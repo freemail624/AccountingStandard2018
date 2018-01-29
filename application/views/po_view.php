@@ -1684,7 +1684,7 @@ $(document).ready(function(){
         if(d.is_bulk == '1'){ 
             unit = '<td width="5%"><select class="line_unit'+d.a+'" name="unit_id[]"><option value="'+d.parent_unit_id+'" data-unit-identifier="1">'+d.parent_unit_name+'</option><option value="'+d.child_unit_id+'" data-unit-identifier="0" >'+d.child_unit_name+'</option></select></td>';
         }else{ 
-            unit  = '<td width="5%"><select class="line_unit'+d.a+'" name="unit_id[]" ><option value="'+d.parent_unit_id+'" data-unit-identifier="1">'+d.parent_unit_name+'</option></select></td>';
+            unit  = '<td width="5%"><select class="line_unit'+d.a+'" style="display:none;" name="unit_id[]" ><option value="'+d.parent_unit_id+'" data-unit-identifier="1">'+d.parent_unit_name+'</option></select></td>';
         }
         return '<tr>'+
         '<td ><input name="po_qty[]" type="text" class="number form-control" value="'+ d.po_qty+'"></td>'+unit+'<td >'+d.product_desc+' <input type="text" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
