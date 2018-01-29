@@ -110,8 +110,16 @@ class Products extends CORE_Controller
                 $m_products->item_type_id = $this->input->post('item_type_id', TRUE);
                 $m_products->income_account_id = $this->input->post('income_account_id', TRUE);
                 $m_products->expense_account_id = $this->input->post('expense_account_id', TRUE);
-                $m_products->unit_id = $this->input->post('unit_id', TRUE);
+                $m_products->parent_unit_id = $this->input->post('parent_unit_id', TRUE);
 
+                $m_products->is_bulk =$this->get_numeric_value($this->input->post('is_bulk',TRUE));
+                if($this->get_numeric_value($this->input->post('is_bulk',TRUE)) == 1){
+                $m_products->child_unit_desc = $this->get_numeric_value($this->input->post('child_unit_desc', TRUE));
+                $m_products->child_unit_id = $this->input->post('child_unit_id', TRUE);  
+                }else{
+                $m_products->child_unit_desc = 0;
+                $m_products->child_unit_id =0;
+                }
                 $m_products->tax_type_id = $this->input->post('tax_type_id', TRUE);
                 //$m_products->is_inventory = $this->input->post('inventory',TRUE);
 
@@ -167,12 +175,20 @@ class Products extends CORE_Controller
                 $m_products->item_type_id = $this->input->post('item_type_id', TRUE);
                 $m_products->income_account_id = $this->input->post('income_account_id', TRUE);
                 $m_products->expense_account_id = $this->input->post('expense_account_id', TRUE);
-                $m_products->unit_id = $this->input->post('unit_id', TRUE);
+                $m_products->parent_unit_id = $this->input->post('parent_unit_id', TRUE);
+                if($this->get_numeric_value($this->input->post('is_bulk',TRUE)) == 1){
+                $m_products->child_unit_desc = $this->get_numeric_value($this->input->post('child_unit_desc', TRUE));
+                $m_products->child_unit_id = $this->input->post('child_unit_id', TRUE);  
+                }else{
+                $m_products->child_unit_desc = 0;
+                $m_products->child_unit_id =0;
+                }
+                $m_products->is_bulk =$this->get_numeric_value($this->input->post('is_bulk',TRUE));
                 $m_products->tax_type_id = $this->input->post('tax_type_id', TRUE);
                 //$m_products->is_inventory = $this->input->post('inventory',TRUE);
 
-                //im not sure, why posted checkbox post value of 0 when checked
-                $m_products->is_tax_exempt =$this->get_numeric_value($this->input->post('is_tax_exempt',TRUE));
+                 //im not sure, why posted checkbox post value of 0 when checked
+               $m_products->is_tax_exempt =$this->get_numeric_value($this->input->post('is_tax_exempt',TRUE));
 
 
                 $m_products->equivalent_points = $this->get_numeric_value($this->input->post('equivalent_points', TRUE));
@@ -378,15 +394,28 @@ class Products extends CORE_Controller
 
                 $data['product_id'] = $product_id;
                 $m_products=$this->Products_model;
-                $data['products']=$m_products->get_product_history($product_id,$department_id,$date,1);
+                $data['products_parent']=$m_products->get_product_history_with_child($product_id,$department_id,$date,1,1);
+                $data['products_child']=$m_products->get_product_history_with_child($product_id,$department_id,$date,1,0);
                 $data['product_id']=$product_id;
                 //$this->load->view('Template/product_history_menus',$data);
 
 
                 $product_info = $m_products->product_list(1,null,$product_id);
+
                 $data['product_info'] = $product_info[0];
                 $type=$this->input->get('type');
                 $data['type'] = $type;
+
+                $data['info']=$m_products->get_list(
+                    array('product_id'=>$product_id),
+                    array(
+                        'products.*',
+                            '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.parent_unit_id) as parent_unit_name',
+                            '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name'
+                            )
+                );
+
+
                 if($type == NULL){
                     $this->load->view('template/product_history',$data);
                 }else if($type == 'print'){
@@ -506,13 +535,12 @@ class Products extends CORE_Controller
         return $this->Products_model->get_list(
             $filter,
 
-            'products.*,categories.category_name,suppliers.supplier_name,refproduct.product_type,units.unit_name,item_types.item_type,account_titles.account_title',
+            'products.*,categories.category_name,suppliers.supplier_name,refproduct.product_type,item_types.item_type,account_titles.account_title',
 
             array(
                 array('suppliers','suppliers.supplier_id=products.supplier_id','left'),
                 array('refproduct','refproduct.refproduct_id=products.refproduct_id','left'),
                 array('categories','categories.category_id=products.category_id','left'),
-                array('units','units.unit_id=products.unit_id','left'),
                 array('item_types','item_types.item_type_id=products.item_type_id','left'),
                 array('account_titles','account_titles.account_id=products.income_account_id','left')
             )
