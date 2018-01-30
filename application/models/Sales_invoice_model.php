@@ -608,16 +608,18 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                 si.sales_inv_no,
                 si.date_invoice,
                 si.customer_id,
+                sii.inv_price,
                 c.customer_name,
                 p.product_id,
                 p.product_code,
                 p.product_desc,
                 p.sale_price,
                 sii.inv_qty,
+                sii.inv_price,
                 s.salesperson_id,
                 s.salesperson_code,
                 CONCAT(s.firstname,' ',s.lastname) AS salesperson_name,
-                ((p.sale_price) * (sii.inv_qty)) as total_amount
+                ((sii.inv_price) * (sii.inv_qty)) as total_amount
             FROM
                 (sales_invoice AS si
                 LEFT JOIN customers AS c ON c.customer_id = si.customer_id)
@@ -638,7 +640,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                   c.customer_name,
                   s.salesperson_code,
                   CONCAT(s.firstname,' ',s.lastname) AS salesperson_name,
-                  SUM((p.sale_price) * (sii.inv_qty)) as total_amount
+                  SUM((sii.inv_price) * (sii.inv_qty)) as total_amount
               FROM
                   (sales_invoice AS si
                   LEFT JOIN customers AS c ON c.customer_id = si.customer_id)
@@ -657,7 +659,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                   si.customer_id,
                   p.product_code,
                   p.product_desc,
-                  SUM((p.sale_price) * (sii.inv_qty)) as total_amount
+                  SUM((sii.inv_price) * (sii.inv_qty)) as total_amount
               FROM
                   (sales_invoice AS si)
                   INNER JOIN sales_invoice_items AS sii ON si.sales_invoice_id = sii.sales_invoice_id
