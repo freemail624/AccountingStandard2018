@@ -181,10 +181,10 @@
                             </select>
                         </div>
                         <div class="col-sm-4">
-                            <label>Contact Person :</label><br/>
+                            <label> <b class="required">*</b>Contact Person :</label><br/>
                             <input type="text" name="contact_person" id="contact_person" class="form-control" required data-error-msg="Contact Person is required!" placeholder="Contact Person">
                         </div>
-                        <div class="col-sm-2 col-sm-offset-2">
+                        <div class="col-sm-2">
                             <b class="required">*</b> <label>Invoice Date :</label> <br />
                             <div class="input-group">
                                 <input type="text" name="date_invoice" id="invoice_default" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date Invoice" data-error-msg="Please set the date this items are issued!" required>
@@ -222,7 +222,7 @@
                                 </span>
                             </div>
                         </div>
-                        <div class="col-sm-2">
+<!--                         <div class="col-sm-2">
                             <b class="required">*</b><label> Due Date :</label> <br />
                             <div class="input-group">
                                 <input type="text" name="date_due" id="due_default" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date Due" data-error-msg="Please set the date this items are issued!" required>
@@ -230,12 +230,46 @@
                                      <i class="fa fa-calendar"></i>
                                 </span>
                             </div>
+                        </div> -->
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <label>Address :</label><br>
+                            <input class="form-control" id="txt_address" type="text" name="address" placeholder="Customer Address">
+                        </div>
+                    <div class="col-sm-5">
+                       <label><b ></b>  Discount :</label><br />
+                       <input type="text" name="discount_text" class="form-control">
+                    </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-5">
+                            Label:<br />
+                           <input type="text" name="label" class="form-control" required data-error-msg="Label Remarks is required">
+                        </div>
+                        <div class="col-sm-5">
+                             Direct Print :<br />
+                           <input type="text" name="direct_print" class="form-control" required data-error-msg="Direct Print is required">
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-8">
-                            <label>Address :</label><br>
-                            <input class="form-control" id="txt_address" type="text" name="address" placeholder="Customer Address">
+                        <div class="col-sm-5">
+                             Production Time :<br />
+                           <input type="text" name="production_time" class="form-control" >
+                        </div>
+                        <div class="col-sm-5">
+                           <b class="required">* </b>  Delivery Date :<br />
+                           <input type="text" name="date_due" id="date_due" class=" date-picker form-control"  value="<?php echo date("m/d/Y"); ?>"  >
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-5">
+                             Confirmed Order :<br />
+                           <input type="text" name="confirmed_order" class="form-control" >
+                        </div>
+                        <div class="col-sm-5">
+                             Received Po: :<br />
+                           <input type="text" name="received_po" class="form-control" >
                         </div>
                     </div>
                 </div>
@@ -1251,6 +1285,7 @@ $(document).ready(function(){
             $('#invoice_default').datepicker('setDate', 'today');
             $('#due_default').datepicker('setDate', 'today');
             $('#typeaheadsearch').val('');
+            $('#date_due').datepicker('setDate', 'today');
             getproduct().done(function(data){
                 products.clear();
                 products.local = data.data;

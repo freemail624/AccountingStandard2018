@@ -180,9 +180,26 @@
     <div class="row" style="padding: 1%;margin-top: 0%;font-family: "Source Sans Pro", "Segoe UI", "Droid Sans", Tahoma, Arial, sans-serif">
         <form id="frm_sales_order" role="form" class="form-horizontal">
             <div>
+
+            <div class="row">
+                <div class="col-sm-5">
+                   <b class="required">* </b>SO #:  :<br />
+                   <input type="text" name="so_no" class="form-control" required data-error-msg="SO # is required">
+                </div>
+                <div class="col-sm-2">
+                    Order Date : <br />
+                    <div class="input-group">
+                        <input type="text" id="order_default" name="date_order" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date Order" data-error-msg="Please set the date this items are ordered!" required>
+                            <span class="input-group-addon">
+                                 <i class="fa fa-calendar"></i>
+                            </span>
+                    </div>
+                </div>
+
+            </div>
                 <div class="row">
                     <div class="col-sm-5">
-                       <b>* </b>  Department :<br />
+                       <b class="required">* </b>  Department :<br />
                         <select name="department" id="cbo_departments" data-error-msg="Department is required." required>
                             <option value="0">[ Create New Department ]</option>
                             <?php foreach($departments as $department){ ?>
@@ -190,7 +207,16 @@
                             <?php } ?>
                         </select>
                     </div>
-                    <div class="col-sm-2 col-sm-offset-5">
+                    <div class="col-sm-5">
+                        SalesPerson :<br/>
+                        <select name="salesperson_id" id="cbo_salesperson">
+                            <option value="0">[ Create New Salesperson ]</option>
+                            <?php foreach($salespersons as $salesperson){ ?>
+                                <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->acr_name.' - '.$salesperson->fullname; ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+<!--                     <div class="col-sm-2 col-sm-offset-5">
                         SO # :<br />
                         <div class="input-group">
                             <span class="input-group-addon">
@@ -198,11 +224,11 @@
                             </span>
                             <input type="text" name="slip_no" class="form-control" placeholder="SO-YYYYMMDD-XXX" readonly>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="row">
                     <div class="col-sm-5">
-                       <b>* </b>  Customer : <br />
+                       <b class="required">* </b>  Customer : <br />
                         <select name="customer" id="cbo_customers" data-error-msg="Customer is required." required>
                             <option value="0">[ Create New Customer ]</option>
                             <?php $customers = $this->db->where('is_deleted',FALSE); ?>
@@ -213,24 +239,41 @@
                             <?php } ?>
                         </select>
                     </div>
-                    <div class="col-sm-4">
-                        SalesPerson :<br/>
-                        <select name="salesperson_id" id="cbo_salesperson">
-                            <option value="0">[ Create New Salesperson ]</option>
-                            <?php foreach($salespersons as $salesperson){ ?>
-                                <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->acr_name.' - '.$salesperson->fullname; ?></option>
-                            <?php } ?>
-                        </select>
+                    <div class="col-sm-5">
+                       <b ></b>  Discount :<br />
+                       <input type="text" name="discount_text" class="form-control">
                     </div>
-                    <div class="col-sm-2 col-sm-offset-1">
-                        Order Date : <br />
-                        <div class="input-group">
-                            <input type="text" id="order_default" name="date_order" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date Order" data-error-msg="Please set the date this items are ordered!" required>
-                                <span class="input-group-addon">
-                                     <i class="fa fa-calendar"></i>
-                                </span>
-                        </div>
-                    </div>
+
+            </div>
+            <div class="row">
+                <div class="col-sm-5">
+                    Label:<br />
+                   <input type="text" name="label" class="form-control" required data-error-msg="Label Remarks is required">
+                </div>
+                <div class="col-sm-5">
+                     Direct Print :<br />
+                   <input type="text" name="direct_print" class="form-control" required data-error-msg="Direct Print is required">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-5">
+                     Production Time :<br />
+                   <input type="text" name="production_time" class="form-control" >
+                </div>
+                <div class="col-sm-5">
+                   <b class="required">* </b>  Delivery Date :<br />
+                   <input type="text" name="date_due" id="date_due" class=" date-picker form-control"  value="<?php echo date("m/d/Y"); ?>"  >
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-5">
+                     Confirmed Order :<br />
+                   <input type="text" name="confirmed_order" class="form-control" >
+                </div>
+                <div class="col-sm-5">
+                     Received Po: :<br />
+                   <input type="text" name="received_po" class="form-control" >
+                </div>
             </div>
             </div>
         </form>
@@ -1133,12 +1176,14 @@ $(document).ready(function(){
             //$('.toggle-fullscreen').click();
             //$('#cbo_prodType').select2('val', 3);
             $('#cbo_salesperson').select2('val',null);
-            $('#order_default').datepicker('setDate', 'today');
+
             clearFields($('#frm_sales_order'));
             $('#tbl_items tbody').html('');
             $('#cbo_departments').select2('val', null);
             $('#cbo_department').select2('val', null);
             $('#cbo_customers').select2('val', null);
+            $('#order_default').datepicker('setDate', 'today');
+            $('#date_due').datepicker('setDate', 'today');
             getproduct().done(function(data){
                 products.clear();
                 products.local = data.data;

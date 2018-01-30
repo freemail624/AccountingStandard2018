@@ -222,6 +222,12 @@ class Sales_invoice extends CORE_Controller
 
                 //treat NOW() as function and not string
                 $m_invoice->set('date_created','NOW()'); //treat NOW() as function and not string
+                $m_invoice->label=$this->input->post('label',TRUE);
+                $m_invoice->direct_print=$this->input->post('direct_print',TRUE);
+                $m_invoice->production_time=$this->input->post('production_time',TRUE);         
+                $m_invoice->confirmed_order=$this->input->post('confirmed_order',TRUE);
+                $m_invoice->received_po=$this->input->post('received_po',TRUE);
+                $m_invoice->discount_text=$this->input->post('discount_text',TRUE);
 
                 $m_invoice->customer_id=$this->input->post('customer',TRUE);
                 $m_invoice->salesperson_id=$this->input->post('salesperson_id',TRUE);
@@ -357,6 +363,12 @@ class Sales_invoice extends CORE_Controller
                     $sales_order_id=(count($arr_so_info)>0?$arr_so_info[0]->sales_order_id:0);
 
                     $m_invoice->begin();
+                    $m_invoice->label=$this->input->post('label',TRUE);
+                    $m_invoice->direct_print=$this->input->post('direct_print',TRUE);
+                    $m_invoice->production_time=$this->input->post('production_time',TRUE);         
+                    $m_invoice->confirmed_order=$this->input->post('confirmed_order',TRUE);
+                    $m_invoice->received_po=$this->input->post('received_po',TRUE);
+                    $m_invoice->discount_text=$this->input->post('discount_text',TRUE);
 
                     //$m_invoice->sales_inv_no=$sales_inv_no;
                     $m_invoice->customer_id=$this->input->post('customer',TRUE);
@@ -660,6 +672,12 @@ class Sales_invoice extends CORE_Controller
                 'sales_invoice.customer_id',
                 'sales_invoice.inv_type',
                 'sales_invoice.contact_person',
+                'sales_invoice.label',
+                'sales_invoice.direct_print',
+                'sales_invoice.production_time',
+                'sales_invoice.confirmed_order',
+                'sales_invoice.received_po',
+                'sales_invoice.discount_text',
                 'DATE_FORMAT(sales_invoice.date_invoice,"%m/%d/%Y") as date_invoice',
                 'DATE_FORMAT(sales_invoice.date_due,"%m/%d/%Y") as date_due',
                 'departments.department_id',

@@ -111,6 +111,7 @@ class Sales_order extends CORE_Controller
                     array(
                         'sales_order.*',
                         'DATE_FORMAT(sales_order.date_order,"%m/%d/%Y") as date_order',
+                        'DATE_FORMAT(sales_order.date_due,"%m/%d/%Y") as date_due',
                         'customers.customer_name',
                         'order_status.order_status',
                         'departments.department_name'
@@ -182,10 +183,17 @@ class Sales_order extends CORE_Controller
 
                 //treat NOW() as function and not string
                 $m_sales_order->set('date_created','NOW()'); //treat NOW() as function and not string
-
+                 $m_sales_order->so_no=$this->input->post('so_no',TRUE);
                 $m_sales_order->department_id=$this->input->post('department',TRUE);
                 $m_sales_order->customer_id=$this->input->post('customer',TRUE);
                 $m_sales_order->remarks=$this->input->post('remarks',TRUE);
+                $m_sales_order->label=$this->input->post('label',TRUE);
+                $m_sales_order->direct_print=$this->input->post('direct_print',TRUE);
+                $m_sales_order->production_time=$this->input->post('production_time',TRUE);
+                $m_sales_order->date_due=date('Y-m-d',strtotime($this->input->post('date_due',TRUE)));               
+                $m_sales_order->confirmed_order=$this->input->post('confirmed_order',TRUE);
+                $m_sales_order->received_po=$this->input->post('received_po',TRUE);
+                $m_sales_order->discount_text=$this->input->post('discount_text',TRUE);
                 $m_sales_order->salesperson_id=$this->input->post('salesperson_id',TRUE);
                 $m_sales_order->date_order=date('Y-m-d',strtotime($this->input->post('date_order',TRUE)));
                 $m_sales_order->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
@@ -246,8 +254,6 @@ class Sales_order extends CORE_Controller
                 }
 
                 //update so number base on formatted last insert id
-                $m_sales_order->so_no='SO-'.date('Ymd').'-'.$sales_order_id;
-                $m_sales_order->modify($sales_order_id);
 
 
 
@@ -274,18 +280,15 @@ class Sales_order extends CORE_Controller
                 $sales_order_id=$this->input->post('sales_order_id',TRUE);
 
 
-                //get sales order id base on SO number
-                $m_so=$this->Sales_order_model;
-                $arr_so_info=$m_so->get_list(
-                    array('sales_order.so_no'=>$this->input->post('so_no',TRUE)),
-                    'sales_order.sales_order_id'
-                );
-                // $sales_order_id=(count($arr_so_info)>0?$arr_so_info[0]->sales_order_id:0);
-
-
-
                 $m_sales_order->begin();
-
+                $m_sales_order->so_no=$this->input->post('so_no',TRUE);
+                $m_sales_order->label=$this->input->post('label',TRUE);
+                $m_sales_order->direct_print=$this->input->post('direct_print',TRUE);
+                $m_sales_order->production_time=$this->input->post('production_time',TRUE);
+                $m_sales_order->date_due=date('Y-m-d',strtotime($this->input->post('date_due',TRUE)));               
+                $m_sales_order->confirmed_order=$this->input->post('confirmed_order',TRUE);
+                $m_sales_order->received_po=$this->input->post('received_po',TRUE);
+                $m_sales_order->discount_text=$this->input->post('discount_text',TRUE);
                 $m_sales_order->department_id=$this->input->post('department',TRUE);
                 $m_sales_order->remarks=$this->input->post('remarks',TRUE);
                 $m_sales_order->customer_id=$this->input->post('customer',TRUE);
@@ -400,6 +403,7 @@ class Sales_order extends CORE_Controller
             array(
                 'sales_order.*',
                 'DATE_FORMAT(sales_order.date_order,"%m/%d/%Y") as date_order',
+                'DATE_FORMAT(sales_order.date_due,"%m/%d/%Y") as date_due',
                 'departments.department_id',
                 'departments.department_name',
                 'customers.customer_name',
