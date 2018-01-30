@@ -36,8 +36,8 @@
 <body>
 	<table width="100%">
         <tr>
-            <td width="5%" style="object-fit: cover;"><img src="<?php echo $company_info->logo_path; ?>" style="height: 90px;width: 90px; text-align: left;"></td>
-            <td width="95%" class="align-center">
+            <td width="10%" style="object-fit: cover;"><img src="<?php echo $company_info->logo_path; ?>" style="height: 90px;width: 90px; text-align: left;"></td>
+            <td width="90%" class="align-center">
                 <h1 class="report-header"><strong><?php echo $company_info->company_name; ?></strong></h1>
                 <p><?php echo $company_info->company_address; ?></p>
                 <p><?php echo $company_info->landline.'/'.$company_info->mobile_no; ?></p><br>
