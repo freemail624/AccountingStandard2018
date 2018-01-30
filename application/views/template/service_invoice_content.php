@@ -31,7 +31,7 @@
         </style>
     <table width="100%" cellspacing="0" cellpadding="0">
         <tr class="row_child_tbl_sales_order" style="height: 100px;" >
-            <td class="bottom-only" width="10%" style="border-bottom:1px solid black;"><img src="<?php echo $company_info->logo_path; ?>" style="height: 90px; width: 120px;  text-align: left;"></td>
+            <td class="bottom-only" width="10%" style="border-bottom:1px solid black;object-fit:cover; "><img src="<?php echo $company_info->logo_path; ?>" style="height: 90px;  text-align: left;"></td>
             <td  class="bottom-only" style="border-bottom:1px solid black;"  width="60%" class="">
                 <h1 class="report-header" style="padding-left: 30px;"><strong><?php echo $company_info->company_name; ?></strong></h1>
                 <p style="padding-left: 30px;"><?php echo $company_info->company_address; ?></p>
