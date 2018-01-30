@@ -182,7 +182,7 @@
                         </div>
                         <div class="col-sm-4">
                             <label>Contact Person :</label><br/>
-                            <input type="text" name="contact_person" class="form-control" required data-error-msg="Contact Person is required!" placeholder="Contact Person">
+                            <input type="text" name="contact_person" id="contact_person" class="form-control" required data-error-msg="Contact Person is required!" placeholder="Contact Person">
                         </div>
                         <div class="col-sm-2 col-sm-offset-2">
                             <b class="required">*</b> <label>Invoice Date :</label> <br />
@@ -200,7 +200,7 @@
                             <select name="customer" id="cbo_customers" data-error-msg="Customer is required." required>
                                 <option value="0">[ Create New Customer ]</option>
                                 <?php foreach($customers as $customer){ ?>
-                                    <option data-address="<?php echo $customer->address; ?>" value="<?php echo $customer->customer_id; ?>" data-term-default="<?php echo ($customer->term=="none"?"":$customer->term); ?>"><?php echo $customer->customer_name; ?></option>
+                                    <option data-address="<?php echo $customer->address; ?>" data-contact="<?php echo $customer->contact_name; ?>" value="<?php echo $customer->customer_id; ?>" data-term-default="<?php echo ($customer->term=="none"?"":$customer->term); ?>"><?php echo $customer->customer_name; ?></option>
                                 <?php } ?>
                             </select>
                         </div>
@@ -1115,6 +1115,7 @@ $(document).ready(function(){
             }
             var obj_customers=$('#cbo_customers').find('option[value="' + i + '"]');
             $('#txt_address').val(obj_customers.data('address'));
+            $('#contact_person').val(obj_customers.data('contact'));
         });
         $('#btn_create_salesperson').click(function(){
             var btn=$(this);
@@ -1184,7 +1185,7 @@ $(document).ready(function(){
                     "type":"POST",
                     "url":"Departments/transaction/create",
                     "data":data,
-                    "beforeSend" : function(){
+            "beforeSend" : function(){
                         showSpinningProgress(btn);
                     }
                 }).done(function(response){
