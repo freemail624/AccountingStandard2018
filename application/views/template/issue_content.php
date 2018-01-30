@@ -79,7 +79,7 @@
 <div style="width:100%">
 <table width="100%">
         <tr>
-            <td width="10%" style="border:none!important;"><img src="<?php echo $company_info->logo_path; ?>" style="height: 90px; width: 120px; text-align: left;"></td>
+            <td width="10%" style="border:none!important; object-fit: cover;"><img src="<?php echo $company_info->logo_path; ?>" style="height: 90px; width: 90px; text-align: left;"></td>
             <td width="90%" style="border:none!important;" class="">
                 <h1 class="report-header"><strong><?php echo $company_info->company_name; ?></strong></h1>
                 <p><?php echo $company_info->company_address; ?></p>
