@@ -86,7 +86,8 @@ class Rights_link_model extends CORE_Model{
                                           (76,'6','6-11','Email Report'),
                                           (77,'12','12-6','Product Reorder (Pick-list)'),
                                           (78,'12','12-7','Product List Report'),
-                                          (79,'2','2-6','Purchase History')
+                                          (79,'2','2-6','Purchase History'),
+                                          (80,'2','2-7','Purchase Monitoring')
 
 
 

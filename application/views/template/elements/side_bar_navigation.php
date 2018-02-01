@@ -57,6 +57,7 @@
                                 <li class="<?php echo (in_array('2-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Purchases">Purchase Order</a></li>
                                 <li class="<?php echo (in_array('2-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Deliveries">Purchase Invoice</a></li>
                                 <li class="<?php echo (in_array('2-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Purchase_history">Purchase History</a></li>
+                                <li class="<?php echo (in_array('2-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Purchase_monitoring">Purchase Monitoring</a></li>
                                 <li class="<?php echo (in_array('2-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Payable_payments">Record Payment</a></li>
                                 <li class="<?php echo (in_array('2-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Issuances">Item Issuance</a></li>
                                 <li class="<?php echo (in_array('2-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Adjustments">Item Adjustment</a></li>
@@ -155,7 +156,7 @@
                                     <a href="#/"><span>Other Accounting Report</span></a>
                                     <ul class="acc-menu">
                                         <li class="<?php echo (in_array('9-14',$this->session->user_rights)?'':'hidden'); ?>"><a href="TAccount">T-Accounts</a></li>
-                                        <li class="<?php echo (in_array('9-11',$this->session->user_rights)?'':'hidden'); ?>"><a href="Schedule_expense">Schedule of Expense</a></li>
+                                        <!-- <li class="<?php echo (in_array('9-11',$this->session->user_rights)?'':'hidden'); ?>"><a href="Schedule_expense">Schedule of Expense</a></li> -->
                                         <li class="<?php echo (in_array('9-8',$this->session->user_rights)?'':'hidden'); ?>"><a href="Account_Subsidiary">Account Subsidiary</a></li>
                                         <li class="<?php echo (in_array('9-13',$this->session->user_rights)?'':'hidden'); ?>"><a href="Replenishment_report">Replenishment Report</a></li>
                                         <li class="<?php echo (in_array('9-20',$this->session->user_rights)?'':'hidden'); ?>"><a href="Replenishment_batch">Replenishment Batch</a></li>
