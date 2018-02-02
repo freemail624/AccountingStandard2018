@@ -666,22 +666,22 @@ if($inv == 'parent'){
           ->getActiveSheet()->setCellValue('B14',$product_info[0]->tax_type.'('.$product_info[0]->tax_rate.' %)')
 
           ->setCellValue('C9','Purchase Cost')->getStyle('C9')->getFont()->setBold(TRUE)
-          ->getActiveSheet()->setCellValue('D9',number_format($product_info[0]->purchase_cost,2))->getStyle('D9')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT)
+          ->getActiveSheet()->setCellValue('D9',number_format(($product_info[0]->purchase_cost/$product_info[0]->child_unit_desc),2))->getStyle('D9')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT)
 
           ->getActiveSheet()->setCellValue('C10','Sale Price')->getStyle('C10')->getFont()->setBold(TRUE)
-          ->getActiveSheet()->setCellValue('D10',number_format($product_info[0]->sale_price,2))->getStyle('D10')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT)
+          ->getActiveSheet()->setCellValue('D10',number_format(($product_info[0]->sale_price/$product_info[0]->child_unit_desc),2))->getStyle('D10')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT)
 
           ->getActiveSheet()->setCellValue('C11','Discounted Price')->getStyle('C11')->getFont()->setBold(TRUE)
-          ->getActiveSheet()->setCellValue('D11',number_format($product_info[0]->discounted_price,2))->getStyle('D11')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT)
+          ->getActiveSheet()->setCellValue('D11',number_format(($product_info[0]->discounted_price/$product_info[0]->child_unit_desc),2))->getStyle('D11')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT)
 
           ->getActiveSheet()->setCellValue('C12','Dealer Price')->getStyle('C12')->getFont()->setBold(TRUE)
-          ->getActiveSheet()->setCellValue('D12',number_format($product_info[0]->dealer_price,2))->getStyle('D12')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT)
+          ->getActiveSheet()->setCellValue('D12',number_format(($product_info[0]->dealer_price/$product_info[0]->child_unit_desc),2))->getStyle('D12')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT)
 
           ->getActiveSheet()->setCellValue('C13','Distributor Price')->getStyle('C13')->getFont()->setBold(TRUE)
-          ->getActiveSheet()->setCellValue('D13',number_format($product_info[0]->distributor_price,2))->getStyle('D13')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT)
+          ->getActiveSheet()->setCellValue('D13',number_format(($product_info[0]->distributor_price/$product_info[0]->child_unit_desc),2))->getStyle('D13')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT)
 
           ->getActiveSheet()->setCellValue('C14','Public Price')->getStyle('C14')->getFont()->setBold(TRUE)
-          ->getActiveSheet()->setCellValue('D14',number_format($product_info[0]->public_price,2))->getStyle('D14')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT)
+          ->getActiveSheet()->setCellValue('D14',number_format(($product_info[0]->public_price/$product_info[0]->child_unit_desc),2))->getStyle('D14')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT)
 
           ->getActiveSheet()->setCellValue('A15','Warning QTY')->getStyle('A15')->getFont()->setBold(TRUE)
           ->getActiveSheet()->setCellValue('B15',$product_info[0]->product_warn.' '.$product_info[0]->parent_unit_name.'(Bulk Unit)')->getStyle('B15')
