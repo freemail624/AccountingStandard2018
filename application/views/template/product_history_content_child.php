@@ -42,7 +42,7 @@
     <div>
         <h3><strong>Product History</strong></h3>
     </div>
-<b>Unit of Measurement :</b> <?php echo $info[0]->parent_unit_name?><br><br>
+<b>Unit of Measurement :</b> <?php echo $info[0]->child_unit_name?><br><br>
    <center>
        <table width="100%"  style="border-collapse: collapse;">
            <thead>
