@@ -25,7 +25,7 @@
         }
 
         hr {
-            border-top: 3px solid #404040;
+            /*border-top: 3px solid #404040;*/
         }
 
         tr {
