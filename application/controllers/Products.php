@@ -365,6 +365,7 @@ class Products extends CORE_Controller
 
                 $m_products=$this->Products_model;
                 $data['products']=$m_products->get_product_history($product_id,$department_id,$date,$account);
+                $data['products_parent']=$m_products->get_product_history_with_child($product_id,$department_id,$date,1,1);
                 $data['product_id']=$product_id;
                 //$this->load->view('Template/product_history_menus',$data);
 
