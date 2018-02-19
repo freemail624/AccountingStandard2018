@@ -119,7 +119,7 @@
 
 <ol class="breadcrumb" style="margin-bottom: 0px;">
     <li><a href="dashboard">Dashboard</a></li>
-    <li><a href="Cash_receipt">General Journal</a></li>
+    <li><a href="General_journal">General Journal</a></li>
 </ol>
 
 <div class="container-fluid">
@@ -128,7 +128,59 @@
 <div class="col-md-12">
 
 <div id="div_payable_list">
+ <div class="panel panel-default">
+<!--                 <div class="panel-heading">
+                    <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; General Journal </b>
+                </div> -->
+                <div class="panel-body table-responsive">
+                    <h2 class="h2-panel-heading">Review General Journal (Issuances)</h2><hr>
+                    <div class="row-panel">
+                        <table id="tbl_issuance_review" class="table table-striped" cellspacing="0" width="100%">
+                            <thead class="">
+                            <tr>
+                                <th></th>
+                                <th>Slip #</th>
+                                <th>Date Issued</th>
+                                <th>Terms</th>
+                                <th>Remarks</th>
+                                <th>Department</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+    
+                            </tbody>
+                        </table>
+                    </div>
 
+                </div>
+            </div>
+
+        <div class="panel panel-default">
+<!--                 <div class="panel-heading">
+                    <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; General Journal </b>
+                </div> -->
+                <div class="panel-body table-responsive">
+                    <h2 class="h2-panel-heading">Review General Journal (Adjustments)</h2><hr>
+                    <div class="row-panel">
+                        <table id="tbl_adjustment_review" class="table table-striped" cellspacing="0" width="100%">
+                            <thead class="">
+                            <tr>
+                                <th></th>
+                                <th>Adjustment Code</th>
+                                <th>Adjustment Type</th>
+                                <th>Date Adjusted</th>
+                                <th>Remarks</th>
+                                <th>Department</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+    
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
 
         <div class="panel panel-default">
 <!--                 <div class="panel-heading">
@@ -819,7 +871,7 @@
 $(document).ready(function(){
     var _txnMode; var _cboParticulars; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode;
     var dtReview; var _cboDepartments; var _option; var _optGroup;
-
+     var dtReviewAdjustment;
 
     var oTBJournal={
         "dr" : "td:eq(2)",
@@ -904,6 +956,45 @@ $(document).ready(function(){
             ]
         });
 
+        dtReview=$('#tbl_issuance_review').DataTable({
+            "bLengthChange":false,
+                "order": [[ 1, "desc" ]],
+            "ajax" : "Issuances/transaction/issuance-for-review",
+            "columns": [
+                {
+                    "targets": [0],
+                    "class":          "details-control",
+                    "orderable":      false,
+                    "data":           null,
+                    "defaultContent": ""
+                },
+                { targets:[1],data: "slip_no" },
+                { targets:[2],data: "date_issued" },
+                { targets:[3],data: "terms" },
+                { targets:[4],data: "remarks" },
+                { targets:[5],data: "department_name" }
+            ]
+        });
+
+        dtReviewAdjustment=$('#tbl_adjustment_review').DataTable({
+            "bLengthChange":false,
+                "order": [[ 1, "desc" ]],
+            "ajax" : "Adjustments/transaction/adjustment-for-review",
+            "columns": [
+                {
+                    "targets": [0],
+                    "class":          "details-control",
+                    "orderable":      false,
+                    "data":           null,
+                    "defaultContent": ""
+                },
+                { targets:[1],data: "adjustment_code" },
+                { targets:[2],data: "adjustment_type" },
+                { targets:[3],data: "date_adjusted" },
+                { targets:[4],data: "remarks" },
+                { targets:[5],data: "department_name" }
+            ]
+        });
 
         $('#cbo_particular').select2();
 
@@ -1065,6 +1156,109 @@ $(document).ready(function(){
                 });
             }
         } );
+            $('#tbl_issuance_review tbody').on( 'click', 'tr td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = dtReview.row( tr );
+                var idx = $.inArray( tr.attr('id'), detailRows );
+
+                if ( row.child.isShown() ) {
+                    tr.removeClass( 'details' );
+                    row.child.hide();
+
+                    // Remove from the 'open' array
+                    detailRows.splice( idx, 1 );
+                }
+                else {
+                    tr.addClass( 'details' );
+                    //console.log(row.data());
+                    var d=row.data();
+
+                    $.ajax({
+                        "dataType":"html",
+                        "type":"POST",
+                        "url":"Templates/layout/issuance-gje-for-review?id="+ d.issuance_id,
+                        "beforeSend" : function(){
+                            row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                        }
+                    }).done(function(response){
+                        row.child( response,'no-padding' ).show();
+
+                        reInitializeSpecificDropDown($('.cbo_supplier_list'));
+                        reInitializeSpecificDropDown($('.cbo_department_list'));
+
+                        reInitializeNumeric();
+
+                        var tbl=$('#tbl_entries_for_review_'+ d.issuance_id);
+                        var parent_tab_pane=$('#journal_review_'+ d.issuance_id);
+                        reInitializeDropDownAccounts(tbl);
+                        reInitializeChildEntriesTable(tbl);
+                        reInitializeChildElements(parent_tab_pane);
+
+                        // Add to the 'open' array
+                        if ( idx === -1 ) {
+                            detailRows.push( tr.attr('id') );
+                        }
+
+
+                    });
+
+
+
+
+                }
+            } );
+
+            $('#tbl_adjustment_review tbody').on( 'click', 'tr td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = dtReviewAdjustment.row( tr );
+                var idx = $.inArray( tr.attr('id'), detailRows );
+
+                if ( row.child.isShown() ) {
+                    tr.removeClass( 'details' );
+                    row.child.hide();
+
+                    // Remove from the 'open' array
+                    detailRows.splice( idx, 1 );
+                }
+                else {
+                    tr.addClass( 'details' );
+                    //console.log(row.data());
+                    var d=row.data();
+
+                    $.ajax({
+                        "dataType":"html",
+                        "type":"POST",
+                        "url":"Templates/layout/adjustment-gje-for-review?id="+ d.adjustment_id,
+                        "beforeSend" : function(){
+                            row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                        }
+                    }).done(function(response){
+                        row.child( response,'no-padding' ).show();
+
+                        reInitializeSpecificDropDown($('.cbo_supplier_list'));
+                        reInitializeSpecificDropDown($('.cbo_department_list'));
+
+                        reInitializeNumeric();
+
+                        var tbl=$('#tbl_entries_for_review_adj'+ d.adjustment_id);
+                        var parent_tab_pane=$('#journal_review_'+ d.adjustment_id);
+                        reInitializeDropDownAccounts(tbl);
+                        reInitializeChildEntriesTableAdjustment(tbl);
+                        reInitializeChildElementsAdjustment(parent_tab_pane);
+
+                        // Add to the 'open' array
+                        if ( idx === -1 ) {
+                            detailRows.push( tr.attr('id') );
+                        }
+
+
+                    });
+
+
+
+
+                }
+            } );
 
         _cboParticulars.on('select2:select',function(){
             if (_cboParticulars.val() == 'create_customer') {
@@ -1420,6 +1614,222 @@ $(document).ready(function(){
     //              user defines
 
 
+        var reInitializeChildEntriesTable=function(tbl){
+
+            var _oTblEntries=tbl.find('tbody');
+            _oTblEntries.on('keyup','input.numeric',function(){
+                var _oRow=$(this).closest('tr');
+
+                if(_oTblEntries.find(oTBJournal.dr).index()===$(this).closest('td').index()){ //if true, this is Debit amount
+                    if(getFloat(_oRow.find(oTBJournal.dr).find('input.numeric').val())>0){
+                        _oRow.find(oTBJournal.cr).find('input.numeric').val('0.00');
+                    }
+                }else{
+                    if(getFloat(_oRow.find(oTBJournal.cr).find('input.numeric').val())>0) {
+                        _oRow.find(oTBJournal.dr).find('input.numeric').val('0.00');
+                    }
+                }
+                reComputeTotals(tbl);
+            });
+
+
+
+            //add account button on table
+            tbl.on('click','button.add_account',function(){
+
+                var row=$('#table_hidden').find('tr');
+                row.clone().insertAfter(tbl.find('tbody > tr:last'));
+
+                reInitializeNumeric();
+                reInitializeDropDownAccounts(tbl,false);
+
+            });
+
+
+            tbl.on('click','button.remove_account',function(){
+                var oRow=tbl.find('tbody tr');
+
+                if(oRow.length>1){
+                    $(this).closest('tr').remove();
+                }else{
+                    showNotification({"title":"Error!","stat":"error","msg":"Sorry, you cannot remove all rows."});
+                }
+
+                reComputeTotals(tbl);
+
+            });
+
+
+
+
+        };
+        var reInitializeChildEntriesTableAdjustment=function(tbl){
+
+            var _oTblEntries=tbl.find('tbody');
+            _oTblEntries.on('keyup','input.numeric',function(){
+                var _oRow=$(this).closest('tr');
+
+                if(_oTblEntries.find(oTBJournal.dr).index()===$(this).closest('td').index()){ //if true, this is Debit amount
+                    if(getFloat(_oRow.find(oTBJournal.dr).find('input.numeric').val())>0){
+                        _oRow.find(oTBJournal.cr).find('input.numeric').val('0.00');
+                    }
+                }else{
+                    if(getFloat(_oRow.find(oTBJournal.cr).find('input.numeric').val())>0) {
+                        _oRow.find(oTBJournal.dr).find('input.numeric').val('0.00');
+                    }
+                }
+                reComputeTotals(tbl);
+            });
+
+
+
+            //add account button on table
+            tbl.on('click','button.add_account',function(){
+
+                var row=$('#table_hidden').find('tr');
+                row.clone().insertAfter(tbl.find('tbody > tr:last'));
+
+                reInitializeNumeric();
+                reInitializeDropDownAccounts(tbl,false);
+
+            });
+
+
+            tbl.on('click','button.remove_account',function(){
+                var oRow=tbl.find('tbody tr');
+
+                if(oRow.length>1){
+                    $(this).closest('tr').remove();
+                }else{
+                    showNotification({"title":"Error!","stat":"error","msg":"Sorry, you cannot remove all rows."});
+                }
+
+                reComputeTotals(tbl);
+
+            });
+
+
+
+
+        };
+
+        var reInitializeChildElementsAdjustment=function(parent){
+            var _dataParentID=parent.data('parent-id');
+            var btn=parent.find('button[name="btn_finalize_journal_review"]');
+
+            //initialize datepicker
+            parent.find('input.date-picker').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true
+
+            });
+
+
+            parent.on('click','button[name="btn_finalize_journal_review"]',function(){
+
+                var _curBtn=$(this);
+
+                if(isBalance('#tbl_entries_for_review_adj'+_dataParentID)){
+                    if(validateRequiredFields('#tbl_entries_for_review_'+_dataParentID)){
+                                           finalizeJournalReview().done(function(response){
+                        showNotification(response);
+                        if(response.stat=="success"){
+                            dt.row.add(response.row_added[0]).draw();
+                            var _parentRow=_curBtn.parents('table.table_journal_entries_review').parents('tr').prev();
+                            dtReviewAdjustment.row(_parentRow).remove().draw();
+                        }
+
+
+                    }).always(function(){
+                        showSpinningProgress(_curBtn);
+                    }); 
+                    }
+
+                }else{
+                    showNotification({title:"Not Balance!",stat:"error",msg:'Please make sure Debit and Credit amount are equal.'});
+                    stat=false;
+                }
+
+            });
+
+            var finalizeJournalReview=function(){
+                var _data_review=parent.find('form').serializeArray();
+
+                return $.ajax({
+                    "dataType":"json",
+                    "type":"POST",
+                    "url":"General_journal/transaction/create",
+                    "data":_data_review,
+                    "beforeSend": showSpinningProgress(btn)
+
+                });
+            };
+
+
+
+        };
+
+        var reInitializeChildElements=function(parent){
+            var _dataParentID=parent.data('parent-id');
+            var btn=parent.find('button[name="btn_finalize_journal_review"]');
+
+            //initialize datepicker
+            parent.find('input.date-picker').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true
+
+            });
+
+
+            parent.on('click','button[name="btn_finalize_journal_review"]',function(){
+
+                var _curBtn=$(this);
+
+                if(isBalance('#tbl_entries_for_review_'+_dataParentID)){
+                    if(validateRequiredFields('#tbl_entries_for_review_'+_dataParentID)){
+                                           finalizeJournalReview().done(function(response){
+                        showNotification(response);
+                        if(response.stat=="success"){
+                            dt.row.add(response.row_added[0]).draw();
+                            var _parentRow=_curBtn.parents('table.table_journal_entries_review').parents('tr').prev();
+                            dtReview.row(_parentRow).remove().draw();
+                        }
+
+
+                    }).always(function(){
+                        showSpinningProgress(_curBtn);
+                    }); 
+                    }
+
+                }else{
+                    showNotification({title:"Not Balance!",stat:"error",msg:'Please make sure Debit and Credit amount are equal.'});
+                    stat=false;
+                }
+
+            });
+
+            var finalizeJournalReview=function(){
+                var _data_review=parent.find('form').serializeArray();
+
+                return $.ajax({
+                    "dataType":"json",
+                    "type":"POST",
+                    "url":"General_journal/transaction/create",
+                    "data":_data_review,
+                    "beforeSend": showSpinningProgress(btn)
+
+                });
+            };
+
+
+
+        };
 
     var createJournal=function(){
         var _data=$('#frm_journal').serializeArray();
@@ -1598,14 +2008,20 @@ $(document).ready(function(){
     };
 
 
-    var isBalance=function(){
-        var oRow=$('#tbl_entries > tfoot tr');
-        var dr=getFloat(oRow.find(oTFSummary.dr).text());
-        var cr=getFloat(oRow.find(oTFSummary.cr).text());
+    var isBalance=function(opTable=null){
+        var oRow; var dr; var cr;
+
+        if(opTable==null){
+            oRow=$('#tbl_entries > tfoot tr');
+        }else{
+            oRow=$(opTable+' > tfoot tr');
+        }
+
+        dr=getFloat(oRow.find(oTFSummary.dr).text());
+        cr=getFloat(oRow.find(oTFSummary.cr).text());
 
         return (dr==cr);
     };
-
 
 
 
