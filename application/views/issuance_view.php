@@ -764,7 +764,7 @@ dt_si = $('#tbl_si_list').DataTable({
             }
         }).bind('typeahead:select', function(ev, suggestion) {
             //console.log(suggestion);
-            var tax_rate=0;
+            var tax_rate=getFloat(suggestion.tax_rate);
             var total=getFloat(suggestion.purchase_cost);
             var net_vat=0;
             var vat_input=0;
@@ -989,6 +989,22 @@ dt_si = $('#tbl_si_list').DataTable({
         });
         $('#tbl_issuances tbody').on('click','button[name="edit_info"]',function(){
             ///alert("ddd");
+
+
+
+            _txnMode="edit";
+            $('#item_issuance_title').html('Edit Item to issue');
+            _selectRowObj=$(this).closest('tr');
+            var data=dt.row(_selectRowObj).data();
+            _selectedID=data.issuance_id;
+
+
+
+            _is_journal_posted=data.is_journal_posted;
+            if(_is_journal_posted > 0){
+                showNotification({title:"<b style='color:white;'> Error!</b>",stat:"error",msg:"Cannot Edit: Invoice is already Posted in General Journal."});
+            }else{
+
                 getproduct().done(function(data){
                     products.clear();
                     products.local = data.data;
@@ -1001,11 +1017,7 @@ dt_si = $('#tbl_si_list').DataTable({
                 }).always(function(){ });
                 $('#typeaheadsearch').val('');
 
-            _txnMode="edit";
-            $('#item_issuance_title').html('Edit Item to issue');
-            _selectRowObj=$(this).closest('tr');
-            var data=dt.row(_selectRowObj).data();
-            _selectedID=data.issuance_id;
+
             $('input,textarea').each(function(){
                 var _elem=$(this);
                 $.each(data,function(name,value){
@@ -1080,12 +1092,22 @@ dt_si = $('#tbl_si_list').DataTable({
                 }
             });
             showList(false);
+        }
         });
         $('#tbl_issuances tbody').on('click','button[name="remove_info"]',function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.issuance_id;
+
+
+            _is_journal_posted=data.is_journal_posted;
+            if(_is_journal_posted > 0){
+                showNotification({title:"<b style='color:white;'> Error!</b>",stat:"error",msg:"Cannot Delete: Invoice is already Posted in General Journal."});
+            }else{
+
+
             $('#modal_confirmation').modal('show');
+        }
         });
         //track every changes on numeric fields
         $('#tbl_items tbody').on('change','select',function(){
@@ -1344,6 +1366,13 @@ dt_si = $('#tbl_si_list').DataTable({
         $('#td_after_tax').html('<b>'+accounting.formatNumber(after_tax,2)+'</b>');
         $('#td_discount').html(accounting.formatNumber(discounts,2));
         $('#td_tax').html(accounting.formatNumber(issue_tax_amount,2));
+
+        var tbl_summary=$('#tbl_issuance_summary');
+        tbl_summary.find(oTableDetails.discount).html(accounting.formatNumber(discounts,2));
+        tbl_summary.find(oTableDetails.before_tax).html(accounting.formatNumber(before_tax,2));
+        tbl_summary.find(oTableDetails.issue_tax_amount).html(accounting.formatNumber(issue_tax_amount,2));
+        tbl_summary.find(oTableDetails.after_tax).html('<b>'+accounting.formatNumber(after_tax,2)+'</b>');
+               
     };
     var reInitializeNumeric=function(){
         $('.numeric').autoNumeric('init');

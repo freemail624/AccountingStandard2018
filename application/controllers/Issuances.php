@@ -13,6 +13,8 @@ class Issuances extends CORE_Controller
         //$this->load->model('Customers_model');
         $this->load->model('Refproduct_model');
         $this->load->model('Users_model');
+        $this->load->model('Trans_model');
+
     }
     public function index() {
         $this->Users_model->validate();
@@ -96,6 +98,30 @@ class Issuances extends CORE_Controller
                 );
                 echo json_encode($response);
                 break;
+
+            case 'issuance-for-review':  //this returns JSON of Issuance to be rendered on Datatable
+                $m_issuance=$this->Issuance_model;
+                $response['data']=$this->Issuance_model->get_list('issuance_info.is_active=TRUE AND issuance_info.is_deleted=FALSE AND is_journal_posted = FALSE',
+                array(
+                    'issuance_info.issuance_id',
+                    'issuance_info.slip_no',
+                    'issuance_info.remarks',
+                    'issuance_info.issued_to_person',
+                    'issuance_info.date_created',
+                    'DATE_FORMAT(issuance_info.date_issued,"%m/%d/%Y") as date_issued',
+                    'issuance_info.terms',
+                    'departments.department_id',
+                    'departments.department_name'
+                ),
+                array(
+                    array('departments','departments.department_id=issuance_info.issued_department_id','left')
+                    //array('customers','customers.customer_id=issuance_info.issued_to_person','left')
+                ),
+                'issuance_info.issuance_id DESC'
+            );
+                echo json_encode($response);
+                break;
+
             //***************************************create new Items************************************************
             case 'create':
                 $m_issuance=$this->Issuance_model;
@@ -176,6 +202,15 @@ class Issuances extends CORE_Controller
                 //update invoice number base on formatted last insert id
                 $m_issuance->slip_no='SLP-'.date('Ymd').'-'.$issuance_id;
                 $m_issuance->modify($issuance_id);
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=1; //CRUD
+                $m_trans->trans_type_id=14; // TRANS TYPE
+                $m_trans->trans_log='Created Issuance No: SLP-'.date('Ymd').'-'.$issuance_id;
+                $m_trans->save();
+
                 $m_issuance->commit();
                 if($m_issuance->status()===TRUE){
                     $response['title'] = 'Success!';
@@ -255,7 +290,14 @@ class Issuances extends CORE_Controller
                     $m_products->on_hand=$m_products->get_product_qty($this->get_numeric_value($tmp_prod_id[$i]->product_id));
                     $m_products->modify($this->get_numeric_value($tmp_prod_id[$i]->product_id));
                 }
-
+                $iss_info=$m_issuance->get_list($issuance_id,'slip_no');
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=14; // TRANS TYPE
+                $m_trans->trans_log='Updated Issuance No: '.$iss_info[0]->slip_no;
+                $m_trans->save();
                 $m_issuance->commit();
                 if($m_issuance->status()===TRUE){
                     $response['title'] = 'Success!';
@@ -287,6 +329,15 @@ class Issuances extends CORE_Controller
                     $m_products->modify($prod_id);
                 }
                 //end update product on_hand after issuance is deleted...
+                $iss_info=$m_issuance->get_list($issuance_id,'slip_no');
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=3; //CRUD
+                $m_trans->trans_type_id=14; // TRANS TYPE
+                $m_trans->trans_log='Deleted Issuance No: '.$iss_info[0]->slip_no;
+                $m_trans->save();
+                
                 $response['title']='Success!';
                 $response['stat']='success';
                 $response['msg']='Record successfully deleted.';
@@ -304,6 +355,7 @@ class Issuances extends CORE_Controller
                 'issuance_info.slip_no',
                 'issuance_info.remarks',
                 'issuance_info.issued_to_person',
+                'issuance_info.is_journal_posted',
                 //'customers.customer_name',
                 'issuance_info.date_created',
                 'DATE_FORMAT(issuance_info.date_issued,"%m/%d/%Y") as date_issued',

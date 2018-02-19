@@ -15,6 +15,8 @@ class Adjustments extends CORE_Controller
         $this->load->model('Products_model');
         $this->load->model('Refproduct_model');
         $this->load->model('Users_model');
+        $this->load->model('Trans_model');
+
 
     }
 
@@ -81,6 +83,28 @@ class Adjustments extends CORE_Controller
                 $m_adjustment=$this->Adjustment_model;
                 $response['data']=$this->response_rows(
                     "adjustment_info.is_active=TRUE AND adjustment_info.is_deleted=FALSE".($id_filter==null?"":" AND adjustment_info.adjustment_id=".$id_filter)
+                );
+                echo json_encode($response);
+                break;
+
+             case 'adjustment-for-review': 
+                $m_adjustment=$this->Adjustment_model;
+                $response['data']=$m_adjustment->get_list(
+                    'adjustment_info.is_active=TRUE AND adjustment_info.is_deleted=FALSE AND adjustment_info.is_journal_posted=FALSE',
+                    array(
+                        'adjustment_info.adjustment_id',
+                        'adjustment_info.adjustment_code',
+                        'adjustment_info.remarks',
+                        'adjustment_info.adjustment_type',
+                        'adjustment_info.date_created',
+                        'DATE_FORMAT(adjustment_info.date_adjusted,"%m/%d/%Y") as date_adjusted',
+                        'departments.department_id',
+                        'departments.department_name'
+                    ),
+                    array(
+                        array('departments','departments.department_id=adjustment_info.department_id','left')
+                    ),
+                    'adjustment_info.adjustment_id DESC'
                 );
                 echo json_encode($response);
                 break;
@@ -193,21 +217,24 @@ class Adjustments extends CORE_Controller
                 $m_adjustment->adjustment_code='ADJ-'.date('Ymd').'-'.$adjustment_id;
                 $m_adjustment->modify($adjustment_id);
 
-
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=1; //CRUD
+                $m_trans->trans_type_id=15; // TRANS TYPE
+                $m_trans->trans_log='Created Adjustment No: ADJ-'.date('Ymd').'-'.$adjustment_id;
+                $m_trans->save();
 
                 $m_adjustment->commit();
-
-
 
                 if($m_adjustment->status()===TRUE){
                     $response['title'] = 'Success!';
                     $response['stat'] = 'success';
-                    $response['msg'] = 'Items successfully issued.';
+                    $response['msg'] = 'Items successfully Adjusted.';
                     $response['row_added']=$this->response_rows($adjustment_id);
 
                     echo json_encode($response);
                 }
-
 
                 break;
 
@@ -285,10 +312,16 @@ class Adjustments extends CORE_Controller
                     $m_products->modify($this->get_numeric_value($tmp_prod_id[$p]->product_id));
                 }
 
+                $adj_info=$m_adjustment->get_list($adjustment_id,'adjustment_code');
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=15; // TRANS TYPE
+                $m_trans->trans_log='Updated Adjustment No: '.$adj_info[0]->adjustment_code;
+                $m_trans->save();
+
                 $m_adjustment->commit();
-
-
-
                 if($m_adjustment->status()===TRUE){
                     $response['title'] = 'Success!';
                     $response['stat'] = 'success';
@@ -329,7 +362,15 @@ class Adjustments extends CORE_Controller
                 }
 
                 //end update product on_hand after Adjustment is deleted...
-
+                $adj_info=$m_adjustment->get_list($adjustment_id,'adjustment_code');
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=3; //CRUD
+                $m_trans->trans_type_id=15; // TRANS TYPE
+                $m_trans->trans_log='Deleted Adjustment No: '.$adj_info[0]->adjustment_code;
+                $m_trans->save();
+                
                 $response['title']='Success!';
                 $response['stat']='success';
                 $response['msg']='Record successfully deleted.';
@@ -353,6 +394,7 @@ class Adjustments extends CORE_Controller
                 'adjustment_info.adjustment_code',
                 'adjustment_info.remarks',
                 'adjustment_info.adjustment_type',
+                'adjustment_info.is_journal_posted',
                 'adjustment_info.date_created',
                 'DATE_FORMAT(adjustment_info.date_adjusted,"%m/%d/%Y") as date_adjusted',
                 'departments.department_id',

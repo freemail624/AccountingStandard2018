@@ -82,7 +82,7 @@ class Templates extends CORE_Controller {
 
         $this->load->model('Cash_invoice_items_model');
 
-
+        $this->load->model('Purchasing_integration_model');
 
 
         $this->load->library('M_pdf');
@@ -4605,6 +4605,177 @@ class Templates extends CORE_Controller {
                 $pdf->setFooter('{PAGENO}');
                 $pdf->WriteHTML($content);
                 $pdf->Output();
+                break;
+
+            case 'adjustment-gje-for-review':
+                $adjustment_id=$this->input->get('id',TRUE);
+                $m_adjustment=$this->Adjustment_model;
+                $m_pur_int_model=$this->Purchasing_integration_model;
+                $m_adjustment_items=$this->Adjustment_item_model;
+                $m_suppliers=$this->Suppliers_model;
+                $m_accounts=$this->Account_title_model;
+                $m_departments=$this->Departments_model;
+
+
+
+                $adjustment_info=$m_adjustment->get_list($adjustment_id,
+                    'adjustment_info.*,
+                    DATE_FORMAT(adjustment_info.date_adjusted,"%m/%d/%Y")as date_adjusted,
+                    CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by
+                    ',
+                    array(
+                        array('user_accounts','user_accounts.user_id=adjustment_info.posted_by_user','left')
+                    ));
+                $supplier_id = $m_pur_int_model->get_list(null,'purchasing_integration.adj_supplier_id,suppliers.*',
+                    array(array('suppliers','suppliers.supplier_id=purchasing_integration.iss_supplier_id','left'))
+                    );
+
+
+
+                $data['adjustment_info']=$adjustment_info[0];
+
+                $data['departments']=$m_departments->get_list('is_active=TRUE AND is_deleted=FALSE');
+
+                $data['suppliers']=$m_suppliers->get_list(
+                    array(
+                        'suppliers.is_active'=>TRUE,
+                        'suppliers.is_deleted'=>FALSE
+                    ),
+
+                    array(
+                        'suppliers.supplier_id',
+                        'suppliers.supplier_name'
+                    )
+                );
+
+                $adjustment_type=$adjustment_info[0]->adjustment_type;
+
+                if($adjustment_type == 'IN'){
+                    $data['entries']=$m_adjustment->get_journal_entries_2_in($adjustment_id);
+
+                }else if ($adjustment_type == 'OUT'){
+                    $data['entries']=$m_adjustment->get_journal_entries_2($adjustment_id);
+
+                }
+                
+                $data['accounts']=$m_accounts->get_list(
+                    array(
+                        'account_titles.is_active'=>TRUE,
+                        'account_titles.is_deleted'=>FALSE
+                    )
+                );
+
+                $data['items']=$m_adjustment_items->get_list(array('adjustment_items.adjustment_id'=>$adjustment_id),
+                    'adjustment_items.*,
+                    products.product_desc,
+                    units.unit_name
+                    ',
+                    array(array('products','products.product_id=adjustment_items.product_id','left'),
+                                     array('units','units.unit_id=adjustment_items.unit_id','left')
+                        )
+
+                    );
+
+                //validate if customer is not deleted
+                $valid_supplier=$m_suppliers->get_list(
+                    array(
+                        'supplier_id'=>$supplier_id[0]->adj_supplier_id,
+                        'is_active'=>TRUE,
+                        'is_deleted'=>FALSE
+                    )
+                );
+                $data['valid_particular']=(count($valid_supplier)>0);
+                $data['supplier_info']=$supplier_id[0];
+                echo $this->load->view('template/adjustment_for_review',$data,TRUE); //details of the journal
+
+
+                break;
+            case 'issuance-gje-for-review':
+                $issuance_id=$this->input->get('id',TRUE);
+                $m_issuance_model=$this->Issuance_model;
+                $m_pur_int_model=$this->Purchasing_integration_model;
+                $m_issuance_item_model=$this->Issuance_item_model;
+                $m_suppliers=$this->Suppliers_model;
+                $m_accounts=$this->Account_title_model;
+                $m_departments=$this->Departments_model;
+
+
+
+                $issuance_info=$m_issuance_model->get_list($issuance_id,
+                    'issuance_info.*,
+                    DATE_FORMAT(issuance_info.date_issued,"%m/%d/%Y")as date_issued,
+                    CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by
+                    ',
+                    array(
+                        array('user_accounts','user_accounts.user_id=issuance_info.posted_by_user','left')
+                    )
+
+
+                    );
+                $supplier_id = $m_pur_int_model->get_list(null,'purchasing_integration.iss_supplier_id,suppliers.*',
+                    array(array('suppliers','suppliers.supplier_id=purchasing_integration.iss_supplier_id','left'))
+                    );
+
+                $data['issuance_info']=$issuance_info[0];
+
+                $data['departments']=$m_departments->get_list('is_active=TRUE AND is_deleted=FALSE');
+
+                $data['suppliers']=$m_suppliers->get_list(
+                    array(
+                        'suppliers.is_active'=>TRUE,
+                        'suppliers.is_deleted'=>FALSE
+                    ),
+
+                    array(
+                        'suppliers.supplier_id',
+                        'suppliers.supplier_name'
+                    )
+                );
+
+                $data['customers']=$this->Customers_model->get_list(
+                    array(
+                        'customers.is_active'=>TRUE,
+                        'customers.is_deleted'=>FALSE
+                    ),
+
+                    array(
+                        'customers.customer_id',
+                        'customers.customer_name'
+                    )
+                );
+                $data['entries']=$m_issuance_model->get_journal_entries_2($issuance_id);
+                $data['accounts']=$m_accounts->get_list(
+                    array(
+                        'account_titles.is_active'=>TRUE,
+                        'account_titles.is_deleted'=>FALSE
+                    )
+                );
+
+                $data['items']=$m_issuance_item_model->get_list(array('issuance_items.issuance_id'=>$issuance_id),
+                    'issuance_items.*,
+
+                    products.product_desc,
+                    units.unit_name
+                    ',
+                    array(array('products','products.product_id=issuance_items.product_id','left'),
+                                     array('units','units.unit_id=issuance_items.unit_id','left')
+                        )
+
+                    );
+
+                //validate if customer is not deleted
+                $valid_supplier=$m_suppliers->get_list(
+                    array(
+                        'supplier_id'=>$supplier_id[0]->iss_supplier_id,
+                        'is_active'=>TRUE,
+                        'is_deleted'=>FALSE
+                    )
+                );
+                $data['valid_particular']=(count($valid_supplier)>0);
+                $data['supplier_info']=$supplier_id[0];
+                echo $this->load->view('template/issuance_for_review',$data,TRUE); //details of the journal
+
+
                 break;
 
         }
