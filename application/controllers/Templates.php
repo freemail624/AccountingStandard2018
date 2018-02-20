@@ -2528,13 +2528,16 @@ class Templates extends CORE_Controller {
                     array(
                         'payable_payments_list.*',
                         'delivery_invoice.dr_invoice_no',
-                        'delivery_invoice.remarks',
+                         'IF(delivery_invoice.remarks = "",journal_info.remarks, delivery_invoice.remarks) as remarks',
                         'delivery_invoice.terms',
                         'DATE_FORMAT(delivery_invoice.date_delivered,"%m/%d/%Y") as delivered_date',
-                        'DATE_FORMAT(delivery_invoice.date_due,"%m/%d/%Y") as due_date'
+                        'DATE_FORMAT(delivery_invoice.date_due,"%m/%d/%Y") as due_date',
+                         'IFNULL(journal_info.ref_no, journal_info.txn_no) as dr_invoice_no'
                     ),
                     array(
-                        array('delivery_invoice','delivery_invoice.dr_invoice_id=payable_payments_list.dr_invoice_id','left')
+                        array('journal_info','journal_info.journal_id=payable_payments_list.dr_invoice_id','left'),
+                        array('delivery_invoice','delivery_invoice.dr_invoice_no=journal_info.ref_no','left')
+ 
                     )
 
                 );
