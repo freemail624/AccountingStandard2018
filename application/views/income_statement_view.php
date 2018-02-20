@@ -75,7 +75,7 @@
                 <div class="page-content"><!-- #page-content -->
                     <ol class="breadcrumb" style="margin:0%;">
                         <li><a href="dashboard">Dashboard</a></li>
-                        <li><a href="Balance_sheet">Balance Sheet</a></li>
+                        <li><a href="Income_statement">Income Statement</a></li>
                     </ol>
                     <div class="container-fluid">
                         <div data-widget-group="group1">
@@ -91,6 +91,7 @@
 
                                             <div class="row">
                                                 <div class="col-sm-12">
+                                                 <b class="required">*</b> Choose <b>Admin</b> to use all branches/departments .<br>
                                                     Branch : <br />
                                                     <select name="department" id="cbo_departments" data-error-msg="Branch is required." required>
                                                         <?php foreach($departments as $department){ ?>
@@ -140,10 +141,10 @@
                                         </div>
                                         <div class="modal-footer">
                                             <div class="col-xs-12">
-                                                <a id="btn_print" href="#" target="_blank" class="btn btn-green" style="text-transform:none;font-family: tahoma;" ><i class="fa fa-print"></i> Print </a>
-                                                <button id="btn_export" class="btn btn-primary"><i class="fa fa-file-excel-o"></i> Export to Excel</button>
+                                                <a id="btn_print" href="#" target="_blank" class="btn btn-green" style="text-transform:none;font-family: tahoma;" title=" Print" ><i class="fa fa-print"></i> Print </a>
+                                                <button id="btn_export" class="btn btn-primary" title="All departments"><i class="fa fa-file-excel-o"></i> Export to Excel</button>
 <!--                                                 <a href="Templates/layout/income-statement?type=&type=pdf" class="btn btn-primary" style="text-transform:none;font-family: tahoma;" ><i class="fa fa-file-pdf-o"></i> Download as PDF </a> -->
-                                                <button class="btn btn-primary" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_email" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Send to Email" >
+                                                <button class="btn btn-primary" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_email" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Send to Email (All departments)" >
                                                 <i class="fa fa-share"></i> Email </button>
                                                 <button class="btn btn-red" data-dismiss="modal" style="text-transform: capitalize;">Close</button>
                                             </div>
