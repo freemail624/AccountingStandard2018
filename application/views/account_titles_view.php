@@ -109,15 +109,20 @@
                                     </div>
                                     <div class="col-xs-12 col-lg-8">
                                         <div class="panel-body table-responsive" style="padding-left: 1px!important;border-top-color:transparent!important;">
+                                       <div style="float: right;">
+                                            <button class="btn btn-success "  id="btn_print" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" title="Print" > Print</button>
+                                            <button class="btn btn-success "  id="" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"  title="Export To Excel" > <a href="Account_titles/Export" style="text-decoration: none;color: white;">Export</a></button>
+                                       </div>
+                                        <br><br>
                                             <table id="tbl_accounts" class="table table-striped" cellspacing="0" width="100%">
                                                 <thead class="">
                                                 <tr>
                                                     <th>&nbsp;&nbsp;</th>
-                                                    <th>Account #</th>
+                                                    <th style="width: 10%;">Account #</th>
                                                     <th>Account</th>
                                                     <th>Parent</th>
                                                     <th>Type</th>
-                                                    <th><center>Action</center></th>
+                                                    <th style="width: 15%;"><center>Action</center></th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -168,7 +173,7 @@
                                         <div class="form-group">
                                             <label class="col-md-2 control-label"><strong>Description :</strong></label>
                                             <div class="col-md-9">
-                                                <textarea name="description" class="form-control" id="account_description"></textarea>
+                                                <textarea name="description" id="account_description" class="form-control"></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -186,7 +191,7 @@
                                             <label class="col-md-2 control-label"><strong>Parent Account :</strong></label>
                                             <div class="col-md-9">
                                                 <select name="parent_account" id="cbo_parent_account">
-                                                    <option value="0">No parent acccount</option>
+                                                    <option value="0">No parent account</option>
                                                     <?php foreach($parents as $account){ ?>
                                                         <option value="<?php echo $account->account_id; ?>"><?php echo $account->account_title; ?></option>
                                                     <?php } ?>
@@ -291,7 +296,7 @@
 <footer role="contentinfo">
     <div class="clearfix">
         <ul class="list-unstyled list-inline pull-left">
-            <li><h6 style="margin: 0;">&copy; 2016 - Paul Christian Rueda</h6></li>
+            <li><h6 style="margin: 0;">&copy; 2018 - JDEV Office Solution </h6></li>
         </ul>
         <button class="pull-right btn btn-link btn-xs hidden-print" id="back-to-top"><i class="ti ti-arrow-up"></i></button>
     </div>
@@ -343,9 +348,11 @@ $(document).ready(function(){
         dt=$('#tbl_accounts').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
+            "pageLength": 15,
+                "order": [[ 1, "desc" ]],
             "ajax" : "Account_titles/transaction/list",
             "columns": [
-                {
+                { visible:false,
                     "targets": [0],
                     "class":          "",
                     "orderable":      false,
@@ -478,13 +485,20 @@ $(document).ready(function(){
         $('#btn_new').click(function(){
             _txnMode="new";
             $('#account_add_title').text('New Account Information');
-        _cboParentAccounts.select2('val',0);
-        _cboClasses.select2('val',null);
-        _cboTypes.select2('val',1);
-        $('#account_no').val('');
-        $('#account_title').val('');
-        $('#account_description').val('');
+            $('#account_title').val('');
+            $('#account_description').val('');
+            $('#account_no').val('');
+            _cboClasses.select2('val',null);
+            _cboTypes.select2('val',1);
+            _cboParentAccounts.select2('val',0);
             showList(false);
+        });
+
+        $('#btn_print').click(function(){
+              window.open('Account_titles/transaction/print');
+        });
+        $('#btn_excel').click(function(){
+              window.open('Account_titles/Export');
         });
 
         $('#btn_create_account_class').click(function(){
