@@ -89,6 +89,12 @@
                                 <li class="<?php echo (in_array('5-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Salesperson">Salesperson Management</a></li>
                             </ul>
                         </li>
+                        <li class=""><a href="#/"><i class="ti ti-shopping-cart"></i><span>System Integration</span></a>
+                            <ul class="acc-menu">
+                                <li class=><a href="Integration_hotel">Hotel Integration</a></li>
+                                <li class=><a href="Hotel_integration">Hotel Settings</a></li>
+                            </ul>
+                        </li>
                         <li class="<?php echo (in_array('14',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-view-list-alt"></i><span>Treasury</span></a>
                             <ul class="acc-menu">
                                 <li class="<?php echo (in_array('14-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Treasury">Treasury</a></li>
@@ -105,6 +111,12 @@
                                 <li class="<?php echo (in_array('10-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Depreciation_expense">Depreciation Expense Report</a></li>
                             </ul>
                         </li>
+<!--                         <li class="<?php echo (in_array('15',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-file"></i><span>Bir Forms</span></a>
+                            <ul class="acc-menu">
+                                <li class="<?php echo (in_array('15-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Form_2307">Form 2307</a></li>
+                               
+                            </ul>
+                        </li> -->
                         <li class="<?php echo (in_array('6',$this->session->parent_rights)?'':'hidden'); ?>">
                             <a href="#/"><i class="ti ti-settings"></i><span>Settings</span></a>
                             <ul class="acc-menu">
@@ -118,7 +130,7 @@
                                 <li class="<?php echo (in_array('6-7',$this->session->user_rights)?'':'hidden'); ?>"><a href="Check_layout">Setup Check Layout</a></li>
                                 <li class="<?php echo (in_array('6-8',$this->session->user_rights)?'':'hidden'); ?>"><a href="Recurring_template">Recurring Template</a></li>
                                 <li class="<?php echo (in_array('6-10',$this->session->user_rights)?'':'hidden'); ?>"><a href="Email_settings">Email Settings</a></li>
-                                <li class="<?php echo (in_array('6-11',$this->session->user_rights)?'':'hidden'); ?>"><a href="Email_report_settings">Email Report Settings</a></li>                             
+                                <li class="<?php echo (in_array('6-11',$this->session->user_rights)?'':'hidden'); ?>"><a href="Email_report_settings">Email Report Settings</a></li>
                                 <li class="<?php echo (in_array('6-9',$this->session->user_rights)?'':'hidden'); ?>"><a href="DBBackup">Backup Database</a></li>
                             </ul>
                         </li>
