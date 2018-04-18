@@ -142,7 +142,7 @@ $(document).ready(function(){
 
 
         });
-
+        $("form").attr('autocomplete', 'off');
         var showPanelActive = function(p){
             if (p == 'list'){
                 $('#product_list_panel').show();
@@ -157,7 +157,7 @@ $(document).ready(function(){
                 $('#btn_cancel_product').show();
             }
         }
-
+        
         showPanelActive('list');
 
         $('.numeric').autoNumeric('init',{mDec:2});

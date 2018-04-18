@@ -601,7 +601,7 @@
                 clearFields($('#div_payment_fields'));
                 $('#td_total_payables').html('<b>0.00</b>');
                 showList(false);
-                
+                _cboBranch.select2('val',null);
                 _cboReceiptType.select2('val',1); //set official receipt as default
 
             });
