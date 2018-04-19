@@ -372,7 +372,7 @@
 
                                 </form>
                                 <div id="div_check">
-                                    <input type="checkbox" name="chk_save">&nbsp;&nbsp;<label for="chk_save"><strong>Save as Template</strong></label>
+                                    <input type="checkbox" name="chk_save" id="checkcheck">&nbsp;&nbsp;<label for="checkcheck"><strong>Save as Template</strong></label>
                                 </div>
                                 <div id="div_no_check">
                                     <br>
