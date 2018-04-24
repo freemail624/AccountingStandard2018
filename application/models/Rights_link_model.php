@@ -88,7 +88,9 @@ class Rights_link_model extends CORE_Model{
                                           (78,'12','12-7','Product List Report'),
                                           (79,'2','2-8','Purchase History'),
                                           (80,'2','2-7','Purchase Monitoring'),
-                                          (81,'6','6-12','Puchasing Integration')
+                                          (81,'6','6-12','Puchasing Integration'),
+                                          (82,'6','6-13','Audit Trail')
+
 
 
 
