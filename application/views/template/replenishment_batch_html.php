@@ -36,9 +36,6 @@
             </td>
         </tr>
     </table><hr>
-    <div>
-        <h3><strong>REPLENISHMENT REPORT <br> as of <?php ?></strong></h3>
-    </div>
     <?php foreach($batches as $batch) { ?>
     			
     <table width="100%" cellpadding="3" cellspacing="0" border="1">
