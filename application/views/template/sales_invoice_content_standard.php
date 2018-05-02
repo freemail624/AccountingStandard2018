@@ -39,7 +39,7 @@
 .bottom{border-bottom: 1px solid black;}
 .top{border-top: 1px solid black;}
 
-.fifteen{ width: 15%; }
+.fifteen{ width: 20%; }
 .text-center{text-align: center;}
 .text-right{text-align: right;}
 </style>
@@ -72,7 +72,7 @@
     <tr>
         <td class="bottom left ">Contact Person:</td>
         <td class="bottom"><?php echo $sales_info->contact_person; ?></td>
-        <td class="bottom left ">Due Date:</td>
+        <td class="bottom left ">Delivery (Due) Date:</td>
         <td class="bottom right"><?php echo  date_format(new DateTime($sales_info->date_due),"m/d/Y"); ?></td>
     </tr>
     <tr>

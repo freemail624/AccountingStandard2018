@@ -194,6 +194,14 @@ class Cash_invoice extends CORE_Controller
                 );
                 $sales_order_id=(count($arr_so_info)>0?$arr_so_info[0]->sales_order_id:0);
                 $m_invoice->sales_order_id=$sales_order_id;
+
+                $m_invoice->label=$this->input->post('label',TRUE);
+                $m_invoice->direct_print=$this->input->post('direct_print',TRUE);
+                $m_invoice->production_time=$this->input->post('production_time',TRUE);         
+                $m_invoice->confirmed_order=$this->input->post('confirmed_order',TRUE);
+                $m_invoice->received_po=$this->input->post('received_po',TRUE);
+                $m_invoice->discount_text=$this->input->post('discount_text',TRUE);
+
                 $m_invoice->customer_id=$this->input->post('customer',TRUE);
                 $m_invoice->sales_order_no=$this->input->post('so_no',TRUE);
                 $m_invoice->department_id=$this->input->post('department',TRUE);
@@ -306,6 +314,13 @@ class Cash_invoice extends CORE_Controller
 
                     $m_invoice->begin();
 
+                    $m_invoice->label=$this->input->post('label',TRUE);
+                    $m_invoice->direct_print=$this->input->post('direct_print',TRUE);
+                    $m_invoice->production_time=$this->input->post('production_time',TRUE);         
+                    $m_invoice->confirmed_order=$this->input->post('confirmed_order',TRUE);
+                    $m_invoice->received_po=$this->input->post('received_po',TRUE);
+                    $m_invoice->discount_text=$this->input->post('discount_text',TRUE);
+
                     $m_so=$this->Sales_order_model;
                     $arr_so_info=$m_so->get_list(
                         array('sales_order.so_no'=>$this->input->post('so_no',TRUE)),
@@ -313,7 +328,7 @@ class Cash_invoice extends CORE_Controller
                     );
                     $sales_order_id=(count($arr_so_info)>0?$arr_so_info[0]->sales_order_id:0);
                     $m_invoice->sales_order_id=$sales_order_id;
-
+                    $m_invoice->date_due=date('Y-m-d',strtotime($this->input->post('date_due',TRUE)));
                     $m_invoice->customer_id=$this->input->post('customer',TRUE);
                     $m_invoice->department_id=$this->input->post('department',TRUE);
                     $m_invoice->remarks=$this->input->post('remarks',TRUE);
