@@ -16,7 +16,6 @@ class Customers extends CORE_Controller {
         $this->load->model('Sales_invoice_model');
         $this->load->model('Receivable_payment_model');
         $this->load->model('Users_model');
-        $this->load->model('Customers_model');
         $this->load->model('Trans_model');
     }
  

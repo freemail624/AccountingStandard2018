@@ -117,6 +117,7 @@
             <input type="checkbox" name="accounting[]" value="account_types" id="account_types" class="css-checkbox"><label class="css-label " for="account_types">Account Types</label>(<?php echo $current_count->account_types ?>)<br>
             <input type="checkbox" name="accounting[]" value="account_year" id="account_year" class="css-checkbox"><label class="css-label " for="account_year">Account Year</label>(<?php echo $current_count->account_year ?>)<br>
             <input type="checkbox" name="accounting[]" value="accounting_period" id="accounting_period" class="css-checkbox"><label class="css-label " for="accounting_period">Accounting Period</label>(<?php echo $current_count->accounting_period ?>)<br>
+            <input type="checkbox" name="accounting[]" value="trans" id="trans" class="css-checkbox"><label class="css-label " for="trans">Audit Trail</label>(<?php echo $current_count->trans ?>)<br>
         </form>
         <button id="btn_accounting" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Truncate Accounting</button>
     </div>
@@ -163,6 +164,9 @@
 
         <input type="checkbox" name="invoice[]" value="proforma_invoice" id="proforma_invoice" class="css-checkbox"><label class="css-label " for="proforma_invoice">Proforma Invoice Info</label>(<?php echo $current_count->proforma_invoice; ?>)<br>
         <input type="checkbox" name="invoice[]" value="proforma_invoice_items" id="proforma_invoice_items" class="css-checkbox"><label class="css-label " for="proforma_invoice_items">Proforma Invoice Items</label>(<?php echo $current_count->proforma_invoice_items; ?>)<br>
+
+        <input type="checkbox" name="invoice[]" value="cash_invoice" id="cash_invoice" class="css-checkbox"><label class="css-label " for="cash_invoice">Cash Invoice Info</label>(<?php echo $current_count->cash_invoice; ?>)<br>
+        <input type="checkbox" name="invoice[]" value="cash_invoice_items" id="cash_invoice_items" class="css-checkbox"><label class="css-label " for="cash_invoice_items">Cash Invoice Items</label>(<?php echo $current_count->cash_invoice_items; ?>)<br>
 
         <input type="checkbox" name="invoice[]" value="sales_order" id="sales_order" class="css-checkbox"><label class="css-label " for="sales_order">Sales Order Info</label>(<?php echo $current_count->sales_order; ?>)<br>
         <input type="checkbox" name="invoice[]" value="sales_order_items" id="sales_order_items" class="css-checkbox"><label class="css-label " for="sales_order_items">Sales Order Items</label>(<?php echo $current_count->sales_order_items; ?>)<br>

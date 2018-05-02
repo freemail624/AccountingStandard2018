@@ -42,6 +42,10 @@ class Bank extends CORE_Controller {
                 $m_bank->save();
                 $bank_id = $m_bank->last_insert_id();
 
+                $response['title'] = 'Success!';
+                $response['stat'] = 'success';
+                $response['msg'] = 'Bank information successfully created.';
+                $response['row_added'] = $m_bank->get_list($bank_id);
 
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
@@ -51,10 +55,6 @@ class Bank extends CORE_Controller {
                 $m_trans->trans_log='Created Bank: '.$this->input->post('bank_name', TRUE);
                 $m_trans->save();
 
-                $response['title'] = 'Success!';
-                $response['stat'] = 'success';
-                $response['msg'] = 'Bank information successfully created.';
-                $response['row_added'] = $m_bank->get_list($bank_id);
                 echo json_encode($response);
 
                 break;
@@ -76,7 +76,7 @@ class Bank extends CORE_Controller {
                     $m_trans->set('trans_date','NOW()');
                     $m_trans->trans_key_id=3; //CRUD
                     $m_trans->trans_type_id=49; // TRANS TYPE
-                    $m_trans->trans_log='Deleted : '.$bank_name[0]->bank_name;
+                    $m_trans->trans_log='Deleted Bank: '.$bank_name[0]->bank_name;
                     $m_trans->save();
 
                     echo json_encode($response);

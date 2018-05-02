@@ -307,23 +307,35 @@
 <div id="wrapper">
         <div id="layout-static">
         <?php echo $_side_bar_navigation; ?>
-        <div class="static-content-wrapper">
+        <div class="static-content-wrapper" >
             <div class="static-content">
-                    <div class="page-content"><!-- #page-content -->
+                    <div class="page-content"  style="overflow-y:hidden;overflow-x:hidden;"><!-- #page-content -->
                             <div data-widget-group="group1">
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-12" >
                                         <div class="panel panel-default" style="overflow-x: hidden!important;"> 
                                             <div class="panel-body table-responsive" style="border-top-color: white!important;">
+
+                                                <div class="col-sm-6" style="word-wrap: break-word;">
                                                 <h1 ><b class="ti ti-bar-chart-alt"  style="color:#067cb2;"></b> <strong style="color:#067cb2;">JCORE</strong> Standard Accounting</h1>
                                                 <div id="intro">
-                                                    <h4 class="welcome-msg">Hi
-                                                        <b style="color:#067cb2;">
+                                                    <h4 class="welcome-msg" style="word-wrap: break-word;padding-left: 0px;padding-right: 0px;">Hi
+                                                        <b style="color:#067cb2;" >
                                                             <?php echo $this->session->user_fullname; ?>
-                                                        </b> here is a rundown of your business' performance<br>and how your collections are doing individually. 
+                                                        </b> here is a rundown of your business' <br>performance and how your collections are doing individually. 
                                                     </h4>
-                                                    <hr style="border-color:#067cb2;!important;border-top:5px solid #03a9f4;">
                                                 </div>
+                                                </div>
+                                                <div class="col-sm-6" style="word-wrap: break-word;padding-left: 0px;padding-right: 0px;">
+                                                <div id="intro">
+                                                    <h1 class="welcome-msg">
+                                                        <?php echo $company_info[0]->company_name; ?>
+                                                    </h1>
+                                                </div>
+                                                  <h4 class="welcome-msg" style=""><?php echo $company_info[0]->company_address; ?></h4><br>
+                                                </div>                                                    
+                                                </div>
+                                                <hr style="border-color:#067cb2;!important;border-top:5px solid #03a9f4;margin-top: 0px;">
                                                 <h3><b   style="color: #067cb2;" class="fa fa-dashboard"></b> DASHBOARD</h3>
                                                 <div class="row">
                                                     <div class="col-xs-12 col-sm-3">
@@ -364,6 +376,29 @@
                                                             <span>Income vs Expense (Current Year)</span>
                                                         </div>
                                                     </div>
+                                                </div>
+                                                <div class="row" style="margin-top: 20px;">
+                                                    <div class="col-xs-12 col-sm-6">
+                                                        <div class="data-container text-center graph-container">
+                                                        <label style="font-weight: normal;" class="pull-left"><i><b>Expense Graph</b></i></label>
+                                         
+                                                        <label style="font-weight: normal;" class="pull-right">Based on Disbursement Report</label>
+                                                            <canvas id="ExpenseChart"></canvas>
+                                                            <span>Month</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-xs-12 col-sm-6">
+                                                        <div class="data-container text-center graph-container">
+                                                        <label style="font-weight: normal;" class="pull-left"><i><b>Sales Report</b></i></label>
+                                         
+                                                        <label style="font-weight: normal;" class="pull-right">In terms of Sales and Cash Invoice</label>
+                                                            <canvas id="SalesInvoiceChart"></canvas>
+                                                            <span style="font-weight: bolder;">Month</span>
+                                                        </div>
+                                                    </div>
+                                                    
+
                                                 </div>
                                                 <div class="row" style="margin-top: 20px;">
                                                     <div class="col-xs-12 col-sm-8 <?php echo (in_array('7-1',$this->session->user_rights)?'':'hidden'); ?>">
@@ -439,6 +474,8 @@
 <script>
 var ctx = document.getElementById("salesChart").getContext('2d');
 var ctxIE = document.getElementById("testChart").getContext('2d');
+var ctxSalesInvoice = document.getElementById("SalesInvoiceChart").getContext('2d');
+var ctxExpenseChart = document.getElementById("ExpenseChart").getContext('2d');
 
 Chart.defaults.global.defaultFontColor = "#000000";
 
@@ -567,6 +604,109 @@ Chart.defaults.global.defaultFontColor = "#000000";
       }
   });
 
+  var salesinvoiceChart = new Chart(ctxSalesInvoice, {
+      type: 'bar',
+      data: {
+          labels: ["Jan","Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"],
+          datasets: [
+            {
+              label: "Sales Income (Current Year)",
+              data: <?php echo ($this->session->user_group_id != 1 ? 0 : json_encode($current_year_sales_invoice)); ?>,
+              backgroundColor: [
+              'rgb(168, 227, 255)',
+              'rgb(168, 227, 255)',
+              'rgb(168, 227, 255)',
+              'rgb(168, 227, 255)',
+              'rgb(168, 227, 255)',
+              'rgb(168, 227, 255)',
+              'rgb(168, 227, 255)',
+              'rgb(168, 227, 255)',
+              'rgb(168, 227, 255)',
+              'rgb(168, 227, 255)',
+              'rgb(168, 227, 255)',
+              'rgb(168, 227, 255)'
+
+              ],
+              borderColor: [
+              'rgb(3, 169, 244)',
+              'rgb(3, 169, 244)',
+              'rgb(3, 169, 244)',
+              'rgb(3, 169, 244)',
+              'rgb(3, 169, 244)',
+              'rgb(3, 169, 244)',
+              'rgb(3, 169, 244)',
+              'rgb(3, 169, 244)',
+              'rgb(3, 169, 244)',
+              'rgb(3, 169, 244)',
+              'rgb(3, 169, 244)',
+              'rgb(3, 169, 244)'
+              ],
+              borderWidth: 2
+            }
+          ]
+      },
+      options: {
+          scales: {
+              yAxes: [{
+                  ticks: {
+                      beginAtZero:true
+                  }
+              }]
+          }
+      }
+  });
+
+  var ExpenseChart = new Chart(ctxExpenseChart, {
+      type: 'bar',
+      data: {
+          labels: ["Jan","Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"],
+          datasets: [
+            {
+              label: "Expense (Current Year)",
+              data: <?php echo ($this->session->user_group_id != 1 ? 0 : json_encode($expense_monthly)); ?>,
+              backgroundColor: [
+              'rgb(168, 227, 255)',
+              'rgb(168, 227, 255)',
+              'rgb(168, 227, 255)',
+              'rgb(168, 227, 255)',
+              'rgb(168, 227, 255)',
+              'rgb(168, 227, 255)',
+              'rgb(168, 227, 255)',
+              'rgb(168, 227, 255)',
+              'rgb(168, 227, 255)',
+              'rgb(168, 227, 255)',
+              'rgb(168, 227, 255)',
+              'rgb(168, 227, 255)'
+
+              ],
+              borderColor: [
+              'rgb(3, 169, 244)',
+              'rgb(3, 169, 244)',
+              'rgb(3, 169, 244)',
+              'rgb(3, 169, 244)',
+              'rgb(3, 169, 244)',
+              'rgb(3, 169, 244)',
+              'rgb(3, 169, 244)',
+              'rgb(3, 169, 244)',
+              'rgb(3, 169, 244)',
+              'rgb(3, 169, 244)',
+              'rgb(3, 169, 244)',
+              'rgb(3, 169, 244)'
+              ],
+              borderWidth: 2
+            }
+          ]
+      },
+      options: {
+          scales: {
+              yAxes: [{
+                  ticks: {
+                      beginAtZero:true
+                  }
+              }]
+          }
+      }
+  });
 </script>
 
 <script>
