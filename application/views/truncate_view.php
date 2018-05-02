@@ -281,10 +281,10 @@ $(document).keydown(function(e){ if(e.which === 123){ return false; }
 $(document).bind("contextmenu",function(e) {  e.preventDefault(); });
     $(document).ready(function() {
         var dt; var _txnMode; var _selectedID; var _selectRowObj; var _taxTypeGroup; var _rights;
-        // $('#modal_confirmation').modal({
-        //     backdrop: 'static',
-        //     keyboard: false
-        // });
+        $('#modal_confirmation').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
         // $('#truncate-div').click(false);
 
 
