@@ -100,7 +100,7 @@
                                         <div class="container-fluid group-box">
                                             <div id="new-search-area" class="col-sm-3" style=""><br>
                                                 <button type="button" id="btn_browse" style="width:150px;margin-bottom:5px;padding: 7px 2px 7px 2px!important;" class="btn btn-success">Upload Text File(s)</button>
-                                                <input type="file" name="file_upload[]" class="hidden" multiple>
+                                                <input type="file" name="file_upload[]" class="hidden" >
                                             </div>
                                             <div class="col-sm-3">
                                                  <strong>Department :</strong><br>
