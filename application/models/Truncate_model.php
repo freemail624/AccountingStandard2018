@@ -22,6 +22,8 @@ class Truncate_model extends CORE_Model{
 				(SELECT COUNT(*) FROM depreciation_expense) as depreciation_expense,
 				(SELECT COUNT(*) FROM bank_reconciliation) as bank_reconciliation,
 				(SELECT COUNT(*) FROM bank_reconciliation_details) as bank_reconciliation_details,
+                (SELECT COUNT(*) FROM cash_invoice) as cash_invoice,
+                (SELECT COUNT(*) FROM cash_invoice_items) as cash_invoice_items,
                 (SELECT COUNT(*) FROM delivery_invoice) as delivery_invoice,
                 (SELECT COUNT(*) FROM delivery_invoice_items) as delivery_invoice_items,
                 (SELECT COUNT(*) FROM issuance_info) as issuance_info,
@@ -68,7 +70,8 @@ class Truncate_model extends CORE_Model{
                 (SELECT COUNT(*) FROM rights_links) as rights_links,
                 (SELECT COUNT(*) FROM user_accounts) as user_accounts,
                 (SELECT COUNT(*) FROM user_group_rights) as user_group_rights,
-                (SELECT COUNT(*) FROM user_groups) as user_groups
+                (SELECT COUNT(*) FROM user_groups) as user_groups,
+                (SELECT COUNT(*) FROM trans) as trans
 
 
 

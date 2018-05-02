@@ -1233,7 +1233,7 @@ $(document).ready(function(){
         $('#btn_new').click(function(){
             _txnMode="new";
             clearFields($('#div_sales_invoice_fields'));
-            $('#span_invoice_no').html('INV-XXXX');
+            $('#span_invoice_no').html('SAL-INV-YYYYMMDD-XX');
             showList(false);
 
             $('#tbl_items > tbody').html('');
@@ -1805,7 +1805,7 @@ $(document).ready(function(){
         }
 return '<tr>'+
 //DISPLAY
-'<td ><input name="inv_qty[]" type="text" class="numeric form-control trigger-keyup" value="'+ d.inv_qty+'"></td>'+unit+
+'<td ><input name="inv_qty[]" type="text" class="numeric form-control trigger-keyup" value="'+accounting.formatNumber(d.inv_qty,2)+'"></td>'+unit+
 '<td ">'+d.product_desc+'<input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
 '<td ><input name="inv_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.inv_price,2)+'" style="text-align:right;"></td>'+
 '<td  style=""><input name="inv_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_discount,2)+'" style="text-align:right;"></td>'+

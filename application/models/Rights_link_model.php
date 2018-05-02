@@ -17,8 +17,8 @@ class Rights_link_model extends CORE_Model{
                                           (6,'2','2-1','Purchase Order'),
                                           (7,'2','2-2','Purchase Invoice'),
                                           (8,'2','2-3','Record Payment'),
-                                          (9,'2','2-4','Item Issuance'),
-                                          (10,'2','2-5','Item Adjustment (In)'),
+                                          (9,'15','15-2','Item Issuance'),
+                                          (10,'15','15-3','Item Adjustment'),
                                           (11,'3','3-1','Sales Order'),
                                           (12,'3','3-2','Sales Invoice'),
                                           (13,'3','3-3','Record Payment'),
@@ -39,7 +39,7 @@ class Rights_link_model extends CORE_Model{
                                           (28,'9','9-2','Income Statement'),
                                           (29,'4','4-1','Account Classification'),
                                           (30,'8','8-1','Sales Report'),
-                                          (31,'8','8-2','Batch Inventory Report'),
+                                          (31,'15','15-4','Inventory Report'),
                                           (32,'5','5-4','Salesperson Management'),
                                           (33,'2','2-6','Item Adjustment (Out)'),
                                           (34,'8','8-3','Export Sales Summary'),
@@ -89,7 +89,11 @@ class Rights_link_model extends CORE_Model{
                                           (79,'2','2-8','Purchase History'),
                                           (80,'2','2-7','Purchase Monitoring'),
                                           (81,'6','6-12','Puchasing Integration'),
-                                          (82,'6','6-13','Audit Trail')
+                                          (82,'15','15-1','Product Management (Inventory Tab)'),
+                                          (83,'3','3-4','Cash Invoice'),
+                                          (84,'6','6-13','Audit Trail')
+
+
 
 
 
