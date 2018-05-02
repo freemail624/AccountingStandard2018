@@ -89,12 +89,6 @@
                                 <li class="<?php echo (in_array('5-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Salesperson">Salesperson Management</a></li>
                             </ul>
                         </li>
-                        <li class=""><a href="#/"><i class="ti ti-shopping-cart"></i><span>System Integration</span></a>
-                            <ul class="acc-menu">
-                                <li class=><a href="Integration_hotel">Hotel Integration</a></li>
-                                <li class=><a href="Hotel_integration">Hotel Settings</a></li>
-                            </ul>
-                        </li>
                         <li class="<?php echo (in_array('14',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-view-list-alt"></i><span>Treasury</span></a>
                             <ul class="acc-menu">
                                 <li class="<?php echo (in_array('14-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Treasury">Treasury</a></li>
@@ -132,6 +126,7 @@
                                 <li class="<?php echo (in_array('6-10',$this->session->user_rights)?'':'hidden'); ?>"><a href="Email_settings">Email Settings</a></li>
                                 <li class="<?php echo (in_array('6-11',$this->session->user_rights)?'':'hidden'); ?>"><a href="Email_report_settings">Email Report Settings</a></li>
                                 <li class="<?php echo (in_array('6-9',$this->session->user_rights)?'':'hidden'); ?>"><a href="DBBackup">Backup Database</a></li>
+                                <li class="<?php echo (in_array('6-13',$this->session->user_rights)?'':'hidden'); ?>"><a href="Trail">Audit Trail</a></li>
                             </ul>
                         </li>
                         <li class="<?php echo (in_array('9',$this->session->parent_rights)?'':'hidden'); ?>">

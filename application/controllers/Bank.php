@@ -7,6 +7,7 @@ class Bank extends CORE_Controller {
         $this->validate_session();
         $this->load->model('Bank_model');
         $this->load->model('Users_model');
+        $this->load->model('Trans_model');
     }
 
     public function index() {
@@ -39,8 +40,16 @@ class Bank extends CORE_Controller {
                 $m_bank->account_number = $this->input->post('account_number', TRUE);
                 $m_bank->account_type = $this->input->post('account_type', TRUE);
                 $m_bank->save();
-
                 $bank_id = $m_bank->last_insert_id();
+
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=1; //CRUD
+                $m_trans->trans_type_id=49; // TRANS TYPE
+                $m_trans->trans_log='Created Bank: '.$this->input->post('bank_name', TRUE);
+                $m_trans->save();
 
                 $response['title'] = 'Success!';
                 $response['stat'] = 'success';
@@ -61,6 +70,15 @@ class Bank extends CORE_Controller {
                     $response['stat']='success';
                     $response['msg']='Bank information successfully deleted.';
 
+                    $bank_name = $m_bank->get_list($bank_id,'bank_name');
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=3; //CRUD
+                    $m_trans->trans_type_id=49; // TRANS TYPE
+                    $m_trans->trans_log='Deleted : '.$bank_name[0]->bank_name;
+                    $m_trans->save();
+
                     echo json_encode($response);
                 }
 
@@ -76,6 +94,15 @@ class Bank extends CORE_Controller {
                 $m_bank->account_type = $this->input->post('account_type', TRUE);
 
                 $m_bank->modify($bank_id);
+
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=49; // TRANS TYPE
+                $m_trans->trans_log='Updated Bank : '.$this->input->post('bank_name', TRUE).' ID('.$bank_id.')';
+                $m_trans->save();
 
                 $response['title']='Success!';
                 $response['stat']='success';
