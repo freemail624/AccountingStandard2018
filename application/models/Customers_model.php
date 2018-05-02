@@ -109,6 +109,8 @@ class Customers_model extends CORE_Model{
                 AND ji.is_active=TRUE
                 AND ji.book_type = 'SJE'
                 AND ji.customer_id = $customer_id
+                AND ji.hotel_integration_id = 0
+                AND ji.pos_integration_id = 0
                 GROUP BY ji.journal_id) unpaid
 
                 LEFT JOIN 

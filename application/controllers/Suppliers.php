@@ -66,6 +66,7 @@ class Suppliers extends CORE_Controller {
                 $m_suppliers->photo_path=$this->input->post('photo_path',TRUE);
 
                 $m_suppliers->tax_type_id=$this->input->post('tax_type_id',TRUE);
+                $m_suppliers->tax_output=$this->input->post('tax_output',TRUE);
                 $m_suppliers->posted_by_user=$this->session->user_id;
                 $m_suppliers->save();
 
@@ -157,6 +158,7 @@ class Suppliers extends CORE_Controller {
                 $m_suppliers->tin_no=$this->input->post('tin_no',TRUE);
                 $m_suppliers->photo_path=$this->input->post('photo_path',TRUE);
                 $m_suppliers->tax_type_id=$this->input->post('tax_type_id',TRUE);
+                $m_suppliers->tax_output=$this->input->post('tax_output',TRUE);
                 $m_suppliers->modify($supplier_id);
 
                 $m_photos->delete_via_fk($supplier_id);
