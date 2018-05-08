@@ -78,7 +78,7 @@ class Pick_list extends CORE_Controller
 
 
 
-                $response['data']=$m_products->product_list(1,null,null,$supplier_id,$category_id,null,1);
+                $response['data']=$m_products->product_list(1,null,null,$supplier_id,$category_id,null,1,null,1);
                 echo json_encode($response);
                 break;
 

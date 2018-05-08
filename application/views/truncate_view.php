@@ -69,15 +69,8 @@
 
     <body class="animated-content"  >
     <!-- <body class="animated-content" oncontextmenu="return false" > -->
-
-    <?php echo $_top_navigation; ?>
-
         <div id="wrapper">
             <div id="layout-static">
-
-        <?php echo $_side_bar_navigation;?>
-
-
         <div class="static-content-wrapper white-bg">
             <div class="static-content"  >
                 <div class="page-content"><!-- #page-content -->
@@ -106,6 +99,7 @@
     <li class=""><a href="#masterfiles" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Masterfiles</a></li>    
     <li class=""><a href="#accounting" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Accounting</a></li>
     <li class=""><a href="#users" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Users</a></li>
+    <li class=""><a href="#reset_defaults" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Reset Defaults</a></li>
 
 </ul>
 <div class="tab-content">
@@ -216,6 +210,14 @@
         </form>
          <button id="btn_users" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Truncate Users</button>
     </div>
+    <div class="tab-pane" id="reset_defaults" style="min-height: 300px;">
+         <button id="reset_default_coa" type="button" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Reset Chart of Accounts to Default</button> <br>
+         <button id="reset_default_users" type="button" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Reset Users to Default</button> <br>
+         <button id="reset_default_configuration" type="button" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Reset General Configuration to Default</button><br> 
+         <button id="reset_default_company" type="button" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Reset Company Information to Default</button> <br>
+        <button id="reset_initial_setup" type="button" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Reset Initial Setup</button> <br>
+    </div>
+
 </div> <!-- END  OF  TAB CONTENT BODY -->    
 </div> <!-- END  OF  TAB CONTENT CONTAINER -->   
 
@@ -266,8 +268,6 @@
         </div>
         </div>
     </div>
-
-    <?php echo $_switcher_settings; ?>
     <?php echo $_def_js_files; ?>
 
     <script src="assets/plugins/spinner/dist/spin.min.js"></script>
@@ -373,6 +373,92 @@ $(document).bind("contextmenu",function(e) {  e.preventDefault(); });
                 });
            });
 
+
+           $('#reset_default_coa').click(function() {
+             var btn=$(this);
+
+                $.ajax({
+                    "dataType":"json",
+                    "type":"POST",
+                    "url":"Truncate/reset_default_coa",
+                    "beforeSend" : function(){
+                        showSpinningProgress(btn);
+                    }
+                }).done(function(response){
+                    showNotification(response);
+                }).always(function(){
+                    showSpinningProgress(btn);
+                });
+           });
+
+           $('#reset_default_users').click(function() {
+             var btn=$(this);
+
+                $.ajax({
+                    "dataType":"json",
+                    "type":"POST",
+                    "url":"Truncate/reset_default_users",
+                    "beforeSend" : function(){
+                        showSpinningProgress(btn);
+                    }
+                }).done(function(response){
+                    showNotification(response);
+                }).always(function(){
+                    showSpinningProgress(btn);
+                });
+           });
+
+           $('#reset_default_configuration').click(function() {
+             var btn=$(this);
+
+                $.ajax({
+                    "dataType":"json",
+                    "type":"POST",
+                    "url":"Truncate/reset_default_configuration",
+                    "beforeSend" : function(){
+                        showSpinningProgress(btn);
+                    }
+                }).done(function(response){
+                    showNotification(response);
+                }).always(function(){
+                    showSpinningProgress(btn);
+                });
+           });
+
+           $('#reset_default_company').click(function() {
+             var btn=$(this);
+
+                $.ajax({
+                    "dataType":"json",
+                    "type":"POST",
+                    "url":"Truncate/reset_default_company",
+                    "beforeSend" : function(){
+                        showSpinningProgress(btn);
+                    }
+                }).done(function(response){
+                    showNotification(response);
+                }).always(function(){
+                    showSpinningProgress(btn);
+                });
+           });
+
+           $('#reset_initial_setup').click(function() {
+             var btn=$(this);
+
+                $.ajax({
+                    "dataType":"json",
+                    "type":"POST",
+                    "url":"Truncate/reset_initial_setup",
+                    "beforeSend" : function(){
+                        showSpinningProgress(btn);
+                    }
+                }).done(function(response){
+                    showNotification(response);
+                }).always(function(){
+                    showSpinningProgress(btn);
+                });
+           });
+           
         })();
 
 

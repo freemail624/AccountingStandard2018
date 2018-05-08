@@ -92,14 +92,6 @@ class Rights_link_model extends CORE_Model{
                                           (82,'15','15-1','Product Management (Inventory Tab)'),
                                           (83,'3','3-4','Cash Invoice'),
                                           (84,'6','6-13','Audit Trail')
-
-
-
-
-
-
-
-
                                           ON DUPLICATE KEY UPDATE
                                           rights_links.parent_code=VALUES(rights_links.parent_code),
                                           rights_links.link_code=VALUES(rights_links.link_code),

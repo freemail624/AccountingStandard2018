@@ -243,7 +243,7 @@ class Inventory extends CORE_Controller
                 $depid = $this->input->get('depid',TRUE);
                 $info = $m_department->get_department_list($depid);
 
-                $products=$m_products->product_list($account,$date,null,null,null,1,null,$depid,$account);
+                $products=$m_products->product_list($account,$date,null,null,null,1,null,$depid,$ci_account);
                 $data['date'] = date('m/d/Y',strtotime($date));
 
                 if(isset($info[0])){
