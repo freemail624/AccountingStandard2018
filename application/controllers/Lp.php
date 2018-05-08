@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Login extends CORE_Controller {
+class Lp extends CORE_Controller {
     public $token_id;
     function __construct()
     {
@@ -47,17 +47,10 @@ class Login extends CORE_Controller {
         if($this->session->userdata('logged_in') == 1) {
             redirect(base_url('Dashboard'));
         } else {
-            $initial= $this->Initial_setup_model->get_list();
 
-            if($initial[0]->setup_complete == TRUE){
                     $company=$this->Company_model->get_list();
                     $data['company']=$company[0];
                     $this->load->view('login_view',$data);
-
-            }else {
-                redirect(base_url('Initial_setup'));
-                // echo 'initial';
-            }
  
         }
         //END WORKAROUND FOR LOGIN REDIRECTION TO DASHBOARD (if user session is ACTIVE)

@@ -38,7 +38,7 @@ class Users extends CORE_Controller
         switch($txn){
             case 'list':
                 $m_users=$this->Users_model;
-                $response['data']=$m_users->get_user_list();
+                $response['data']=$m_users->get_user_accounts();
                 echo json_encode($response);
                 break;
             case 'create':
