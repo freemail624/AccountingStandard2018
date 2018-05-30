@@ -412,7 +412,118 @@ class Products_model extends CORE_Model {
             ".($depid==0?"":" AND ii.issued_department_id=".$depid)."
             AND iit.product_id=$product_id ".($as_of_date==null?"":" AND ii.date_issued<='".$as_of_date."'")."
 
-            
+
+
+
+
+
+
+
+
+
+            UNION ALL
+
+            SELECT
+            ii.date_issued as txn_date,
+            ii.date_created ,
+            ii.slip_no as ref_no,
+            'Issuance' as type,
+            ii.issued_to_person as Description,
+            iit.product_id,
+            IF(iit.is_parent = 1, 'Bulk' ,'Retail') as identifier,
+            0 as parent_in_qty,
+            0 as child_in_qty,
+            IF(iit.is_parent = 1, IFNULL(iit.issue_qty,0),IFNULL(iit.issue_qty,0)/IFNULL(p.child_unit_desc,0)) as parent_out_qty,
+            IF(iit.is_parent = 1, IFNULL(iit.issue_qty,0)*IFNULL(p.child_unit_desc,0),IFNULL(iit.issue_qty,0)) as child_out_qty 
+
+            FROM issuance_info as ii
+            INNER JOIN issuance_items as iit ON iit.issuance_id=ii.issuance_id
+            LEFT JOIN products p on p.product_id = iit.product_id
+            WHERE ii.is_active=TRUE AND ii.is_deleted=FALSE
+            ".($depid==0?"":" AND ii.issued_department_id=".$depid)."
+            AND iit.product_id=$product_id ".($as_of_date==null?"":" AND ii.date_issued<='".$as_of_date."'")."
+
+
+
+            ".($depid==0?" ":"
+
+            UNION ALL
+
+            SELECT
+            ii.date_issued as txn_date,
+            ii.date_created ,
+            ii.trn_no as ref_no,
+            'Transfer Issuance Out' as type,
+            CONCAT(u.user_fname,' ', u.user_mname) as Description,
+            iit.product_id,
+            IF(iit.is_parent = 1, 'Bulk' ,'Retail') as identifier,
+            0 as parent_in_qty,
+            0 as child_in_qty,
+            IF(iit.is_parent = 1, IFNULL(iit.issue_qty,0),IFNULL(iit.issue_qty,0)/IFNULL(p.child_unit_desc,0)) as parent_out_qty,
+            IF(iit.is_parent = 1, IFNULL(iit.issue_qty,0)*IFNULL(p.child_unit_desc,0),IFNULL(iit.issue_qty,0)) as child_out_qty 
+
+            FROM issuance_department_info as ii
+            INNER JOIN issuance_department_items as iit ON iit.issuance_department_id=ii.issuance_department_id
+            LEFT JOIN products p on p.product_id = iit.product_id
+            LEFT JOIN user_accounts u on u.user_id = ii.posted_by_user
+            WHERE ii.is_active=TRUE AND ii.is_deleted=FALSE
+            ".($depid==0?"":" AND ii.from_department_id=".$depid)."
+            AND iit.product_id=$product_id ".($as_of_date==null?"":" AND ii.date_issued<='".$as_of_date."'")."
+
+
+
+
+            UNION ALL
+
+            SELECT
+            ii.date_issued as txn_date,
+            ii.date_created ,
+            ii.trn_no as ref_no,
+            'Transfer Issuance IN' as type,
+            CONCAT(u.user_fname,' ', u.user_mname) as Description,
+            iit.product_id,
+            IF(iit.is_parent = 1, 'Bulk' ,'Retail') as identifier,
+            IF(iit.is_parent = 1, IFNULL(iit.issue_qty,0),IFNULL(iit.issue_qty,0)/IFNULL(p.child_unit_desc,0)) as parent_in_qty,
+            IF(iit.is_parent = 1, IFNULL(iit.issue_qty,0)*IFNULL(p.child_unit_desc,0),IFNULL(iit.issue_qty,0)) as child_in_qty, 
+            0 as parent_out_qty,
+            0 as child_out_qty
+
+
+            FROM issuance_department_info as ii
+            INNER JOIN issuance_department_items as iit ON iit.issuance_department_id=ii.issuance_department_id
+            LEFT JOIN products p on p.product_id = iit.product_id
+            LEFT JOIN user_accounts u on u.user_id = ii.posted_by_user
+            WHERE ii.is_active=TRUE AND ii.is_deleted=FALSE
+            ".($depid==0?"":" AND ii.to_department_id=".$depid)."
+            AND iit.product_id=$product_id ".($as_of_date==null?"":" AND ii.date_issued<='".$as_of_date."'")."
+
+
+
+
+
+                 ")."
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             ".($account==TRUE?" 
             
             UNION ALL  
@@ -1085,8 +1196,8 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 (SELECT uc.unit_name as child_unit_name FROM units as uc WHERE uc.unit_id = core.parent_unit_id) as parent_unit_name,
                 (SELECT uc.unit_name as child_unit_name FROM units as uc WHERE uc.unit_id = core.child_unit_id) as child_unit_name,
 
-                ROUND((ReceiveQtyP+AdjustInQtyP".($account==TRUE?"-SalesOUtQtyP":"")."".($account_cii==TRUE?"-CInvOutP":"")."-IssueQtyP-AdjustOutP),2) as CurrentQty,
-                ROUND((ReceiveQtyC+AdjustInQtyC".($account==TRUE?" -SalesOUtQtyC":"")."".($account_cii==TRUE?"-CInvOutC":"")."-IssueQtyC-AdjustOutC),2) as CurrentQtyChild
+                ROUND((ReceiveQtyP+AdjustInQtyP".($account==TRUE?"-SalesOUtQtyP":"")."".($account_cii==TRUE?"-CInvOutP":"")."-IssueQtyP-AdjustOutP".($depid==0?"":"-IssueFromInvOutP+IssueToInvInP")."),2) as CurrentQty,
+                ROUND((ReceiveQtyC+AdjustInQtyC".($account==TRUE?" -SalesOUtQtyC":"")."".($account_cii==TRUE?"-CInvOutC":"")."-IssueQtyC-AdjustOutC".($depid==0?"":"-IssueFromInvOutC+IssueToInvInC")."),2) as CurrentQtyChild
 
             
 
@@ -1103,9 +1214,14 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 IFNULL(ii.parent_out_qty,0) as IssueQtyP,
                 IFNULL(ii.child_out_qty,0) as IssueQtyC,
                 IFNULL(aiout.parent_out_qty,0) as AdjustOutP,
-                IFNULL(aiout.child_out_qty,0) as AdjustOutC
-,                IFNULL(ciout.parent_out_qty,0) as CInvOutP,
-                IFNULL(ciout.child_out_qty,0) as CInvOutC 
+                IFNULL(aiout.child_out_qty,0) as AdjustOutC,                
+                IFNULL(ciout.parent_out_qty,0) as CInvOutP,
+                IFNULL(ciout.child_out_qty,0) as CInvOutC, 
+                IFNULL(issuefromout.parent_out_qty,0) as IssueFromInvOutP,
+                IFNULL(issuefromout.child_out_qty,0) as IssueFromInvOutC,
+                IFNULL(issuetoin.parent_in_qty,0) as IssueToInvInP,
+                IFNULL(issuetoin.child_in_qty,0) as IssueToInvInC
+
 
                 FROM
 
@@ -1165,6 +1281,39 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 WHERE ii.is_deleted=0 ".($as_of_date==null?"":"  AND ii.date_issued<='".$as_of_date."'")."
                  ".($depid==null||$depid==0?"":" AND ii.issued_department_id=".$depid)."
                 GROUP BY iii.product_id) as ii ON ii.product_id = pQ.product_id
+
+
+                LEFT JOIN
+
+                (SELECT iii.product_id,
+                SUM(IF(iii.is_parent = 1, IFNULL(iii.issue_qty,0),IFNULL(iii.issue_qty,0)/IFNULL(p.child_unit_desc,0))) as parent_out_qty,
+                SUM(IF(iii.is_parent = 1, IFNULL(iii.issue_qty,0)*IFNULL(p.child_unit_desc,0),IFNULL(iii.issue_qty,0))) as child_out_qty
+                FROM issuance_department_info as ii 
+                INNER JOIN issuance_department_items as iii ON iii.issuance_department_id=ii.issuance_department_id
+                LEFT JOIN products p on p.product_id = iii.product_id
+                WHERE ii.is_deleted=0 ".($as_of_date==null?"":"  AND ii.date_issued<='".$as_of_date."'")."
+                 ".($depid==null||$depid==0?"":" AND ii.from_department_id=".$depid)."
+                GROUP BY iii.product_id) as issuefromout ON issuefromout.product_id = pQ.product_id
+
+
+
+                LEFT JOIN
+
+                (SELECT iii.product_id,
+                SUM(IF(iii.is_parent = 1, IFNULL(iii.issue_qty,0),IFNULL(iii.issue_qty,0)/IFNULL(p.child_unit_desc,0))) as parent_in_qty,
+                SUM(IF(iii.is_parent = 1, IFNULL(iii.issue_qty,0)*IFNULL(p.child_unit_desc,0),IFNULL(iii.issue_qty,0))) as child_in_qty
+                FROM issuance_department_info as ii 
+                INNER JOIN issuance_department_items as iii ON iii.issuance_department_id=ii.issuance_department_id
+                LEFT JOIN products p on p.product_id = iii.product_id
+                WHERE ii.is_deleted=0 ".($as_of_date==null?"":"  AND ii.date_issued<='".$as_of_date."'")."
+                 ".($depid==null||$depid==0?"":" AND ii.to_department_id=".$depid)."
+                GROUP BY iii.product_id) as issuetoin ON issuetoin.product_id = pQ.product_id
+
+
+
+
+
+
 
                 LEFT JOIN
 
