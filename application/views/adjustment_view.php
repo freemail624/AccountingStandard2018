@@ -662,9 +662,11 @@ $(document).ready(function(){
                 _objTypeHead.typeahead('val','');
             }
         }).bind('typeahead:select', function(ev, suggestion) {
-
-            //console.log(suggestion);
-
+            if(getFloat(suggestion.CurrentQty) <= 0 && _cboAdjustments.val() == "OUT"){
+                showNotification({title: suggestion.product_desc ,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
+            }else if(getFloat(suggestion.CurrentQty) <= getFloat(suggestion.product_warn) && _cboAdjustments.val() == "OUT"){
+                showNotification({title: suggestion.product_desc ,stat:"info",msg:"This item has low stock remaining.<br>It might result to negative inventory."});
+            }
 
             var tax_rate=suggestion.tax_rate;
 

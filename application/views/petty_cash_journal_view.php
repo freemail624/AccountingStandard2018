@@ -602,7 +602,6 @@
         var _cboTaxGroup;
 
         var initializeControls=function() {
-            InitializeDataTable();
 
             $('.date-picker').datepicker({
                 todayBtn: "linked",
@@ -650,7 +649,7 @@
                 placeholder: "Please Select Bank"
             });
             $('.numeric').autoNumeric('init',{mDec:2});
-
+            InitializeDataTable();
             recomputeTotals();
         }();
 

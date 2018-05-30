@@ -764,6 +764,14 @@ dt_si = $('#tbl_si_list').DataTable({
             }
         }).bind('typeahead:select', function(ev, suggestion) {
             //console.log(suggestion);
+
+
+            if(getFloat(suggestion.CurrentQty) <= 0){
+                showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
+            }else if(getFloat(suggestion.CurrentQty) <= getFloat(suggestion.product_warn) ){
+                showNotification({title: suggestion.product_desc ,stat:"info",msg:"This item has low stock remaining.<br>It might result to negative inventory."});
+            }
+            
             var tax_rate=getFloat(suggestion.tax_rate);
             var total=getFloat(suggestion.purchase_cost);
             var net_vat=0;

@@ -919,6 +919,11 @@ $(document).ready(function(){
         }).bind('typeahead:select', function(ev, suggestion) {
             //console.log(suggestion);
             //alert(suggestion.sale_price);
+            if(getFloat(suggestion.CurrentQty) <= 0){
+                showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
+            }else if(getFloat(suggestion.CurrentQty) <= getFloat(suggestion.product_warn) ){
+                showNotification({title: suggestion.product_desc ,stat:"info",msg:"This item has low stock remaining.<br>It might result to negative inventory."});
+            }
             var tax_rate=suggestion.tax_rate; //base on the tax rate set to current product
             //choose what purchase cost to be use
             var sale_price=0.00;

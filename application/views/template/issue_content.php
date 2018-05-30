@@ -121,7 +121,7 @@
         <tr >
             <th style="width:35%;text-align:left;border-bottom: 1px solid gray;">Description</th>
             <th style="width:10%;text-align:center;border-bottom: 1px solid gray;">Quantity</th>
-            <th style="width:15%;text-align:center;border-bottom: 1px solid gray;">Pack. Size</th>
+            <th style="width:15%;text-align:center;border-bottom: 1px solid gray;">Unit</th>
             <th style="width:20%;text-align:center;border-bottom: 1px solid gray;">Unit Price</th>
             <th style="width:20%;text-align:center;border-bottom: 1px solid gray;">Amount</th>
         </tr>
@@ -135,7 +135,7 @@
                 <tr>
                     <td style="border-bottom: 1px solid gray;"><?php echo $item->product_desc; ?></td>
                     <td style="text-align:center; border-bottom: 1px solid gray;"><?php echo number_format($item->issue_qty,0); ?></td>
-                    <td style="text-align:center; border-bottom: 1px solid gray;"></td>
+                    <td style="text-align:center; border-bottom: 1px solid gray;"><?php echo $item->unit_name; ?></td>
                     <td style="text-align:center;border-bottom: 1px solid gray;"><?php echo number_format($item->issue_price,2); ?></td>
                     <td style="text-align:center;border-bottom: 1px solid gray;"><?php echo number_format($item->issue_line_total_price,2); ?></td>
                 </tr>

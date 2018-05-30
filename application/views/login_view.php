@@ -95,6 +95,7 @@
 <script src="assets/plugins/spinner/dist/ladda.min.js"></script>
     <script>
         $(document).ready(function(){
+            $('#user').focus();
             var bindEventHandlers=(function(){
                 $('#btn_login').click(function(){
                     var l = Ladda.create(this);
