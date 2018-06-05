@@ -326,17 +326,21 @@ class Products_model extends CORE_Model {
             ai.date_created,
             ai.adjustment_code as ref_no,
             ('Adjustment IN')as type,
-            '' as Description,
+             CONCAT(u.user_fname,' ', u.user_mname) as Description,
             aii.product_id,
             IF(aii.is_parent = 1, 'Bulk' ,'Retail') as identifier,
             IF(aii.is_parent = 1, IFNULL(aii.adjust_qty,0),IFNULL(aii.adjust_qty,0)/IFNULL(p.child_unit_desc,0)) as parent_in_qty,
             IF(aii.is_parent = 1, IFNULL(aii.adjust_qty,0)*IFNULL(p.child_unit_desc,0),IFNULL(aii.adjust_qty,0)) as child_in_qty,
             0 as parent_out_qty,
-            0 as child_out_qty
+            0 as child_out_qty,
+            d.department_name,
+            ai.remarks
 
-             FROM adjustment_info as ai
+            FROM adjustment_info as ai
             INNER JOIN `adjustment_items` as aii ON aii.adjustment_id=ai.adjustment_id
             LEFT JOIN products p on p.product_id = aii.product_id
+            LEFT JOIN departments d on d.department_id = ai.department_id
+            LEFT JOIN user_accounts u on u.user_id = ai.posted_by_user
             WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
             AND aii.product_id=$product_id ".($depid==0?"":" AND ai.department_id=".$depid)."
             ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
@@ -350,18 +354,22 @@ class Products_model extends CORE_Model {
             ai.date_created,
             ai.adjustment_code as ref_no,
             ('Adjustment Out')as type,
-            '' as Description,
+             CONCAT(u.user_fname,' ', u.user_mname) as Description,
             aii.product_id,
             IF(aii.is_parent = 1, 'Bulk' ,'Retail') as identifier,
             0 as parent_in_qty,
             0 as child_in_qty,
             IF(aii.is_parent = 1, IFNULL(aii.adjust_qty,0),IFNULL(aii.adjust_qty,0)/IFNULL(p.child_unit_desc,0)) as parent_out_qty,
-            IF(aii.is_parent = 1, IFNULL(aii.adjust_qty,0)*IFNULL(p.child_unit_desc,0),IFNULL(aii.adjust_qty,0)) as child_out_qty 
+            IF(aii.is_parent = 1, IFNULL(aii.adjust_qty,0)*IFNULL(p.child_unit_desc,0),IFNULL(aii.adjust_qty,0)) as child_out_qty,
+            d.department_name,
+            ai.remarks
 
 
              FROM adjustment_info as ai
             INNER JOIN `adjustment_items` as aii ON aii.adjustment_id=ai.adjustment_id
             LEFT JOIN products p on p.product_id = aii.product_id
+            LEFT JOIN user_accounts u on u.user_id = ai.posted_by_user
+            LEFT JOIN departments d on d.department_id = ai.department_id
             WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
             AND aii.product_id=$product_id ".($depid==0?"":" AND ai.department_id=".$depid)."
             ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
@@ -379,12 +387,16 @@ class Products_model extends CORE_Model {
             IF(dii.is_parent = 1, IFNULL(dii.dr_qty,0),IFNULL(dii.dr_qty,0)/IFNULL(p.child_unit_desc,0)) as parent_in_qty,
             IF(dii.is_parent = 1, IFNULL(dii.dr_qty,0)*IFNULL(p.child_unit_desc,0),IFNULL(dii.dr_qty,0)) as child_in_qty,
             0 as parent_out_qty,
-            0 as child_out_qty
+            0 as child_out_qty,
+            d.department_name,
+            di.remarks
+
             FROM (delivery_invoice as di
             LEFT JOIN suppliers as s ON s.supplier_id=di.supplier_id)
             INNER JOIN delivery_invoice_items as dii
             ON dii.dr_invoice_id=di.dr_invoice_id
             LEFT JOIN products p on p.product_id = dii.product_id
+            LEFT JOIN departments d on d.department_id = di.department_id
             WHERE di.is_active=TRUE AND di.is_deleted=FALSE 
             ".($depid==0?"":" AND di.department_id=".$depid)."
             AND dii.product_id=$product_id
@@ -403,49 +415,19 @@ class Products_model extends CORE_Model {
             0 as parent_in_qty,
             0 as child_in_qty,
             IF(iit.is_parent = 1, IFNULL(iit.issue_qty,0),IFNULL(iit.issue_qty,0)/IFNULL(p.child_unit_desc,0)) as parent_out_qty,
-            IF(iit.is_parent = 1, IFNULL(iit.issue_qty,0)*IFNULL(p.child_unit_desc,0),IFNULL(iit.issue_qty,0)) as child_out_qty 
+            IF(iit.is_parent = 1, IFNULL(iit.issue_qty,0)*IFNULL(p.child_unit_desc,0),IFNULL(iit.issue_qty,0)) as child_out_qty,
+            d.department_name,
+            ii.remarks
 
             FROM issuance_info as ii
             INNER JOIN issuance_items as iit ON iit.issuance_id=ii.issuance_id
             LEFT JOIN products p on p.product_id = iit.product_id
+            LEFT JOIN departments d on d.department_id = ii.issued_department_id
             WHERE ii.is_active=TRUE AND ii.is_deleted=FALSE
             ".($depid==0?"":" AND ii.issued_department_id=".$depid)."
             AND iit.product_id=$product_id ".($as_of_date==null?"":" AND ii.date_issued<='".$as_of_date."'")."
 
 
-
-
-
-
-
-
-
-
-            UNION ALL
-
-            SELECT
-            ii.date_issued as txn_date,
-            ii.date_created ,
-            ii.slip_no as ref_no,
-            'Issuance' as type,
-            ii.issued_to_person as Description,
-            iit.product_id,
-            IF(iit.is_parent = 1, 'Bulk' ,'Retail') as identifier,
-            0 as parent_in_qty,
-            0 as child_in_qty,
-            IF(iit.is_parent = 1, IFNULL(iit.issue_qty,0),IFNULL(iit.issue_qty,0)/IFNULL(p.child_unit_desc,0)) as parent_out_qty,
-            IF(iit.is_parent = 1, IFNULL(iit.issue_qty,0)*IFNULL(p.child_unit_desc,0),IFNULL(iit.issue_qty,0)) as child_out_qty 
-
-            FROM issuance_info as ii
-            INNER JOIN issuance_items as iit ON iit.issuance_id=ii.issuance_id
-            LEFT JOIN products p on p.product_id = iit.product_id
-            WHERE ii.is_active=TRUE AND ii.is_deleted=FALSE
-            ".($depid==0?"":" AND ii.issued_department_id=".$depid)."
-            AND iit.product_id=$product_id ".($as_of_date==null?"":" AND ii.date_issued<='".$as_of_date."'")."
-
-
-
-            ".($depid==0?" ":"
 
             UNION ALL
 
@@ -460,12 +442,15 @@ class Products_model extends CORE_Model {
             0 as parent_in_qty,
             0 as child_in_qty,
             IF(iit.is_parent = 1, IFNULL(iit.issue_qty,0),IFNULL(iit.issue_qty,0)/IFNULL(p.child_unit_desc,0)) as parent_out_qty,
-            IF(iit.is_parent = 1, IFNULL(iit.issue_qty,0)*IFNULL(p.child_unit_desc,0),IFNULL(iit.issue_qty,0)) as child_out_qty 
+            IF(iit.is_parent = 1, IFNULL(iit.issue_qty,0)*IFNULL(p.child_unit_desc,0),IFNULL(iit.issue_qty,0)) as child_out_qty,
+            d.department_name,
+            ii.remarks
 
             FROM issuance_department_info as ii
             INNER JOIN issuance_department_items as iit ON iit.issuance_department_id=ii.issuance_department_id
             LEFT JOIN products p on p.product_id = iit.product_id
             LEFT JOIN user_accounts u on u.user_id = ii.posted_by_user
+            LEFT JOIN departments d on d.department_id = ii.from_department_id
             WHERE ii.is_active=TRUE AND ii.is_deleted=FALSE
             ".($depid==0?"":" AND ii.from_department_id=".$depid)."
             AND iit.product_id=$product_id ".($as_of_date==null?"":" AND ii.date_issued<='".$as_of_date."'")."
@@ -486,39 +471,19 @@ class Products_model extends CORE_Model {
             IF(iit.is_parent = 1, IFNULL(iit.issue_qty,0),IFNULL(iit.issue_qty,0)/IFNULL(p.child_unit_desc,0)) as parent_in_qty,
             IF(iit.is_parent = 1, IFNULL(iit.issue_qty,0)*IFNULL(p.child_unit_desc,0),IFNULL(iit.issue_qty,0)) as child_in_qty, 
             0 as parent_out_qty,
-            0 as child_out_qty
+            0 as child_out_qty,
+            d.department_name,
+            ii.remarks
 
 
             FROM issuance_department_info as ii
             INNER JOIN issuance_department_items as iit ON iit.issuance_department_id=ii.issuance_department_id
             LEFT JOIN products p on p.product_id = iit.product_id
             LEFT JOIN user_accounts u on u.user_id = ii.posted_by_user
+            LEFT JOIN departments d on d.department_id = ii.to_department_id
             WHERE ii.is_active=TRUE AND ii.is_deleted=FALSE
             ".($depid==0?"":" AND ii.to_department_id=".$depid)."
             AND iit.product_id=$product_id ".($as_of_date==null?"":" AND ii.date_issued<='".$as_of_date."'")."
-
-
-
-
-
-                 ")."
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -538,7 +503,9 @@ class Products_model extends CORE_Model {
             0 as parent_in_qty,
             0 as child_in_qty,
             IF(sii.is_parent = 1, IFNULL(sii.inv_qty,0),IFNULL(sii.inv_qty,0)/IFNULL(p.child_unit_desc,0)) as parent_out_qty,
-            IF(sii.is_parent = 1, IFNULL(sii.inv_qty,0)*IFNULL(p.child_unit_desc,0),IFNULL(sii.inv_qty,0)) as child_out_qty 
+            IF(sii.is_parent = 1, IFNULL(sii.inv_qty,0)*IFNULL(p.child_unit_desc,0),IFNULL(sii.inv_qty,0)) as child_out_qty,
+            d.department_name,
+            si.remarks
 
              FROM 
             (sales_invoice as si
@@ -547,6 +514,7 @@ class Products_model extends CORE_Model {
             INNER JOIN
             sales_invoice_items sii ON sii.sales_invoice_id = si.sales_invoice_id
             LEFT JOIN products p on p.product_id = sii.product_id
+            LEFT JOIN departments d on d.department_id = si.department_id
             WHERE si.is_active = TRUE AND si.is_deleted = FALSE
             ".($depid==0?"":" AND si.department_id=".$depid)."
             AND sii.product_id = $product_id
@@ -557,7 +525,7 @@ class Products_model extends CORE_Model {
 
             ".($ciaccount==TRUE?" 
             
-            UNION                         
+            UNION  ALL                
             
             SELECT 
             (ci.date_invoice) as txn_date,
@@ -570,7 +538,9 @@ class Products_model extends CORE_Model {
             0 as parent_in_qty,
             0 as child_in_qty,    
             IF(cii.is_parent = 1, IFNULL(cii.inv_qty,0),IFNULL(cii.inv_qty,0)/IFNULL(p.child_unit_desc,0)) as parent_out_qty,
-            IF(cii.is_parent = 1, IFNULL(cii.inv_qty,0)*IFNULL(p.child_unit_desc,0),IFNULL(cii.inv_qty,0)) as child_out_qty 
+            IF(cii.is_parent = 1, IFNULL(cii.inv_qty,0)*IFNULL(p.child_unit_desc,0),IFNULL(cii.inv_qty,0)) as child_out_qty,
+            d.department_name,
+            ci.remarks
 
             FROM cash_invoice as ci
             
@@ -579,7 +549,7 @@ class Products_model extends CORE_Model {
             customers as c ON c.customer_id = ci.customer_id
             LEFT JOIN cash_invoice_items cii ON cii.cash_invoice_id = ci.cash_invoice_id
             LEFT JOIN products p on p.product_id = cii.product_id
-            
+            LEFT JOIN departments d on d.department_id = ci.department_id
             WHERE ci.is_active = TRUE AND ci.is_deleted = FALSE
             ".($depid==0?"":" AND ci.department_id=".$depid)."
             AND cii.product_id = $product_id

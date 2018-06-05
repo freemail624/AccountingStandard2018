@@ -132,6 +132,7 @@ class Products extends CORE_Controller
                 //$m_products->is_inventory = $this->input->post('inventory',TRUE);
 
                  //im not sure, why posted checkbox post value of 0 when checked
+               $m_products->primary_unit =$this->get_numeric_value($this->input->post('primary_unit',TRUE));
                $m_products->is_tax_exempt =$this->get_numeric_value($this->input->post('is_tax_exempt',TRUE));
 
                 $m_products->equivalent_points = $this->get_numeric_value($this->input->post('equivalent_points', TRUE));
@@ -206,6 +207,7 @@ class Products extends CORE_Controller
 
                  //im not sure, why posted checkbox post value of 0 when checked
                $m_products->is_tax_exempt =$this->get_numeric_value($this->input->post('is_tax_exempt',TRUE));
+               $m_products->primary_unit =$this->get_numeric_value($this->input->post('primary_unit',TRUE));
 
 
                 $m_products->equivalent_points = $this->get_numeric_value($this->input->post('equivalent_points', TRUE));
@@ -278,11 +280,8 @@ class Products extends CORE_Controller
                 }
 
                 else if(count($m_order_items->get_list(
-
                     'sales_order.is_deleted=0 AND product_id='.$product_id,
-
                     'sales_order_items.product_id',
-
                     array(
                         array('sales_order','sales_order.sales_order_id=sales_order_items.sales_order_id','left')
                     )
@@ -450,121 +449,21 @@ class Products extends CORE_Controller
                             )
                 );
 
-
                 if($type == NULL){
                     $this->load->view('template/product_history',$data);
                 }else if($type == 'print'){
-
                     if($inv=='parent'){
                         $this->load->view('template/product_history_content',$data);
                     }else if($inv=='child'){
                         $this->load->view('template/product_history_content_child',$data);
-
                     }
+                }else if($type == 'stockcard'){
+                        echo json_encode($data);
+                }else if($type == 'stockcard_print'){
+                    $this->load->view('template/product_history_content_child',$data);
                 }
-
-
-
                 break;
                 
-            // case 'export-product-history':
-            //     $excel=$this->excel;
-            //     $product_id=$this->input->get('id');
-            //     $m_products=$this->Products_model;
-
-            //     $product_info=$m_products->get_list($product_id);
-
-
-
-            //     $excel->setActiveSheetIndex(0);
-
-
-            //     //name the worksheet
-            //     $excel->getActiveSheet()->setTitle($product_info[0]->product_desc."  History");
-
-            //     $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
-            //     $excel->getActiveSheet()->setCellValue('A1',$product_info[0]->product_desc."  History")
-            //         ->setCellValue('A2',"As of Date ".date('m/d/Y'));
-
-
-            //     //create headers
-            //     $excel->getActiveSheet()->getStyle('A4:I4')->getFont()->setBold(TRUE);
-            //     $excel->getActiveSheet()->setCellValue('A4', 'Txn Date')
-            //                             ->setCellValue('B4', 'Reference')
-            //                             ->setCellValue('C4', 'Txn Type')
-            //                             ->setCellValue('D4', 'Description')
-            //                             ->setCellValue('E4', 'Exp Date')
-            //                             ->setCellValue('F4', 'Batch #')
-            //                             ->setCellValue('G4', 'In')
-            //                             ->setCellValue('H4', 'Out')
-            //                             ->setCellValue('I4', 'Balance');
-
-
-
-
-            //     $transaction=$m_products->get_product_history($product_id);
-            //     $rows=array();
-            //     foreach($transaction as $x){
-            //         $rows[]=array(
-            //             $x->txn_date,
-            //             $x->ref_no,
-            //             $x->type,
-            //             $x->Description,
-            //             $x->exp_date,
-            //             $x->batch_no,
-            //             $x->in_qty,
-            //             $x->out_qty,
-            //             $x->balance
-            //         );
-            //     }
-
-
-            //     $excel->getActiveSheet()->getStyle('A4:I4')->getFill()
-            //         ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
-            //         ->getStartColor()->setARGB('07700e');
-
-            //     $styleArray = array(
-            //         'font'  => array(
-            //             'bold'  => true,
-            //             'color' => array('rgb' => 'FFFFF'),
-            //             'size'  => 10,
-            //             'name'  => 'Tahoma'
-            //         ));
-
-            //     $excel->getActiveSheet()->getStyle('A4:I4')->applyFromArray($styleArray);
-
-            //     $excel->getActiveSheet()->fromArray($rows,NULL,'A5');
-            //     //autofit column
-            //     foreach(range('A','I') as $columnID)
-            //     {
-            //         $excel->getActiveSheet()->getColumnDimension($columnID)->setAutoSize(TRUE);
-            //     }
-
-
-
-
-
-            //     $excel->getActiveSheet()->getColumnDimension('A')->setAutoSize(TRUE);
-
-
-
-            //     // Redirect output to a client’s web browser (Excel2007)
-            //     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            //     header('Content-Disposition: attachment;filename="'.$product_info[0]->product_desc."  History.xlsx".'"');
-            //     header('Cache-Control: max-age=0');
-            //     // If you're serving to IE 9, then the following may be needed
-            //     header('Cache-Control: max-age=1');
-
-            //     // If you're serving to IE over SSL, then the following may be needed
-            //     header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-            //     header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
-            //     header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-            //     header ('Pragma: public'); // HTTP/1.0
-
-            //     $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
-            //     $objWriter->save('php://output');
-
-            //     break;
         }
     }
 

@@ -951,7 +951,7 @@ $(document).ready(function(){
                 }else if (suggestion.is_bulk== 0){
                     retail_price = 0;
                 }
-
+                if(suggestion.primary_unit == 1){ suggis_parent = 1;}else{ suggis_parent = 0;}                
                 $('#tbl_items > tbody').append(newRowItem({
                     so_qty : "1",
                     product_code : suggestion.product_code,
@@ -977,8 +977,8 @@ $(document).ready(function(){
                 child_unit_id : suggestion.child_unit_id,
                 child_unit_name : suggestion.child_unit_name,
                 parent_unit_name : suggestion.parent_unit_name,
-
-                is_parent: 1 ,// INITIALLY , UNIT USED IS THE PARENT , 1 for PARENT 0 for CHILD
+                is_parent: suggis_parent,
+                primary_unit:suggestion.primary_unit,
                 a:a
                 }));
                 changetxn ='active';
@@ -1569,10 +1569,11 @@ $(document).ready(function(){
         return parseFloat(accounting.unformat(f));
     };
     var newRowItem=function(d){
+        if(d.primary_unit == 1){ parent = ' selected'; child = ' '; }else{ parent = ' '; child = ' selected'; }
         if(d.is_bulk == '1'){ 
-            unit = '<td ><select class="line_unit'+d.a+'" name="unit_id[]"><option value="'+d.parent_unit_id+'" data-unit-identifier="1">'+d.parent_unit_name+'</option><option value="'+d.child_unit_id+'" data-unit-identifier="0" >'+d.child_unit_name+'</option></select></td>';
+            unit = '<td ><select class="line_unit'+d.a+'" name="unit_id[]"><option value="'+d.parent_unit_id+'" data-unit-identifier="1" '+parent+'>'+d.parent_unit_name+'</option><option value="'+d.child_unit_id+'" data-unit-identifier="0" '+child+'>'+d.child_unit_name+'</option></select></td>';
         }else{ 
-            unit  = '<td ><select class="line_unit'+d.a+'" name="unit_id[]" ><option value="'+d.parent_unit_id+'" data-unit-identifier="1">'+d.parent_unit_name+'</option></select></td>';
+            unit  = '<td ><select class="line_unit'+d.a+'" name="unit_id[]" ><option value="'+d.parent_unit_id+'" data-unit-identifier="1" '+parent+'>'+d.parent_unit_name+'</option></select></td>';
         }
         return '<tr>'+
         // DISPLAY

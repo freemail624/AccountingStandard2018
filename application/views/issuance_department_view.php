@@ -618,8 +618,8 @@ dt_si = $('#tbl_si_list').DataTable({
             }else if (suggestion.is_bulk== 0){
                 retail_price = 0;
             }
-
-            $('#tbl_items > tbody').prepend(newRowItem({
+                if(suggestion.primary_unit == 1){ suggis_parent = 1;}else{ suggis_parent = 0;}
+            $('#tbl_items > tbody').append(newRowItem({
                 issue_qty : "1",
                 product_code : suggestion.product_code,
                 product_id: suggestion.product_id,
@@ -640,7 +640,9 @@ dt_si = $('#tbl_si_list').DataTable({
                 child_unit_id : suggestion.child_unit_id,
                 child_unit_name : suggestion.child_unit_name,
                 parent_unit_name : suggestion.parent_unit_name,
-                is_parent: 1 ,// INITIALLY , UNIT USED IS THE PARENT , 1 for PARENT 0 for CHILD
+                    is_parent: suggis_parent ,// INITIALLY , UNIT USED IS THE PARENT , 1 for PARENT 0 for CHILD
+                    primary_unit:suggestion.primary_unit,
+
                 a:a
  
             }));
@@ -1124,11 +1126,12 @@ dt_si = $('#tbl_si_list').DataTable({
         return parseFloat(accounting.unformat(f));
     };
     var newRowItem=function(d){
+        if(d.primary_unit == 1){ parent = ' selected'; child = ' '; }else{ parent = ' '; child = ' selected'; } // This does not cause conflict with value of select when editing 
         if(d.is_bulk == '1'){ 
-            unit = '<td width="5%"><select class="line_unit'+d.a+'" name="unit_id[]"><option value="'+d.parent_unit_id+'" data-unit-identifier="1">'+d.parent_unit_name+'</option><option value="'+d.child_unit_id+'" data-unit-identifier="0" >'+d.child_unit_name+'</option></select></td>';
+            unit = '<td ><select class="line_unit'+d.a+'" name="unit_id[]"><option value="'+d.parent_unit_id+'" data-unit-identifier="1" '+parent+'>'+d.parent_unit_name+'</option><option value="'+d.child_unit_id+'" data-unit-identifier="0" '+child+'>'+d.child_unit_name+'</option></select></td>';
         }else{ 
-            unit  = '<td width="5%"><select class="line_unit'+d.a+'" name="unit_id[]" ><option value="'+d.parent_unit_id+'" data-unit-identifier="1">'+d.parent_unit_name+'</option></select></td>';
-        };
+            unit  = '<td ><select class="line_unit'+d.a+'" name="unit_id[]" ><option value="'+d.parent_unit_id+'" data-unit-identifier="1" '+parent+'>'+d.parent_unit_name+'</option></select></td>';
+        }
         return '<tr>'+
         '<td width="10%"><input name="issue_qty[]" type="text" class="numeric form-control trigger-number" value="'+ d.issue_qty+'"></td>'+unit+
         '<td width="30%">'+d.product_desc+'<input type="text" style="display: none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+

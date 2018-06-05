@@ -91,7 +91,7 @@
 <table style="font-family:tahoma;width: 100%;" id="report_header">
     <tbody>
         <tr>
-            <td style="width:75%;font-size:18px;font-weight:bold;border:none!important;">ISSUANCE REPORT</td>
+            <td style="width:75%;font-size:18px;font-weight:bold;border:none!important;">ITEM TRANSFER REPORT</td>
             <td style="width:25%;font-size:18px;font-weight:bold;border:none!important;text-align: right;"><?php echo $issuance_info->trn_no; ?></td>
         </tr>
 

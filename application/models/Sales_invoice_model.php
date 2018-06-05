@@ -328,7 +328,7 @@ $sql="SELECT * FROM
         WHERE rp.is_deleted=FALSE
         AND rp.is_active=TRUE
         AND rp.customer_id = $customer_id
-        AND MONTH(rp.date_paid) = MONTH(NOW()) AND YEAR(NOW())
+        AND MONTH(rp.date_paid) <= MONTH(NOW()) AND YEAR(NOW())
         GROUP BY rpl.journal_id) m HAVING balance > 0) as m";
 
 

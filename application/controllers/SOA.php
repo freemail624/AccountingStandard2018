@@ -54,7 +54,6 @@
 
 					
 					$response['payments'] = $m_sales->get_customer_soa_payment($customer_id);
-
 					echo json_encode($response);
 					break;
 

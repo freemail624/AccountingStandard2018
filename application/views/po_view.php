@@ -1007,7 +1007,7 @@ $(document).ready(function(){
             }else if (suggestion.is_bulk== 0){
                 retail_price = 0;
             }
-
+            if(suggestion.primary_unit == 1){ suggis_parent = 1;}else{ suggis_parent = 0;}
             $('#tbl_items > tbody').append(newRowItem({
                 po_qty : "1",
                 bulk_price: bulk_price,
@@ -1029,7 +1029,8 @@ $(document).ready(function(){
                 po_line_total : total,
                 po_non_tax_amount: net_vat,
                 po_tax_amount:vat_input,
-                is_parent: 1 ,// INITIALLY , UNIT USED IS THE PARENT , 1 for PARENT 0 for CHILD
+                is_parent: suggis_parent ,
+                primary_unit:suggestion.primary_unit,
                 a:a
             }));
 
@@ -1693,10 +1694,11 @@ $(document).ready(function(){
     };
 
     var newRowItem=function(d){
+        if(d.primary_unit == 1){ parent = ' selected'; child = ' '; }else{ parent = ' '; child = ' selected'; } // This does not cause conflict with value of select when editing 
         if(d.is_bulk == '1'){ 
-            unit = '<td width="5%"><select class="line_unit'+d.a+'" name="unit_id[]"><option value="'+d.parent_unit_id+'" data-unit-identifier="1">'+d.parent_unit_name+'</option><option value="'+d.child_unit_id+'" data-unit-identifier="0" >'+d.child_unit_name+'</option></select></td>';
+            unit = '<td ><select class="line_unit'+d.a+'" name="unit_id[]"><option value="'+d.parent_unit_id+'" data-unit-identifier="1" '+parent+'>'+d.parent_unit_name+'</option><option value="'+d.child_unit_id+'" data-unit-identifier="0" '+child+'>'+d.child_unit_name+'</option></select></td>';
         }else{ 
-            unit  = '<td width="5%"><select class="line_unit'+d.a+'" name="unit_id[]" ><option value="'+d.parent_unit_id+'" data-unit-identifier="1">'+d.parent_unit_name+'</option></select></td>';
+            unit  = '<td ><select class="line_unit'+d.a+'" name="unit_id[]" ><option value="'+d.parent_unit_id+'" data-unit-identifier="1" '+parent+'>'+d.parent_unit_name+'</option></select></td>';
         }
         return '<tr>'+
         '<td ><input name="po_qty[]" type="text" class="numeric form-control" value="'+ d.po_qty+'"></td>'+unit+'<td >'+d.product_desc+' <input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+

@@ -55,17 +55,20 @@
             to { -webkit-transform: rotate(360deg); }
         }
 
+        .group-heading-soa {
+            background-color: #bcf6ff;
+        }
 
-
+        .hidden{
+            display: none;
+        }
     </style>
     <?php echo $_def_css_files; ?>
 
 </head>
 
 <body class="animated-content">
-
 <?php echo $_top_navigation; ?>
-
 <div id="wrapper">
     <div id="layout-static">
 
@@ -118,13 +121,13 @@
                                                 <th align="right">Total</th>
                                             </tr>
                                             <tr>
-                                            <th colspan="5" class="group-heading">SALES</th>
+                                            <th colspan="5" class="group-heading-soa" id="prevbalsale">SALES</th>
                                             </tr>
                                             <tbody id="previous_balances">
                                             
                                             </tbody>
                                             <tr>
-                                            <th colspan="5" class="group-heading">SERVICES</th>
+                                            <th colspan="5" class="group-heading-soa" id="prevbalservice">SERVICES</th>
                                             </tr>
                                             <tbody id="previous_balances_service">
 
@@ -142,14 +145,14 @@
                                                 <th align="right">Balance Amount</th>
                                                 <th align="right">Total</th>
                                             </tr>
-                                                <th colspan="5" class="group-heading">SALES</th>
+                                                <th colspan="5" class="group-heading-soa" id="curbalsale">SALES</th>
                                             </tr>
                                             <tbody id="current_balances">
 
                                             
                                             </tbody>
                                             <tr>
-                                                <th colspan="5" class="group-heading">SERVICES</th>
+                                                <th colspan="5" class="group-heading-soa" id="curbalservice">SERVICES</th>
                                             </tr>
                                             
                                             <tbody id="current_balances_service">
@@ -167,13 +170,13 @@
                                                 <th align="right" colspan="2"></th>
                                             </tr>
                                             <tr>
-                                                <th colspan="5" class="group-heading">SALES</th>
+                                                <th colspan="5" class="group-heading-soa" id="paymentsale">SALES</th>
                                             </tr>
                                             <tbody id="payment">
 
                                             </tbody>
                                             <tr>
-                                                <th colspan="5" class="group-heading">SERVICES</th>
+                                                <th colspan="5" class="group-heading-soa" id="paymentservices">SERVICES</th>
                                             </tr>
                                             <tbody id="payment_services">
                                             </tbody>
@@ -291,7 +294,12 @@ $(document).ready(function(){
         $('#tbl_balances #current_balances_service').html('');
         $('#tbl_balances #payment').html('');
         $('#tbl_balances #payment_services').html('');
-
+        prevbalsale = 0;
+        prevbalservice = 0;
+        curbalsale = 0;
+        curbalservice = 0;
+        paymentsale = 0;
+        paymentservices = 0;
 
         $.ajax({
             url : 'SOA/transaction/balances?cusid='+_cboCustomers.val(),
@@ -301,6 +309,21 @@ $(document).ready(function(){
             processData : false,
             contentType : false,
             success : function(response){
+
+
+                $.each(response.previous_balances_soa, function(index,value){
+                if(value.is_sales == 1 ){ prevbalsale ++; } else{ prevbalservice ++;} });
+
+                if(prevbalsale == 0){ $('#prevbalsale').addClass('hidden');}else{$('#prevbalsale').removeClass('hidden');}
+                if(prevbalservice == 0){ $('#prevbalservice').addClass('hidden');}else{$('#prevbalservice').removeClass('hidden');}
+                if(prevbalsale == 0 && prevbalservice == 0){
+                    $('#tbl_balances #previous_balances').append(
+                        '<tr>'+
+                            '<td colspan = "5">No Item Found</td>'+
+                        '</tr>'
+                    );
+
+                }
                 $.each(response.previous_balances_soa, function(index,value){
                     if(value.is_sales == 1 ){
                     $('#tbl_balances #previous_balances').append(
@@ -327,6 +350,19 @@ $(document).ready(function(){
 
                     sumPrev += parseFloat(value.receivable_amount);
                 });
+
+                $.each(response.current_balances_soa, function(index,value){
+                if(value.is_sales == 1 ){ curbalsale ++; } else{ curbalservice ++;} });
+                if(curbalsale == 0){ $('#curbalsale').addClass('hidden');}else{$('#curbalsale').removeClass('hidden');}
+                if(curbalservice == 0){ $('#curbalservice').addClass('hidden');}else{$('#curbalservice').removeClass('hidden');}
+                if(curbalsale == 0 && curbalservice == 0){
+                    $('#tbl_balances #current_balances').append(
+                        '<tr>'+
+                            '<td colspan = "5">No Item Found</td>'+
+                        '</tr>'
+                    );
+
+                }
                 $.each(response.current_balances_soa, function(index,value){
                 if(value.is_sales == 1 ){
 
@@ -356,6 +392,18 @@ $(document).ready(function(){
 
                 });
 
+                $.each(response.payments, function(index,value){
+                if(value.is_sales == 1 ){ paymentsale ++; } else{ paymentservices ++;} });
+                if(paymentsale == 0){ $('#paymentsale').addClass('hidden');}else{$('#paymentsale').removeClass('hidden');}
+                if(paymentservices == 0){ $('#paymentservices').addClass('hidden');}else{$('#paymentservices').removeClass('hidden');}
+                if(paymentservices == 0 && paymentsale == 0){
+                    $('#tbl_balances #payment').append(
+                        '<tr>'+
+                            '<td colspan = "5">No Item Found</td>'+
+                        '</tr>'
+                    );
+
+                }
                 $.each(response.payments, function(index,value){
                     if (value.is_sales == 1){
                     $('#tbl_balances #payment').append(

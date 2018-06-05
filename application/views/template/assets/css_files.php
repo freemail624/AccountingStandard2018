@@ -125,10 +125,13 @@
         background-color:#e6f7ff;
      }
 
-.demo-options {
-  /*  top: 60px!important;*/
-    /*width: 151px!important;*/
-}
+    .demo-options {
+      /*  top: 60px!important;*/
+        /*width: 151px!important;*/
+    }
+    .breadcrumb li a {
+        text-decoration: none;
+    }
 </style>
 
 <link rel="stylesheet" type="text/css" href="assets/css/light-theme.css">

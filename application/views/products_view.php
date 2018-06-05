@@ -53,6 +53,7 @@ $(document).ready(function(){
     var _cboSupplier; var _cboCategory; var _cboTax; var _cboInventory; var _cboMeasurement; var _cboCredit; var _cboDebit;
     var _cboTaxGroup;
     var _section_id; var _menu_id; var _child_unit_id;
+    var _cboPrimaryUnit;
     /*$(document).ready(function(){
         $('#modal_filter').modal('show');
         showList(false);
@@ -195,6 +196,12 @@ $(document).ready(function(){
 
         _cboMeasurement=$('#product_unit').select2({
             allowClear: false
+        });
+
+
+        _cboPrimaryUnit=$('#primary_unit').select2({
+            allowClear: false,
+            minimumResultsForSearch: -1
         });
 
         _child_unit_id=$('#child_unit_id').select2({
@@ -617,6 +624,7 @@ $(document).ready(function(){
             _cboMeasurement.select2('val',null);
             _cboCredit.select2('val',0);
             _cboDebit.select2('val',0);
+            _cboPrimaryUnit.select2('val',1);
             $('#child_unit_desc').prop('required',false);
            $('#child_unit_id').prop('required',false);
             $('#is_tax_exempt').attr('checked', false);
@@ -663,6 +671,8 @@ $(document).ready(function(){
             _cboDebit.select2('val',data.expense_account_id);
 
             _cboTaxGroup.select2('val',data.tax_type_id);
+
+            _cboPrimaryUnit.select2('val',data.primary_unit);
 
 
 
@@ -1348,6 +1358,14 @@ $('#is_bulk').prop("checked") ?  _data.push({name : "is_bulk" , value : '1'   })
                                                             <div class="form-group" style="margin-bottom:0px;text-align: left;margin-left: 5px;">
                                                                     <label class="" for="is_bulk" style="text-align: left;"><input type="checkbox" id="is_bulk" style="transform: scale(2.0);">  &nbsp;&nbsp;For Bulk and Retail ?</label>
                                                             </div>
+                                                                                                                   <div class="form-group col-sm-4" style="margin-bottom:0px;">
+
+                                                                <label class=""><b class="required">*</b>Primary Unit</label>
+                                                                <select name="primary_unit" id="primary_unit" data-error-msg="Primary Unit is required." required>
+                                                                    <option value="1">Bulk</option>
+                                                                    <option value="0">Retail</option>
+                                                                </select> 
+                                                            </div> 
                                                                 <div class="col-lg-12 container-fluid" style="padding: 0px;">
                                                        <div class="form-group col-sm-4" style="margin-bottom:0px;">
 

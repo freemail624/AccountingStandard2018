@@ -27,6 +27,7 @@
 <script type="text/javascript" src="assets/plugins/notify/pnotify.core.js"></script>
 <script type="text/javascript" src="assets/plugins/notify/pnotify.buttons.js"></script>
 <script type="text/javascript" src="assets/plugins/notify/pnotify.nonblock.js"></script>
+<script type="text/javascript" src="assets/plugins/shortcut/shortcut.js"></script>
 
 
 
