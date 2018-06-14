@@ -29,7 +29,12 @@
 	        $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', true);
 	        $data['title'] = 'Stock Card / Bin Card';
 	        $data['products']= $this->Products_model->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE ),'product_id,product_desc,is_bulk');
-	        $this->load->view('stock_card_view',$data);
+
+	        if(in_array('5-1',$this->session->user_rights)){
+	        	$this->load->view('stock_card_view',$data);
+	       	}else{
+	       		redirect(base_url('dashboard'));
+	       	}
 		}
 
 		function transaction($txn)

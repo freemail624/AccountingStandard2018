@@ -22,6 +22,7 @@ class Sales_invoice extends CORE_Controller
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
         $this->load->model('Cash_invoice_model');
+        $this->load->model('Customer_type_model');
 
 
     }
@@ -52,6 +53,10 @@ class Sales_invoice extends CORE_Controller
         );
 
         $data['refproducts']=$this->Refproduct_model->get_list(
+            'is_deleted=FALSE'
+        );
+
+        $data['customer_type']=$this->Customer_type_model->get_list(
             'is_deleted=FALSE'
         );
 
@@ -178,6 +183,10 @@ class Sales_invoice extends CORE_Controller
                         'products.child_unit_id',
                         'products.parent_unit_id',
                         'products.child_unit_desc',
+                        'products.discounted_price',
+                        'products.dealer_price',
+                        'products.distributor_price',
+                        'products.public_price',
                         '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.parent_unit_id) as parent_unit_name',
                         '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name'
                     ),
@@ -224,7 +233,7 @@ class Sales_invoice extends CORE_Controller
 
                 //treat NOW() as function and not string
                 $m_invoice->set('date_created','NOW()'); //treat NOW() as function and not string
-
+                $m_invoice->customer_type_id=$this->input->post('customer_type_id',TRUE);
                 $m_invoice->customer_id=$this->input->post('customer',TRUE);
                 $m_invoice->salesperson_id=$this->input->post('salesperson_id',TRUE);
                 $m_invoice->department_id=$this->input->post('department',TRUE);
@@ -367,6 +376,7 @@ class Sales_invoice extends CORE_Controller
                     $m_invoice->begin();
 
                     //$m_invoice->sales_inv_no=$sales_inv_no;
+                    $m_invoice->customer_type_id=$this->input->post('customer_type_id',TRUE);
                     $m_invoice->customer_id=$this->input->post('customer',TRUE);
                     $m_invoice->department_id=$this->input->post('department',TRUE);
                     $m_invoice->remarks=$this->input->post('remarks',TRUE);
@@ -585,29 +595,30 @@ class Sales_invoice extends CORE_Controller
             //***************************************************************************************
             case 'sales-for-review':
                 $m_sales_invoice=$this->Sales_invoice_model;
-                $response['data']=$m_sales_invoice->get_list(
+                // $response['data']=$m_sales_invoice->get_list(
 
-                    array(
-                        'sales_invoice.is_active'=>TRUE,
-                        'sales_invoice.is_deleted'=>FALSE,
-                        'sales_invoice.is_journal_posted'=>FALSE
-                    ),
+                //     array(
+                //         'sales_invoice.is_active'=>TRUE,
+                //         'sales_invoice.is_deleted'=>FALSE,
+                //         'sales_invoice.is_journal_posted'=>FALSE
+                //     ),
 
-                    array(
-                        'sales_invoice.sales_invoice_id',
-                        'sales_invoice.sales_inv_no',
-                        'sales_invoice.remarks',
-                        'DATE_FORMAT(sales_invoice.date_invoice,"%m/%d/%Y") as date_invoice',
-                        'customers.customer_name'
-                    ),
+                //     array(
+                //         'sales_invoice.sales_invoice_id',
+                //         'sales_invoice.sales_inv_no',
+                //         'sales_invoice.remarks',
+                //         'DATE_FORMAT(sales_invoice.date_invoice,"%m/%d/%Y") as date_invoice',
+                //         'customers.customer_name'
+                //     ),
 
-                    array(
-                        array('customers','customers.customer_id=sales_invoice.customer_id','left')
-                    ),
-                    'sales_invoice.sales_invoice_id DESC'
-                );
+                //     array(
+                //         array('customers','customers.customer_id=sales_invoice.customer_id','left')
+                //     ),
+                //     'sales_invoice.sales_invoice_id DESC'
+                // );
+                // OLD Response - Invoice not subject to finalizing are still showing up so i revised the code                
 
-
+                $response['data']=$m_sales_invoice->get_sales_invoice_for_review();
                 echo json_encode($response);
                 break;
 
@@ -683,6 +694,7 @@ class Sales_invoice extends CORE_Controller
                 'sales_invoice.customer_id',
                 'sales_invoice.inv_type',
                 'sales_invoice.contact_person',
+                'sales_invoice.customer_type_id',
                 'DATE_FORMAT(sales_invoice.date_invoice,"%m/%d/%Y") as date_invoice',
                 'DATE_FORMAT(sales_invoice.date_due,"%m/%d/%Y") as date_due',
                 'departments.department_id',

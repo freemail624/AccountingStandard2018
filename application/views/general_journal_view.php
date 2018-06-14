@@ -132,18 +132,19 @@
 <!--                 <div class="panel-heading">
                     <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; General Journal </b>
                 </div> -->
-                <div class="panel-body table-responsive">
-                    <h2 class="h2-panel-heading">Review General Journal (Issuances)</h2><hr>
+                <div class="panel-body table-responsive" style="">
+                    <h2 class="h2-panel-heading">Review General Journal (Item Transfer)</h2><hr>
                     <div class="row-panel">
                         <table id="tbl_issuance_review" class="table table-striped" cellspacing="0" width="100%">
                             <thead class="">
                             <tr>
                                 <th></th>
-                                <th>Slip #</th>
+                                <th>Transfer #</th>
+                                <th>Transfer Type</th>
+                                <th>Department</th>
                                 <th>Date Issued</th>
                                 <th>Terms</th>
                                 <th>Remarks</th>
-                                <th>Department</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -156,9 +157,6 @@
             </div>
 
         <div class="panel panel-default">
-<!--                 <div class="panel-heading">
-                    <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; General Journal </b>
-                </div> -->
                 <div class="panel-body table-responsive">
                     <h2 class="h2-panel-heading">Review General Journal (Adjustments)</h2><hr>
                     <div class="row-panel">
@@ -970,8 +968,8 @@ $(document).ready(function(){
 
         dtReview=$('#tbl_issuance_review').DataTable({
             "bLengthChange":false,
-                "order": [[ 1, "desc" ]],
-            "ajax" : "Issuances/transaction/issuance-for-review",
+                // "order": [[ 1, "desc" ]],
+            "ajax" : "Issuance_department/transaction/issuance-department-for-review",
             "columns": [
                 {
                     "targets": [0],
@@ -980,17 +978,18 @@ $(document).ready(function(){
                     "data":           null,
                     "defaultContent": ""
                 },
-                { targets:[1],data: "slip_no" },
-                { targets:[2],data: "date_issued" },
-                { targets:[3],data: "terms" },
-                { targets:[4],data: "remarks" },
-                { targets:[5],data: "department_name" }
+                { targets:[1],data: "trn_no" },
+                { targets:[2],data: "trn_type" },
+                { targets:[3],data: "department" },
+                { targets:[4],data: "date_issued" },
+                { targets:[5],data: "terms" },
+                { targets:[6],data: "remarks" }
             ]
         });
 
         dtReviewAdjustment=$('#tbl_adjustment_review').DataTable({
             "bLengthChange":false,
-                "order": [[ 1, "desc" ]],
+                // "order": [[ 1, "desc" ]],
             "ajax" : "Adjustments/transaction/adjustment-for-review",
             "columns": [
                 {
@@ -1188,7 +1187,7 @@ $(document).ready(function(){
                     $.ajax({
                         "dataType":"html",
                         "type":"POST",
-                        "url":"Templates/layout/issuance-gje-for-review?id="+ d.issuance_id,
+                        "url":"Templates/layout/issuance-department-gje-for-review?id="+ d.issuance_department_id+"&type="+d.trn_type,
                         "beforeSend" : function(){
                             row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
                         }
@@ -1200,8 +1199,8 @@ $(document).ready(function(){
 
                         reInitializeNumeric();
 
-                        var tbl=$('#tbl_entries_for_review_'+ d.issuance_id);
-                        var parent_tab_pane=$('#journal_review_'+ d.issuance_id);
+                        var tbl=$('#tbl_entries_for_review_'+ d.issuance_department_id);
+                        var parent_tab_pane=$('#journal_review_'+ d.issuance_department_id);
                         reInitializeDropDownAccounts(tbl);
                         reInitializeChildEntriesTable(tbl);
                         reInitializeChildElements(parent_tab_pane);

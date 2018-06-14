@@ -89,23 +89,7 @@ class Adjustments extends CORE_Controller
 
              case 'adjustment-for-review': 
                 $m_adjustment=$this->Adjustment_model;
-                $response['data']=$m_adjustment->get_list(
-                    'adjustment_info.is_active=TRUE AND adjustment_info.is_deleted=FALSE AND adjustment_info.is_journal_posted=FALSE',
-                    array(
-                        'adjustment_info.adjustment_id',
-                        'adjustment_info.adjustment_code',
-                        'adjustment_info.remarks',
-                        'adjustment_info.adjustment_type',
-                        'adjustment_info.date_created',
-                        'DATE_FORMAT(adjustment_info.date_adjusted,"%m/%d/%Y") as date_adjusted',
-                        'departments.department_id',
-                        'departments.department_name'
-                    ),
-                    array(
-                        array('departments','departments.department_id=adjustment_info.department_id','left')
-                    ),
-                    'adjustment_info.adjustment_id DESC'
-                );
+                $response['data']=$m_adjustment->get_adjustments_for_review();
                 echo json_encode($response);
                 break;
 

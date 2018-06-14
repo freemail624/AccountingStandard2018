@@ -190,7 +190,17 @@
                             <?php } ?>
                         </select>
                     </div>
-                    <div class="col-sm-2 col-sm-offset-5">
+                    <div class="col-sm-4">
+                        SalesPerson :<br/>
+                        <select name="salesperson_id" id="cbo_salesperson">
+                            <option value="0">[ Create New Salesperson ]</option>
+                            <?php foreach($salespersons as $salesperson){ ?>
+                                <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->acr_name.' - '.$salesperson->fullname; ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+
+                    <div class="col-sm-3 ">
                         SO # :<br />
                         <div class="input-group">
                             <span class="input-group-addon">
@@ -213,16 +223,16 @@
                             <?php } ?>
                         </select>
                     </div>
-                    <div class="col-sm-4">
-                        SalesPerson :<br/>
-                        <select name="salesperson_id" id="cbo_salesperson">
-                            <option value="0">[ Create New Salesperson ]</option>
-                            <?php foreach($salespersons as $salesperson){ ?>
-                                <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->acr_name.' - '.$salesperson->fullname; ?></option>
-                            <?php } ?>
-                        </select>
-                    </div>
-                    <div class="col-sm-2 col-sm-offset-1">
+                        <div class="col-sm-4">
+                            Customer Type :<br>
+                            <select name="customer_type_id" id="cbo_customer_type">
+                                <option value="0">None</option>
+                                <?php foreach($customer_type as $customer_type){ ?>
+                                    <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                    <div class="col-sm-3">
                         Order Date : <br />
                         <div class="input-group">
                             <input type="text" id="order_default" name="date_order" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date Order" data-error-msg="Please set the date this items are ordered!" required>
@@ -282,7 +292,7 @@
                                 <td>Total After Discount:</td>
                                 <td id="td_total_after_discount" style="text-align: right">0.00</td>
 
-                                <td style="text-align: right;" colspan="2">Total before tax:</td>
+                                <td style="text-align: right;" colspan="2">Total Before Tax:</td>
                                 <td id="td_total_before_tax" style="text-align: right">0.00</td>
                                 <td></td>
                             </tr>
@@ -666,7 +676,7 @@
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj;
     var _cboDepartments; var _cboDepartment; var _cboSalesperson; var _cboCustomers; var _lookUpPrice; var products;
-    var _line_unit;
+    var _line_unit; var _cboCustomerType;
  
     /*var oTableItems={
         qty : 'td:eq(0)',
@@ -696,6 +706,7 @@ $(document).ready(function(){
         total : 'td:eq(8)',
         vat_input : 'td:eq(9)',
         net_vat : 'td:eq(10)',
+        item_id : 'td:eq(11)',
         bulk_price : 'td:eq(13)',
         retail_price : 'td:eq(14)'
     };
@@ -765,6 +776,12 @@ $(document).ready(function(){
             placeholder: "Please select Product Type",
             allowClear: false
         });*/
+
+
+        _cboCustomerType=$("#cbo_customer_type").select2({
+            allowClear: false
+        });
+
         $('.numeric').autoNumeric('init');
         $('#mobile_no').keypress(validateNumber);
         $('#landline').keypress(validateNumber);
@@ -919,6 +936,12 @@ $(document).ready(function(){
                     total=getFloat(suggestion.sale_price);
                 }*/
                 //alert(suggestion.sale_price);
+                // if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
+                //     showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
+                //     return;
+                // }
+
+
                 if(getFloat(suggestion.CurrentQty) <= 0){
                     showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
                 }else if(getFloat(suggestion.CurrentQty) <= getFloat(suggestion.product_warn) ){
@@ -926,9 +949,23 @@ $(document).ready(function(){
                 }
                 var tax_rate=suggestion.tax_rate; //base on the tax rate set to current product
                 //choose what purchase cost to be use
+                _customer_type_ = _cboCustomerType.val();
                 var sale_price=0.00;
-                sale_price=suggestion.sale_price;
-                //alert(suggestion.sale_price);
+
+                if(_customer_type_ == '' || _customer_type_ == 0){
+                    sale_price=suggestion.sale_price;
+                }else if(_customer_type_ == '1' ){ // DISCOUNTED CUSTOMER TYPE
+                    sale_price=suggestion.discounted_price;
+                }else if(_customer_type_ == '2' ){ // DEALER CUSTOMER TYPE
+                    sale_price=suggestion.dealer_price;
+                }else if(_customer_type_ == '3' ){ // DISTRIBUTOR CUSTOMER TYPE
+                    sale_price=suggestion.distributor_price;
+                }else if(_customer_type_ == '4' ){ // PUBLIC CUSTOMER TYPE
+                    sale_price=suggestion.public_price;
+                }else{
+                    sale_price=suggestion.sale_price;
+                }
+
                 var total=getFloat(sale_price);
                 var net_vat=0;
                 var vat_input=0;
@@ -943,15 +980,23 @@ $(document).ready(function(){
                     net_vat=total;
                     vat_input=0;
                 }
-                bulk_price = suggestion.sale_price;
+                bulk_price = sale_price;
 
                 if(suggestion.is_bulk == 1){
-                    retail_price = getFloat(suggestion.sale_price) / getFloat(suggestion.child_unit_desc);
+                    retail_price = getFloat(sale_price) / getFloat(suggestion.child_unit_desc);
 
                 }else if (suggestion.is_bulk== 0){
                     retail_price = 0;
                 }
-                if(suggestion.primary_unit == 1){ suggis_parent = 1;}else{ suggis_parent = 0;}                
+                if(suggestion.primary_unit == 1){ 
+                        suggis_parent = 1;
+                        temp_inv_price = sale_price;
+                }else{ 
+                        suggis_parent = 0;
+                        temp_inv_price = retail_price;
+                        net_vat = getFloat(net_vat) / getFloat(suggestion.child_unit_desc);
+                        vat_input = getFloat(vat_input) / getFloat(suggestion.child_unit_desc);
+                }                
                 $('#tbl_items > tbody').append(newRowItem({
                     so_qty : "1",
                     product_code : suggestion.product_code,
@@ -961,25 +1006,25 @@ $(document).ready(function(){
                     so_line_total_discount : "0.00",
                     tax_exempt : false,
                     so_tax_rate : tax_rate,
-                    so_gross : total,
-                    so_price : total,
+                    so_gross : temp_inv_price,
+                    so_price : temp_inv_price,
                     so_discount : "0.00",
                     tax_type_id : null,
-                    so_line_total_price : total,
+                    so_line_total_price : temp_inv_price,
                     so_non_tax_amount: net_vat,
                     so_tax_amount:vat_input,
                     batch_no : suggestion.batch_no,
                     exp_date : suggestion.exp_date,
-                bulk_price: bulk_price,
-                retail_price: retail_price,
-                is_bulk: suggestion.is_bulk,
-                parent_unit_id : suggestion.parent_unit_id,
-                child_unit_id : suggestion.child_unit_id,
-                child_unit_name : suggestion.child_unit_name,
-                parent_unit_name : suggestion.parent_unit_name,
-                is_parent: suggis_parent,
-                primary_unit:suggestion.primary_unit,
-                a:a
+                        bulk_price: bulk_price,
+                        retail_price: retail_price,
+                        is_bulk: suggestion.is_bulk,
+                        parent_unit_id : suggestion.parent_unit_id,
+                        child_unit_id : suggestion.child_unit_id,
+                        child_unit_name : suggestion.child_unit_name,
+                        parent_unit_name : suggestion.parent_unit_name,
+                        is_parent: suggis_parent,
+                        primary_unit:suggestion.primary_unit,
+                        a:a
                 }));
                 changetxn ='active';
                 _line_unit=$('.line_unit'+a).select2({
@@ -1144,6 +1189,7 @@ $(document).ready(function(){
             $('#cbo_departments').select2('val', null);
             $('#cbo_department').select2('val', null);
             $('#cbo_customers').select2('val', null);
+            $('#cbo_customer_type').select2('val', 0);
             getproduct().done(function(data){
                 products.clear();
                 products.local = data.data;
@@ -1191,6 +1237,7 @@ $(document).ready(function(){
             $('#cbo_department').select2('val',data.department_id);
             $('#cbo_customers').select2('val',data.customer_id);
             $('#cbo_salesperson').select2('val',data.salesperson_id);
+            $('#cbo_customer_type').select2('val',data.customer_type_id);
             $.ajax({
                 url : 'Sales_order/transaction/items/'+data.sales_order_id,
                 type : "GET",
@@ -1206,9 +1253,25 @@ $(document).ready(function(){
                     $('#tbl_items > tbody').html('');
                       a=0;
                     $.each(rows,function(i,value){
+                        _customer_type_ = _cboCustomerType.val();
+                        var temp_sale_price=0.00;
+
+                            if(_customer_type_ == '' || _customer_type_ == 0){
+                                temp_sale_price=value.sale_price;
+                            }else if(_customer_type_ == '1' ){ // DISCOUNTED CUSTOMER TYPE
+                                temp_sale_price=value.discounted_price;
+                            }else if(_customer_type_ == '2' ){ // DEALER CUSTOMER TYPE
+                                temp_sale_price=value.dealer_price;
+                            }else if(_customer_type_ == '3' ){ // DISTRIBUTOR CUSTOMER TYPE
+                                temp_sale_price=value.distributor_price;
+                            }else if(_customer_type_ == '4' ){ // PUBLIC CUSTOMER TYPE
+                                temp_sale_price=value.public_price;
+                            }else{
+                                temp_sale_price=value.sale_price;
+                            }
                         var retail_price;
                         if(value.is_bulk == 1){
-                            retail_price = getFloat(value.sale_price) / getFloat(value.child_unit_desc);
+                            retail_price = getFloat(temp_sale_price) / getFloat(value.child_unit_desc);
                         }else if (value.is_bulk == 0){
                             retail_price = 0;
                         }
@@ -1239,7 +1302,7 @@ $(document).ready(function(){
                             parent_unit_id : getFloat(value.parent_unit_id),
                             is_bulk: value.is_bulk,
                             is_parent : value.is_parent,
-                            bulk_price: value.sale_price,
+                            bulk_price: temp_sale_price,
                             retail_price: retail_price,
                             a:a
 
@@ -1634,6 +1697,20 @@ $(document).ready(function(){
     var initializeChange=function(){
 
     };
+
+    var checkProduct= function(check_id){
+        var prodstat=true;
+        var rowcheck=$('#tbl_items > tbody tr');
+        $.each(rowcheck,function(){
+            item = parseFloat(accounting.unformat($(oTableItems.item_id,$(this)).find('input').val()));
+            if(check_id == item){
+                prodstat=false;
+                return false;
+            }
+        });
+         return prodstat;    
+    };
+
 });
 </script>
 </body>

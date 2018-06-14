@@ -735,6 +735,33 @@ GROUP BY n.customer_id HAVING total_balance > 0";
          return $this->db->query($sql)->result();
     }
 
+
+    function get_sales_invoice_for_review(){
+        $sql='SELECT 
+        si.sales_invoice_id,
+        si.sales_inv_no,
+        si.remarks,
+        DATE_FORMAT(si.date_invoice,"%m/%d/%Y") as date_invoice,
+        c.customer_name
+        FROM sales_invoice si 
+        LEFT JOIN customers c on c.customer_id  = si.customer_id
+        LEFT JOIN (SELECT 
+        sii.sales_invoice_id,
+        SUM(IFNULL(p.income_account_id,0)) as identifier
+        FROM sales_invoice_items sii
+        LEFT JOIN products p ON p.product_id = sii.product_id
+        GROUP BY sii.sales_invoice_id) as sii ON sii.sales_invoice_id = si.sales_invoice_id
+
+
+        WHERE
+        si.is_active = TRUE AND
+        si.is_deleted = FALSE AND
+        si.is_journal_posted = FALSE AND 
+        sii.identifier > 0';
+
+        return $this->db->query($sql)->result();
+    }
+
 }
 
 

@@ -170,8 +170,8 @@
         <input type="checkbox" name="invoice[]" value="service_invoice_items" id="service_invoice_items" class="css-checkbox"><label class="css-label " for="service_invoice_items">Service Invoice Items</label>(<?php echo $current_count->service_invoice_items; ?>)<br>
         <input type="checkbox" name="invoice[]" value="adjustment_info" id="adjustment_info" class="css-checkbox"><label class="css-label " for="adjustment_info">Adjustments Info</label>(<?php echo $current_count->adjustment_info; ?>)<br>
         <input type="checkbox" name="invoice[]" value="adjustment_items" id="adjustment_items" class="css-checkbox"><label class="css-label " for="adjustment_items">Adjustments Items</label>(<?php echo $current_count->adjustment_items; ?>)<br>
-        <input type="checkbox" name="invoice[]" value="issuance_info" id="issuance_info" class="css-checkbox"><label class="css-label " for="issuance_info">Issuance Info</label>(<?php echo $current_count->issuance_info; ?>)<br>
-        <input type="checkbox" name="invoice[]" value="issuance_items" id="issuance_items" class="css-checkbox"><label class="css-label " for="issuance_items">Issuance Items</label>(<?php echo $current_count->issuance_items; ?>)<br>
+        <input type="checkbox" name="invoice[]" value="issuance_department_info" id="issuance_department_info" class="css-checkbox"><label class="css-label " for="issuance_department_info">Issuance Department Info</label>(<?php echo $current_count->issuance_department_info; ?>)<br>
+        <input type="checkbox" name="invoice[]" value="issuance_department_items" id="issuance_department_items" class="css-checkbox"><label class="css-label " for="issuance_department_items">Issuance Department Items</label>(<?php echo $current_count->issuance_department_items; ?>)<br>
         </form>
 
          <button id="btn_invoices" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Truncate Invoices</button>

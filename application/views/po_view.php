@@ -114,7 +114,7 @@
         }
 
         .modal-body {
-            padding-left:0px !important;
+            /*padding-left:0px !important;*/
         }
 
         .form-group {

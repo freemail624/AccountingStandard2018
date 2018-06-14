@@ -105,17 +105,20 @@
                                                 <?php } ?>
                                             </select>
                                         </div>
-                                        <div class="col-xs-6 col-sm-3">
-                                            <label><b class="required">*</b> Category</label><br>
-                                            <button id="btn_print" class="btn btn-primary btn-block" style="margin-top: 5px;"><i class="fa fa-print"></i> Print Report</button>
-                                        </div>
-                                        <div class="col-xs-6 col-sm-3">
+                                        <div class="col-xs-4 col-sm-2">
                                             <label><b class="required">*</b> Category</label><br>
                                             <select id="cbo_cat" class="form-control" style="width: 100%">
                                                     <option value="bulk" id="bulk">Bulk</option>
                                                     <option value="retail" id="retail">Retail</option>
                                             </select>
                                         </div>
+                                        <div class="col-xs-4 col-sm-2"><br><br>
+                                            <button id="btn_print" class="btn btn-primary btn-block" style="margin-top: 5px;vertical-align: middle;"><i class="fa fa-print"></i> Print Report</button>
+                                        </div>
+                                        <div class="col-xs-4 col-sm-2"><br><br>
+                                            <button id="btn_export" class="btn btn-success btn-block" style="margin-top: 5px;"><i class="fa fa-file-excel-o"></i> Export</button>
+                                        </div>
+
                                 </div><br>
                                 <div class="container-fluid">
                                 <table style="width: 100%" class="table table-striped">
@@ -131,6 +134,13 @@
 
                                         <td  style="width: 15%;" class="class-title">Suggested Retail Price</td>
                                         <td  style="width: 35%;" id="sale_price"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 15%;" class="class-title">Unit of Measurement</td>
+                                        <td style="width: 35%;" id="unit_of_measurement"></td>
+
+                                        <td  style="width: 15%;" class="class-title"></td>
+                                        <td  style="width: 35%;" id=""></td>
                                     </tr>
                                 </table>
                                 <table id="tbl_stock" class="table table-striped" style="width: 100%;,margin-top: 20px;">
@@ -210,11 +220,11 @@ $(document).ready(function(){
         });
 
         $('#btn_print').click(function(){
-            window.open('SOA/transaction/print?cusid='+_cboCustomers.val());
-        });
+            window.open('products/transaction/history-product?id='+_cboProduct.val()+'&type=stockcard_print&cat='+_cboCat.val())
+        });;
 
         $('#btn_export').click(function(){
-            window.open('SOA/transaction/export?cusid='+_cboCustomers.val());
+            window.open('products/Export_Stock?id='+_cboProduct.val()+'&type=stockcard_print&cat='+_cboCat.val())
 
         });
 
@@ -258,11 +268,13 @@ $(document).ready(function(){
             contentType : false,
             success : function(response){
 
-            $('#product_desc').html(response.product_info.product_desc);
-            $('#purchase_cost').html(accounting.formatNumber(response.product_info.purchase_cost,2));
-            $('#sale_price').html(response.product_info.sale_price);
-            $('#product_code').html(accounting.formatNumber(response.product_info.product_code,2));
+
             if(_cboCat.val() == 'bulk'){
+                    $('#unit_of_measurement').html(response.product_info.parent_unit_name);
+                    $('#product_desc').html(response.product_info.product_desc);
+                    $('#purchase_cost').html(accounting.formatNumber(response.product_info.purchase_cost,2));
+                    $('#sale_price').html(accounting.formatNumber(response.product_info.sale_price,2));
+                    $('#product_code').html(response.product_info.product_code);
                     $.each(response.products_parent, function(index,value){
                         $('#tbl_stock #parent').append(
                             '<tr>'+
@@ -277,6 +289,11 @@ $(document).ready(function(){
                         );
                     });
             }else if (_cboCat.val() == 'retail'){
+                $('#unit_of_measurement').html(response.product_info.child_unit_name);
+                $('#product_desc').html(response.product_info.product_desc);
+                $('#purchase_cost').html(accounting.formatNumber((response.product_info.purchase_cost / response.product_info.child_unit_desc),2))
+                $('#sale_price').html(accounting.formatNumber((response.product_info.sale_price / response.product_info.child_unit_desc),2));
+                $('#product_code').html(response.product_info.product_code);
                 $.each(response.products_child, function(index,value){
                     $('#tbl_stock #parent').append(
                         '<tr>'+

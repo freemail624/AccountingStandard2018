@@ -802,6 +802,14 @@ dt_si = $('#tbl_si_list').DataTable({
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.issuance_department_id;
 
+
+            _is_journal_posted_from=data.is_journal_posted_from;
+            _is_journal_posted_to=data.is_journal_posted_to;
+            if(_is_journal_posted_from > 0 || _is_journal_posted_to > 0){
+                showNotification({title:"<b style='color:white;'> Error!</b>",stat:"error",msg:"Cannot Edit: Invoice is already Posted in General Journal."});
+                return;
+            }
+
                 getproduct().done(function(data){
                     products.clear();
                     products.local = data.data;
@@ -896,7 +904,12 @@ dt_si = $('#tbl_si_list').DataTable({
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.issuance_department_id;
-
+            _is_journal_posted_from=data.is_journal_posted_from;
+            _is_journal_posted_to=data.is_journal_posted_to;
+            if(_is_journal_posted_from > 0 || _is_journal_posted_to > 0){
+                showNotification({title:"<b style='color:white;'> Error!</b>",stat:"error",msg:"Cannot Delete: Invoice is already Posted in General Journal."});
+                return;
+            }
             $('#modal_confirmation').modal('show');
 
         });

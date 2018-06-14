@@ -9,7 +9,7 @@ function __construct()
 {
 parent::__construct();
 }
-
+// OUT ADJUSTMENT
  function get_journal_entries_2($adjustment_id){
         $sql="SELECT 
         main.* 
@@ -24,29 +24,26 @@ parent::__construct();
 		FROM 
 		adjustment_items adj 
 		INNER JOIN products p ON p.product_id = adj.product_id
-		WHERE adj.adjustment_id = $adjustment_id AND p.expense_account_id > 0
+		WHERE adj.adjustment_id = $adjustment_id AND p.income_account_id > 0
 		GROUP BY adj.adjustment_id
 
 		UNION ALL
 
 		SELECT 
-		p.expense_account_id as account_id,
+		p.income_account_id as account_id,
 		0 as dr_amount,
 		SUM(IFNULL(adj.adjust_non_tax_amount,0)) as cr_amount,
 		'' as memo
 
 		FROM adjustment_items adj
 		INNER JOIN products p ON p.product_id = adj.product_id
-		WHERE adj.adjustment_id= $adjustment_id AND p.expense_account_id > 0
-		GROUP BY p.expense_account_id) as main 
+		WHERE adj.adjustment_id= $adjustment_id AND p.income_account_id > 0
+		GROUP BY p.income_account_id) as main 
 		WHERE main.dr_amount > 0 OR main.cr_amount > 0";
-
         return $this->db->query($sql)->result();
 
-
-
     }
-
+// IN ADJUSTMENT
      function get_journal_entries_2_in($adjustment_id){
         $sql="SELECT 
         main.* 
@@ -88,6 +85,75 @@ parent::__construct();
 
     }
 
+
+     function get_adjustments_for_review(){
+        $sql='SELECT main.*
+
+			FROM(SELECT 
+			ai.adjustment_id,
+			ai.adjustment_code,
+			ai.remarks,
+			ai.adjustment_type,
+			ai.date_created,
+			DATE_FORMAT(ai.date_adjusted,"%m/%d/%Y") as date_adjusted,
+			d.department_id,
+			d.department_name
+
+			FROM adjustment_info ai
+
+			LEFT JOIN departments d ON d.department_id = ai.department_id
+
+			LEFT JOIN (SELECT 
+			aii.adjustment_id, SUM(IFNULL(p.expense_account_id,0)) as identifier
+			FROM adjustment_items aii 
+			LEFT JOIN products p ON p.product_id = aii.product_id
+			GROUP BY aii.adjustment_id) as aii ON aii.adjustment_id = ai.adjustment_id
+
+
+			WHERE
+			ai.is_active=TRUE AND
+			ai.is_deleted=FALSE AND 
+			is_journal_posted=FALSE
+			AND ai.adjustment_type = "IN"
+			AND aii.identifier > 0
+
+			UNION ALL
+
+
+			SELECT 
+
+			ai.adjustment_id,
+			ai.adjustment_code,
+			ai.remarks,
+			ai.adjustment_type,
+			ai.date_created,
+			DATE_FORMAT(ai.date_adjusted,"%m/%d/%Y") as date_adjusted,
+			d.department_id,
+			d.department_name
+
+			FROM adjustment_info ai
+
+			LEFT JOIN departments d ON d.department_id = ai.department_id
+
+			LEFT JOIN (SELECT 
+			aii.adjustment_id, SUM(IFNULL(p.expense_account_id,0)) as identifier
+			FROM adjustment_items aii 
+			LEFT JOIN products p ON p.product_id = aii.product_id
+			GROUP BY aii.adjustment_id) as aii ON aii.adjustment_id = ai.adjustment_id
+
+			WHERE
+			ai.is_active=TRUE AND
+			ai.is_deleted=FALSE AND 
+			is_journal_posted=FALSE
+			AND ai.adjustment_type = "OUT"
+			AND aii.identifier > 0) as main
+
+			ORDER BY main.adjustment_id';
+        return $this->db->query($sql)->result();
+
+
+
+    }
 }
 
 

@@ -481,31 +481,35 @@ class Deliveries extends CORE_Controller
             //****************************************list of purchase invoice that are not yet posted as journal***********************************************
             case 'purchases-for-review':
                 $m_delivery_invoice=$this->Delivery_invoice_model;
-                $response['data']=$m_delivery_invoice->get_list(
+                // $response['data']=$m_delivery_invoice->get_list(
 
-                    array(
-                        'delivery_invoice.is_active'=>TRUE,
-                        'delivery_invoice.is_deleted'=>FALSE,
-                        'delivery_invoice.is_journal_posted'=>FALSE
-                    ),
+                //     array(
+                //         'delivery_invoice.is_active'=>TRUE,
+                //         'delivery_invoice.is_deleted'=>FALSE,
+                //         'delivery_invoice.is_journal_posted'=>FALSE
+                //     ),
 
-                    array(
-                        'delivery_invoice.dr_invoice_id',
-                        'delivery_invoice.dr_invoice_no',
-                        'CONCAT_WS(" ",delivery_invoice.terms,delivery_invoice.duration)as term_description',
-                        'delivery_invoice.remarks',
-                        'DATE_FORMAT(delivery_invoice.date_delivered,"%m/%d/%Y") as date_delivered',
-                        'suppliers.supplier_name'
-                    ),
+                //     array(
+                //         'delivery_invoice.dr_invoice_id',
+                //         'delivery_invoice.dr_invoice_no',
+                //         'CONCAT_WS(" ",delivery_invoice.terms,delivery_invoice.duration)as term_description',
+                //         'delivery_invoice.remarks',
+                //         'DATE_FORMAT(delivery_invoice.date_delivered,"%m/%d/%Y") as date_delivered',
+                //         'suppliers.supplier_name'
+                //     ),
 
-                    array(
-                        array('suppliers','suppliers.supplier_id=delivery_invoice.supplier_id','left')
-                    ),
-                    'delivery_invoice.dr_invoice_id DESC'
+                //     array(
+                //         array('suppliers','suppliers.supplier_id=delivery_invoice.supplier_id','left')
+                //     ),
+                //     'delivery_invoice.dr_invoice_id DESC'
 
 
 
-                );
+                // );
+
+                // OLD Response - Invoice not subject to finalizing are still showing up so i revised the code
+
+                $response['data']=$m_delivery_invoice->get_purchases_for_review();
                 echo json_encode($response);
                 break;
             //***************************************************************************************

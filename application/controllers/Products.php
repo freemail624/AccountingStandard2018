@@ -437,6 +437,7 @@ class Products extends CORE_Controller
 
                 $data['product_info'] = $product_info[0];
                 $type=$this->input->get('type');
+                $cat=$this->input->get('cat');
                 $inv=$this->input->get('inv');
                 $data['type'] = $type;
 
@@ -460,7 +461,12 @@ class Products extends CORE_Controller
                 }else if($type == 'stockcard'){
                         echo json_encode($data);
                 }else if($type == 'stockcard_print'){
-                    $this->load->view('template/product_history_content_child',$data);
+                    if($cat == 'bulk'){
+                        $this->load->view('template/Stock_card_parent_content',$data);
+                    }else if ($cat == 'retail'){
+                        $this->load->view('template/Stock_card_child_content',$data);
+
+                    }
                 }
                 break;
                 
@@ -703,5 +709,139 @@ foreach(range('A','D') as $columnID) {
 
 }
 
+
+function Export_Stock(){
+      
+                $m_company_info = $this->Company_model;
+                $company_info=$m_company_info->get_list();
+
+
+
+                $account_integration =$this->Account_integration_model;
+                $a_i=$account_integration->get_list();
+                $account =$a_i[0]->sales_invoice_inventory;
+
+                $product_id=$this->input->get('id');
+                $cat=$this->input->get('cat');
+
+                $department_id=($this->input->get('depid')==null||$this->input->get('depid')==0?0:$this->input->get('depid'));
+                $as_of_date=$this->input->get('date');
+                if($as_of_date==null){ $date = null; }else{$date = date('Y-m-d',strtotime($as_of_date));}
+                $m_products=$this->Products_model;
+                $products_parent=$m_products->get_product_history_with_child($product_id,$department_id,$date,1,1,1);
+                $products_child=$m_products->get_product_history_with_child($product_id,$department_id,$date,1,0,1);
+                $info=$m_products->get_list(
+                    array('product_id'=>$product_id),
+                    array(
+                        'products.*',
+                            '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.parent_unit_id) as parent_unit_name',
+                            '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name'
+                            )
+                );
+                $product_info= $info[0];
+                if($cat == 'bulk'){$cat_name = 'Bulk'; }else if ($cat == 'retail'){$cat_name = 'Retail';}
+
+                $excel=$this->excel;
+                $excel->setActiveSheetIndex(0);
+                ob_start();
+                $excel->getActiveSheet()->mergeCells('A1:D1');
+                $excel->getActiveSheet()->mergeCells('A2:D2');
+                $excel->getActiveSheet()->mergeCells('A3:D3');
+                $excel->getActiveSheet()->mergeCells('A4:D4');
+
+                $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
+                                        ->setCellValue('A2',$company_info[0]->company_address)
+                                        ->setCellValue('A3',$company_info[0]->email_address)
+                                        ->setCellValue('A4',$company_info[0]->mobile_no)
+                                        ->setCellValue('A6','Stock Card / Bin Card ('.$cat_name.')')
+                                        ->setCellValue('A7','As of '.date("F j, Y, g:i a"));
+
+
+          $excel->getActiveSheet()->setCellValue('A9','Product Description')->getStyle('A9')->getFont()->setBold(TRUE)
+          ->getActiveSheet()->setCellValue('B9',$product_info->product_desc)
+          ->setCellValue('A10','Other Description')->getStyle('A10')->getFont()->setBold(TRUE)
+          ->getActiveSheet()->setCellValue('B10',$product_info->product_desc1);
+
+
+          $excel->getActiveSheet()->getStyle('A6')->getFont()->setBold(TRUE);
+          if($cat == 'bulk'){          
+                $purchase_cost = $product_info->purchase_cost;
+                $sale_price =$product_info->sale_price;
+                $excel->getActiveSheet()->setCellValue('E9','Unit of Measurement')->getStyle('E9')->getFont()->setBold(TRUE)
+                        ->getActiveSheet()->setCellValue('F9',$product_info->parent_unit_name);
+            }else if($cat == 'retail'){
+                $purchase_cost = number_format($product_info->purchase_cost,2) / number_format($product_info->child_unit_desc,2);
+                $sale_price = number_format($product_info->sale_price,2) / number_format($product_info->child_unit_desc,2);
+                $excel->getActiveSheet()->setCellValue('E9','Unit of Measurement')->getStyle('E9')->getFont()->setBold(TRUE)
+                        ->getActiveSheet()->setCellValue('F9',$product_info->child_unit_name);
+            }
+
+            $excel->getActiveSheet()->setCellValue('C9','Purchase Cost')->getStyle('C9')->getFont()->setBold(TRUE)
+                    ->getActiveSheet()->setCellValue('D9',$purchase_cost)->getStyle('D9')->getNumberFormat()->setFormatCode('#,##0.00');
+            $excel->getActiveSheet()->setCellValue('C10','Suggested Retail Price')->getStyle('C10')->getFont()->setBold(TRUE)
+                    ->getActiveSheet()->setCellValue('D10',$sale_price)->getStyle('D10')->getNumberFormat()->setFormatCode('#,##0.00');
+            $excel->getActiveSheet()->setCellValue('A12','Transaction Date')->getStyle('A12')->getFont()->setBold(TRUE)
+                    ->getActiveSheet()->setCellValue('B12','Reference')->getStyle('B12')->getFont()->setBold(TRUE)
+                    ->getActiveSheet()->setCellValue('C12','IN')->getStyle('C12')->getFont()->setBold(TRUE)
+                    ->getActiveSheet()->setCellValue('D12','OUT')->getStyle('D12')->getFont()->setBold(TRUE)
+                    ->getActiveSheet()->setCellValue('E12','Balance')->getStyle('E12')->getFont()->setBold(TRUE)
+                    ->getActiveSheet()->setCellValue('F12','Department')->getStyle('F12')->getFont()->setBold(TRUE)
+                    ->getActiveSheet()->setCellValue('G12','Remarks')->getStyle('G12')->getFont()->setBold(TRUE);
+            $excel->getActiveSheet()->getStyle('C12')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+            $excel->getActiveSheet()->getStyle('D12')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+            $excel->getActiveSheet()->getStyle('E12')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+          $i = 12;  foreach ($products_parent as $parent) {
+                                $i++;
+                                $excel->getActiveSheet()->setCellValue('A'.$i,$parent->txn_date);
+                                $excel->getActiveSheet()->setCellValue('B'.$i,$parent->ref_no);
+
+                                if($cat == 'bulk'){
+                                    $excel->getActiveSheet()->setCellValue('C'.$i,number_format($parent->parent_in_qty,2))->getStyle('C'.$i)->getNumberFormat()->setFormatCode('#,##0.00');
+                                    $excel->getActiveSheet()->setCellValue('D'.$i,number_format($parent->parent_out_qty,2))->getStyle('D'.$i)->getNumberFormat()->setFormatCode('#,##0.00');
+                                    $excel->getActiveSheet()->setCellValue('E'.$i,number_format($parent->parent_balance,2))->getStyle('E'.$i)->getNumberFormat()->setFormatCode('#,##0.00');
+                                }else if ($cat == 'retail'){
+                                    $excel->getActiveSheet()->setCellValue('C'.$i,number_format($parent->child_in_qty,2))->getStyle('C'.$i)->getNumberFormat()->setFormatCode('#,##0.00');
+                                    $excel->getActiveSheet()->setCellValue('D'.$i,number_format($parent->child_out_qty,2))->getStyle('D'.$i)->getNumberFormat()->setFormatCode('#,##0.00');
+                                    $excel->getActiveSheet()->setCellValue('E'.$i,number_format($parent->child_balance,2))->getStyle('E'.$i)->getNumberFormat()->setFormatCode('#,##0.00');
+
+                                }
+
+                                $excel->getActiveSheet()->setCellValue('F'.$i,$parent->department_name);
+                                $excel->getActiveSheet()->setCellValue('G'.$i,$parent->remarks);
+
+                                // STYLE
+                                 $excel->getActiveSheet()->getStyle('C'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                                 $excel->getActiveSheet()->getStyle('D'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                                 $excel->getActiveSheet()->getStyle('E'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                                 $excel->getActiveSheet()->getStyle('F'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+                                 $excel->getActiveSheet()->getStyle('G'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+                            }
+
+
+
+
+            foreach(range('A','G') as $columnID) {
+                $excel->getActiveSheet()->getColumnDimension($columnID)
+                    ->setAutoSize(true);
+            }
+            // Redirect output to a client’s web browser (Excel2007)
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="Stock Card of '.trim($product_info->product_desc).' '.date("F j, Y g.i a").'.xlsx"');
+            header('Cache-Control: max-age=0');
+            // If you're serving to IE 9, then the following may be needed
+            header('Cache-Control: max-age=1');
+
+            // If you're serving to IE over SSL, then the following may be needed
+            header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+            header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+            header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+            header ('Pragma: public'); // HTTP/1.0
+
+            $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+            $objWriter->save('php://output');
+
+
+
+}
 
 }

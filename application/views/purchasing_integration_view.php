@@ -113,7 +113,7 @@
 
                     <form id="frm_account_integration" role="form" class="form-horizontal row-border">
                         <br >
-                        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Issuance Details</strong></span></h4>
+                        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Item Transfer (Issuance) Details</strong></span></h4>
 
 
                         <div class="form-group">
@@ -124,7 +124,7 @@
                                         <option value="<?php echo $supplier->supplier_id; ?>" <?php echo ($current_accounts->iss_supplier_id==$supplier->supplier_id?'selected':''); ?>  ><?php echo $supplier->supplier_name; ?></option>
                                     <?php } ?>
                                 </select>
-                                <span class="help-block m-b-none">Please Choose a default Supplier for Issuance Inventory </span>
+                                <span class="help-block m-b-none">Please Choose a default Supplier for Inventory Transfer Items </span>
                             </div>
                         </div>
                         <div class="form-group">
@@ -135,7 +135,7 @@
                                         <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->iss_debit_id==$account->account_id?'selected':''); ?>  ><?php echo $account->account_title; ?></option>
                                     <?php } ?>
                                 </select>
-                            <span class="help-block m-b-none">Please Choose Debit Account for the Issuance of Inventory</span>
+                            <span class="help-block m-b-none">Please Choose Account for Inventory Transfer Items</span>
                             </div><br>
                             
                         </div>

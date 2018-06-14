@@ -24,7 +24,7 @@ class General_journal extends CORE_Controller
                 'Depreciation_expense_model',
                 'Trans_model',
                 'Adjustment_model',
-                'Issuance_model'
+                'Issuance_department_model'
 
             )
         );
@@ -129,22 +129,35 @@ class General_journal extends CORE_Controller
                 $m_journal->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
                 $m_journal->modify($journal_id);
 
-                $issuance_id=$this->input->post('issuance_id',TRUE);
-                if($issuance_id!=null){
-                    $m_issuances=$this->Issuance_model;
-                    $m_issuances->journal_id=$journal_id;
-                    $m_issuances->is_journal_posted=TRUE;
-                    $m_issuances->modify($issuance_id);
+                $issuance_department_id=$this->input->post('issuance_department_id',TRUE);
+                $trn_type=$this->input->post('trn_type',TRUE);
+                if($issuance_department_id!=null){
+                    $m_issuances=$this->Issuance_department_model;
+                    if($trn_type == 'From'){
+                        $m_issuances->is_journal_posted_from=TRUE;
+                        $m_issuances->posted_by_from=$this->session->user_id;
+                        $m_issuances->set('date_posted_from','NOW()');
+                        $m_issuances->journal_id_from=$journal_id;
+                    }else if ($trn_type == 'To'){
+                        $m_issuances->is_journal_posted_to=TRUE;
+                        $m_issuances->posted_by_to=$this->session->user_id;
+                        $m_issuances->set('date_posted_to','NOW()');
+                        $m_issuances->journal_id_to=$journal_id;
+                    }
+
+                    
+                    $m_issuances->modify($issuance_department_id);
 
                 // AUDIT TRAIL START
-                $issuances=$m_issuances->get_list($issuance_id,'slip_no');
+                $issuances=$m_issuances->get_list($issuance_department_id,'trn_no');
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=8; //CRUD
                 $m_trans->trans_type_id=14; // TRANS TYPE
-                $m_trans->trans_log='Finalized Issuance Slip No.'.$issuances[0]->slip_no.' For General Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
+                $m_trans->trans_log='Finalized Issuance Transfer Item  Tranfer No.'.$issuances[0]->trn_no.' For General Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
                 $m_trans->save();
+
                 //AUDIT TRAIL END
                 }
   //if adjustment invoice is available, adjustment invoice is recorded as journal

@@ -48,6 +48,19 @@ class Issuance_department extends CORE_Controller
                 );
                 echo json_encode($response);
                 break;
+
+
+            case 'issuance-department-for-review':  //this returns JSON of Issuance to be rendered on Datatable of accounting issuance
+                $response['data']=$this->Issuance_department_model->issuance_department_for_review();
+                echo json_encode($response);
+                break;
+
+
+
+
+
+
+
             ////****************************************items/products of selected Items***********************************************
             case 'items': //items on the specific PO, loads when edit button is called
                 $m_items=$this->Issuance_department_item_model;
@@ -279,7 +292,9 @@ class Issuance_department extends CORE_Controller
                 'issuance_department_info.terms',
                 'departments.department_id',
                 'departments.department_name as to_department_name',
-                'depfrom.department_name as from_department_name'
+                'depfrom.department_name as from_department_name',
+                'issuance_department_info.is_journal_posted_from',
+                'issuance_department_info.is_journal_posted_to'
             ),
             array(
                 array('departments','departments.department_id=issuance_department_info.to_department_id','left'),

@@ -9,7 +9,7 @@ class Issuance_model extends CORE_Model
     {
         parent::__construct();
     }
-
+ // NOT IN USE
     function get_journal_entries_2($issuance_id){
         $sql="SELECT 
         main.* 

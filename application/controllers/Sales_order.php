@@ -18,6 +18,7 @@ class Sales_order extends CORE_Controller
         $this->load->model('Refproduct_model');
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
+        $this->load->model('Customer_type_model');
 
     }
 
@@ -78,6 +79,10 @@ class Sales_order extends CORE_Controller
         //     )
 
         // );
+
+        $data['customer_type']=$this->Customer_type_model->get_list(
+            'is_deleted=FALSE'
+        );
 
         $data['title'] = 'Sales Order';
         
@@ -153,6 +158,10 @@ class Sales_order extends CORE_Controller
                             'products.child_unit_id',
                             'products.parent_unit_id',
                             'products.child_unit_desc',
+                            'products.discounted_price',
+                            'products.dealer_price',
+                            'products.distributor_price',
+                            'products.public_price',
                             '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.parent_unit_id) as parent_unit_name',
                             '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name'),
                     array(
@@ -183,7 +192,7 @@ class Sales_order extends CORE_Controller
 
                 //treat NOW() as function and not string
                 $m_sales_order->set('date_created','NOW()'); //treat NOW() as function and not string
-
+                $m_sales_order->customer_type_id=$this->input->post('customer_type_id',TRUE);
                 $m_sales_order->department_id=$this->input->post('department',TRUE);
                 $m_sales_order->customer_id=$this->input->post('customer',TRUE);
                 $m_sales_order->remarks=$this->input->post('remarks',TRUE);
@@ -293,7 +302,7 @@ class Sales_order extends CORE_Controller
 
 
                 $m_sales_order->begin();
-
+                $m_sales_order->customer_type_id=$this->input->post('customer_type_id',TRUE);
                 $m_sales_order->department_id=$this->input->post('department',TRUE);
                 $m_sales_order->remarks=$this->input->post('remarks',TRUE);
                 $m_sales_order->customer_id=$this->input->post('customer',TRUE);

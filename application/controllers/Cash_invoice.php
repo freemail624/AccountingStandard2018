@@ -22,10 +22,7 @@ class Cash_invoice extends CORE_Controller
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
         $this->load->model('Sales_invoice_model');
-
-
-
-
+        $this->load->model('Customer_type_model');
     }
 
     public function index() {
@@ -71,59 +68,11 @@ class Cash_invoice extends CORE_Controller
 
         $data['tax_percentage']=(count($tax_rate)>0?$tax_rate[0]->tax_rate:0);
 
-        /*$data['products']=$this->Products_model->get_list(
-
-            'products.is_deleted=FALSE AND products.is_active=TRUE',
-
-            array(
-                'products.product_id',
-                'products.product_code',
-                'products.product_desc' ,
-                'products.product_desc1',
-                'products.is_tax_exempt',
-                'FORMAT(products.sale_price,2)as sale_price',
-                'FORMAT(products.purchase_cost,2)as purchase_cost',
-                'products.unit_id',
-                'units.unit_name'
-            ),
-            array(
-                // parameter (table to join(left) , the reference field)
-                array('units','units.unit_id=products.unit_id','left'),
-                array('categories','categories.category_id=products.category_id','left')
-
-            )
-
-        );*/
-
-
-        // $data['products']=$this->Products_model->get_list(
-        //     null, //no id filter
-        //     array(
-        //                'products.product_id',
-        //                'products.product_code',
-        //                'products.product_desc',
-        //                'products.product_desc1',
-        //                'products.is_tax_exempt',
-        //                'products.size',
-        //                'FORMAT(products.sale_price,2)as sale_price',
-        //                //'FORMAT(products.sale_price,2)as sale_price',
-        //                'FORMAT(products.purchase_cost,2)as purchase_cost',
-        //                'products.unit_id',
-        //                'products.on_hand',
-        //                'units.unit_name',
-        //                'tax_types.tax_type_id',
-        //                'tax_types.tax_rate'
-        //     ),
-        //     array(
-        //         // parameter (table to join(left) , the reference field)
-        //         array('units','units.unit_id=products.unit_id','left'),
-        //         array('categories','categories.category_id=products.category_id','left'),
-        //         array('tax_types','tax_types.tax_type_id=products.tax_type_id','left')
-
-        //     )
-
-        // );
-
+        
+        $data['customer_type']=$this->Customer_type_model->get_list(
+            'is_deleted=FALSE'
+        );
+ 
         $data['invoice_counter']=$this->Invoice_counter_model->get_list(array('user_id'=>$this->session->user_id));
 
 
@@ -162,6 +111,10 @@ class Cash_invoice extends CORE_Controller
                         'products.child_unit_id',
                         'products.parent_unit_id',
                         'products.child_unit_desc',
+                        'products.discounted_price',
+                        'products.dealer_price',
+                        'products.distributor_price',
+                        'products.public_price',
                         '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.parent_unit_id) as parent_unit_name',
                         '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name'
                     ),
@@ -194,6 +147,7 @@ class Cash_invoice extends CORE_Controller
                 );
                 $sales_order_id=(count($arr_so_info)>0?$arr_so_info[0]->sales_order_id:0);
                 $m_invoice->sales_order_id=$sales_order_id;
+                $m_invoice->customer_type_id=$this->input->post('customer_type_id',TRUE);
                 $m_invoice->customer_id=$this->input->post('customer',TRUE);
                 $m_invoice->sales_order_no=$this->input->post('so_no',TRUE);
                 $m_invoice->department_id=$this->input->post('department',TRUE);
@@ -313,7 +267,7 @@ class Cash_invoice extends CORE_Controller
                     );
                     $sales_order_id=(count($arr_so_info)>0?$arr_so_info[0]->sales_order_id:0);
                     $m_invoice->sales_order_id=$sales_order_id;
-
+                    $m_invoice->customer_type_id=$this->input->post('customer_type_id',TRUE);
                     $m_invoice->customer_id=$this->input->post('customer',TRUE);
                     $m_invoice->department_id=$this->input->post('department',TRUE);
                     $m_invoice->remarks=$this->input->post('remarks',TRUE);
@@ -463,7 +417,8 @@ class Cash_invoice extends CORE_Controller
                 break;
 
             case 'cash-for-review':
-                $response['data']=$this->response_rows($id_filter,TRUE); //show only unposted data
+                $m_invoice=$this->Cash_invoice_model;
+                $response['data']=$m_invoice->get_cash_invoice_for_review(); 
                 echo json_encode($response);
                 break;
         }
@@ -509,6 +464,7 @@ class Cash_invoice extends CORE_Controller
                 'departments.department_name',
                 'customers.customer_name',
                 'cash_invoice.salesperson_id',
+                'cash_invoice.customer_type_id',
                 'cash_invoice.address',
                 'sales_order.so_no'
             ),
