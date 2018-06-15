@@ -1089,7 +1089,15 @@ $(document).ready(function(){
                     retail_price = 0;
                 }
                 changetxn = 'active';            
-                if(suggestion.primary_unit == 1){ suggis_parent = 1;}else{ suggis_parent = 0;}
+                if(suggestion.primary_unit == 1){ 
+                    suggis_parent = 1;
+                    temp_inv_price = bulk_price;
+                }else{ 
+                    suggis_parent = 0;
+                    temp_inv_price = retail_price;
+                    net_vat = getFloat(net_vat) / getFloat(suggestion.child_unit_desc);
+                    vat_input = getFloat(vat_input) / getFloat(suggestion.child_unit_desc);
+                }
                 $('#tbl_items > tbody').append(newRowItem({
                     //dr_qty : value.dr_qty,
                     dr_qty : "1",
@@ -1101,10 +1109,10 @@ $(document).ready(function(){
                     dr_line_total_discount : "0.00",
                     tax_exempt : false,
                     dr_tax_rate : tax_rate,
-                    dr_price : suggestion.purchase_cost,
+                    dr_price : temp_inv_price,
                     dr_discount : "0.00",
                     tax_type_id : null,
-                    dr_line_total_price : total,
+                    dr_line_total_price : temp_inv_price,
                     dr_non_tax_amount: net_vat,
                     dr_tax_amount:vat_input,
                     total_after_global : 0.00,
@@ -1689,8 +1697,8 @@ $(document).ready(function(){
         }else{
             var price=parseFloat(accounting.unformat(row.find(oTableItems.retail_price).find('input.numeric').val()));
         }
-        $(oTableItems.unit_price,row).find('input').val(price);  
-        $(oTableItems.unit_identifier,row).find('input').val(unit_value); 
+        $(oTableItems.unit_price,row).find('input').val(accounting.formatNumber(price,2));  
+        $(oTableItems.unit_identifier,row).find('input').val(accounting.formatNumber(unit_value,2)); 
         }
         $('.trigger-keyup').keyup();
         });
@@ -1709,8 +1717,6 @@ $(document).ready(function(){
 
             // var discounted_price=price-discount;
             // var line_total_discount=discount*qty;
-
-
             var global_discount = $('#txt_overall_discount').val();
             var line_total=price*qty;
             var new_discount_price=line_total*(discount/100);

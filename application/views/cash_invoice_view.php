@@ -1547,8 +1547,8 @@ $(document).ready(function(){
         }else{
             var price=parseFloat(accounting.unformat(row.find(oTableItems.retail_price).find('input.numeric').val()));
         }
-        $(oTableItems.unit_price,row).find('input').val(price);  
-        $(oTableItems.unit_identifier,row).find('input').val(unit_value); 
+        $(oTableItems.unit_price,row).find('input').val(accounting.formatNumber(price,2));  
+        $(oTableItems.unit_identifier,row).find('input').val(accounting.formatNumber(unit_value,2)); 
         }
         $('.trigger-keyup').keyup();
         });

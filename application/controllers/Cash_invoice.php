@@ -115,6 +115,7 @@ class Cash_invoice extends CORE_Controller
                         'products.dealer_price',
                         'products.distributor_price',
                         'products.public_price',
+                        'products.sale_price',
                         '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.parent_unit_id) as parent_unit_name',
                         '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name'
                     ),

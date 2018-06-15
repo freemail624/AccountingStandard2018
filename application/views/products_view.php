@@ -280,8 +280,7 @@
                                                             <div class="form-group" style="margin-bottom:0px;text-align: left;margin-left: 5px;">
                                                                     <label class="" for="is_bulk" style="text-align: left;"><input type="checkbox" id="is_bulk" style="transform: scale(2.0);">  &nbsp;&nbsp;For Bulk and Retail ?</label>
                                                             </div>
-                                                                                                                   <div class="form-group col-sm-4" style="margin-bottom:0px;">
-
+                                                            <div class="form-group col-sm-4" style="margin-bottom:0px;">
                                                                 <label class=""><b class="required">*</b>Primary Unit</label>
                                                                 <select name="primary_unit" id="primary_unit" data-error-msg="Primary Unit is required." required>
                                                                     <option value="1">Bulk</option>

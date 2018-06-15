@@ -1305,7 +1305,6 @@ $(document).ready(function(){
             $('#invoice_default').datepicker('setDate', 'today');
             $('#due_default').datepicker('setDate', 'today');
             $('#typeaheadsearch').val('');
-            _cboCustomers
             getproduct().done(function(data){
                 products.clear();
                 products.local = data.data;

@@ -1006,8 +1006,18 @@ $(document).ready(function(){
 
             }else if (suggestion.is_bulk== 0){
                 retail_price = 0;
+                net_vat = getFloat(net_vat) / getFloat(suggestion.child_unit_desc);
+                vat_input = getFloat(vat_input) / getFloat(suggestion.child_unit_desc);
             }
-            if(suggestion.primary_unit == 1){ suggis_parent = 1;}else{ suggis_parent = 0;}
+            if(suggestion.primary_unit == 1){ 
+                suggis_parent = 1;
+                temp_inv_price = purchase_cost;
+            }else{ 
+                suggis_parent = 0;
+                temp_inv_price = retail_price;
+                net_vat = getFloat(net_vat) / getFloat(suggestion.child_unit_desc);
+                vat_input = getFloat(vat_input) / getFloat(suggestion.child_unit_desc);
+            }
             $('#tbl_items > tbody').append(newRowItem({
                 po_qty : "1",
                 bulk_price: bulk_price,
@@ -1023,10 +1033,10 @@ $(document).ready(function(){
                 po_line_total_discount : "0.00",
                 tax_exempt : false,
                 po_tax_rate : tax_rate,
-                po_price : purchase_cost,
+                po_price : temp_inv_price,
                 po_discount : "0.00",
                 tax_type_id : null,
-                po_line_total : total,
+                po_line_total : temp_inv_price,
                 po_non_tax_amount: net_vat,
                 po_tax_amount:vat_input,
                 is_parent: suggis_parent ,
@@ -1324,7 +1334,7 @@ $(document).ready(function(){
                         changetxn = 'inactive';
                         // SET THE VALUE FOR UNIT (SELECT 2)
                         _line_unit=$('.line_unit'+a).select2({
-         
+                            minimumResultsForSearch: -1
                         });
                         _line_unit.select2('val',value.unit_id);
                         a++;
@@ -1359,11 +1369,11 @@ $(document).ready(function(){
                 }else{
                     var price=parseFloat(accounting.unformat(row.find(oTableItems.retail_price).find('input.numeric').val()));
                 }
-                $(oTableItems.unit_price,row).find('input').val(price);  
-                $(oTableItems.unit_identifier,row).find('input').val(unit_value); 
+                $(oTableItems.unit_price,row).find('input').val(accounting.formatNumber(price,2));  
+                $(oTableItems.unit_identifier,row).find('input').val(accounting.formatNumber(unit_value,2)); 
             } 
 
-        $('.number').keyup();
+        $('.number-keyup').keyup();
         });
 
 
@@ -1701,7 +1711,7 @@ $(document).ready(function(){
             unit  = '<td ><select class="line_unit'+d.a+'" name="unit_id[]" ><option value="'+d.parent_unit_id+'" data-unit-identifier="1" '+parent+'>'+d.parent_unit_name+'</option></select></td>';
         }
         return '<tr>'+
-        '<td ><input name="po_qty[]" type="text" class="numeric form-control" value="'+ d.po_qty+'"></td>'+unit+'<td >'+d.product_desc+' <input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
+        '<td ><input name="po_qty[]" type="text" class="numeric form-control number-keyup" value="'+ d.po_qty+'"></td>'+unit+'<td >'+d.product_desc+' <input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
 
         '<td ><input name="po_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.po_price,2)+'" style="text-align:right;"></td>'+
         '<td ><input name="po_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.po_discount,2)+'" style="text-align:right;"></td>'+

@@ -2109,6 +2109,7 @@ class Templates extends CORE_Controller {
                     array(
                         array('customers','customers.customer_id=sales_invoice.customer_id','left'),
                         array('sales_order','sales_order.sales_order_id=sales_invoice.sales_order_id','left'),
+                        
                         array('user_accounts','user_accounts.user_id=sales_invoice.posted_by_user','left')
                     )
 
@@ -2142,11 +2143,13 @@ class Templates extends CORE_Controller {
 
                     array(
                         'sales_invoice_items.*',
-                        'products.product_desc'
+                        'products.product_desc',
+                        'units.unit_name'
                     ),
 
                     array(
-                        array('products','products.product_id=sales_invoice_items.product_id','left')
+                        array('products','products.product_id=sales_invoice_items.product_id','left'),
+                        array('units','units.unit_id=sales_invoice_items.unit_id','left')
                     )
 
                 );
