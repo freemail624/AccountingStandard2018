@@ -1,7 +1,15 @@
+
 <table style="font-family: 'Century Gothic', sans-serif;">
-	<tr>
-		<td colspan="6"><strong>PER SALES</strong></td>
+
+	<?php $sal = 0; foreach($receivables as $item){if($item->is_sales == '1'){ $sal ++;} }?>
+
+	<?php if($sal > 0 ){ ?>
+	<tr style="background-color: #bcf6ff;">
+		<td colspan="6"><strong>SALES</strong></td>
 	</tr>
+	<?php	} ?>
+
+
 	<?php foreach($receivables as $item){ ?>
 		<?php if ($item->is_sales == '1') { ?>
 	    <tr>
@@ -17,9 +25,16 @@
 	    </tr>
 	    <?php } ?>
 	<?php } ?>
-	<tr>
-		<td colspan="6"><strong>PER SERVICES</strong></td>
+
+
+	<?php 
+
+	$serv = 0;
+	 foreach($receivables as $item){   if ($item->is_sales == '0') {$serv ++;  } } ?> <?php  if($serv != 0){ ?>
+	<tr style="background-color: #bcf6ff;">
+		<td colspan="6"><strong>SERVICES</strong></td>
 	</tr>
+	<?php } ?>
 	<?php foreach($receivables as $item){ ?>
 		<?php if ($item->is_sales == '0') { ?>
 	    <tr>
@@ -33,5 +48,13 @@
 	        <td align="center"><button type="button" class="btn btn-success btn_set_amount"><i class="fa fa-check"></i></button></td>
 	    </tr>
 	    <?php } ?>
+	<?php } ?>
+
+
+	<?php if($sal == 0 && $serv == 0){ ?>
+	<tr>
+		<td colspan="6"><i>No receivable records found.</i></td>
+	</tr>
+
 	<?php } ?>
 </table>
