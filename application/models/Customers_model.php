@@ -134,6 +134,56 @@ class Customers_model extends CORE_Model{
                 return $this->db->query($sql)->result();
     }
 
+    function get_customer_receivable_list_from_hotel($customer_id)
+    {
+        $sql = "SELECT
+        unpaid.*,
+        IFNULL(paid.receivable_amount,0) receivable_amount,
+        IFNULL(paid.payment_amount,0) payment_amount,
+        (IFNULL(unpaid.journal_receivable_amount,0) - IFNULL(paid.payment_amount,0)) amount_due
+
+         FROM(
+        SELECT 
+        ji.txn_no,
+        phi.journal_id,
+        ji.remarks,
+        c.customer_name,
+        '0000-00-00' as date_due,
+        '' as inv_no,
+        phi.charge_sales as journal_receivable_amount,
+        ji.is_sales
+
+        FROM prime_hotel_integration phi 
+        LEFT JOIN journal_info ji ON ji.journal_id = phi.journal_id
+        LEFT JOIN customers c ON c.customer_id = ji.customer_id
+        WHERE phi.item_type = 'AR' AND 
+        phi.is_journal_posted
+        AND ji.customer_id = $customer_id
+        AND ji.is_active = TRUE AND ji.is_deleted = FALSE
+        ) as unpaid
+
+
+         LEFT JOIN 
+
+        (SELECT
+        rpl.journal_id,
+        SUM(IFNULL(rpl.receivable_amount,0)) receivable_amount,
+        SUM(IFNULL(rpl.payment_amount,0)) payment_amount
+        FROM
+        receivable_payments rp
+        INNER JOIN receivable_payments_list rpl ON rpl.payment_id = rp.payment_id
+        WHERE
+        rp.is_active=TRUE
+        AND rp.is_deleted=FALSE
+        AND rp.customer_id = $customer_id
+        GROUP BY rpl.journal_id) paid
+
+        ON unpaid.journal_id = paid.journal_id
+        HAVING amount_due > 0";
+
+                return $this->db->query($sql)->result();
+    }
+
     function get_customer_receivable_list2($customer_id) {
         $sql = "SELECT
                 *

@@ -181,7 +181,7 @@
                                                         <div class="row">
                                                             <div class="col-lg-12">
                                                                 <label><b class="required">*</b>Department :</label> <br />
-                                                                <select id="cbo_branch" name="department">
+                                                                <select id="cbo_branch" name="department" required data-error-msg="Department is required">
                                                                     <?php foreach($departments as $department){ ?>
                                                                         <option value="<?php echo $department->department_id; ?>" selected><?php echo $department->department_name; ?></option>
                                                                     <?php } ?>

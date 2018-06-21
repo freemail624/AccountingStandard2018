@@ -264,6 +264,7 @@ class Customers extends CORE_Controller {
                 $m_customers=$this->Customers_model;
 
                 $data['receivables']=$m_customers->get_customer_receivable_list($customer_id);
+                $data['hotel_receivables']=$m_customers->get_customer_receivable_list_from_hotel($customer_id);
                 $structured_content=$this->load->view('template/customer_receivable_list',$data,TRUE);
                 echo $structured_content;
 
