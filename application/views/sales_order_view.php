@@ -1466,7 +1466,7 @@ $(document).ready(function(){
                     showNotification(response);
                     $('#modal_new_customer').modal('hide');
                     var _customer=response.row_added[0];
-                    $('#cbo_customers').append('<option value="'+_customer.customer_id+'" selected>'+ _customer.customer_name + '</option>');
+                    $('#cbo_customers').append('<option value="'+_customer.customer_id+'" selected data-customer_type = "'+_customer.customer_type_id+'">'+ _customer.customer_name + '</option>');
                     $('#cbo_customers').select2('val',_customer.customer_id);
                     $('#cbo_customer_type').select2('val',_customer.customer_type_id);
                 }).always(function(){
