@@ -880,6 +880,7 @@ $(document).ready(function(){
         vat_input : 'td:eq(8)',
         net_vat : 'td:eq(9)',
         total_after_global : 'td:eq(11)',
+        item_id : 'td:eq(10)',
         bulk_price : 'td:eq(13)',
         retail_price : 'td:eq(14)'
 
@@ -1065,6 +1066,10 @@ $(document).ready(function(){
                 }
             }).bind('typeahead:select', function(ev, suggestion) {
 
+            if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
+                showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
+                return;
+            }
                 var tax_rate=suggestion.tax_rate; 
                 var total=getFloat(suggestion.purchase_cost);
                 var net_vat=0;
@@ -2133,7 +2138,18 @@ $(document).ready(function(){
         tbl_summary.find(oTableDetails.after_tax).html('<b>0.00</b>');
     };
 
-
+    var checkProduct= function(check_id){
+        var prodstat=true;
+        var rowcheck=$('#tbl_items > tbody tr');
+        $.each(rowcheck,function(){
+            item = parseFloat(accounting.unformat($(oTableItems.item_id,$(this)).find('input.numeric').val()));
+            if(check_id == item){
+                prodstat=false;
+                return false;
+            }
+        });
+         return prodstat;    
+    };
 
 
 });

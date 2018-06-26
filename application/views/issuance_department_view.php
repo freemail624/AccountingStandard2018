@@ -420,6 +420,7 @@ $(document).ready(function(){
         total : 'td:eq(7)',
         vat_input : 'td:eq(8)',
         net_vat : 'td:eq(9)',
+        item_id : 'td:eq(10)',
         bulk_price : 'td:eq(12)',
         retail_price : 'td:eq(13)'
     };
@@ -591,6 +592,12 @@ dt_si = $('#tbl_si_list').DataTable({
         }).bind('typeahead:select', function(ev, suggestion) {
             //console.log(suggestion);
 
+            if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
+                showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
+                return;
+            }
+
+
             if(getFloat(suggestion.CurrentQty) <= 0){
                 showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
             }else if(getFloat(suggestion.CurrentQty) <= getFloat(suggestion.product_warn) ){
@@ -736,7 +743,7 @@ dt_si = $('#tbl_si_list').DataTable({
                     showNotification(response);
                     $('#modal_new_department').modal('hide');
                     var _department=response.row_added[0];
-                    $('.cbo_departments').append('<option value="'+_department.department_id+'" selected>'+_department.department_name+'</option>');
+                    $('.cbo_departments').append('<option value="'+_department.department_id+'" >'+_department.department_name+'</option>');
                     $(_cboDepartmentactive).select2('val',_department.department_id);
                 }).always(function(){
                     showSpinningProgress(btn);
@@ -1200,6 +1207,19 @@ dt_si = $('#tbl_si_list').DataTable({
            }
       });
     };
+
+    var checkProduct= function(check_id){
+        var prodstat=true;
+        var rowcheck=$('#tbl_items > tbody tr');
+        $.each(rowcheck,function(){
+            item = parseFloat(accounting.unformat($(oTableItems.item_id,$(this)).find('input.numeric').val()));
+            if(check_id == item){
+                prodstat=false;
+                return false;
+            }
+        });
+         return prodstat;    
+    };    
 
 });
 </script>

@@ -780,6 +780,7 @@ $(document).ready(function(){
         total : 'td:eq(7)',
         vat_input : 'td:eq(8)',
         net_vat : 'td:eq(9)',
+        item_id : 'td:eq(10)',
         bulk_price : 'td:eq(12)',
         retail_price : 'td:eq(13)'
 
@@ -973,6 +974,10 @@ $(document).ready(function(){
             //var tax_id=$('#cbo_tax_type').select2('val');
             //var tax_rate=parseFloat($('#cbo_tax_type').find('option[value="'+tax_id+'"]').data('tax-rate'));
             //alert(suggestion.tax_rate);
+            if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
+                showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
+                return;
+            }
 
             var tax_rate=suggestion.tax_rate; //base on the tax rate set to current product
 
@@ -1786,9 +1791,7 @@ $(document).ready(function(){
 
 
     _cboSuppliers.on("select2:select", function (e) {
-
         var i=$(this).select2('val');
-
         if(i==0){ //new supplier
             _cboSuppliers.select2('val',null)
             $('#modal_new_supplier').modal('show');
@@ -1805,7 +1808,19 @@ $(document).ready(function(){
         $('.numeric').autoNumeric('init',{mDec: 2});
         $('.number').autoNumeric('init', {mDec:0});
     };
-
+    var checkProduct= function(check_id){
+        var prodstat=true;
+        var rowcheck=$('#tbl_items > tbody tr');
+        $.each(rowcheck,function(){
+            item = parseFloat(accounting.unformat($(oTableItems.item_id,$(this)).find('input').val()));
+            // alert()
+            if(check_id == item){
+                prodstat=false;
+                return false;
+            }
+        });
+         return prodstat;    
+    };
 });
 
 

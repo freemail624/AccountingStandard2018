@@ -22,7 +22,8 @@ class Cash_receipt extends CORE_Controller
                 'Users_model',
                 'Accounting_period_model',
                 'Cash_invoice_model',
-                'Trans_model'
+                'Trans_model',
+                'Customer_type_model'
             )
         );
 
@@ -42,7 +43,8 @@ class Cash_receipt extends CORE_Controller
         $data['methods']=$this->Payment_method_model->get_list('is_deleted=0');
         $data['departments']=$this->Departments_model->get_list('is_deleted=0');
         $data['banks']=$this->Bank_model->get_list('is_deleted=0');
-
+        $data['customer_type']=$this->Customer_type_model->get_list('is_deleted=FALSE');
+ 
         $data['title'] = 'Cash Receipt';
         (in_array('1-5',$this->session->user_rights)? 
         $this->load->view('cash_receipt_journal_view', $data)

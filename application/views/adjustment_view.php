@@ -529,6 +529,7 @@ $(document).ready(function(){
         total : 'td:eq(7)',
         vat_input : 'td:eq(8)',
         net_vat : 'td:eq(9)',
+        item_id : 'td:eq(10)',
         bulk_price : 'td:eq(12)',
         retail_price : 'td:eq(13)'
     };
@@ -662,6 +663,12 @@ $(document).ready(function(){
                 _objTypeHead.typeahead('val','');
             }
         }).bind('typeahead:select', function(ev, suggestion) {
+
+            if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
+                showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
+                return;
+            }
+
             if(getFloat(suggestion.CurrentQty) <= 0 && _cboAdjustments.val() == "OUT"){
                 showNotification({title: suggestion.product_desc ,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
             }else if(getFloat(suggestion.CurrentQty) <= getFloat(suggestion.product_warn) && _cboAdjustments.val() == "OUT"){
@@ -1374,8 +1381,18 @@ $(document).ready(function(){
 
     };
 
-
-
+    var checkProduct= function(check_id){
+        var prodstat=true;
+        var rowcheck=$('#tbl_items > tbody tr');
+        $.each(rowcheck,function(){
+            item = parseFloat(accounting.unformat($(oTableItems.item_id,$(this)).find('input.numeric').val()));
+            if(check_id == item){
+                prodstat=false;
+                return false;
+            }
+        });
+         return prodstat;    
+    };   
     var reInitializeNumeric=function(){
         $('.numeric').autoNumeric('init');
     };

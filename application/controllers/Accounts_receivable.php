@@ -21,7 +21,9 @@ class Accounts_receivable extends CORE_Controller
                 'Departments_model',
                 'Users_model',
                 'Accounting_period_model',
-                'Trans_model'
+                'Trans_model',
+                'Customer_type_model'
+ 
             )
         );
 
@@ -40,6 +42,7 @@ class Accounts_receivable extends CORE_Controller
         $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['accounts']=$this->Account_title_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['methods']=$this->Payment_method_model->get_list('is_active=TRUE AND is_deleted=FALSE');
+        $data['customer_type']=$this->Customer_type_model->get_list('is_deleted=FALSE');
 
         $data['title'] = 'Accounts Receivable';
         (in_array('1-4',$this->session->user_rights)? 
