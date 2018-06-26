@@ -212,7 +212,7 @@
                             <select name="customer" id="cbo_customers" data-error-msg="Customer is required." required>
                                 <option value="0">[ Create New Customer ]</option>
                                 <?php foreach($customers as $customer){ ?>
-                                    <option data-address="<?php echo $customer->address; ?>" data-contact="<?php echo $customer->contact_name; ?>" value="<?php echo $customer->customer_id; ?>" data-term-default="<?php echo ($customer->term=="none"?"":$customer->term); ?>"><?php echo $customer->customer_name; ?></option>
+                                    <option data-address="<?php echo $customer->address; ?>" data-contact="<?php echo $customer->contact_name; ?>" value="<?php echo $customer->customer_id; ?>" data-term-default="<?php echo ($customer->term=="none"?"":$customer->term); ?>" data-customer_type="<?php echo $customer->customer_type_id; ?>"><?php echo $customer->customer_name; ?></option>
                                 <?php } ?>
                             </select>
                         </div>
@@ -546,6 +546,19 @@
                                     </div>
                                 </div>
                             </div>
+                           <div class="col-md-12">
+                                <div class="col-md-4" id="label">
+                                     <label class="control-label boldlabel" style="text-align:right;">Tin No :</label>
+                                </div>
+                                <div class="col-md-8" style="padding: 0px;">
+                                <select name="customer_type_id_create" id="cbo_customer_type_create" style="width: 100%">
+                                    <option value="0">None</option>
+                                    <?php foreach($customer_type_create as $customer_type){ ?>
+                                        <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name?></option>
+                                    <?php } ?>
+                                </select>
+                                </div>
+                            </div> 
                         </div>
                         <div class="col-md-4">
                             <div class="col-md-12">
@@ -762,6 +775,8 @@
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboDepartments; var _cboCustomers; var dt_so; var products; var changetxn;
      var _line_unit; var _cboCustomerType;
+    var _cboCustomerTypeCreate;
+
     var oTableItems={
         qty : 'td:eq(0)',
         unit_value: 'td:eq(1)',
@@ -867,6 +882,10 @@ $(document).ready(function(){
             placeholder: "Please select sales person.",
             allowClear: true
         });
+        _cboCustomerTypeCreate=$("#cbo_customer_type_create").select2({
+            allowClear: false
+        });
+
         _cboSalesperson.select2('val',null);
         _cboDepartments.select2('val', null);
         _cboDepartment.select2('val', null);
@@ -918,10 +937,10 @@ $(document).ready(function(){
         }).bind('typeahead:select', function(ev, suggestion) {
             //console.log(suggestion);
             //alert(suggestion.sale_price);
-            // if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
-            //     showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
-            //     return;
-            // }
+            if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
+                showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
+                return;
+            }
 
             if(getFloat(suggestion.CurrentQty) <= 0){
                 showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
@@ -1112,12 +1131,17 @@ $(document).ready(function(){
             var i=$(this).select2('val');
             if(i==0){ //new customer
                 //clearFields($('#modal_new_customer').find('form'));
+                 clearFields($('#frm_customer_new'));
+                _cboCustomerTypeCreate.select2('val',0);
+                _cboCustomerType.select2('val',0);
                 _cboCustomers.select2('val',null)
                 $('#modal_new_customer').modal('show');
             }
             var obj_customers=$('#cbo_customers').find('option[value="' + i + '"]');
             $('#txt_address').val(obj_customers.data('address'));
             $('#contact_person').val(obj_customers.data('contact'));
+            $('#cbo_customer_type').select2('val',obj_customers.data('customer_type'));
+            if(i==0){ _cboCustomerType.select2('val',0); }
         });
         $('#btn_create_salesperson').click(function(){
             var btn=$(this);
@@ -1210,7 +1234,7 @@ $(document).ready(function(){
                 $.ajax({
                     "dataType":"json",
                     "type":"POST",
-                    "url":"Customers/transaction/create",
+                    "url":"Customers/transaction/new-create",
                     "data":data,
                     "beforeSend" : function(){
                         showSpinningProgress(btn);
@@ -1219,9 +1243,12 @@ $(document).ready(function(){
                     showNotification(response);
                     $('#modal_new_customer').modal('hide');
                     var _customer=response.row_added[0];
-                    $('#cbo_customers').append('<option value="'+_customer.customer_id+'" selected>'+ _customer.customer_name + '</option>');
+                    $('#cbo_customers').append('<option value="'+_customer.customer_id+'" selected data-contact="'+_customer.contact_name+'" data-customer_type="'+_customer.customer_type_id+'">'+ _customer.customer_name + '</option>');
                     $('#cbo_customers').select2('val',_customer.customer_id);
                     $('#txt_address').val(_customer.address);
+                    $('#contact_person').val(_customer.contact_name);
+                    $('#cbo_customer_type').select2('val',_customer.customer_type_id);
+
                 }).always(function(){
                     showSpinningProgress(btn);
                 });

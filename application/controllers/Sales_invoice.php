@@ -60,6 +60,9 @@ class Sales_invoice extends CORE_Controller
             'is_deleted=FALSE'
         );
 
+        $data['customer_type_create']=$this->Customer_type_model->get_list(
+            'is_deleted=FALSE'
+        );
 
         $tax_rate=$this->Company_model->get_list(
             null,

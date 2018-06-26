@@ -61,7 +61,7 @@
     <script>
 
     $(document).ready(function(){
-        var dt; var _txnMode; var _selectedID; var _selectRowObj; var _selectedBranch;
+        var dt; var _txnMode; var _selectedID; var _selectRowObj; var _selectedBranch; var _cboCustomerType;
 
         /*$(document).ready(function(){
             $('#modal_filter').modal('show');
@@ -71,7 +71,6 @@
         var initializeControls=function() {
             dt=$('#tbl_customers').DataTable({
                 "fnInitComplete": function (oSettings, json) {
-                    $.unblockUI();
                 },
                 "dom": '<"toolbar">frtip',
                 "bLengthChange": false,
@@ -107,6 +106,11 @@
             $('.numeric').autoNumeric('init');
             $('#term').keypress(validateNumber);
             $('#credit_limit').keypress(validateNumber);
+
+
+            _cboCustomerType=$("#cbo_customer_type").select2({
+                allowClear: false
+            });
 
             //$('#contact_no').keypress(validateNumber);
      }();
@@ -161,6 +165,7 @@
                 _txnMode="new";
                 $('#modal_create_customer').modal('show');
                 clearFields($('#frm_customer'));
+                $('#cbo_customer_type').select2('val', 0);
             });
 
              $('#btn_browse').click(function(event){
@@ -184,6 +189,7 @@
                     _selectedID=data.customer_id;
                     $('#branch').val(data.department_id);
                     $('#refcustomertype_id').val(data.refcustomertype_id);
+                    _cboCustomerType.select2('val',data.customer_type_id);
                     $('#term').val(data.term);
 
                     //alert(data.term);
@@ -855,7 +861,7 @@
                 </div>
             </div>
 
-            <div id="modal_create_customer" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+            <div id="modal_create_customer" class="modal fade" role="dialog"><!--modal-->
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header" style="background-color:#2ecc71;">
@@ -978,6 +984,23 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div class="col-md-12">
+                                            <div class="col-md-4" id="label">
+                                                 <label class="control-label boldlabel" style="text-align:right;">Tin No :</label>
+                                            </div>
+                                            <div class="col-md-8" style="padding: 0px;">
+                                            <select name="customer_type_id" id="cbo_customer_type" style="width: 100%">
+                                                <option value="0">None</option>
+                                                <?php foreach($customer_type as $customer_type){ ?>
+                                                    <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name?></option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>
+
+
+
 
                                     </div>
 

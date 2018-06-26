@@ -84,6 +84,10 @@ class Sales_order extends CORE_Controller
             'is_deleted=FALSE'
         );
 
+        $data['customer_type_create']=$this->Customer_type_model->get_list(
+            'is_deleted=FALSE'
+        );
+
         $data['title'] = 'Sales Order';
         
         (in_array('3-1',$this->session->user_rights)? 

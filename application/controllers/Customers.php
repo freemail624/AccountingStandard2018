@@ -17,6 +17,7 @@ class Customers extends CORE_Controller {
         $this->load->model('Receivable_payment_model');
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
+        $this->load->model('Customer_type_model');
     }
  
     public function index()
@@ -28,6 +29,10 @@ class Customers extends CORE_Controller {
         $data['_side_bar_navigation']=$this->load->view('template/elements/side_bar_navigation','',TRUE);
         $data['_top_navigation']=$this->load->view('template/elements/top_navigation','',TRUE);
         $data['title']='Customer Management';
+
+        $data['customer_type']=$this->Customer_type_model->get_list(
+            'is_deleted=FALSE'
+        );
 
         $data['departments'] = $this->Departments_model->get_list(array('departments.is_deleted'=>FALSE));
         $data['refcustomertype'] = $this->RefCustomerType_model->get_list(array('refcustomertype.is_deleted'=>FALSE));
@@ -73,6 +78,52 @@ class Customers extends CORE_Controller {
                 $m_customers->contact_name=$this->input->post('contact_name',TRUE);
                 $m_customers->address=$this->input->post('address',TRUE);
                 $m_customers->email_address=$this->input->post('email_address',TRUE);
+                $m_customers->customer_type_id=$this->input->post('customer_type_id',TRUE);
+                $m_customers->contact_no=$this->input->post('contact_no',TRUE);
+                $m_customers->tin_no=$this->input->post('tin_no',TRUE);
+                $m_customers->refcustomertype_id=$this->input->post('refcustomertype_id',TRUE);
+                $m_customers->department_id=$this->input->post('department_id',TRUE);
+                $m_customers->photo_path=$this->input->post('photo_path',TRUE);
+                $m_customers->term=$this->input->post('term',TRUE);
+                $m_customers->credit_limit=$this->input->post('credit_limit',TRUE);
+
+                $m_customers->set('date_created','NOW()');
+                $m_customers->posted_by_user=$this->session->user_id;
+
+                $m_customers->save();
+
+                $customer_id=$m_customers->last_insert_id();//get last insert id
+
+                $m_photos->customer_id=$customer_id;
+                $m_photos->photo_path=$this->input->post('photo_path',TRUE);
+                $m_photos->save();
+
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=1; //CRUD
+                $m_trans->trans_type_id=52; // TRANS TYPE
+                $m_trans->trans_log='Created a new customer: '.$this->input->post('contact_name',TRUE);
+                $m_trans->save();
+
+                $response['title']='Success!';
+                $response['stat']='success';
+                $response['msg']='Customer Information successfully created.';
+                $response['row_added']=$this->response_rows($customer_id);
+                echo json_encode($response);
+
+                break;
+
+            case 'new-create':
+                $m_customers=$this->Customers_model;
+                $m_photos=$this->Customer_photos_model;
+
+                $m_customers->customer_name=$this->input->post('customer_name',TRUE);
+                $m_customers->contact_name=$this->input->post('contact_name',TRUE);
+                $m_customers->address=$this->input->post('address',TRUE);
+                $m_customers->email_address=$this->input->post('email_address',TRUE);
+                $m_customers->customer_type_id=$this->input->post('customer_type_id_create',TRUE);
                 $m_customers->contact_no=$this->input->post('contact_no',TRUE);
                 $m_customers->tin_no=$this->input->post('tin_no',TRUE);
                 $m_customers->refcustomertype_id=$this->input->post('refcustomertype_id',TRUE);
@@ -198,7 +249,7 @@ class Customers extends CORE_Controller {
                 $m_customers->photo_path=$this->input->post('photo_path',TRUE);
                 $m_customers->term=$this->input->post('term',TRUE);
                 $m_customers->credit_limit=$this->input->post('credit_limit',TRUE);
-
+                $m_customers->customer_type_id=$this->input->post('customer_type_id',TRUE);
                 $m_customers->set('date_modified','NOW()');
                 $m_customers->modified_by_user=$this->session->user_id;
 

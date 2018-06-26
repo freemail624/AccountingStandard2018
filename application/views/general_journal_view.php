@@ -767,7 +767,19 @@
                                                 </div>
                                             </div>
                                         </div>
-
+                                        <div class="col-md-12">
+                                            <div class="col-md-4" id="label">
+                                                 <label class="control-label boldlabel" style="text-align:right;">Tin No :</label>
+                                            </div>
+                                            <div class="col-md-8" style="padding: 0px;">
+                                            <select name="customer_type_id" id="cbo_customer_type" style="width: 100%">
+                                                <option value="0">None</option>
+                                                <?php foreach($customer_type as $customer_type){ ?>
+                                                    <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name?></option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>  
                                     </div>
 
                                     <div class="col-md-4">
@@ -881,8 +893,9 @@
 $(document).ready(function(){
     var _txnMode; var _cboParticulars; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode;
     var dtReview; var _cboDepartments; var _option; var _optGroup;
-     var dtReviewAdjustment;
-
+    var dtReviewAdjustment;
+    var _cboCustomerType;
+ 
     var oTBJournal={
         "dr" : "td:eq(2)",
         "cr" : "td:eq(3)"
@@ -1049,6 +1062,10 @@ $(document).ready(function(){
         });
         _cboParticulars.select2('val',null);
 
+        _cboCustomerType=$("#cbo_customer_type").select2({
+            allowClear: false
+        });
+ 
     }();
 
 
@@ -1275,6 +1292,7 @@ $(document).ready(function(){
             if (_cboParticulars.val() == 'create_customer') {
                 $('input,textarea,select',$('#frm_customer')).val('');
                 $('img').attr('src','assets/img/anonymous-icon.png');
+                 $('#cbo_customer_type').select2('val', 0);
                 $('#modal_create_customer').modal('show');
             } else if (_cboParticulars.val() == 'create_supplier'){
                 clearFields($('#frm_supplier'));

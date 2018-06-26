@@ -46,8 +46,240 @@
 			switch ($txn) {
 				case 'list':
 					$m_items = $this->Hotel_system_model;
-					$aod=date('Y-m-d',strtotime($this->input->get('aod',TRUE)));
-					$response['data']=$m_items->get_list_hotel_integration($aod);
+					// as of date aod changed to one date only 
+					$date=date('Y-m-d',strtotime($this->input->get('aod',TRUE)));
+					$response['data']=$m_items->get_list_hotel_integration($date);
+					echo json_encode($response);
+				break;
+
+
+
+
+
+				case 'post_selected':
+					$m_items = $this->Hotel_system_model;
+					$post_id = $this->input->post('post_id',TRUE);
+					$m_journal = $this->Journal_info_model;
+					$m_customers = $this->Customers_model;
+
+				$total_posted = 0;	
+				 for($i=0;$i<count($post_id);$i++){
+
+					 $info=$m_items->get_list($post_id[$i],
+						'prime_hotel_integration.*,
+						DATE_FORMAT(prime_hotel_integration.shift_date,"%m/%d/%Y") as date_sales');
+
+
+					$settings_info = $this->Hotel_system_settings_model->get_list(1);
+					$department_id = $settings_info[0]->department_id; 
+
+					$type=$info[0]->item_type;
+
+					$check_no = $info[0]->check_no;
+					$check_date = $info[0]->check_date;
+
+					$check_type_id = $info[0]->check_type_id;
+					$check_type_name = $info[0]->check_type_name;
+
+					$card_no = $info[0]->card_no;
+					$card_type_name = $info[0]->card_type_name;
+
+					$or_no = $info[0]->or_no;
+					$folio_no = $info[0]->folio_no;
+					$receipt_no = $info[0]->receipt_no;
+
+		
+					$rem_check = '';
+					if($check_no != '' || $check_no != 0){
+						$rem_check = 'Check No : '.$check_no.', Check Name: '.$check_type_name.', Check Date: '.$check_date."\n";
+					}
+					$rem_card = '';
+					if($card_no != '' || $card_no != 0){
+						$rem_card = 'Card No : '.$card_no.', Card Type Name: '.$card_type_name."\n";
+					}
+					$rem_billed_to = '';
+					if($type == 'AR'){
+					$rem_billed_to = 'Originally Billed To '.$info[0]->guest_name." - ID(".$info[0]->guest_id.")\n";
+
+					}
+
+					$global_remarks=  $rem_billed_to."".$rem_check."".$rem_card."OR No: ".$or_no."\nFolio No: ".$folio_no."\nReceipt No: ".$receipt_no;
+
+
+
+
+
+					if($type == 'ADV'){
+						// Journal Info 
+		                $m_journal->customer_id= $settings_info[0]->customer_id;
+		                $m_journal->department_id=$settings_info[0]->department_id; 
+		                $m_journal->remarks=$global_remarks;
+		                $m_journal->hotel_integration_id=$info[0]->prime_hotel_integration_id;
+		                $m_journal->date_txn=$info[0]->shift_date;
+		                $m_journal->book_type='SJE';
+		                $m_journal->ref_no=$this->input->post('ref_no',TRUE);
+		                $m_journal->is_sales=1;
+		                //for audit details
+		                $m_journal->set('date_created','NOW()');
+		                $m_journal->created_by_user=$this->session->user_id;
+		                $m_journal->save();				
+		                $journal_id=$m_journal->last_insert_id();
+
+						// Journal Entries
+						$entries =$m_items->adv_journal($post_id[$i]);
+						$m_journal_accounts = $this->Journal_account_model;
+							foreach ($entries as $entry) {
+			                    $m_journal_accounts->journal_id=$journal_id;
+			                    $m_journal_accounts->account_id=$entry->account_id;
+			                    $m_journal_accounts->memo='';
+			                    $m_journal_accounts->dr_amount=$this->get_numeric_value($entry->dr_amount);
+			                    $m_journal_accounts->cr_amount=$this->get_numeric_value($entry->cr_amount);
+			                    $m_journal_accounts->save();
+							}
+						$m_journal->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
+						$m_journal->modify($journal_id);
+
+					} // END OF ADV TYPE
+					else if($type == 'COUT' || $type == 'AR'){
+						
+						// CHECK IF AR, THEN CHECK IF CUSTOMER EXISTS, CREATE NEW IF NOT
+						if($type == 'AR'){ // check first the ar customer 
+								$check_ar_guest_id= $info[0]->ar_guest_id;
+								$check_ar_guest_name = $info[0]->ar_guest_name;
+								$get_ar_info = $m_customers->get_list(array('hotel_customer_id'=>$check_ar_guest_id));
+								$check_ar_info = count($get_ar_info);
+								if($check_ar_info == 0){
+									$ar_customer_id = 0;
+									$m_customer_create_ar = $this->Customers_model; // redeclared customer model to ensure that no duplication of create code
+									$m_customer_create_ar->hotel_customer_id = $check_ar_guest_id;
+									$m_customer_create_ar->customer_name = $check_ar_guest_name;
+									$m_customer_create_ar->save();
+									$ar_customer_id =$m_customer_create_ar->last_insert_id();
+								}else if ($check_ar_info > 0){
+									$ar_customer_id = 0;
+									$ar_customer_id = $get_ar_info[0]->customer_id;
+									$m_customers_modify_ar = $this->Customers_model;
+									$m_customers_modify_ar->customer_name = $check_ar_guest_name;
+									$m_customers_modify_ar->hotel_customer_id = $check_ar_guest_id;
+									$m_customers_modify_ar->modify($ar_customer_id);
+								}
+
+								$data['ar_info']=$check_ar_info;
+						}// END OF IF ELSE CHECK OF AR CUSTOMER
+
+					// CHECK CUSTOMER IN EVERY COUT AND AR TRANSACTION ... INCLUDED
+					$check_customer_id = $info[0]->guest_id;
+					$check_guest_name = $info[0]->guest_name;
+					$get_customer_info  = $m_customers->get_list(array('hotel_customer_id'=>$check_customer_id));
+					$check_customer_info = count($get_customer_info);
+						if($check_customer_info == 0){ // means customer is not existing, create new
+							$m_customer_create_cus = $this->Customers_model; // redeclared customer model to ensure that no duplication of create code
+							$m_customer_create_cus->hotel_customer_id = $check_customer_id;
+							$m_customer_create_cus->customer_name = $check_guest_name;
+							$m_customer_create_cus->save();
+							$customer_id =$m_customer_create_cus->last_insert_id();
+							//SET NEWLY SAVED CUSTOMER ID AS CUSTOMER SELECTED
+						}else if ($check_customer_info > 0){ // if existing, just update the customer_name 
+							$customer_id = 0;
+							$customer_id = $get_customer_info[0]->customer_id;
+							$m_customers_modify_cus = $this->Customers_model;
+							$m_customers_modify_cus ->customer_name = $check_guest_name;
+							$m_customers_modify_cus ->hotel_customer_id = $check_customer_id;
+							$m_customers_modify_cus->modify($customer_id);
+							
+						} 
+
+					// END OF IF ELSE CUSTOMER CREATE OR MODIFY	
+						if($type == 'COUT' ){
+							$customer_id = $customer_id;
+						}else if ($type == 'AR'){
+							$customer_id = $ar_customer_id;
+						}
+
+						// Journal Info 
+		                $m_journal->customer_id= $customer_id;
+		                $m_journal->department_id=$settings_info[0]->department_id; 
+		                $m_journal->remarks=$global_remarks;
+		                $m_journal->hotel_integration_id=$info[0]->prime_hotel_integration_id;
+		                $m_journal->date_txn=$info[0]->shift_date;
+		                $m_journal->book_type='SJE';
+		                $m_journal->is_sales=1;
+		                //for audit details
+		                $m_journal->set('date_created','NOW()');
+		                $m_journal->created_by_user=$this->session->user_id;
+		                $m_journal->save();				
+		                $journal_id=$m_journal->last_insert_id();
+
+							// Journal Entries
+						$entries = $m_items->cout_and_ar_journal($post_id[$i]); 
+						$m_journal_accounts = $this->Journal_account_model;
+							foreach ($entries as $entry) {
+			                    $m_journal_accounts->journal_id=$journal_id;
+			                    $m_journal_accounts->account_id=$entry->account_id;
+			                    $m_journal_accounts->memo='';
+			                    $m_journal_accounts->dr_amount=$this->get_numeric_value($entry->dr_amount);
+			                    $m_journal_accounts->cr_amount=$this->get_numeric_value($entry->cr_amount);
+			                    $m_journal_accounts->save();
+							}
+						$m_journal->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
+						$m_journal->modify($journal_id);
+
+
+						
+
+
+				}// END OF COUT AND AR
+
+				else if($type == 'REV'){
+	                $m_journal->customer_id= $settings_info[0]->customer_id;
+	                $m_journal->department_id=$settings_info[0]->department_id; 
+	                $m_journal->remarks=$global_remarks;
+	                $m_journal->hotel_integration_id=$info[0]->prime_hotel_integration_id;
+	                $m_journal->date_txn=$info[0]->shift_date;
+	                $m_journal->book_type='SJE';
+	                $m_journal->is_sales=1;
+	                //for audit details
+	                $m_journal->set('date_created','NOW()');
+	                $m_journal->created_by_user=$this->session->user_id;
+	                $m_journal->save();				
+	                $journal_id=$m_journal->last_insert_id();
+
+	                $entries =$m_items->rev_journal($post_id[$i]); 
+					$m_journal_accounts = $this->Journal_account_model;
+						foreach ($entries as $entry) {
+		                    $m_journal_accounts->journal_id=$journal_id;
+		                    $m_journal_accounts->account_id=$entry->account_id;
+		                    $m_journal_accounts->memo='';
+		                    $m_journal_accounts->dr_amount=$this->get_numeric_value($entry->dr_amount);
+		                    $m_journal_accounts->cr_amount=$this->get_numeric_value($entry->cr_amount);
+		                    $m_journal_accounts->save();
+						}
+					$m_journal->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
+					$m_journal->modify($journal_id);
+				}
+
+                $m_items=$this->Hotel_system_model;
+                $m_items->is_journal_posted = 1;
+                $m_items->journal_id = $journal_id;
+                $m_items->posted_by_user=$this->session->user_id;
+                $m_items->set('date_posted','NOW()');
+                $m_items->modify($post_id[$i]);
+
+                $total_posted ++;
+
+				} // end of foreach post id
+
+				if($total_posted == 0){
+					$response['stat']="info";
+	                $response['title']="Information!";
+	                $response['msg']="0 Journal/s Posted";
+
+				}else{
+					$response['stat']="success";
+	                $response['title']="Success!";
+	                $response['msg']=$total_posted." Journal/s successfully Posted";
+				}
+
 					echo json_encode($response);
 				break;
 
@@ -139,36 +371,36 @@
 
 				}
 
- $check_no = $info[0]->check_no;
- $check_date = $info[0]->check_date;
+				 $check_no = $info[0]->check_no;
+				 $check_date = $info[0]->check_date;
 
- $check_type_id = $info[0]->check_type_id;
- $check_type_name = $info[0]->check_type_name;
+				 $check_type_id = $info[0]->check_type_id;
+				 $check_type_name = $info[0]->check_type_name;
 
- $card_no = $info[0]->card_no;
- $card_type_name = $info[0]->card_type_name;
+				 $card_no = $info[0]->card_no;
+				 $card_type_name = $info[0]->card_type_name;
 
- $or_no = $info[0]->or_no;
- $folio_no = $info[0]->folio_no;
- $receipt_no = $info[0]->receipt_no;
+				 $or_no = $info[0]->or_no;
+				 $folio_no = $info[0]->folio_no;
+				 $receipt_no = $info[0]->receipt_no;
 
- 
+				 
 
-$rem_check = '';
-if($check_no != '' || $check_no != 0){
-	$rem_check = 'Check No : '.$check_no.', Check Name: '.$check_type_name.', Check Date: '.$check_date."\n";
-}
-$rem_card = '';
-if($card_no != '' || $card_no != 0){
-	$rem_card = 'Card No : '.$card_no.', Card Type Name: '.$card_type_name."\n";
-}
-$rem_billed_to = '';
-if($type == 'AR'){
-$rem_billed_to = 'Originally Billed To '.$info[0]->guest_name." - ID(".$info[0]->guest_id.")\n";
+				$rem_check = '';
+				if($check_no != '' || $check_no != 0){
+					$rem_check = 'Check No : '.$check_no.', Check Name: '.$check_type_name.', Check Date: '.$check_date."\n";
+				}
+				$rem_card = '';
+				if($card_no != '' || $card_no != 0){
+					$rem_card = 'Card No : '.$card_no.', Card Type Name: '.$card_type_name."\n";
+				}
+				$rem_billed_to = '';
+				if($type == 'AR'){
+				$rem_billed_to = 'Originally Billed To '.$info[0]->guest_name." - ID(".$info[0]->guest_id.")\n";
 
-}
+				}
 
-$data['info_remarks'] =  $rem_billed_to."".$rem_check."".$rem_card."OR No: ".$or_no."\nFolio No: ".$folio_no."\nReceipt No: ".$receipt_no;
+				$data['info_remarks'] =  $rem_billed_to."".$rem_check."".$rem_card."OR No: ".$or_no."\nFolio No: ".$folio_no."\nReceipt No: ".$receipt_no;
 
                 $data['department_id'] = $settings_info[0]->department_id;  // department id comes from settings
                 $data['customers']=$m_customers->get_list(array('customers.is_active'=>TRUE,'customers.is_deleted'=>FALSE),

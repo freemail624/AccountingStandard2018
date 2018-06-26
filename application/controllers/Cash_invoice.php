@@ -74,7 +74,11 @@ class Cash_invoice extends CORE_Controller
         );
  
         $data['invoice_counter']=$this->Invoice_counter_model->get_list(array('user_id'=>$this->session->user_id));
-
+        
+        $data['customer_type_create']=$this->Customer_type_model->get_list(
+            'is_deleted=FALSE'
+        );
+ 
 
         $data['title'] = 'Cash Invoice';
         

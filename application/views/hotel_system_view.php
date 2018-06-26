@@ -69,6 +69,24 @@
             text-align: right;
             width: 60%;
         }
+
+        #tbl_summary_filter 
+        {
+            display:none;
+        }
+
+        .right-align{
+            text-align: right;
+        }
+input[type=checkbox]
+{
+  /* Double-sized Checkboxes */
+  -ms-transform: scale(1.5); /* IE */
+  -moz-transform: scale(1.5); /* FF */
+  -webkit-transform: scale(1.5); /* Safari and Chrome */
+  -o-transform: scale(1.5); /* Opera */
+  padding: 10px;
+}
     </style>
 
 </head>
@@ -94,16 +112,18 @@
                             <div class="panel-body">
                             <h2 class="h2-panel-heading">Prime Asia | <small>Hotel Integration Control Panel</small></h2><hr>
                                 <div class="row">
+                                
                                     <div class="container-fluid">
                                         <div class="container-fluid group-box">
                                             <div id="new-search-area" class="col-sm-3" style=""><br>
-                                                <button type="button" id="btn_browse" style="width:150px;margin-bottom:5px;padding: 7px 2px 7px 2px!important;" class="btn btn-success">Upload Text File(s)</button>
+                                                <button type="button" id="btn_browse" style="width:200px;margin-bottom:5px;padding: 7px 2px 7px 2px!important;" class="btn btn-success">Upload A Text File</button>
                                                 <input type="file" name="file_upload[]" accept=".jdev"  class="hidden" >
                                             </div>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-3"><br>
+                                                        <button type="button" id="total_day_transaction" style="width:200px;margin-bottom:5px;padding: 7px 2px 7px 2px!important;" class="btn btn-info">Total Day Transaction</button>
                                             </div>
                                             <div class="col-xs-12 col-md-3" style="margin-bottom: 10px;">
-                                                <strong>As of Date :</strong>
+                                                <strong>Date :</strong>
                                                 <div class="input-group">
                                                     <input id="txt_date" type="text" class="date-picker form-control" value="<?php echo date('m/d/Y'); ?>">
                                                     <div class="input-group-addon">
@@ -118,14 +138,22 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 </div><br>
                                 <div class="row">
                                     <div class="container-fluid">
                                         <div class="container-fluid group-box">
+                                        <div class="col-sm-3">
+                                        <input type="checkbox" id="selectall_" class="css-checkbox"><label class="css-label " for="selectall_" style="font-weight: normal;">SELECT ALL</label><br><br>
+                                        </div>
+                                        <div class="col-sm-3 ">
+                                         <button id="post_selected" type="button" class="btn-primary btn" style="width : 200px;padding: 7px 2px 7px 2px!important;text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span> POST SELECTED</button>
+                                        </div>
+                                         
+                                         <form id='form_hotel'>
                                             <table id="tbl_hotel_integration" class="table table-striped" width="100%" cellspacing="0">
                                                 <thead class="">
-                                                    <th></th>
+                                                    <th style="width: 3%;"></th>
+                                                    <th style="width: 5%;"></th>
                                                     <th>Transaction Type</th>
                                                     <th>Shift Date</th>
                                                     <th>Folio</th>
@@ -133,18 +161,19 @@
                                                 </thead>
                                                 <tbody></tbody>
                                             </table>
+                                        </form>
+
                                         </div>
+                                        <i>Note: The System only allows 20 simultaneous journals to be posted at a time. Please be patient and wait for the posting to finish before refreshing the page.</i>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div> <!-- .container-fluid -->
-
                 <table id="table_hidden" class="hidden">
                     <tr>
                         <td>
                             <select name="accounts[]" class="selectpicker show-tick form-control selectpicker_accounts" data-live-search="true" title="Please select Account.">
-                            
                                 <?php foreach($accounts as $account){ ?>
                                     <option value='<?php echo $account->account_id; ?>'><?php echo $account->account_title; ?></option>
                                 <?php } ?>
@@ -176,6 +205,35 @@
     </div>
 </div>
 
+<div id="total_day_transaction_modal" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header ">
+                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Total Day Transaction</h4>
+            </div>
+            <div class="modal-body">
+                <p id="modal-body-message">Date : <label id="date_label"></label></p>
+                    <table id="tbl_summary" class="table table-striped" style="width: 100%;">
+                        <thead class="">
+                        <tr>
+                            <th>&nbsp;&nbsp;</th>
+                            <th>Account</th>
+                            <th>Debit</th>
+                            <th>Credit</th>
+                            <th>Balance</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <?php echo $_switcher_settings; ?>
@@ -207,7 +265,7 @@
 <script>
 
 $(document).ready(function(){
-    var dt; var _cboDepartments;
+    var dt; var _cboDepartments; var dt_summary;
 
 
     var oTBJournal={
@@ -253,6 +311,7 @@ $(document).ready(function(){
         dt=$('#tbl_hotel_integration').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
+            "pageLength":20,
             "language": {
                 searchPlaceholder: "Search..."
             },
@@ -269,19 +328,58 @@ $(document).ready(function(){
             },
             "columns": [
                 {
+                    targets:[0],data : null,
+                    render: function (data, type, full, meta){
+                        return  '<input type="checkbox" name="post_id[]" value="'+data.prime_hotel_integration_id+'">';
+                    }
+                },
+                {
+                    "targets": [1],
+                    "class":          "details-control",
+                    "orderable":      false,
+                    "data":           null,
+                    "defaultContent": ""
+                },
+                { targets:[2],data: "transaction" },
+                { targets:[3],data: "shift_date" },
+                { targets:[4],data: "folio_no" },
+                { targets:[5],data: "guest_name" }                        
+                
+            ]
+        });
+
+
+
+        dt_summary=$('#tbl_summary').DataTable({
+            "dom": '<"toolbar">frtip',
+            "bLengthChange":false,
+            "pageLength":20,
+            "bPaginate":false,
+            "bInfo" : false,
+            "ajax": {
+              "url":"Summary_before_posting/transaction/list",
+              "type":"GET",
+              "data":function (d) {
+                return $.extend( {}, d, {
+                    "aod": $('#txt_date').val()
+                });
+              }
+            },
+
+            "columns": [
+                {   visible: false,
                     "targets": [0],
                     "class":          "details-control",
                     "orderable":      false,
                     "data":           null,
                     "defaultContent": ""
                 },
-                { targets:[1],data: "transaction" },
-                { targets:[1],data: "shift_date" },
-                { targets:[2],data: "folio_no" },
-                { targets:[3],data: "guest_name" }                        
-                
+                {targets:[1],data: "account_title" },
+                {sClass:'right-align', targets:[2],data: "dr_amount" , render: $.fn.dataTable.render.number( ',', '.', 2 ) },
+                {sClass:'right-align', targets:[3],data: "cr_amount" , render: $.fn.dataTable.render.number( ',', '.', 2 ) },                
+                {sClass:'right-align', targets:[4],data: "balance" , render: $.fn.dataTable.render.number( ',', '.', 2 ) }
             ]
-        });
+        }); 
     };
     var showNotification=function(obj){
         PNotify.removeAll(); //remove all notifications
@@ -317,6 +415,7 @@ $(document).ready(function(){
     var bindEventHandlers=(function(){
         $('#txt_date').change(function(){
         $('#tbl_hotel_integration').DataTable().ajax.reload()
+        $('#tbl_summary').DataTable().ajax.reload()
         });
 
             var detailRows = [];
@@ -380,7 +479,26 @@ $(document).ready(function(){
                 .draw();
         });
 
+        $('#post_selected').click(function(){
 
+            var data=$("#form_hotel").serializeArray();
+            showSpinningProgress($(this));
+            console.log(data);
+                $.ajax({
+                    url : 'Hotel_system/transaction/post_selected',
+                    type : "POST",
+                    data : data,
+                    dataType : 'json',
+                    success : function(response){
+                        $('#tbl_hotel_integration').DataTable().ajax.reload();
+                        showNotification(response);
+                        $('#selectall_').prop('checked', false);
+                        showSpinningProgress($('#post_selected'));
+
+                    }
+                });
+
+        });
         $('#btn_browse').click(function(event){
             event.preventDefault();
             $('input[name="file_upload[]"]').click();
@@ -420,6 +538,29 @@ $(document).ready(function(){
                     InitializeDataTable();
                 });
         });
+
+
+        $('#total_day_transaction').click(function(){
+            $('#total_day_transaction_modal').modal('show');
+            $('#date_label').html($('#txt_date').val())
+        });
+
+
+            $('[id=selectall_]').click(function(event) {   
+                    var btn=$(this); 
+                if(this.checked) {
+                    $('input[name="post_id[]"]').each(function() {
+                        this.checked = true;                        
+                    });
+                }
+                else {
+                    $('input[name="post_id[]"]').each(function() {
+                        this.checked = false;                        
+                    });
+                }
+            });
+
+
     })();
 
 
