@@ -93,7 +93,9 @@ class Rights_link_model extends CORE_Model{
                                           (83,'3','3-4','Cash Invoice'),
                                           (84,'6','6-13','Audit Trail'),
                                           (85,'15','15-5','Item Transfer to Department'),
-                                          (86,'15','15-6','Stock Card / Bin Card')
+                                          (86,'15','15-6','Stock Card / Bin Card'),
+                                          (87,'16','16-1','Hotel Integration Control Panel'),
+                                          (88,'16','16-2','Hotel Integration Settings')
                                           ON DUPLICATE KEY UPDATE
                                           rights_links.parent_code=VALUES(rights_links.parent_code),
                                           rights_links.link_code=VALUES(rights_links.link_code),

@@ -566,7 +566,7 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;">Tin No :</label>
+                                     <label class="control-label boldlabel" style="text-align:right;">Customer Type :</label>
                                 </div>
                                 <div class="col-md-8" style="padding: 0px;">
                                 <select name="customer_type_id_create" id="cbo_customer_type_create" style="width: 100%">

@@ -35,9 +35,9 @@ class Hotel_system_settings extends CORE_Controller
         $data['departments'] = $this->Departments_model->get_list(array('is_active'=>TRUE, 'is_deleted'=>FALSE));
         $prime_hotel_integration = $this->Hotel_system_settings_model->get_list(1);
         $data['prime_hotel_integration'] = $prime_hotel_integration[0]; 
-        // (in_array('6-13',$this->session->user_rights)? 
-        $this->load->view('hotel_system_settings_view', $data);
-        // :redirect(base_url('dashboard')));
+        (in_array('16-2',$this->session->user_rights)? 
+        $this->load->view('hotel_system_settings_view', $data)
+        :redirect(base_url('dashboard')));
 
     }
 

@@ -125,8 +125,8 @@
 
                         <li class="<?php echo (in_array('15',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-stats-up"></i><span>Hotel System Integration</span></a>
                             <ul class="acc-menu">
-                                <li class="<?php echo (in_array('15-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Hotel_system">Hotel Control Panel</a></li>
-                                <li class="<?php echo (in_array('15-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Hotel_system_settings">Hotel Settings</a></li>
+                                <li class="<?php echo (in_array('16-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Hotel_system">Hotel Control Panel</a></li>
+                                <li class="<?php echo (in_array('16-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Hotel_system_settings">Hotel Settings</a></li>
                             </ul>
                         </li>
                         <li class="<?php echo (in_array('6',$this->session->parent_rights)?'':'hidden'); ?>">

@@ -36,9 +36,9 @@
 	        $data['title'] = 'Hotel Integration Control Panel';
 	        $data['accounts']=$this->Account_title_model->get_list('is_active=TRUE AND is_deleted=FALSE');
 	        $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE');
-        // (in_array('16-3',$this->session->user_rights)? 
-        $this->load->view('hotel_system_view',$data);
-        // :redirect(base_url('dashboard')));
+        (in_array('16-1',$this->session->user_rights)? 
+        $this->load->view('hotel_system_view',$data)
+        :redirect(base_url('dashboard')));
 	        
 		}
 
