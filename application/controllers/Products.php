@@ -30,6 +30,7 @@ class Products extends CORE_Controller
         $this->load->model('Account_integration_model');
         $this->load->model('Company_model');
         $this->load->model('Trans_model');
+        $this->load->model('Brands_model');
     }
 
     public function index() {
@@ -55,6 +56,7 @@ class Products extends CORE_Controller
         $data['item_types'] = $this->Item_type_model->get_list(array('item_types.is_deleted'=>FALSE));
         $data['accounts'] = $this->Account_title_model->get_list('is_active= TRUE AND is_deleted = FALSE','account_id,account_title');
         $data['tax_types']=$this->Tax_model->get_list(array('tax_types.is_deleted'=>FALSE));
+        $data['brands']= $this->Brands_model->get_brand_list();
         // (in_array('5-1',$this->session->user_rights)? 
         // $this->load->view('products_view', $data)
         // :redirect(base_url('dashboard')));
@@ -111,6 +113,7 @@ class Products extends CORE_Controller
                 $m_products->product_code = $this->input->post('product_code', TRUE);
                 $m_products->product_desc = $this->input->post('product_desc', TRUE);
                 $m_products->product_desc1 = $this->input->post('product_desc1', TRUE);
+                $m_products->brand_id = $this->input->post('brand_id', TRUE);
                 $m_products->size = $this->input->post('size', TRUE);
                 $m_products->supplier_id = $this->input->post('supplier_id', TRUE);
                 $m_products->category_id = $this->input->post('category_id', TRUE);
@@ -121,13 +124,11 @@ class Products extends CORE_Controller
                 $m_products->parent_unit_id = $this->input->post('parent_unit_id', TRUE);
 
                 $m_products->is_bulk =$this->get_numeric_value($this->input->post('is_bulk',TRUE));
-                if($this->get_numeric_value($this->input->post('is_bulk',TRUE)) == 1){
                 $m_products->child_unit_desc = $this->get_numeric_value($this->input->post('child_unit_desc', TRUE));
                 $m_products->child_unit_id = $this->input->post('child_unit_id', TRUE);  
-                }else{
-                $m_products->child_unit_desc = 0;
-                $m_products->child_unit_id =0;
-                }
+  
+
+        
                 $m_products->tax_type_id = $this->input->post('tax_type_id', TRUE);
                 //$m_products->is_inventory = $this->input->post('inventory',TRUE);
 
@@ -183,6 +184,7 @@ class Products extends CORE_Controller
                 $m_products->set('date_modified','NOW()');
                 $m_products->modified_by_user = $this->session->user_id;
 
+                $m_products->brand_id = $this->input->post('brand_id', TRUE);
                 $m_products->product_code = $this->input->post('product_code', TRUE);
                 $m_products->product_desc = $this->input->post('product_desc', TRUE);
                 $m_products->product_desc1 = $this->input->post('product_desc1', TRUE);
@@ -194,13 +196,9 @@ class Products extends CORE_Controller
                 $m_products->income_account_id = $this->input->post('income_account_id', TRUE);
                 $m_products->expense_account_id = $this->input->post('expense_account_id', TRUE);
                 $m_products->parent_unit_id = $this->input->post('parent_unit_id', TRUE);
-                if($this->get_numeric_value($this->input->post('is_bulk',TRUE)) == 1){
                 $m_products->child_unit_desc = $this->get_numeric_value($this->input->post('child_unit_desc', TRUE));
                 $m_products->child_unit_id = $this->input->post('child_unit_id', TRUE);  
-                }else{
-                $m_products->child_unit_desc = 0;
-                $m_products->child_unit_id =0;
-                }
+
                 $m_products->is_bulk =$this->get_numeric_value($this->input->post('is_bulk',TRUE));
                 $m_products->tax_type_id = $this->input->post('tax_type_id', TRUE);
                 //$m_products->is_inventory = $this->input->post('inventory',TRUE);

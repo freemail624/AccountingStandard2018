@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 
 <html lang="en">
 
@@ -18,13 +18,9 @@
     <?php echo $_def_css_files; ?>
 
     <link rel="stylesheet" href="assets/plugins/spinner/dist/ladda-themeless.min.css">
-
     <link type="text/css" href="assets/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet">
     <link type="text/css" href="assets/plugins/datatables/dataTables.themify.css" rel="stylesheet">
-
     <style>
-
-
         .toolbar{
             float: left;
         }
@@ -70,127 +66,37 @@
 
         <?php echo $_side_bar_navigation;?>
 
-        <div class="static-content-wrapper white-bg">
+        <div class="static-content-wrapper white-bg custom-background">
             <div class="static-content"  >
                 <div class="page-content"><!-- #page-content -->
 
-                    <ol class="breadcrumb">
+                    <ol class="breadcrumb transparent-background" style="margin: 0;">
                         <li><a href="dashboard">Dashboard</a></li>
-                        <li><a href="brands">Brands</a></li>
+                        <li><a href="Brands">Brands</a></li>
                     </ol>
 
                     <div class="container-fluid">
                         <div data-widget-group="group1">
                             <div class="row">
                                 <div class="col-md-12">
-
                                     <div id="div_brand_list">
                                         <div class="panel panel-default">
                                             <div class="panel-body table-responsive">
-                                                <table id="tbl_brands" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                            <h2 class="h2-panel-heading">Brands</h2><hr>
+                                                <table id="tbl_brands" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead>
+
                                                     <tr>
                                                         <th>Brand Name</th>
-                                                        <th>First Name</th>
-                                                        <th>Middle Name</th>
-                                                        <th>Last Name</th>
-                                                        <th>Mobile No.</th>
                                                         <th><center>Action</center></th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            <div class="panel-footer"></div>
                                         </div>
                                     </div>
-
-                                    <div id="div_brand_fields" style="display: none;">
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading">
-                                                <h2>brand Information</h2>
-                                                <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body"}'></div>
-                                            </div>
-
-                                            <div class="panel-body center">
-                                                <form id="frm_brand" role="form" class="form-horizontal row-border">
-                                                    <div class="form-group">
-                                                        <label class="col-md-4 control-label">Brand Name :</label>
-                                                        <div class="col-md-4">
-                                                            <div class="input-group">
-                                                                <span class="input-group-addon">
-                                                                    <i class="fa fa-user"></i>
-                                                                </span>
-                                                                <input type="text" name="brand_name" class="form-control" placeholder="Brand Name" data-error-msg="Brand name is required!" required>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label class="col-md-4 control-label">First Name :</label>
-                                                        <div class="col-md-4">
-                                                            <div class="input-group">
-                                                                <span class="input-group-addon">
-                                                                    <i class="fa fa-send"></i>
-                                                                </span>
-                                                                <input type="text" name="fname" class="form-control" placeholder="a Test field" data-error-msg="test field required" required>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label class="col-md-4 control-label">Middle Name :</label>
-                                                        <div class="col-md-4">
-                                                            <div class="input-group">
-                                                                <span class="input-group-addon">
-                                                                    <i class="fa fa-send"></i>
-                                                                </span>
-                                                                <input type="text" name="mname" class="form-control" placeholder="a Test field" data-error-msg="test field required" required>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label class="col-md-4 control-label">Last Name :</label>
-                                                        <div class="col-md-4">
-                                                            <div class="input-group">
-                                                                <span class="input-group-addon">
-                                                                    <i class="fa fa-send"></i>
-                                                                </span>
-                                                                <input type="text" name="lname" class="form-control" placeholder="a Test field" data-error-msg="test field required" required>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label class="col-md-4 control-label">Mobile No. :</label>
-                                                        <div class="col-md-4">
-                                                            <div class="input-group">
-                                                                <span class="input-group-addon">
-                                                                    <i class="fa fa-send"></i>
-                                                                </span>
-                                                                <input type="text" name="m_num" class="form-control" placeholder="a Test field" data-error-msg="test field required" required>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <br/>
-                                                </form>
-                                            </div>
-
-                                            <div class="panel-footer">
-                                                <div class="row">
-                                                    <div class="col-sm-6 col-sm-offset-4">
-                                                        <button id="btn_save" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;""><span class=""></span>  Save Changes</button>
-                                                        <button id="btn_cancel" class="btn-default btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"">Cancel</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
                                 </div>
                             </div>
                         </div>
@@ -201,10 +107,10 @@
 
             <div id="modal_confirmation" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
                 <div class="modal-dialog modal-sm">
-                    <div class="modal-content"><!---content--->
+                    <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
-                            <h4 class="modal-title"><span id="modal_mode"> </span>Confirm Deletion</h4>
+                            <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Confirm Deletion</h4>
                         </div>
 
                         <div class="modal-body">
@@ -215,14 +121,41 @@
                             <button id="btn_yes" type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
                             <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal">No</button>
                         </div>
-                    </div><!---content---->
+                    </div>
                 </div>
             </div><!---modal-->
+            <div id="modal_new_brand" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background: #2ecc71">
+                             <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                             <h2 id="brand_title" class="modal-title" style="color:white;"></h2>
+                        </div>
+                        <div class="modal-body">
+                            <form id="frm_brands" role="form" class="form-horizontal">
+                                <div class="row" style="margin: 1%;">
+                                    <div class="col-lg-12">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            <label class=""><B> * </B> Brand Name :</label>
+                                            <textarea name="brand_name" class="form-control" data-error-msg="Brand Name is required!" placeholder="Brand name" required></textarea>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="btn_save" class="btn btn-primary">Save</button>
+                            <button id="btn_cancel" class="btn btn-default">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <footer role="contentinfo">
                 <div class="clearfix">
                     <ul class="list-unstyled list-inline pull-left">
-                        <li><h6 style="margin: 0;">&copy; 2016 - Paul Christian Rueda</h6></li>
+                        <li><h6 style="margin: 0;">&copy; 2018 - JDEV OFFICE SOLUTION INC</h6></li>
                     </ul>
                     <button class="pull-right btn btn-link btn-xs hidden-print" id="back-to-top"><i class="ti ti-arrow-up"></i></button>
                 </div>
@@ -253,28 +186,28 @@ $(document).ready(function(){
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "ajax" : "Brands/transaction/list",
+            "language" : {
+                "searchPlaceholder": "Search Brand"
+            },
             "columns": [
-
                 { targets:[0],data: "brand_name" },
-                { targets:[2],data: "fname" },
-                { targets:[3],data: "mname" },
-                { targets:[4],data: "lname" },
-                { targets:[5],data: "m_num" },
                 {
-                    targets:[6],
+                    targets:[1],
                     render: function (data, type, full, meta){
-                        var btn_edit='<button class="btn btn-default btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
-                        var btn_trash='<button class="btn btn-default btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
+                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
+                        var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
 
-                        return '<center>'+btn_edit+btn_trash+'</center>';
+                        return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                     }
                 }
             ]
         });
 
         var createToolBarButton=function(){
-            var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New brand" >'+
-                '<i class="fa fa-users"></i> New Brand</button>';
+
+            var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Brand" >'+
+
+                '<i class="fa fa-plus"></i> New Brand</button>';
             $("div.toolbar").html(_btnNew);
         }();
     }();
@@ -282,31 +215,13 @@ $(document).ready(function(){
     var bindEventHandlers=(function(){
         var detailRows = [];
 
-        $('#tbl_brands tbody').on( 'click', 'tr td.details-control', function () {
-            var tr = $(this).closest('tr');
-            var row = dt.row( tr );
-            var idx = $.inArray( tr.attr('id'), detailRows );
-
-            if ( row.child.isShown() ) {
-                tr.removeClass( 'details' );
-                row.child.hide();
-
-                detailRows.splice( idx, 1 );
-            }
-            else {
-                tr.addClass( 'details' );
-
-                row.child( format( row.data() ) ).show();
-
-                if ( idx === -1 ) {
-                    detailRows.push( tr.attr('id') );
-                }
-            }
-        } );
 
         $('#btn_new').click(function(){
             _txnMode="new";
-            showList(false);
+            //showList(false);
+            clearFields($('#frm_brands'));
+            $('#brand_title').text('New Brand');
+            $('#modal_new_brand').modal('show');
         });
 
         $('#tbl_brands tbody').on('click','button[name="edit_info"]',function(){
@@ -315,7 +230,7 @@ $(document).ready(function(){
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.brand_id;
 
-            $('input,textarea').each(function(){
+            $('input,textarea,select').each(function(){
                 var _elem=$(this);
                 $.each(data,function(name,value){
                     if(_elem.attr('name')==name){
@@ -323,7 +238,9 @@ $(document).ready(function(){
                     }
                 });
             });
-            showList(false);
+            $('#brand_title').text('Edit Brand');
+            $('#modal_new_brand').modal('show');
+            //showList(false);
         });
 
         $('#tbl_brands tbody').on('click','button[name="remove_info"]',function(){
@@ -335,42 +252,16 @@ $(document).ready(function(){
         });
 
         $('#btn_yes').click(function(){
-            removebrand().done(function(response){
+            removeBrand().done(function(response){
                 showNotification(response);
                 dt.row(_selectRowObj).remove().draw();
             });
         });
 
-        $('input[name="file_upload[]"]').change(function(event){
-            var _files=event.target.files;
-
-            $('#div_img_brand').hide();
-            $('#div_img_loader').show();
-
-            var data=new FormData();
-            $.each(_files,function(key,value){
-                data.append(key,value);
-            });
-
-            console.log(_files);
-
-            $.ajax({
-                url : 'Brands/transaction/upload',
-                type : "POST",
-                data : data,
-                cache : false,
-                dataType : 'json',
-                processData : false,
-                contentType : false,
-                success : function(response){
-                    $('#div_img_loader').hide();
-                    $('#div_img_brand').show();
-                }
-            });
-        });
 
         $('#btn_cancel').click(function(){
-            showList(true);
+            clearFields();
+            $('#modal_new_brand').modal('hide');
         });
 
         $('#btn_save').click(function(){
@@ -380,7 +271,6 @@ $(document).ready(function(){
                         showNotification(response);
                         dt.row.add(response.row_added[0]).draw();
                         clearFields();
-
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
                     });
@@ -394,6 +284,7 @@ $(document).ready(function(){
                         showSpinningProgress($('#btn_save'));
                     });
                 }
+                $('#modal_new_brand').modal('hide');
             }
         });
     })();
@@ -402,7 +293,7 @@ $(document).ready(function(){
         var stat=true;
 
         $('div.form-group').removeClass('has-error');
-        $('input[required],textarea','#frm_brand').each(function(){
+        $('input[required],textarea[required]','#frm_brands').each(function(){
             if($(this).val()==""){
                 showNotification({title:"Error!",stat:"error",msg:$(this).data('error-msg')});
                 $(this).closest('div.form-group').addClass('has-error');
@@ -414,7 +305,7 @@ $(document).ready(function(){
     };
 
     var createBrand=function(){
-        var _data=$('#frm_brand').serializeArray();
+        var _data=$('#frm_brands').serializeArray();
 
         return $.ajax({
             "dataType":"json",
@@ -426,7 +317,7 @@ $(document).ready(function(){
     };
 
     var updateBrand=function(){
-        var _data=$('#frm_brand').serializeArray();
+        var _data=$('#frm_brands').serializeArray();
         _data.push({name : "brand_id" ,value : _selectedID});
 
         return $.ajax({
@@ -438,7 +329,7 @@ $(document).ready(function(){
         });
     };
 
-    var removebrand=function(){
+    var removeBrand=function(){
         return $.ajax({
             "dataType":"json",
             "type":"POST",
@@ -471,20 +362,11 @@ $(document).ready(function(){
     };
 
     var clearFields=function(){
-        $('input[required],textarea','#frm_brand').val('');
+        $('input[required],textarea','#frm_brands').val('');
         $('form').find('input:first').focus();
     };
 
-    function format ( d ) {
-        return '<br /><table style="margin-left:10%;width: 80%;">' +
-        '<thead>' +
-        '</thead>' +
-        '<tbody>' +
-        '<tr>' +
-        '<td>brand Name : </td><td><b>'+ d.brand_name+'</b></td>' +
-        '</tr>' +
-        '</tbody></table><br />';
-    };
+
 });
 
 </script>
