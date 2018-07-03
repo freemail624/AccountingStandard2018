@@ -233,6 +233,19 @@
                                                                 <textarea name="product_desc1" id="product_desc1" class="form-control"></textarea>
                                                             </div>
 
+                                                            <div class="form-group" style="margin-bottom:0px;">
+                                                                <label class=""><b class="required">*</b> Brand :</label>
+                                                                <select name="brand_id" id="brand" data-error-msg="Brand is required." required>
+                                                                    <option value="0">[ Create Brand ]</option>
+                                                                    <?php
+                                                                    foreach($brands as $brand)
+                                                                    {
+                                                                        echo '<option value="'.$brand->brand_id.'">'.$brand->brand_name.'</option>';
+                                                                    }
+                                                                    ?>
+                                                                </select>
+                                                            </div>
+
                                                             
                                                             <div class="form-group" style="margin-bottom:0px;">
                                                                 <label class=""><b class="required">*</b> Supplier :</label>
@@ -290,8 +303,9 @@
                                                                 <div class="col-lg-12 container-fluid" style="padding: 0px;">
                                                        <div class="form-group col-sm-4" style="margin-bottom:0px;">
 
-                                                                <label class=""><b class="required">*</b>Unit of Measurement</label><select name="parent_unit_id" id="product_unit" data-error-msg="Unit is required." required>
-                                                                    <option value="">Please Select Unit</option>
+                                                                <label class=""><b class="required">*</b>Unit of Measurement</label>
+                                                                <select name="parent_unit_id" id="product_unit" data-error-msg="Unit is required." required>
+                                                                    <option value="unt">[ Create New Unit ]</option>
                                                                     <?php
                                                                     foreach($units as $row)
                                                                     {
@@ -310,7 +324,7 @@
                                                              <div class="form-group col-sm-4" style="margin-bottom:0px;">
                                                                 <label class=""><b class="required"> &nbsp;</b> &nbsp; </label>
                                                                 <select name="child_unit_id" id="child_unit_id" data-error-msg="Retail Unit is required.">
-                                                                    <option value="">No Unit</option>
+                                                                    <option value="unt">[ Create New Unit ]</option>
                                                                     <?php
                                                                     foreach($units as $row)
                                                                     {
@@ -603,6 +617,46 @@
                 </div>
             </div><!---modal-->
 
+            <div id="modal_unit_group_child" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+                <div class="modal-dialog modal-md">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                            <h4 class="modal-title"><span id="modal_mode"> </span>New Unit Group</h4>
+
+                        </div>
+
+                        <div class="modal-body">
+                            <form id="frm_unit_group_child">
+                                <div class="form-group">
+                                    <label class="boldlabel"><b class="required">*</b> Unit Name :</label>
+                                    <div class="input-group">
+                                                <span class="input-group-addon">
+                                                    <i class="fa fa-envelope-o"></i>
+                                                </span>
+                                        <input type="text" name="unit_name" id="unit_name" class="form-control" placeholder="Unit Name" data-error-msg="Unit name is required." required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="boldlabel">Description :</label>
+                                    <div class="input-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <textarea name="unit_desc" id="unit_desc" placeholder="Unit Description" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                            </form>
+
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button id="btn_create_unit_group_child" type="button" class="btn btn-primary"  style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span> Create</button>
+                            <button id="btn_close_unit_group_child" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div><!---modal-->
+
             <div id="modal_product_type" class="modal fade" tabindex="-1" role="dialog">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -812,7 +866,33 @@
 
 
 
+            <div id="modal_new_brand" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background: #2ecc71">
+                             <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                             <h2 id="brand_title" class="" style="color:white;">Brand | New</h2>
+                        </div>
+                        <div class="modal-body">
+                            <form id="frm_brands" role="form" class="form-horizontal">
+                                <div class="row" style="margin: 1%;">
+                                    <div class="col-lg-12">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            <label class=""><B> * </B> Brand Name :</label>
+                                            <textarea name="brand_name" class="form-control" data-error-msg="Brand Name is required!" placeholder="Brand name" required></textarea>
 
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="btn_save_brand" class="btn btn-primary">Save</button>
+                            <button id="btn_cancel_brand" class="btn btn-default">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div id="modal_filter" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
                 <div class="modal-dialog modal-md">
@@ -978,6 +1058,7 @@ $(document).ready(function(){
     var _cboTaxGroup;
     var _section_id; var _menu_id; var _child_unit_id;
     var _cboPrimaryUnit;
+    var _cboBrands;
     /*$(document).ready(function(){
         $('#modal_filter').modal('show');
         showList(false);
@@ -1133,7 +1214,7 @@ $(document).ready(function(){
         });
 
         _child_unit_id=$('#child_unit_id').select2({
-            
+            placeholder: "Please select Retail Unit.",
             allowClear: false
         });
 
@@ -1148,9 +1229,25 @@ $(document).ready(function(){
         _cboTaxGroup=$('#cbo_tax_group').select2({
             allowClear: false
         });
+
+        _cboBrands=$('#brand').select2({
+            placeholder: "Please select a Brand.",
+            allowClear: false
+        });
     }();
     
-        
+        $("#brand").on("change", function () {     
+            $modal = $('#modal_new_brand');
+            if($(this).val() == '0'){
+         
+                $modal.modal('show');
+                _cboBrands.select2('val',null);
+
+                clearFieldsCategory($('#frm_brands'));
+            }
+        });
+
+
 
         // NEW PRODUCT CATEGORY
         $("#product_category").on("change", function () {        
@@ -1195,7 +1292,7 @@ $(document).ready(function(){
         // END HERE
 
         // NEW PRODUCT UNIT
-        $("#product_unit").on("change", function () {        
+        $("#product_unit").on("change", function () {
             $modal = $('#modal_unit_group');
         
             if($(this).val() === 'unt'){
@@ -1204,6 +1301,17 @@ $(document).ready(function(){
                 // $('#modal_create_product').modal('toggle');
                 //clearFieldsModal($('#frm_unit_group'));
                 clearFieldsUnit($('#frm_unit_group'));
+            }
+        });
+
+        $("#child_unit_id").on("change", function () {        
+            $modal = $('#modal_unit_group_child');
+            if($(this).val() === 'unt'){
+                _child_unit_id.select2('val',null);
+                $modal.modal('show');
+                // $('#modal_create_product').modal('toggle');
+                //clearFieldsModal($('#frm_unit_group'));
+                clearFieldsUnit($('#frm_unit_group_child'));
             }
         });
 
@@ -1343,6 +1451,34 @@ $(document).ready(function(){
 
         });*/
     
+    $('#btn_save_brand').click(function(){
+
+        var btn=$(this);
+
+        if(validateRequiredFields($('#frm_brands'))){
+            var data=$('#frm_brands').serializeArray();
+
+            $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Brands/transaction/create",
+                "data":data,
+                "beforeSend" : function(){
+                    showSpinningProgress(btn);
+                }
+            }).done(function(response){
+                showNotification(response);
+                $('#modal_new_brand').modal('hide');
+                var _group=response.row_added[0];
+                $('#brand').append('<option value="'+_group.brand_id+'" selected>'+_group.brand_name+'</option>');
+                $('#brand').select2('val',_group.brand_id);
+
+            }).always(function(){
+                showSpinningProgress(btn);
+            });
+        }
+    });
+
     $('#btn_create_category_group').click(function(){
 
         var btn=$(this);
@@ -1427,7 +1563,40 @@ $(document).ready(function(){
 
                 var _group=response.row_added[0];
                 $('#product_unit').append('<option value="'+_group.unit_id+'" selected>'+_group.unit_name+'</option>');
+                $('#child_unit_id').append('<option value="'+_group.unit_id+'" >'+_group.unit_name+'</option>');
+                if(_child_unit_id.val() == 'unt'){_child_unit_id.select2('val',null); } // append in #child_unit_id changes the selected to the first row
                 $('#product_unit').select2('val',_group.unit_id);
+            }).always(function(){
+                showSpinningProgress(btn);
+            });
+        }
+    });
+
+    $('#btn_create_unit_group_child').click(function(){
+
+        var btn=$(this);
+
+        if(validateRequiredFields($('#frm_unit_group_child'))){
+            var data=$('#frm_unit_group_child').serializeArray();
+
+            $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Units/transaction/create",
+                "data":data,
+                "beforeSend" : function(){
+                    showSpinningProgress(btn);
+                }
+            }).done(function(response){
+                showNotification(response);
+                $('#modal_unit_group_child').modal('hide');
+                // $('#modal_create_product').modal('show');
+
+                var _group=response.row_added[0];
+                $('#child_unit_id').append('<option value="'+_group.unit_id+'" selected>'+_group.unit_name+'</option>');
+                $('#product_unit').append('<option value="'+_group.unit_id+'" >'+_group.unit_name+'</option>');
+                if(_cboMeasurement.val() == 'unt'){_cboMeasurement.select2('val',null); }  // append in #product_unit changes the selected to the first row
+                $('#child_unit_id').select2('val',_group.unit_id);
 
             }).always(function(){
                 showSpinningProgress(btn);
@@ -1559,9 +1728,11 @@ $(document).ready(function(){
             clearFields($('#frm_product'));
             _cboCategory.select2('val',null);
             _cboSupplier.select2('val',null);
+            _cboBrands.select2('val',null);
             _cboTax.select2('val',null);
             _cboInventory.select2('val',null);
             _cboMeasurement.select2('val',null);
+            _child_unit_id.select2('val',null);
             _cboCredit.select2('val',0);
             _cboDebit.select2('val',0);
             _cboPrimaryUnit.select2('val',1);
@@ -1596,26 +1767,16 @@ $(document).ready(function(){
             });
 
              _cboSupplier.select2('val',data.supplier_id);
-
             _cboCategory.select2('val',data.category_id);
-
             _cboTax.select2('val',data.tax_type_id);
-
             _cboInventory.select2('val',data.item_type_id);
-
             _cboMeasurement.select2('val',data.parent_unit_id);
             _child_unit_id.select2('val',data.child_unit_id);
-
             _cboCredit.select2('val',data.income_account_id);
-
             _cboDebit.select2('val',data.expense_account_id);
-
             _cboTaxGroup.select2('val',data.tax_type_id);
-
             _cboPrimaryUnit.select2('val',data.primary_unit);
-
-
-
+            _cboBrands.select2('val',data.brand_id);
             $('#is_tax_exempt').prop('checked', (data.is_tax_exempt==1?true:false));
             $('#is_bulk').prop('checked', (data.is_bulk==1?true:false));
 

@@ -95,12 +95,13 @@ class Rights_link_model extends CORE_Model{
                                           (85,'15','15-5','Item Transfer to Department'),
                                           (86,'15','15-6','Stock Card / Bin Card'),
                                           (87,'16','16-1','Hotel Integration Control Panel'),
-                                          (88,'16','16-2','Hotel Integration Settings')
+                                          (88,'16','16-2','Hotel Integration Settings'),
+                                          (89,'3','3-5','Warehouse Dispatching'),
+                                          (90,'4','4-7','Hotel Integration Settings')
                                           ON DUPLICATE KEY UPDATE
                                           rights_links.parent_code=VALUES(rights_links.parent_code),
                                           rights_links.link_code=VALUES(rights_links.link_code),
-                                          rights_links.link_name=VALUES(rights_links.link_name)
-            ";
+                                          rights_links.link_name=VALUES(rights_links.link_name)";
         $this->db->query($sql);
     }
 }

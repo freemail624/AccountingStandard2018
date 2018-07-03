@@ -87,6 +87,10 @@ class Templates extends CORE_Controller {
         $this->load->model('Issuance_department_model');
         $this->load->model('Issuance_department_item_model');
 
+
+        $this->load->model('Dispatching_invoice_model');
+        $this->load->model('Dispatching_invoice_item_model');
+
         $this->load->library('M_pdf');
         $this->load->library('excel');
         $this->load->model('Email_settings_model');
@@ -805,6 +809,70 @@ class Templates extends CORE_Controller {
 
                 break;
 
+
+            //****************************************************
+            case 'dispatching-invoice': //delivery invoice
+                $m_dispatching_invoice=$this->Dispatching_invoice_model;
+                $m_dispatching_invoice_items=$this->Dispatching_invoice_item_model;
+                $m_company_info=$this->Company_model;
+                $type=$this->input->get('type',TRUE);
+
+
+                $company_info=$m_company_info->get_list();
+                $data['company_info']=$company_info[0];
+
+                $info=$m_dispatching_invoice->get_list(
+                    $filter_value,
+                    array(
+                        'dispatching_invoice.sales_invoice_id',
+                        'dispatching_invoice.sales_inv_no',
+                        'dispatching_invoice.remarks', 
+                        'dispatching_invoice.date_created',
+                        'dispatching_invoice.customer_id',
+                        'dispatching_invoice.inv_type',
+                        'dispatching_invoice.*',
+                        'DATE_FORMAT(dispatching_invoice.date_invoice,"%m/%d/%Y") as date_invoice',
+                        'DATE_FORMAT(dispatching_invoice.date_due,"%m/%d/%Y") as date_due',
+                        'departments.department_id',
+                        'departments.department_name',
+                        'customers.customer_name',
+                        'dispatching_invoice.salesperson_id',
+                        'dispatching_invoice.address',
+                        'sales_invoice.sales_inv_no',
+                        'CONCAT(salesperson.firstname," ",salesperson.lastname) AS salesperson_name'
+                    ),
+                    array(
+                        array('departments','departments.department_id=dispatching_invoice.department_id','left'),
+                        array('salesperson','salesperson.salesperson_id=dispatching_invoice.salesperson_id','left'),
+                        array('customers','customers.customer_id=dispatching_invoice.customer_id','left'),
+                        array('sales_invoice','sales_invoice.sales_invoice_id=dispatching_invoice.sales_invoice_id','left'),
+                    )
+                );
+
+                $data['dis_info']=$info[0];
+                $data['dispatching_invoice_items']=$m_dispatching_invoice_items->get_list(
+                    array('dispatching_invoice_items.dispatching_invoice_id'=>$filter_value),
+                    'dispatching_invoice_items.*,products.product_desc,products.size,units.unit_name',
+                    array(
+                        array('products','products.product_id=dispatching_invoice_items.product_id','left'),
+                        array('units','units.unit_id=dispatching_invoice_items.unit_id','left')
+                    )
+                );
+
+
+                if($type=='contentview'){
+                    $file_name=$info[0]->dispatching_inv_no;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                    $content=$this->load->view('template/dispatching_invoice_content',$data,TRUE); //load the template
+                    $pdf->setFooter('{PAGENO}');
+                    
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output();
+                }
+
+                break;
 
             //****************************************************
             case 'sales-invoice': //delivery invoice
