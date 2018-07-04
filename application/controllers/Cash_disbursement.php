@@ -64,6 +64,14 @@ class Cash_disbursement extends CORE_Controller
 
     public function transaction($txn=null){
         switch($txn){
+                case 'cdj-for-approval':  //is called on DASHBOARD, returns PO list for approval
+                    //approval id 2 are those pending
+                    $m_journal=$this->Journal_info_model;
+                    $response['data'] = $m_journal->get_cdj_for_approval();
+                    echo json_encode($response);
+                    break;
+
+
             case 'list':
                 $m_journal=$this->Journal_info_model;
                 $response['data']=$this->get_response_rows();
@@ -178,6 +186,9 @@ class Cash_disbursement extends CORE_Controller
                     $response['msg']='Please make sure transaction date is valid!<br />';
                     die(json_encode($response));
                 }
+
+                // NEW FOR PRIME ASIA ONLY 
+                $m_journal->is_active=FALSE;
 
                 $m_journal->supplier_id=$this->input->post('supplier_id',TRUE);
                 $m_journal->remarks=$this->input->post('remarks',TRUE);
@@ -341,6 +352,14 @@ class Cash_disbursement extends CORE_Controller
                     die(json_encode($response));
                 }
 
+                $journal_approved =$m_journal->get_list($journal_id,'cdj_approved_by');
+                if($journal_approved[0]->cdj_approved_by == 0){ // already approved
+                    $response['title']='Cannot set as Active!';
+                    $response['stat']='error';
+                    $response['msg']='Journal is not yet approved.';
+                    die(json_encode($response));
+                }
+
                 //mark Items as deleted
                 $m_journal->set('date_cancelled','NOW()'); //treat NOW() as function and not string
                 $m_journal->cancelled_by_user=$this->session->user_id;//user that cancelled the record
@@ -373,6 +392,52 @@ class Cash_disbursement extends CORE_Controller
 
                 break;
 
+            case 'mark-approved':
+                $m_journal=$this->Journal_info_model;
+                $journal_id=$this->input->post('journal_id',TRUE);
+
+                //validate if this transaction is not yet closed
+                $not_closed=$m_journal->get_list('accounting_period_id>0 AND journal_id='.$journal_id);
+                if(count($not_closed)>0){
+                    $response['stat']='error';
+                    $response['title']='<b>Journal is Locked!</b>';
+                    $response['msg']='Sorry, you cannot cancel journal that is already closed!<br />';
+                    die(json_encode($response));
+                }
+
+
+                //mark Items as deleted
+       
+                $m_journal->cdj_approved_by=$this->session->user_id;//user that cancelled the record
+                $m_journal->is_active = 1;
+                $m_journal->modify($journal_id);
+
+                // $journal_txn_no =$m_journal->get_list($journal_id,'txn_no,is_active');
+                // $m_trans=$this->Trans_model;
+                // $m_trans->user_id=$this->session->user_id;
+                // $m_trans->set('trans_date','NOW()');
+                // if($journal_txn_no[0]->is_active ==TRUE){
+
+                // $m_trans->trans_key_id=9; //CRUD
+                // $m_trans->trans_type_id=2; // TRANS TYPE
+                // $m_trans->trans_log='Uncancelled Cash Disbursement Entry : '.$journal_txn_no[0]->txn_no;
+
+                // }else if($journal_txn_no[0]->is_active ==FALSE){
+                // $m_trans->trans_key_id=4; //CRUD
+                // $m_trans->trans_type_id=2; // TRANS TYPE
+                // $m_trans->trans_log='Cancelled Cash Disbursement Entry : '.$journal_txn_no[0]->txn_no;
+                // }
+                // $m_trans->save();
+
+                $response['title']='Success!';
+                $response['stat']='success';
+                $response['msg']='Journal successfully Finalized.';
+                $response['row_updated']=$this->get_response_rows($journal_id);
+
+                echo json_encode($response);
+
+                break;
+
         };
     }
 
@@ -395,6 +460,7 @@ class Cash_disbursement extends CORE_Controller
                 'journal_info.supplier_id',
                 'journal_info.customer_id',
                 'journal_info.payment_method_id',
+                'journal_info.cdj_approved_by',
                 'payment_methods.payment_method',
                 'journal_info.bank',
                 'journal_info.check_no',
@@ -403,6 +469,7 @@ class Cash_disbursement extends CORE_Controller
                 'journal_info.ref_no',
                 'journal_info.amount',
                 'CONCAT(IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,""))as particular',
+                '(CASE WHEN journal_info.cdj_approved_by = 0 THEN "" ELSE CONCAT_WS(" ",cda.user_fname,cda.user_lname) END) as approved_by',
                 'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by'
             ),
             array(
@@ -410,6 +477,7 @@ class Cash_disbursement extends CORE_Controller
                 array('suppliers','suppliers.supplier_id=journal_info.supplier_id','left'),
                 array('departments','departments.department_id=journal_info.department_id','left'),
                 array('user_accounts','user_accounts.user_id=journal_info.created_by_user','left'),
+                array('user_accounts cda','cda.user_id=journal_info.cdj_approved_by','left'),
                 array('payment_methods','payment_methods.payment_method_id=journal_info.payment_method_id','left')
             ),
             'journal_info.journal_id DESC'

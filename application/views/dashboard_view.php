@@ -400,11 +400,31 @@
                                                     
 
                                                 </div>
+                                                      <div class="row container-fluid">
+                                                      <div class="data-container table-responsive <?php echo (in_array('1-7',$this->session->user_rights)?'':'hidden'); ?>" style="padding: 20px 15px 20px 15px; min-height: 300px; ">
+                                                            <h6 class="visible-xs hidden-sm hidden-md hidden-lg po_title" style="position: relative ;top: 5px"><i class="fa fa-file-text-o"></i> <span >CASH DISBURSEMENT</span></h6>
+                                                            <h3 class="hidden-xs po_title" style="position: relative; top: 5px"><i class="fa fa-file-text-o"  style="color: #067cb2;"></i> <span >CASH DISBURSEMENT FOR APPROVAL</span></h3>
+                                                            <table id="cdj-for-approval" class="table table-striped" cellspacing="0" width="100%" style="font-size: 12px;">
+                                                                <thead>
+                                                                    <th></th>
+                                                                    <th>Txn No</th>
+                                                                    <th>Particular</th>
+                                                                    <th>Terms </th>
+                                                                    <th>Date </th>
+                                                                    <th>Posted by </th>
+                                                                    <th style="width: 15%!important;"><center>Action</center></th>
+                                                                </thead>
+                                                                <tbody>
+                                                                </tbody>
+                                                            </table>
+                                                      </div>
+                                                      </div>
                                                 <div class="row" style="margin-top: 20px;">
-                                                    <div class="col-xs-12 col-sm-8 <?php echo (in_array('7-1',$this->session->user_rights)?'':'hidden'); ?>">
-                                                      <div class="data-container table-responsive" style="padding: 20px 15px 20px 15px; min-height: 700px; max-height: 700px;">
+                                                    <div class="col-xs-12 col-sm-8 ">
+                                                      <div class="row">
+                                                      <div class="data-container table-responsive <?php echo (in_array('7-1',$this->session->user_rights)?'':'hidden'); ?>" style="padding: 20px 15px 20px 15px; min-height: 300px; max-height: 300px;">
                                                             <h6 class="visible-xs hidden-sm hidden-md hidden-lg po_title" style="position: absolute; top: 5px"><i class="fa fa-file-text-o"></i> <span >PURCHASE ORDER</span></h6>
-                                                            <h3 class="hidden-xs po_title" style="position: absolute; top: 5px"><i class="fa fa-file-text-o"  style="color: #067cb2;"></i> <span >PURCHASE ORDER FOR APPROVAL</span></h2>
+                                                            <h3 class="hidden-xs po_title" style="position: absolute; top: 5px"><i class="fa fa-file-text-o"  style="color: #067cb2;"></i> <span >PURCHASE ORDER FOR APPROVAL</span></h3>
                                                             <table id="tbl_po_list" class="table table-striped" cellspacing="0" width="100%">
                                                                 <thead>
                                                                     <th></th>
@@ -419,7 +439,12 @@
                                                                 </tbody>
                                                             </table>
                                                       </div>
+                                                      </div>
+
+
+
                                                     </div>
+
                                                     <div class="col-xs-12 <?php echo ($this->session->user_group_id == 1 ? 'col-sm-4' : 'col-sm-12' ); ?>">
                                                       <div id="style-1" class="data-container" style="min-height: 700px; max-height: 700px; overflow-y: scroll;">
                                                         <h3><i class="fa fa-rss" style="color: #067cb2;;"></i> ACTIVITY FEED</h3>
@@ -741,7 +766,7 @@ Chart.defaults.global.defaultFontColor = "#000000";
 <script>
 
     $(document).ready(function(){
-        var dt; var _selectedID; var _selectRowObj;
+        var dt; var _selectedID; var _selectRowObj; var dt_cdj;
 
         var initializeControls=(function(){
 
@@ -778,7 +803,7 @@ Chart.defaults.global.defaultFontColor = "#000000";
                         render: function (data, type, full, meta){
                             //alert(full.purchase_order_id);
 
-                            var btn_approved='<button class="btn btn-success btn-sm" name="approve_po"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Approved this PO"><i class="fa fa-check" style="color: white;"></i> <span class=""></span></button>';
+                            var btn_approved='<button class="btn btn-success btn-sm" name="approve_po"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Approve this PO"><i class="fa fa-check" style="color: white;"></i> <span class=""></span></button>';
                             var btn_conversation='<a id="link_conversation" href="Po_messages?id='+full.purchase_order_id+'" target="_blank" class="btn btn-info btn-sm"  style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Open Conversation"><i class="fa fa-envelope"></i> </a>';
 
                             return '<center>'+btn_approved+'&nbsp;'+btn_conversation+'</center>';
@@ -788,6 +813,37 @@ Chart.defaults.global.defaultFontColor = "#000000";
             });
 
              $('div.dataTables_filter input').addClass('dash_search_field');
+            dt_cdj=$('#cdj-for-approval').DataTable({
+                "dom": '<"toolbar">frtip',
+                "bLengthChange":false,
+                "ajax" : "Cash_disbursement/transaction/cdj-for-approval",
+                "language": {
+                  "searchPlaceholder":"Search Purchase Order"
+                },
+                "columns": [
+                    {
+                        "targets": [0],
+                        "class":          "details-control",
+                        "orderable":      false,
+                        "data":           null,
+                        "defaultContent": ""
+                    },
+                    { targets:[1],data: "txn_no" },
+                    { targets:[2],data: "particular" },
+                    { targets:[3],data: "payment_method" },
+                    { targets:[4],data: "date_txn" },
+                    { targets:[5],data: "posted_by" },
+                    {
+                        targets:[6],
+                        render: function (data, type, full, meta){
+                            var btn_approved='<button class="btn btn-success btn-sm" name="approve_cdj"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Approve this Disbursement"><i class="fa fa-check" style="color: white;"></i> <span class=""></span></button>';
+                            return '<center>'+btn_approved+'</center>';
+                        }
+                    }
+                ]
+            });
+
+
         })();
 
 
@@ -795,6 +851,41 @@ Chart.defaults.global.defaultFontColor = "#000000";
 
 
             var detailRows = [];
+
+          $('#cdj-for-approval tbody').on( 'click', 'tr td.details-control', function () {
+              var tr = $(this).closest('tr');
+              var row = dt_cdj.row( tr );
+              var idx = $.inArray( tr.attr('id'), detailRows );
+
+              if ( row.child.isShown() ) {
+                  tr.removeClass( 'details' );
+                  row.child.hide();
+
+                  // Remove from the 'open' array
+                  detailRows.splice( idx, 1 );
+              }
+              else {
+                  tr.addClass( 'details' );
+                  //console.log(row.data());
+                  var d=row.data();
+
+                  $.ajax({
+                      "dataType":"html",
+                      "type":"POST",
+                      "url":"Templates/layout/journal-cdj?id="+ d.journal_id,
+                      "beforeSend" : function(){
+                          row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                      }
+                  }).done(function(response){
+                      row.child( response,'no-padding' ).show();
+                      // Add to the 'open' array
+                      reinitializeApproval();
+                      if ( idx === -1 ) {
+                          detailRows.push( tr.attr('id') );
+                      }
+                  });
+              }
+          } );
 
            
             $('#tbl_po_list tbody').on( 'click', 'tr td.details-control', function () {
@@ -853,6 +944,20 @@ Chart.defaults.global.defaultFontColor = "#000000";
                 });
             });
 
+            $('#cdj-for-approval > tbody').on('click','button[name="approve_cdj"]',function(){
+                _selectRowObj=$(this).closest('tr'); //hold dom of tr which is selected
+
+                var datacdj=dt_cdj.row(_selectRowObj).data();
+                _selectedID=datacdj.journal_id;
+
+                 approveCashDisbursement().done(function(response){
+                    showNotification(response);
+                    if(response.stat=="success"){
+                        dt_cdj.row(_selectRowObj).remove().draw();
+                    }
+
+                });
+            });
 
             //****************************************************************************************
             $('#tbl_po_list > tbody').on('click','button[name="mark_as_approved"]',function(){
@@ -860,6 +965,26 @@ Chart.defaults.global.defaultFontColor = "#000000";
                 _selectRowObj.find('button[name="approve_po"]').click();
                 showSpinningProgress($(this));
             });
+
+
+          function reinitializeApproval(){
+
+                  $('button[name=btn_mark_as_approved]').on('click',function(){
+                    _selected_ID = $(this).attr('id');
+                    _selectRowObjbutton=$(this).parents('tr').prev();
+                       approveCashDisbursementButton().done(function(response){
+                          showNotification(response);
+                          if(response.stat=="success"){
+                              dt_cdj.row(_selectRowObjbutton).remove().draw();
+                          }
+                      });
+                      showSpinningProgress($(this));
+                  });
+
+          };
+
+
+
 
 
             //****************************************************************************************
@@ -886,6 +1011,26 @@ Chart.defaults.global.defaultFontColor = "#000000";
                 "type":"POST",
                 "url":"Purchases/transaction/mark-approved",
                 "data":{purchase_order_id : _selectedID}
+
+            });
+        };
+
+        var approveCashDisbursement=function(){
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Cash_disbursement/transaction/mark-approved",
+                "data":{journal_id : _selectedID}
+
+            });
+        };
+
+        var approveCashDisbursementButton=function(){
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Cash_disbursement/transaction/mark-approved",
+                "data":{journal_id : _selected_ID}
 
             });
         };

@@ -12,6 +12,45 @@ class Journal_info_model extends CORE_Model{
         parent::__construct();
     }
 
+    function get_cdj_for_approval(){
+        $sql='SELECT
+
+            journal_info.journal_id,
+            journal_info.txn_no,
+            DATE_FORMAT(journal_info.date_txn,"%m/%d/%Y") as date_txn,
+            journal_info.is_active,
+            journal_info.remarks,
+            journal_info.department_id,
+            journal_info.bank_id,
+            journal_info.supplier_id,
+            journal_info.customer_id,
+            journal_info.payment_method_id,
+            payment_methods.payment_method,
+            journal_info.bank,
+            journal_info.check_no,
+            DATE_FORMAT(journal_info.check_date,"%m/%d/%Y") as check_date,
+            journal_info.ref_type,
+            journal_info.ref_no,
+            journal_info.amount,
+            CONCAT(IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,"")) as particular,
+            CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by
+
+            FROM journal_info 
+
+
+            LEFT JOIN customers ON customers.customer_id=journal_info.customer_id
+            LEFT JOIN suppliers ON suppliers.supplier_id=journal_info.supplier_id
+            LEFT JOIN departments ON departments.department_id=journal_info.department_id
+            LEFT JOIN user_accounts ON user_accounts.user_id=journal_info.created_by_user
+            LEFT JOIN payment_methods ON payment_methods.payment_method_id=journal_info.payment_method_id
+
+            WHERE 
+            journal_info.is_deleted=FALSE AND journal_info.book_type="CDJ" AND journal_info.cdj_approved_by = 0';
+
+            return $this->db->query($sql)->result();
+
+    }
+
     function get_bank_recon($bank_id,$sDate,$eDate) 
     {
         $sql="SELECT 

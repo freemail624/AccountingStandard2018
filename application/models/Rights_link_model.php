@@ -97,7 +97,8 @@ class Rights_link_model extends CORE_Model{
                                           (87,'16','16-1','Hotel Integration Control Panel'),
                                           (88,'16','16-2','Hotel Integration Settings'),
                                           (89,'3','3-5','Warehouse Dispatching'),
-                                          (90,'4','4-7','Hotel Integration Settings')
+                                          (90,'4','4-7','Hotel Integration Settings'),
+                                          (91,'1','1-7','Cash Disbursement Approval')
                                           ON DUPLICATE KEY UPDATE
                                           rights_links.parent_code=VALUES(rights_links.parent_code),
                                           rights_links.link_code=VALUES(rights_links.link_code),

@@ -70,9 +70,11 @@
                 <p><?php echo $company_info->email_address; ?></p>
             </td>
             <td width="30%">
-            <?php if($journal_info->cancelled == 0){ ?>
+            <?php if($journal_info->cancelled == 0 && $journal_info->cdj_approved_by !=0){ ?>
                 <img src="assets/img/cancelled.png" style="height: 100px;">
-                <?php } ?>
+                <?php } else if($journal_info->cdj_approved_by == 0){ ?>
+                <img src="assets/img/for_approval.png" style="height: 100px;">
+                  <?php } ?>
             </td>
         </tr>
     </table><hr>
@@ -151,16 +153,27 @@
                 </tfoot>    
         </table><br><br>
         <center>
-            <table style="text-align: center;">
+        <br>
+            <table style="text-align: center;border: none!important; ">
                 <tr>
-                    <td width="30%" style="padding-right: 10px;">___________________________________</td>
-                    <td width="30%" style="padding-right: 10px;">___________________________________</td>
-                    <td width="30%" style="padding-right: 10px;">___________________________________</td>
+                    <td width="25%" style="padding-right: 10px;line-height: 5px;">
+                    <?php echo $this->session->journal_prepared_by; ?><br style="">
+                    _____________________________</td>
+                    <td width="25%" style="padding-right: 10px;line-height: 5px;">
+                    <?php echo $this->session->journal_approved_by; ?><br style="line-height:5px;">
+                    _____________________________</td>
+                    <td width="25%" style="padding-right: 10px;line-height: 5px;">
+                    &nbsp;<br style="line-height:5px;">
+                    _____________________________</td>
+                    <td width="25%" style="padding-right: 10px;line-height: 5px;">
+                    &nbsp;<br style="line-height:5px;">
+                    _____________________________</td>
                 </tr>
                 <tr>
-                    <td width="30%" style="padding-right: 10px;"><strong>Prepared by</strong></td>
-                    <td width="30%" style="padding-right: 10px;"><strong>Approved by</strong></td>
-                    <td width="30%" style="padding-right: 10px;"><strong>Received by</strong></td>
+                    <td width="25%" style=""><strong>Prepared by</strong></td>
+                    <td width="25%" style=""><strong>Approved by</strong></td>
+                    <td width="25%" style=""><strong>Received by<br><small>(Signature Over Printed Name)</small></strong></td>
+                    <td width="25%" style=""><strong>Date Received</strong></td>
                 </tr>
             </table>
         </center>

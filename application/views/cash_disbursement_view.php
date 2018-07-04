@@ -142,6 +142,11 @@
         #tbl_check_list td:nth-child(6),#tbl_check_list th:nth-child(6){
             text-align: center;
         }
+
+        .right_align_items{
+            text-align: right;
+
+        }
         
     </style>
 
@@ -214,31 +219,34 @@
               <a data-toggle="collapse" data-parent="#accordionA" href="#collapseOne" style="text-decoration: none;">
 <!--               <div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Cash Disbursement Journal</b></div> -->
             <h2 class="h2-panel-heading">Cash Disbursement Journal</h2><hr>
-
               </a>
                 <div id="collapseOne" class="collapse in">
-                        <div >
-                            <table id="tbl_cash_disbursement_list" class="table-striped table" cellspacing="0" width="100%">
-                                <thead class="">
-                                <tr>
-                                    <th></th>
-                                    <th>Txn #</th>
-                                    <th>Voucher #</th>
-                                    <th>Particular</th>
-                                    <th>Method</th>
-                                    <th>Txn Date</th>
-                                    <th>Posted</th>
-                                    <th>Status</th>
-                                    <th><center>Action</center></th>
-                                </tr>
-                                </thead>
-                                <tbody>
+                    <div >
+                        <table id="tbl_cash_disbursement_list" class="table-striped table" cellspacing="0" width="100%">
+                            <thead class="">
+                            <tr>
+                                <th></th>
+                                <th>Txn #</th>
+                                <th>Voucher #</th>
+                                <th>Particular</th>
+                                <th>Method</th>
+                                <th>Txn Date</th>
+                                <th>Approved by</th>
+                                <th>Status</th>
+                                <th>Posted</th>
+                                
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
 
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>                </div>
-                </div>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>                
+            </div>
+        </div>
         </div>
 
         <div class="panel panel-default" style="border-radius:6px;">
@@ -1060,9 +1068,25 @@ $(document).ready(function(){
                 { targets:[3],data: "particular" },
                 { targets:[4],data: "payment_method" },
                 { targets:[5],data: "date_txn" },
-                { targets:[6],data: "posted_by" },
+                { targets:[6],data: "approved_by" },
                 {
                     targets:[7],data: null,
+                    render: function (data, type, full, meta){
+                        var _attribute='';
+                        //console.log(data.is_email_sent);
+                        if(data.cdj_approved_by=="0"){
+                            _attribute=' class="fa fa-times-circle" style="color:red;" ';
+                        }else{
+                            _attribute=' class="fa fa-check-circle" style="color:green;" ';
+                        }
+
+                        return '<center><i '+_attribute+'></i></center>';
+                    }
+
+                },
+                { targets:[8],data: "posted_by" },
+                {
+                    targets:[9],data: null,
                     render: function (data, type, full, meta){
                         var _attribute='';
                         //console.log(data.is_email_sent);
@@ -1076,15 +1100,18 @@ $(document).ready(function(){
                     }
 
                 },
-                {
-                    targets:[7],
+                { sClass:"right_align_items",
+                    targets:[9], data: null,
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_cancel='<button class="btn btn-red btn-sm" name="cancel_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Cancel Journal"><i class="fa fa-times"></i> </button>';
-                        var btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-print"></i> Print Check</button>';
+                        var btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Print Check"><i class="fa fa-print"></i> Print Check</button>';
 
-
-                        return '<center>'+btn_check_print+"&nbsp;"+btn_cancel+'</center>';
+                        if(data.payment_method_id == 2){
+                            return ''+btn_check_print+"&nbsp;"+btn_cancel+'';
+                        }else{
+                            return ''+btn_cancel+'';
+                        }
                     }
                 }
             ]
