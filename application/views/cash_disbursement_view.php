@@ -128,6 +128,9 @@
             width: 100% !important;
         }
 
+        .right_align_items{
+        	text-align: right;
+        }
 
         input[type=checkbox] {
           /* Double-sized Checkboxes */
@@ -229,7 +232,7 @@
                                     <th>Txn Date</th>
                                     <th>Posted</th>
                                     <th>Status</th>
-                                    <th><center>Action</center></th>
+                                    <th style="width: 15%;"><center>Action</center></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -1076,15 +1079,22 @@ $(document).ready(function(){
                     }
 
                 },
-                {
-                    targets:[7],
+                {sClass: "right_align_items",
+                    targets:[7],data:null,
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_cancel='<button class="btn btn-red btn-sm" name="cancel_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Cancel Journal"><i class="fa fa-times"></i> </button>';
                         var btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-print"></i> Print Check</button>';
 
+                        if(data.payment_method_id == 2){
+                        	return ''+btn_check_print+"&nbsp;"+btn_cancel+'';
 
-                        return '<center>'+btn_check_print+"&nbsp;"+btn_cancel+'</center>';
+                        }else{
+
+                        	return ''+btn_cancel+'';
+                        }
+
+                        
                     }
                 }
             ]
