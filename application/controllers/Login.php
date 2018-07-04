@@ -229,6 +229,8 @@ class Login extends CORE_Controller {
                                 'user_fullname'=>$result->row()->user_fullname,
                                 'user_email'=>$result->row()->user_email,
                                 'user_photo'=>$result->row()->photo_path,
+                                'journal_prepared_by'=>$result->row()->journal_prepared_by,
+                                'journal_approved_by'=>$result->row()->journal_approved_by,
                                 'user_rights'=>$user_rights,
                                 'parent_rights'=>$parent_links,
                                 'logged_in'=>1,

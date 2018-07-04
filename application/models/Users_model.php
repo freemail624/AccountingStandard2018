@@ -272,7 +272,7 @@ class Users_model extends CORE_Model{
     }
 
     function authenticate_user($uname,$pword){
-        $this->db->select('ua.user_id,ua.user_name,ua.user_group_id,ua.photo_path,ua.is_online,ua.user_email,CONCAT_WS(" ",ua.user_fname,ua.user_mname,ua.user_lname) as user_fullname');
+        $this->db->select('ua.user_id,ua.user_name,ua.user_group_id,ua.photo_path,ua.is_online,ua.user_email,CONCAT_WS(" ",ua.user_fname,ua.user_mname,ua.user_lname) as user_fullname,ua.journal_approved_by,ua.journal_prepared_by');
         $this->db->from('user_accounts as ua');
         $this->db->join('user_groups as ug', 'ua.user_group_id = ug.user_group_id','left');
         $this->db->where('ua.user_name', $uname);
@@ -334,7 +334,7 @@ class Users_model extends CORE_Model{
     }
     function get_user_accounts($id=null){
 
-        $this->db->select('ua.user_id,ua.user_name,ua.user_lname,ua.user_fname,ua.user_mname,ua.photo_path,ua.token_id');
+        $this->db->select('ua.user_id,ua.user_name,ua.user_lname,ua.user_fname,ua.user_mname,ua.photo_path,ua.token_id,ua.journal_prepared_by,ua.journal_approved_by');
         $this->db->select('ua.user_address,ua.user_email,ua.user_mobile,ua.user_telephone');
         $this->db->select('DATE_FORMAT(ua.user_bdate,"%m/%d/%Y")as user_bdate,ua.user_group_id');
         $this->db->select('ua.is_active,ug.user_group,CONCAT_WS(" ",ua.user_fname,ua.user_mname,ua.user_lname)as full_name');

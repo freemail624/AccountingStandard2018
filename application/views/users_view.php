@@ -167,7 +167,7 @@
                                             <br>
                                                <form id="frm_users" role="form" class="form-horizontal row-border">
                                                    <div class="form-group">
-                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong>* User Name :</strong></label>
+                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong><b class="required">*</b> User Name :</strong></label>
                                                        <div class="col-md-7">
                                                            <div class="input-group">
                                                                 <span class="input-group-addon">
@@ -179,7 +179,7 @@
                                                    </div>
 
                                                    <div class="form-group">
-                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong>User Group :</strong></label>
+                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong><b class="required">*</b> User Group :</strong></label>
 
                                                        <div class="col-md-7">
                                                            <select name="" id="cbo_user_groups" data-error-msg="User group is required." required>
@@ -198,7 +198,7 @@
 
 
                                                    <div class="form-group">
-                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong>* Password :</strong></label>
+                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong><b class="required">*</b> Password :</strong></label>
                                                        <div class="col-md-7">
                                                            <div class="input-group">
                                                                 <span class="input-group-addon">
@@ -210,7 +210,7 @@
                                                    </div>
 
                                                    <div class="form-group">
-                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong>* Confirm Password :</strong></label>
+                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong><b class="required">*</b> Confirm Password :</strong></label>
                                                        <div class="col-md-7">
                                                            <div class="input-group">
                                                                 <span class="input-group-addon">
@@ -225,7 +225,7 @@
 
 
                                                    <div class="form-group">
-                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong>* Firstname :</strong></label>
+                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong><b class="required">*</b> Firstname :</strong></label>
                                                        <div class="col-md-7">
                                                            <div class="input-group">
                                                                 <span class="input-group-addon">
@@ -251,7 +251,7 @@
 
 
                                                    <div class="form-group">
-                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong>* Lastname :</strong></label>
+                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong><b class="required">*</b> Lastname :</strong></label>
                                                        <div class="col-md-7">
                                                            <div class="input-group">
                                                                 <span class="input-group-addon">
@@ -319,6 +319,8 @@
                                                    </div>
 
 
+
+
                                                    <div class="form-group">
                                                        <label class="col-md-2 col-md-offset-1 control-label"><strong>Photo :</strong></label>
                                                        <div class="col-md-5">
@@ -341,6 +343,31 @@
                                                        </div>
                                                    </div>
 
+                                              <h6><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Journal Footer Settings</strong></span></h6>
+                                                   <div class="form-group">
+                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong> Prepared by: :</strong></label>
+                                                       <div class="col-md-7">
+                                                           <div class="input-group">
+                                                                <span class="input-group-addon">
+                                                                    <i class="fa fa-user"></i>
+                                                                </span>
+                                                               <input type="text" name="journal_prepared_by" class="form-control" placeholder="Prepared By">
+                                                           </div>
+                                                       </div>
+                                                   </div>
+
+                                                   <div class="form-group">
+                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong> Approved by: :</strong></label>
+                                                       <div class="col-md-7">
+                                                           <div class="input-group">
+                                                                <span class="input-group-addon">
+                                                                    <i class="fa fa-user"></i>
+                                                                </span>
+                                                               <input type="text" name="journal_approved_by" class="form-control" placeholder="Approved By" >
+                                                           </div>
+                                                       </div>
+                                                   </div>
+
                                                </form>
 
 
@@ -352,7 +379,7 @@
 
 
 
-
+                                            <i>Note: The user must log off and then login again for the changes to take effect.</i>
                                             </div>
                                             <div class="panel-footer">
                                                 <div class="row">
@@ -450,7 +477,7 @@
             <footer role="contentinfo">
                 <div class="clearfix">
                     <ul class="list-unstyled list-inline pull-left">
-                        <li><h6 style="margin: 0;">&copy; 2016 - Paul Christian Rueda</h6></li>
+                        <li><h6 style="margin: 0;">&copy;  2018 - JDEV OFFICE SOLUTION INC.</h6></li>
                     </ul>
                     <button class="pull-right btn btn-link btn-xs hidden-print" id="back-to-top"><i class="ti ti-arrow-up"></i></button>
                 </div>

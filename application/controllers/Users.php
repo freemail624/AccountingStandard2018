@@ -92,6 +92,9 @@ class Users extends CORE_Controller
                 $m_users->user_group_id=$this->input->post('user_group_id',TRUE);
                 $m_users->photo_path=$this->input->post('photo_path',TRUE);
 
+                $m_users->journal_approved_by=$this->input->post('journal_approved_by',TRUE);
+                $m_users->journal_prepared_by=$this->input->post('journal_prepared_by',TRUE);
+                $m_users->user_mobile=$this->input->post('user_mobile',TRUE);
                 $m_users->set('date_created','NOW()');
                 $m_users->posted_by_user=$this->session->user_id;
 
@@ -132,7 +135,8 @@ class Users extends CORE_Controller
                 $m_users->user_bdate=date('Y-m-d',strtotime($this->input->post('user_bdate',TRUE)));
                 $m_users->user_group_id=$this->input->post('user_group_id',TRUE);
                 $m_users->photo_path=$this->input->post('photo_path');
-
+                $m_users->journal_approved_by=$this->input->post('journal_approved_by',TRUE);
+                $m_users->journal_prepared_by=$this->input->post('journal_prepared_by',TRUE);
                 $m_users->set('date_modified','NOW()');
                 $m_users->modified_by_user=$this->session->user_id;
 
@@ -231,7 +235,8 @@ class Users extends CORE_Controller
                 $m_users->user_bdate=date('Y-m-d',strtotime($this->input->post('user_bdate',TRUE)));
                 //$m_users->user_group_id=$this->input->post('user_group_id',TRUE);
                 $m_users->photo_path=$this->input->post('photo_path');
-
+                $m_users->journal_approved_by=$this->input->post('journal_approved_by',TRUE);
+                $m_users->journal_prepared_by=$this->input->post('journal_prepared_by',TRUE);
                 $m_users->set('date_modified','NOW()');
                 $m_users->modified_by_user=$this->session->user_id;
                 $m_users->modify($user_account_id);
