@@ -150,16 +150,27 @@
                 </tfoot>    
         </table><br><br>
         <center>
-            <table style="text-align: center;" class="noborder">
+        <br>
+            <table style="text-align: center;border: none!important; ">
                 <tr>
-                    <td width="30%" style="padding-right: 10px;">___________________________________</td>
-                    <td width="30%" style="padding-right: 10px;">___________________________________</td>
-                    <td width="30%" style="padding-right: 10px;">___________________________________</td>
+                    <td width="25%" style="padding-right: 10px;line-height: 5px;">
+                    <?php echo $this->session->journal_prepared_by; ?><br style="">
+                    _____________________________</td>
+                    <td width="25%" style="padding-right: 10px;line-height: 5px;">
+                    <?php echo $this->session->journal_approved_by; ?><br style="line-height:5px;">
+                    _____________________________</td>
+                    <td width="25%" style="padding-right: 10px;line-height: 5px;">
+                    &nbsp;<br style="line-height:5px;">
+                    _____________________________</td>
+                    <td width="25%" style="padding-right: 10px;line-height: 5px;">
+                    &nbsp;<br style="line-height:5px;">
+                    _____________________________</td>
                 </tr>
                 <tr>
-                    <td width="30%" style="padding-right: 10px;"><strong>Prepared by</strong></td>
-                    <td width="30%" style="padding-right: 10px;"><strong>Checked by</strong></td>
-                    <td width="30%" style="padding-right: 10px;"><strong>Posted by</strong></td>
+                    <td width="25%" style=""><strong>Prepared by</strong></td>
+                    <td width="25%" style=""><strong>Approved by</strong></td>
+                    <td width="25%" style=""><strong>Received by<br><small>(Signature Over Printed Name)</small></strong></td>
+                    <td width="25%" style=""><strong>Date Received</strong></td>
                 </tr>
             </table>
         </center>
