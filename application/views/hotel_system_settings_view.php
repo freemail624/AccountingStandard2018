@@ -253,6 +253,26 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label class="col-md-2  col-md-offset-1 control-label"> <b class="asterisk-required">*</b> Hotel Transportation: </label>
+                            <div class="col-md-4 col-md-offset-0 col-md-offset-3 col-md-offset-3">
+                                <select name="transpo_hotel_id" class="cbo_accounts" data-error-msg="Hotel Transportation Account is required." required>
+                                    <?php foreach($accounts as $account){ ?>
+                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($prime_hotel_integration->transpo_hotel_id==$account->account_id?'selected':''); ?>  ><?php echo $account->account_title; ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2  col-md-offset-1 control-label"> <b class="asterisk-required">*</b> Outsource Transportation: </label>
+                            <div class="col-md-4 col-md-offset-0 col-md-offset-3 col-md-offset-3">
+                                <select name="transpo_outsource_id" class="cbo_accounts" data-error-msg="Outsource Transportation Account is required." required>
+                                    <?php foreach($accounts as $account){ ?>
+                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($prime_hotel_integration->transpo_outsource_id==$account->account_id?'selected':''); ?>  ><?php echo $account->account_title; ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                        </div>
                         <br>
                         <h5><span style="margin-left: 1%"><strong> Various Customer Account (Advances)</strong></span></h5>
                         <div class="form-group">

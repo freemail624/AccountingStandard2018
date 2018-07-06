@@ -200,6 +200,33 @@ class Hotel_system_model extends CORE_Model{
         (SELECT IFNULL(SUM(phi.other_sales),0) FROM prime_hotel_integration phi WHERE phi.item_type = 'COUT'  AND phi.shift_date = '$date') as cout_other_sales,
         (SELECT IFNULL(SUM(phi.other_sales),0) FROM prime_hotel_integration phi WHERE phi.item_type = 'AR'  AND phi.shift_date = '$date') as ar_other_sales) as other_sales   
 
+
+        UNION ALL
+
+        SELECT 
+        transpo_hotel.account_id,
+        0 as dr_amount,
+        (IFNULL(transpo_hotel.cout_transpo_hotel,0) + IFNULL(transpo_hotel.ar_transpo_hotel,0)) as cr_amount,
+        (IFNULL(transpo_hotel.cout_transpo_hotel,0) + IFNULL(transpo_hotel.ar_transpo_hotel,0)) as balance
+        FROM
+        (SELECT
+        (SELECT phis.transpo_hotel_id FROM prime_hotel_integration_settings phis) as account_id,
+        (SELECT IFNULL(SUM(phi.transpo_hotel_sales),0) FROM prime_hotel_integration phi WHERE phi.item_type = 'COUT'  AND phi.shift_date = '$date') as cout_transpo_hotel,
+        (SELECT IFNULL(SUM(phi.transpo_hotel_sales),0) FROM prime_hotel_integration phi WHERE phi.item_type = 'AR'  AND phi.shift_date = '$date') as ar_transpo_hotel) as transpo_hotel
+
+        UNION ALL
+
+        SELECT 
+        transpo_outsource.account_id,
+        0 as dr_amount,
+        (IFNULL(transpo_outsource.cout_transpo_outsource,0) + IFNULL(transpo_outsource.ar_transpo_outsource,0)) as cr_amount,
+        (IFNULL(transpo_outsource.cout_transpo_outsource,0) + IFNULL(transpo_outsource.ar_transpo_outsource,0)) as balance
+        FROM
+        (SELECT
+        (SELECT phis.transpo_outsource_id FROM prime_hotel_integration_settings phis) as account_id,
+        (SELECT IFNULL(SUM(phi.transpo_outsource_sales),0) FROM prime_hotel_integration phi WHERE phi.item_type = 'COUT' AND phi.shift_date = '$date') as cout_transpo_outsource,
+        (SELECT IFNULL(SUM(phi.transpo_outsource_sales),0) FROM prime_hotel_integration phi WHERE phi.item_type = 'AR' AND phi.shift_date = '$date') as ar_transpo_outsource) as transpo_outsource
+
         ) as main
         LEFT JOIN account_titles ac ON ac.account_id = main.account_id
 
@@ -411,7 +438,29 @@ function cout_and_ar_journal($item_id){
         0 as dr_amount,
         phi.other_sales as cr_amount
         FROM prime_hotel_integration phi
-        WHERE phi.prime_hotel_integration_id = $item_id )  as main WHERE main.dr_amount > 0 OR main.cr_amount > 0";
+        WHERE phi.prime_hotel_integration_id = $item_id 
+
+        UNION ALL
+        SELECT
+        (SELECT transpo_hotel_id FROM prime_hotel_integration_settings) as account_id,
+        '' as memo,
+        0 as dr_amount,
+        phi.transpo_hotel_sales as cr_amount
+        FROM prime_hotel_integration phi
+        WHERE phi.prime_hotel_integration_id = $item_id 
+
+
+        UNION ALL
+        SELECT
+        (SELECT transpo_outsource_id FROM prime_hotel_integration_settings) as account_id,
+        '' as memo,
+        0 as dr_amount,
+        phi.transpo_outsource_sales as cr_amount
+        FROM prime_hotel_integration phi
+        WHERE phi.prime_hotel_integration_id = $item_id 
+
+
+        )  as main WHERE main.dr_amount > 0 OR main.cr_amount > 0";
     return $this->db->query($sql)->result();
 }
 

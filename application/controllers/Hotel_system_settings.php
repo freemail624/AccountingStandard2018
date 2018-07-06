@@ -62,6 +62,8 @@ class Hotel_system_settings extends CORE_Controller
                 $m_settings->room_sales_id=$this->input->post('room_sales_id',TRUE);
                 $m_settings->bar_sales_id=$this->input->post('bar_sales_id',TRUE);
                 $m_settings->other_sales_id=$this->input->post('other_sales_id',TRUE);
+                $m_settings->transpo_hotel_id=$this->input->post('transpo_hotel_id',TRUE);
+                $m_settings->transpo_outsource_id=$this->input->post('transpo_outsource_id',TRUE);
                 $m_settings->adv_sales_id=$this->input->post('adv_sales_id',TRUE);
 
                 $m_settings->customer_id=$this->input->post('customer_id',TRUE);
