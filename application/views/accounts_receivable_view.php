@@ -150,7 +150,9 @@
             padding-bottom: 15px;
         }
         
-
+        #tbl_accounts_receivable_filter{
+            display: none;
+        }
     </style>
 
 </head>
@@ -221,7 +223,36 @@
                 </div> -->
                 <h2 class="h2-panel-heading"> Sales / AR Journal</h2>
             </a>
-                    <div >
+
+                <div class="row">
+                    <div class="col-lg-3">&nbsp;<br>
+                        <button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Sales Journal" ><i class="fa fa-plus"></i> New Sales Journal</button>
+                    </div>
+                    <div class="col-lg-3">
+                            From :<br />
+                            <div class="input-group">
+                                <input type="text" id="txt_start_date_ar" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                                 <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                 </span>
+                            </div>
+                    </div>
+                    <div class="col-lg-3">
+                            To :<br />
+                            <div class="input-group">
+                                <input type="text" id="txt_end_date_ar" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
+                                 <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                 </span>
+                            </div>
+                    </div>
+                    <div class="col-lg-3">
+                            Search :<br />
+                             <input type="text" id="searchbox_ar" class="form-control">
+                    </div>
+                </div>
+                <br>
+                            <div >
                     <table id="tbl_accounts_receivable" class="table table-striped" cellspacing="0" width="100%">
                         <thead class="">
                         <tr>
@@ -777,7 +808,17 @@ $(document).ready(function(){
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "order": [[ 1, "desc" ]],
-            "ajax" : "Accounts_receivable/transaction/list",
+            "ajax" : {
+                "url" :  "Accounts_receivable/transaction/list",
+                "bDestroy": true,            
+                "data": function ( d ) {
+                        return $.extend( {}, d, {
+                            "tsd":$('#txt_start_date_ar').val(),
+                            "ted":$('#txt_end_date_ar').val()
+
+                        });
+                    }
+            }, 
             "columns": [
                 {
                     "targets": [0],
@@ -860,11 +901,7 @@ $(document).ready(function(){
         });
 
 
-        var createToolBarButton=function() {
-            var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Sales Journal" >'+
-                '<i class="fa fa-plus"></i> New Sales Journal</button>';
-            $("div.toolbar").html(_btnNew);
-        }();
+
 
 
 
@@ -904,6 +941,18 @@ $(document).ready(function(){
 
     var bindEventHandlers=function(){
         var detailRows = [];
+        $("#txt_start_date_ar").on("change", function () {        
+            $('#tbl_accounts_receivable').DataTable().ajax.reload()
+        });
+
+        $("#txt_end_date_ar").on("change", function () {        
+            $('#tbl_accounts_receivable').DataTable().ajax.reload()
+        });
+        $("#searchbox_ar").keyup(function(){         
+            dt
+                .search(this.value)
+                .draw();
+        });
 
         $('#tbl_accounts_receivable tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');

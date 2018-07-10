@@ -132,7 +132,9 @@
             width: 100% !important;
         }
 
-
+        #tbl_account_payables_filter{
+            display: none;
+        }
     </style>
 
 </head>
@@ -204,6 +206,35 @@
                                 </div> -->
                                 <h2 class="h2-panel-responsive">Purchase Journal</h2>
                             </a>   
+
+                <div class="row">
+                    <div class="col-lg-3">&nbsp;<br>
+                    <button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Purchase Journal" ><i class="fa fa-plus"></i> New Purchase Journal</button>
+                    </div>
+                    <div class="col-lg-3">
+                            From :<br />
+                            <div class="input-group">
+                                <input type="text" id="txt_start_date_ap" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                                 <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                 </span>
+                            </div>
+                    </div>
+                    <div class="col-lg-3">
+                            To :<br />
+                            <div class="input-group">
+                                <input type="text" id="txt_end_date_ap" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
+                                 <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                 </span>
+                            </div>
+                    </div>
+                    <div class="col-lg-3">
+                            Search :<br />
+                             <input type="text" id="searchbox_ap" class="form-control">
+                    </div>
+                </div><br>
+
                                     <div >
                                         <table id="tbl_account_payables" class="table-striped table" cellspacing="0" width="100%">
                                             <thead class="">
@@ -745,7 +776,17 @@
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
                 "order": [[ 1, "desc" ]],
-                "ajax" : "Account_payables/transaction/list",
+                "ajax" : {
+                    "url" :  "Account_payables/transaction/list",
+                    "bDestroy": true,            
+                    "data": function ( d ) {
+                            return $.extend( {}, d, {
+                                "tsd":$('#txt_start_date_ap').val(),
+                                "ted":$('#txt_end_date_ap').val()
+
+                            });
+                        }
+                }, 
                 "columns": [
                     {
                         "targets": [0],
@@ -832,11 +873,6 @@
             });
 
 
-            var createToolBarButton=function() {
-                var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Purchase Journal" >'+
-                    '<i class="fa fa-plus"></i> New Purchase Journal</button>';
-                $("div.toolbar").html(_btnNew);
-            }();
 
 
 
@@ -875,9 +911,19 @@
 
         }();
 
-
-
         var bindEventHandlers=function(){
+            $("#txt_start_date_ap").on("change", function () {        
+                $('#tbl_account_payables').DataTable().ajax.reload()
+            });
+
+            $("#txt_end_date_ap").on("change", function () {        
+                $('#tbl_account_payables').DataTable().ajax.reload()
+            });
+            $("#searchbox_ap").keyup(function(){         
+                dt
+                    .search(this.value)
+                    .draw();
+            });
             var detailRows = [];
 
             $('#tbl_account_payables tbody').on( 'click', 'tr td.details-control', function () {
