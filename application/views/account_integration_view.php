@@ -352,6 +352,19 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                                 <span class="help-block m-b-none">Please select if Cash Invoices will be included in the Inventory computation.</span>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> * Dispatching Invoice Integration :</label>
+                            <div class="col-md-7">
+                                <select name="dispatching_invoice_inventory" class="cbo_accounts"   data-error-msg="Inventory is required." required>
+                               
+
+                                <option value="1" <?php echo ($current_accounts->dispatching_invoice_inventory == 1 ? 'selected' :'')   ?> >Enable</option>
+                                <option value="0" <?php echo ($current_accounts->dispatching_invoice_inventory == 0 ? 'selected' :'')   ?>> Disable</option>
+                                </select>
+
+                                <span class="help-block m-b-none">Please select if Dispatching Invoices will be included in the Inventory computation.</span>
+                            </div>
+                        </div>
 
                         <br >
                         <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Depreciation Expense Account</strong></span></h4>
