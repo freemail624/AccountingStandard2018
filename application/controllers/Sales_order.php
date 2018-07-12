@@ -19,6 +19,7 @@ class Sales_order extends CORE_Controller
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
         $this->load->model('Customer_type_model');
+        $this->load->model('Order_source_model');
 
     }
 
@@ -88,6 +89,8 @@ class Sales_order extends CORE_Controller
             'is_deleted=FALSE'
         );
 
+
+        $data['order_sources'] = $this->Order_source_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
         $data['title'] = 'Sales Order';
         
         (in_array('3-1',$this->session->user_rights)? 
@@ -196,6 +199,7 @@ class Sales_order extends CORE_Controller
 
                 //treat NOW() as function and not string
                 $m_sales_order->set('date_created','NOW()'); //treat NOW() as function and not string
+                $m_sales_order->order_source_id=$this->input->post('order_source_id',TRUE);
                 $m_sales_order->customer_type_id=$this->input->post('customer_type_id',TRUE);
                 $m_sales_order->department_id=$this->input->post('department',TRUE);
                 $m_sales_order->customer_id=$this->input->post('customer',TRUE);
@@ -306,6 +310,7 @@ class Sales_order extends CORE_Controller
 
 
                 $m_sales_order->begin();
+                $m_sales_order->order_source_id=$this->input->post('order_source_id',TRUE);
                 $m_sales_order->customer_type_id=$this->input->post('customer_type_id',TRUE);
                 $m_sales_order->department_id=$this->input->post('department',TRUE);
                 $m_sales_order->remarks=$this->input->post('remarks',TRUE);

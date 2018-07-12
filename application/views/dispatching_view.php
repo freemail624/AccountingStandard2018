@@ -252,6 +252,15 @@
                         </div>
                     </div>
                     <div class="row">
+                        <div class="col-sm-4">
+                           <b>* </b>  Order Source :<br />
+                            <select name="order_source_id" id="cbo_order_source" data-error-msg="Order Source is required." required>
+                                <option value="0">[ Create New Order Source ]</option>
+                                <?php foreach($order_sources as $order_source){ ?>
+                                    <option value="<?php echo $order_source->order_source_id; ?>"><?php echo $order_source->order_source_name; ?></option>
+                                <?php } ?>
+                            </select>
+                        </div> 
                         <div class="col-sm-8">
                             <label>Address :</label><br>
                             <input class="form-control" id="txt_address" type="text" name="address" placeholder="Customer Address">
@@ -559,7 +568,7 @@
                                 </div>
                                 <div class="col-md-8" style="padding: 0px;">
                                 <select name="customer_type_id_create" id="cbo_customer_type_create" style="width: 100%">
-                                    <option value="0">None</option>
+                                    <option value="0">Walk In</option>
                                     <?php foreach($customer_type_create as $customer_type){ ?>
                                         <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name?></option>
                                     <?php } ?>
@@ -593,9 +602,43 @@
                 <button id="btn_create_customer" type="button" class="btn btn-primary"  style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span> Create</button>
                 <button id="btn_close_customer" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
             </div>
-        </div><!---content---->
+        </div>
     </div>
 </div><!---modal-->
+<div id="modal_new_order_source" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background: #2ecc71">
+                 <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                 <h2 id="" class="modal-title" style="color:white;">New Order Status</h2>
+            </div>
+            <div class="modal-body">
+                <form id="frm_order_source" role="form" class="form-horizontal">
+                    <div class="row" style="margin: 1%;">
+                        <div class="col-lg-12">
+                            <div class="form-group" style="margin-bottom:0px;">
+                                <label class=""><B> * </B> Order Source Name :</label>
+                                <textarea name="order_source_name" class="form-control" data-error-msg="Order Source Name is required!" placeholder="Order Source Name" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin: 1%;">
+                        <div class="col-lg-12">
+                            <div class="form-group" style="margin-bottom:0px;">
+                                    <label class="">Order Source Description :</label>
+                                    <textarea name="order_source_description" class="form-control" placeholder="Order Source Description"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="btn_create_order_source" class="btn btn-primary">Save</button>
+                <button  class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div id="modal_new_salesperson" class="modal fade" role="dialog">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
@@ -782,8 +825,8 @@
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboDepartments; var _cboCustomers; var dt_so; var products; var changetxn;
     var _cboCustomerType; var prodstat;
-    var _cboCustomerTypeCreate;
-     var _line_unit;
+    var _cboCustomerTypeCreate; var _cboSource;
+    var _line_unit;
     var oTableItems={
         qty : 'td:eq(0)',
         unit_value: 'td:eq(1)',
@@ -905,6 +948,10 @@ $(document).ready(function(){
         });
         _cboSalesperson=$("#cbo_salesperson").select2({
             placeholder: "Please select sales person.",
+            allowClear: true
+        });
+        _cboSource=$("#cbo_order_source").select2({
+             placeholder: "Please select Order Source.",
             allowClear: true
         });
         _cboSalesperson.select2('val',null);
@@ -1147,6 +1194,16 @@ $(document).ready(function(){
                 $('#salesperson_title').text('Create New Salesperson');
             }
         });
+
+        _cboSource.on("select2:select", function (e) {
+            var i=$(this).select2('val');
+                if(i==0){ 
+                clearFields($('#frm_order_source'));
+                _cboSource.select2('val',null);
+                $('#modal_new_order_source').modal('show');
+                 }
+        });
+
         $('#btn_close_salesperson').on('click',function(){
             $('#modal_new_salesperson').modal('hide');
         });
@@ -1213,7 +1270,31 @@ $(document).ready(function(){
                 });
             }
         });
-
+        //create new order source
+        $('#btn_create_order_source').click(function(){
+            var btn=$(this);
+            if(validateRequiredFields($('#frm_order_source'))){
+                var data=$('#frm_order_source').serializeArray();
+                $.ajax({
+                    "dataType":"json",
+                    "type":"POST",
+                    "url":"Order_source/transaction/create",
+                    "data":data,
+                    "beforeSend" : function(){
+                        showSpinningProgress(btn);
+                    }
+                }).done(function(response){
+                    showNotification(response);
+                    $('#modal_new_order_source').modal('hide');
+                    var _order=response.row_added[0];
+                    $('#cbo_order_source').append('<option value="'+_order.order_source_id+'" selected>'+_order.order_source_name+'</option>');
+                    $('#cbo_order_source').select2('val',_order.order_source_id);
+                }).always(function(){
+                    showSpinningProgress(btn);
+                });
+            }
+        });
+ 
          $('#refreshproducts').click(function(){
             getproduct().done(function(data){
                 products.clear();
@@ -1310,7 +1391,7 @@ $(document).ready(function(){
             clearFields($('#div_dispatching_invoice_fields'));
             $('#span_invoice_no').html('DIS-YYYYMMDD-XX');
             showList(false);
-
+            _cboSource.select2('val',1);
             $('#tbl_items > tbody').html('');
             $('#cbo_departments').select2('val', null);
             $('#cbo_department').select2('val', null);
@@ -1359,6 +1440,8 @@ $(document).ready(function(){
                 $('#cbo_department').select2('val',data.department_id);
                 $('#cbo_salesperson').select2('val',data.salesperson_id);
                 $('#cbo_customer_type').select2('val',data.customer_type_id);
+                $('#cbo_order_source').select2('val',data.order_source_id);
+ 
 
 
             });
@@ -1472,6 +1555,8 @@ $(document).ready(function(){
                 $('#cbo_department').select2('val',data.department_id);
                 $('#cbo_salesperson').select2('val',data.salesperson_id);
                 $('#cbo_customer_type').select2('val',data.customer_type_id);
+                $('#cbo_order_source').select2('val',data.order_source_id);
+ 
 
 
             });
@@ -1614,7 +1699,8 @@ $(document).ready(function(){
                     }
                 });
             });
-
+            $('#cbo_order_source').select2('val',data.order_source_id);
+ 
             $('#cbo_customer_type').select2('val',data.customer_type_id);
             $('#cbo_departments').select2('val',data.department_id);
             $('#cbo_department').select2('val',data.department_id);

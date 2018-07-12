@@ -23,6 +23,7 @@ class Cash_invoice extends CORE_Controller
         $this->load->model('Trans_model');
         $this->load->model('Sales_invoice_model');
         $this->load->model('Customer_type_model');
+        $this->load->model('Order_source_model');
     }
 
     public function index() {
@@ -79,6 +80,7 @@ class Cash_invoice extends CORE_Controller
             'is_deleted=FALSE'
         );
  
+ $data['order_sources'] = $this->Order_source_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
 
         $data['title'] = 'Cash Invoice';
         
@@ -152,6 +154,7 @@ class Cash_invoice extends CORE_Controller
                 );
                 $sales_order_id=(count($arr_so_info)>0?$arr_so_info[0]->sales_order_id:0);
                 $m_invoice->sales_order_id=$sales_order_id;
+                $m_invoice->order_source_id=$this->input->post('order_source_id',TRUE);
                 $m_invoice->customer_type_id=$this->input->post('customer_type_id',TRUE);
                 $m_invoice->customer_id=$this->input->post('customer',TRUE);
                 $m_invoice->sales_order_no=$this->input->post('so_no',TRUE);
@@ -272,6 +275,7 @@ class Cash_invoice extends CORE_Controller
                     );
                     $sales_order_id=(count($arr_so_info)>0?$arr_so_info[0]->sales_order_id:0);
                     $m_invoice->sales_order_id=$sales_order_id;
+                    $m_invoice->order_source_id=$this->input->post('order_source_id',TRUE);
                     $m_invoice->customer_type_id=$this->input->post('customer_type_id',TRUE);
                     $m_invoice->customer_id=$this->input->post('customer',TRUE);
                     $m_invoice->department_id=$this->input->post('department',TRUE);

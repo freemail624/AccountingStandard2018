@@ -219,7 +219,7 @@
                         <div class="col-sm-3">
                             <label>Customer Type :</label><br/>
                             <select name="customer_type_id" id="cbo_customer_type">
-                                <option value="0">None</option>
+                                <option value="0">Walk In</option>
                                 <?php foreach($customer_type as $customer_type){ ?>
                                     <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name?></option>
                                 <?php } ?>
@@ -240,6 +240,15 @@
                         </div>
                     </div>
                     <div class="row">
+                    <div class="col-sm-4">
+                       <b>* </b>  Order Source :<br />
+                        <select name="order_source_id" id="cbo_order_source" data-error-msg="Order Source is required." required>
+                            <option value="0">[ Create New Order Source ]</option>
+                            <?php foreach($order_sources as $order_source){ ?>
+                                <option value="<?php echo $order_source->order_source_id; ?>"><?php echo $order_source->order_source_name; ?></option>
+                            <?php } ?>
+                        </select>
+                    </div> 
                         <div class="col-sm-8">
                             <label>Address :</label><br>
                             <input class="form-control" id="txt_address" type="text" name="address" placeholder="Customer Address">
@@ -718,6 +727,40 @@
         </div>
     </div>
 </div>
+<div id="modal_new_order_source" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background: #2ecc71">
+                 <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                 <h2 id="" class="modal-title" style="color:white;">New Order Status</h2>
+            </div>
+            <div class="modal-body">
+                <form id="frm_order_source" role="form" class="form-horizontal">
+                    <div class="row" style="margin: 1%;">
+                        <div class="col-lg-12">
+                            <div class="form-group" style="margin-bottom:0px;">
+                                <label class=""><B> * </B> Order Source Name :</label>
+                                <textarea name="order_source_name" class="form-control" data-error-msg="Order Source Name is required!" placeholder="Order Source Name" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin: 1%;">
+                        <div class="col-lg-12">
+                            <div class="form-group" style="margin-bottom:0px;">
+                                    <label class="">Order Source Description :</label>
+                                    <textarea name="order_source_description" class="form-control" placeholder="Order Source Description"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="btn_create_order_source" class="btn btn-primary">Save</button>
+                <button  class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div id="modal_new_department_sp" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -898,7 +941,10 @@ $(document).ready(function(){
         _cboCustomerTypeCreate=$("#cbo_customer_type_create").select2({
             allowClear: false
         });
-
+        _cboSource=$("#cbo_order_source").select2({
+            placeholder: "Please select Order Source.",
+            allowClear: true
+        });
         _cboSalesperson.select2('val',null);
         _cboDepartments.select2('val', null);
         _cboDepartment.select2('val', null);
@@ -1131,6 +1177,14 @@ $(document).ready(function(){
                 $('#modal_new_salesperson').modal('hide');
             }
         });
+        _cboSource.on("select2:select", function (e) {
+            var i=$(this).select2('val');
+                if(i==0){ 
+                clearFields($('#frm_order_source'));
+                _cboSource.select2('val',null);
+                $('#modal_new_order_source').modal('show');
+                 }
+        });
         $('#btn_cancel_department').on('click', function(){
             $('#modal_new_department').modal('hide');
             _cboDepartments.select2('val',null);
@@ -1239,6 +1293,29 @@ $(document).ready(function(){
                 });
             }
         });
+        $('#btn_create_order_source').click(function(){
+            var btn=$(this);
+            if(validateRequiredFields($('#frm_order_source'))){
+                var data=$('#frm_order_source').serializeArray();
+                $.ajax({
+                    "dataType":"json",
+                    "type":"POST",
+                    "url":"Order_source/transaction/create",
+                    "data":data,
+                    "beforeSend" : function(){
+                        showSpinningProgress(btn);
+                    }
+                }).done(function(response){
+                    showNotification(response);
+                    $('#modal_new_order_source').modal('hide');
+                    var _order=response.row_added[0];
+                    $('#cbo_order_source').append('<option value="'+_order.order_source_id+'" selected>'+_order.order_source_name+'</option>');
+                    $('#cbo_order_source').select2('val',_order.order_source_id);
+                }).always(function(){
+                    showSpinningProgress(btn);
+                });
+            }
+        });
         $('#btn_create_customer').click(function(){
             var btn=$(this);
             if(validateRequiredFields($('#frm_customer_new'))){
@@ -1282,6 +1359,7 @@ $(document).ready(function(){
             $('#cbo_departments').select2('val', null);
             $('#cbo_department').select2('val', null);
             $('#cbo_customers').select2('val', null);
+            $('#cbo_order_source').select2('val', 1);
             $('#cbo_salesperson').select2('val', null);
             $('#img_user').attr('src','assets/img/anonymous-icon.png');
             $('#td_discount').html('0.00');
@@ -1320,6 +1398,7 @@ $(document).ready(function(){
                         _elem.val(value);
                     }
                 });
+                $('#cbo_order_source').select2('val',data.order_source_id);
                 $('#cbo_customers').select2('val',data.customer_id);
                 $('#cbo_departments').select2('val',data.department_id);
                 $('#cbo_department').select2('val',data.department_id);
@@ -1460,6 +1539,7 @@ $(document).ready(function(){
                     }
                 });
             });
+            $('#cbo_order_source').select2('val',data.order_source_id);
             $('#cbo_departments').select2('val',data.department_id);
             $('#cbo_department').select2('val',data.department_id);
             $('#cbo_customers').select2('val',data.customer_id);

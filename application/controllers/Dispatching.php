@@ -22,6 +22,7 @@ class Dispatching extends CORE_Controller
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
         $this->load->model('Customer_type_model');
+        $this->load->model('Order_source_model');
 
 
     }
@@ -71,6 +72,8 @@ class Dispatching extends CORE_Controller
         );
 
         $data['tax_percentage']=(count($tax_rate)>0?$tax_rate[0]->tax_rate:0);
+        $data['order_sources'] = $this->Order_source_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
+
         $data['title'] = 'Warehouse Dispatching';
         
         (in_array('3-5',$this->session->user_rights)? 
@@ -194,6 +197,7 @@ class Dispatching extends CORE_Controller
 
                 //treat NOW() as function and not string
                 $m_invoice->set('date_created','NOW()'); //treat NOW() as function and not string
+                $m_invoice->order_source_id=$this->input->post('order_source_id',TRUE);
                 $m_invoice->customer_type_id=$this->input->post('customer_type_id',TRUE);
                 $m_invoice->customer_id=$this->input->post('customer',TRUE);
                 $m_invoice->salesperson_id=$this->input->post('salesperson_id',TRUE);
@@ -367,6 +371,7 @@ class Dispatching extends CORE_Controller
                 $m_invoice->sales_inv_no=$sales_inv_no;
                 $m_invoice->cash_invoice_id=$cash_invoice_id;
                 $m_invoice->cash_inv_no=$cash_inv_no;
+                $m_invoice->order_source_id=$this->input->post('order_source_id',TRUE);
                 $m_invoice->customer_type_id=$this->input->post('customer_type_id',TRUE);
                 $m_invoice->customer_id=$this->input->post('customer',TRUE);
                 $m_invoice->department_id=$this->input->post('department',TRUE);

@@ -210,6 +210,7 @@
 
 
                                             <div class="panel-body table-responsive" id="product_entry_panel" style="display: none;">
+                                             <h2 class="h2-panel-heading">Products <small></small></h2><hr>
                                                 <form id="frm_product">
                                                     <div class="row">
                                                         <div class="col-lg-4">
@@ -362,7 +363,7 @@
 
 
                                                                 <div class="form-group" style="margin-bottom:0px;">
-                                                                    <label class="">Discounted Price :</label>
+                                                                    <label class="">Wholesaler Price :</label>
                                                                     <div class="input-group">
                                                                             <span class="input-group-addon">
                                                                                 <i class="fa fa-toggle-off"></i>
@@ -406,7 +407,7 @@
                                                             <div class="col-lg-6">
 
                                                                 <div class="form-group" style="margin-bottom:0px;">
-                                                                    <label class="">Public Price :</label>
+                                                                    <label class="">Reseller Price :</label>
                                                                     <div class="input-group">
                                                                             <span class="input-group-addon">
                                                                                 <i class="fa fa-toggle-off"></i>
