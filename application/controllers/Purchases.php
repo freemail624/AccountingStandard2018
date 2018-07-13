@@ -526,39 +526,39 @@ class Purchases extends CORE_Controller
                             )
                         );
 
-                        if(strlen($info[0]->user_email)>0){ //if email is found, notify the user who posted it
-                            $emailConfig = array('protocol' => 'smtp', 
-                                'smtp_host' => 'ssl://smtp.googlemail.com', 
-                                'smtp_port' => 465, 
-                                'smtp_user' => $email[0]->email_address, 
-                                'smtp_pass' => $email[0]->password, 
-                                'mailtype' => 'html', 
-                                'charset' => 'iso-8859-1');
+                        // if(strlen($info[0]->user_email)>0){ //if email is found, notify the user who posted it
+                        //     $emailConfig = array('protocol' => 'smtp', 
+                        //         'smtp_host' => 'ssl://smtp.googlemail.com', 
+                        //         'smtp_port' => 465, 
+                        //         'smtp_user' => $email[0]->email_address, 
+                        //         'smtp_pass' => $email[0]->password, 
+                        //         'mailtype' => 'html', 
+                        //         'charset' => 'iso-8859-1');
 
-                            // Set your email information
+                        //     // Set your email information
                             
-                            $from = array('email' => $email[0]->email_from,
-                                'name' => $email[0]->name_from);
+                        //     $from = array('email' => $email[0]->email_from,
+                        //         'name' => $email[0]->name_from);
                                 
 
-                            $to = array($info[0]->user_email);
-                            $subject = 'Purchase Order';
-                          //  $message = 'Type your gmail message here';
-                            $message = '<p>Good Day!</p><br /><br /><p>Hi! your Purchase Order '.$info[0]->po_no.' is already approved. Kindly check your account.</p>';
+                        //     $to = array($info[0]->user_email);
+                        //     $subject = 'Purchase Order';
+                        //   //  $message = 'Type your gmail message here';
+                        //     $message = '<p>Good Day!</p><br /><br /><p>Hi! your Purchase Order '.$info[0]->po_no.' is already approved. Kindly check your account.</p>';
 
-                            // Load CodeIgniter Email library
-                            $this->load->library('email', $emailConfig);
-                            // Sometimes you have to set the new line character for better result
-                            $this->email->set_newline("\r\n");
-                            // Set email preferences
-                            $this->email->from($from['email'], $from['name']);
-                            $this->email->to($to);
-                            $this->email->subject($subject);
-                            $this->email->message($message);
+                        //     // Load CodeIgniter Email library
+                        //     $this->load->library('email', $emailConfig);
+                        //     // Sometimes you have to set the new line character for better result
+                        //     $this->email->set_newline("\r\n");
+                        //     // Set email preferences
+                        //     $this->email->from($from['email'], $from['name']);
+                        //     $this->email->to($to);
+                        //     $this->email->subject($subject);
+                        //     $this->email->message($message);
                          
-                            $this->email->set_mailtype("html");
-                            $this->email->send();
-                        }
+                        //     $this->email->set_mailtype("html");
+                        //     $this->email->send();
+                        // }
 
 
 

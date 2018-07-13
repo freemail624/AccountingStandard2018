@@ -50,9 +50,12 @@ class Income_statement extends CORE_Controller
                 $company_info=$m_company->get_list();
                 $start=$this->input->get('start',TRUE);
                 $end=$this->input->get('end',TRUE);
+                $dep_id=$this->input->get('depid',TRUE);
 
-                $income_accounts = $m_journal->get_account_balance(4,null,date("Y-m-d",strtotime($start)),date("Y-m-d",strtotime($end)));
-                $expense_accounts = $m_journal->get_account_balance(5,null,date("Y-m-d",strtotime($start)),date("Y-m-d",strtotime($end)));
+                $departments = $this->Departments_model->get_list($dep_id);
+                $department_name = $departments[0]->department_name;
+                $income_accounts = $m_journal->get_account_balance(4,$dep_id,date("Y-m-d",strtotime($start)),date("Y-m-d",strtotime($end)));
+                $expense_accounts = $m_journal->get_account_balance(5,$dep_id,date("Y-m-d",strtotime($start)),date("Y-m-d",strtotime($end)));
 
                 $excel=$this->excel;
    
@@ -67,7 +70,7 @@ class Income_statement extends CORE_Controller
                                         ->setAutoSize(false)
                                         ->setWidth('25');
 
-                $excel->getActiveSheet()->setTitle('Income Statement');
+                $excel->getActiveSheet()->setTitle('Income Statement'.$dep_id);
 
                 $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
                                         ->setCellValue('A2',$company_info[0]->company_address)
@@ -92,7 +95,7 @@ class Income_statement extends CORE_Controller
 
                 $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
 
-                $excel->getActiveSheet()->setCellValue('A6','INCOME STATEMENT')
+                $excel->getActiveSheet()->setCellValue('A6','INCOME STATEMENT - '.$department_name)
                                         ->setCellValue('A7',$start.' to '.$end);
 
                 $excel->getActiveSheet()->getStyle('A6')->getFont()->setBold(TRUE);

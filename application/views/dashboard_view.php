@@ -778,7 +778,7 @@ Chart.defaults.global.defaultFontColor = "#000000";
                         render: function (data, type, full, meta){
                             //alert(full.purchase_order_id);
 
-                            var btn_approved='<button class="btn btn-success btn-sm" name="approve_po"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Approved this PO"><i class="fa fa-check" style="color: white;"></i> <span class=""></span></button>';
+                            var btn_approved='<button class="btn btn-success btn-sm" name="approve_po"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Approve this PO"><i class="fa fa-check" style="color: white;"></i> <span class=""></span></button>';
                             var btn_conversation='<a id="link_conversation" href="Po_messages?id='+full.purchase_order_id+'" target="_blank" class="btn btn-info btn-sm"  style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Open Conversation"><i class="fa fa-envelope"></i> </a>';
 
                             return '<center>'+btn_approved+'&nbsp;'+btn_conversation+'</center>';
@@ -838,7 +838,7 @@ Chart.defaults.global.defaultFontColor = "#000000";
 
             //*****************************************************************************************
             $('#tbl_po_list > tbody').on('click','button[name="approve_po"]',function(){
-            showNotification({title:"Approving PO and Sending Email!",stat:"info",msg:"Please wait for a few seconds."});
+            // showNotification({title:"Approving PO and Sending Email!",stat:"info",msg:"Please wait for a few seconds."});
                 _selectRowObj=$(this).closest('tr'); //hold dom of tr which is selected
 
                 var data=dt.row(_selectRowObj).data();
