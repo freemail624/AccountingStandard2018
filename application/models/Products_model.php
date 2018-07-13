@@ -311,7 +311,7 @@ class Products_model extends CORE_Model {
         return $this->db->query($sql)->result();
     }
 
-     function get_product_history_with_child($product_id,$depid=0,$as_of_date=null,$account,$is_parent=null,$ciaccount){
+     function get_product_history_with_child($product_id,$depid=0,$as_of_date=null,$account,$is_parent=null,$ciaccount,$disaccount=null){
 
         $this->db->query("SET @pBalance:=0.00;");
         $this->db->query("SET @cBalance:=0.00;");
@@ -555,6 +555,39 @@ class Products_model extends CORE_Model {
             AND cii.product_id = $product_id
             ".($as_of_date==null?"":" AND ci.date_invoice<='".$as_of_date."'")."
             ":" ")."
+
+
+            ".($disaccount==TRUE?" 
+
+            UNION ALL
+            SELECT 
+            dis.date_invoice as txn_date,
+            dis.date_created,
+            dis.dispatching_inv_no,
+            ('Dispatching Invoice') as type,
+            CONCAT(IFNULL(c.customer_name,''),' (Customer)') as Description,
+            dii.product_id,
+            IF(dii.is_parent = 1, 'Bulk' ,'Retail') as identifier,
+            0 as parent_in_qty,
+            0 as child_in_qty,
+            IF(dii.is_parent = 1, IFNULL(dii.inv_qty,0),IFNULL(dii.inv_qty,0)/IFNULL(p.child_unit_desc,0)) as parent_out_qty,
+            IF(dii.is_parent = 1, IFNULL(dii.inv_qty,0)*IFNULL(p.child_unit_desc,0),IFNULL(dii.inv_qty,0)) as child_out_qty,
+            d.department_name,
+            dis.remarks
+
+            FROM (dispatching_invoice as dis
+            LEFT JOIN customers as c ON c.customer_id=dis.customer_id)
+            INNER JOIN dispatching_invoice_items as dii
+            ON dii.dispatching_invoice_id=dis.dispatching_invoice_id
+            LEFT JOIN products p on p.product_id = dii.product_id
+            LEFT JOIN departments d on d.department_id = dis.department_id
+            WHERE dis.is_active=TRUE AND dis.is_deleted=FALSE 
+            ".($depid==0?"":" AND dis.department_id=".$depid)."
+            AND dii.product_id=$product_id
+            ".($as_of_date==null?"":" AND dis.date_invoice<='".$as_of_date."'")."
+
+            ":" ")."
+
 
             ) as main
 
@@ -1150,7 +1183,7 @@ Product Pick List
 
 */
 
-function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=null,$category_id=null,$item_type_id=null,$pick_list=null,$depid=null,$account_cii){
+function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=null,$category_id=null,$item_type_id=null,$pick_list=null,$depid=null,$account_cii,$account_dis=null){
     $sql="SELECT main.*
          ".($pick_list==TRUE?",(main.product_ideal - main.CurrentQty) as recommended_qty":"")."
             FROM 
@@ -1166,8 +1199,8 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 (SELECT uc.unit_name as child_unit_name FROM units as uc WHERE uc.unit_id = core.parent_unit_id) as parent_unit_name,
                 (SELECT uc.unit_name as child_unit_name FROM units as uc WHERE uc.unit_id = core.child_unit_id) as child_unit_name,
 
-                ROUND((ReceiveQtyP+AdjustInQtyP".($account==TRUE?"-SalesOUtQtyP":"")."".($account_cii==TRUE?"-CInvOutP":"")."-IssueQtyP-AdjustOutP".($depid==0?"":"-IssueFromInvOutP+IssueToInvInP")."),2) as CurrentQty,
-                ROUND((ReceiveQtyC+AdjustInQtyC".($account==TRUE?" -SalesOUtQtyC":"")."".($account_cii==TRUE?"-CInvOutC":"")."-IssueQtyC-AdjustOutC".($depid==0?"":"-IssueFromInvOutC+IssueToInvInC")."),2) as CurrentQtyChild
+                ROUND((ReceiveQtyP+AdjustInQtyP".($account==TRUE?"-SalesOUtQtyP":"")."".($account_cii==TRUE?"-CInvOutP":"")."".($account_dis==TRUE?"-DInvOutP":"")."-IssueQtyP-AdjustOutP".($depid==0?"":"-IssueFromInvOutP+IssueToInvInP")."),2) as CurrentQty,
+                ROUND((ReceiveQtyC+AdjustInQtyC".($account==TRUE?" -SalesOUtQtyC":"")."".($account_cii==TRUE?"-CInvOutC":"")."".($account_dis==TRUE?"-DInvOutC":"")."-IssueQtyC-AdjustOutC".($depid==0?"":"-IssueFromInvOutC+IssueToInvInC")."),2) as CurrentQtyChild
 
             
 
@@ -1187,6 +1220,8 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 IFNULL(aiout.child_out_qty,0) as AdjustOutC,                
                 IFNULL(ciout.parent_out_qty,0) as CInvOutP,
                 IFNULL(ciout.child_out_qty,0) as CInvOutC, 
+                IFNULL(disout.parent_out_qty,0) as DInvOutP,
+                IFNULL(disout.child_out_qty,0) as DInvOutC, 
                 IFNULL(issuefromout.parent_out_qty,0) as IssueFromInvOutP,
                 IFNULL(issuefromout.child_out_qty,0) as IssueFromInvOutC,
                 IFNULL(issuetoin.parent_in_qty,0) as IssueToInvInP,
@@ -1282,9 +1317,6 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
 
 
 
-
-
-
                 LEFT JOIN
 
                 (SELECT aii.product_id,
@@ -1307,9 +1339,24 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 INNER JOIN cash_invoice_items  cii ON cii.cash_invoice_id =  ci.cash_invoice_id
                 LEFT JOIN products p on p.product_id = cii.product_id
                 WHERE  ci.is_deleted = 0
-                AND ci.is_deleted=0   ".($as_of_date==null?"":" AND ci.date_invoice<='".$as_of_date."'")."
+                AND ci.is_active=1   ".($as_of_date==null?"":" AND ci.date_invoice<='".$as_of_date."'")."
                 ".($depid==null||$depid==0?"":" AND ci.department_id=".$depid)."
                 GROUP BY cii.product_id) as ciout ON ciout.product_id = pQ.product_id
+
+
+                LEFT JOIN
+
+                (SELECT dii.product_id,
+                SUM(IF(dii.is_parent = 1, IFNULL(dii.inv_qty,0),IFNULL(dii.inv_qty,0)/IFNULL(p.child_unit_desc,0))) as parent_out_qty,
+                SUM(IF(dii.is_parent = 1, IFNULL(dii.inv_qty,0)*IFNULL(p.child_unit_desc,0),IFNULL(dii.inv_qty,0))) as child_out_qty
+
+                FROM dispatching_invoice di
+                LEFT JOIN dispatching_invoice_items dii ON dii.dispatching_invoice_id = di.dispatching_invoice_id
+                LEFT JOIN products p on p.product_id = dii.product_id
+                WHERE  di.is_deleted = 0
+                #AND di.is_active=1  ".($as_of_date==null?"":" AND di.date_invoice<='".$as_of_date."'")."
+                #".($depid==null||$depid==0?"":" AND di.department_id=".$depid)."
+                GROUP BY dii.product_id) as disout ON disout.product_id = pQ.product_id
 
                 )as core 
                 
