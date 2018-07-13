@@ -929,7 +929,7 @@ Chart.defaults.global.defaultFontColor = "#000000";
 
             //*****************************************************************************************
             $('#tbl_po_list > tbody').on('click','button[name="approve_po"]',function(){
-            showNotification({title:"Approving PO and Sending Email!",stat:"info",msg:"Please wait for a few seconds."});
+            // showNotification({title:"Approving PO and Sending Email!",stat:"info",msg:"Please wait for a few seconds."});
                 _selectRowObj=$(this).closest('tr'); //hold dom of tr which is selected
 
                 var data=dt.row(_selectRowObj).data();

@@ -132,8 +132,11 @@ class Trial_balance extends CORE_Controller
 
                                 $excel->getActiveSheet()->setCellValue('A'.$i,'               '.$title->account_title);
                                 $excel->getActiveSheet()->setCellValue('B'.$i,number_format($title->dr_amount,2));
+                                $excel->getActiveSheet()->getStyle('B'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                                 $excel->getActiveSheet()->setCellValue('C'.$i,number_format($title->cr_amount,2));
+                                $excel->getActiveSheet()->getStyle('C'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                                 $excel->getActiveSheet()->setCellValue('D'.$i,number_format($title->balance,2));
+                                $excel->getActiveSheet()->getStyle('D'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
 
                                 $c_dr_amount+=$title->dr_amount;
@@ -170,8 +173,12 @@ class Trial_balance extends CORE_Controller
 
                             $excel->getActiveSheet()->setCellValue('A'.$i,'Sub-Total :   ');
                             $excel->getActiveSheet()->setCellValue('B'.$i,number_format($c_dr_amount,2));
+                            $excel->getActiveSheet()->getStyle('B'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                             $excel->getActiveSheet()->setCellValue('C'.$i,number_format($c_cr_amount,2));
+                            $excel->getActiveSheet()->getStyle('C'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
                             $excel->getActiveSheet()->setCellValue('D'.$i,number_format($c_total,2));
+                            $excel->getActiveSheet()->getStyle('D'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
                             $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getFont()->setBold(TRUE);
                             $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
@@ -183,13 +190,20 @@ class Trial_balance extends CORE_Controller
 
                 $i++;
                 $excel->getActiveSheet()->setCellValue('B'.$i,number_format($dr_amount,2));
+                $excel->getActiveSheet()->getStyle('B'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                 $excel->getActiveSheet()->setCellValue('C'.$i,number_format($cr_amount,2));
+                $excel->getActiveSheet()->getStyle('C'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                 $excel->getActiveSheet()->setCellValue('D'.$i,number_format($dr_amount-$cr_amount,2));
+                $excel->getActiveSheet()->getStyle('D'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
                 $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
 
+
                 $excel->getActiveSheet()->getColumnDimension('A')->setAutoSize(TRUE);
+                $excel->getActiveSheet()->getColumnDimension('B')->setAutoSize(TRUE);
+                $excel->getActiveSheet()->getColumnDimension('C')->setAutoSize(TRUE);
+                $excel->getActiveSheet()->getColumnDimension('D')->setAutoSize(TRUE);
 
                 //merge cell A1 until D1
                 //$excel->getActiveSheet()->mergeCells('A1:D1');
