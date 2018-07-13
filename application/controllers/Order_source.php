@@ -18,7 +18,7 @@ class Order_source extends CORE_Controller {
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['title'] = 'Order Source Management';
-        (in_array('4-3',$this->session->user_rights)? 
+        (in_array('4-8',$this->session->user_rights)? 
         $this->load->view('order_source_view', $data)
         :redirect(base_url('dashboard')));
         
