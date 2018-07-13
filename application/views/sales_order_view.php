@@ -127,6 +127,10 @@
         #img_user {
             padding-bottom: 15px;
         }
+        #tbl_sales_order_filter{
+
+            display: none;
+        }
     </style>
 </head>
 <body class="animated-content"  style="font-family: tahoma;">
@@ -151,6 +155,25 @@
 <!--         <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Sales Order</b></div></a> -->
         <div class="panel-body table-responsive" >
         <h2 class="h2-panel-heading">Sales Order</h2><hr>
+            <div class="row">
+                <div class="col-sm-3">&nbsp;<br>
+                    <button class="btn btn-primary"  id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Sales Order" ><i class="fa fa-plus"></i> New Sales Order</button>
+                </div>
+                <div class="col-sm-3 col-sm-offset-3">
+                    Status :<br>
+                    <select id="cbo_status">
+                        <option value="0">All</option>
+                        <option value="1">Open</option>
+                        <option value="2">Closed</option>
+                        <option value="3">Partially Received</option>
+
+                    </select>
+                </div>
+                <div class="col-lg-3">
+                        Search :<br />
+                         <input type="text" id="searchbox_so" class="form-control">
+                </div>
+            </div><br>
             <table id="tbl_sales_order"  class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
                 <tr>
@@ -763,6 +786,7 @@ $(document).ready(function(){
     var _line_unit; var _cboCustomerType;
     var _cboCustomerTypeCreate;
     var _cboSource;
+    var _cboStatus;
  
     /*var oTableItems={
         qty : 'td:eq(0)',
@@ -808,7 +832,16 @@ $(document).ready(function(){
             "bLengthChange":false,
             "pageLength":15,
             "order": [[ 1, "desc" ]],
-            "ajax" : "Sales_order/transaction/list",
+
+            "ajax" : {
+                "url":"Sales_order/transaction/list",
+                "bDestroy": true,            
+                "data": function ( d ) {
+                        return $.extend( {}, d, {
+                            "stats":$('#cbo_status').val()
+                        });
+                    }
+            }, 
             "columns": [
                 {
                     "targets": [0],
@@ -832,11 +865,6 @@ $(document).ready(function(){
                 }
             ]
         }); 
-        var createToolBarButton=function(){
-            var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Sales Order" >'+
-                '<i class="fa fa-plus"></i> New Sales Order</button>';
-                $("div.toolbar").html(_btnNew);
-        }();
         _cboCustomers=$("#cbo_customers").select2({
             placeholder: "Please select customer.",
             allowClear: true
@@ -875,6 +903,10 @@ $(document).ready(function(){
 
         _cboCustomerTypeCreate=$("#cbo_customer_type_create").select2({
             allowClear: false
+        });
+
+        _cboStatus=$("#cbo_status").select2({
+            allowClear: true
         });
 
         $('.numeric').autoNumeric('init');
@@ -926,6 +958,12 @@ $(document).ready(function(){
                     showSpinningProgress(btn);
                 });
             }
+        });
+
+        $("#searchbox_so").keyup(function(){         
+        dt
+                .search(this.value)
+                .draw();
         });
 
 
@@ -1187,6 +1225,10 @@ $(document).ready(function(){
                 $('#modal_new_department_sp').modal('show');
                 $('#modal_new_salesperson').modal('hide');
             }
+        });
+
+        _cboStatus.on('select2:select', function(){
+            $('#tbl_sales_order').DataTable().ajax.reload()
         });
 
 
