@@ -161,7 +161,7 @@
             <footer role="contentinfo">
                 <div class="clearfix">
                     <ul class="list-unstyled list-inline pull-left">
-                        <li><h6 style="margin: 0;">&copy; 2017 - JDEV IT BUSINESS SOLUTION</h6></li>
+                        <li><h6 style="margin: 0;">&copy; 2018 - JDEV OFFICE SOLUTION</h6></li>
                     </ul>
                     <button class="pull-right btn btn-link btn-xs hidden-print" id="back-to-top"><i class="ti ti-arrow-up"></i></button>
                 </div>
@@ -205,7 +205,7 @@
         // _cboDepartments.select2('val',1);
 
         $('#btn_export').click(function(){
-            window.open('Income_statement/transaction/export-excel?start='+$('#dt_start_date').val()+'&end='+$('#dt_end_date').val());
+            window.open('Income_statement/transaction/export-excel?start='+$('#dt_start_date').val()+'&end='+$('#dt_end_date').val()+"&depid="+_cboDepartments.select2('val'));
         });
 
         $('#btn_email').on('click', function() {
