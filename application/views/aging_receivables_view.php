@@ -259,14 +259,14 @@
                         }, 0 );
 
                     total_sixty = api
-                        .column( 3 )
+                        .column( 4 )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0 );
 
                     total_ninety = api
-                        .column( 3 )
+                        .column( 5 )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);

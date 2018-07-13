@@ -385,6 +385,7 @@ class Products extends CORE_Controller
 
                 $account =$a_i[0]->sales_invoice_inventory;
                 $ci_account =$a_i[0]->cash_invoice_inventory;
+                $disaccount =$a_i[0]->dispatching_invoice_inventory;
 
 
                 $product_id=$this->input->get('id');
@@ -395,7 +396,7 @@ class Products extends CORE_Controller
 
                 $m_products=$this->Products_model;
                 $data['products']=$m_products->get_product_history($product_id,$department_id,$date,$account);
-                $data['products_parent']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account);
+                $data['products_parent']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$disaccount);
                 $data['product_id']=$product_id;
                 //$this->load->view('Template/product_history_menus',$data);
 
@@ -425,6 +426,7 @@ class Products extends CORE_Controller
 
                 $data['product_id'] = $product_id;
                 $m_products=$this->Products_model;
+                //$product_id,$depid=0,$as_of_date=null,$account,$is_parent=null,$ciaccount // OREDR OF PARAMETER
                 $data['products_parent']=$m_products->get_product_history_with_child($product_id,$department_id,$date,1,1,1);
                 $data['products_child']=$m_products->get_product_history_with_child($product_id,$department_id,$date,1,0,1);
                 $data['product_id']=$product_id;

@@ -50,7 +50,8 @@ class Inventory extends CORE_Controller
                 $a_i=$account_integration->get_list();
                 $account =$a_i[0]->sales_invoice_inventory;
                 $account_cii =$a_i[0]->cash_invoice_inventory; // Cash Invoice 
-                $response['data']=$m_products->product_list($account,$date,null,null,null,1,null,$depid,$account_cii);
+                $account_dis =$a_i[0]->dispatching_invoice_inventory; // Cash Invoice 
+                $response['data']=$m_products->product_list($account,$date,null,null,null,1,null,$depid,$account_cii,$account_dis);
                 // $response['data'] = $m_products->get_product_list_inventory($date,$depid,$account);
 
 
