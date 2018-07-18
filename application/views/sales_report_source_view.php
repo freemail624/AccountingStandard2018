@@ -232,7 +232,7 @@
                         <i class="fa fa-print"></i> Print Report
                     </button>
                 </div>
-                <div class="col-sm-3"> 
+                <div class="col-sm-3" style="display: none;"> 
                     <button class="btn btn-success pull-left" style="margin-right: 5px; margin-top: 0; margin-bottom: 10px;" id="btn_export"  data-placement="left" title="Export" ><i class="fa fa-file-excel-o"></i> Export Report
                 </button>
                 </div>

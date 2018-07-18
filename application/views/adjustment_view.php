@@ -156,6 +156,7 @@
                     <th></th>
                     <th>Adjustment #</th>
                     <th>Transaction Type</th>
+                    <th>Invoice No</th>
                     <th>Date Adjusted</th>
                     <th>Department</th>
                     <th>Remarks</th>
@@ -656,12 +657,13 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "adjustment_code" },
                 { targets:[2],data: "transaction_type" },
-                { targets:[3],data: "date_adjusted" },
-                { targets:[4],data: "department_name" },
-                { targets:[5],data: "remarks" },
-                { targets:[6],data: "adjustment_type" },
+                { targets:[3],data: "inv_no" },
+                { targets:[4],data: "date_adjusted" },
+                { targets:[5],data: "department_name" },
+                { targets:[6],data: "remarks" },
+                { targets:[7],data: "adjustment_type" },
                 {
-                    targets:[7],
+                    targets:[8],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';

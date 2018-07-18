@@ -62,6 +62,51 @@ class Sales_invoice_model extends CORE_Model
         return $this->db->query($sql)->result();
     }
 
+    function get_sales_history($customer_id = null){
+        $sql='SELECT 
+        "SI" as type,
+        si.sales_invoice_id as invoice_id,
+        si.sales_inv_no as inv_no,
+        si.remarks,
+        DATE_FORMAT(si.date_invoice,"%m/%d/%Y") as date_invoice,
+        d.department_name,
+        c.customer_name
+
+        FROM
+        sales_invoice si
+
+        LEFT JOIN departments d ON d.department_id=si.department_id
+        LEFT JOIN customers c ON c.customer_id=si.customer_id
+        WHERE si.is_active= TRUE = si.is_deleted = FALSE
+
+        '.($customer_id==null||$customer_id==0?'':' AND si.customer_id='.$customer_id).'
+
+        UNION ALL
+
+
+        SELECT 
+        "CI" as type,
+        ci.cash_invoice_id as inv_id,
+        ci.cash_inv_no as inv_no,
+        ci.remarks,
+        DATE_FORMAT(ci.date_invoice,"%m/%d/%Y") as date_invoice,
+        d.department_name,
+        c.customer_name
+
+        FROM
+        cash_invoice ci
+
+        LEFT JOIN departments d ON d.department_id=ci.department_id
+        LEFT JOIN customers c ON c.customer_id=ci.customer_id
+        WHERE ci.is_active= TRUE = ci.is_deleted = FALSE
+
+        '.($customer_id==null||$customer_id==0?'':' AND ci.customer_id='.$customer_id).'
+
+        ';
+
+        return $this->db->query($sql)->result();
+    }
+
 
 function get_journal_entries_2($sales_invoice_id){
 

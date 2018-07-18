@@ -17,6 +17,9 @@ class Adjustments extends CORE_Controller
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
         $this->load->model('Customers_model');
+        $this->load->model('Customers_model');
+        $this->load->model('Sales_invoice_model');
+        $this->load->model('Cash_invoice_model');
 
 
     }
@@ -91,7 +94,37 @@ class Adjustments extends CORE_Controller
                 echo json_encode($response);
                 break;
 
-            case 'list-per-customer':  //this returns JSON of Issuance to be rendered on Datatable
+            case 'check-invoice-for-returns': // for sales
+                $invoice_id=$this->input->get('id');
+                $m_sales = $this->Sales_invoice_model;
+
+
+                $sales = $m_sales->get_list($invoice_id);
+                $inv_no = $sales[0]->sales_inv_no;
+
+
+                $m_adjustment=$this->Adjustment_model;
+                $response['data'] = $m_adjustment->get_list(array('inv_no'=>$inv_no,'is_active'=>TRUE,'is_deleted'=>FALSE));
+                echo json_encode($response);
+                break;
+
+
+            case 'check-invoice-for-returns-cash': // for sales
+                $invoice_id=$this->input->get('id');
+                $m_cash = $this->Cash_invoice_model;
+
+
+                $cash = $m_cash->get_list($invoice_id);
+                $inv_no = $cash[0]->cash_inv_no;
+
+                
+                $m_adjustment=$this->Adjustment_model;
+                $response['data'] = $m_adjustment->get_list(array('inv_no'=>$inv_no,'is_active'=>TRUE,'is_deleted'=>FALSE));
+                echo json_encode($response);
+                break;
+
+
+            case 'list-per-customer': 
                 $customer_id = $this->input->get('cus');
                 $m_adjustment=$this->Adjustment_model;
                 $response['data']=$m_adjustment->list_per_customer($customer_id);

@@ -143,6 +143,8 @@
                     <th>Department</th>
                     <th>Remarks</th>
                     <th><center>Action</center></th>
+                    <th></th>
+
                 </tr>
                 </thead>
                 <tbody>
@@ -861,7 +863,7 @@ $(document).ready(function(){
         dt=$('#tbl_cash_invoice').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 1, "desc" ]],
+            "order": [[ 8, "desc" ]],
             "ajax" : "Cash_invoice/transaction/list",
             "language": {
                 "searchPlaceholder":"Search Invoice"
@@ -887,7 +889,8 @@ $(document).ready(function(){
                         var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
                         return '<center>'+btn_edit+"&nbsp;"+btn_trash+'</center>';
                     }
-                }
+                },
+                { targets:[8],data: "cash_invoice_id", visible:false },
             ]
         });
         dt_so=$('#tbl_so_list').DataTable({
@@ -975,7 +978,7 @@ $(document).ready(function(){
         var _objTypeHead=$('#custom-templates .typeahead');
         _objTypeHead.typeahead(null, {
         name: 'products',
-        display: 'product_code',
+        display: 'product_desc',
         source: products,
         templates: {
             header: [
@@ -1637,21 +1640,39 @@ $(document).ready(function(){
             _selectedID=data.cash_invoice_id;
             _count=data.count;
             _is_journal_posted=data.is_journal_posted;
-            if(_is_journal_posted > 0){
-                showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Cannot Delete: Invoice is already Posted in Cash Receipt Journal."});
-            }
-            else if(_count > 0){
-                showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Cannot Edit: Invoice is already in use in Collection Entry."});
-            }
-            else
-            {
+
 
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.cash_invoice_id;
-            //alert(_selectedID);
-            $('#modal_confirmation').modal('show');
-        }
+                $.ajax({
+                    "url":"Adjustments/transaction/check-invoice-for-returns-cash?id="+_selectedID,
+                type : "GET",
+                cache : false,
+                dataType : 'json',
+                processData : false,
+                contentType : false,
+                }).done(function(response){
+                    var row = response.data;
+                    if(row.length > 0){
+                        showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Cannot Delete: Sales Return exists on this invoice."});
+                        return;
+                    }
+                    if(_is_journal_posted > 0){
+                        showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Cannot Delete: Invoice is already Posted in Cash Receipt Journal."});
+                    } else if(_count > 0){
+                        showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Cannot Edit: Invoice is already in use in Collection Entry."});
+                    } else { 
+                        $('#modal_confirmation').modal('show');
+                    }
+            
+            });
+
+
+
+
+
+
         });
         //track every changes on numeric fields
         $('#txt_overall_discount').on('keyup',function(){

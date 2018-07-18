@@ -97,7 +97,8 @@ class Rights_link_model extends CORE_Model{
                                           (87,'3','3-5','Warehouse Dispatching'),
                                           (88,'4','4-7','Brands Management'),
                                           (89,'4','4-8','Order Source Management'),
-                                          (90,'8','8-5','Sales Report by Source')
+                                          (90,'8','8-5','Sales Report by Source'),
+                                          (91,'3','3-6','Sales/Cash Invoice History')
                                           ON DUPLICATE KEY UPDATE
                                           rights_links.parent_code=VALUES(rights_links.parent_code),
                                           rights_links.link_code=VALUES(rights_links.link_code),
