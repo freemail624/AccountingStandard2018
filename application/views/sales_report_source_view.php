@@ -421,6 +421,9 @@ $(document).ready(function(){
             "data":data,
             success : function(response){
                  $('#tbl_delivery_invoice').html('');
+                $('#tbl_delivery_invoice').append(
+                     '<h4><strong>Sales</strong></h4><hr>'
+                );
                  $.each(response.sources, function(index,value){
                     $('#tbl_delivery_invoice').append(
                     '<h4>'+value.order_source_name+'</h4>'+
@@ -432,7 +435,10 @@ $(document).ready(function(){
                     '<th>Product Desription</th>'+
                     '<th class="right-align">Quantity</th>'+
                     '<th class="right-align">Unit Cost</th>'+
-                    '<th class="right-align">Total</th>'+
+                    '<th class="right-align">Gross</th>'+
+                    '<th class="right-align">Discount(%)</th>'+
+                    '<th class="right-align">Net </th>'+
+                    
                     '</thead>'+
                         '<tbody id="'+value.order_source_id+'">'+
                         '</tbody>'+
@@ -450,6 +456,8 @@ $(document).ready(function(){
                         '<td class="right-align">'+accounting.formatNumber(value.inv_qty,2)+'</td>'+
                         '<td class="right-align">'+accounting.formatNumber(value.inv_price,2)+'</td>'+
                         '<td class="right-align">'+accounting.formatNumber(value.inv_gross,2)+'</td>'+
+                        '<td class="right-align">'+accounting.formatNumber(value.inv_discount,2)+'</td>'+
+                        '<td class="right-align">'+accounting.formatNumber(value.inv_line_total_price,2)+'</td>'+
                         '</tr>'
                     );
                  });
@@ -464,6 +472,8 @@ $(document).ready(function(){
                         '<td></td>'+
                         '<td></td>'+
                         '<td></td>'+
+                        '<td></td>'+
+                        '<td></td>'+
                         '<td style="font-weight:bold;">Sub Total:</td>'+
                         '<td class="right-align"><strong>'+accounting.formatNumber(value.sub_total,2)+'</strong></td>'+
                         '</tr>'
@@ -472,12 +482,123 @@ $(document).ready(function(){
 
                  $('#tbl_delivery_invoice ').append(
 
-                    '<tr style="font-size18px;font-weight:bold;float:right;padding-right:10px;"><td>Grand Total: </td><td>&nbsp;'+accounting.formatNumber(grand_total,2)+'</td></tr>'
+                    '<tr style="font-size18px;font-weight:bold;float:right;padding-right:10px;"><td>Total Sales: </td><td>&nbsp;'+accounting.formatNumber(grand_total,2)+'</td></tr>'
+                )
+
+
+
+                $('#tbl_delivery_invoice').append(
+                     '<br><h4><strong>Returns</strong></h4><hr>'
+                );
+
+
+                 $.each(response.return_sources, function(index,value){
+                    $('#tbl_delivery_invoice').append(
+                    '<h4>'+value.order_source_name+'</h4>'+
+                    '<table style="width:100%" class="table table-striped">'+
+                    '<thead>'+
+                    '<th>Invoice No.</th>'+
+                    '<th>Reference No.</th>'+
+                    '<th>Return Date</th>'+
+                    '<th>Customer Name</th>'+
+                    '<th>Product Desription</th>'+
+                    '<th class="right-align">Quantity</th>'+
+                    '<th class="right-align">Unit Cost</th>'+
+                    '<th class="right-align">Total</th>'+
+                    '</thead>'+
+                        '<tbody id="return_'+value.order_source_id+'">'+
+                        '</tbody>'+
+                         '</table>'
+                    );
+                 });
+
+
+
+
+                 $.each(response.return_data, function(index,value){
+                     $('#return_'+value.order_source_id).append(
+                        '<tr>'+
+                        '<td>'+value.inv_no+'</td>'+
+                        '<td>'+value.adjustment_code+'</td>'+
+                        '<td>'+value.date_adjusted+'</td>'+
+                        '<td>'+value.customer_name+'</td>'+
+                        '<td>'+value.product_desc+'</td>'+
+                        '<td class="right-align">'+accounting.formatNumber(value.adjust_qty,2)+'</td>'+
+                        '<td class="right-align">'+accounting.formatNumber(value.adjust_price,2)+'</td>'+
+                        '<td class="right-align">'+accounting.formatNumber(value.adjust_line_total_price,2)+'</td>'+
+                        '</tr>'
+                    );
+                 });
+
+
+                 grand_total_returns = 0;
+                 $.each(response.return_totals, function(index,value){
+                    grand_total_returns += getFloat(value.sub_total);
+                    $('#tbl_delivery_invoice #return_'+value.order_source_id).append(
+                        '<tr>'+
+                        '<td></td>'+
+                        '<td></td>'+
+                        '<td></td>'+
+                        '<td></td>'+
+                        '<td></td>'+
+                        '<td></td>'+
+                        '<td style="font-weight:bold;">Sub Total:</td>'+
+                        '<td class="right-align"><strong>'+accounting.formatNumber(value.sub_total,2)+'</strong></td>'+
+                        '</tr>'
+                    );
+                 });
+
+
+                 $('#tbl_delivery_invoice ').append(
+
+                    '<table style="width:100%;border:none!important;"><tr style="font-size18px;font-weight:bold;float:right;padding-right:10px;"><td>Total Returns: </td><td>&nbsp;'+accounting.formatNumber(grand_total_returns,2)+'</td></tr></table><br><br>'
+                )
+
+                 $('#tbl_delivery_invoice ').append(
+
+                    '<table style="width:100%;border:none!important;"><tr style="font-size18px;font-weight:bold;float:right;padding-right:10px;"><td>Net Sales: </td><td>&nbsp;'+accounting.formatNumber(grand_total - grand_total_returns,2)+'</td></tr></table>'
                 )
 
             }
         });
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 });
 

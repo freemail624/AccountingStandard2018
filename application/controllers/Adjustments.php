@@ -16,6 +16,7 @@ class Adjustments extends CORE_Controller
         $this->load->model('Refproduct_model');
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
+        $this->load->model('Customers_model');
 
 
     }
@@ -40,6 +41,9 @@ class Adjustments extends CORE_Controller
         );
 
 
+        $data['customers']=$this->Customers_model->get_list(
+            array('customers.is_active'=>TRUE,'customers.is_deleted'=>FALSE)
+        );
         // $data['products']=$this->Products_model->get_list(
 
         //     'products.is_deleted=FALSE AND products.is_active=TRUE',
@@ -84,6 +88,13 @@ class Adjustments extends CORE_Controller
                 $response['data']=$this->response_rows(
                     "adjustment_info.is_active=TRUE AND adjustment_info.is_deleted=FALSE".($id_filter==null?"":" AND adjustment_info.adjustment_id=".$id_filter)
                 );
+                echo json_encode($response);
+                break;
+
+            case 'list-per-customer':  //this returns JSON of Issuance to be rendered on Datatable
+                $customer_id = $this->input->get('cus');
+                $m_adjustment=$this->Adjustment_model;
+                $response['data']=$m_adjustment->list_per_customer($customer_id);
                 echo json_encode($response);
                 break;
 
@@ -142,11 +153,12 @@ class Adjustments extends CORE_Controller
 
                 //$m_adjustment->set('date_adjusted','NOW()'); //treat NOW() as function and not string
                 $m_adjustment->set('date_created','NOW()'); //treat NOW() as function and not string
-
-
                 $m_adjustment->department_id=$this->input->post('department',TRUE);
                 $m_adjustment->adjustment_type=$this->input->post('adjustment_type',TRUE);
+                $m_adjustment->customer_id=$this->input->post('customer_id',TRUE);
+                $m_adjustment->inv_no=$this->input->post('inv_no',TRUE);
                 $m_adjustment->remarks=$this->input->post('remarks',TRUE);
+                $m_adjustment->is_returns=$this->get_numeric_value($this->input->post('adjustment_is_return',TRUE));
                 $m_adjustment->date_adjusted=date('Y-m-d',strtotime($this->input->post('date_adjusted',TRUE)));
                 $m_adjustment->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                 $m_adjustment->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
@@ -230,7 +242,9 @@ class Adjustments extends CORE_Controller
 
 
                 $m_adjustment->begin();
-
+                $m_adjustment->customer_id=$this->input->post('customer_id',TRUE);
+                $m_adjustment->is_returns=$this->get_numeric_value($this->input->post('adjustment_is_return',TRUE));
+                $m_adjustment->inv_no=$this->input->post('inv_no',TRUE);
                 $m_adjustment->department_id=$this->input->post('department',TRUE);
                 $m_adjustment->remarks=$this->input->post('remarks',TRUE);
                 $m_adjustment->adjustment_type=$this->input->post('adjustment_type',TRUE);
@@ -380,8 +394,12 @@ class Adjustments extends CORE_Controller
                 'adjustment_info.adjustment_type',
                 'adjustment_info.is_journal_posted',
                 'adjustment_info.date_created',
+                'adjustment_info.customer_id',
+                'adjustment_info.is_returns as adjustment_is_return',
+                'adjustment_info.inv_no',
                 'DATE_FORMAT(adjustment_info.date_adjusted,"%m/%d/%Y") as date_adjusted',
                 'departments.department_id',
+                '(CASE WHEN adjustment_info.is_returns = 1 THEN "Sales Returns" ELSE "Adjustments" END ) as transaction_type',
                 'departments.department_name'
             ),
             array(

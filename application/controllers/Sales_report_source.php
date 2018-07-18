@@ -47,6 +47,10 @@ class Sales_report_source extends CORE_Controller
                     $response['data']=$m_sales->get_sales_source(null,null,$order_source_id,$start,$end,$source_invoice);
                     $response['sources']=$m_sales->get_sales_source(TRUE,null,$order_source_id,$start,$end,$source_invoice);
                     $response['totals']=$m_sales->get_sales_source(null,TRUE,$order_source_id,$start,$end,$source_invoice);
+
+                    $response['return_data']=$m_sales->get_sales_return(null,null,$order_source_id,$start,$end,$source_invoice);
+                    $response['return_sources']=$m_sales->get_sales_return(TRUE,null,$order_source_id,$start,$end,$source_invoice);
+                    $response['return_totals']=$m_sales->get_sales_return(null,TRUE,$order_source_id,$start,$end,$source_invoice);
                     echo json_encode($response);
                 break;
 
@@ -67,6 +71,10 @@ class Sales_report_source extends CORE_Controller
                     $data['data']=$m_sales->get_sales_source(null,null,$order_source_id,$start,$end,$source_invoice);
                     $data['sources']=$m_sales->get_sales_source(TRUE,null,$order_source_id,$start,$end,$source_invoice);
                     $data['totals']=$m_sales->get_sales_source(null,TRUE,$order_source_id,$start,$end,$source_invoice);
+
+                    $data['return_data']=$m_sales->get_sales_return(null,null,$order_source_id,$start,$end,$source_invoice);
+                    $data['return_sources']=$m_sales->get_sales_return(TRUE,null,$order_source_id,$start,$end,$source_invoice);
+                    $data['return_totals']=$m_sales->get_sales_return(null,TRUE,$order_source_id,$start,$end,$source_invoice);
 
 
 
