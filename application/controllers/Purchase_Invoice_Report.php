@@ -29,6 +29,17 @@
 	        $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', true);
 	        $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', true);
 	        $data['title'] = 'Purchase Invoice Report';
+
+        //data required by active view
+        $data['suppliers']=$this->Suppliers_model->get_list(
+            null,
+            'suppliers.*,IFNULL(tax_types.tax_rate,0)as tax_rate',
+            array(
+                array('tax_types','tax_types.tax_type_id=suppliers.tax_type_id','left')
+            )
+        );
+
+
         (in_array('8-4',$this->session->user_rights)? 
         $this->load->view('purchase_invoice_report_view',$data)
         :redirect(base_url('dashboard')));
@@ -40,10 +51,11 @@
 				case 'summary':
 
 					$start_Date=date('Y-m-d',strtotime($this->input->get('startDate',TRUE)));
-					$end_Date=date('Y-m-d',strtotime($this->input->get('endDate',TRUE)));
+                    $end_Date=date('Y-m-d',strtotime($this->input->get('endDate',TRUE)));
+					$sup_id=$this->input->get('sup_id',TRUE);
 					$m_delivery_invoice=$this->Delivery_invoice_model;
 
-					$response['data']=$m_delivery_invoice->get_report_summary($start_Date,$end_Date);
+					$response['data']=$m_delivery_invoice->get_report_summary($start_Date,$end_Date,$sup_id);
 					echo json_encode($response);
 
 				break;
@@ -52,9 +64,10 @@
 
 					$start_Date=date('Y-m-d',strtotime($this->input->get('startDate',TRUE)));
 					$end_Date=date('Y-m-d',strtotime($this->input->get('endDate',TRUE)));
+                    $sup_id=$this->input->get('sup_id',TRUE);
 					$m_delivery_invoice=$this->Delivery_invoice_model;
 
-					$response['data']=$m_delivery_invoice->get_report_detailed($start_Date,$end_Date);
+					$response['data']=$m_delivery_invoice->get_report_detailed($start_Date,$end_Date,$sup_id);
 					echo json_encode($response);
 
 				break;
@@ -70,19 +83,19 @@
 	                $type=$this->input->get('type');
 	                $startDate=date('Y-m-d',strtotime($this->input->get('startDate')));
 	                $endDate=date('Y-m-d',strtotime($this->input->get('endDate')));
-
+                    $sup_id=$this->input->get('sup_id',TRUE);
 
 	                if ($type=='summary') {
 
                         $data['suppliers']=$m_delivery_invoice->get_list(
-                            'date_delivered BETWEEN "'.$startDate.'" AND "'.$endDate.'" AND delivery_invoice.is_active=TRUE AND delivery_invoice.is_deleted=FALSE',
+                            'date_delivered BETWEEN "'.$startDate.'" AND "'.$endDate.'" '.($sup_id==0?'':' AND suppliers.supplier_id='.$sup_id).' AND delivery_invoice.is_active=TRUE AND delivery_invoice.is_deleted=FALSE',
                             'DISTINCT(suppliers.supplier_name), delivery_invoice.supplier_id',
                             array(
                                 array('suppliers','suppliers.supplier_id=delivery_invoice.supplier_id','left')
                             )
                         );
 
-                        $data['purchase_invoice_summary']=$m_delivery_invoice->get_report_summary($startDate,$endDate);
+                        $data['purchase_invoice_summary']=$m_delivery_invoice->get_report_summary($startDate,$endDate,$sup_id);
 	                	$this->load->view('template/purchase_invoice_summary',$data);
 	                } 
 
@@ -90,7 +103,7 @@
 
 
                         $data['invoice_numbers']=$m_delivery_invoice->get_list(
-                            'date_delivered BETWEEN "'.$startDate.'" AND "'.$endDate.'" AND  delivery_invoice.is_active=TRUE AND delivery_invoice.is_deleted=FALSE',
+                            'date_delivered BETWEEN "'.$startDate.'" AND "'.$endDate.'" '.($sup_id==0?'':' AND suppliers.supplier_id='.$sup_id).' AND  delivery_invoice.is_active=TRUE AND delivery_invoice.is_deleted=FALSE',
                             'DISTINCT(delivery_invoice.dr_invoice_no), delivery_invoice.supplier_id,delivery_invoice.dr_invoice_id,delivery_invoice.supplier_id,suppliers.supplier_name',
                             array(
                                 array('suppliers','suppliers.supplier_id=delivery_invoice.supplier_id','left')
@@ -99,12 +112,12 @@
 
 
 
-                        $data['purchase_invoice_detailed']=$m_delivery_invoice->get_report_detailed($startDate,$endDate);
+                        $data['purchase_invoice_detailed']=$m_delivery_invoice->get_report_detailed($startDate,$endDate,$sup_id);
 	                	$this->load->view('template/purchase_invoice_detailed',$data);
 	                }
 	            break;
 
-	            case 'purchase-invoice-export':
+	            case 'purchase-invoice-export': // NEEDS UPDATE
                     $excel=$this->excel;
 	                $m_company_info=$this->Company_model;
 
@@ -115,20 +128,21 @@
 
 	                $type=$this->input->get('type');
 	                $startDate=date('Y-m-d',strtotime($this->input->get('startDate')));
-	                $endDate=date('Y-m-d',strtotime($this->input->get('endDate')));
+                    $endDate=date('Y-m-d',strtotime($this->input->get('endDate')));
+	                $sup_id=$this->input->get('sup_id');
 
 
 	                if ($type=='summary') {
 
                         $suppliers=$m_delivery_invoice->get_list(
-                            'date_delivered BETWEEN "'.$startDate.'" AND "'.$endDate.'" AND delivery_invoice.is_active=TRUE AND delivery_invoice.is_deleted=FALSE',
+                            'date_delivered BETWEEN "'.$startDate.'" AND "'.$endDate.'" '.($sup_id==0?'':' AND suppliers.supplier_id='.$sup_id).'  AND delivery_invoice.is_active=TRUE AND delivery_invoice.is_deleted=FALSE',
                             'DISTINCT(suppliers.supplier_name), delivery_invoice.supplier_id',
                             array(
                                 array('suppliers','suppliers.supplier_id=delivery_invoice.supplier_id','left')
                             )
                         );
 
-                        $purchase_invoice_summary=$m_delivery_invoice->get_report_summary($startDate,$endDate);
+                        $purchase_invoice_summary=$m_delivery_invoice->get_report_summary($startDate,$endDate,$sup_id);
 
 
                     $excel->setActiveSheetIndex(0);
@@ -309,21 +323,20 @@
 	                if ($type=='detailed') {
 
                         $invoice_numbers=$m_delivery_invoice->get_list(
-                            'date_delivered BETWEEN "'.$startDate.'" AND "'.$endDate.'" AND  delivery_invoice.is_active=TRUE AND delivery_invoice.is_deleted=FALSE',
+                            'date_delivered BETWEEN "'.$startDate.'" AND "'.$endDate.'" '.($sup_id==0?'':' AND suppliers.supplier_id='.$sup_id).' AND  delivery_invoice.is_active=TRUE AND delivery_invoice.is_deleted=FALSE',
                             'DISTINCT(delivery_invoice.dr_invoice_no), delivery_invoice.supplier_id,delivery_invoice.dr_invoice_id,delivery_invoice.supplier_id,suppliers.supplier_name',
                             array(
                                 array('suppliers','suppliers.supplier_id=delivery_invoice.supplier_id','left')
                             )
                         );
 
-                        $purchase_invoice_detailed=$m_delivery_invoice->get_report_detailed($startDate,$endDate);
+                        $purchase_invoice_detailed=$m_delivery_invoice->get_report_detailed($startDate,$endDate,$sup_id);
 
                     $excel->setActiveSheetIndex(0);
 
                     $excel->getActiveSheet()->getColumnDimensionByColumn('A1:B1')->setWidth('50');
                     $excel->getActiveSheet()->getColumnDimensionByColumn('A2:B2')->setWidth('50');
                     $excel->getActiveSheet()->getColumnDimensionByColumn('A3:B3')->setWidth('50');
-
                     //name the worksheet
                     $excel->getActiveSheet()->setTitle("Purchase Invoice (Summary)");
 

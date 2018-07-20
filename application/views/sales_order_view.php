@@ -184,6 +184,7 @@
                     <th>Remarks</th>
                     <th>Status</th>
                     <th><center>Action</center></th>
+                    <th>Invoice No</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -205,7 +206,7 @@
             <div>
                 <div class="row">
                     <div class="col-sm-5">
-                       <b>* </b>  Department :<br />
+                       <b class="required">* </b>  Department :<br />
                         <select name="department" id="cbo_departments" data-error-msg="Department is required." required>
                             <option value="0">[ Create New Department ]</option>
                             <?php foreach($departments as $department){ ?>
@@ -214,8 +215,8 @@
                         </select>
                     </div>
                     <div class="col-sm-4">
-                        SalesPerson :<br/>
-                        <select name="salesperson_id" id="cbo_salesperson">
+                       <b class="required">* </b> SalesPerson :<br/>
+                        <select name="salesperson_id" id="cbo_salesperson" required="" data-error-msg="Salesperson is required.">
                             <option value="0">[ Create New Salesperson ]</option>
                             <?php foreach($salespersons as $salesperson){ ?>
                                 <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->acr_name.' - '.$salesperson->fullname; ?></option>
@@ -235,7 +236,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-5">
-                       <b>* </b>  Customer : <br />
+                       <b class="required">* </b> Customer : <br />
                         <select name="customer" id="cbo_customers" data-error-msg="Customer is required." required>
                             <option value="0">[ Create New Customer ]</option>
                             <?php $customers = $this->db->where('is_deleted',FALSE); ?>
@@ -247,7 +248,7 @@
                         </select>
                     </div>
                         <div class="col-sm-4">
-                            Customer Type :<br>
+                           <b class="required">* </b> Customer Type :<br>
                             <select name="customer_type_id" id="cbo_customer_type">
                                 <option value="0">Walk In</option>
                                 <?php foreach($customer_type as $customer_type){ ?>
@@ -267,7 +268,7 @@
             </div>
             <div class="row">
                     <div class="col-sm-5">
-                       <b>* </b>  Order Source :<br />
+                       <b class="required">* </b>  Order Source :<br />
                         <select name="order_source_id" id="cbo_order_source" data-error-msg="Order Source is required." required>
                             <option value="0">[ Create New Order Source ]</option>
                             <?php foreach($order_sources as $order_source){ ?>
@@ -831,7 +832,7 @@ $(document).ready(function(){
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "pageLength":15,
-            "order": [[ 1, "desc" ]],
+            "order": [[ 7, "desc" ]],
 
             "ajax" : {
                 "url":"Sales_order/transaction/list",
@@ -862,7 +863,8 @@ $(document).ready(function(){
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
                         return '<center>'+btn_edit+"&nbsp;"+btn_trash+'</center>';
                     }
-                }
+                },
+                { targets:[7],data: "sales_order_id" } 
             ]
         }); 
         _cboCustomers=$("#cbo_customers").select2({

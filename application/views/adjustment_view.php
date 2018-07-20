@@ -242,10 +242,10 @@
                         <div class="col-sm-3"><div class="checkhidden">
                             Invoice # :<br />
                             <div class="input-group">
-                                <input type="text" name="inv_no" class="form-control" readonly>
+                                <input type="text" name="inv_no" id="inv_no" class="form-control" readonly required data-error-msg="Invoice is Required for the Sales Return.">
                                 <span class="input-group-addon">
                                     <a href="#" id="link_browse_inv" style="text-decoration: none;color:black;"><b>...</b></a>
-                                </span>
+                                </span>.
                             </div>
                             <i style="font-size: 9px;">Note: Process Item/s from 1 Invoice only.</i>
                             </div>
@@ -854,6 +854,7 @@ $(document).ready(function(){
                 if(this.checked == true) {
                     $('input[id="is_adjustment"]').prop('checked', false);
                     $("#cbo_customers").prop('required',true);
+                    $("#inv_no").prop('required',true);
                     $('.checkhidden').show();
                     $('#adjustment_is_return').val('1');
                     
@@ -867,6 +868,7 @@ $(document).ready(function(){
                 if(this.checked == true) {
                     $('input[id="is_returns"]').prop('checked', false);
                     $("#cbo_customers").prop('required',false);
+                    $("#inv_no").prop('required',false);
                     _cboCustomers.select2('val',null);
                     $('.checkhidden').hide();
                     $('#adjustment_is_return').val('0');
@@ -1010,6 +1012,7 @@ $(document).ready(function(){
             $('.checkhidden').hide();
             $('#adjustment_is_return').val('0');
             $("#cbo_customers").prop('required',false);
+            $("#inv_no").prop('required',false);
             getproduct().done(function(data){
                 products.clear();
                 products.local = data.data;

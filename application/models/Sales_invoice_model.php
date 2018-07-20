@@ -102,6 +102,9 @@ class Sales_invoice_model extends CORE_Model
 
         '.($customer_id==null||$customer_id==0?'':' AND ci.customer_id='.$customer_id).'
 
+
+        ORDER BY type,invoice_id DESC
+
         ';
 
         return $this->db->query($sql)->result();

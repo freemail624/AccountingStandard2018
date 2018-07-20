@@ -71,7 +71,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
 
             return $this->db->query($sql)->result();
     }
-    function get_report_summary($startDate,$endDate){
+    function get_report_summary($startDate,$endDate,$supplier_id){
         $sql="SELECT
             di.dr_invoice_no,
             s.*,
@@ -80,13 +80,16 @@ GROUP BY n.supplier_id HAVING total_balance > 0
             FROM 
             delivery_invoice AS di
             LEFT JOIN suppliers AS s ON s.supplier_id = di.`supplier_id`
-            WHERE date_delivered BETWEEN '$startDate' AND '$endDate' AND di.is_active=TRUE AND di.is_deleted=FALSE
+            WHERE date_delivered BETWEEN '$startDate' AND '$endDate' AND di.is_active=TRUE AND di.is_deleted=FALSE 
+
+            ".($supplier_id==0?"":" AND di.supplier_id = '$supplier_id'")."
+
             ORDER BY di.date_delivered,di.dr_invoice_id";
 
         return $this->db->query($sql)->result();
     }
 
-    function get_report_detailed($startDate,$endDate){
+    function get_report_detailed($startDate,$endDate,$supplier_id){
         $sql="SELECT
             di.*,
             s.*,
@@ -101,6 +104,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
             LEFT JOIN delivery_invoice_items AS dii ON dii.`dr_invoice_id`=di.`dr_invoice_id`
             LEFT JOIN products AS p ON p.`product_id`=dii.`product_id`
             WHERE date_delivered BETWEEN '$startDate' AND '$endDate' AND di.is_active=TRUE AND di.is_deleted=FALSE
+             ".($supplier_id==0?"":" AND di.supplier_id = '$supplier_id'")."
             ORDER BY di.date_delivered,di.dr_invoice_id";
 
         return $this->db->query($sql)->result();

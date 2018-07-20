@@ -146,6 +146,7 @@
                     <th>Department</th>
                     <th>Remarks</th>
                     <th><center>Action</center></th>
+                    <th>Invoice #</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -190,8 +191,8 @@
                             </div>
                         </div>
                         <div class="col-sm-4">
-                            <label>Sales person :</label><br/>
-                            <select name="salesperson_id" id="cbo_salesperson">
+                            <b class="required">*</b><label>Sales person :</label><br/>
+                            <select name="salesperson_id" id="cbo_salesperson" required data-error-msg="Salesperson is required.">
                                 <option value="0">[ Create New Salesperson ]</option>
                                 <?php foreach($salespersons as $salesperson){ ?>
                                     <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->acr_name.' - '.$salesperson->fullname; ?></option>
@@ -884,7 +885,7 @@ $(document).ready(function(){
         dt=$('#tbl_sales_invoice').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 1, "desc" ]],
+            "order": [[ 8, "desc" ]],
             "ajax" : "Sales_invoice/transaction/list_with_count",
             "language": {
                 "searchPlaceholder":"Search Invoice"
@@ -910,7 +911,8 @@ $(document).ready(function(){
                         var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
                         return '<center>'+btn_edit+"&nbsp;"+btn_trash+'</center>';
                     }
-                }
+                },
+                { targets:[8],data: "sales_invoice_id" }
             ]
         });
         dt_so=$('#tbl_so_list').DataTable({

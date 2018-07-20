@@ -1,5 +1,5 @@
 <head>
-    <title>Cash Invoice</title>
+    <title>Sales Invoice</title>
     </head>
     <body><style type="text/css" media="print">
   @page { size: portrait; }
