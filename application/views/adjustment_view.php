@@ -162,6 +162,8 @@
                     <th>Remarks</th>
                     <th>Adjustment</th>
                     <th><center>Action</center></th>
+                    <th></th>
+
                 </tr>
                 </thead>
                 <tbody>
@@ -645,7 +647,7 @@ $(document).ready(function(){
         dt=$('#tbl_issuances').DataTable(
 {            "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 1, "desc" ]],
+            "order": [[ 8, "desc" ]],
             "ajax" : "Adjustments/transaction/list",
             "columns": [
                 {
@@ -670,7 +672,8 @@ $(document).ready(function(){
 
                         return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                     }
-                }
+                },
+                { targets:[8],data: "adjustment_id" }
             ]
 
         });

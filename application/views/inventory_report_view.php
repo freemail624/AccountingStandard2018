@@ -267,7 +267,7 @@
 
 <script>
     $(document).ready(function(){
-        var dt;
+        var dt; var _cboDepartment;
 
 
         var initializeControls=function(){
@@ -279,6 +279,10 @@
                 calendarWeeks: true,
                 autoclose: true
 
+            });
+            _cboDepartment=$("#cbo_department").select2({
+            placeholder: "Choose Department",
+            allowClear: false
             });
 
             reloadList();

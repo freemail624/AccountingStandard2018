@@ -582,9 +582,10 @@ if($inv == 'parent'){
         ->getActiveSheet()->setCellValue('B18','Reference')->getStyle('B18')->getFont()->setBold(TRUE)
         ->getActiveSheet()->setCellValue('C18','Transaction Type')->getStyle('C18')->getFont()->setBold(TRUE)
         ->getActiveSheet()->setCellValue('D18','Description')->getStyle('D18')->getFont()->setBold(TRUE)
-        ->getActiveSheet()->setCellValue('E18','In')->getStyle('E18')->getFont()->setBold(TRUE)
-        ->getActiveSheet()->setCellValue('F18','Out')->getStyle('F18')->getFont()->setBold(TRUE)
-        ->getActiveSheet()->setCellValue('G18','Balance')->getStyle('G18')->getFont()->setBold(TRUE);
+        ->getActiveSheet()->setCellValue('E18','Remarks')->getStyle('E18')->getFont()->setBold(TRUE)
+        ->getActiveSheet()->setCellValue('F18','In')->getStyle('F18')->getFont()->setBold(TRUE)
+        ->getActiveSheet()->setCellValue('G18','Out')->getStyle('G18')->getFont()->setBold(TRUE)
+        ->getActiveSheet()->setCellValue('H18','Balance')->getStyle('H18')->getFont()->setBold(TRUE);
         }else if ($inv=='child'){
           $excel->getActiveSheet()->setCellValue('A9','Product Description')->getStyle('A9')->getFont()->setBold(TRUE)
           ->getActiveSheet()->setCellValue('B9',$product_info[0]->product_desc)
@@ -631,9 +632,10 @@ if($inv == 'parent'){
         ->getActiveSheet()->setCellValue('B18','Reference')->getStyle('B18')->getFont()->setBold(TRUE)
         ->getActiveSheet()->setCellValue('C18','Transaction Type')->getStyle('C18')->getFont()->setBold(TRUE)
         ->getActiveSheet()->setCellValue('D18','Description')->getStyle('D18')->getFont()->setBold(TRUE)
-        ->getActiveSheet()->setCellValue('E18','In')->getStyle('E18')->getFont()->setBold(TRUE)
-        ->getActiveSheet()->setCellValue('F18','Out')->getStyle('F18')->getFont()->setBold(TRUE)
-        ->getActiveSheet()->setCellValue('G18','Balance')->getStyle('G18')->getFont()->setBold(TRUE);
+        ->getActiveSheet()->setCellValue('E18','Remarks')->getStyle('E18')->getFont()->setBold(TRUE)
+        ->getActiveSheet()->setCellValue('F18','In')->getStyle('F18')->getFont()->setBold(TRUE)
+        ->getActiveSheet()->setCellValue('G18','Out')->getStyle('G18')->getFont()->setBold(TRUE)
+        ->getActiveSheet()->setCellValue('H18','Balance')->getStyle('H18')->getFont()->setBold(TRUE);
 
 
 
@@ -657,9 +659,10 @@ $i=18;
                                 $excel->getActiveSheet()->setCellValue('B'.$i,$product->ref_no);
                                 $excel->getActiveSheet()->setCellValue('C'.$i,$product->type);
                                 $excel->getActiveSheet()->setCellValue('D'.$i,$product->Description);
-                                $excel->getActiveSheet()->setCellValue('E'.$i,number_format($product->parent_in_qty,2));
-                                $excel->getActiveSheet()->setCellValue('F'.$i,number_format($product->parent_out_qty,2));
-                                $excel->getActiveSheet()->setCellValue('G'.$i,number_format($product->parent_balance,2));
+                                $excel->getActiveSheet()->setCellValue('E'.$i,$product->remarks);
+                                $excel->getActiveSheet()->setCellValue('F'.$i,number_format($product->parent_in_qty,2));
+                                $excel->getActiveSheet()->setCellValue('G'.$i,number_format($product->parent_out_qty,2));
+                                $excel->getActiveSheet()->setCellValue('H'.$i,number_format($product->parent_balance,2));
 
                             }
 
@@ -673,9 +676,10 @@ $i=18;
                                 $excel->getActiveSheet()->setCellValue('B'.$i,$product->ref_no);
                                 $excel->getActiveSheet()->setCellValue('C'.$i,$product->type);
                                 $excel->getActiveSheet()->setCellValue('D'.$i,$product->Description);
-                                $excel->getActiveSheet()->setCellValue('E'.$i,number_format($product->child_in_qty,2));
-                                $excel->getActiveSheet()->setCellValue('F'.$i,number_format($product->child_out_qty,2));
-                                $excel->getActiveSheet()->setCellValue('G'.$i,number_format($product->child_balance,2));
+                                $excel->getActiveSheet()->setCellValue('E'.$i,$product->remarks);
+                                $excel->getActiveSheet()->setCellValue('F'.$i,number_format($product->child_in_qty,2));
+                                $excel->getActiveSheet()->setCellValue('G'.$i,number_format($product->child_out_qty,2));
+                                $excel->getActiveSheet()->setCellValue('H'.$i,number_format($product->child_balance,2));
 
                             }
 
@@ -685,7 +689,7 @@ $i=18;
 
                         
 
-foreach(range('A','D') as $columnID) {
+foreach(range('A','H') as $columnID) {
     $excel->getActiveSheet()->getColumnDimension($columnID)
         ->setAutoSize(true);
 }

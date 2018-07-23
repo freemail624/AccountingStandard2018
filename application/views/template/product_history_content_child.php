@@ -42,6 +42,8 @@
     <div>
         <h3><strong>Product History</strong></h3>
     </div>
+<b>Product Description :</b> <?php echo $info[0]->product_desc?><br>
+
 <b>Unit of Measurement :</b> <?php echo $info[0]->child_unit_name?><br><br>
    <center>
        <table width="100%"  style="border-collapse: collapse;">
@@ -52,6 +54,7 @@
                     <td style="border: 1px solid lightgrey;padding: 5px;"><b>Txn Type</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;"><b>Description</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;"><b>Department</b></td>
+                    <td style="border: 1px solid lightgrey;padding: 5px;"><b>Remarks</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>In</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>Out</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>Balance</b></td>
@@ -73,6 +76,7 @@
                    <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo $product->type; ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo $product->Description; ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo $product->department_name; ?></td>
+                   <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo $product->remarks; ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->child_in_qty,2); ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->child_out_qty,2); ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;font-weight: bolder;"><?php echo number_format($product->child_balance,2); ?></td>
