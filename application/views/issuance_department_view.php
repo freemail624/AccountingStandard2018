@@ -112,6 +112,8 @@ echo $_side_bar_navigation;
                     <th>To Department</th>
                     <th>Remarks</th>
                     <th><center>Action</center></th>
+                    <th></th>
+
                 </tr>
                 </thead>
                 <tbody>
@@ -509,7 +511,7 @@ dt_si = $('#tbl_si_list').DataTable({
     var initializeControls=function(){
         dt=$('#tbl_issuances').DataTable({
             "dom": '<"toolbar">frtip',
-            "order": [[ 1, "desc" ]],
+            "order": [[ 6, "desc" ]],
             "bLengthChange":false,  
             "ajax" : "Issuance_department/transaction/list",
             "columns": [
@@ -531,7 +533,8 @@ dt_si = $('#tbl_si_list').DataTable({
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
                         return '<center>'+btn_edit+"&nbsp;"+btn_trash+'</center>';
                     }
-                }
+                },
+                { targets:[6],data: "issuance_department_id",visible:false },
             ]
         });
         $('#btn_receive_si').click(function(){
