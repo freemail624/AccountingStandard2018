@@ -264,6 +264,8 @@
                                     <th>Posted</th>
                                     <th>Status</th>
                                     <th style="width: 15%;"><center>Action</center></th>
+                                    <th></th>
+
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -1079,7 +1081,7 @@ $(document).ready(function(){
         dt=$('#tbl_cash_disbursement_list').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 1, "desc" ]],
+            "order": [[ 9, "desc" ]],
             "ajax" : {
                 "url" : "Cash_disbursement/transaction/list",
                 "bDestroy": true,            
@@ -1121,7 +1123,7 @@ $(document).ready(function(){
 
                 },
                 {sClass: "right_align_items",
-                    targets:[7],data:null,
+                    targets:[8],data:null,
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_cancel='<button class="btn btn-red btn-sm" name="cancel_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Cancel Journal"><i class="fa fa-times"></i> </button>';
@@ -1137,7 +1139,8 @@ $(document).ready(function(){
 
                         
                     }
-                }
+                },
+                { targets:[9],data: "journal_id",visible:false }
             ]
         });
         
