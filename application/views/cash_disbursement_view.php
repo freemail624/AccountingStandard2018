@@ -1085,7 +1085,7 @@ $(document).ready(function(){
         dt=$('#tbl_cash_disbursement_list').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 1, "desc" ]],
+            "order": [[ 9, "desc" ]],
             "ajax" : {
                 "url" : "Cash_disbursement/transaction/list",
                 "bDestroy": true,            
@@ -1155,7 +1155,10 @@ $(document).ready(function(){
                             return ''+btn_cancel+'';
                         }
                     }
-                }
+                },
+                { targets:[9],data: "journal_id" },
+
+
             ]
         });
         

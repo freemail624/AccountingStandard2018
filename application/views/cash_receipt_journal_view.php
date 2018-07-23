@@ -281,6 +281,8 @@
                                 <th>Posted</th>
                                 <th>Status</th>
                                 <th><center>Action</center></th>
+                                <th></th>
+
                             </tr>
                             </thead>
                             <tbody>
@@ -854,7 +856,7 @@ $(document).ready(function(){
         dt=$('#tbl_accounts_receivable').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 1, "desc" ]],
+            "order": [[ 8, "desc" ]],
             "ajax" : {
                 "url" : "Cash_receipt/transaction/list",
                 "bDestroy": true,            
@@ -904,7 +906,9 @@ $(document).ready(function(){
                         /*return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';*/
                         return '<center>'+btn_trash+'</center>';
                     }
-                }
+                },
+                { targets:[8],data: "journal_id", visible:false },
+
             ]
         });
 

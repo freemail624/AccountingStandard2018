@@ -160,6 +160,8 @@
                     <th>Remarks</th>
                     <th>Adjustment</th>
                     <th><center>Action</center></th>
+                    <th></th>
+
                 </tr>
                 </thead>
                 <tbody>
@@ -568,7 +570,7 @@ $(document).ready(function(){
         dt=$('#tbl_issuances').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 1, "desc" ]],
+            "order": [[ 6, "desc" ]],
             "ajax" : "Adjustments/transaction/list",
             "columns": [
                 {
@@ -583,14 +585,15 @@ $(document).ready(function(){
                 { targets:[3],data: "remarks" },
                 { targets:[4],data: "adjustment_type" },
                 {
-                    targets:[7],
+                    targets:[5],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
 
                         return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                     }
-                }
+                },
+                { targets:[6],data: "adjustment_id", visible:false}
             ]
 
         });

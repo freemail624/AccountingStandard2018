@@ -161,6 +161,7 @@
                     <th>Remarks</th>
                     <th>Status</th>
                     <th><center>Action</center></th>
+                    <th>id</th>                    
                 </tr>
                 </thead>
                 <tbody>
@@ -736,7 +737,7 @@ $(document).ready(function(){
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "pageLength":15,
-            "order": [[ 1, "desc" ]],
+            "order": [[ 7, "desc" ]],
             "ajax" : "Sales_order/transaction/list",
             "columns": [
                 {
@@ -758,7 +759,8 @@ $(document).ready(function(){
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
                         return '<center>'+btn_edit+"&nbsp;"+btn_trash+'</center>';
                     }
-                }
+                },
+                { targets:[7],data: "sales_order_id", visible:false}
             ]
         }); 
         var createToolBarButton=function(){
