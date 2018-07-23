@@ -214,7 +214,7 @@ $(document).ready(function(){
     var initializeControls=function(){
         dt=$('#tbl_delivery_invoice').DataTable({
             "dom": '<"toolbar">frtip',
-            "order": [[ 0, "asc" ]],
+            "order": [[ 8, "desc" ]],
             "bLengthChange":false,
             "ajax": {
               "url":"Purchase_history/transaction/delivery_list_count",

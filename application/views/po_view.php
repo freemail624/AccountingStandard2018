@@ -187,6 +187,7 @@
                     <th>Status</th>
                     <th>Sent</th>
                     <th><center>Action</center></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -801,7 +802,7 @@ $(document).ready(function(){
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "pageLength":15,
-            "order": [[ 2, "desc" ]],
+            "order": [[ 9, "desc" ]],
             "ajax" : "Purchases/transaction/list",
             "columns": [
                 {
@@ -856,9 +857,9 @@ $(document).ready(function(){
                         return '<center>'+btn_edit+'&nbsp;'+btn_message+'&nbsp;'+btn_trash+'</center>';
                     }
                 },
+                { targets:[9],data: "purchase_order_id" }
             ]
         });
-
 
         var createToolBarButton=function(){
             var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Purcahase Order" >'+

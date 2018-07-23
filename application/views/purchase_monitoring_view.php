@@ -79,7 +79,7 @@ $(document).ready(function(){
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "pageLength":15,
-            "order": [[ 1, "asc" ]],
+            "order": [[ 7, "desc" ]],
              "searching": false,
             // "scrollX": true,
             "ajax": {
@@ -101,8 +101,10 @@ $(document).ready(function(){
                 { targets:[2],data: "unit_name" },
                 { sClass: 'right-align',targets:[3],data: "dr_price" , render: $.fn.dataTable.render.number( ',', '.', 2 ) },
                 { targets:[4],data: "supplier_name" },
-                { targets:[4],data: "date_delivered" },
-                { targets:[4],data: "dr_invoice_no" }
+                { targets:[5],data: "date_delivered" },
+                { targets:[6],data: "dr_invoice_no" },
+                { targets:[7],data: "dr_invoice_id" }
+
 
 
 
@@ -341,6 +343,8 @@ $(document).ready(function(){
                                                         <th>Supplier</th>
                                                         <th>Date Invoice</th>
                                                         <th>Reference No.</th>
+                                                        <th></th>
+
                                                     </tr>
                                                     </thead>
                                                     <tbody>

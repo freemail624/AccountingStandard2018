@@ -149,6 +149,7 @@
                                                                 <th>Remarks</th>
                                                                 <th>Amount</th>
                                                                 <th>Action</th>
+                                                                <th></th>
                                                             </tr>
                                                             </thead>
                                                             <tbody>
@@ -719,6 +720,7 @@
             dt=$('#tbl_pcf').DataTable({
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
+                "order": [[ 9, "desc" ]],
                 "language": {
                    searchPlaceholder: "Search Petty Cash"
                 },
@@ -768,7 +770,8 @@
 
                             return '<center>'+btn_edit+"&nbsp;"+btn_trash+'</center>';
                         }
-                    }
+                    },
+                     { targets:[9],data: "journal_id",visible:false },
                 ]
             });
         };
