@@ -534,7 +534,7 @@ dt_si = $('#tbl_si_list').DataTable({
                         return '<center>'+btn_edit+"&nbsp;"+btn_trash+'</center>';
                     }
                 },
-                { targets:[6],data: "issuance_department_id" },
+                { targets:[6],data: "issuance_department_id", visible:false },
             ]
         });
         $('#btn_receive_si').click(function(){
