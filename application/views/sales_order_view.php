@@ -864,7 +864,7 @@ $(document).ready(function(){
                         return '<center>'+btn_edit+"&nbsp;"+btn_trash+'</center>';
                     }
                 },
-                { targets:[7],data: "sales_order_id" } 
+                { targets:[7],data: "sales_order_id",visible:false } 
             ]
         }); 
         _cboCustomers=$("#cbo_customers").select2({

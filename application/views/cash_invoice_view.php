@@ -403,6 +403,8 @@
     <div class="panel-footer" >
         <div class="row">
             <div class="col-sm-12">
+                <input type="checkbox" name="chk_dispatching" id="checkcheck">&nbsp;&nbsp;<label for="checkcheck"><strong>For Dispatching ?</strong></label><br>
+                <input type="hidden" name="for_dispatching" id="for_dispatching" class="form-control"><br>
                 <button id="btn_save" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Save Changes</button>
                 <button id="btn_cancel" class="btn-default btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
             </div>
@@ -1109,6 +1111,13 @@ $(document).ready(function(){
         });
     }();
     var bindEventHandlers=(function(){
+        $('[id=checkcheck]').click(function(event) {
+            if(this.checked == true) {
+                $('#for_dispatching').val('1');
+            }else{
+                 $('#for_dispatching').val('0');
+            }
+        });
         var detailRows = [];
         $('#tbl_cash_invoice tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
@@ -1375,6 +1384,8 @@ $(document).ready(function(){
             $('#due_default').datepicker('setDate', 'today');
             $('#typeaheadsearch').val('');
             $('#cbo_customer_type').select2('val',0);
+            $('input[id="checkcheck"]').prop('checked', false);
+            $('#for_dispatching').val('0');
             getproduct().done(function(data){
                 products.clear();
                 products.local = data.data;
@@ -1515,6 +1526,13 @@ $(document).ready(function(){
             }
             else
             {
+            if(data.for_dispatching == 1){
+                $('input[id="checkcheck"]').prop('checked', true);
+                $('#for_dispatching').val('1');
+            }else{
+                $('input[id="checkcheck"]').prop('checked', false);
+                $('#for_dispatching').val('0');
+            }
 
             getproduct().done(function(data){
                 products.clear();
@@ -1893,7 +1911,7 @@ $(document).ready(function(){
         var _data=$('#frm_cash_invoice,#frm_items').serializeArray();
         var tbl_summary=$('#tbl_cash_invoice_summary');
         _data.push({name : "remarks", value : $('textarea[name="remarks"]').val()});
-
+        _data.push({name : "for_dispatching", value : $('#for_dispatching').val()});
         _data.push({name : "total_after_discount", value: $('#td_total_after_discount').text()});
         _data.push({name : "summary_discount", value : tbl_summary.find(oTableDetails.discount).text()});
         _data.push({name : "summary_before_discount", value :tbl_summary.find(oTableDetails.before_tax).text()});
@@ -1911,7 +1929,7 @@ $(document).ready(function(){
         var _data=$('#frm_cash_invoice,#frm_items').serializeArray();
         var tbl_summary=$('#tbl_cash_invoice_summary');
         _data.push({name : "remarks", value : $('textarea[name="remarks"]').val()});
-
+        _data.push({name : "for_dispatching", value : $('#for_dispatching').val()});
         _data.push({name : "total_after_discount", value: $('#td_total_after_discount').text()});
         _data.push({name : "summary_discount", value : tbl_summary.find(oTableDetails.discount).text()});
         _data.push({name : "summary_before_discount", value :tbl_summary.find(oTableDetails.before_tax).text()});

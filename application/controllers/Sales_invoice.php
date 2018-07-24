@@ -238,6 +238,7 @@ class Sales_invoice extends CORE_Controller
                 //treat NOW() as function and not string
                 $m_invoice->set('date_created','NOW()'); //treat NOW() as function and not string
                 $m_invoice->order_source_id=$this->input->post('order_source_id',TRUE);
+                $m_invoice->for_dispatching=$this->get_numeric_value($this->input->post('for_dispatching',TRUE));
                 $m_invoice->customer_type_id=$this->input->post('customer_type_id',TRUE);
                 $m_invoice->customer_id=$this->input->post('customer',TRUE);
                 $m_invoice->salesperson_id=$this->input->post('salesperson_id',TRUE);
@@ -380,6 +381,7 @@ class Sales_invoice extends CORE_Controller
 
                     $m_invoice->begin();
 
+                    $m_invoice->for_dispatching=$this->get_numeric_value($this->input->post('for_dispatching',TRUE));
                     //$m_invoice->sales_inv_no=$sales_inv_no;
                     $m_invoice->order_source_id=$this->input->post('order_source_id',TRUE);
                     $m_invoice->customer_type_id=$this->input->post('customer_type_id',TRUE);
@@ -702,6 +704,7 @@ class Sales_invoice extends CORE_Controller
                 'sales_invoice.contact_person',
                 'sales_invoice.customer_type_id',
                 'sales_invoice.order_source_id',
+                'sales_invoice.for_dispatching',
                 'DATE_FORMAT(sales_invoice.date_invoice,"%m/%d/%Y") as date_invoice',
                 'DATE_FORMAT(sales_invoice.date_due,"%m/%d/%Y") as date_due',
                 'departments.department_id',

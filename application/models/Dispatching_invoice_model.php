@@ -35,7 +35,7 @@ class Dispatching_invoice_model extends CORE_Model
 		LEFT JOIN departments d ON d.department_id = si.department_id
 		LEFT JOIN order_status ON order_status.order_status_id=si.order_status_id
 		WHERE
-		si.is_deleted=FALSE AND si.is_active=TRUE 
+		si.is_deleted=FALSE AND si.is_active=TRUE AND si.for_dispatching = TRUE
 
 		UNION ALL
 
@@ -62,7 +62,7 @@ class Dispatching_invoice_model extends CORE_Model
 		LEFT JOIN departments d ON d.department_id = ci.department_id
 		LEFT JOIN order_status ON order_status.order_status_id=ci.order_status_id
 		WHERE
-		ci.is_deleted=FALSE AND ci.is_active=TRUE ';
+		ci.is_deleted=FALSE AND ci.is_active=TRUE AND ci.for_dispatching = TRUE';
 
 	         return $this->db->query($sql)->result();
 	    }

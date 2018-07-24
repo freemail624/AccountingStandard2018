@@ -153,6 +153,7 @@ class Cash_invoice extends CORE_Controller
                     'sales_order.sales_order_id'
                 );
                 $sales_order_id=(count($arr_so_info)>0?$arr_so_info[0]->sales_order_id:0);
+                $m_invoice->for_dispatching=$this->get_numeric_value($this->input->post('for_dispatching',TRUE));
                 $m_invoice->sales_order_id=$sales_order_id;
                 $m_invoice->order_source_id=$this->input->post('order_source_id',TRUE);
                 $m_invoice->customer_type_id=$this->input->post('customer_type_id',TRUE);
@@ -275,6 +276,7 @@ class Cash_invoice extends CORE_Controller
                     );
                     $sales_order_id=(count($arr_so_info)>0?$arr_so_info[0]->sales_order_id:0);
                     $m_invoice->sales_order_id=$sales_order_id;
+                    $m_invoice->for_dispatching=$this->get_numeric_value($this->input->post('for_dispatching',TRUE));
                     $m_invoice->order_source_id=$this->input->post('order_source_id',TRUE);
                     $m_invoice->customer_type_id=$this->input->post('customer_type_id',TRUE);
                     $m_invoice->customer_id=$this->input->post('customer',TRUE);

@@ -884,7 +884,7 @@ $(document).ready(function(){
                         return '<center>'+btn_edit+"&nbsp;"+btn_trash+'</center>';
                     }
                 },
-                { targets:[8],data: "dispatching_invoice_id" },
+                { targets:[8],data: "dispatching_invoice_id", visible: false },
             ]
         });
         dt_so=$('#tbl_inv_list').DataTable({

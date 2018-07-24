@@ -56,6 +56,7 @@ parent::__construct();
 			p.parent_unit_id,
 			p.child_unit_desc,
 			p.sale_price,
+			IF(si.is_journal_posted = TRUE, 'Note: Invoice is posted in Accounting', 'Note: Invoice is not yet posted in Accounting') as note,
 			(SELECT units.unit_name  FROM units WHERE  units.unit_id = p.parent_unit_id) as parent_unit_name,
 			(SELECT units.unit_name  FROM units WHERE  units.unit_id = p.child_unit_id) as child_unit_name,
 			sii.* FROM sales_invoice_items sii
@@ -80,6 +81,7 @@ parent::__construct();
 			p.parent_unit_id,
 			p.child_unit_desc,
 			p.sale_price,
+			IF(ci.is_journal_posted = TRUE, 'Invoice is posted in Accounting', 'Invoice is not yet posted in Accounting') as note,
 			(SELECT units.unit_name  FROM units WHERE  units.unit_id = p.parent_unit_id) as parent_unit_name,
 			(SELECT units.unit_name  FROM units WHERE  units.unit_id = p.child_unit_id) as child_unit_name,
 			cii.* FROM cash_invoice_items cii

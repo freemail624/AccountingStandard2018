@@ -249,7 +249,8 @@
                                     <a href="#" id="link_browse_inv" style="text-decoration: none;color:black;"><b>...</b></a>
                                 </span>.
                             </div>
-                            <i style="font-size: 9px;">Note: Process Item/s from 1 Invoice only.</i>
+                            <i style="font-size: 9px;">Note: Process Item/s from 1 Invoice only.</i><br>
+                            <i style="font-size: 9px;color: red;" id="note"></i>
                             </div>
                         </div>
 
@@ -1016,6 +1017,7 @@ $(document).ready(function(){
             $('#adjustment_is_return').val('0');
             $("#cbo_customers").prop('required',false);
             $("#inv_no").prop('required',false);
+            $('#note').text('');
             getproduct().done(function(data){
                 products.clear();
                 products.local = data.data;
@@ -1045,6 +1047,7 @@ $(document).ready(function(){
         $('#tbl_inv_list tbody').on('click','button[name="accept_item"]',function(){
         _selectRowObjCus=$(this).closest('tr');
         var value=dtCustomer.row(_selectRowObjCus).data();
+        $('#note').text(value.note);
         $("input[name=inv_no]").val(value.inv_no);
             a='';
                 var retail_price;
@@ -1133,6 +1136,8 @@ $(document).ready(function(){
                 });
             });
 
+
+            $('#note').text('');
             _cboAdjustments.select2('val',data.adjustment_type);
             $('#cbo_departments').select2('val',data.department_id);
             $('#cbo_customers').select2('val',data.customer_id);
