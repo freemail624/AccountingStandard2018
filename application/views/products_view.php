@@ -1734,8 +1734,8 @@ $(document).ready(function(){
             _cboInventory.select2('val',null);
             _cboMeasurement.select2('val',null);
             _child_unit_id.select2('val',null);
-            _cboCredit.select2('val',0);
-            _cboDebit.select2('val',0);
+            _cboCredit.select2('val',19);
+            _cboDebit.select2('val',55);
             _cboPrimaryUnit.select2('val',1);
             $('#child_unit_desc').prop('required',false);
            $('#child_unit_id').prop('required',false);
