@@ -407,7 +407,7 @@ $(document).ready(function(){
 
 
     function reinitializeBalances() {
-       
+        $('#tbl_delivery_invoice').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
         var data = [];
          data.push({name : "oi" ,value : $('#cbo_order_source').val()});
          data.push({name : "si" ,value : $('#source_invoice').val()});

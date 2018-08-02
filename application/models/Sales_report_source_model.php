@@ -122,7 +122,6 @@ class Sales_report_source_model extends CORE_Model
             LEFT JOIN order_source os ON os.order_source_id = si.order_source_id
             WHERE si.is_active = TRUE
             AND si.is_deleted = FALSE
-            AND (si.date_invoice BETWEEN '$start' AND '$end')
             UNION ALL
 
             SELECT 
@@ -136,7 +135,7 @@ class Sales_report_source_model extends CORE_Model
             LEFT JOIN order_source os ON os.order_source_id = ci.order_source_id
             WHERE ci.is_active = TRUE
             AND ci.is_deleted = FALSE
-            AND (ci.date_invoice BETWEEN '$start' AND '$end')
+            
             
             ) as invoices ON invoices.inv_no = ai.inv_no
 
@@ -144,6 +143,7 @@ class Sales_report_source_model extends CORE_Model
             WHERE ai.is_active = TRUE
             AND ai.is_deleted = FALSE
             AND ai.adjustment_type = 'IN'
+            AND (ai.date_adjusted BETWEEN '$start' AND '$end')
             ".($order_source_id!=0?" AND invoices.order_source_id = $order_source_id":"")."
             ) as main
 
