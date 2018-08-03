@@ -151,7 +151,16 @@
         #tbl_cash_disbursement_list_filter{
             display: none;
         }
- 
+         div.dataTables_processing{ 
+        position: absolute!important; 
+        top: 0%!important; 
+        right: -45%!important; 
+        left: auto!important; 
+        width: 100%!important; 
+        height: 40px!important; 
+        background: none!important; 
+        background-color: transparent!important; 
+        } 
     </style>
 
 </head>
@@ -1058,6 +1067,7 @@ $(document).ready(function(){
         dtRecurring=$('#tbl_recurring').DataTable({
             "bLengthChange": false,
             "bPaginate":true, 
+
             language: { 
                 "searchPlaceholder": "Search Template" 
             },
@@ -1085,6 +1095,10 @@ $(document).ready(function(){
         initializeRecurringTable();
 
         dt=$('#tbl_cash_disbursement_list').DataTable({
+                oLanguage: {
+                        sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+                },
+                processing : true,
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "order": [[11, "desc" ]],
