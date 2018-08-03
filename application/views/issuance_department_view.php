@@ -23,7 +23,7 @@
             float: left;
         }
         td.details-control {
-            background: url('assets/img/print.png') no-repeat center center;
+            background: url('assets/img/Folder_Closed.png') no-repeat center center;
             cursor: pointer;
         }
         tr.details td.details-control {
