@@ -110,7 +110,6 @@ GROUP BY n.supplier_id HAVING total_balance > 0
         return $this->db->query($sql)->result();
     }
 
-
     function get_journal_entries($purchase_invoice_id){
         $sql="SELECT main.* FROM(SELECT
             p.expense_account_id as account_id,

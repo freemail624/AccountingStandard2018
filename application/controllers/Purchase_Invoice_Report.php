@@ -1,24 +1,24 @@
 <?php
-	defined('BASEPATH') OR exit('No direct script access allowed');
+    defined('BASEPATH') OR exit('No direct script access allowed');
 
-	class Purchase_Invoice_Report extends CORE_Controller
-	{
-		
-		function __construct()
-		{
-			parent::__construct('');
-			$this->validate_session();
-			$this->load->model(
-				array(
-					'Delivery_invoice_model',
-					'Suppliers_model',
-					'Users_model',
-					'Company_model'
-				)
-			);
+    class Purchase_Invoice_Report extends CORE_Controller
+    {
+        
+        function __construct()
+        {
+            parent::__construct('');
+            $this->validate_session();
+            $this->load->model(
+                array(
+                    'Delivery_invoice_model',
+                    'Suppliers_model',
+                    'Users_model',
+                    'Company_model'
+                )
+            );
             $this->load->library('excel');
             $this->load->model('Email_settings_model');
-		}
+        }
 
 		public function index()
 		{	
@@ -43,12 +43,12 @@
         (in_array('8-4',$this->session->user_rights)? 
         $this->load->view('purchase_invoice_report_view',$data)
         :redirect(base_url('dashboard')));
-	        
-		}
+            
+        }
 
-		function transaction($txn=null){
-			switch($txn){
-				case 'summary':
+        function transaction($txn=null){
+            switch($txn){
+                case 'summary':
 
 					$start_Date=date('Y-m-d',strtotime($this->input->get('startDate',TRUE)));
                     $end_Date=date('Y-m-d',strtotime($this->input->get('endDate',TRUE)));
@@ -58,9 +58,9 @@
 					$response['data']=$m_delivery_invoice->get_report_summary($start_Date,$end_Date,$sup_id);
 					echo json_encode($response);
 
-				break;
+                break;
 
-				case 'detailed':
+                case 'detailed':
 
 					$start_Date=date('Y-m-d',strtotime($this->input->get('startDate',TRUE)));
 					$end_Date=date('Y-m-d',strtotime($this->input->get('endDate',TRUE)));
@@ -70,15 +70,15 @@
 					$response['data']=$m_delivery_invoice->get_report_detailed($start_Date,$end_Date,$sup_id);
 					echo json_encode($response);
 
-				break;
+                break;
 
-	            case 'purchase-invoice':
-	                $m_company_info=$this->Company_model;
+                case 'purchase-invoice':
+                    $m_company_info=$this->Company_model;
 
-	                $company_info=$m_company_info->get_list();
-	                $data['company_info']=$company_info[0];
+                    $company_info=$m_company_info->get_list();
+                    $data['company_info']=$company_info[0];
 
-	                $m_delivery_invoice=$this->Delivery_invoice_model;
+                    $m_delivery_invoice=$this->Delivery_invoice_model;
 
 	                $type=$this->input->get('type');
 	                $startDate=date('Y-m-d',strtotime($this->input->get('startDate')));
@@ -99,7 +99,7 @@
 	                	$this->load->view('template/purchase_invoice_summary',$data);
 	                } 
 
-	                if ($type=='detailed') {
+                    if ($type=='detailed') {
 
 
                         $data['invoice_numbers']=$m_delivery_invoice->get_list(
@@ -119,12 +119,12 @@
 
 	            case 'purchase-invoice-export': // NEEDS UPDATE
                     $excel=$this->excel;
-	                $m_company_info=$this->Company_model;
+                    $m_company_info=$this->Company_model;
 
-	                $company_info=$m_company_info->get_list();
-	                $data['company_info']=$company_info[0];
+                    $company_info=$m_company_info->get_list();
+                    $data['company_info']=$company_info[0];
 
-	                $m_delivery_invoice=$this->Delivery_invoice_model;
+                    $m_delivery_invoice=$this->Delivery_invoice_model;
 
 	                $type=$this->input->get('type');
 	                $startDate=date('Y-m-d',strtotime($this->input->get('startDate')));
@@ -132,7 +132,7 @@
 	                $sup_id=$this->input->get('sup_id');
 
 
-	                if ($type=='summary') {
+                    if ($type=='summary') {
 
                         $suppliers=$m_delivery_invoice->get_list(
                             'date_delivered BETWEEN "'.$startDate.'" AND "'.$endDate.'" '.($sup_id==0?'':' AND suppliers.supplier_id='.$sup_id).'  AND delivery_invoice.is_active=TRUE AND delivery_invoice.is_deleted=FALSE',
@@ -155,20 +155,20 @@
                     $excel->getActiveSheet()->setTitle("Purchase Invoice (Summary)");
 
                     $excel->getActiveSheet()
-                    	  ->getStyle('A1:I1')
-                    	  ->getAlignment()
-                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                          ->getStyle('A1:I1')
+                          ->getAlignment()
+                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                     $excel->getActiveSheet()
-                    	  ->getStyle('A2:I2')
-                    	  ->getAlignment()
-                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                          ->getStyle('A2:I2')
+                          ->getAlignment()
+                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                     $excel->getActiveSheet()
-                    	  ->getStyle('A3:I3')
-                    	  ->getAlignment()
-                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);        
+                          ->getStyle('A3:I3')
+                          ->getAlignment()
+                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);        
 
                     $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE)
-       										->setSize(16);
+                                            ->setSize(16);
                     $excel->getActiveSheet()->mergeCells('A1:I1');
                     $excel->getActiveSheet()->mergeCells('A2:I2');
                     $excel->getActiveSheet()->mergeCells('A3:I3');
@@ -177,41 +177,41 @@
                                             ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no);  
 
 
-                	$border = array(
-					        'borders' => array(
-					            'bottom' => array(
-					                'style' => PHPExcel_Style_Border::BORDER_THICK,
-					                'color' => array('rgb' => '92a8d1')
-					            )
-					        )
-					    );
+                    $border = array(
+                            'borders' => array(
+                                'bottom' => array(
+                                    'style' => PHPExcel_Style_Border::BORDER_THICK,
+                                    'color' => array('rgb' => '92a8d1')
+                                )
+                            )
+                        );
                     $excel->getActiveSheet()->setCellValue('A4')       
-                    						->mergeCells('A4:I4');         	
-                	$excel->getActiveSheet()->getStyle('A4:I4')->applyFromArray($border);
+                                            ->mergeCells('A4:I4');          
+                    $excel->getActiveSheet()->getStyle('A4:I4')->applyFromArray($border);
 
                     $excel->getActiveSheet()
-                    	  ->getStyle('A5:I5')
-                    	  ->getAlignment()
-                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);  
+                          ->getStyle('A5:I5')
+                          ->getAlignment()
+                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);  
 
                     $excel->getActiveSheet()
-                    	  ->getStyle('A6:I6')
-                    	  ->getAlignment()
-                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);  
+                          ->getStyle('A6:I6')
+                          ->getAlignment()
+                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);  
 
                     $excel->getActiveSheet()
-                    	  ->getStyle('A7:I7')
-                    	  ->getAlignment()
-                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);  
+                          ->getStyle('A7:I7')
+                          ->getAlignment()
+                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);  
 
                     $excel->getActiveSheet()->mergeCells('A5:I5');
                     $excel->getActiveSheet()->mergeCells('A6:I6');
                     $excel->getActiveSheet()->mergeCells('A7:I7');
-                							
+                                            
                     $excel->getActiveSheet()->setCellValue('A5',"PURCHASE INVOICE REPORT")
-                    						->setCellValue('A6',"(SUMMARIZED)")
-                    						->getStyle('A5:A6')->getFont()->setBold(TRUE)
-                    						->setSize(18);
+                                            ->setCellValue('A6',"(SUMMARIZED)")
+                                            ->getStyle('A5:A6')->getFont()->setBold(TRUE)
+                                            ->setSize(18);
 
                     $excel->getActiveSheet()->setCellValue('A7','Period '.$startDate.' to '. $endDate);
 
@@ -219,89 +219,89 @@
 
                     foreach($suppliers as $supplier){
 
-	                	$border = array(
-						        'borders' => array(
-						            'bottom' => array(
-						                'style' => PHPExcel_Style_Border::BORDER_THICK,
-						                'color' => array('rgb' => '92a8d1')
-						            )
-						        )
-						    );
+                        $border = array(
+                                'borders' => array(
+                                    'bottom' => array(
+                                        'style' => PHPExcel_Style_Border::BORDER_THICK,
+                                        'color' => array('rgb' => '92a8d1')
+                                    )
+                                )
+                            );
 
-               			$excel->getActiveSheet()->mergeCells('A'.$i.':I'.$i);
+                        $excel->getActiveSheet()->mergeCells('A'.$i.':I'.$i);
 
-                    	$excel->getActiveSheet()->setCellValue('A'.$i,$supplier->supplier_name)
-                    							->getStyle('A'.$i)->getFont()->setBold(TRUE)
-                    							->setSize(14);
-                		$excel->getActiveSheet()->getStyle('A'.$i.':I'.$i)->applyFromArray($border);
-
-
-                    	$i++;
-
-	                    $excel->getActiveSheet()
-	                    	  ->getStyle('G'.$i)
-	                    	  ->getAlignment()
-	                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
+                        $excel->getActiveSheet()->setCellValue('A'.$i,$supplier->supplier_name)
+                                                ->getStyle('A'.$i)->getFont()->setBold(TRUE)
+                                                ->setSize(14);
+                        $excel->getActiveSheet()->getStyle('A'.$i.':I'.$i)->applyFromArray($border);
 
 
-	                    $excel->getActiveSheet()->getColumnDimensionByColumn('A'.$i)->setWidth('50');
-	                    $excel->getActiveSheet()->getColumnDimensionByColumn('D'.$i)->setWidth('50');
-	                    $excel->getActiveSheet()->getColumnDimensionByColumn('G'.$i)->setWidth('50');
+                        $i++;
 
-               			$excel->getActiveSheet()->mergeCells('A'.$i.':C'.$i);
-               			$excel->getActiveSheet()->mergeCells('D'.$i.':F'.$i);
-               			$excel->getActiveSheet()->mergeCells('G'.$i.':I'.$i);
+                        $excel->getActiveSheet()
+                              ->getStyle('G'.$i)
+                              ->getAlignment()
+                              ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
 
-                    	$excel->getActiveSheet()->setCellValue('A'.$i,"Ref #")
-                    							->getStyle('A'.$i)->getFont()->setBold(TRUE);
-                    	$excel->getActiveSheet()->setCellValue('D'.$i,"Date")
-                    							->getStyle('D'.$i)->getFont()->setBold(TRUE);
-                    	$excel->getActiveSheet()->setCellValue('G'.$i,"Invoice Amount")
-                    							->getStyle('G'.$i)->getFont()->setBold(TRUE);     
-                    	$i++;                                    	
-                    	$sum = 0;      
-                    	foreach($purchase_invoice_summary as $summary){
 
-                    		if ($summary->supplier_id==$supplier->supplier_id) {
+                        $excel->getActiveSheet()->getColumnDimensionByColumn('A'.$i)->setWidth('50');
+                        $excel->getActiveSheet()->getColumnDimensionByColumn('D'.$i)->setWidth('50');
+                        $excel->getActiveSheet()->getColumnDimensionByColumn('G'.$i)->setWidth('50');
 
-	                    $excel->getActiveSheet()
-	                    	  ->getStyle('G'.$i)
-	                    	  ->getAlignment()
-	                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
+                        $excel->getActiveSheet()->mergeCells('A'.$i.':C'.$i);
+                        $excel->getActiveSheet()->mergeCells('D'.$i.':F'.$i);
+                        $excel->getActiveSheet()->mergeCells('G'.$i.':I'.$i);
 
-	                    $excel->getActiveSheet()->getColumnDimensionByColumn('A'.$i)->setWidth('50');
-	                    $excel->getActiveSheet()->getColumnDimensionByColumn('D'.$i)->setWidth('50');
-	                    $excel->getActiveSheet()->getColumnDimensionByColumn('G'.$i)->setWidth('50');
+                        $excel->getActiveSheet()->setCellValue('A'.$i,"Ref #")
+                                                ->getStyle('A'.$i)->getFont()->setBold(TRUE);
+                        $excel->getActiveSheet()->setCellValue('D'.$i,"Date")
+                                                ->getStyle('D'.$i)->getFont()->setBold(TRUE);
+                        $excel->getActiveSheet()->setCellValue('G'.$i,"Invoice Amount")
+                                                ->getStyle('G'.$i)->getFont()->setBold(TRUE);     
+                        $i++;                                       
+                        $sum = 0;      
+                        foreach($purchase_invoice_summary as $summary){
 
-               			$excel->getActiveSheet()->mergeCells('A'.$i.':C'.$i);
-               			$excel->getActiveSheet()->mergeCells('D'.$i.':F'.$i);
-               			$excel->getActiveSheet()->mergeCells('G'.$i.':I'.$i);
+                            if ($summary->supplier_id==$supplier->supplier_id) {
 
-                    	$excel->getActiveSheet()->setCellValue('A'.$i,$summary->dr_invoice_no);
-                    	$excel->getActiveSheet()->setCellValue('D'.$i,$summary->date_delivered);
+                        $excel->getActiveSheet()
+                              ->getStyle('G'.$i)
+                              ->getAlignment()
+                              ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
+
+                        $excel->getActiveSheet()->getColumnDimensionByColumn('A'.$i)->setWidth('50');
+                        $excel->getActiveSheet()->getColumnDimensionByColumn('D'.$i)->setWidth('50');
+                        $excel->getActiveSheet()->getColumnDimensionByColumn('G'.$i)->setWidth('50');
+
+                        $excel->getActiveSheet()->mergeCells('A'.$i.':C'.$i);
+                        $excel->getActiveSheet()->mergeCells('D'.$i.':F'.$i);
+                        $excel->getActiveSheet()->mergeCells('G'.$i.':I'.$i);
+
+                        $excel->getActiveSheet()->setCellValue('A'.$i,$summary->dr_invoice_no);
+                        $excel->getActiveSheet()->setCellValue('D'.$i,$summary->date_delivered);
                         $excel->getActiveSheet()->getStyle('G'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');
-                    	$excel->getActiveSheet()->setCellValue('G'.$i,number_format($summary->total_after_discount,2))
-                    							->getStyle('G'.$i)->getFont()->setBold(FALSE)
-                    							->setSize(12);
+                        $excel->getActiveSheet()->setCellValue('G'.$i,number_format($summary->total_after_discount,2))
+                                                ->getStyle('G'.$i)->getFont()->setBold(FALSE)
+                                                ->setSize(12);
 
-                    	$i++;
-       					$sum+=$summary->total_after_discount;
+                        $i++;
+                        $sum+=$summary->total_after_discount;
 
-                    		}
-                   	 	}
+                            }
+                        }
 
-	                    $excel->getActiveSheet()
-	                    	  ->getStyle('G'.$i)
-	                    	  ->getAlignment()
-	                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
+                        $excel->getActiveSheet()
+                              ->getStyle('G'.$i)
+                              ->getAlignment()
+                              ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
 
-               			$excel->getActiveSheet()->mergeCells('G'.$i.':I'.$i);
+                        $excel->getActiveSheet()->mergeCells('G'.$i.':I'.$i);
 
                         $excel->getActiveSheet()->getStyle('G'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');
-                    	$excel->getActiveSheet()->setCellValue('G'.$i,number_format($sum,2))
-                    							->getStyle('G'.$i)->getFont()->setBold(TRUE)
-                    							->setSize(14);              
-                   	 	$i++;
+                        $excel->getActiveSheet()->setCellValue('G'.$i,number_format($sum,2))
+                                                ->getStyle('G'.$i)->getFont()->setBold(TRUE)
+                                                ->setSize(14);              
+                        $i++;
                     }
                     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                     header('Content-Disposition: attachment;filename='."Purchase Invoice Report (Summary).xlsx".'');
@@ -317,10 +317,10 @@
 
                     $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
                     $objWriter->save('php://output'); 
-	                
-	                } 
+                    
+                    } 
 
-	                if ($type=='detailed') {
+                    if ($type=='detailed') {
 
                         $invoice_numbers=$m_delivery_invoice->get_list(
                             'date_delivered BETWEEN "'.$startDate.'" AND "'.$endDate.'" '.($sup_id==0?'':' AND suppliers.supplier_id='.$sup_id).' AND  delivery_invoice.is_active=TRUE AND delivery_invoice.is_deleted=FALSE',
@@ -341,20 +341,20 @@
                     $excel->getActiveSheet()->setTitle("Purchase Invoice (Summary)");
 
                     $excel->getActiveSheet()
-                    	  ->getStyle('A1:I1')
-                    	  ->getAlignment()
-                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                          ->getStyle('A1:I1')
+                          ->getAlignment()
+                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                     $excel->getActiveSheet()
-                    	  ->getStyle('A2:I2')
-                    	  ->getAlignment()
-                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                          ->getStyle('A2:I2')
+                          ->getAlignment()
+                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                     $excel->getActiveSheet()
-                    	  ->getStyle('A3:I3')
-                    	  ->getAlignment()
-                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);        
+                          ->getStyle('A3:I3')
+                          ->getAlignment()
+                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);        
 
                     $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE)
-       										->setSize(16);
+                                            ->setSize(16);
                     $excel->getActiveSheet()->mergeCells('A1:I1');
                     $excel->getActiveSheet()->mergeCells('A2:I2');
                     $excel->getActiveSheet()->mergeCells('A3:I3');
@@ -363,42 +363,42 @@
                                             ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no);  
 
 
-                	$border = array(
-					        'borders' => array(
-					            'bottom' => array(
-					                'style' => PHPExcel_Style_Border::BORDER_THICK,
-					                'color' => array('rgb' => '92a8d1')
-					            )
-					        )
-					    );
+                    $border = array(
+                            'borders' => array(
+                                'bottom' => array(
+                                    'style' => PHPExcel_Style_Border::BORDER_THICK,
+                                    'color' => array('rgb' => '92a8d1')
+                                )
+                            )
+                        );
 
                     $excel->getActiveSheet()->setCellValue('A4')       
-                    						->mergeCells('A4:I4');         	
-                	$excel->getActiveSheet()->getStyle('A4:I4')->applyFromArray($border);
+                                            ->mergeCells('A4:I4');          
+                    $excel->getActiveSheet()->getStyle('A4:I4')->applyFromArray($border);
 
                     $excel->getActiveSheet()
-                    	  ->getStyle('A5:I5')
-                    	  ->getAlignment()
-                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);  
+                          ->getStyle('A5:I5')
+                          ->getAlignment()
+                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);  
 
                     $excel->getActiveSheet()
-                    	  ->getStyle('A6:I6')
-                    	  ->getAlignment()
-                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);  
+                          ->getStyle('A6:I6')
+                          ->getAlignment()
+                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);  
 
                     $excel->getActiveSheet()
-                    	  ->getStyle('A7:I7')
-                    	  ->getAlignment()
-                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);  
+                          ->getStyle('A7:I7')
+                          ->getAlignment()
+                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);  
 
                     $excel->getActiveSheet()->mergeCells('A5:I5');
                     $excel->getActiveSheet()->mergeCells('A6:I6');
                     $excel->getActiveSheet()->mergeCells('A7:I7');
-                							
+                                            
                     $excel->getActiveSheet()->setCellValue('A5',"PURCHASE INVOICE REPORT")
-                    						->setCellValue('A6',"(DETAILED)")
-                    						->getStyle('A5:A6')->getFont()->setBold(TRUE)
-                    						->setSize(18);
+                                            ->setCellValue('A6',"(DETAILED)")
+                                            ->getStyle('A5:A6')->getFont()->setBold(TRUE)
+                                            ->setSize(18);
 
                     $excel->getActiveSheet()->setCellValue('A7','Period '.$startDate.' to '. $endDate);
 
@@ -406,132 +406,132 @@
 
                     foreach ($invoice_numbers as $invoice_number) {
 
-	                	$border = array(
-						        'borders' => array(
-						            'bottom' => array(
-						                'style' => PHPExcel_Style_Border::BORDER_THICK,
-						                'color' => array('rgb' => '92a8d1')
-						            )
-						        )
-						    );
+                        $border = array(
+                                'borders' => array(
+                                    'bottom' => array(
+                                        'style' => PHPExcel_Style_Border::BORDER_THICK,
+                                        'color' => array('rgb' => '92a8d1')
+                                    )
+                                )
+                            );
 
-               			$excel->getActiveSheet()->mergeCells('A'.$i.':I'.$i);
-						$excel->getActiveSheet()->getStyle('A'.$i)->getAlignment()->setIndent(0);
-                    	$excel->getActiveSheet()->setCellValue('A'.$i,$invoice_number->dr_invoice_no)
-                    							->getStyle('A'.$i)->getFont()->setBold(TRUE)
-                    							->setSize(12);
-                		$excel->getActiveSheet()->getStyle('A'.$i.':I'.$i)->applyFromArray($border);
-	                	$i++;
+                        $excel->getActiveSheet()->mergeCells('A'.$i.':I'.$i);
+                        $excel->getActiveSheet()->getStyle('A'.$i)->getAlignment()->setIndent(0);
+                        $excel->getActiveSheet()->setCellValue('A'.$i,$invoice_number->dr_invoice_no)
+                                                ->getStyle('A'.$i)->getFont()->setBold(TRUE)
+                                                ->setSize(12);
+                        $excel->getActiveSheet()->getStyle('A'.$i.':I'.$i)->applyFromArray($border);
+                        $i++;
 
-               			$excel->getActiveSheet()->mergeCells('A'.$i.':I'.$i);
-						$excel->getActiveSheet()->getStyle('A'.$i)->getAlignment()->setIndent(4);
-                    	$excel->getActiveSheet()->setCellValue('A'.$i,$invoice_number->supplier_name)
-                    							->getStyle('A'.$i)->getFont()->setBold(TRUE)
-                    							->setSize(12);   
-                		$excel->getActiveSheet()->getStyle('A'.$i.':I'.$i)->applyFromArray($border);                    							
-                		$i++;
+                        $excel->getActiveSheet()->mergeCells('A'.$i.':I'.$i);
+                        $excel->getActiveSheet()->getStyle('A'.$i)->getAlignment()->setIndent(4);
+                        $excel->getActiveSheet()->setCellValue('A'.$i,$invoice_number->supplier_name)
+                                                ->getStyle('A'.$i)->getFont()->setBold(TRUE)
+                                                ->setSize(12);   
+                        $excel->getActiveSheet()->getStyle('A'.$i.':I'.$i)->applyFromArray($border);                                                
+                        $i++;
 
-               			$excel->getActiveSheet()->mergeCells('A'.$i.':I'.$i);                		
-                    	$excel->getActiveSheet()->setCellValue('A'.$i);                		
-                		$i++;
+                        $excel->getActiveSheet()->mergeCells('A'.$i.':I'.$i);                       
+                        $excel->getActiveSheet()->setCellValue('A'.$i);                     
+                        $i++;
 
-	                    $excel->getActiveSheet()->getColumnDimensionByColumn('D')->setWidth('50');
-	                    $excel->getActiveSheet()->getColumnDimensionByColumn('F')->setWidth('50');
-	                    $excel->getActiveSheet()->getColumnDimensionByColumn('H')->setWidth('50');      
-	                              		
-               			$excel->getActiveSheet()->mergeCells('A'.$i.':C'.$i);                		                		
-                		$excel->getActiveSheet()->getStyle('A'.$i)->getAlignment()->setIndent(8);
-                    	$excel->getActiveSheet()->setCellValue('A'.$i,'PRODUCT')
-                    							->getStyle('A'.$i)->getFont()->setBold(TRUE);
+                        $excel->getActiveSheet()->getColumnDimensionByColumn('D')->setWidth('50');
+                        $excel->getActiveSheet()->getColumnDimensionByColumn('F')->setWidth('50');
+                        $excel->getActiveSheet()->getColumnDimensionByColumn('H')->setWidth('50');      
+                                        
+                        $excel->getActiveSheet()->mergeCells('A'.$i.':C'.$i);                                               
+                        $excel->getActiveSheet()->getStyle('A'.$i)->getAlignment()->setIndent(8);
+                        $excel->getActiveSheet()->setCellValue('A'.$i,'PRODUCT')
+                                                ->getStyle('A'.$i)->getFont()->setBold(TRUE);
 
-	                    $excel->getActiveSheet()
-	                    	  ->getStyle('D'.$i)
-	                    	  ->getAlignment()
-	                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
+                        $excel->getActiveSheet()
+                              ->getStyle('D'.$i)
+                              ->getAlignment()
+                              ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
 
-	                    $excel->getActiveSheet()
-	                    	  ->getStyle('F'.$i)
-	                    	  ->getAlignment()
-	                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
+                        $excel->getActiveSheet()
+                              ->getStyle('F'.$i)
+                              ->getAlignment()
+                              ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
 
-	                    $excel->getActiveSheet()
-	                    	  ->getStyle('H'.$i)
-	                    	  ->getAlignment()
-	                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
+                        $excel->getActiveSheet()
+                              ->getStyle('H'.$i)
+                              ->getAlignment()
+                              ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
 
-               			$excel->getActiveSheet()->mergeCells('D'.$i.':E'.$i);                		                		
-                    	$excel->getActiveSheet()->setCellValue('D'.$i,'UNIT COST')
-                    							->getStyle('D'.$i)->getFont()->setBold(TRUE);        
+                        $excel->getActiveSheet()->mergeCells('D'.$i.':E'.$i);                                               
+                        $excel->getActiveSheet()->setCellValue('D'.$i,'UNIT COST')
+                                                ->getStyle('D'.$i)->getFont()->setBold(TRUE);        
 
-               			$excel->getActiveSheet()->mergeCells('F'.$i.':G'.$i);                		                		
-                    	$excel->getActiveSheet()->setCellValue('F'.$i,'QTY')
-                    							->getStyle('F'.$i)->getFont()->setBold(TRUE);                    							
+                        $excel->getActiveSheet()->mergeCells('F'.$i.':G'.$i);                                               
+                        $excel->getActiveSheet()->setCellValue('F'.$i,'QTY')
+                                                ->getStyle('F'.$i)->getFont()->setBold(TRUE);                                               
 
-               			$excel->getActiveSheet()->mergeCells('H'.$i.':I'.$i);                		                		
-                    	$excel->getActiveSheet()->setCellValue('H'.$i,'TOTAL NET')
-                    							->getStyle('H'.$i)->getFont()->setBold(TRUE);                    							
-						$inv_total = 0; 
-                  		$i++;
+                        $excel->getActiveSheet()->mergeCells('H'.$i.':I'.$i);                                               
+                        $excel->getActiveSheet()->setCellValue('H'.$i,'TOTAL NET')
+                                                ->getStyle('H'.$i)->getFont()->setBold(TRUE);                                               
+                        $inv_total = 0; 
+                        $i++;
 
- 							foreach ($purchase_invoice_detailed as $detail) {
-								if($detail->supplier_id==$invoice_number->supplier_id&&$detail->dr_invoice_id==$invoice_number->dr_invoice_id) {
+                            foreach ($purchase_invoice_detailed as $detail) {
+                                if($detail->supplier_id==$invoice_number->supplier_id&&$detail->dr_invoice_id==$invoice_number->dr_invoice_id) {
 
-				                	$border = array(
-									        'borders' => array(
-									            'bottom' => array(
-									                'style' => PHPExcel_Style_Border::BORDER_THICK,
-									                'color' => array('rgb' => '92a8d1')
-									            )
-									        )
-									    );
+                                    $border = array(
+                                            'borders' => array(
+                                                'bottom' => array(
+                                                    'style' => PHPExcel_Style_Border::BORDER_THICK,
+                                                    'color' => array('rgb' => '92a8d1')
+                                                )
+                                            )
+                                        );
 
-				                    $excel->getActiveSheet()
-				                    	  ->getStyle('D'.$i)
-				                    	  ->getAlignment()
-				                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
+                                    $excel->getActiveSheet()
+                                          ->getStyle('D'.$i)
+                                          ->getAlignment()
+                                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
 
-				                    $excel->getActiveSheet()
-				                    	  ->getStyle('F'.$i)
-				                    	  ->getAlignment()
-				                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
+                                    $excel->getActiveSheet()
+                                          ->getStyle('F'.$i)
+                                          ->getAlignment()
+                                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
 
-				                    $excel->getActiveSheet()
-				                    	  ->getStyle('H'.$i)
-				                    	  ->getAlignment()
-				                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
+                                    $excel->getActiveSheet()
+                                          ->getStyle('H'.$i)
+                                          ->getAlignment()
+                                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
 
-			               			$excel->getActiveSheet()->mergeCells('A'.$i.':C'.$i);
-			               			$excel->getActiveSheet()->mergeCells('D'.$i.':E'.$i);
-			               			$excel->getActiveSheet()->mergeCells('F'.$i.':G'.$i);		
-			               			$excel->getActiveSheet()->mergeCells('H'.$i.':I'.$i);		
-			               										
-			                    	$excel->getActiveSheet()->setCellValue('A'.$i,$detail->product_desc)
-															->getStyle('A'.$i)->getAlignment()->setIndent(8);			                    	
-                        			$excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');			               			            		                		
-			                    	$excel->getActiveSheet()->setCellValue('D'.$i,number_format($detail->dr_price,2));
+                                    $excel->getActiveSheet()->mergeCells('A'.$i.':C'.$i);
+                                    $excel->getActiveSheet()->mergeCells('D'.$i.':E'.$i);
+                                    $excel->getActiveSheet()->mergeCells('F'.$i.':G'.$i);       
+                                    $excel->getActiveSheet()->mergeCells('H'.$i.':I'.$i);       
+                                                                
+                                    $excel->getActiveSheet()->setCellValue('A'.$i,$detail->product_desc)
+                                                            ->getStyle('A'.$i)->getAlignment()->setIndent(8);                                   
+                                    $excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');                                                                                
+                                    $excel->getActiveSheet()->setCellValue('D'.$i,number_format($detail->dr_price,2));
 
-			                    	$excel->getActiveSheet()->setCellValue('F'.$i,number_format($detail->dr_qty,2));
+                                    $excel->getActiveSheet()->setCellValue('F'.$i,number_format($detail->dr_qty,2));
 
-                        			$excel->getActiveSheet()->getStyle('H'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');			               			   		                		
-			                    	$excel->getActiveSheet()->setCellValue('H'.$i,number_format(($detail->dr_qty*$detail->dr_price),2));
-                					$excel->getActiveSheet()->getStyle('A'.$i.':I'.$i)->applyFromArray($border);                    							
+                                    $excel->getActiveSheet()->getStyle('H'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');                                                                    
+                                    $excel->getActiveSheet()->setCellValue('H'.$i,number_format(($detail->dr_qty*$detail->dr_price),2));
+                                    $excel->getActiveSheet()->getStyle('A'.$i.':I'.$i)->applyFromArray($border);                                                
 
-									$inv_total+= $detail->dr_qty*$detail->dr_price;	
-			                    	$i++;
+                                    $inv_total+= $detail->dr_qty*$detail->dr_price; 
+                                    $i++;
 
-								}
- 							}
-				                    $excel->getActiveSheet()
-				                    	  ->getStyle('A'.$i)
-				                    	  ->getAlignment()
-				                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT); 
+                                }
+                            }
+                                    $excel->getActiveSheet()
+                                          ->getStyle('A'.$i)
+                                          ->getAlignment()
+                                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT); 
 
-			               			$excel->getActiveSheet()->mergeCells('A'.$i.':I'.$i);
-                        			$excel->getActiveSheet()->getStyle('A'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');			               			   		                					               			
-			                    	$excel->getActiveSheet()->setCellValue('A'.$i,number_format($inv_total,2))
-			                    							->getStyle('A'.$i)->getFont()->setBold(TRUE)
-			                    							->setSize(14);
-			                    	$i++;
+                                    $excel->getActiveSheet()->mergeCells('A'.$i.':I'.$i);
+                                    $excel->getActiveSheet()->getStyle('A'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');                                                                                                        
+                                    $excel->getActiveSheet()->setCellValue('A'.$i,number_format($inv_total,2))
+                                                            ->getStyle('A'.$i)->getFont()->setBold(TRUE)
+                                                            ->setSize(14);
+                                    $i++;
                     }
                     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                     header('Content-Disposition: attachment;filename='."Purchase Invoice Report (Detailed).xlsx".'');
@@ -548,26 +548,26 @@
                     $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
                     $objWriter->save('php://output'); 
 
-	                }
-	            break;
+                    }
+                break;
 
-	            case 'purchase-invoice-email':
+                case 'purchase-invoice-email':
                     $excel=$this->excel;
-	                $m_email=$this->Email_settings_model;
-	                $email=$m_email->get_list(2);                          
-	                $m_company_info=$this->Company_model;
+                    $m_email=$this->Email_settings_model;
+                    $email=$m_email->get_list(2);                          
+                    $m_company_info=$this->Company_model;
 
-	                $company_info=$m_company_info->get_list();
-	                $data['company_info']=$company_info[0];
+                    $company_info=$m_company_info->get_list();
+                    $data['company_info']=$company_info[0];
 
-	                $m_delivery_invoice=$this->Delivery_invoice_model;
+                    $m_delivery_invoice=$this->Delivery_invoice_model;
 
-	                $type=$this->input->get('type');
-	                $startDate=date('Y-m-d',strtotime($this->input->get('startDate')));
-	                $endDate=date('Y-m-d',strtotime($this->input->get('endDate')));
+                    $type=$this->input->get('type');
+                    $startDate=date('Y-m-d',strtotime($this->input->get('startDate')));
+                    $endDate=date('Y-m-d',strtotime($this->input->get('endDate')));
 
 
-	                if ($type=='summary') {
+                    if ($type=='summary') {
 
                         $suppliers=$m_delivery_invoice->get_list(
                             'date_delivered BETWEEN "'.$startDate.'" AND "'.$endDate.'" AND delivery_invoice.is_active=TRUE AND delivery_invoice.is_deleted=FALSE',
@@ -590,20 +590,20 @@
                     $excel->getActiveSheet()->setTitle("Purchase Invoice (Summary)");
 
                     $excel->getActiveSheet()
-                    	  ->getStyle('A1:I1')
-                    	  ->getAlignment()
-                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                          ->getStyle('A1:I1')
+                          ->getAlignment()
+                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                     $excel->getActiveSheet()
-                    	  ->getStyle('A2:I2')
-                    	  ->getAlignment()
-                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                          ->getStyle('A2:I2')
+                          ->getAlignment()
+                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                     $excel->getActiveSheet()
-                    	  ->getStyle('A3:I3')
-                    	  ->getAlignment()
-                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);        
+                          ->getStyle('A3:I3')
+                          ->getAlignment()
+                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);        
 
                     $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE)
-       										->setSize(16);
+                                            ->setSize(16);
                     $excel->getActiveSheet()->mergeCells('A1:I1');
                     $excel->getActiveSheet()->mergeCells('A2:I2');
                     $excel->getActiveSheet()->mergeCells('A3:I3');
@@ -612,41 +612,41 @@
                                             ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no);  
 
 
-                	$border = array(
-					        'borders' => array(
-					            'bottom' => array(
-					                'style' => PHPExcel_Style_Border::BORDER_THICK,
-					                'color' => array('rgb' => '92a8d1')
-					            )
-					        )
-					    );
+                    $border = array(
+                            'borders' => array(
+                                'bottom' => array(
+                                    'style' => PHPExcel_Style_Border::BORDER_THICK,
+                                    'color' => array('rgb' => '92a8d1')
+                                )
+                            )
+                        );
                     $excel->getActiveSheet()->setCellValue('A4')       
-                    						->mergeCells('A4:I4');         	
-                	$excel->getActiveSheet()->getStyle('A4:I4')->applyFromArray($border);
+                                            ->mergeCells('A4:I4');          
+                    $excel->getActiveSheet()->getStyle('A4:I4')->applyFromArray($border);
 
                     $excel->getActiveSheet()
-                    	  ->getStyle('A5:I5')
-                    	  ->getAlignment()
-                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);  
+                          ->getStyle('A5:I5')
+                          ->getAlignment()
+                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);  
 
                     $excel->getActiveSheet()
-                    	  ->getStyle('A6:I6')
-                    	  ->getAlignment()
-                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);  
+                          ->getStyle('A6:I6')
+                          ->getAlignment()
+                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);  
 
                     $excel->getActiveSheet()
-                    	  ->getStyle('A7:I7')
-                    	  ->getAlignment()
-                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);  
+                          ->getStyle('A7:I7')
+                          ->getAlignment()
+                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);  
 
                     $excel->getActiveSheet()->mergeCells('A5:I5');
                     $excel->getActiveSheet()->mergeCells('A6:I6');
                     $excel->getActiveSheet()->mergeCells('A7:I7');
-                							
+                                            
                     $excel->getActiveSheet()->setCellValue('A5',"PURCHASE INVOICE REPORT")
-                    						->setCellValue('A6',"(SUMMARIZED)")
-                    						->getStyle('A5:A6')->getFont()->setBold(TRUE)
-                    						->setSize(18);
+                                            ->setCellValue('A6',"(SUMMARIZED)")
+                                            ->getStyle('A5:A6')->getFont()->setBold(TRUE)
+                                            ->setSize(18);
 
                     $excel->getActiveSheet()->setCellValue('A7','Period '.$startDate.' to '. $endDate);
 
@@ -654,89 +654,89 @@
 
                     foreach($suppliers as $supplier){
 
-	                	$border = array(
-						        'borders' => array(
-						            'bottom' => array(
-						                'style' => PHPExcel_Style_Border::BORDER_THICK,
-						                'color' => array('rgb' => '92a8d1')
-						            )
-						        )
-						    );
+                        $border = array(
+                                'borders' => array(
+                                    'bottom' => array(
+                                        'style' => PHPExcel_Style_Border::BORDER_THICK,
+                                        'color' => array('rgb' => '92a8d1')
+                                    )
+                                )
+                            );
 
-               			$excel->getActiveSheet()->mergeCells('A'.$i.':I'.$i);
+                        $excel->getActiveSheet()->mergeCells('A'.$i.':I'.$i);
 
-                    	$excel->getActiveSheet()->setCellValue('A'.$i,$supplier->supplier_name)
-                    							->getStyle('A'.$i)->getFont()->setBold(TRUE)
-                    							->setSize(14);
-                		$excel->getActiveSheet()->getStyle('A'.$i.':I'.$i)->applyFromArray($border);
-
-
-                    	$i++;
-
-	                    $excel->getActiveSheet()
-	                    	  ->getStyle('G'.$i)
-	                    	  ->getAlignment()
-	                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
+                        $excel->getActiveSheet()->setCellValue('A'.$i,$supplier->supplier_name)
+                                                ->getStyle('A'.$i)->getFont()->setBold(TRUE)
+                                                ->setSize(14);
+                        $excel->getActiveSheet()->getStyle('A'.$i.':I'.$i)->applyFromArray($border);
 
 
-	                    $excel->getActiveSheet()->getColumnDimensionByColumn('A'.$i)->setWidth('50');
-	                    $excel->getActiveSheet()->getColumnDimensionByColumn('D'.$i)->setWidth('50');
-	                    $excel->getActiveSheet()->getColumnDimensionByColumn('G'.$i)->setWidth('50');
+                        $i++;
 
-               			$excel->getActiveSheet()->mergeCells('A'.$i.':C'.$i);
-               			$excel->getActiveSheet()->mergeCells('D'.$i.':F'.$i);
-               			$excel->getActiveSheet()->mergeCells('G'.$i.':I'.$i);
+                        $excel->getActiveSheet()
+                              ->getStyle('G'.$i)
+                              ->getAlignment()
+                              ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
 
-                    	$excel->getActiveSheet()->setCellValue('A'.$i,"Ref #")
-                    							->getStyle('A'.$i)->getFont()->setBold(TRUE);
-                    	$excel->getActiveSheet()->setCellValue('D'.$i,"Date")
-                    							->getStyle('D'.$i)->getFont()->setBold(TRUE);
-                    	$excel->getActiveSheet()->setCellValue('G'.$i,"Invoice Amount")
-                    							->getStyle('G'.$i)->getFont()->setBold(TRUE);     
-                    	$i++;                                    	
-                    	$sum = 0;      
-                    	foreach($purchase_invoice_summary as $summary){
 
-                    		if ($summary->supplier_id==$supplier->supplier_id) {
+                        $excel->getActiveSheet()->getColumnDimensionByColumn('A'.$i)->setWidth('50');
+                        $excel->getActiveSheet()->getColumnDimensionByColumn('D'.$i)->setWidth('50');
+                        $excel->getActiveSheet()->getColumnDimensionByColumn('G'.$i)->setWidth('50');
 
-	                    $excel->getActiveSheet()
-	                    	  ->getStyle('G'.$i)
-	                    	  ->getAlignment()
-	                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
+                        $excel->getActiveSheet()->mergeCells('A'.$i.':C'.$i);
+                        $excel->getActiveSheet()->mergeCells('D'.$i.':F'.$i);
+                        $excel->getActiveSheet()->mergeCells('G'.$i.':I'.$i);
 
-	                    $excel->getActiveSheet()->getColumnDimensionByColumn('A'.$i)->setWidth('50');
-	                    $excel->getActiveSheet()->getColumnDimensionByColumn('D'.$i)->setWidth('50');
-	                    $excel->getActiveSheet()->getColumnDimensionByColumn('G'.$i)->setWidth('50');
+                        $excel->getActiveSheet()->setCellValue('A'.$i,"Ref #")
+                                                ->getStyle('A'.$i)->getFont()->setBold(TRUE);
+                        $excel->getActiveSheet()->setCellValue('D'.$i,"Date")
+                                                ->getStyle('D'.$i)->getFont()->setBold(TRUE);
+                        $excel->getActiveSheet()->setCellValue('G'.$i,"Invoice Amount")
+                                                ->getStyle('G'.$i)->getFont()->setBold(TRUE);     
+                        $i++;                                       
+                        $sum = 0;      
+                        foreach($purchase_invoice_summary as $summary){
 
-               			$excel->getActiveSheet()->mergeCells('A'.$i.':C'.$i);
-               			$excel->getActiveSheet()->mergeCells('D'.$i.':F'.$i);
-               			$excel->getActiveSheet()->mergeCells('G'.$i.':I'.$i);
+                            if ($summary->supplier_id==$supplier->supplier_id) {
 
-                    	$excel->getActiveSheet()->setCellValue('A'.$i,$summary->dr_invoice_no);
-                    	$excel->getActiveSheet()->setCellValue('D'.$i,$summary->date_delivered);
+                        $excel->getActiveSheet()
+                              ->getStyle('G'.$i)
+                              ->getAlignment()
+                              ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
+
+                        $excel->getActiveSheet()->getColumnDimensionByColumn('A'.$i)->setWidth('50');
+                        $excel->getActiveSheet()->getColumnDimensionByColumn('D'.$i)->setWidth('50');
+                        $excel->getActiveSheet()->getColumnDimensionByColumn('G'.$i)->setWidth('50');
+
+                        $excel->getActiveSheet()->mergeCells('A'.$i.':C'.$i);
+                        $excel->getActiveSheet()->mergeCells('D'.$i.':F'.$i);
+                        $excel->getActiveSheet()->mergeCells('G'.$i.':I'.$i);
+
+                        $excel->getActiveSheet()->setCellValue('A'.$i,$summary->dr_invoice_no);
+                        $excel->getActiveSheet()->setCellValue('D'.$i,$summary->date_delivered);
                         $excel->getActiveSheet()->getStyle('G'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');
-                    	$excel->getActiveSheet()->setCellValue('G'.$i,number_format($summary->total_after_discount,2))
-                    							->getStyle('G'.$i)->getFont()->setBold(FALSE)
-                    							->setSize(12);
+                        $excel->getActiveSheet()->setCellValue('G'.$i,number_format($summary->total_after_discount,2))
+                                                ->getStyle('G'.$i)->getFont()->setBold(FALSE)
+                                                ->setSize(12);
 
-                    	$i++;
-       					$sum+=$summary->total_after_discount;
+                        $i++;
+                        $sum+=$summary->total_after_discount;
 
-                    		}
-                   	 	}
+                            }
+                        }
 
-	                    $excel->getActiveSheet()
-	                    	  ->getStyle('G'.$i)
-	                    	  ->getAlignment()
-	                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
+                        $excel->getActiveSheet()
+                              ->getStyle('G'.$i)
+                              ->getAlignment()
+                              ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
 
-               			$excel->getActiveSheet()->mergeCells('G'.$i.':I'.$i);
+                        $excel->getActiveSheet()->mergeCells('G'.$i.':I'.$i);
 
                         $excel->getActiveSheet()->getStyle('G'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');
-                    	$excel->getActiveSheet()->setCellValue('G'.$i,number_format($sum,2))
-                    							->getStyle('G'.$i)->getFont()->setBold(TRUE)
-                    							->setSize(14);              
-                   	 	$i++;
+                        $excel->getActiveSheet()->setCellValue('G'.$i,number_format($sum,2))
+                                                ->getStyle('G'.$i)->getFont()->setBold(TRUE)
+                                                ->setSize(14);              
+                        $i++;
                     }
                     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                     header('Content-Disposition: attachment;filename='."Purchase Invoice Report (Summary).xlsx".'');
@@ -806,10 +806,10 @@
                             $response['msg']='Email Sent successfully.';
 
                             echo json_encode($response);
-                            }	                
-	                } 
+                            }                   
+                    } 
 
-	                if ($type=='detailed') {
+                    if ($type=='detailed') {
 
                         $invoice_numbers=$m_delivery_invoice->get_list(
                             'date_delivered BETWEEN "'.$startDate.'" AND "'.$endDate.'" AND  delivery_invoice.is_active=TRUE AND delivery_invoice.is_deleted=FALSE',
@@ -832,20 +832,20 @@
                     $excel->getActiveSheet()->setTitle("Purchase Invoice (Summary)");
 
                     $excel->getActiveSheet()
-                    	  ->getStyle('A1:I1')
-                    	  ->getAlignment()
-                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                          ->getStyle('A1:I1')
+                          ->getAlignment()
+                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                     $excel->getActiveSheet()
-                    	  ->getStyle('A2:I2')
-                    	  ->getAlignment()
-                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                          ->getStyle('A2:I2')
+                          ->getAlignment()
+                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                     $excel->getActiveSheet()
-                    	  ->getStyle('A3:I3')
-                    	  ->getAlignment()
-                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);        
+                          ->getStyle('A3:I3')
+                          ->getAlignment()
+                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);        
 
                     $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE)
-       										->setSize(16);
+                                            ->setSize(16);
                     $excel->getActiveSheet()->mergeCells('A1:I1');
                     $excel->getActiveSheet()->mergeCells('A2:I2');
                     $excel->getActiveSheet()->mergeCells('A3:I3');
@@ -854,42 +854,42 @@
                                             ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no);  
 
 
-                	$border = array(
-					        'borders' => array(
-					            'bottom' => array(
-					                'style' => PHPExcel_Style_Border::BORDER_THICK,
-					                'color' => array('rgb' => '92a8d1')
-					            )
-					        )
-					    );
+                    $border = array(
+                            'borders' => array(
+                                'bottom' => array(
+                                    'style' => PHPExcel_Style_Border::BORDER_THICK,
+                                    'color' => array('rgb' => '92a8d1')
+                                )
+                            )
+                        );
 
                     $excel->getActiveSheet()->setCellValue('A4')       
-                    						->mergeCells('A4:I4');         	
-                	$excel->getActiveSheet()->getStyle('A4:I4')->applyFromArray($border);
+                                            ->mergeCells('A4:I4');          
+                    $excel->getActiveSheet()->getStyle('A4:I4')->applyFromArray($border);
 
                     $excel->getActiveSheet()
-                    	  ->getStyle('A5:I5')
-                    	  ->getAlignment()
-                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);  
+                          ->getStyle('A5:I5')
+                          ->getAlignment()
+                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);  
 
                     $excel->getActiveSheet()
-                    	  ->getStyle('A6:I6')
-                    	  ->getAlignment()
-                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);  
+                          ->getStyle('A6:I6')
+                          ->getAlignment()
+                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);  
 
                     $excel->getActiveSheet()
-                    	  ->getStyle('A7:I7')
-                    	  ->getAlignment()
-                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);  
+                          ->getStyle('A7:I7')
+                          ->getAlignment()
+                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);  
 
                     $excel->getActiveSheet()->mergeCells('A5:I5');
                     $excel->getActiveSheet()->mergeCells('A6:I6');
                     $excel->getActiveSheet()->mergeCells('A7:I7');
-                							
+                                            
                     $excel->getActiveSheet()->setCellValue('A5',"PURCHASE INVOICE REPORT")
-                    						->setCellValue('A6',"(DETAILED)")
-                    						->getStyle('A5:A6')->getFont()->setBold(TRUE)
-                    						->setSize(18);
+                                            ->setCellValue('A6',"(DETAILED)")
+                                            ->getStyle('A5:A6')->getFont()->setBold(TRUE)
+                                            ->setSize(18);
 
                     $excel->getActiveSheet()->setCellValue('A7','Period '.$startDate.' to '. $endDate);
 
@@ -897,132 +897,132 @@
 
                     foreach ($invoice_numbers as $invoice_number) {
 
-	                	$border = array(
-						        'borders' => array(
-						            'bottom' => array(
-						                'style' => PHPExcel_Style_Border::BORDER_THICK,
-						                'color' => array('rgb' => '92a8d1')
-						            )
-						        )
-						    );
+                        $border = array(
+                                'borders' => array(
+                                    'bottom' => array(
+                                        'style' => PHPExcel_Style_Border::BORDER_THICK,
+                                        'color' => array('rgb' => '92a8d1')
+                                    )
+                                )
+                            );
 
-               			$excel->getActiveSheet()->mergeCells('A'.$i.':I'.$i);
-						$excel->getActiveSheet()->getStyle('A'.$i)->getAlignment()->setIndent(0);
-                    	$excel->getActiveSheet()->setCellValue('A'.$i,$invoice_number->dr_invoice_no)
-                    							->getStyle('A'.$i)->getFont()->setBold(TRUE)
-                    							->setSize(12);
-                		$excel->getActiveSheet()->getStyle('A'.$i.':I'.$i)->applyFromArray($border);
-	                	$i++;
+                        $excel->getActiveSheet()->mergeCells('A'.$i.':I'.$i);
+                        $excel->getActiveSheet()->getStyle('A'.$i)->getAlignment()->setIndent(0);
+                        $excel->getActiveSheet()->setCellValue('A'.$i,$invoice_number->dr_invoice_no)
+                                                ->getStyle('A'.$i)->getFont()->setBold(TRUE)
+                                                ->setSize(12);
+                        $excel->getActiveSheet()->getStyle('A'.$i.':I'.$i)->applyFromArray($border);
+                        $i++;
 
-               			$excel->getActiveSheet()->mergeCells('A'.$i.':I'.$i);
-						$excel->getActiveSheet()->getStyle('A'.$i)->getAlignment()->setIndent(4);
-                    	$excel->getActiveSheet()->setCellValue('A'.$i,$invoice_number->supplier_name)
-                    							->getStyle('A'.$i)->getFont()->setBold(TRUE)
-                    							->setSize(12);   
-                		$excel->getActiveSheet()->getStyle('A'.$i.':I'.$i)->applyFromArray($border);                    							
-                		$i++;
+                        $excel->getActiveSheet()->mergeCells('A'.$i.':I'.$i);
+                        $excel->getActiveSheet()->getStyle('A'.$i)->getAlignment()->setIndent(4);
+                        $excel->getActiveSheet()->setCellValue('A'.$i,$invoice_number->supplier_name)
+                                                ->getStyle('A'.$i)->getFont()->setBold(TRUE)
+                                                ->setSize(12);   
+                        $excel->getActiveSheet()->getStyle('A'.$i.':I'.$i)->applyFromArray($border);                                                
+                        $i++;
 
-               			$excel->getActiveSheet()->mergeCells('A'.$i.':I'.$i);                		
-                    	$excel->getActiveSheet()->setCellValue('A'.$i);                		
-                		$i++;
+                        $excel->getActiveSheet()->mergeCells('A'.$i.':I'.$i);                       
+                        $excel->getActiveSheet()->setCellValue('A'.$i);                     
+                        $i++;
 
-	                    $excel->getActiveSheet()->getColumnDimensionByColumn('D')->setWidth('50');
-	                    $excel->getActiveSheet()->getColumnDimensionByColumn('F')->setWidth('50');
-	                    $excel->getActiveSheet()->getColumnDimensionByColumn('H')->setWidth('50');      
-	                              		
-               			$excel->getActiveSheet()->mergeCells('A'.$i.':C'.$i);                		                		
-                		$excel->getActiveSheet()->getStyle('A'.$i)->getAlignment()->setIndent(8);
-                    	$excel->getActiveSheet()->setCellValue('A'.$i,'PRODUCT')
-                    							->getStyle('A'.$i)->getFont()->setBold(TRUE);
+                        $excel->getActiveSheet()->getColumnDimensionByColumn('D')->setWidth('50');
+                        $excel->getActiveSheet()->getColumnDimensionByColumn('F')->setWidth('50');
+                        $excel->getActiveSheet()->getColumnDimensionByColumn('H')->setWidth('50');      
+                                        
+                        $excel->getActiveSheet()->mergeCells('A'.$i.':C'.$i);                                               
+                        $excel->getActiveSheet()->getStyle('A'.$i)->getAlignment()->setIndent(8);
+                        $excel->getActiveSheet()->setCellValue('A'.$i,'PRODUCT')
+                                                ->getStyle('A'.$i)->getFont()->setBold(TRUE);
 
-	                    $excel->getActiveSheet()
-	                    	  ->getStyle('D'.$i)
-	                    	  ->getAlignment()
-	                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
+                        $excel->getActiveSheet()
+                              ->getStyle('D'.$i)
+                              ->getAlignment()
+                              ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
 
-	                    $excel->getActiveSheet()
-	                    	  ->getStyle('F'.$i)
-	                    	  ->getAlignment()
-	                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
+                        $excel->getActiveSheet()
+                              ->getStyle('F'.$i)
+                              ->getAlignment()
+                              ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
 
-	                    $excel->getActiveSheet()
-	                    	  ->getStyle('H'.$i)
-	                    	  ->getAlignment()
-	                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
+                        $excel->getActiveSheet()
+                              ->getStyle('H'.$i)
+                              ->getAlignment()
+                              ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
 
-               			$excel->getActiveSheet()->mergeCells('D'.$i.':E'.$i);                		                		
-                    	$excel->getActiveSheet()->setCellValue('D'.$i,'UNIT COST')
-                    							->getStyle('D'.$i)->getFont()->setBold(TRUE);        
+                        $excel->getActiveSheet()->mergeCells('D'.$i.':E'.$i);                                               
+                        $excel->getActiveSheet()->setCellValue('D'.$i,'UNIT COST')
+                                                ->getStyle('D'.$i)->getFont()->setBold(TRUE);        
 
-               			$excel->getActiveSheet()->mergeCells('F'.$i.':G'.$i);                		                		
-                    	$excel->getActiveSheet()->setCellValue('F'.$i,'QTY')
-                    							->getStyle('F'.$i)->getFont()->setBold(TRUE);                    							
+                        $excel->getActiveSheet()->mergeCells('F'.$i.':G'.$i);                                               
+                        $excel->getActiveSheet()->setCellValue('F'.$i,'QTY')
+                                                ->getStyle('F'.$i)->getFont()->setBold(TRUE);                                               
 
-               			$excel->getActiveSheet()->mergeCells('H'.$i.':I'.$i);                		                		
-                    	$excel->getActiveSheet()->setCellValue('H'.$i,'TOTAL NET')
-                    							->getStyle('H'.$i)->getFont()->setBold(TRUE);                    							
-						$inv_total = 0; 
-                  		$i++;
+                        $excel->getActiveSheet()->mergeCells('H'.$i.':I'.$i);                                               
+                        $excel->getActiveSheet()->setCellValue('H'.$i,'TOTAL NET')
+                                                ->getStyle('H'.$i)->getFont()->setBold(TRUE);                                               
+                        $inv_total = 0; 
+                        $i++;
 
- 							foreach ($purchase_invoice_detailed as $detail) {
-								if($detail->supplier_id==$invoice_number->supplier_id&&$detail->dr_invoice_id==$invoice_number->dr_invoice_id) {
+                            foreach ($purchase_invoice_detailed as $detail) {
+                                if($detail->supplier_id==$invoice_number->supplier_id&&$detail->dr_invoice_id==$invoice_number->dr_invoice_id) {
 
-				                	$border = array(
-									        'borders' => array(
-									            'bottom' => array(
-									                'style' => PHPExcel_Style_Border::BORDER_THICK,
-									                'color' => array('rgb' => '92a8d1')
-									            )
-									        )
-									    );
+                                    $border = array(
+                                            'borders' => array(
+                                                'bottom' => array(
+                                                    'style' => PHPExcel_Style_Border::BORDER_THICK,
+                                                    'color' => array('rgb' => '92a8d1')
+                                                )
+                                            )
+                                        );
 
-				                    $excel->getActiveSheet()
-				                    	  ->getStyle('D'.$i)
-				                    	  ->getAlignment()
-				                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
+                                    $excel->getActiveSheet()
+                                          ->getStyle('D'.$i)
+                                          ->getAlignment()
+                                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
 
-				                    $excel->getActiveSheet()
-				                    	  ->getStyle('F'.$i)
-				                    	  ->getAlignment()
-				                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
+                                    $excel->getActiveSheet()
+                                          ->getStyle('F'.$i)
+                                          ->getAlignment()
+                                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
 
-				                    $excel->getActiveSheet()
-				                    	  ->getStyle('H'.$i)
-				                    	  ->getAlignment()
-				                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
+                                    $excel->getActiveSheet()
+                                          ->getStyle('H'.$i)
+                                          ->getAlignment()
+                                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);  
 
-			               			$excel->getActiveSheet()->mergeCells('A'.$i.':C'.$i);
-			               			$excel->getActiveSheet()->mergeCells('D'.$i.':E'.$i);
-			               			$excel->getActiveSheet()->mergeCells('F'.$i.':G'.$i);		
-			               			$excel->getActiveSheet()->mergeCells('H'.$i.':I'.$i);		
-			               										
-			                    	$excel->getActiveSheet()->setCellValue('A'.$i,$detail->product_desc)
-															->getStyle('A'.$i)->getAlignment()->setIndent(8);			                    	
-                        			$excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');			               			            		                		
-			                    	$excel->getActiveSheet()->setCellValue('D'.$i,number_format($detail->dr_price,2));
+                                    $excel->getActiveSheet()->mergeCells('A'.$i.':C'.$i);
+                                    $excel->getActiveSheet()->mergeCells('D'.$i.':E'.$i);
+                                    $excel->getActiveSheet()->mergeCells('F'.$i.':G'.$i);       
+                                    $excel->getActiveSheet()->mergeCells('H'.$i.':I'.$i);       
+                                                                
+                                    $excel->getActiveSheet()->setCellValue('A'.$i,$detail->product_desc)
+                                                            ->getStyle('A'.$i)->getAlignment()->setIndent(8);                                   
+                                    $excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');                                                                                
+                                    $excel->getActiveSheet()->setCellValue('D'.$i,number_format($detail->dr_price,2));
 
-			                    	$excel->getActiveSheet()->setCellValue('F'.$i,number_format($detail->dr_qty,2));
+                                    $excel->getActiveSheet()->setCellValue('F'.$i,number_format($detail->dr_qty,2));
 
-                        			$excel->getActiveSheet()->getStyle('H'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');			               			   		                		
-			                    	$excel->getActiveSheet()->setCellValue('H'.$i,number_format(($detail->dr_price*$detail->dr_qty),2));
-                					$excel->getActiveSheet()->getStyle('A'.$i.':I'.$i)->applyFromArray($border);                    							
+                                    $excel->getActiveSheet()->getStyle('H'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');                                                                    
+                                    $excel->getActiveSheet()->setCellValue('H'.$i,number_format(($detail->dr_price*$detail->dr_qty),2));
+                                    $excel->getActiveSheet()->getStyle('A'.$i.':I'.$i)->applyFromArray($border);                                                
 
-									$inv_total+=$detail->dr_price*$detail->dr_qty;	
-			                    	$i++;
+                                    $inv_total+=$detail->dr_price*$detail->dr_qty;  
+                                    $i++;
 
-								}
- 							}
-				                    $excel->getActiveSheet()
-				                    	  ->getStyle('A'.$i)
-				                    	  ->getAlignment()
-				                    	  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT); 
+                                }
+                            }
+                                    $excel->getActiveSheet()
+                                          ->getStyle('A'.$i)
+                                          ->getAlignment()
+                                          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT); 
 
-			               			$excel->getActiveSheet()->mergeCells('A'.$i.':I'.$i);
-                        			$excel->getActiveSheet()->getStyle('A'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');			               			   		                					               			
-			                    	$excel->getActiveSheet()->setCellValue('A'.$i,number_format($inv_total,2))
-			                    							->getStyle('A'.$i)->getFont()->setBold(TRUE)
-			                    							->setSize(14);
-			                    	$i++;
+                                    $excel->getActiveSheet()->mergeCells('A'.$i.':I'.$i);
+                                    $excel->getActiveSheet()->getStyle('A'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');                                                                                                        
+                                    $excel->getActiveSheet()->setCellValue('A'.$i,number_format($inv_total,2))
+                                                            ->getStyle('A'.$i)->getFont()->setBold(TRUE)
+                                                            ->setSize(14);
+                                    $i++;
                     }
                     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                     header('Content-Disposition: attachment;filename='."Purchase Invoice Report (Detailed).xlsx".'');
@@ -1092,11 +1092,11 @@
                             $response['msg']='Email Sent successfully.';
 
                             echo json_encode($response);
-                            }	              
-	                }
-	            break;
+                            }                 
+                    }
+                break;
 
-			}
-		}
-	}
+            }
+        }
+    }
 ?>
