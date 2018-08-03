@@ -148,7 +148,16 @@
         #tbl_cash_disbursement_list_filter{
             display: none;
         }
- 
+         div.dataTables_processing{ 
+        position: absolute!important; 
+        top: 0%!important; 
+        right: -45%!important; 
+        left: auto!important; 
+        width: 100%!important; 
+        height: 40px!important; 
+        background: none!important; 
+        background-color: transparent!important; 
+        } 
     </style>
 
 </head>
@@ -256,7 +265,7 @@
                                 <thead class="">
                                 <tr>    
                                     <th></th>
-                                    <th>Txn #</th>
+                                    <th style="width: 15%;">Txn #</th>
                                     <th>Voucher #</th>
                                     <th>Particular</th>
                                     <th>Method</th>
@@ -1082,6 +1091,10 @@ $(document).ready(function(){
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "order": [[ 9, "desc" ]],
+            oLanguage: {
+                    sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+            },
+            processing : true,
             "ajax" : {
                 "url" : "Cash_disbursement/transaction/list",
                 "bDestroy": true,            
