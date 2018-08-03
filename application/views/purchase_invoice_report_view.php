@@ -112,6 +112,15 @@
                                                                          </span>
                                                                     </div>
                                                                 </div>
+                                                                <div class="col-sm-4">
+                                                                    Supplier * : <br />
+                                                                    <select name="supplier" id="cbo_suppliers" data-error-msg="Supplier is required." required style="width: 100%;">
+                                                                        <option value="0">ALL</option>
+                                                                        <?php foreach($suppliers as $supplier){ ?>
+                                                                            <option value="<?php echo $supplier->supplier_id; ?>" data-tax-type="<?php echo $supplier->tax_type_id; ?>" data-contact-person="<?php echo $supplier->contact_name; ?>"><?php echo $supplier->supplier_name; ?></option>
+                                                                        <?php } ?>
+                                                                    </select>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                         <br />
@@ -126,7 +135,7 @@
                                                                     <div id="summary" class="tab-pane fade in active">
                                                                         <button class="btn btn-primary pull-left" id="btn_print_summary"><i class="fa fa-print"></i>&nbsp; Print Report</button>
                                                                         <button class="btn btn-success pull-left" style="margin-left: 5px;" id="btn_export_summary"><i class="fa fa-file-excel-o"></i>&nbsp; Export</button>
-                                                                        <button class="btn btn-success pull-left" style="margin-left: 5px;" id="btn_email_summary"><i class="fa fa-share"></i>&nbsp; Email</button>
+                                                                        <!-- <button class="btn btn-success pull-left" style="margin-left: 5px;" id="btn_email_summary"><i class="fa fa-share"></i>&nbsp; Email</button> -->
                                                                         <table id="tbl_pi_summary" class="table table-striped" cellspacing="0" width="100%">
                                                                             <thead class="">
                                                                             <tr>
@@ -153,7 +162,7 @@
                                                                     <div id="detailed" class="tab-pane fade">
                                                                         <button class="btn btn-primary pull-left" id="btn_print_detailed"><i class="fa fa-print"></i>&nbsp; Print Report</button>
                                                                         <button class="btn btn-success pull-left" style="margin-left: 5px;" id="btn_export_detailed"><i class="fa fa-file-excel-o"></i>&nbsp; Export</button>
-                                                                        <button class="btn btn-success pull-left" style="margin-left: 5px;" id="btn_email_detailed"><i class="fa fa-share"></i>&nbsp; Email</button>                                                                         
+                                                                        <!-- <button class="btn btn-success pull-left" style="margin-left: 5px;" id="btn_email_detailed"><i class="fa fa-share"></i>&nbsp; Email</button>     -->                                                                     
                                                                         <table id="tbl_pi_detailed" class="table table-striped" cellspacing="0" width="100%">
                                                                             <thead class="">
                                                                             <tr>
@@ -241,97 +250,11 @@
         var tbl_summary = $('#tbl_pi_summary');
         var tbl_detailed = $('#tbl_pi_detailed');
         var dtSummary, dtDetailed;
+        var _cboSuppliers;
         var _date_from = $('input[name="date_from"]');
         var _date_to = $('input[name="date_to"]');
 
-        var bindEventControls=function(){
-            // cbo_Type.on('change', function(){
-            //     loadTable();
-            //     (cbo_Type.val() == 0 ? dtDetailed.destroy() : dtSummary.destroy())
-            //     initializeDataTable();
-            // });
 
-            $('#btn_print_summary').on('click', function(){
-                window.open('Purchase_Invoice_Report/transaction/purchase-invoice?type=summary&startDate='+_date_from.val()+'&endDate='+_date_to.val());
-            });
-
-            $('#btn_export_summary').on('click', function(){
-                window.open('Purchase_Invoice_Report/transaction/purchase-invoice-export?type=summary&startDate='+_date_from.val()+'&endDate='+_date_to.val());
-            });
-
-            $('#btn_email_summary').on('click', function(){
-                showNotification({title:"Sending!",stat:"info",msg:"Please wait for a few seconds."});
-
-                var btn=$(this);
-            
-                $.ajax({
-                    "dataType":"json",
-                    "type":"POST",
-                    "url":'Purchase_Invoice_Report/transaction/purchase-invoice-email?type=summary&startDate='+_date_from.val()+'&endDate='+_date_to.val(),
-                    "beforeSend": showSpinningProgress(btn)
-                }).done(function(response){
-                    showNotification(response);
-                    showSpinningProgress(btn);
-
-                }); 
-            });
-
-
-            $('#btn_print_detailed').on('click', function(){
-                window.open('Purchase_Invoice_Report/transaction/purchase-invoice?type=detailed&startDate='+_date_from.val()+'&endDate='+_date_to.val());
-            });
-
-            $('#btn_export_detailed').on('click', function(){
-                window.open('Purchase_Invoice_Report/transaction/purchase-invoice-export?type=detailed&startDate='+_date_from.val()+'&endDate='+_date_to.val());
-            });
-
-            $('#btn_email_detailed').on('click', function(){
-                showNotification({title:"Sending!",stat:"info",msg:"Please wait for a few seconds."});
-
-                var btn=$(this);
-            
-                $.ajax({
-                    "dataType":"json",
-                    "type":"POST",
-                    "url":'Purchase_Invoice_Report/transaction/purchase-invoice-email?type=detailed&startDate='+_date_from.val()+'&endDate='+_date_to.val(),
-                    "beforeSend": showSpinningProgress(btn)
-                }).done(function(response){
-                    showNotification(response);
-                    showSpinningProgress(btn);
-
-                }); 
-            });
-
-            _date_from.on('change', function(){
-                //(cbo_Type.val() == 0 ? dtSummary.destroy() : dtDetailed.destroy())
-                dtSummary.destroy();
-                dtDetailed.destroy();
-                initializeDataTable();
-            });
-
-            _date_to.on('change', function(){
-                //(cbo_Type.val() == 0 ? dtSummary.destroy() : dtDetailed.destroy())
-                dtSummary.destroy();
-                dtDetailed.destroy();
-                initializeDataTable();
-            });
-
-        var showSpinningProgress=function(e){
-            $(e).toggleClass('disabled');
-            $(e).find('span').toggleClass('glyphicon glyphicon-refresh spinning');
-        };
-
-
-        var showNotification=function(obj){
-            PNotify.removeAll(); //remove all notifications
-            new PNotify({
-                title:  obj.title,
-                text:  obj.msg,
-                type:  obj.stat
-            });
-        };
-        
-        }();
 
 
 
@@ -343,6 +266,11 @@
                 calendarWeeks: true,
                 autoclose: true
             });
+
+        _cboSuppliers=$('#cbo_suppliers').select2({
+            placeholder: "Please select supplier first to filter product lookup.",
+            allowClear: false
+        });
 
             initializeDataTable();
         }();
@@ -370,7 +298,9 @@
                         "data": function (d) {
                             return $.extend({}, d, {
                                 "startDate":_date_from.val(),
-                                "endDate":_date_to.val()
+                                "endDate":_date_to.val(),
+                                "sup_id":_cboSuppliers.val()
+
                             });
                         }
                     },
@@ -435,7 +365,8 @@
                         "data": function (d) {
                             return $.extend({}, d, {
                                 "startDate":_date_from.val(),
-                                "endDate":_date_to.val()
+                                "endDate":_date_to.val(),
+                                "sup_id":_cboSuppliers.val()
                             });
                         }
                     },
@@ -496,6 +427,101 @@
 
                 });
         };
+
+                var bindEventControls=function(){
+            // cbo_Type.on('change', function(){
+            //     loadTable();
+            //     (cbo_Type.val() == 0 ? dtDetailed.destroy() : dtSummary.destroy())
+            //     initializeDataTable();cbo_suppliers
+            // });
+
+            $('#btn_print_summary').on('click', function(){
+                window.open('Purchase_Invoice_Report/transaction/purchase-invoice?type=summary&startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&sup_id='+_cboSuppliers.val());
+            });
+
+            $('#btn_export_summary').on('click', function(){
+                window.open('Purchase_Invoice_Report/transaction/purchase-invoice-export?type=summary&startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&sup_id='+_cboSuppliers.val());
+            });
+
+            $('#btn_email_summary').on('click', function(){
+                showNotification({title:"Sending!",stat:"info",msg:"Please wait for a few seconds."});
+
+                var btn=$(this);
+            
+                $.ajax({
+                    "dataType":"json",
+                    "type":"POST",
+                    "url":'Purchase_Invoice_Report/transaction/purchase-invoice-email?type=summary&startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&sup_id='+_cboSuppliers.val(),
+                    "beforeSend": showSpinningProgress(btn)
+                }).done(function(response){
+                    showNotification(response);
+                    showSpinningProgress(btn);
+
+                }); 
+            });
+
+
+            $('#btn_print_detailed').on('click', function(){
+                window.open('Purchase_Invoice_Report/transaction/purchase-invoice?type=detailed&startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&sup_id='+_cboSuppliers.val());
+            });
+
+            $('#btn_export_detailed').on('click', function(){
+                window.open('Purchase_Invoice_Report/transaction/purchase-invoice-export?type=detailed&startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&sup_id='+_cboSuppliers.val());
+            });
+
+            $('#btn_email_detailed').on('click', function(){
+                showNotification({title:"Sending!",stat:"info",msg:"Please wait for a few seconds."});
+
+                var btn=$(this);
+            
+                $.ajax({
+                    "dataType":"json",
+                    "type":"POST",
+                    "url":'Purchase_Invoice_Report/transaction/purchase-invoice-email?type=detailed&startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&sup_id='+_cboSuppliers.val(),
+                    "beforeSend": showSpinningProgress(btn)
+                }).done(function(response){
+                    showNotification(response);
+                    showSpinningProgress(btn);
+
+                }); 
+            });
+
+            _date_from.on('change', function(){
+                //(cbo_Type.val() == 0 ? dtSummary.destroy() : dtDetailed.destroy())
+                dtSummary.destroy();
+                dtDetailed.destroy();
+                initializeDataTable();
+            });
+
+            _date_to.on('change', function(){
+                //(cbo_Type.val() == 0 ? dtSummary.destroy() : dtDetailed.destroy())
+                dtSummary.destroy();
+                dtDetailed.destroy();
+                initializeDataTable();
+            });
+
+            _cboSuppliers.on("select2:select", function (e) {
+                dtSummary.destroy();
+                dtDetailed.destroy();
+                initializeDataTable();
+
+            });
+        var showSpinningProgress=function(e){
+            $(e).toggleClass('disabled');
+            $(e).find('span').toggleClass('glyphicon glyphicon-refresh spinning');
+        };
+
+
+        var showNotification=function(obj){
+            PNotify.removeAll(); //remove all notifications
+            new PNotify({
+                title:  obj.title,
+                text:  obj.msg,
+                type:  obj.stat
+            });
+        };
+        
+        }();
 
     });
 </script>

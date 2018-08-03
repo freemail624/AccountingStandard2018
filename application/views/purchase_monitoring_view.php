@@ -58,7 +58,19 @@
     <!-- numeric formatter -->
     <script src="assets/plugins/formatter/autoNumeric.js" type="text/javascript"></script>
     <script src="assets/plugins/formatter/accounting.js" type="text/javascript"></script>
-
+<style type="text/css">
+            div.dataTables_processing{ 
+                position: absolute!important; 
+                top: 0%!important; 
+                right: -45%!important; 
+                left: auto!important; 
+                width: 100%!important; 
+                height: 40px!important; 
+                background: none!important; 
+                background-color: transparent!important; 
+        } 
+    
+</style>
     <script>
 
 $(document).ready(function(){
@@ -82,6 +94,10 @@ $(document).ready(function(){
             "order": [[ 7, "desc" ]],
              "searching": false,
             // "scrollX": true,
+            oLanguage: {
+                    sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+            },
+            processing : true,
             "ajax": {
               "url":"Purchase_monitoring/transaction/list",
               "type":"GET",
@@ -103,7 +119,7 @@ $(document).ready(function(){
                 { targets:[4],data: "supplier_name" },
                 { targets:[5],data: "date_delivered" },
                 { targets:[6],data: "dr_invoice_no" },
-                { targets:[7],data: "dr_invoice_id" }
+                { targets:[7],data: "dr_invoice_id" , visible:false}
 
 
 
