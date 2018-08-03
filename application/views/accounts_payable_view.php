@@ -135,6 +135,16 @@
         #tbl_account_payables_filter{
             display: none;
         }
+        div.dataTables_processing{ 
+        position: absolute!important; 
+        top: 0%!important; 
+        right: -45%!important; 
+        left: auto!important; 
+        width: 100%!important; 
+        height: 40px!important; 
+        background: none!important; 
+        background-color: transparent!important; 
+        } 
     </style>
 
 </head>
@@ -777,6 +787,10 @@
             dt=$('#tbl_account_payables').DataTable({
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
+                oLanguage: {
+                        sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+                },
+                processing : true,
                 "order": [[ 8, "desc" ]],
                 "ajax" : {
                     "url" :  "Account_payables/transaction/list",
