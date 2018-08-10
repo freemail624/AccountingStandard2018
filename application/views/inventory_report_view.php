@@ -122,6 +122,9 @@
         #img_user {
             padding-bottom: 15px;
         }
+        .hidden{
+            display: none;
+        }
     </style>
 
 </head>
@@ -182,6 +185,25 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
+                                                            <br>
+                                                            <button class="btn btn-primary" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Print" >
+                                                                <i class="fa fa-print"></i> Print Report</button>&nbsp;
+
+                                                            <button class="btn btn-success" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Export" >
+                                                                <i class="fa fa-file-excel-o"></i> Export</button>
+
+                                                            <button class="btn btn-success" id="btn_email" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Email" >
+                                                                <i class="fa fa-share"></i> Email</button>
+
+                                                            <button class="btn btn-green" id="btn_refresh" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Reload" >
+                                                                <i class="fa fa-refresh"></i></button>
+
+
+                                                            <button class="btn btn-primary <?php echo (in_array('7-2',$this->session->user_rights)?'':'hidden'); ?>" id="btn_print_detailed" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Print" >
+                                                                <i class="fa fa-print"></i> Print Detailed</button>
+
+                                                            <button class="btn btn-success <?php echo (in_array('7-2',$this->session->user_rights)?'':'hidden'); ?>" id="btn_export_detailed" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Export" >
+                                                                <i class="fa fa-file-excel-o"></i> Export Detailed</button>
                                                         <br />
 
                                                         <div >
@@ -287,7 +309,7 @@
 
             reloadList();
 
-            createToolBarButton();
+            // createToolBarButton();
 
 
 
@@ -315,9 +337,17 @@
                 window.open('Inventory/transaction/preview-inventory?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val());
             });
 
+            $(document).on('click','#btn_print_detailed',function(){
+                window.open('Inventory/transaction/preview-inventory-with-total?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val());
+            });
+
 
             $(document).on('click','#btn_export',function(){
                 window.open('Inventory/transaction/export-inventory?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val());
+            });
+
+            $(document).on('click','#btn_export_detailed',function(){
+                window.open('Inventory/transaction/export-inventory-with-total?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val());
             });
 
             $(document).on('click','#btn_email',function(){
@@ -399,21 +429,30 @@
             });
         };
 
-        function createToolBarButton(){
-            var _btnPrint='<button class="btn btn-primary" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Print" >'+
-                '<i class="fa fa-print"></i> Print Report</button>';
+        // function createToolBarButton(){
+        //     var _btnPrint='<button class="btn btn-primary" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Print" >'+
+        //         '<i class="fa fa-print"></i> Print Report</button>';
 
-            var _btnExport='<button class="btn btn-success" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Export" >'+
-                '<i class="fa fa-file-excel-o"></i> Export</button>';
+        //     var _btnExport='<button class="btn btn-success" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Export" >'+
+        //         '<i class="fa fa-file-excel-o"></i> Export</button>';
 
-            var _btnEmail='<button class="btn btn-success" id="btn_email" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Email" >'+
-                '<i class="fa fa-share"></i> Email</button>';
+        //     var _btnEmail='<button class="btn btn-success" id="btn_email" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Email" >'+
+        //         '<i class="fa fa-share"></i> Email</button>';
 
-            var _btnRefresh='<button class="btn btn-green" id="btn_refresh" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Reload" >'+
-                '<i class="fa fa-refresh"></i></button>';
+        //     var _btnRefresh='<button class="btn btn-green" id="btn_refresh" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Reload" >'+
+        //         '<i class="fa fa-refresh"></i></button>';
 
-            $("div.toolbar").html(_btnPrint+"&nbsp;"+_btnExport+"&nbsp;"+_btnEmail+"&nbsp;"+_btnRefresh);
-        };
+
+        //     var _btnPrintDetailed='<button class="btn btn-primary" id="btn_print_detailed" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Print" >'+
+        //         '<i class="fa fa-print"></i> Print Detailed</button>';
+
+        //     var _btnExportDetailed='<button class="btn btn-success" id="btn_export_detailed" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Export" >'+
+        //         '<i class="fa fa-file-excel-o"></i> Export Detailed</button>';
+
+
+
+        //     $("div.toolbar").html(_btnPrint+"&nbsp;"+_btnExport+"&nbsp;"+_btnRefresh+"&nbsp;"+_btnPrintDetailed+"&nbsp;"+_btnExportDetailed);
+        // };
 
 
 
