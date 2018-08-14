@@ -36,9 +36,9 @@
 	        $data['title'] = 'Purchases Integration Control Panel';
 	        $data['accounts']=$this->Account_title_model->get_list('is_active=TRUE AND is_deleted=FALSE');
 	        $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE');
-        // (in_array('16-1',$this->session->user_rights)? 
-        $this->load->view('purchases_integration_view',$data);
-        // :redirect(base_url('dashboard')));
+        (in_array('2-9',$this->session->user_rights)? 
+        $this->load->view('purchases_integration_view',$data)
+        :redirect(base_url('dashboard')));
 	        
 		}
 

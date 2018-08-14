@@ -21,7 +21,7 @@ class Rights_link_model extends CORE_Model{
                                           (10,'15','15-3','Item Adjustment'),
                                           (11,'3','3-1','Sales Order'),
                                           (12,'3','3-2','Sales Invoice'),
-                                          (13,'3','3-3','Record Payment'),
+                                          (13,'3','3-3','Collection Entry'),
                                           (14,'4','4-2','Category Management'),
                                           (15,'4','4-3','Department Management'),
                                           (16,'4','4-4','Unit Management'),
@@ -95,7 +95,9 @@ class Rights_link_model extends CORE_Model{
                                           (85,'15','15-5','Item Transfer to Department'),
                                           (86,'15','15-6','Stock Card / Bin Card'),
                                           (87,'3','3-5','Warehouse Dispatching'),
-                                          (88,'4','4-7','Brands')
+                                          (88,'4','4-7','Brands'),
+                                          (89,'2','2-9','Purchasing Integration')
+
                                           ON DUPLICATE KEY UPDATE
                                           rights_links.parent_code=VALUES(rights_links.parent_code),
                                           rights_links.link_code=VALUES(rights_links.link_code),
