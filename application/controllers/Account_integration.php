@@ -12,6 +12,7 @@ class Account_integration extends CORE_Controller
                 'Account_integration_model',
                 'Account_year_model',
                 'Users_model',
+                'Departments_model',
                 'Invoice_counter_model',
                 'Accounting_period_model',
                 'Journal_info_model',
@@ -34,6 +35,7 @@ class Account_integration extends CORE_Controller
         $data['title'] = 'Account Integration';
 
         $data['accounts'] = $this->Account_title_model->get_list(array('is_deleted'=>FALSE));
+        $data['departments'] = $this->Departments_model->get_list(array('is_deleted'=>FALSE));
         $current_accounts= $this->Account_integration_model->get_list();
         $data['current_accounts'] =$current_accounts[0];
         $data['users_counter']=$this->Users_model->get_user_invoice_counter();
@@ -107,6 +109,8 @@ class Account_integration extends CORE_Controller
                 $m_integration->payable_account_id=$this->input->post('payable_account_id',TRUE);
                 $m_integration->payable_discount_account_id=$this->input->post('payable_discount_account_id',TRUE);
                 $m_integration->payment_to_supplier_id=$this->input->post('payment_to_supplier_id',TRUE);
+                $m_integration->supplier_inventory_debit_account_id=$this->input->post('supplier_inventory_debit_account_id',TRUE);
+                $m_integration->purchases_department_id=$this->input->post('purchases_department_id',TRUE);
 
                 //customers
                 $m_integration->output_tax_account_id=$this->input->post('output_tax_account_id',TRUE);

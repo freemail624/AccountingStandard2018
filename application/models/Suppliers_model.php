@@ -67,9 +67,9 @@ class Suppliers_model extends CORE_Model {
         ji.txn_no,
         ji.journal_id,
         s.supplier_name,
-        IFNULL(di.terms,ji.remarks) terms,
+        COALESCE(di.terms,pi.terms) terms,
         di.date_due,
-        IFNULL(di.remarks,ji.remarks) remarks,
+        COALESCE(di.remarks,pi.remarks,ji.remarks) remarks,
         IFNULL(ref_no, txn_no) inv_no,
         SUM(ja.cr_amount)  as journal_payable_amount
         FROM
@@ -77,6 +77,7 @@ class Suppliers_model extends CORE_Model {
         INNER JOIN journal_accounts ja ON ja.journal_id = ji.journal_id)
         LEFT JOIN suppliers s ON s.supplier_id = ji.supplier_id
         LEFT JOIN delivery_invoice di ON di.dr_invoice_no = ji.ref_no
+        LEFT JOIN purchase_integration pi  ON pi.purchase_integration_id = ji.pos_integration_id AND pi.invoice_no = ji.ref_no
         WHERE
         ji.is_deleted=FALSE
         AND ji.is_active=TRUE

@@ -228,6 +228,34 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                         </div>
 
 
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> * Inventory Account :</label>
+                            <div class="col-md-7">
+                                <select name="supplier_inventory_debit_account_id"  class="cbo_accounts" data-error-msg="Supplier Inventory Account is required." required>
+
+                                    <?php foreach($accounts as $account){ ?>
+                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->supplier_inventory_debit_account_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
+                                    <?php } ?>
+                                </select>
+
+                                <span class="help-block m-b-none">Please select the account where Inventory from supplier will be debited. <br><i>(Only used in Purchase Integration Module)</i></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> * Department in Purchases Integration :</label>
+                            <div class="col-md-7">
+                                <select name="purchases_department_id"  class="cbo_accounts" data-error-msg="Default Department for Purchases Integration is required." required>
+
+                                    <?php foreach($departments as $department){ ?>
+                                        <option value="<?php echo $department->department_id; ?>" <?php echo ($current_accounts->purchases_department_id==$department->department_id?'selected':''); ?>><?php echo $department->department_name; ?></option>
+                                    <?php } ?>
+                                </select>
+
+                                <span class="help-block m-b-none">Please select the default Department used in finalizing Purchase Integration (System Integration) <br><i>(Only used in Purchase Integration Module)</i></span>
+                            </div>
+                        </div>
+
 
                         <br >
                         <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Customer Integration Account</strong></span></h4>
