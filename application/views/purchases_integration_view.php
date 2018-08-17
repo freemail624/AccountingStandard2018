@@ -100,7 +100,7 @@ input[type=checkbox]
                 <div class="page-content"><!-- #page-content -->
                     <ol class="breadcrumb">
                         <li><a href="dashboard">Dashboard</a></li>
-                        <li><a href="Hotel_system">Purchases | Integration Control Panel</a></li>
+                        <li><a href="Purchases_integration">Purchases | Integration Control Panel</a></li>
                     </ol>
                     <div class="container-fluid">
                         <div class="panel panel-default">
