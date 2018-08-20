@@ -94,7 +94,11 @@ class Cash_invoice extends CORE_Controller
         switch ($txn){
             case 'list':
             $m_pf_invoice = $this->Cash_invoice_model;
-            $response['data']=$this->response_rows();
+
+            $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
+            $ted = date('Y-m-d',strtotime($this->input->get('ted')));
+            $additional = " AND DATE(cash_invoice.date_invoice) BETWEEN '$tsd' AND '$ted'";
+            $response['data']=$this->response_rows(null,null,$additional);
                     echo json_encode($response);
 
         
@@ -167,7 +171,7 @@ class Cash_invoice extends CORE_Controller
                 $m_invoice->email_address=$this->input->post('email_address',TRUE);
                 $m_invoice->contact_person=$this->input->post('contact_person',TRUE);
                 $m_invoice->date_due=date('Y-m-d',strtotime($this->input->post('date_due',TRUE)));
-                $m_invoice->date_invoice=date('Y-m-d',strtotime($this->input->post('date_invoice',TRUE)));
+                $m_invoice->date_invoice=date('Y-m-d',strtotime("now"));
                 $m_invoice->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                 $m_invoice->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                 $m_invoice->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
@@ -286,7 +290,8 @@ class Cash_invoice extends CORE_Controller
                     $m_invoice->salesperson_id=$this->input->post('salesperson_id',TRUE);
                     $m_invoice->contact_no=$this->input->post('contact_no',TRUE);
                     $m_invoice->email_address=$this->input->post('email_address',TRUE);
-                    $m_invoice->date_invoice=date('Y-m-d',strtotime($this->input->post('date_invoice',TRUE)));
+                    // $m_invoice->date_invoice=date('Y-m-d',strtotime($this->input->post('date_invoice',TRUE)));
+                    // Invoice Date Updating forbidden
                     $m_invoice->contact_person=$this->input->post('contact_person',TRUE);
                     $m_invoice->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
                     $m_invoice->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
@@ -464,9 +469,9 @@ class Cash_invoice extends CORE_Controller
     }
 
 
-    function response_rows($id_filter=null,$show_unposted=FALSE){
+    function response_rows($id_filter=null,$show_unposted=FALSE,$additional=null){
         return $this->Cash_invoice_model->get_list(
-            'cash_invoice.is_active = TRUE AND cash_invoice.is_deleted = FALSE '.($id_filter==null?'':' AND cash_invoice.cash_invoice_id='.$id_filter). ($show_unposted==FALSE?"":" AND cash_invoice.is_journal_posted=FALSE "),
+            'cash_invoice.is_active = TRUE AND cash_invoice.is_deleted = FALSE '.($id_filter==null?'':' AND cash_invoice.cash_invoice_id='.$id_filter).''.($additional==null?'':$additional).''. ($show_unposted==FALSE?"":" AND cash_invoice.is_journal_posted=FALSE "),
             array(
                 'cash_invoice.*',
                 'DATE_FORMAT(cash_invoice.date_invoice,"%m/%d/%Y") as date_invoice',

@@ -1758,7 +1758,7 @@ $(document).ready(function(){
             _selectedID=data.product_id;
 
             clearFields('#frm_product');
-             $('input,textarea,select').each(function(){
+             $('input:not(.numeric),textarea,select').each(function(){
                 var _elem=$(this);
                 $.each(data,function(name,value){
                     if(_elem.attr('name')==name){
@@ -1778,6 +1778,16 @@ $(document).ready(function(){
             _cboTaxGroup.select2('val',data.tax_type_id);
             _cboPrimaryUnit.select2('val',data.primary_unit);
             _cboBrands.select2('val',data.brand_id);
+
+             $('input.numeric').each(function(){
+                var _elem=$(this);
+                $.each(data,function(name,value){
+                    if(_elem.attr('name')==name){
+                        _elem.val(accounting.formatNumber(value,2));
+                    }
+                });
+            });
+
             $('#is_tax_exempt').prop('checked', (data.is_tax_exempt==1?true:false));
             $('#is_bulk').prop('checked', (data.is_bulk==1?true:false));
 

@@ -1133,7 +1133,7 @@ $(document).ready(function(){
                         net_vat = getFloat(net_vat) / getFloat(suggestion.child_unit_desc);
                         vat_input = getFloat(vat_input) / getFloat(suggestion.child_unit_desc);
                 }                
-                $('#tbl_items > tbody').append(newRowItem({
+                $('#tbl_items > tbody').prepend(newRowItem({
                     so_qty : "1",
                     product_code : suggestion.product_code,
                     size : suggestion.size,
@@ -1458,7 +1458,7 @@ $(document).ready(function(){
                             retail_price = 0;
                         }
  
-                        $('#tbl_items > tbody').append(newRowItem({
+                        $('#tbl_items > tbody').prepend(newRowItem({
                             so_gross:value.so_gross,
                             so_qty : value.so_qty,
                             product_code : value.product_code,

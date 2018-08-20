@@ -159,7 +159,7 @@
                     <th>Invoice No</th>
                     <th>Date Adjusted</th>
                     <th>Department</th>
-                    <th>Remarks</th>
+                    <th style="width: 20%;">Remarks</th>
                     <th>Adjustment</th>
                     <th><center>Action</center></th>
                     <th></th>
@@ -674,7 +674,7 @@ $(document).ready(function(){
                         return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                     }
                 },
-                { targets:[8],data: "adjustment_id" }
+                { targets:[8],data: "adjustment_id",visible:false }
             ]
 
         });
