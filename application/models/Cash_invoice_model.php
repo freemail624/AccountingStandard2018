@@ -21,7 +21,7 @@ class Cash_invoice_model extends CORE_Model
 		 FROM
 		(SELECT cii.product_id,
 
-		(SELECT cash_invoice_debit_id FROM account_integration) as account_id
+		(SELECT payment_from_customer_id FROM account_integration) as account_id
 		,
 		'' as memo,
 		0 cr_amount,
