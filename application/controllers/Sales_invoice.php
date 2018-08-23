@@ -158,18 +158,21 @@ class Sales_invoice extends CORE_Controller
                 break;
 
 
+            // case 'list':  //this returns JSON of Issuance to be rendered on Datatable
+            //     $m_invoice=$this->Sales_invoice_model;
+            //     $response['data']=$this->response_rows(
+            //         'sales_invoice.is_active=TRUE AND sales_invoice.is_deleted=FALSE'.($id_filter==null?'':' AND sales_invoice.sales_invoice_id='.$id_filter),
+            //         'sales_invoice.sales_invoice_id DESC'
+            //     );
+            //     echo json_encode($response);
+            //     break;
+
             case 'list':  //this returns JSON of Issuance to be rendered on Datatable
                 $m_invoice=$this->Sales_invoice_model;
-                $response['data']=$this->response_rows(
-                    'sales_invoice.is_active=TRUE AND sales_invoice.is_deleted=FALSE'.($id_filter==null?'':' AND sales_invoice.sales_invoice_id='.$id_filter),
-                    'sales_invoice.sales_invoice_id DESC'
-                );
-                echo json_encode($response);
-                break;
-
-            case 'list_with_count':  //this returns JSON of Issuance to be rendered on Datatable
-                $m_invoice=$this->Sales_invoice_model;
-                $response['data']=$this->response_rows_count($id_filter);
+                $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
+                $ted = date('Y-m-d',strtotime($this->input->get('ted')));
+                $additional = " AND DATE(sales_invoice.date_invoice) BETWEEN '$tsd' AND '$ted'";
+                $response['data']=$this->response_rows($id_filter,$additional);
                 echo json_encode($response);
                 break;
 
@@ -249,7 +252,7 @@ class Sales_invoice extends CORE_Controller
                 $m_invoice->remarks=$this->input->post('remarks',TRUE);
                 $m_invoice->contact_person=$this->input->post('contact_person',TRUE);
                 $m_invoice->date_due=date('Y-m-d',strtotime($this->input->post('date_due',TRUE)));
-                $m_invoice->date_invoice=date('Y-m-d',strtotime($this->input->post('date_invoice',TRUE)));
+                $m_invoice->date_invoice=date('Y-m-d',strtotime("now"));
                 $m_invoice->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                 $m_invoice->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                 $m_invoice->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
@@ -393,7 +396,7 @@ class Sales_invoice extends CORE_Controller
                     $m_invoice->salesperson_id=$this->input->post('salesperson_id',TRUE);
                     $m_invoice->sales_order_id=$sales_order_id;
                     $m_invoice->date_due=date('Y-m-d',strtotime($this->input->post('date_due',TRUE)));
-                    $m_invoice->date_invoice=date('Y-m-d',strtotime($this->input->post('date_invoice',TRUE)));
+                    // $m_invoice->date_invoice=date('Y-m-d',strtotime($this->input->post('date_invoice',TRUE)));
                     $m_invoice->contact_person=$this->input->post('contact_person',TRUE);
                     $m_invoice->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
                     $m_invoice->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
@@ -691,29 +694,20 @@ class Sales_invoice extends CORE_Controller
 
 
 //**************************************user defined*************************************************
-    function response_rows($filter_value){
+    function response_rows($filter_value,$additional=null){
         return $this->Sales_invoice_model->get_list(
-            $filter_value,
+            'sales_invoice.is_active = TRUE AND sales_invoice.is_deleted = FALSE '.($filter_value==null?'':' AND sales_invoice.sales_invoice_id='.$filter_value).''.($additional==null?'':$additional),
             array(
-                'sales_invoice.sales_invoice_id',
-                'sales_invoice.sales_inv_no',
-                'sales_invoice.remarks', 
-                'sales_invoice.date_created',
-                'sales_invoice.customer_id',
-                'sales_invoice.inv_type',
-                'sales_invoice.contact_person',
-                'sales_invoice.customer_type_id',
-                'sales_invoice.order_source_id',
-                'sales_invoice.for_dispatching',
+                'sales_invoice.*',
                 'DATE_FORMAT(sales_invoice.date_invoice,"%m/%d/%Y") as date_invoice',
                 'DATE_FORMAT(sales_invoice.date_due,"%m/%d/%Y") as date_due',
                 'departments.department_id',
                 'departments.department_name',
                 'customers.customer_name',
-                'sales_invoice.salesperson_id',
-                'sales_invoice.address',
                 'sales_order.so_no'
             ),
+
+
             array(
                 array('departments','departments.department_id=sales_invoice.department_id','left'),
                 array('customers','customers.customer_id=sales_invoice.customer_id','left'),
@@ -723,9 +717,9 @@ class Sales_invoice extends CORE_Controller
         );
     }
 
-    function response_rows_count($filter_value){
-        return $this->Sales_invoice_model->list_with_count($filter_value);
-    }
+    // function response_rows_count($filter_value){
+    //     return $this->Sales_invoice_model->list_with_count($filter_value);
+    // }
 
 
 

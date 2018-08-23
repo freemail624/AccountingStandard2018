@@ -113,36 +113,7 @@ class Sales_invoice_model extends CORE_Model
 
 function get_journal_entries_2($sales_invoice_id){
 
-$sql="SELECT main.* FROM(SELECT
-            p.income_account_id as account_id,
-            '' as memo,
-            SUM(sii.inv_non_tax_amount) cr_amount,
-            0 as dr_amount
-
-            FROM `sales_invoice_items` as sii
-            INNER JOIN products as p ON sii.product_id=p.product_id
-            WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
-            GROUP BY p.income_account_id
-
-            UNION ALL
-
-
-            SELECT output_tax.account_id,output_tax.memo,
-            SUM(output_tax.cr_amount)as cr_amount,0 as dr_amount
-             FROM
-            (SELECT sii.product_id,
-
-            (SELECT output_tax_account_id FROM account_integration) as account_id
-            ,
-            '' as memo,
-            SUM(sii.inv_tax_amount) as cr_amount,
-            0 as dr_amount
-            FROM `sales_invoice_items` as sii
-            INNER JOIN products as p ON sii.product_id=p.product_id
-            WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
-            )as output_tax GROUP BY output_tax.account_id
-
-            UNION ALL
+$sql="SELECT main.* FROM(
             SELECT acc_receivable.account_id,acc_receivable.memo,
             0 as cr_amount,SUM(acc_receivable.dr_amount) as dr_amount
              FROM
@@ -177,6 +148,36 @@ $sql="SELECT main.* FROM(SELECT
             WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
             ) as acc_discount GROUP BY acc_discount.account_id
 
+            UNION ALL
+
+            SELECT
+            p.income_account_id as account_id,
+            '' as memo,
+            SUM(sii.inv_non_tax_amount) cr_amount,
+            0 as dr_amount
+
+            FROM `sales_invoice_items` as sii
+            INNER JOIN products as p ON sii.product_id=p.product_id
+            WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
+            GROUP BY p.income_account_id
+
+            UNION ALL
+
+
+            SELECT output_tax.account_id,output_tax.memo,
+            SUM(output_tax.cr_amount)as cr_amount,0 as dr_amount
+             FROM
+            (SELECT sii.product_id,
+
+            (SELECT output_tax_account_id FROM account_integration) as account_id
+            ,
+            '' as memo,
+            SUM(sii.inv_tax_amount) as cr_amount,
+            0 as dr_amount
+            FROM `sales_invoice_items` as sii
+            INNER JOIN products as p ON sii.product_id=p.product_id
+            WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
+            )as output_tax GROUP BY output_tax.account_id
             )as main WHERE main.dr_amount>0 OR main.cr_amount>0
             
 
@@ -718,7 +719,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
               GROUP BY sii.product_id";
          return $this->db->query($sql)->result();
     }
-
+// NOT IN USE AS  OF 08222018 // REMOVED THIS BECAUSE COUNT IS NOT NEEDED ANYMORE
     function list_with_count($filter_id){
     $sql="SELECT
         si.*,
@@ -731,24 +732,10 @@ GROUP BY n.customer_id HAVING total_balance > 0";
         departments.department_id,
         departments.department_name,
         customers.customer_name,
-        sales_order.so_no,
-
-
-        IFNULL(count.count,0) as count
+        sales_order.so_no
         FROM sales_invoice AS si
 
-        LEFT JOIN
 
-        (SELECT
-        rp.payment_id,
-        rpl.sales_invoice_id,
-        count(sales_invoice_id) AS count
-        FROM receivable_payments_list AS rpl
-        LEFT JOIN receivable_payments AS rp ON rp.payment_id = rpl.payment_id
-        WHERE rp.is_active= TRUE AND rp.is_deleted = FALSE
-        group by rpl.sales_invoice_id) AS count
-
-        ON count.sales_invoice_id = si.sales_invoice_id
         LEFT JOIN departments ON departments.department_id=si.department_id
         LEFT JOIN customers  ON customers.customer_id=si.customer_id
         LEFT JOIN sales_order ON sales_order.sales_order_id=si.sales_order_id

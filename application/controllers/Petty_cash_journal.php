@@ -45,7 +45,7 @@
 	        );
 	        $data['account_titles'] = $this->Account_title_model->get_list(array('is_deleted'=>FALSE));
 	        $data['accounts']=$this->Account_title_model->get_list(
-	        	'account_titles.is_deleted=FALSE AND account_titles.is_active=TRUE AND ac.account_type_id=5',
+	        	'account_titles.is_deleted=FALSE AND account_titles.is_active=TRUE',
 	        	'account_titles.account_title,
 	        	account_titles.account_no,
 	        	account_titles.account_id,

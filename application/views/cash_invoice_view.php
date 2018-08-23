@@ -223,8 +223,8 @@
                             </select>
                         </div>
                         <div class="col-sm-3">
-                            <label>Salesperson :</label><br/>
-                            <select name="salesperson_id" id="cbo_salesperson">
+                           <b class="required">*</b> <label>Salesperson :</label><br/>
+                            <select name="salesperson_id" id="cbo_salesperson" required  data-error-msg="Salesperson is required." required> >
                                 <option value="0">[ Create New Salesperson ]</option>
                                 <?php foreach($salespersons as $salesperson){ ?>
                                     <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->acr_name.' - '.$salesperson->fullname; ?></option>
@@ -242,8 +242,8 @@
                         </div>
                         
                         <div class="col-sm-2 ">
-                            <label>Invoice Date :</label><br /><i><label id="label_invoice_default"> </label></i> 
-                            <div class="input-group" style="display:none;">
+                            <b class="required">*</b><label>Invoice Date :</label></i> 
+                            <div class="input-group">
                                 <input type="text" name="date_invoice" id="invoice_default" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date Invoice" data-error-msg="Please set the date this items are issued!" required>
                                  <span class="input-group-addon">
                                      <i class="fa fa-calendar"></i>
@@ -1592,9 +1592,6 @@ $(document).ready(function(){
             _is_journal_posted=data.is_journal_posted;
             if(_is_journal_posted > 0){
                 showNotification({title:"<b style='color:white;'> Error!</b>",stat:"error",msg:"Cannot Edit: Invoice is already Posted in Cash Receipt Journal."});
-            }
-            else if(_count > 0){
-                showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Cannot Edit: Invoice is already in use in Collection Entry."});
             }
             else
             {
