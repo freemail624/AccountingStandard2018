@@ -846,7 +846,7 @@ $(document).ready(function(){
                         return '<center>'+btn_edit+"&nbsp;"+btn_trash+'</center>';
                     }
                 },
-                { targets:[8],data: "cash_invoice_id" },
+                { targets:[8],data: "cash_invoice_id", visible:false },
             ]
         });
         dt_so=$('#tbl_so_list').DataTable({
@@ -1425,16 +1425,10 @@ $(document).ready(function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.cash_invoice_id;
-            _count=data.count;
             _is_journal_posted=data.is_journal_posted;
             if(_is_journal_posted > 0){
                 showNotification({title:"<b style='color:white;'> Error!</b>",stat:"error",msg:"Cannot Edit: Invoice is already Posted in Cash Receipt Journal."});
-            }
-            else if(_count > 0){
-                showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Cannot Edit: Invoice is already in use in Collection Entry."});
-            }
-            else
-            {
+            } else {
 
             getproduct().done(function(data){
                 products.clear();
@@ -1557,23 +1551,12 @@ $(document).ready(function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.cash_invoice_id;
-            _count=data.count;
             _is_journal_posted=data.is_journal_posted;
             if(_is_journal_posted > 0){
                 showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Cannot Delete: Invoice is already Posted in Cash Receipt Journal."});
+            } else {
+                $('#modal_confirmation').modal('show');
             }
-            else if(_count > 0){
-                showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Cannot Edit: Invoice is already in use in Collection Entry."});
-            }
-            else
-            {
-
-            _selectRowObj=$(this).closest('tr');
-            var data=dt.row(_selectRowObj).data();
-            _selectedID=data.cash_invoice_id;
-            //alert(_selectedID);
-            $('#modal_confirmation').modal('show');
-        }
         });
         //track every changes on numeric fields
         $('#txt_overall_discount').on('keyup',function(){
