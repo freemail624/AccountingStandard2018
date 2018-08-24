@@ -128,7 +128,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-md-3 control-label"> <b class="required"> * </b> Debit Account :</label>
+                            <label class="col-md-3 control-label"> <b class="required"> * </b> Inventory Account:</label>
                             <div class="col-md-7">
                                 <select name="iss_debit_id" class="cbo_accounts" data-error-msg="Debit Account is required." required>
                                     <?php foreach($accounts as $account){ ?>
