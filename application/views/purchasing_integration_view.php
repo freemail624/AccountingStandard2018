@@ -128,7 +128,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-md-3 control-label"> <b class="required"> * </b> Debit Account :</label>
+                            <label class="col-md-3 control-label"> <b class="required"> * </b> Inventory Account :</label>
                             <div class="col-md-7">
                                 <select name="iss_debit_id" class="cbo_accounts" data-error-msg="Debit Account is required." required>
                                     <?php foreach($accounts as $account){ ?>
@@ -137,12 +137,9 @@
                                 </select>
                             <span class="help-block m-b-none">Please Choose Account for Inventory Transfer Items</span>
                             </div><br>
-                            
                         </div>
-                     
                         <br>
                         <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Adjustment Details</strong></span></h4>
-
                         <div class="form-group">
                             <label class="col-md-3 control-label"> <b class="required"> * </b> Adjustment Supplier :</label>
                             <div class="col-md-7">
