@@ -148,27 +148,201 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
 <div data-widget-group="group1">
 <div class="row">
     <div class="col-md-12">
-
-
-
         <div class="tab-container tab-top tab-primary">
             <ul class="nav nav-tabs">
-                <li class="active"><a href="#accounts_integration_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-gear"></i> Accounts</a></li>
+                <li class="active"><a href="#accounts_integration_setting_supplier" data-toggle="tab" style="font-family: tahoma;"> Supplier</a></li>
+                <li><a href="#accounts_integration_setting_customer" data-toggle="tab" style="font-family: tahoma;"> Customer</a></li>
+                <li><a href="#accounts_integration_setting_inventory" data-toggle="tab" style="font-family: tahoma;"> Inventory</a></li>
+                <li><a href="#accounts_integration_setting" data-toggle="tab" style="font-family: tahoma;"> Other Accounts</a></li>
+                <li><a href="#accounts_integration_adjustment" data-toggle="tab" style="font-family: tahoma;">Adjustments</a></li>
+                <li><a href="#accounts_integration_item_transfer" data-toggle="tab" style="font-family: tahoma;">Item Transfer</a></li>
                 <!-- <li class=""><a href="#sched_expense_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-gear"></i> Expense Group (Schedule of Expense)</a></li> -->
-                <li class=""><a href="#account_year_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-calendar"></i> Accounting Period</a></li>
+                <li class=""><a href="#account_year_setting" data-toggle="tab" style="font-family: tahoma;"> Accounting Period</a></li>
                 <!-- <li class=""><a href="#invoice_counter_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-code"></i> Invoice Number</a></li> -->
 
             </ul>
             <div class="tab-content">
+<!-- ITEM TRANSFER START -->
+            <div class="tab-pane" id="accounts_integration_item_transfer" style="min-height: 300px;">
+                <form id="frm_account_integration_item_transfer" role="form" class="form-horizontal row-border">
+                        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Item Transfer </strong></span></h4>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> <b class="required"> * </b>Issuance Supplier :</label>
+                            <div class="col-md-7">
+                                <select name="iss_supplier_id" class="cbo_accounts" data-error-msg="Issuance Supplier is required." required>
+                                    <?php foreach($suppliers as $supplier){ ?>
+                                        <option value="<?php echo $supplier->supplier_id; ?>" <?php echo ($current_accounts_purchasing->iss_supplier_id==$supplier->supplier_id?'selected':''); ?>  ><?php echo $supplier->supplier_name; ?></option>
+                                    <?php } ?>
+                                </select>
+                                <span class="help-block m-b-none">Please Choose a default Supplier for Inventory Transfer Items </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> <b class="required"> * </b> Inventory Account :</label>
+                            <div class="col-md-7">
+                                <select name="iss_debit_id" class="cbo_accounts" data-error-msg="Debit Account is required." required>
+                                    <?php foreach($accounts as $account){ ?>
+                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts_purchasing->iss_debit_id==$account->account_id?'selected':''); ?>  ><?php echo $account->account_title; ?></option>
+                                    <?php } ?>
+                                </select>
+                            <span class="help-block m-b-none">Please Choose Account for Inventory Transfer Items</span>
+                            </div><br>
+                        </div>
+                </form>
+                    <div class="col-sm-offset-3">
+                        <button id="btn_save_item_transfer_accounts" type="button" class="btn btn-primary" style="font-family: tahoma;text-transform: none;"><span class=""></span> Save Item Transfer Configuration Changes</button>
+                    </div>
+            </div>
 
-                <div class="tab-pane active" id="accounts_integration_setting" style="min-height: 300px;">
+<!-- ITEM TRANSFER END -->
+<!-- ADJUSTMENTS START -->
+            <div class="tab-pane" id="accounts_integration_adjustment" style="min-height: 300px;">
+                <form id="frm_account_integration_adjustment" role="form" class="form-horizontal row-border">
+                        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Adjustment Details</strong></span></h4>
 
-                    <form id="frm_account_integration" role="form" class="form-horizontal row-border">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> <b class="required"> * </b> Adjustment Supplier :</label>
+                            <div class="col-md-7">
+                                <select name="adj_supplier_id" class="cbo_accounts" data-error-msg="Adjustment Supplier is required." required>
+                                    <?php foreach($suppliers as $supplier){ ?>
+                                        <option value="<?php echo $supplier->supplier_id; ?>" <?php echo ($current_accounts_purchasing->adj_supplier_id==$supplier->supplier_id?'selected':''); ?>  ><?php echo $supplier->supplier_name; ?></option>
+                                    <?php } ?>
+                                </select>
+                                <span class="help-block m-b-none">Please Choose a default Supplier for Adjusting Inventory.</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> <b class="required"> * </b> Debit Account :</label>
+                            <div class="col-md-7">
+                                <select name="adj_debit_id" class="cbo_accounts" data-error-msg="Debit Account is required." required>
+                                    <?php foreach($accounts as $account){ ?>
+                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts_purchasing->adj_debit_id==$account->account_id?'selected':''); ?>  ><?php echo $account->account_title; ?></option>
+                                    <?php } ?>
+                                </select>
+                                <span class="help-block m-b-none">Please Choose Debit Account for the Adjustment OUT of Inventory</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> <b class="required"> * </b> Credit Account :</label>
+                            <div class="col-md-7">
+                                <select name="adj_credit_id" class="cbo_accounts" data-error-msg="Credit Account is required." required>
+                                    <?php foreach($accounts as $account){ ?>
+                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts_purchasing->adj_credit_id==$account->account_id?'selected':''); ?>  ><?php echo $account->account_title; ?></option>
+                                    <?php } ?>
+                                </select>
+                                <span class="help-block m-b-none">Please Choose Credit Account for the Adjustment IN of Inventory</span>
+                            </div>
+                        </div>
+                </form>
+                    <div class="col-sm-offset-3">
+                        <button id="btn_save_adjustment_accounts" type="button" class="btn btn-primary" style="font-family: tahoma;text-transform: none;"><span class=""></span> Save Adjustments Configuration Changes</button>
+                    </div>
+            </div>
 
-                        <br >
+<!-- ADJUSTMENTS END -->
+
+<!-- INVENTORY START -->
+            <div class="tab-pane" id="accounts_integration_setting_inventory" style="min-height: 300px;">
+                <form id="frm_account_integration_inventory" role="form" class="form-horizontal row-border">
+                    <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Inventory</strong></span></h4>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label"> * Sales Invoice Integration :</label>
+                        <div class="col-md-7">
+                            <select name="sales_invoice_inventory" class="cbo_accounts"   id="cbo_inventory" data-error-msg="Inventory is required." required>
+                           
+
+                            <option value="1" <?php echo ($current_accounts->sales_invoice_inventory == 1 ? 'selected' :'')   ?> >Enable</option>
+                            <option value="0" <?php echo ($current_accounts->sales_invoice_inventory == 0 ? 'selected' :'')   ?>> Disable</option>
+                            </select>
+
+                            <span class="help-block m-b-none">Please select if Sales Invoices will be included in the Inventory computation.</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label"> * Cash Invoice Integration :</label>
+                        <div class="col-md-7">
+                            <select name="cash_invoice_inventory" class="cbo_accounts"   id="cbo_inventory" data-error-msg="Inventory is required." required>
+                           
+
+                            <option value="1" <?php echo ($current_accounts->cash_invoice_inventory == 1 ? 'selected' :'')   ?> >Enable</option>
+                            <option value="0" <?php echo ($current_accounts->cash_invoice_inventory == 0 ? 'selected' :'')   ?>> Disable</option>
+                            </select>
+
+                            <span class="help-block m-b-none">Please select if Cash Invoices will be included in the Inventory computation.</span>
+                        </div>
+                    </div>
+                </form>
+                    <div class="col-sm-offset-3">
+                        <button id="btn_save_inventory_accounts" type="button" class="btn btn-primary" style="font-family: tahoma;text-transform: none;"><span class=""></span> Save Inventory Configuration Changes</button>
+                    </div>
+            </div>
+
+<!-- INVENTORY END -->
+<!--  CUSTOMER START -->
+             <div class="tab-pane" id="accounts_integration_setting_customer" style="min-height: 300px;">
+                <form id="frm_account_integration_customer" role="form" class="form-horizontal row-border">
+                    <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Customer Integration Account</strong></span></h4>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label"> * Output Tax Account :</label>
+                        <div class="col-md-7">
+                            <select name="output_tax_account_id"  class="cbo_accounts" data-error-msg="Output Tax account is required." required>
+
+                                <?php foreach($accounts as $account){ ?>
+                                    <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->output_tax_account_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
+                                <?php } ?>
+                            </select>
+
+                            <span class="help-block m-b-none">Output tax is the amount charge on your own sales if you are registered as Vatted.</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label"> * Receivable from Customer :</label>
+                        <div class="col-md-7">
+                            <select name="receivable_account_id"  class="cbo_accounts" data-error-msg="Receivable account is required." required>
+
+                                <?php foreach($accounts as $account){ ?>
+                                    <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->receivable_account_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
+                                <?php } ?>
+                            </select>
+
+                            <span class="help-block m-b-none">Account that represents the amount of goods and services credited by customer.</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label"> * Discount to Customer :</label>
+                        <div class="col-md-7">
+                            <select name="receivable_discount_account_id"  class="cbo_accounts" data-error-msg="Receivable account is required." required>
+                                <?php foreach($accounts as $account){ ?>
+                                    <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->receivable_discount_account_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
+                                <?php } ?>
+                            </select>
+
+                            <span class="help-block m-b-none">Please select Discount Account.</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label"> * Collection Account :</label>
+                        <div class="col-md-7">
+                            <select name="payment_from_customer_id"  class="cbo_accounts" data-error-msg="Discount Account is required." required>
+
+                                <?php foreach($accounts as $account){ ?>
+                                    <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->payment_from_customer_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
+                                <?php } ?>
+                            </select>
+
+                            <span class="help-block m-b-none">Please select the account where payment of customer will be posted.</span>
+                        </div>
+                    </div>
+                   <div class="col-sm-offset-3">
+                        <button id="btn_save_customer_accounts" type="button" class="btn btn-primary" style="font-family: tahoma;text-transform: none;"><span class=""></span> Save Customer Configuration Changes</button>
+                    </div>
+                </form>
+             </div>
+<!-- CUSTOMER END -->
+<!-- SUPPLIER START -->
+                <div class="tab-pane active" id="accounts_integration_setting_supplier" style="min-height: 300px;">
+                <form id="frm_account_integration_supplier" role="form" class="form-horizontal row-border">
                         <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Supplier Integration Account</strong></span></h4>
-
-
                         <div class="form-group">
                             <label class="col-md-3 control-label"> * Input Tax Account :</label>
                             <div class="col-md-7">
@@ -177,12 +351,9 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                                         <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->input_tax_account_id==$account->account_id?'selected':''); ?>  ><?php echo $account->account_title; ?></option>
                                     <?php } ?>
                                 </select>
-
-
                                 <span class="help-block m-b-none">Input Tax is generally apply to the purchases of goods and services.</span>
                             </div>
                         </div>
-
                         <div class="form-group">
                             <label class="col-md-3 control-label"> * Payable to Supplier :</label>
                             <div class="col-md-7">
@@ -191,12 +362,9 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                                         <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->payable_account_id==$account->account_id?'selected':''); ?> ><?php echo $account->account_title; ?></option>
                                     <?php } ?>
                                 </select>
-
-
                                 <span class="help-block m-b-none">Account that is used to represent the amount owes by the company.</span>
                             </div>
                         </div>
-
                         <div class="form-group">
                             <label class="col-md-3 control-label"> * Discount from Supplier :</label>
                             <div class="col-md-7">
@@ -210,9 +378,6 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                                 <span class="help-block m-b-none">Please select Discount Account.</span>
                             </div>
                         </div>
-
-
-
                         <div class="form-group">
                             <label class="col-md-3 control-label"> * Payment to Supplier :</label>
                             <div class="col-md-7">
@@ -226,100 +391,15 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                                 <span class="help-block m-b-none">Please select the account where payment to supplier will be credited.</span>
                             </div>
                         </div>
-
-
-                        <div class="form-group">
-                            <label class="col-md-3 control-label"> * Inventory Account :</label>
-                            <div class="col-md-7">
-                                <select name="supplier_inventory_debit_account_id"  class="cbo_accounts" data-error-msg="Supplier Inventory Account is required." required>
-
-                                    <?php foreach($accounts as $account){ ?>
-                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->supplier_inventory_debit_account_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
-                                    <?php } ?>
-                                </select>
-
-                                <span class="help-block m-b-none">Please select the account where Inventory from supplier will be debited. <br><i>(Only used in Purchase Integration Module)</i></span>
-                            </div>
+                        <div class="col-sm-offset-3">
+                            <button id="btn_save_supplier_accounts" type="button" class="btn btn-primary" style="font-family: tahoma;text-transform: none;"><span class=""></span> Save Supplier Configuration Changes</button>
                         </div>
+                    </form>
+                </div>
+<!-- SUPPLIER END -->
 
-                        <div class="form-group">
-                            <label class="col-md-3 control-label"> * Department in Purchases Integration :</label>
-                            <div class="col-md-7">
-                                <select name="purchases_department_id"  class="cbo_accounts" data-error-msg="Default Department for Purchases Integration is required." required>
-
-                                    <?php foreach($departments as $department){ ?>
-                                        <option value="<?php echo $department->department_id; ?>" <?php echo ($current_accounts->purchases_department_id==$department->department_id?'selected':''); ?>><?php echo $department->department_name; ?></option>
-                                    <?php } ?>
-                                </select>
-
-                                <span class="help-block m-b-none">Please select the default Department used in finalizing Purchase Integration (System Integration) <br><i>(Only used in Purchase Integration Module)</i></span>
-                            </div>
-                        </div>
-
-
-                        <br >
-                        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Customer Integration Account</strong></span></h4>
-
-
-                        <div class="form-group">
-                            <label class="col-md-3 control-label"> * Output Tax Account :</label>
-                            <div class="col-md-7">
-                                <select name="output_tax_account_id"  class="cbo_accounts" data-error-msg="Output Tax account is required." required>
-
-                                    <?php foreach($accounts as $account){ ?>
-                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->output_tax_account_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
-                                    <?php } ?>
-                                </select>
-
-                                <span class="help-block m-b-none">Output tax is the amount charge on your own sales if you are registered as Vatted.</span>
-                            </div>
-                        </div>
-
-
-                        <div class="form-group">
-                            <label class="col-md-3 control-label"> * Receivable from Customer :</label>
-                            <div class="col-md-7">
-                                <select name="receivable_account_id"  class="cbo_accounts" data-error-msg="Receivable account is required." required>
-                                    <?php foreach($accounts as $account){ ?>
-                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->receivable_account_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
-                                    <?php } ?>
-                                </select>
-
-                                <span class="help-block m-b-none">Account that represents the amount of goods and services credited by customer.</span>
-                            </div>
-                        </div>
-
-
-
-                        <div class="form-group">
-                            <label class="col-md-3 control-label"> * Discount to Customer :</label>
-                            <div class="col-md-7">
-                                <select name="receivable_discount_account_id"  class="cbo_accounts" data-error-msg="Receivable account is required." required>
-                                    <?php foreach($accounts as $account){ ?>
-                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->receivable_discount_account_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
-                                    <?php } ?>
-                                </select>
-
-                                <span class="help-block m-b-none">Please select Discount Account.</span>
-                            </div>
-                        </div>
-
-
-                        <div class="form-group">
-                            <label class="col-md-3 control-label"> * Collection Account :</label>
-                            <div class="col-md-7">
-                                <select name="payment_from_customer_id"  class="cbo_accounts" data-error-msg="Discount Account is required." required>
-
-                                    <?php foreach($accounts as $account){ ?>
-                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->payment_from_customer_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
-                                    <?php } ?>
-                                </select>
-
-                                <span class="help-block m-b-none">Please select the account where payment of customer will be posted.</span>
-                            </div>
-                        </div>
-
-
+                <div class="tab-pane" id="accounts_integration_setting" style="min-height: 300px;">
+                    <form id="frm_account_integration" role="form" class="form-horizontal row-border">
                         <br >
                         <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Retained Earnings Account</strong></span></h4>
                         <div class="form-group">
@@ -331,7 +411,6 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                                         <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->retained_earnings_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
                                     <?php } ?>
                                 </select>
-
                                 <span class="help-block m-b-none">Please select the account where net income will be forwarded.</span>
                             </div>
                         </div>
@@ -351,48 +430,6 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                                 <span class="help-block m-b-none">Please select the account where petty cash will be forwarded.</span>
                             </div>
                         </div>
-
-                        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Inventory</strong></span></h4>
-                        <div class="form-group">
-                            <label class="col-md-3 control-label"> * Sales Invoice Integration :</label>
-                            <div class="col-md-7">
-                                <select name="sales_invoice_inventory" class="cbo_accounts"   id="cbo_inventory" data-error-msg="Inventory is required." required>
-                               
-
-                                <option value="1" <?php echo ($current_accounts->sales_invoice_inventory == 1 ? 'selected' :'')   ?> >Enable</option>
-                                <option value="0" <?php echo ($current_accounts->sales_invoice_inventory == 0 ? 'selected' :'')   ?>> Disable</option>
-                                </select>
-
-                                <span class="help-block m-b-none">Please select if Sales Invoices will be included in the Inventory computation.</span>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-md-3 control-label"> * Cash Invoice Integration :</label>
-                            <div class="col-md-7">
-                                <select name="cash_invoice_inventory" class="cbo_accounts"   id="cbo_inventory" data-error-msg="Inventory is required." required>
-                               
-
-                                <option value="1" <?php echo ($current_accounts->cash_invoice_inventory == 1 ? 'selected' :'')   ?> >Enable</option>
-                                <option value="0" <?php echo ($current_accounts->cash_invoice_inventory == 0 ? 'selected' :'')   ?>> Disable</option>
-                                </select>
-
-                                <span class="help-block m-b-none">Please select if Cash Invoices will be included in the Inventory computation.</span>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-md-3 control-label"> * Dispatching Invoice Integration :</label>
-                            <div class="col-md-7">
-                                <select name="dispatching_invoice_inventory" class="cbo_accounts"   data-error-msg="Inventory is required." required>
-                               
-
-                                <option value="1" <?php echo ($current_accounts->dispatching_invoice_inventory == 1 ? 'selected' :'')   ?> >Enable</option>
-                                <option value="0" <?php echo ($current_accounts->dispatching_invoice_inventory == 0 ? 'selected' :'')   ?>> Disable</option>
-                                </select>
-
-                                <span class="help-block m-b-none">Please select if Dispatching Invoices will be included in the Inventory computation.</span>
-                            </div>
-                        </div>
-
                         <br >
                         <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Depreciation Expense Account</strong></span></h4>
                         <div class="form-group">
@@ -422,15 +459,11 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                             </div>
                         </div>
                         <hr />
-
                         <div class=" col-lg-offset-3">
-                            <button id="btn_save_supplier_accounts" type="button" class="btn btn-primary" style="font-family: tahoma;text-transform: none;"><span class=""></span> Save Changes</button>
+                            <button id="btn_save_other_accounts" type="button" class="btn btn-primary" style="font-family: tahoma;text-transform: none;"><span class=""></span> Save Changes</button>
                         </div>
-
                     </form>
-
                 </div>
-
                 <div class="tab-pane" id="sched_expense_setting" style="min-height: 300px;">
                     <br />
                    <h8 style="color: white;"> Please specify the group of each account :</h8><br />
@@ -470,13 +503,8 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
 
 
                 <div class="tab-pane" id="account_year_setting" style="min-height: 300px;">
-
-
                         <div id="div_account_year_list">
-
                             <br />
-
-
                             <table id="tbl_account_year" class="table table-striped" cellspacing="0" width="100%">
                                 <thead>
                                     <tr>
@@ -487,20 +515,15 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                                     </tr>
                                 </thead>
                                 <tbody>
-
                                 </tbody>
                             </table>
                         </div>
-
                         <div id="div_account_year_fields" style="display: none;">
                             <div class="row">
                                 <div class="col-lg-12">
-
                                     <br >
                                     <h4><span style="margin-left: 1%"><strong><i class="fa fa-calendar"></i> Accounting Period</strong></span></h4>
                                     <hr />
-
-
                                     <div class="form-group">
                                         <label class="col-md-3 control-label"> * Account Year (Code):</label>
                                         <div class="col-md-7">
@@ -509,8 +532,6 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                                             <span class="help-block m-b-none">Please enter the code you want to represent the accounting period. Ex. AY2016</span>
                                         </div>
                                     </div>
-
-
                                     <div class="form-group">
                                         <label class="col-md-3 control-label"> * Period Start :</label>
                                         <div class="col-md-7">
@@ -519,30 +540,20 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                                             <span class="help-block m-b-none">Please enter the code you want to represent the accounting period. Ex. AY2016</span>
                                         </div>
                                     </div>
-
-
                                     <div class="form-group">
                                         <label class="col-md-3 control-label"> * Period End :</label>
                                         <div class="col-md-7">
                                             <input type="text" class="form-control" data-error-msg="Account year is required." required>
-
                                             <span class="help-block m-b-none">Please enter the code you want to represent the accounting period. Ex. AY2016</span>
                                         </div>
                                     </div>
-
-
-
                                     <div class="form-group">
                                         <label class="col-md-3 control-label"> * Description :</label>
                                         <div class="col-md-7">
                                             <textarea class="form-control"></textarea>
-
                                             <span class="help-block m-b-none">Ex. 2016</span>
                                         </div>
                                     </div>
-
-
-
                                 </div>
                             </div>
                         </div>
@@ -749,14 +760,58 @@ $(document).ready(function(){
 
 
     var bindEventHandlers=(function(){
-            $('#btn_save_supplier_accounts').click(function(){
+            $('#btn_save_other_accounts').click(function(){
                 saveSettings().done(function(response){
+                    showNotification(response);
+                }).always(function(){
+                    showSpinningProgress($('#btn_save_other_accounts'));
+                });
+            });
+            $('#btn_save_supplier_accounts').click(function(){
+                saveSettingsSuppliers().done(function(response){
                     showNotification(response);
                 }).always(function(){
                     showSpinningProgress($('#btn_save_supplier_accounts'));
                 });
             });
+            $('#btn_save_customer_accounts').click(function(){
+                saveSettingsCustomers().done(function(response){
+                    showNotification(response);
+                }).always(function(){
+                    showSpinningProgress($('#btn_save_customer_accounts'));
+                });
+            });
+            $('#btn_save_inventory_accounts').click(function(){
+                saveSettingsInventory().done(function(response){
+                    showNotification(response);
+                }).always(function(){
+                    showSpinningProgress($('#btn_save_inventory_accounts'));
+                });
+            });
+            $('#btn_save_adjustment_accounts').click(function(){
+                saveSettingsAdjustment().done(function(response){
+                    showNotification(response);
+                }).always(function(){
+                    showSpinningProgress($('#btn_save_adjustment_accounts'));
+                });
+            });
 
+            $('#btn_save_item_transfer_accounts').click(function(){
+                saveSettingsItemTransfer().done(function(response){
+                    showNotification(response);
+                }).always(function(){
+                    showSpinningProgress($('#btn_save_item_transfer_accounts'));
+                });
+            });
+            $('#btn_save_material_issuance_accounts').click(function(){
+                saveSettingsMaterialIssuance().done(function(response){
+                    showNotification(response);
+                }).always(function(){
+                    showSpinningProgress($('#btn_save_material_issuance_accounts'));
+                });
+            });
+
+            
             $('#btn_close_period').click(function(){
                 var btn=$(this);
                 var _data=$('#frm_accounting_period').serializeArray();
@@ -868,11 +923,94 @@ $(document).ready(function(){
             "type":"POST",
             "url":"Account_integration/transaction/save",
             "data":_data,
-            "beforeSend": showSpinningProgress($('#btn_save_supplier_accounts'))
+            "beforeSend": showSpinningProgress($('#btn_save_other_accounts'))
 
         });
     };
 
+    var saveSettingsSuppliers=function(){
+        var _data=$('#frm_account_integration_supplier').serializeArray();
+        console.log(_data);
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Account_integration/transaction/save_supplier",
+            "data":_data,
+            "beforeSend": showSpinningProgress($('#btn_save_supplier_accounts'))
+
+        });
+    };
+    var saveSettingsCustomers=function(){
+        var _data=$('#frm_account_integration_customer').serializeArray();
+        console.log(_data);
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Account_integration/transaction/save_customer",
+            "data":_data,
+            "beforeSend": showSpinningProgress($('#btn_save_customer_accounts'))
+
+        });
+    };
+
+    var saveSettingsInventory=function(){
+        var _data=$('#frm_account_integration_inventory').serializeArray();
+        console.log(_data);
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Account_integration/transaction/save_inventory",
+            "data":_data,
+            "beforeSend": showSpinningProgress($('#btn_save_inventory_accounts'))
+
+        });
+    };
+
+    var saveSettingsAdjustment=function(){
+        var _data=$('#frm_account_integration_adjustment').serializeArray();
+        console.log(_data);
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Account_integration/transaction/save_adjustments",
+            "data":_data,
+            "beforeSend": showSpinningProgress($('#btn_save_adjustment_accounts'))
+
+        });
+    };
+
+
+    var saveSettingsItemTransfer=function(){
+        var _data=$('#frm_account_integration_item_transfer').serializeArray();
+        console.log(_data);
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Account_integration/transaction/save_item_transfer",
+            "data":_data,
+            "beforeSend": showSpinningProgress($('#btn_save_item_transfer_accounts'))
+
+        });
+    };
+
+    var saveSettingsMaterialIssuance=function(){
+        var _data=$('#frm_account_integration_material_issuance').serializeArray();
+        console.log(_data);
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Account_integration/transaction/save_material_issuance",
+            "data":_data,
+            "beforeSend": showSpinningProgress($('#btn_save_material_issuance_accounts'))
+
+        });
+    };
 
 
 

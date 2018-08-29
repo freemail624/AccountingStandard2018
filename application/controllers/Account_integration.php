@@ -12,12 +12,15 @@ class Account_integration extends CORE_Controller
                 'Account_integration_model',
                 'Account_year_model',
                 'Users_model',
-                'Departments_model',
                 'Invoice_counter_model',
                 'Accounting_period_model',
                 'Journal_info_model',
                 'Sales_invoice_model',
                 'Users_model',
+                'Customers_model',
+                'Suppliers_model',
+                'Departments_model',
+                'Purchasing_integration_model',
                 'Trans_model',
                 'Sched_expense_integration'
             )
@@ -35,10 +38,18 @@ class Account_integration extends CORE_Controller
         $data['title'] = 'Account Integration';
 
         $data['accounts'] = $this->Account_title_model->get_list(array('is_deleted'=>FALSE));
-        $data['departments'] = $this->Departments_model->get_list(array('is_deleted'=>FALSE));
         $current_accounts= $this->Account_integration_model->get_list();
         $data['current_accounts'] =$current_accounts[0];
         $data['users_counter']=$this->Users_model->get_user_invoice_counter();
+
+        $current_accounts_purchasing= $this->Purchasing_integration_model->get_list();
+        $data['current_accounts_purchasing'] =$current_accounts_purchasing[0];
+        $data['departments'] = $this->Departments_model->get_list(array('is_active'=>TRUE, 'is_deleted'=>FALSE));
+        $data['customers']=$this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
+        $data['suppliers']=$this->Suppliers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
+
+
+
 
         //grand parent account only
         $data['expenses']=$this->Account_title_model->get_list(
@@ -99,41 +110,15 @@ class Account_integration extends CORE_Controller
 
             case 'save':
                 $m_integration=$this->Account_integration_model;
-
-                $m_integration->delete(1); //delete it first
-
-                $m_integration->integration_id=1;
-
-                //suppliers
-                $m_integration->input_tax_account_id=$this->input->post('input_tax_account_id',TRUE);
-                $m_integration->payable_account_id=$this->input->post('payable_account_id',TRUE);
-                $m_integration->payable_discount_account_id=$this->input->post('payable_discount_account_id',TRUE);
-                $m_integration->payment_to_supplier_id=$this->input->post('payment_to_supplier_id',TRUE);
-                $m_integration->supplier_inventory_debit_account_id=$this->input->post('supplier_inventory_debit_account_id',TRUE);
-                $m_integration->purchases_department_id=$this->input->post('purchases_department_id',TRUE);
-
-                //customers
-                $m_integration->output_tax_account_id=$this->input->post('output_tax_account_id',TRUE);
-                $m_integration->receivable_account_id=$this->input->post('receivable_account_id',TRUE);
-                $m_integration->receivable_discount_account_id=$this->input->post('receivable_discount_account_id',TRUE);
-                $m_integration->payment_from_customer_id=$this->input->post('payment_from_customer_id',TRUE);
-
                 $m_integration->retained_earnings_id=$this->input->post('retained_earnings_id',TRUE);
                 $m_integration->petty_cash_account_id=$this->input->post('petty_cash_account_id',TRUE);
-
-                $m_integration->sales_invoice_inventory=$this->get_numeric_value($this->input->post('sales_invoice_inventory',TRUE));
-                $m_integration->cash_invoice_inventory=$this->get_numeric_value($this->input->post('cash_invoice_inventory',TRUE));
-                $m_integration->dispatching_invoice_inventory=$this->get_numeric_value($this->input->post('dispatching_invoice_inventory',TRUE));
-
                 $m_integration->depreciation_expense_debit_id=$this->input->post('depreciation_expense_debit_id',TRUE);
-                $m_integration->depreciation_expense_credit_id=$this->input->post('depreciation_expense_credit_id',TRUE);
-                // $m_integration->cash_invoice_debit_id=$this->input->post('cash_invoice_debit_id',TRUE);
-                // $m_integration->cash_invoice_credit_id=$this->input->post('cash_invoice_credit_id',TRUE);              
-                $m_integration->save();
+                $m_integration->depreciation_expense_credit_id=$this->input->post('depreciation_expense_credit_id',TRUE);        
+                $m_integration->modify(1);
 
                 $response['stat']="success";
                 $response['title']="Success!";
-                $response['msg']="Account successfully integrated.";
+                $response['msg']="Other Account successfully integrated.";
 
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
@@ -147,6 +132,172 @@ class Account_integration extends CORE_Controller
                 break;
 
 
+            case 'save_supplier':
+                $m_integration=$this->Account_integration_model;
+
+                //suppliers
+                $m_integration->input_tax_account_id=$this->input->post('input_tax_account_id',TRUE);
+                $m_integration->payable_account_id=$this->input->post('payable_account_id',TRUE);
+                $m_integration->payable_discount_account_id=$this->input->post('payable_discount_account_id',TRUE);
+                $m_integration->payment_to_supplier_id=$this->input->post('payment_to_supplier_id',TRUE);
+
+
+        
+                $m_integration->modify(1);
+
+                $response['stat']="success";
+                $response['title']="Success!";
+                $response['msg']="Supplier Accounts successfully integrated.";
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=57; // TRANS TYPE
+                $m_trans->trans_log='Updated Supplier Configuration';
+                $m_trans->save();
+                echo json_encode($response);
+
+                break;
+
+            case 'save_customer':
+                $m_integration=$this->Account_integration_model;
+
+                // //customers
+                $m_integration->output_tax_account_id=$this->input->post('output_tax_account_id',TRUE);
+                $m_integration->receivable_account_id=$this->input->post('receivable_account_id',TRUE);
+                $m_integration->receivable_discount_account_id=$this->input->post('receivable_discount_account_id',TRUE);
+                $m_integration->payment_from_customer_id=$this->input->post('payment_from_customer_id',TRUE);       
+                $m_integration->modify(1);
+
+                $response['stat']="success";
+                $response['title']="Success!";
+                $response['msg']="Customer Accounts successfully integrated.";
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=57; // TRANS TYPE
+                $m_trans->trans_log='Updated System General Configuration Customer';
+                $m_trans->save();
+                echo json_encode($response);
+
+                break;
+
+            case 'save_inventory':
+                $m_integration=$this->Account_integration_model;
+
+
+                // inventory
+                $m_integration->sales_invoice_inventory=$this->get_numeric_value($this->input->post('sales_invoice_inventory',TRUE));
+                $m_integration->cash_invoice_inventory=$this->get_numeric_value($this->input->post('cash_invoice_inventory',TRUE));
+        
+                $m_integration->modify(1);
+
+                $response['stat']="success";
+                $response['title']="Success!";
+                $response['msg']="Inventory Configuration successfully integrated.";
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=57; // TRANS TYPE
+                $m_trans->trans_log='Updated System General Configuration Inventory ';
+                $m_trans->save();
+                echo json_encode($response);
+
+                break;
+
+
+
+            case 'save_adjustments':
+                $m_purchasing_integration=$this->Purchasing_integration_model;
+                $m_purchasing_integration->adj_supplier_id=$this->input->post('adj_supplier_id',TRUE);
+                $m_purchasing_integration->adj_debit_id=$this->input->post('adj_debit_id',TRUE);
+                $m_purchasing_integration->adj_credit_id=$this->input->post('adj_credit_id',TRUE);
+
+
+                $m_purchasing_integration->modify(1);
+
+                $response['stat']="success";
+                $response['title']="Success!";
+                $response['msg']="Adjustment Accounts successfully integrated.";
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=58; // TRANS TYPE
+                $m_trans->trans_log='Updated System Purchasing Configuration Adjustments';
+                $m_trans->save();
+                echo json_encode($response);
+
+                break;
+
+            case 'save_adjustments':
+                $m_purchasing_integration=$this->Purchasing_integration_model;
+                $m_purchasing_integration->adj_supplier_id=$this->input->post('adj_supplier_id',TRUE);
+                $m_purchasing_integration->adj_debit_id=$this->input->post('adj_debit_id',TRUE);
+                $m_purchasing_integration->adj_credit_id=$this->input->post('adj_credit_id',TRUE);
+                $m_purchasing_integration->modify(1);
+
+                $response['stat']="success";
+                $response['title']="Success!";
+                $response['msg']="Adjustment Accounts successfully integrated.";
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=58; // TRANS TYPE
+                $m_trans->trans_log='Updated System Purchasing Configuration Adjustments';
+                $m_trans->save();
+                echo json_encode($response);
+
+                break;
+
+            case 'save_item_transfer':
+                $m_purchasing_integration=$this->Purchasing_integration_model;
+                $m_purchasing_integration->iss_supplier_id=$this->input->post('iss_supplier_id',TRUE);
+                $m_purchasing_integration->iss_debit_id=$this->input->post('iss_debit_id',TRUE);
+                $m_purchasing_integration->modify(1);
+                $response['stat']="success";
+                $response['title']="Success!";
+                $response['msg']="Item Transfer Accounts successfully integrated.";
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=58; // TRANS TYPE
+                $m_trans->trans_log='Updated System Purchasing Configuration Item Transfer';
+                $m_trans->save();
+                echo json_encode($response);
+
+                break;
+
+            case 'save_material_issuance':
+                $m_purchasing_integration=$this->Purchasing_integration_model;
+                $m_purchasing_integration->iss_mat_debit_id=$this->input->post('iss_mat_debit_id',TRUE);
+                $m_purchasing_integration->iss_mat_supplier_id=$this->input->post('iss_mat_supplier_id',TRUE);
+                $m_purchasing_integration->modify(1);
+
+                $response['stat']="success";
+                $response['title']="Success!";
+                $response['msg']="Material Issuances Accounts successfully integrated.";
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=58; // TRANS TYPE
+                $m_trans->trans_log='Updated System Purchasing Configuration Material Issuance';
+                $m_trans->save();
+                echo json_encode($response);
+
+                break;
             case 'get-account-year':
                 $m_year=$this->Accounting_period_model;
 
