@@ -200,7 +200,7 @@ class Payable_payments extends CORE_Controller
         return $m_payments->get_list(
             //filter
             'payable_payments.is_deleted=0 '.($id==null?'':' AND payable_payments.payment_id='.$id).
-            ($show_unposted==FALSE?"":" AND payable_payments.is_posted=FALSE AND payable_payments.is_active=TRUE"),
+            ($show_unposted==FALSE?"":" AND payable_payments.is_journal_posted=FALSE AND payable_payments.is_active=TRUE"),
             //fields
             array(
                 'payable_payments.*',

@@ -1165,7 +1165,7 @@ $(document).ready(function(){
                         var btn_cancel='<button class="btn btn-red btn-sm" name="cancel_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Cancel Journal"><i class="fa fa-times"></i> </button>';
                         var btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Print Check"><i class="fa fa-print"></i> Print Check</button>';
 
-                        if(data.payment_method_id == 2){
+                       if(data.payment_method_id == 2 && data.cdj_approved_by > 0 && data.is_active=="1" ){
                             return ''+btn_check_print+"&nbsp;"+btn_cancel+'';
                         }else{
                             return ''+btn_cancel+'';
