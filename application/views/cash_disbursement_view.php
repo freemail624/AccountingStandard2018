@@ -1153,7 +1153,7 @@ $(document).ready(function(){
                         
                     }
                 },
-                { targets:[9],data: "journal_id" },
+                { targets:[9],data: "journal_id",visible:false },
 
 
             ]
