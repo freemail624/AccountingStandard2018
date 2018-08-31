@@ -55,6 +55,7 @@
 							'journal_templates_info.template_id',
 							'journal_templates_info.template_code',
 							'journal_templates_info.payee',
+							'journal_templates_info.carf_trans_id',
 							'journal_templates_info.template_description',
 							'journal_templates_info.supplier_id',
 							'journal_templates_info.customer_id',

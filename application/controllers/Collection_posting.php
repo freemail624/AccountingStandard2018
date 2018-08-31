@@ -2,7 +2,7 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Carf extends CORE_Controller
+class Collection_posting extends CORE_Controller
 {
 
     function __construct() {
@@ -12,24 +12,17 @@ class Carf extends CORE_Controller
         $this->load->model(
             array(
                 'Suppliers_model',
-                'Departments_model',
                 'Account_title_model',
                 'Payment_method_model',
                 'Journal_info_model',
                 'Journal_account_model',
-                'Tax_types_model',
-                'Delivery_invoice_model',
-                'Payment_method_model',
-                'Check_layout_model',
-                'Payable_payment_model',
-                'Accounting_period_model',
-                'Journal_template_info_model',
-                'Journal_template_entry_model',
-                'Company_model',
-                'Users_model',
+                'Departments_model',
+                'Receivable_payment_model',
                 'Bank_model',
+                'Users_model',
+                'Accounting_period_model',
+                'Cash_invoice_model',
                 'Trans_model'
-
             )
         );
 
@@ -43,24 +36,18 @@ class Carf extends CORE_Controller
         $data['_switcher_settings'] = $this->load->view('template/elements/switcher', '', TRUE);
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
-
-        $data['bank_refs']=$this->Bank_model->get_list('is_deleted=FALSE AND is_active=TRUE');
         $data['suppliers']=$this->Suppliers_model->get_list('is_deleted = FALSE');
-        $data['departments']=$this->Departments_model->get_list('is_deleted = FALSE');
-        $data['accounts']=$this->Account_title_model->get_list('is_deleted = FALSE');
-        $data['methods']=$this->Payment_method_model->get_list();
-        $data['tax_types']=$this->Tax_types_model->get_list('is_deleted=0');
-        $data['payment_methods']=$this->Payment_method_model->get_list('is_deleted=0');
-        $data['layouts']=$this->Check_layout_model->get_list('is_deleted=0');
-        $data['banks']=$this->Journal_info_model->get_list('is_active=1 AND is_deleted=0 AND payment_method_id=2',null,null,null,'bank');
-
-        $data['title'] = 'Cash Advance Request Form'; 
-
-        (in_array('14-2',$this->session->user_rights)? 
-        $this->load->view('carf_view', $data)
+        $data['accounts']=$this->Account_title_model->get_list('is_deleted=0');
+        $data['methods']=$this->Payment_method_model->get_list('is_deleted=0');
+        $data['departments']=$this->Departments_model->get_list('is_deleted=0');
+        $data['banks']=$this->Bank_model->get_list('is_deleted=0');
+ 
+        $data['title'] = 'Collection Posting';
+        (in_array('14-3',$this->session->user_rights)? 
+        $this->load->view('collection_posting_view', $data)
         :redirect(base_url('dashboard')));
+        
     }
-
 
     public function transaction($txn=null){
         switch($txn){
@@ -72,104 +59,16 @@ class Carf extends CORE_Controller
                 $response['data']=$this->get_response_rows(null,$additional);
                 echo json_encode($response);
                 break;
-            case 'print-check-list':
-                $m_journal=$data['banks']=$this->Journal_info_model;
-
-                $bank=$this->input->get('bank');
-                $start=date('Y-m-d',strtotime($this->input->get('start')));
-                $end=date('Y-m-d',strtotime($this->input->get('end')));
-
-                $data['checks']=$m_journal->get_list(
-                    "journal_info.is_active=1 AND journal_info.is_deleted=0 AND journal_info.payment_method_id=2 AND journal_info.date_txn BETWEEN '".$start."' AND '".$end."'".($bank=="0"?"":" AND b.bank_id='".$bank."'"),
-
-                    array(
-                        'journal_info.*',
-                        's.supplier_name',
-                        'b.*'
-                    ),
-
-                    array(
-                        array('suppliers as s','s.supplier_id=journal_info.supplier_id','left'),
-                        array('bank as b','b.bank_id=journal_info.bank_id','left')
-                    ),
-
-                    'b.bank_name,check_no'
-
-                );
-
-                $company_info=$this->Company_model->get_list();
-                $params['company_info']=$company_info[0];
-
-                $data['bank']=($bank==0?"All Bank":$bank);
-                $data['start']=date('m/d/Y',strtotime($this->input->get('start')));
-                $data['end']=date('m/d/Y',strtotime($this->input->get('end')));
-                $data['company_header']=$this->load->view('template/company_header',$params,TRUE);
-                $this->load->view('template/check_list_report',$data);
-                break;
-
-            case 'get-check-list':
-                $m_journal=$this->Journal_info_model;
-                $response['data']=$m_journal->get_list(
-                    "journal_info.is_active=1 AND journal_info.is_deleted=0 AND journal_info.book_type='CDJ' AND journal_info.payment_method_id=2",
-                    array(
-                        'journal_info.*',
-                        'IF(journal_info.check_status=1,"Yes","No") as check_status',
-                        's.supplier_name',
-                        'UPPER(journal_info.bank)as bank',
-                        'DATE_FORMAT(journal_info.check_date,"%m/%d/%Y")as check_date'
-                    ),
-                    array(
-                        array('suppliers as s','s.supplier_id=journal_info.supplier_id','left')
-                    )
-                );
-                echo json_encode($response);
-                break;
-
             case 'get-entries':
                 $journal_id=$this->input->get('id');
                 $m_accounts=$this->Account_title_model;
                 $m_journal_accounts=$this->Journal_account_model;
 
-                $data['accounts']=$m_accounts->get_list(array('is_deleted'=>FALSE));
+                $data['accounts']=$m_accounts->get_list('is_deleted=0');
                 $data['entries']=$m_journal_accounts->get_list('journal_accounts.journal_id='.$journal_id);
 
                 $this->load->view('template/journal_entries', $data);
                 break;
-            case 'create-template':
-                $m_journal_temp_info=$this->Journal_template_info_model;
-                $m_journal_temp_entry=$this->Journal_template_entry_model;
-
-                $m_journal_temp_info->carf_trans_id=$this->input->post('carf_trans_id',TRUE);
-                $m_journal_temp_info->supplier_id=$this->input->post('supplier_id',TRUE);
-                $m_journal_temp_info->template_code=$this->input->post('template_code',TRUE);
-                $m_journal_temp_info->template_description=$this->input->post('template_description',TRUE);
-                $m_journal_temp_info->remarks=$this->input->post('remarks',TRUE);
-                $m_journal_temp_info->book_type=$this->input->post('book_type',TRUE);
-                $m_journal_temp_info->posted_by=$this->session->user_id;
-                $m_journal_temp_info->save();
-
-                $journal_template_id=$m_journal_temp_info->last_insert_id();
-                $accounts=$this->input->post('accounts',TRUE);
-                $memos=$this->input->post('memo',TRUE);
-                $dr_amounts=$this->input->post('dr_amount',TRUE);
-                $cr_amounts=$this->input->post('cr_amount',TRUE);
-
-                for($i=0;$i<=count($accounts)-1;$i++) {
-                    $m_journal_temp_entry->template_id=$journal_template_id;
-                    $m_journal_temp_entry->account_id=$accounts[$i];
-                    $m_journal_temp_entry->memo=$memos[$i];
-                    $m_journal_temp_entry->dr_amount=$this->get_numeric_value($dr_amounts[$i]);
-                    $m_journal_temp_entry->cr_amount=$this->get_numeric_value($cr_amounts[$i]);
-                    $m_journal_temp_entry->save();
-                }
-
-                $response['stat']='success';
-                $response['title']='Success!';
-                $response['msg']='Template successfully saved';
-                $response['row_added']=$this->get_response_rows($journal_template_id);
-                echo json_encode($response);
-                break;
-
             case 'create' :
                 $m_journal=$this->Journal_info_model;
                 $m_journal_accounts=$this->Journal_account_model;
@@ -189,17 +88,13 @@ class Carf extends CORE_Controller
                 $m_journal->book_type='SPJ';
                 $m_journal->department_id=$this->input->post('department_id');
                 $m_journal->payment_method_id=$this->input->post('payment_method');
-                $m_journal->carf_trans_id=$this->input->post('carf_trans_id');
-                // $m_journal->bank=$this->input->post('bank');
-                $m_journal->bank_id=$this->input->post('bank_id');
-                $m_journal->check_no=$this->input->post('check_no');
                 $m_journal->check_date=date('Y-m-d',strtotime($this->input->post('check_date',TRUE)));
-                $m_journal->ref_type=$this->input->post('ref_type');
-                $m_journal->ref_no=$this->input->post('ref_no');
                 $m_journal->amount=$this->get_numeric_value($this->input->post('amount'));
-                $m_journal->is_carf_collection=0;
-
-
+                $m_journal->or_no=$this->input->post('or_no');
+                $m_journal->check_no=$this->input->post('check_no');
+                $m_journal->bank_id=$this->input->post('bank');
+                $m_journal->ref_no=$this->input->post('ref_no');
+                $m_journal->is_carf_collection=1;
 
                 //for audit details
                 $m_journal->set('date_created','NOW()');
@@ -227,27 +122,25 @@ class Carf extends CORE_Controller
                 $m_journal->modify($journal_id);
 
 
-                //if dr invoice is available, purchase invoice is recorded as journal
+
                 $payment_id=$this->input->post('payment_id',TRUE);
                 if($payment_id!=null){
-                    $m_payable_payment=$this->Payable_payment_model;
-                    $m_payable_payment->journal_id=$journal_id;
-                    $m_payable_payment->is_journal_posted=TRUE;
-                    $m_payable_payment->is_posted=TRUE;
-                    $m_payable_payment->modify($payment_id);
-
-                // AUDIT TRAIL START
-                $payment_info=$m_payable_payment->get_list($payment_id,'payment_id,receipt_no');
+                    $m_receivable_payment=$this->Receivable_payment_model;
+                    $m_receivable_payment->journal_id=$journal_id;
+                    $m_receivable_payment->is_journal_posted=TRUE;
+                    $m_receivable_payment->modify($payment_id);
+                 // AUDIT TRAIL START
+                $payment_info=$m_receivable_payment->get_list($payment_id,'payment_id,receipt_no');
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=8; //CRUD
-                $m_trans->trans_type_id=13; // TRANS TYPE
-                $m_trans->trans_log='Finalized Payment No.'.$payment_info[0]->receipt_no.' ('.$payment_info[0]->payment_id.')For Cash Disbursement';
+                $m_trans->trans_type_id=18; // TRANS TYPE
+                $m_trans->trans_log='Finalized Payment No.'.$payment_info[0]->receipt_no.' ('.$payment_info[0]->payment_id.') For Cash Receipt Journal TXN-'.date('Ymd').'-'.$journal_id;
                 $m_trans->save();
                 //AUDIT TRAIL END
-
                 }
+
 
                 // AUDIT TRAIL START
 
@@ -255,8 +148,8 @@ class Carf extends CORE_Controller
                 $m_trans->user_id=$this->session->user_id;
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=1; //CRUD
-                $m_trans->trans_type_id=2; // TRANS TYPE
-                $m_trans->trans_log='Created Cash Disbursement Entry TXN-'.date('Ymd').'-'.$journal_id;
+                $m_trans->trans_type_id=6; // TRANS TYPE
+                $m_trans->trans_log='Created Cash Receipt Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
                 $m_trans->save();
                 //AUDIT TRAIL END
 
@@ -266,6 +159,8 @@ class Carf extends CORE_Controller
                 $response['row_added']=$this->get_response_rows($journal_id);
                 echo json_encode($response);
                 break;
+
+
             case 'update':
                 $journal_id=$this->input->get('id');
                 $m_journal=$this->Journal_info_model;
@@ -292,16 +187,14 @@ class Carf extends CORE_Controller
                 $m_journal->supplier_id=$this->input->post('supplier_id',TRUE);
                 $m_journal->remarks=$this->input->post('remarks',TRUE);
                 $m_journal->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
-                $m_journal->book_type='CDJ';
+                $m_journal->book_type='SPJ';
                 $m_journal->department_id=$this->input->post('department_id');
                 $m_journal->payment_method_id=$this->input->post('payment_method');
-                // $m_journal->bank=$this->input->post('bank');
-                $m_journal->bank_id=$this->input->post('bank_id');
-                $m_journal->check_no=$this->input->post('check_no');
                 $m_journal->check_date=date('Y-m-d',strtotime($this->input->post('check_date',TRUE)));
-                $m_journal->ref_type=$this->input->post('ref_type');
-                $m_journal->ref_no=$this->input->post('ref_no');
                 $m_journal->amount=$this->get_numeric_value($this->input->post('amount'));
+                $m_journal->or_no=$this->input->post('or_no');
+                $m_journal->check_no=$this->input->post('check_no');
+                $m_journal->bank_id=$this->input->post('bank');
 
                 //for audit details
                 $m_journal->set('date_modified','NOW()');
@@ -360,13 +253,14 @@ class Carf extends CORE_Controller
                 if($journal_txn_no[0]->is_active ==TRUE){
 
                 $m_trans->trans_key_id=9; //CRUD
-                $m_trans->trans_type_id=2; // TRANS TYPE
-                $m_trans->trans_log='Uncancelled Cash Disbursement Entry : '.$journal_txn_no[0]->txn_no;
+                $m_trans->trans_type_id=6; // TRANS TYPE
+                $m_trans->trans_log='Uncancelled Cash Receipt Journal Entry : '.$journal_txn_no[0]->txn_no;
+        
 
                 }else if($journal_txn_no[0]->is_active ==FALSE){
                 $m_trans->trans_key_id=4; //CRUD
-                $m_trans->trans_type_id=2; // TRANS TYPE
-                $m_trans->trans_log='Cancelled Cash Disbursement Entry : '.$journal_txn_no[0]->txn_no;
+                $m_trans->trans_type_id=6; // TRANS TYPE
+                $m_trans->trans_log='Cancelled Cash Receipt Journal Entry : '.$journal_txn_no[0]->txn_no;
                 }
                 $m_trans->save();
 
@@ -378,7 +272,6 @@ class Carf extends CORE_Controller
                 echo json_encode($response);
 
                 break;
-
         };
     }
 
@@ -388,7 +281,7 @@ class Carf extends CORE_Controller
         $m_journal=$this->Journal_info_model;
         return $m_journal->get_list(
 
-            "journal_info.is_deleted=FALSE AND journal_info.book_type='SPJ' AND journal_info.is_carf_collection = FALSE ".($criteria==null?'':' AND journal_info.journal_id='.$criteria)."".($additional==null?'':$additional),
+            "journal_info.is_deleted=FALSE AND journal_info.book_type='SPJ' AND journal_info.is_carf_collection = TRUE".($criteria==null?'':' AND journal_info.journal_id='.$criteria)."".($additional==null?'':$additional),
 
             array(
                 'journal_info.journal_id',
@@ -396,28 +289,22 @@ class Carf extends CORE_Controller
                 'DATE_FORMAT(journal_info.date_txn,"%m/%d/%Y")as date_txn',
                 'journal_info.is_active',
                 'journal_info.remarks',
-                'journal_info.department_id',
-                'journal_info.bank_id',
                 'journal_info.supplier_id',
-                'journal_info.customer_id',
-                'journal_info.payment_method_id',
-                'payment_methods.payment_method',
-                'journal_info.bank',
+                'journal_info.or_no',
                 'journal_info.check_no',
-                'journal_info.carf_trans_id',
-                'DATE_FORMAT(journal_info.check_date,"%m/%d/%Y") as check_date',
-                'journal_info.ref_type',
-                'journal_info.ref_no',
+                'payment_methods.payment_method_id',
+                'journal_info.department_id',
+                'DATE_FORMAT(journal_info.check_date,"%m/%d/%Y")as check_date',
                 'journal_info.amount',
-                'CONCAT(IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,""))as particular',
+                'journal_info.bank_id',
+                'suppliers.supplier_name as particular',
                 'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by'
             ),
             array(
-                array('customers','customers.customer_id=journal_info.customer_id','left'),
                 array('suppliers','suppliers.supplier_id=journal_info.supplier_id','left'),
-                array('departments','departments.department_id=journal_info.department_id','left'),
                 array('user_accounts','user_accounts.user_id=journal_info.created_by_user','left'),
-                array('payment_methods','payment_methods.payment_method_id=journal_info.payment_method_id','left')
+                array('payment_methods','payment_methods.payment_method_id=journal_info.payment_method_id','left'),
+                array('departments','departments.department_id=journal_info.department_id','left')
             ),
             'journal_info.journal_id DESC'
         );

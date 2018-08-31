@@ -96,7 +96,9 @@ class Rights_link_model extends CORE_Model{
                                           (86,'15','15-6','Stock Card / Bin Card'),
                                           (87,'3','3-5','Warehouse Dispatching'),
                                           (88,'4','4-7','Brands'),
-                                          (89,'2','2-9','Purchasing Integration')
+                                          (89,'2','2-9','Purchasing Integration'),
+                                          (90,'14','14-2','Cash Advance Request Form (CARF)'),
+                                          (91,'14','14-3','Collection Posting - CARF')
 
                                           ON DUPLICATE KEY UPDATE
                                           rights_links.parent_code=VALUES(rights_links.parent_code),

@@ -106,6 +106,8 @@
                         <li class="<?php echo (in_array('14',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-view-list-alt"></i><span>Treasury</span></a>
                             <ul class="acc-menu">
                                 <li class="<?php echo (in_array('14-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Treasury">Treasury</a></li>
+                                <li class="<?php echo (in_array('14-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Carf">Carf</a></li>
+                                <li class="<?php echo (in_array('14-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Collection_posting">Collection Posting</a></li>
                             </ul>
                         </li>
                         <li class="<?php echo (in_array('11',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-credit-card"></i><span>Bank Reconciliation</span></a>

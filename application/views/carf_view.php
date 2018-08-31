@@ -221,8 +221,9 @@
                         <tr>    
                             <th></th>
                             <th style="width: 15%;">Txn #</th>
-                            <th>Voucher #</th>
+                            <th>Ref no</th>
                             <th>Particular</th>
+                            <th>Transaction</th>
                             <th>Method</th>
                             <th>Txn Date</th>
                             <th>Posted</th>
@@ -247,8 +248,7 @@
 
     <div class="panel panel-default" style="margin: 1%;">
     <div class="panel-body panel-responsive">
-    <h2 class="h2-panel-heading"> Cash Disbursement Journal</h2>
-     <!--    <b><i class="fa fa-bars"></i> Cash Disbursement Journal</b><hr /> -->
+    <h2 class="h2-panel-heading"> Cash Advance Request Form</h2>
         <button id="btn_browse_recurring" class="btn btn-primary" style="margin-bottom: 15px; text-transform: capitalize;"><i class="fa fa-folder-open-o"></i> Browse Recurring Template</button>
         <form id="frm_journal" role="form" class="form-horizontal">
 
@@ -283,23 +283,25 @@
                             <?php } ?>
                         </select>
                     </div>
-
-
                 </div>
 
                 <div class="row">
                     <div class="col-lg-3">
+                       <b class="required"> * </b><label>Transaction Type :</label><br />
+                        <select id="carf_trans_id" class="form-control" name="carf_trans_id" required data-error-msg="Transaction Type is Required">
+                            <option value="1">Vale</option>
+                            <option value="2">Subject for Liquidation (SFL)</option>
+                            <option value="3">Borrowings</option>
+                        </select>
+
+                    </div>
+                    <div class="col-lg-3">
+                       <b class="required"> * </b><label>Reference No :</label><br />
+                       <input type="text" name="ref_no" class="form-control" required data-error-msg="Reference Number is required.">
+                    </div>
+                    <div class="col-lg-4 col-lg-offset-2">
                         <label>Bank :</label><br />
                         <select id="cbo_bank" class="form-control" name="bank_id">
-                            <option value="create_bank">[Create New Bank]</option>
-                            <?php foreach($bank_refs as $bank) { ?>
-                                <option value="<?php echo $bank->bank_id; ?>"><?php echo $bank->bank_name; ?></option>
-                            <?php } ?>
-                        </select>
-                    </div>
-                    <div class="col-lg-4 col-lg-offset-5">
-                        <label>Bank :</label><br />
-                        <select id="carf_trans_id" class="form-control" name="bank_id">
                             <option value="create_bank">[Create New Bank]</option>
                             <?php foreach($bank_refs as $bank) { ?>
                                 <option value="<?php echo $bank->bank_id; ?>"><?php echo $bank->bank_name; ?></option>
@@ -777,6 +779,41 @@
     </div>
 </div><!---modal-->
 
+<div id="modal_check_layout" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#2ecc71;">
+                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title" style="color:#ecf0f1 !important;"><span id="modal_mode"> </span>Select Check Layout</h4>
+
+            </div>
+
+            <div class="modal-body" style="padding-right: 20px;">
+
+                <div class="row">
+                        <div class="container-fluid">
+                            <div class="col-xs-12">
+                                <select name="check_layout" class="form-control" id="cbo_layouts">
+                                    <?php foreach($layouts as $layout){ ?>
+                                        <option value="<?php echo $layout->check_layout_id; ?>"><?php echo $layout->check_layout; ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+
+                        </div>
+                </div>
+
+
+            </div>
+
+            <div class="modal-footer">
+                <button id="btn_preview_check" type="button" class="btn btn-primary"  style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span> Preview Check</button>
+                <button id="btn_close_check" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
+            </div>
+        </div><!---content-->
+    </div>
+</div><!---modal-->
+
 
 <div id="modal_bank" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog">
@@ -847,7 +884,7 @@
 <script>
 $(document).ready(function(){
     var _txnMode; var _cboSuppliers; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode, _cboBranches, _cboPaymentMethod, _cboBanks, _cboAccountType;
-    var _cboLayouts; var dtRecurring; var _attribute; var _cboTax; var _cboCarfTrans;
+    var dtRecurring; var _attribute; var _cboTax; var _cboCarfTrans; var _cboLayouts; 
 
 
     var oTBJournal={
@@ -868,7 +905,7 @@ $(document).ready(function(){
                 "searchPlaceholder": "Search Template" 
             },
             "ajax" : {
-                "url":"Recurring_template/transaction/list-template?type=CDJ",
+                "url":"Recurring_template/transaction/list-template?type=SPJ",
                 "bDestroy": true
             },
             "columns": [
@@ -893,13 +930,13 @@ $(document).ready(function(){
         dt=$('#tbl_carf_list').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 9, "desc" ]],
+            "order": [[ 10, "desc" ]],
             oLanguage: {
                     sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
             },
             processing : true,
             "ajax" : {
-                "url" : "Cash_disbursement/transaction/list",
+                "url" : "Carf/transaction/list",
                 "bDestroy": true,            
                 "data": function ( d ) {
                         return $.extend( {}, d, {
@@ -920,11 +957,28 @@ $(document).ready(function(){
                 { targets:[1],data: "txn_no" },
                 { targets:[2],data: "ref_no" },
                 { targets:[3],data: "particular" },
-                { targets:[4],data: "payment_method" },
-                { targets:[5],data: "date_txn" },
-                { targets:[6],data: "posted_by" },
                 {
-                    targets:[7],data: null,
+                    targets:[4],data: null,
+                    render: function (data, type, full, meta){
+                        var _attribute='';
+                        //console.log(data.is_email_sent);
+                        if(data.carf_trans_id=="1"){
+                            _attribute='Vale';
+                        }else if (data.carf_trans_id=="2"){
+                            _attribute='Subject for Liquidation (SFL)';
+                        }else if (data.carf_trans_id=="3"){
+                            _attribute='Borrowings';
+                        }
+
+                        return ''+_attribute+'';
+                    }
+
+                },
+                { targets:[5],data: "payment_method" },
+                { targets:[6],data: "date_txn" },
+                { targets:[7],data: "posted_by" },
+                {
+                    targets:[8],data: null,
                     render: function (data, type, full, meta){
                         var _attribute='';
                         //console.log(data.is_email_sent);
@@ -939,7 +993,7 @@ $(document).ready(function(){
 
                 },
                 {sClass: "right_align_items",
-                    targets:[8],data:null,
+                    targets:[9],data:null,
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_cancel='<button class="btn btn-red btn-sm" name="cancel_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Cancel Journal"><i class="fa fa-times"></i> </button>';
@@ -956,7 +1010,7 @@ $(document).ready(function(){
                         
                     }
                 },
-                { targets:[9],data: "journal_id",visible:false },
+                { targets:[10],data: "journal_id",visible:false },
 
 
             ]
@@ -1019,14 +1073,15 @@ $(document).ready(function(){
             placeholder: "Please select department.",
             allowClear: true
         });
-        _cboBranches.select2('val',null);
 
         _cboLayouts=$('#cbo_layouts').select2({
             placeholder: "Please select check layout.",
             allowClear: true
-        });
-        _cboAccountType.select2('val',null);
+        }); 
+        _cboBranches.select2('val',null);
         _cboLayouts.select2('val',null);
+
+        _cboAccountType.select2('val',null);
         _cboTax.select2('val',null);
         _cboBanks.select2('val',null);
 
@@ -1081,7 +1136,7 @@ $(document).ready(function(){
                 $.ajax({
                     "dataType":"html",
                     "type":"POST",
-                    "url":"Templates/layout/journal-cdj?id="+ d.journal_id,
+                    "url":"Templates/layout/journal-spj?id="+ d.journal_id,
                     "beforeSend" : function(){
                         row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
                     }
@@ -1118,6 +1173,7 @@ $(document).ready(function(){
             });
 
             _cboSuppliers.select2('val',data.supplier_id);
+            _cboCarfTrans.select2('val',data.carf_trans_id);
 
             $('#modal_recurring').modal('hide');
 
@@ -1190,6 +1246,7 @@ $(document).ready(function(){
             $('#cbo_branch').select2('val',null);
             $('#cbo_pay_type').select2('val',1);
             $('#cbo_suppliers').select2('val',null);
+            _cboCarfTrans.select2('val',null);
 
             //set defaults
             _cboPaymentMethod.select2('val',1);//set cash as default
@@ -1231,11 +1288,28 @@ $(document).ready(function(){
             $('#modal_confirmation').modal('show');
         });
 
+        $('#tbl_carf_list').on('click','button[name="print_check"]',function(){
+
+            _selectRowObj=$(this).closest('tr');
+            var data=dt.row(_selectRowObj).data();
+            _selectedID=data.journal_id;
+
+            $('#modal_check_layout').modal('show');
+        });
+
+        $('#btn_preview_check').click(function(){
+            if ($('#cbo_layouts').select2('val') != null || $('#cbo_layouts').select2('val') != undefined)
+                window.open('Templates/layout/print-check?id='+$('#cbo_layouts').val()+'&jid='+_selectedID);
+            else
+                showNotification({ title: 'Error', msg: 'Please select check layout!', stat: 'error' });
+        });
+
+
         $('#btn_yes').click(function(){
             $.ajax({
                 "dataType":"json",
                 "type":"POST",
-                "url":"Cash_disbursement/transaction/cancel",
+                "url":"Carf/transaction/cancel",
                 "data":{journal_id : _selectedID},
                 "success": function(response){
                     showNotification(response);
@@ -1411,7 +1485,7 @@ $(document).ready(function(){
         return $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"Cash_disbursement/transaction/create",
+            "url":"Carf/transaction/create",
             "data":_data,
             "beforeSend": showSpinningProgress($('#btn_save'))
 
@@ -1424,7 +1498,7 @@ $(document).ready(function(){
         return $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"Cash_disbursement/transaction/update?id="+_selectedID,
+            "url":"Carf/transaction/update?id="+_selectedID,
             "data":_data,
             "beforeSend": showSpinningProgress($('#btn_save'))
         });
@@ -1433,12 +1507,12 @@ $(document).ready(function(){
     var createTemplate=function(){
         var _data=$('#frm_journal').serializeArray();
         _data.push({ name:'template_code', value:$("#cbo_suppliers option:selected").text() });
-        _data.push({ name:'book_type', value: 'CDJ'});
+        _data.push({ name:'book_type', value: 'SPJ'});
         
         return $.ajax({ 
             "dataType":"json",
             "type":"POST",
-            "url":"Cash_disbursement/transaction/create-template",
+            "url":"Carf/transaction/create-template",
             "data":_data
         });
     };
@@ -1585,7 +1659,7 @@ $(document).ready(function(){
             oRow=$(opTable+' > tfoot tr');
         }
 
-        dr=getFloat(oRow.find(oFSummary.dr).text());
+        dr=getFloat(oRow.find(oTFSummary.dr).text());
         cr=getFloat(oRow.find(oTFSummary.cr).text());
         return (dr==cr);
     };
