@@ -98,7 +98,8 @@ class Rights_link_model extends CORE_Model{
                                           (88,'4','4-7','Brands'),
                                           (89,'2','2-9','Purchasing Integration'),
                                           (90,'14','14-2','Cash Advance Request Form (CARF)'),
-                                          (91,'14','14-3','Collection Posting - CARF')
+                                          (91,'14','14-3','Collection Posting - CARF'),
+                                          (92,'14','14-4','Daily Collection Report')
 
                                           ON DUPLICATE KEY UPDATE
                                           rights_links.parent_code=VALUES(rights_links.parent_code),
