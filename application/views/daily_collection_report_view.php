@@ -91,6 +91,14 @@
                                     <div class="container-fluid">
                                         <div class="container-fluid group-box">
                                             <div class="col-xs-12 col-md-4" style="margin-bottom: 10px;">
+                                                <strong>Department:</strong><br>
+                                                <select id="cbo_departments" style="width: 100%;">
+                                                    <?php foreach($departments as $department){ ?>
+                                                        <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                            <div class="col-xs-12 col-md-4" style="margin-bottom: 10px;">
                                                 <strong>Report Date:</strong>
                                                 <div class="input-group">
                                                     <input id="txt_date" type="text" class="date-picker form-control" value="<?php echo date('m/d/Y'); ?>">
@@ -99,10 +107,16 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-md-4" style="margin-bottom: 10px;">
+                                            <div class="col-xs-12 col-md-2" style="margin-bottom: 10px;">
                                                 <strong></strong><br>
                                                 <button class="btn btn-primary pull-left" style="margin-right: 5px; margin-top: 0; margin-bottom: 10px;padding:5px 12px!important" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif; ">
                                                     <i class="fa fa-print"></i> Print Report
+                                                </button>
+                                            </div>
+                                            <div class="col-xs-12 col-md-2" style="margin-bottom: 10px;">
+                                                <strong></strong><br>
+                                                <button class="btn btn-success pull-left" style="margin-right: 5px; margin-top: 0; margin-bottom: 10px;padding:5px 12px!important" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif; ">
+                                                    <i class="fa fa-file-excel-o"></i> Export to Excel
                                                 </button>
                                             </div>
                                         </div>
@@ -112,9 +126,6 @@
                                     <div class="container-fluid">
                                         <div class="container-fluid group-box">
                                         <div class="row" style="display: none;">
-                                            <button class="btn btn-success pull-left" style="margin-right: 5px; margin-top: 0; margin-bottom: 10px;display: none;" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif; ">
-                                                <i class="fa fa-file-excel-o"></i> Export to Excel
-                                            </button>
                                             <button class="btn btn-success pull-left" style="margin-right: 5px; margin-top: 0; margin-bottom: 10px;display: none;" id="btn_email" style="text-transform: none; font-family: Tahoma, Georgia, Serif; ">
                                                 <i class="fa fa-share"></i> Email
                                             </button>
@@ -158,14 +169,17 @@
 <!-- numeric formatter -->
 <script src="assets/plugins/formatter/autoNumeric.js" type="text/javascript"></script>
 <script src="assets/plugins/formatter/accounting.js" type="text/javascript"></script>
-
+<!-- Select2 -->
+<script src="assets/plugins/select2/select2.full.min.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
 
 <script>
 
 $(document).ready(function(){
-    var dtReplenish;
+    var dtReplenish; var _cboDepartments;
+
+
     var getFloat=function(f){
         return parseFloat(accounting.unformat(f));
     };
@@ -178,6 +192,10 @@ $(document).ready(function(){
             calendarWeeks: true,
             autoclose: true
         });
+    _cboDepartments=$("#cbo_departments").select2({
+        placeholder: "Please select Department.",
+        allowClear: false
+    });
 
         InitializeDataTable();
     }();
@@ -187,8 +205,16 @@ $(document).ready(function(){
             InitializeDataTable();
         });
 
+        _cboDepartments.on('select2:select', function(){
+            InitializeDataTable();
+        });
+
         $('#btn_print').click(function(){
-            window.open('Daily_collection_report/transaction/report?date='+$('#txt_date').val());
+            window.open('Daily_collection_report/transaction/report?date='+$('#txt_date').val()+'&dep='+_cboDepartments.val());
+        });
+
+        $('#btn_export').click(function(){
+            window.open('Daily_collection_report/transaction/export-daily-collection?date='+$('#txt_date').val()+'&dep='+_cboDepartments.val());
         });
 
         
@@ -215,11 +241,9 @@ $(document).ready(function(){
         $('#tbl_daily_report').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
         var data = [];
             data.push({name : "date" ,value : $('#txt_date').val()});
+            data.push({name : "dep" ,value : _cboDepartments.val()});
 
-        beginning_balance = 0;
-        total_collection = 0;
-        total_carf = 0;
-        ending_balance = 0;
+
         $.ajax({
             url : 'Daily_collection_report/transaction/list',
             type : "GET",
@@ -227,7 +251,11 @@ $(document).ready(function(){
             dataType : 'json',
             "data":data,
             success : function(response){
-                 $('#tbl_daily_report').html('');
+                beginning_balance = 0;
+                total_collection = 0;
+                total_carf = 0;
+                ending_balance = 0;
+                $('#tbl_daily_report').html('');
                 $('#tbl_daily_report').append(
                      '<center><h4><strong>Daily Collection Report</strong></h4><hr></center>'
                 );
@@ -329,7 +357,7 @@ $(document).ready(function(){
                         '</tr>'
                     );
 
-                ending_balance = ((getFloat(beginning_balance) + getFloat(total_collection) ) - getFloat(total_carf));
+                ending_balance = beginning_balance + total_collection  - total_carf;
                 $('#tbl_daily_report').append(
                     '<table style="width:100%" class="table table-striped">'+
                     '<thead>'+

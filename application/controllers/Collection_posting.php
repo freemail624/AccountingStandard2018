@@ -297,6 +297,7 @@ class Collection_posting extends CORE_Controller
                 'DATE_FORMAT(journal_info.check_date,"%m/%d/%Y")as check_date',
                 'journal_info.amount',
                 'journal_info.bank_id',
+                'departments.department_name',
                 'suppliers.supplier_name as particular',
                 'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by'
             ),

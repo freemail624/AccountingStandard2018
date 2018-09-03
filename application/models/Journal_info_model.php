@@ -1051,7 +1051,7 @@ class Journal_info_model extends CORE_Model{
             return $this->db->query($sql)->result();
     }
 
-    function get_revolving_fund_balance($date){
+    function get_revolving_fund_balance($date,$department_id){
              $sql="SELECT
             (CASE WHEN x.`account_type_id` = 1 OR x.account_type_id=5 THEN
             IFNULL(((x.dr_amount) - (x.cr_amount)),0)
@@ -1072,11 +1072,14 @@ class Journal_info_model extends CORE_Model{
             LEFT JOIN account_titles AS atitles ON atitles.account_id=ai.revolving_fund_account_id
             LEFT JOIN account_classes AS ac ON ac.`account_class_id`=atitles.`account_class_id`
             LEFT JOIN journal_info AS ji ON ji.journal_id=ja.`journal_id`
-            WHERE date_txn < '$date'  AND ji.is_active=TRUE AND ji.is_deleted=FALSE) AS x ";
+            WHERE date_txn < '$date'  AND ji.is_active=TRUE AND ji.is_deleted=FALSE
+             ".($department_id==null?"":" AND ji.department_id=".$department_id."")."
+
+            ) AS x ";
             return $this->db->query($sql)->result();
     }
 
-    function get_revolving_fund_carf($date){
+    function get_revolving_fund_carf($date,$department_id){
              $sql="SELECT   
                     ji.txn_no,
                     ji.supplier_id,
@@ -1094,12 +1097,13 @@ class Journal_info_model extends CORE_Model{
                     LEFT JOIN payment_methods pm on pm.payment_method_id= ji.payment_method_id
                     LEFT JOIN carf_trans ct ON ct.carf_trans_id = ji.carf_trans_id
                     WHERE ji.is_active = TRUE AND ji.is_deleted = FALSE AND ji.is_carf_collection = FALSE AND ji.book_type = 'SPJ'
+                     ".($department_id==null?"":" AND ji.department_id=".$department_id."")."
                     AND ji.date_txn = '$date'
                     ";
             return $this->db->query($sql)->result();
     }
 
-    function get_revolving_fund_collection($date){
+    function get_revolving_fund_collection($date,$department_id){
              $sql="SELECT   
                 ji.txn_no,
                 ji.supplier_id,
@@ -1115,8 +1119,30 @@ class Journal_info_model extends CORE_Model{
                 LEFT JOIN suppliers s on s.supplier_id = ji.supplier_id
                 LEFT JOIN payment_methods pm on pm.payment_method_id= ji.payment_method_id
                 WHERE ji.is_active = TRUE AND ji.is_deleted = FALSE AND ji.is_carf_collection = TRUE AND ji.book_type = 'SPJ'
+                 ".($department_id==null?"":" AND ji.department_id=".$department_id."")."
                     AND ji.date_txn = '$date'
                     ";
+            return $this->db->query($sql)->result();
+    }
+
+    function get_revolving_fund_summary($is_carf_collection=false,$date,$department_id){
+             $sql="SELECT
+            ji.payment_method_id,
+            pm.payment_method,
+            SUM(ja.dr_amount) AS dr_amount,
+            SUM(ja.cr_amount) AS cr_amount,
+            ji.date_txn,
+            ji.department_id
+            FROM `account_integration` AS ai
+            LEFT JOIN journal_accounts AS ja ON ja.account_id=ai.revolving_fund_account_id
+            LEFT JOIN account_titles AS atitles ON atitles.account_id=ai.revolving_fund_account_id
+            LEFT JOIN account_classes AS ac ON ac.`account_class_id`=atitles.`account_class_id`
+            LEFT JOIN journal_info AS ji ON ji.journal_id=ja.`journal_id`
+            LEFT JOIN payment_methods pm  ON pm.payment_method_id  = ji.payment_method_id
+            WHERE  ji.is_active=TRUE AND ji.is_deleted=FALSE AND ji.book_type = 'SPJ' AND ji.date_txn = '$date'
+            ".($is_carf_collection!=false?" AND ji.is_carf_collection = TRUE ":" AND ji.is_carf_collection = FALSE ")."
+            ".($department_id==null?"":" AND ji.department_id=".$department_id."")."
+            GROUP BY ji.payment_method_id";
             return $this->db->query($sql)->result();
     }
 
