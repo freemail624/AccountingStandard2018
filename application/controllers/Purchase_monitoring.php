@@ -87,7 +87,7 @@ class Purchase_monitoring extends CORE_Controller
                 $data['company_info']=$company[0];
 
                 $m_delivery_invoice = $this->Delivery_invoice_model;
-                $product_id = $this->input->get('product_id');
+                $product_id = $this->input->get('supplier_id'); // supplier in post butin reality its product id
                 $start_date=date('Y-m-d',strtotime($this->input->get('start_date',TRUE)));
                 $end_date=date('Y-m-d',strtotime($this->input->get('end_date',TRUE)));
                 $data['data']=$m_delivery_invoice->purchase_monitoring($product_id,$start_date,$end_date);

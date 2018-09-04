@@ -280,7 +280,7 @@
                         $excel->getActiveSheet()->setCellValue('A'.$i,$summary->dr_invoice_no);
                         $excel->getActiveSheet()->setCellValue('D'.$i,$summary->date_delivered);
                         $excel->getActiveSheet()->getStyle('G'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');
-                        $excel->getActiveSheet()->setCellValue('G'.$i,number_format($summary->total_after_discount,2))
+                        $excel->getActiveSheet()->setCellValue('G'.$i,number_format($summary->total_after_discount,4))
                                                 ->getStyle('G'.$i)->getFont()->setBold(FALSE)
                                                 ->setSize(12);
 
@@ -298,7 +298,7 @@
                         $excel->getActiveSheet()->mergeCells('G'.$i.':I'.$i);
 
                         $excel->getActiveSheet()->getStyle('G'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');
-                        $excel->getActiveSheet()->setCellValue('G'.$i,number_format($sum,2))
+                        $excel->getActiveSheet()->setCellValue('G'.$i,number_format($sum,4))
                                                 ->getStyle('G'.$i)->getFont()->setBold(TRUE)
                                                 ->setSize(14);              
                         $i++;
@@ -508,12 +508,12 @@
                                     $excel->getActiveSheet()->setCellValue('A'.$i,$detail->product_desc)
                                                             ->getStyle('A'.$i)->getAlignment()->setIndent(8);                                   
                                     $excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');                                                                                
-                                    $excel->getActiveSheet()->setCellValue('D'.$i,number_format($detail->dr_price,2));
+                                    $excel->getActiveSheet()->setCellValue('D'.$i,number_format($detail->dr_price,4));
 
-                                    $excel->getActiveSheet()->setCellValue('F'.$i,number_format($detail->dr_qty,2));
+                                    $excel->getActiveSheet()->setCellValue('F'.$i,number_format($detail->dr_qty,4));
 
                                     $excel->getActiveSheet()->getStyle('H'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');                                                                    
-                                    $excel->getActiveSheet()->setCellValue('H'.$i,number_format(($detail->dr_qty*$detail->dr_price),2));
+                                    $excel->getActiveSheet()->setCellValue('H'.$i,number_format(($detail->dr_qty*$detail->dr_price),4));
                                     $excel->getActiveSheet()->getStyle('A'.$i.':I'.$i)->applyFromArray($border);                                                
 
                                     $inv_total+= $detail->dr_qty*$detail->dr_price; 
@@ -528,7 +528,7 @@
 
                                     $excel->getActiveSheet()->mergeCells('A'.$i.':I'.$i);
                                     $excel->getActiveSheet()->getStyle('A'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');                                                                                                        
-                                    $excel->getActiveSheet()->setCellValue('A'.$i,number_format($inv_total,2))
+                                    $excel->getActiveSheet()->setCellValue('A'.$i,number_format($inv_total,4))
                                                             ->getStyle('A'.$i)->getFont()->setBold(TRUE)
                                                             ->setSize(14);
                                     $i++;
@@ -715,7 +715,7 @@
                         $excel->getActiveSheet()->setCellValue('A'.$i,$summary->dr_invoice_no);
                         $excel->getActiveSheet()->setCellValue('D'.$i,$summary->date_delivered);
                         $excel->getActiveSheet()->getStyle('G'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');
-                        $excel->getActiveSheet()->setCellValue('G'.$i,number_format($summary->total_after_discount,2))
+                        $excel->getActiveSheet()->setCellValue('G'.$i,number_format($summary->total_after_discount,4))
                                                 ->getStyle('G'.$i)->getFont()->setBold(FALSE)
                                                 ->setSize(12);
 
@@ -733,7 +733,7 @@
                         $excel->getActiveSheet()->mergeCells('G'.$i.':I'.$i);
 
                         $excel->getActiveSheet()->getStyle('G'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');
-                        $excel->getActiveSheet()->setCellValue('G'.$i,number_format($sum,2))
+                        $excel->getActiveSheet()->setCellValue('G'.$i,number_format($sum,4))
                                                 ->getStyle('G'.$i)->getFont()->setBold(TRUE)
                                                 ->setSize(14);              
                         $i++;
@@ -999,12 +999,12 @@
                                     $excel->getActiveSheet()->setCellValue('A'.$i,$detail->product_desc)
                                                             ->getStyle('A'.$i)->getAlignment()->setIndent(8);                                   
                                     $excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');                                                                                
-                                    $excel->getActiveSheet()->setCellValue('D'.$i,number_format($detail->dr_price,2));
+                                    $excel->getActiveSheet()->setCellValue('D'.$i,number_format($detail->dr_price,4));
 
-                                    $excel->getActiveSheet()->setCellValue('F'.$i,number_format($detail->dr_qty,2));
+                                    $excel->getActiveSheet()->setCellValue('F'.$i,number_format($detail->dr_qty,4));
 
                                     $excel->getActiveSheet()->getStyle('H'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');                                                                    
-                                    $excel->getActiveSheet()->setCellValue('H'.$i,number_format(($detail->dr_price*$detail->dr_qty),2));
+                                    $excel->getActiveSheet()->setCellValue('H'.$i,number_format(($detail->dr_price*$detail->dr_qty),4));
                                     $excel->getActiveSheet()->getStyle('A'.$i.':I'.$i)->applyFromArray($border);                                                
 
                                     $inv_total+=$detail->dr_price*$detail->dr_qty;  
@@ -1019,7 +1019,7 @@
 
                                     $excel->getActiveSheet()->mergeCells('A'.$i.':I'.$i);
                                     $excel->getActiveSheet()->getStyle('A'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');                                                                                                        
-                                    $excel->getActiveSheet()->setCellValue('A'.$i,number_format($inv_total,2))
+                                    $excel->getActiveSheet()->setCellValue('A'.$i,number_format($inv_total,4))
                                                             ->getStyle('A'.$i)->getFont()->setBold(TRUE)
                                                             ->setSize(14);
                                     $i++;

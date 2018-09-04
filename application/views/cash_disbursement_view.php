@@ -1728,7 +1728,7 @@ $(document).ready(function(){
                 "success": function(response){
                     showNotification(response);
                     if(response.stat=="success"){
-                        dt.row(_selectRowObj).data(response.row_updated[0]).draw();
+                        dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
                     }
 
                 }
@@ -1842,7 +1842,7 @@ $(document).ready(function(){
                     updateJournal().done(function(response){
                         showNotification(response);
                         if(response.stat=="success"){
-                            dt.row(_selectRowObj).data(response.row_updated[0]).draw();
+                            dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
                             clearFields(f);
                             showList(true);
 

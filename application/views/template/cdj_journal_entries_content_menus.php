@@ -10,9 +10,9 @@
 <div class="row" >
     <div class="col-lg-12">
         <div class="title-action" style="margin-left: 3%;">
+        	<?php if($journal_info->cdj_approved_by > 0  && $journal_info->cancelled == TRUE){ ?>
             <a href="Templates/layout/journal-cdj?id=<?php echo $journal_info->journal_id; ?>&type=preview" target="_blank" class="btn btn-default" style="text-transform:none;font-family: tahoma;" ><i class="fa fa-print"></i> Print </a>
-            <!-- <a href="Templates/layout/journal-cdj-version-2?id=<?php echo $journal_info->journal_id; ?>&type=preview" target="_blank" class="btn btn-default" style="text-transform:none;font-family: tahoma;" ><i class="fa fa-print"></i> Print Voucher and Check </a> -->
-<!--             <a href="Templates/layout/journal-cdj?id=<?php echo $journal_info->journal_id; ?>&type=pdf" class="btn btn-default" style="text-transform:none;font-family: tahoma;" ><i class="fa fa-file-pdf-o"></i> Download as PDF </a> -->
+            <?php } ?>
         </div>
     </div>
 

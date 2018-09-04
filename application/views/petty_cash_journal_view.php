@@ -962,7 +962,7 @@
                         updatePettyCash().done(function(response){
                             showNotification(response);
                             console.log(response.row_updated[0]);
-                            dt.row(_selectRowObj).data(response.row_updated[0]).draw();
+                            dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
                             recomputeTotals();
                             clearFields($('#frm_petty_cash'));
                             $('#modal_new_pcf').modal('hide');
