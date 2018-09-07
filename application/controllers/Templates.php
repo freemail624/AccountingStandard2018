@@ -91,6 +91,9 @@ class Templates extends CORE_Controller {
         $this->load->model('Dispatching_invoice_model');
         $this->load->model('Dispatching_invoice_item_model');
 
+        $this->load->model('Other_income_model');
+        $this->load->model('Other_invoice_items_model');
+
         $this->load->library('M_pdf');
         $this->load->library('excel');
         $this->load->model('Email_settings_model');
@@ -448,7 +451,71 @@ class Templates extends CORE_Controller {
 
 
             //****************************************************
+            case 'other-invoice-dropdown': //delivery invoice
+                $m_info=$this->Other_income_model;
+                $m_items=$this->Other_invoice_items_model;
+                $type=$this->input->get('type',TRUE);
+                $info=$this->Other_income_model->get_list(
+                    $filter_value,
+                    array(
+                    'other_invoice.other_invoice_id',
+                    'other_invoice.other_invoice_no',
+                    'other_invoice.department_id',
+                    'other_invoice.supplier_id',
+                    'other_invoice.salesperson_id',
+                    'other_invoice.contact_person',
+                    'other_invoice.other_invoice_no',
+                    'other_invoice.address',
+                    'other_invoice.remarks',
+                    'other_invoice.total_amount',
+                    'other_invoice.total_overall_discount_amount',
+                    'other_invoice.total_amount_after_discount',
+                    'other_invoice.total_overall_discount',
+                    'other_invoice.is_journal_posted',
+                    'DATE_FORMAT(other_invoice.date_invoice,"%m/%d/%Y") as date_invoice',
+                    'DATE_FORMAT(other_invoice.date_due,"%m/%d/%Y") as date_due',
+                    'suppliers.supplier_name',
+                     'salesperson.firstname',
+                     'salesperson.lastname',
+                    'departments.department_name'),
+                    array(
+                        array('departments','departments.department_id=other_invoice.department_id','left'),
+                        array('salesperson','salesperson.salesperson_id=other_invoice.salesperson_id','left'),
+                        array('suppliers','suppliers.supplier_id=other_invoice.supplier_id','left')
+                        ),
+                    'other_invoice.other_invoice_id DESC'
+                    );
 
+                $data['other_items']=$m_items->get_list(
+                    array('other_invoice_id'=>$filter_value),
+                    array(
+                        'other_invoice_items.*',
+                        'item_unit.item_unit_name'
+                    ),
+                    array(
+                        array('item_unit','item_unit.item_unit_id=other_invoice_items.item_unit_id','left')
+                    ),
+                    'other_invoice_items.other_invoice_item_id ASC'
+                );
+                $data['other_info']=$info[0];
+                $m_company=$this->Company_model;
+                $company=$m_company->get_list();
+                $data['company_info']=$company[0];
+
+
+                if($type=='html'){
+                    $file_name=$info[0]->other_invoice_no;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                    $content=$this->load->view('template/other_invoice_content',$data,TRUE);//load the template
+                    $pdf->setFooter('{PAGENO}');
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output();
+                    // echo $this->load->view('template/other_invoice_content',$data,TRUE);
+                }
+
+                break;
 
             case 'service-invoice-dropdown': //delivery invoice
                 $m_info=$this->Service_invoice_model;
