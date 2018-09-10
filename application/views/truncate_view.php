@@ -118,7 +118,7 @@
     <div class="tab-pane" id="references" style="min-height: 300px;">
     <input type="checkbox" id="selectall_references" class="css-checkbox"><label class="css-label " for="selectall_references">SELECT ALL REFERENCES</label><br>
     <form id="frm_references">
-
+        <input type="checkbox" name="references[]" value="brands" id="brands" class="css-checkbox"><label class="css-label " for="brands">Brands</label>(<?php echo $current_count->brands ?>)<br>
         <input type="checkbox" name="references[]" value="bank" id="bank" class="css-checkbox"><label class="css-label " for="bank">Bank</label>(<?php echo $current_count->bank ?>)<br>
         <input type="checkbox" name="references[]" value="departments" id="departments" class="css-checkbox"><label class="css-label " for="departments">Departments</label>(<?php echo $current_count->departments ?>)<br>
         <input type="checkbox" name="references[]" value="categories" id="categories" class="css-checkbox"><label class="css-label " for="categories">Categories</label>(<?php echo $current_count->categories ?>)<br>
@@ -172,6 +172,8 @@
         <input type="checkbox" name="invoice[]" value="adjustment_items" id="adjustment_items" class="css-checkbox"><label class="css-label " for="adjustment_items">Adjustments Items</label>(<?php echo $current_count->adjustment_items; ?>)<br>
         <input type="checkbox" name="invoice[]" value="issuance_department_info" id="issuance_department_info" class="css-checkbox"><label class="css-label " for="issuance_department_info">Issuance Department Info</label>(<?php echo $current_count->issuance_department_info; ?>)<br>
         <input type="checkbox" name="invoice[]" value="issuance_department_items" id="issuance_department_items" class="css-checkbox"><label class="css-label " for="issuance_department_items">Issuance Department Items</label>(<?php echo $current_count->issuance_department_items; ?>)<br>
+        <input type="checkbox" name="invoice[]" value="dispatching_invoice" id="dispatching_invoice" class="css-checkbox"><label class="css-label " for="dispatching_invoice">Dispatching Invoice Info</label>(<?php echo $current_count->dispatching_invoice; ?>)<br>
+        <input type="checkbox" name="invoice[]" value="dispatching_invoice_items" id="dispatching_invoice_items" class="css-checkbox"><label class="css-label " for="dispatching_invoice_items">Dispatching Invoice Items</label>(<?php echo $current_count->dispatching_invoice_items; ?>)<br>
         </form>
 
          <button id="btn_invoices" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Truncate Invoices</button>
@@ -211,11 +213,11 @@
          <button id="btn_users" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Truncate Users</button>
     </div>
     <div class="tab-pane" id="reset_defaults" style="min-height: 300px;">
-         <button id="reset_default_coa" type="button" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Reset Chart of Accounts to Default</button> <br>
-         <button id="reset_default_users" type="button" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Reset Users to Default</button> <br>
-         <button id="reset_default_configuration" type="button" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Reset General Configuration to Default</button><br> 
-         <button id="reset_default_company" type="button" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Reset Company Information to Default</button> <br>
-        <button id="reset_initial_setup" type="button" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Reset Initial Setup</button> <br>
+         <!-- <button id="reset_default_coa" type="button" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Reset Chart of Accounts to Default</button> <br> -->
+         <!-- <button id="reset_default_users" type="button" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Reset Users to Default</button> <br> -->
+         <!-- <button id="reset_default_configuration" type="button" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Reset General Configuration to Default</button><br>  -->
+         <!-- <button id="reset_default_company" type="button" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Reset Company Information to Default</button> <br> -->
+        <!-- <button id="reset_initial_setup" type="button" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Reset Initial Setup</button> <br> -->
     </div>
 
 </div> <!-- END  OF  TAB CONTENT BODY -->    

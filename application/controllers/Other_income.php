@@ -71,6 +71,13 @@ class Other_income extends CORE_Controller
 
                 break;
 
+            case 'list-invoice-for-review' :
+                $response['data']= $this->response_rows_other_invoice(
+                     'other_invoice.is_active=TRUE AND other_invoice.is_deleted=FALSE AND other_invoice.is_journal_posted = FALSE');
+                echo json_encode($response);
+
+                break;
+
             ////****************************************items/products of selected Items***********************************************
             case 'items-invoice':
                 $m_items=$this->Other_invoice_items_model;

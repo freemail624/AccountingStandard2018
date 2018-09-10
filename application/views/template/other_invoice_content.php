@@ -1,5 +1,5 @@
         <head>
-            <title><?php echo $other_info->other_invoice_no; ?></title>
+            <title></title>
         </head>
 
         <style type="text/css">

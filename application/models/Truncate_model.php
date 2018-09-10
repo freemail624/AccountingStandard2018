@@ -71,6 +71,9 @@ class Truncate_model extends CORE_Model{
                 (SELECT COUNT(*) FROM user_accounts) as user_accounts,
                 (SELECT COUNT(*) FROM user_group_rights) as user_group_rights,
                 (SELECT COUNT(*) FROM user_groups) as user_groups,
+                (SELECT COUNT(*) FROM brands) as brands,
+                (SELECT COUNT(*) FROM dispatching_invoice) as dispatching_invoice,
+                (SELECT COUNT(*) FROM dispatching_invoice_items) as dispatching_invoice_items,
                 (SELECT COUNT(*) FROM trans) as trans
 
 

@@ -1121,7 +1121,7 @@ $(document).ready(function(){
             //alert(_selectedID);
             _is_journal_posted=data.is_journal_posted;
         if(_is_journal_posted > 0){
-                showNotification({title:" Error!",stat:"error",msg:"Cannot Delete: Invoice is already Posted in Sales Journal."});
+                showNotification({title:" Error!",stat:"error",msg:"Cannot Delete: Invoice is already Posted in Cash Receipt Journal."});
             } else{
             $('#modal_confirmation').modal('show');
         }

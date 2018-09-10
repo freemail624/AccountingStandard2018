@@ -12,6 +12,7 @@ class Cash_receipt extends CORE_Controller
         $this->load->model(
             array(
                 'Customers_model',
+                'Suppliers_model',
                 'Account_title_model',
                 'Payment_method_model',
                 'Journal_info_model',
@@ -23,6 +24,8 @@ class Cash_receipt extends CORE_Controller
                 'Accounting_period_model',
                 'Cash_invoice_model',
                 'Trans_model',
+                'Tax_model',
+                'Other_income_model',
                 'Customer_type_model'
             )
         );
@@ -37,12 +40,13 @@ class Cash_receipt extends CORE_Controller
         $data['_switcher_settings'] = $this->load->view('template/elements/switcher', '', TRUE);
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
-
-        $data['customers']=$this->Customers_model->get_list('is_deleted=0');
-        $data['accounts']=$this->Account_title_model->get_list('is_deleted=0');
+        $data['tax_types']=$this->Tax_model->get_list(array('tax_types.is_deleted'=>FALSE));
+        $data['customers']=$this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
+        $data['suppliers']=$this->Suppliers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
+        $data['accounts']=$this->Account_title_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['methods']=$this->Payment_method_model->get_list('is_deleted=0');
-        $data['departments']=$this->Departments_model->get_list('is_deleted=0');
-        $data['banks']=$this->Bank_model->get_list('is_deleted=0');
+        $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE');
+        $data['banks']=$this->Bank_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['customer_type']=$this->Customer_type_model->get_list('is_deleted=FALSE');
  
         $data['title'] = 'Cash Receipt';
@@ -85,7 +89,15 @@ class Cash_receipt extends CORE_Controller
                     die(json_encode($response));
                 }
 
-                $m_journal->customer_id=$this->input->post('customer_id',TRUE);
+                $particular=explode('-',$this->input->post('particular_id',TRUE));
+                if($particular[0]=='C'){
+                    $m_journal->customer_id=$particular[1];
+                    $m_journal->supplier_id=0;
+                }else{
+                    $m_journal->customer_id=0;
+                    $m_journal->supplier_id=$particular[1];
+                }
+
                 $m_journal->remarks=$this->input->post('remarks',TRUE);
                 $m_journal->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
                 $m_journal->book_type='CRJ';
@@ -163,6 +175,77 @@ class Cash_receipt extends CORE_Controller
                 echo json_encode($response);
                 break;
 
+
+
+
+       case 'create-from-other-income' :
+                $m_journal=$this->Journal_info_model;
+                $m_journal_accounts=$this->Journal_account_model;
+
+                //validate if still in valid range
+                $valid_range=$this->Accounting_period_model->get_list("'".date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)))."'<=period_end");
+                if(count($valid_range)>0){
+                    $response['stat']='error';
+                    $response['title']='<b>Accounting Period is Closed!</b>';
+                    $response['msg']='Please make sure transaction date is valid!<br />';
+                    die(json_encode($response));
+                }
+
+                $m_journal->supplier_id=$this->input->post('supplier_id',TRUE);
+                $m_journal->remarks=$this->input->post('remarks',TRUE);
+                $m_journal->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
+                $m_journal->book_type='CRJ';
+                $m_journal->department_id=$this->input->post('department_id');
+                $m_journal->amount=$this->get_numeric_value($this->input->post('amount'));
+                $m_journal->ref_no=$this->input->post('ref_no');
+
+
+                //for audit details
+                $m_journal->set('date_created','NOW()');
+                $m_journal->created_by_user=$this->session->user_id;
+                $m_journal->save();
+
+                $journal_id=$m_journal->last_insert_id();
+                $accounts=$this->input->post('accounts',TRUE);
+                $memos=$this->input->post('memo',TRUE);
+                $dr_amounts=$this->input->post('dr_amount',TRUE);
+                $cr_amounts=$this->input->post('cr_amount',TRUE);
+
+                for($i=0;$i<=count($accounts)-1;$i++){
+                    $m_journal_accounts->journal_id=$journal_id;
+                    $m_journal_accounts->account_id=$accounts[$i];
+                    $m_journal_accounts->memo=$memos[$i];
+                    $m_journal_accounts->dr_amount=$this->get_numeric_value($dr_amounts[$i]);
+                    $m_journal_accounts->cr_amount=$this->get_numeric_value($cr_amounts[$i]);
+                    $m_journal_accounts->save();
+                }
+
+                //update transaction number base on formatted last insert id
+                $m_journal->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
+                $m_journal->modify($journal_id);
+                // AUDIT TRAIL START
+                $other_invoice_id=$this->input->post('other_invoice_id',TRUE);
+                if($other_invoice_id!=null){
+                    $m_other_invoice=$this->Other_income_model;
+                    $m_other_invoice->journal_id=$journal_id;
+                    $m_other_invoice->is_journal_posted=TRUE;
+                    $m_other_invoice->modify($other_invoice_id);
+                }
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=1; //CRUD
+                $m_trans->trans_type_id=6; // TRANS TYPE
+                $m_trans->trans_log='Created Cash Receipt Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
+                $m_trans->save();
+                //AUDIT TRAIL END
+
+                $response['stat']='success';
+                $response['title']='Success!';
+                $response['msg']='Journal successfully posted';
+                $response['row_added']=$this->get_response_rows($journal_id);
+                echo json_encode($response);
+                break;
 
             case 'create-from-cash-invoice' :
                 $m_journal=$this->Journal_info_model;
@@ -256,7 +339,15 @@ class Cash_receipt extends CORE_Controller
                     die(json_encode($response));
                 }
 
-                $m_journal->customer_id=$this->input->post('customer_id',TRUE);
+                $particular=explode('-',$this->input->post('particular_id',TRUE));
+                if($particular[0]=='C'){
+                    $m_journal->customer_id=$particular[1];
+                    $m_journal->supplier_id=0;
+                }else{
+                    $m_journal->customer_id=0;
+                    $m_journal->supplier_id=$particular[1];
+                }
+
                 $m_journal->remarks=$this->input->post('remarks',TRUE);
                 $m_journal->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
                 $m_journal->book_type='CRJ';
@@ -361,7 +452,6 @@ class Cash_receipt extends CORE_Controller
                 'DATE_FORMAT(journal_info.date_txn,"%m/%d/%Y")as date_txn',
                 'journal_info.is_active',
                 'journal_info.remarks',
-                'journal_info.customer_id',
                 'journal_info.or_no',
                 'journal_info.check_no',
                 'payment_methods.payment_method_id',
@@ -369,11 +459,13 @@ class Cash_receipt extends CORE_Controller
                 'DATE_FORMAT(journal_info.check_date,"%m/%d/%Y")as check_date',
                 'journal_info.amount',
                 'journal_info.bank_id',
-                'customers.customer_name as particular',
+                'CONCAT(IF(NOT ISNULL(customers.customer_id),CONCAT("C-",customers.customer_id),""),IF(NOT ISNULL(suppliers.supplier_id),CONCAT("S-",suppliers.supplier_id),"")) as particular_id',
+                'CONCAT_WS(" ",IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,"")) as particular',
                 'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by'
             ),
             array(
                 array('customers','customers.customer_id=journal_info.customer_id','left'),
+                array('suppliers','suppliers.supplier_id=journal_info.supplier_id','left'),
                 array('user_accounts','user_accounts.user_id=journal_info.created_by_user','left'),
                 array('payment_methods','payment_methods.payment_method_id=journal_info.payment_method_id','left'),
                 array('departments','departments.department_id=journal_info.department_id','left')

@@ -70,7 +70,7 @@
             <td style="padding: 4px;" colspan="2"><strong>TXN DATE :</strong> <?php echo date_format(new DateTime($journal_info->date_txn),"m/d/Y"); ?></td>
         </tr>
         <tr>
-            <td style="padding: 4px;" colspan="3"><strong>CUSTOMER :</strong> <?php echo $journal_info->customer_name; ?></td>
+            <td style="padding: 4px;" colspan="3"><strong>PARTICULAR :</strong> <?php echo $journal_info->particular; ?></td>
         </tr>
         <tr>
             <td style="padding: 4px;"><strong>ADDRESS :</strong></td>

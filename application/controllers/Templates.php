@@ -678,27 +678,6 @@ class Templates extends CORE_Controller {
 
                 break;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             case 'issuance-department': //delivery invoice
                 $m_issuance=$this->Issuance_department_model;
                 $m_dr_items=$this->Issuance_department_item_model;
@@ -769,43 +748,6 @@ class Templates extends CORE_Controller {
                 }
 
                 break;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
             //****************************************************
             case 'adjustments': //delivery invoice
@@ -2017,6 +1959,7 @@ class Templates extends CORE_Controller {
 
                     array(
                         'journal_info.*',
+                        'CONCAT_WS(" ",IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,"")) as particular',
                         'customers.customer_name',
                         'customers.address',
                         'customers.email_address',
@@ -2026,10 +1969,12 @@ class Templates extends CORE_Controller {
 
                     array(
                         array('customers','customers.customer_id=journal_info.customer_id','left'),
+                        array('suppliers','suppliers.supplier_id=journal_info.supplier_id','left'),
                         array('payment_methods','payment_methods.payment_method_id=journal_info.payment_method_id','left')
                     )
 
                 );
+                        
 
                 $company_info=$m_company_info->get_list();
 
@@ -2904,6 +2849,101 @@ class Templates extends CORE_Controller {
 
                 break;
 
+
+            case 'other-income-for-review':
+                $other_invoice_id=$this->input->get('id',TRUE);
+
+                $m_other_income = $this->Other_income_model;
+                $m_other_income_items = $this->Other_invoice_items_model;
+                $m_suppliers = $this->Suppliers_model;
+                $m_accounts=$this->Account_title_model;
+                $m_payments=$this->Receivable_payment_model;
+                $m_methods=$this->Payment_method_model;
+                $m_departments=$this->Departments_model;
+                $m_pay_list=$this->Receivable_payment_list_model;
+
+
+                $info=$m_other_income->get_list(
+                    $other_invoice_id,
+                    array(
+                    'other_invoice.other_invoice_id',
+                    'other_invoice.other_invoice_no',
+                    'other_invoice.department_id',
+                    'other_invoice.supplier_id',
+                    'other_invoice.salesperson_id',
+                    'other_invoice.contact_person',
+                    'other_invoice.other_invoice_no',
+                    'other_invoice.address',
+                    'other_invoice.remarks',
+                    'other_invoice.total_amount',
+                    'other_invoice.total_overall_discount_amount',
+                    'other_invoice.total_amount_after_discount',
+                    'other_invoice.total_overall_discount',
+                    'other_invoice.is_journal_posted',
+                    'DATE_FORMAT(other_invoice.date_invoice,"%m/%d/%Y") as date_invoice',
+                    'DATE_FORMAT(other_invoice.date_due,"%m/%d/%Y") as date_due',
+                    'suppliers.*',
+                    'departments.department_name'),
+                    array(
+                        array('departments','departments.department_id=other_invoice.department_id','left'),
+                        array('suppliers','suppliers.supplier_id=other_invoice.supplier_id','left')
+                        ),
+                    'other_invoice.other_invoice_id DESC'
+
+
+                    );
+                $data['other_info']=$info[0];
+
+
+
+                $data['methods']=$m_methods->get_list();
+                $data['departments']=$m_departments->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
+
+                $data['suppliers']=$m_suppliers->get_list(
+                    array(
+                        'is_active'=>TRUE,
+                        'is_deleted'=>FALSE
+                    ),
+
+                    array(
+                        'suppliers.supplier_id',
+                        'suppliers.supplier_name'
+                    )
+                );
+
+                $data['entries']=$m_other_income->get_journal_entries($other_invoice_id);
+
+                $data['accounts']=$m_accounts->get_list(
+                    array(
+                        'account_titles.is_active'=>TRUE,
+                        'account_titles.is_deleted'=>FALSE
+                    )
+                );
+
+                $data['items'] =$m_other_income_items->get_list(
+                    array('other_invoice_id'=>$other_invoice_id),
+                    array(
+                        'other_invoice_items.*',
+                        'item_unit.item_unit_name'
+                    ),
+                    array(
+                        array('item_unit','item_unit.item_unit_id=other_invoice_items.item_unit_id','left')
+                    ),
+                    'other_invoice_items.other_invoice_item_id ASC'
+                );
+
+
+                $valid_supplier=$m_suppliers->get_list(
+                    array(
+                        'supplier_id'=>$info[0]->supplier_id,
+                        'is_active'=>TRUE,
+                        'is_deleted'=>FALSE
+                    )
+                );
+                $data['valid_particular']=(count($valid_supplier)>0);
+                echo $this->load->view('template/other_invoice_for_review',$data,TRUE); //details of the journal
+
+                break;
 
             case 'expense-for-review':
                 $payment_id=$this->input->get('id',TRUE);
