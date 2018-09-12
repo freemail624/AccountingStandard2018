@@ -24,7 +24,7 @@ class Items extends CORE_Controller
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['title'] = 'Item Management';
         $data['units'] = $this->Item_units_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
-        $data['accounts'] = $this->Account_title_model->get_list(null,'account_id,account_title');
+        $data['accounts'] = $this->Account_title_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE),'account_id,account_title');
 
         (in_array('16-1',$this->session->user_rights)? 
         $this->load->view('items_view', $data)       

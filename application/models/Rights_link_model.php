@@ -98,8 +98,8 @@ class Rights_link_model extends CORE_Model{
                                           (88,'4','4-7','Brands'),
                                           (89,'2','2-9','Purchasing Integration'),
                                           (90,'14','14-2','Cash Advance Request Form (CARF)'),
-                                          (91,'14','14-3','Collection Posting - CARF'),
-                                          (92,'14','14-4','Daily Collection Report'),
+                                          (91,'14','14-3','Revolving Fund Journal'),
+                                          (92,'14','14-4','Revolving Fund Monitor'),
                                           (93,'16','16-1','Items Management'),
                                           (94,'16','16-2','Item Units Management'),
                                           (95,'16','16-3','Other Income Invoice')

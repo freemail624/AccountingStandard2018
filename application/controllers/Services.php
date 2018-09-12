@@ -29,7 +29,7 @@ class Services extends CORE_Controller
 
         $data['units'] = $this->Service_unit_model->get_list(array('service_unit.is_deleted'=>FALSE));
 
-        $data['accounts'] = $this->Account_title_model->get_list(null,'account_id,account_title');
+        $data['accounts'] = $this->Account_title_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE),'account_id,account_title');
 
 
         $this->load->view('Services_view', $data);

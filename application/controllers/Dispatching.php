@@ -22,7 +22,8 @@ class Dispatching extends CORE_Controller
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
         $this->load->model('Customer_type_model');
-
+        $this->load->model('Payment_terms_model');
+        $this->load->model('Ar_trans_model');
 
     }
 
@@ -70,6 +71,13 @@ class Dispatching extends CORE_Controller
             )
         );
 
+        $data['payment_terms']=$this->Payment_terms_model->get_list(
+            'is_deleted=FALSE AND is_active = TRUE'
+        );
+
+        $data['ar_trans']=$this->Ar_trans_model->get_list(
+            'is_deleted=FALSE AND is_active = TRUE'
+        );
         $data['tax_percentage']=(count($tax_rate)>0?$tax_rate[0]->tax_rate:0);
         $data['title'] = 'Warehouse Dispatching';
         

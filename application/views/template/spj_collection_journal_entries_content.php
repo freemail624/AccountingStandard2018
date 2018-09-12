@@ -71,7 +71,7 @@
         </tr>
     </table><hr>
     <div class="">
-        <h3 class="report-header"><strong>SPECIAL JOURNAL - COLLECTION</strong></h3>
+        <h3 class="report-header"><strong>REVOLVING FUND JOURNAL</strong></h3>
     </div>
     <table width="100%" border="1"  cellspacing="-1" >
         <tr>

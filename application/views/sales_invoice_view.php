@@ -488,98 +488,168 @@
                 <form id="frm_customer_new">
                     <div class="row">
                         <div class="col-md-8">
-                            <div class="col-md-12">
-                                <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;"><b>*</b> Customer Name :</label>
-                                </div>
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-users"></i>
-                                        </span>
-                                        <input type="text" name="customer_name" class="form-control" placeholder="Customer Name" data-error-msg="Customer Name is required!" required>
-                                    </div>
+                           <div class="col-md-12">
+                            <div class="col-md-4" id="label">
+                                 <label class="control-label boldlabel" style="text-align:right;"> Customer Name :</label>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-users"></i>
+                                    </span>
+                                    <input type="text" name="customer_name" class="form-control" placeholder="Customer Name" data-error-msg="Customer Name is required!" required>
                                 </div>
                             </div>
-                            <div class="col-md-12">
-                                <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;"><b>*</b>Contact Person :</label>
-                                </div>
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-users"></i>
-                                        </span>
-                                        <input type="text" name="contact_name" class="form-control" placeholder="Contact Person" data-error-msg="Contact Person is required!" required>
-                                    </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="col-md-4" id="label">
+                                 <label class="control-label boldlabel" style="text-align:right;"> Contact Person :</label>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-users"></i>
+                                    </span>
+                                    <input type="text" name="contact_name" class="form-control" placeholder="Contact Person" required data-error-msg="Contact Person is required.">
                                 </div>
                             </div>
-                            <div class="col-md-12">
-                                <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;"><b>*</b> Address :</label>
-                                </div>
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-home"></i>
-                                         </span>
-                                         <textarea name="address" class="form-control" data-error-msg="Supplier address is required!" placeholder="Address" required ></textarea>
-                                    </div>
+                        </div>
+                    
+                        <div class="col-md-12">
+                            <div class="col-md-4" id="label">
+                                 <label class="control-label boldlabel" style="text-align:right;">Address :</label>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-home"></i>
+                                     </span>
+                                     <textarea name="address" class="form-control" data-error-msg="Supplier address is required!" placeholder="Address" required ></textarea>
                                 </div>
                             </div>
-                            <div class="col-md-12">
-                                <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;">Email Address :</label>
-                                </div>
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-envelope-o"></i>
-                                        </span>
-                                        <input type="text" name="email_address" class="form-control" placeholder="Email Address">
-                                    </div>
+                        </div>
+
+                        <!-- <div class="col-md-12">
+                            <div class="col-md-4" id="label">
+                                 <label class="control-label boldlabel" style="text-align:right;"> Term :</label>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-file-code-o"></i>
+                                    </span>
+                                    <input type="text" name="term" id="term" class="form-control" placeholder="Term in days">
                                 </div>
                             </div>
-                            <div class="col-md-12">
-                                <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;">Landline :</label>
-                                </div>
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-phone"></i>
-                                        </span>
-                                        <input type="text" name="landline" id="landline" class="form-control" placeholder="Landline">
-                                    </div>
+                        </div> -->
+
+                        <!-- <div class="col-md-12">
+                            <div class="col-md-4" id="label">
+                                 <label class="control-label boldlabel" style="text-align:right;"> Credit Limit :</label>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-file-code-o"></i>
+                                    </span>
+                                    <input type="text" name="credit_limit" id="credit_limit" class="form-control" placeholder="Credit Limit">
                                 </div>
                             </div>
-                            <div class="col-md-12">
-                                <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;">Mobile No :</label>
-                                </div>
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-mobile"></i>
-                                        </span>
-                                        <input type="text" name="mobile_no" id="mobile_no" class="form-control" placeholder="Mobile No">
-                                    </div>
+                        </div> -->
+                    
+                        <div class="col-md-12">
+                            <div class="col-md-4" id="label">
+                                 <label class="control-label boldlabel" style="text-align:right;">Email Address :</label>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-envelope-o"></i>
+                                    </span>
+                                    <input type="text" name="email_address" class="form-control" placeholder="Email Address" data-error-msg="Email Address is required." required>
                                 </div>
                             </div>
-                            <div class="col-md-12">
-                                <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;">Tin No :</label>
-                                </div>
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-file-code-o"></i>
-                                        </span>
-                                        <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="Tin No">
-                                    </div>
+                        </div>
+                    
+                        <div class="col-md-12">
+                            <div class="col-md-4" id="label">
+                                 <label class="control-label boldlabel" style="text-align:right;">Contact No :</label>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-phone"></i>
+                                    </span>
+                                    <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Contact No" data-error-msg="Contact No  is required." required>
                                 </div>
                             </div>
-                            <div class="col-md-12">
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="col-md-4" id="label">
+                                 <label class="control-label boldlabel" style="text-align:right;">Tin No :</label>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-file-code-o"></i>
+                                    </span>
+                                    <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="Tin No" data-error-msg="Tin No is required." required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-4" id="label">
+                                 <label class="control-label boldlabel" style="text-align:right;">Business Organization :</label>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-users"></i>
+                                    </span>
+                                    <input type="text" name="business_organization" id="business_organization" class="form-control" placeholder="Business Organization" data-error-msg="Business Organization is required." required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-4" id="label">
+                                 <label class="control-label boldlabel" style="text-align:right;">Office Fax Number :</label>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-users"></i>
+                                    </span>
+                                    <input type="text" name="office_fax_number" id="office_fax_number" class="form-control" placeholder="Office Fax Number" data-error-msg="Office Fax Number is required." required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-4" id="label">
+                                 <label class="control-label boldlabel" style="text-align:right;">AR Transaction :</label>
+                            </div>
+                            <div class="col-md-8" style="padding: 0px;">
+                            <select name="ar_trans_id" id="cbo_ar_trans" style="width: 100%" data-error-msg="Type of Accounts Receivable Transaction is required." required>
+                                <?php foreach($ar_trans as $ar_tran){ ?>
+                                    <option value="<?php echo $ar_tran->ar_trans_id; ?>"><?php echo $ar_tran->ar_trans_name?></option>
+                                <?php } ?>
+                            </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12"><br>
+                            <div class="col-md-4" id="label">
+                                 <label class="control-label boldlabel" style="text-align:right;" >Terms and Conditions :</label>
+                            </div>
+                            <div class="col-md-8" style="padding: 0px;">
+                            <select name="payment_term_id" id="cbo_payment_term" style="width: 100%" data-error-msg="Payment Terms and Condition is required." required>
+                                <?php foreach($payment_terms as $payment_terms){ ?>
+                                    <option value="<?php echo $payment_terms->payment_term_id; ?>"><?php echo $payment_terms->payment_term_name?></option>
+                                <?php } ?>
+                            </select>
+                            </div>
+                        </div>
+                            <div class="col-md-12"><br>
                                 <div class="col-md-4" id="label">
                                      <label class="control-label boldlabel" style="text-align:right;">Customer Type :</label>
                                 </div>
@@ -808,7 +878,8 @@
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboDepartments; var _cboCustomers; var dt_so; var products; var changetxn;
     var _cboCustomerType; var prodstat;
-    var _cboCustomerTypeCreate;
+    var _cboCustomerTypeCreate; var _cboPaymentTerm;
+    var _cboArTrans;
      var _line_unit;
     var oTableItems={
         qty : 'td:eq(0)',
@@ -932,6 +1003,17 @@ $(document).ready(function(){
         });
 
         _cboCustomerTypeCreate=$("#cbo_customer_type_create").select2({
+            allowClear: false
+        });
+
+        _cboPaymentTerm=$("#cbo_payment_term").select2({
+            placeholder: "Please select Payment Term.",
+            allowClear: false
+        });
+
+
+        _cboArTrans=$("#cbo_ar_trans").select2({
+            placeholder: "Please select AR Transaction.",
             allowClear: false
         });
         $('#custom-templates .typeahead').keypress(function(event){
@@ -1197,6 +1279,8 @@ $(document).ready(function(){
             if(i==0){ //new customer
                 //clearFields($('#modal_new_customer').find('form'));
                 clearFields($('#frm_customer_new'));
+                $('#cbo_payment_term').select2('val',null);
+                $('#cbo_ar_trans').select2('val',null);
                 _cboCustomers.select2('val',null)
                 $('#modal_new_customer').modal('show');
                  _cboCustomerTypeCreate.select2('val',0);

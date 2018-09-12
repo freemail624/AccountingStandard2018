@@ -27,7 +27,7 @@
 	        $data['_switcher_settings'] = $this->load->view('template/elements/switcher', '', true);
 	        $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', true);
 	        $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', true);
-	        $data['title'] = 'Daily Collection Report';
+	        $data['title'] = 'Revolving Fund Monitor';
 	        $data['departments']=$this->Departments_model->get_list(array('departments.is_active'=>TRUE,'departments.is_deleted'=>FALSE));
 
         (in_array('14-4',$this->session->user_rights)? 
@@ -107,7 +107,7 @@
                 $excel->getActiveSheet()->getColumnDimension('G')->setWidth('25');
 
                 //name the worksheet
-                $excel->getActiveSheet()->setTitle("Daily Collection Report");
+                $excel->getActiveSheet()->setTitle("Revolving Fund Monitor");
                 $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
                 						->setCellValue('A2',$company_info[0]->company_address)
@@ -118,7 +118,7 @@
 
 				$excel->getActiveSheet()
                         ->mergeCells('A'.$i.':E'.$i)
-                        ->setCellValue('A'.$i, 'Daily Collection Report as of '.$date)
+                        ->setCellValue('A'.$i, 'Revolving Fund Monitor as of '.$date)
                         ->getStyle('A'.$i.':E'.$i)->applyFromArray(
                             array(
                                 'fill' => array(
@@ -263,7 +263,7 @@
 
 				$excel->getActiveSheet()
                         ->mergeCells('A'.$i.':B'.$i)
-                        ->setCellValue('A'.$i, 'Daily Collection Report Summary as of '.$date)
+                        ->setCellValue('A'.$i, 'Revolving Fund Monitor Summary as of '.$date)
                         ->getStyle('A'.$i.':B'.$i)->applyFromArray(
                             array(
                                 'fill' => array(
@@ -383,7 +383,7 @@
 				$i++;
                 ob_end_clean();
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                header('Content-Disposition: attachment;filename='."Daily Collection Report.xlsx".'');
+                header('Content-Disposition: attachment;filename='."Revolving Fund Monitor.xlsx".'');
                 header('Cache-Control: max-age=0');
                 // If you're serving to IE 9, then the following may be needed
                 header('Cache-Control: max-age=1');

@@ -114,6 +114,7 @@ class Account_integration extends CORE_Controller
                 $m_integration->petty_cash_account_id=$this->input->post('petty_cash_account_id',TRUE);
                 $m_integration->revolving_fund_account_id=$this->input->post('revolving_fund_account_id',TRUE);
                 $m_integration->depreciation_expense_debit_id=$this->input->post('depreciation_expense_debit_id',TRUE);
+                $m_integration->supplier_inventory_debit_account_id=$this->input->post('supplier_inventory_debit_account_id',TRUE);
                 $m_integration->depreciation_expense_credit_id=$this->input->post('depreciation_expense_credit_id',TRUE);        
                 $m_integration->modify(1);
 

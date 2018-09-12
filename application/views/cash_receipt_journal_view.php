@@ -816,7 +816,7 @@
                                     <div class="col-md-8">
                                         <div class="col-md-12">
                                             <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b class="required">*</b></font> Customer Name :</label>
+                                                 <label class="control-label boldlabel" style="text-align:right;"> Customer Name :</label>
                                             </div>
                                             <div class="form-group">
                                                 <div class="input-group">
@@ -830,28 +830,28 @@
 
                                         <div class="col-md-12">
                                             <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;"><font color="red"></font> Contact Person :</label>
+                                                 <label class="control-label boldlabel" style="text-align:right;"> Contact Person :</label>
                                             </div>
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-users"></i>
                                                     </span>
-                                                    <input type="text" name="contact_name" class="form-control" placeholder="Contact Person">
+                                                    <input type="text" name="contact_name" class="form-control" placeholder="Contact Person" required data-error-msg="Contact Person is required.">
                                                 </div>
                                             </div>
                                         </div>
                                     
                                         <div class="col-md-12">
                                             <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b class="required">*</b></font> Address :</label>
+                                                 <label class="control-label boldlabel" style="text-align:right;">Address :</label>
                                             </div>
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-home"></i>
                                                      </span>
-                                                     <textarea name="address" class="form-control" data-error-msg="Address is required!" placeholder="Address" required ></textarea>
+                                                     <textarea name="address" class="form-control" data-error-msg="Supplier address is required!" placeholder="Address" required ></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -893,7 +893,7 @@
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-envelope-o"></i>
                                                     </span>
-                                                    <input type="text" name="email_address" class="form-control" placeholder="Email Address">
+                                                    <input type="text" name="email_address" class="form-control" placeholder="Email Address" data-error-msg="Email Address is required." required>
                                                 </div>
                                             </div>
                                         </div>
@@ -907,7 +907,7 @@
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-phone"></i>
                                                     </span>
-                                                    <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Contact No">
+                                                    <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Contact No" data-error-msg="Contact No  is required." required>
                                                 </div>
                                             </div>
                                         </div>
@@ -921,11 +921,61 @@
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-file-code-o"></i>
                                                     </span>
-                                                    <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="Tin No">
+                                                    <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="Tin No" data-error-msg="Tin No is required." required>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-12">
+                                            <div class="col-md-4" id="label">
+                                                 <label class="control-label boldlabel" style="text-align:right;">Business Organization :</label>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-users"></i>
+                                                    </span>
+                                                    <input type="text" name="business_organization" id="business_organization" class="form-control" placeholder="Business Organization" data-error-msg="Business Organization is required." required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="col-md-4" id="label">
+                                                 <label class="control-label boldlabel" style="text-align:right;">Office Fax Number :</label>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-users"></i>
+                                                    </span>
+                                                    <input type="text" name="office_fax_number" id="office_fax_number" class="form-control" placeholder="Office Fax Number" data-error-msg="Office Fax Number is required." required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="col-md-4" id="label">
+                                                 <label class="control-label boldlabel" style="text-align:right;">AR Transaction :</label>
+                                            </div>
+                                            <div class="col-md-8" style="padding: 0px;">
+                                            <select name="ar_trans_id" id="cbo_ar_trans" style="width: 100%" data-error-msg="Type of Accounts Receivable Transaction is required." required>
+                                                <?php foreach($ar_trans as $ar_tran){ ?>
+                                                    <option value="<?php echo $ar_tran->ar_trans_id; ?>"><?php echo $ar_tran->ar_trans_name?></option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12"><br>
+                                            <div class="col-md-4" id="label">
+                                                 <label class="control-label boldlabel" style="text-align:right;" >Terms and Conditions :</label>
+                                            </div>
+                                            <div class="col-md-8" style="padding: 0px;">
+                                            <select name="payment_term_id" id="cbo_payment_term" style="width: 100%" data-error-msg="Payment Terms and Condition is required." required>
+                                                <?php foreach($payment_terms as $payment_terms){ ?>
+                                                    <option value="<?php echo $payment_terms->payment_term_id; ?>"><?php echo $payment_terms->payment_term_name?></option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12"><br>
                                             <div class="col-md-4" id="label">
                                                  <label class="control-label boldlabel" style="text-align:right;">Customer Type :</label>
                                             </div>
@@ -1071,7 +1121,8 @@ $(document).ready(function(){
     var _txnMode; var _cboParticulars; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode;
     var dtReview; var _cbo_paymentMethod; var _cbo_departments; var dt; var _cbo_banks; var _cbo_accounttype;
     var _cboCustomerType; var dtReviewOther; var _cboTaxGroup;
- 
+    var _cboPaymentTerm;
+    var _cboArTrans;
 
     var oTBJournal={
         "dr" : "td:eq(2)",
@@ -1295,7 +1346,15 @@ $(document).ready(function(){
             allowClear: false
         });
  
+        _cboPaymentTerm=$("#cbo_payment_term").select2({
+            placeholder: "Please select Payment Term.",
+            allowClear: false
+        });
 
+        _cboArTrans=$("#cbo_ar_trans").select2({
+            placeholder: "Please select AR Transaction.",
+            allowClear: false
+        });
 
     }();
 
@@ -1646,6 +1705,8 @@ $(document).ready(function(){
                 $('input,textarea,select',$('#frm_customer')).val('');
                 $('img').attr('src','assets/img/anonymous-icon.png');
                  $('#cbo_customer_type').select2('val', 0);
+                $('#cbo_payment_term').select2('val',null);
+                $('#cbo_ar_trans').select2('val',null);
                 $('#modal_create_customer').modal('show');
             } else if (_cboParticulars.val() == 'create_supplier'){
                 clearFields($('#frm_supplier'));
@@ -1802,7 +1863,8 @@ $(document).ready(function(){
         });
 
 
-        $('#btn_browse').click(function(event){
+
+        $('#btn_browse_customer_photo').click(function(event){
             event.preventDefault();
             $('input[name="file_upload[]"]').click();
         });
@@ -1813,6 +1875,7 @@ $(document).ready(function(){
             $.each(_files,function(key,value){
                 data.append(key,value);
             });
+
             $.ajax({
                 url : 'Customers/transaction/upload',
                 type : "POST",
@@ -1822,7 +1885,35 @@ $(document).ready(function(){
                 processData : false,
                 contentType : false,
                 success : function(response){
-                    $('img[name="img_user"]').attr('src',response.path);
+                    //console.log(response);
+                    //alert(response.path);
+                    /*$('#div_img_loader').hide();
+                    $('#div_img_user').show();*/
+                    $('img[name="img_customer"]').attr('src',response.path);
+                }
+            });
+        });
+
+
+
+        $('input[name="file_supplier[]"]').change(function(event){
+            var _files=event.target.files;
+            
+            var data=new FormData();
+            $.each(_files,function(key,value){
+                data.append(key,value);
+            });
+            $.ajax({
+                url : 'Suppliers/transaction/upload',
+                type : "POST",
+                data : data,
+                cache : false,
+                dataType : 'json',
+                processData : false,
+                contentType : false,
+                success : function(response){
+                    
+                    $('img[name="img_supplier"]').attr('src',response.path);
                 }
             });
         });
@@ -1852,6 +1943,7 @@ $(document).ready(function(){
             $('#modal_create_suppliers').modal('hide');
         });
 
+
     }();
 
 
@@ -1869,7 +1961,7 @@ $(document).ready(function(){
 
     var createCustomer=function(){
         var _data=$('#frm_customer').serializeArray();
-        _data.push({name : "photo_path" ,value : $('img[name="img_user"]').attr('src')});
+        _data.push({name : "photo_path" ,value : $('img[name="img_customer"]').attr('src')});
 
         return $.ajax({
             "dataType":"json",

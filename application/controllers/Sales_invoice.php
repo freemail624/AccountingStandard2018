@@ -23,7 +23,8 @@ class Sales_invoice extends CORE_Controller
         $this->load->model('Trans_model');
         $this->load->model('Cash_invoice_model');
         $this->load->model('Customer_type_model');
-
+        $this->load->model('Payment_terms_model');
+        $this->load->model('Ar_trans_model');
 
     }
 
@@ -132,6 +133,13 @@ class Sales_invoice extends CORE_Controller
 
         $data['invoice_counter']=$this->Invoice_counter_model->get_list(array('user_id'=>$this->session->user_id));
 
+        $data['payment_terms']=$this->Payment_terms_model->get_list(
+            'is_deleted=FALSE AND is_active = TRUE'
+        );
+
+        $data['ar_trans']=$this->Ar_trans_model->get_list(
+            'is_deleted=FALSE AND is_active = TRUE'
+        );
 
         $data['title'] = 'Sales Invoice';
         

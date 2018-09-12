@@ -18,7 +18,9 @@ class Service_invoice extends CORE_Controller
         $this->load->model('Service_invoice_item_model');
         $this->load->model('Services_model');
         $this->load->model('Users_model');
-
+        $this->load->model('Payment_terms_model');
+        $this->load->model('Ar_trans_model');
+        $this->load->model('Customer_type_model');
     }
 
     public function index() {
@@ -46,6 +48,18 @@ class Service_invoice extends CORE_Controller
             array('customers.is_active'=>TRUE,'customers.is_deleted'=>FALSE)
         );
 
+
+        $data['payment_terms']=$this->Payment_terms_model->get_list(
+            'is_deleted=FALSE AND is_active = TRUE'
+        );
+
+        $data['ar_trans']=$this->Ar_trans_model->get_list(
+            'is_deleted=FALSE AND is_active = TRUE'
+        );
+
+        $data['customer_type']=$this->Customer_type_model->get_list(
+            'is_deleted=FALSE'
+        );
 
         $data['services'] = $this->Services_model->get_list(
             array('services.is_active'=>TRUE,'services.is_deleted'=>FALSE), 

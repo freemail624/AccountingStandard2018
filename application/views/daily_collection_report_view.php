@@ -80,13 +80,13 @@
 
                     <ol class="breadcrumb">
                         <li><a href="dashboard">Dashboard</a></li>
-                        <li><a href="Daily_collection_report">Daily Collection Report</a></li>
+                        <li><a href="Daily_collection_report">Revolving Fund Monitor </a></li>
                     </ol>
 
                     <div class="container-fluid">
                         <div class="panel panel-default">
                             <div class="panel-body">
-                            <h2 class="h2-panel-heading">Daily Collection Report</h2><hr>
+                            <h2 class="h2-panel-heading">Revolving Fund Monitor </h2><hr>
                                 <div class="row">
                                     <div class="container-fluid">
                                         <div class="container-fluid group-box">
@@ -257,7 +257,7 @@ $(document).ready(function(){
                 ending_balance = 0;
                 $('#tbl_daily_report').html('');
                 $('#tbl_daily_report').append(
-                     '<center><h4><strong>Daily Collection Report</strong></h4><hr></center>'
+                     '<center><h4><strong>Revolving Fund Monitor</strong></h4><hr></center>'
                 );
 
                 beginning_balance =getFloat(response.balance);

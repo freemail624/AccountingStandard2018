@@ -61,7 +61,8 @@
     <script>
 
     $(document).ready(function(){
-        var dt; var _txnMode; var _selectedID; var _selectRowObj; var _selectedBranch; var _cboCustomerType;
+        var dt; var _txnMode; var _selectedID; var _selectRowObj; var _selectedBranch; var _cboCustomerType; var _cboPaymentTerm;
+        var _cboArTrans;
 
         /*$(document).ready(function(){
             $('#modal_filter').modal('show');
@@ -109,9 +110,21 @@
 
 
             _cboCustomerType=$("#cbo_customer_type").select2({
+                placeholder: "Please select Customer Type.",
                 allowClear: false
             });
 
+
+            _cboPaymentTerm=$("#cbo_payment_term").select2({
+                placeholder: "Please select Payment Term.",
+                allowClear: false
+            });
+
+
+            _cboArTrans=$("#cbo_ar_trans").select2({
+                placeholder: "Please select AR Transaction.",
+                allowClear: false
+            });
             //$('#contact_no').keypress(validateNumber);
      }();
 
@@ -166,6 +179,8 @@
                 $('#modal_create_customer').modal('show');
                 clearFields($('#frm_customer'));
                 $('#cbo_customer_type').select2('val', 0);
+                $('#cbo_payment_term').select2('val',null);
+                $('#cbo_ar_trans').select2('val',null);
             });
 
              $('#btn_browse').click(function(event){
@@ -190,6 +205,8 @@
                     $('#branch').val(data.department_id);
                     $('#refcustomertype_id').val(data.refcustomertype_id);
                     _cboCustomerType.select2('val',data.customer_type_id);
+                    _cboArTrans.select2('val',data.ar_trans_id);
+                    _cboPaymentTerm.select2('val',data.payment_term_id);
                     $('#term').val(data.term);
 
                     //alert(data.term);
@@ -266,12 +283,12 @@
 
                 $('#btn_save').click(function(){
 
-                    if(validateRequiredFields()){
+                    if(validateRequiredFields($('#frm_customer'))){
                         if(_txnMode=="new"){
                             createCustomer().done(function(response){
                                 showNotification(response);
                                 dt.row.add(response.row_added[0]).draw();
-                                clearFields($('#frm_cusomer'));
+                                clearFields($('#frm_customer'));
                             }).always(function(){
                                 $('#modal_create_customer').modal('toggle');
                                 showSpinningProgress($('#btn_save'));
@@ -304,7 +321,7 @@
             $('div.form-group').removeClass('has-error');
             $('input[required],textarea[required],select[required]',f).each(function(){
                     if($(this).is('select')){
-                    if($(this).val()==0){
+                    if($(this).val()==0 || $(this).val()==null){
                         showNotification({title:"Error!",stat:"error",msg:$(this).data('error-msg')});
                         $(this).closest('div.form-group').addClass('has-error');
                         $(this).focus();
@@ -870,12 +887,18 @@
                         </div>
 
                         <div class="modal-body">
+
                             <form id="frm_customer">
                                 <div class="row">
                                     <div class="col-md-8">
+                                    <div class="col-sm-12">
+                                        <div class="col-sm-4">
+                                            <i style="color: red;">All fields are required.</i>
+                                        </div>
+                                    </div>
                                         <div class="col-md-12">
                                             <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b>*</b></font> Customer Name :</label>
+                                                 <label class="control-label boldlabel" style="text-align:right;"> Customer Name :</label>
                                             </div>
                                             <div class="form-group">
                                                 <div class="input-group">
@@ -889,21 +912,21 @@
 
                                         <div class="col-md-12">
                                             <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;"><font color="red"></font> Contact Person :</label>
+                                                 <label class="control-label boldlabel" style="text-align:right;"> Contact Person :</label>
                                             </div>
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-users"></i>
                                                     </span>
-                                                    <input type="text" name="contact_name" class="form-control" placeholder="Contact Person">
+                                                    <input type="text" name="contact_name" class="form-control" placeholder="Contact Person" required data-error-msg="Contact Person is required.">
                                                 </div>
                                             </div>
                                         </div>
                                     
                                         <div class="col-md-12">
                                             <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b>*</b></font> Address :</label>
+                                                 <label class="control-label boldlabel" style="text-align:right;">Address :</label>
                                             </div>
                                             <div class="form-group">
                                                 <div class="input-group">
@@ -952,7 +975,7 @@
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-envelope-o"></i>
                                                     </span>
-                                                    <input type="text" name="email_address" class="form-control" placeholder="Email Address">
+                                                    <input type="text" name="email_address" class="form-control" placeholder="Email Address" data-error-msg="Email Address is required." required>
                                                 </div>
                                             </div>
                                         </div>
@@ -966,7 +989,7 @@
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-phone"></i>
                                                     </span>
-                                                    <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Contact No">
+                                                    <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Contact No" data-error-msg="Contact No  is required." required>
                                                 </div>
                                             </div>
                                         </div>
@@ -980,12 +1003,61 @@
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-file-code-o"></i>
                                                     </span>
-                                                    <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="Tin No">
+                                                    <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="Tin No" data-error-msg="Tin No is required." required>
                                                 </div>
                                             </div>
                                         </div>
-
                                         <div class="col-md-12">
+                                            <div class="col-md-4" id="label">
+                                                 <label class="control-label boldlabel" style="text-align:right;">Business Organization :</label>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-users"></i>
+                                                    </span>
+                                                    <input type="text" name="business_organization" id="business_organization" class="form-control" placeholder="Business Organization" data-error-msg="Business Organization is required." required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="col-md-4" id="label">
+                                                 <label class="control-label boldlabel" style="text-align:right;">Office Fax Number :</label>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-users"></i>
+                                                    </span>
+                                                    <input type="text" name="office_fax_number" id="office_fax_number" class="form-control" placeholder="Office Fax Number" data-error-msg="Office Fax Number is required." required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="col-md-4" id="label">
+                                                 <label class="control-label boldlabel" style="text-align:right;">AR Transaction :</label>
+                                            </div>
+                                            <div class="col-md-8" style="padding: 0px;">
+                                            <select name="ar_trans_id" id="cbo_ar_trans" style="width: 100%" data-error-msg="Type of Accounts Receivable Transaction is required." required>
+                                                <?php foreach($ar_trans as $ar_tran){ ?>
+                                                    <option value="<?php echo $ar_tran->ar_trans_id; ?>"><?php echo $ar_tran->ar_trans_name?></option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12"><br>
+                                            <div class="col-md-4" id="label">
+                                                 <label class="control-label boldlabel" style="text-align:right;" >Terms and Conditions :</label>
+                                            </div>
+                                            <div class="col-md-8" style="padding: 0px;">
+                                            <select name="payment_term_id" id="cbo_payment_term" style="width: 100%" data-error-msg="Payment Terms and Condition is required." required>
+                                                <?php foreach($payment_terms as $payment_terms){ ?>
+                                                    <option value="<?php echo $payment_terms->payment_term_id; ?>"><?php echo $payment_terms->payment_term_name?></option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12"><br>
                                             <div class="col-md-4" id="label">
                                                  <label class="control-label boldlabel" style="text-align:right;">Customer Type :</label>
                                             </div>
@@ -998,12 +1070,7 @@
                                             </select>
                                             </div>
                                         </div>
-
-
-
-
                                     </div>
-
                                     <div class="col-md-4">
                                         <div class="col-md-12">
                                             <div class="col-md-12">
@@ -1028,7 +1095,7 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button id="btn_save" type="button" class="btn" style="background-color:#2ecc71;color:white;">Save</button>
+                            <button id="btn_save" type="button" class="btn" style="background-color:#2ecc71;color:white;"><span class=""></span> Save</button>
                             <button id="btn_cancel" type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
                         </div>
                     </div><!---content---->

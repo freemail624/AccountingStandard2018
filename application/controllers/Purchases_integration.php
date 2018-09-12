@@ -195,10 +195,10 @@
 		                		$pos_supplier_id = $ins_line[3];
 		                		$supplier_info = $this->Suppliers_model->get_list(array('pos_supplier_id'=>$pos_supplier_id));
 		                		if(COUNT($supplier_info) > 0){ // supplier exists but modify the name
-		                			$m_update_supplier = $this->Suppliers_model;
-		                			$supplier_id = $supplier_info[0]->supplier_id;
-		                			$m_update_supplier->supplier_name = $ins_line[4]; 
-		                			$m_update_supplier->modify($supplier_id);
+		                			// $m_update_supplier = $this->Suppliers_model;
+		                			// $supplier_id = $supplier_info[0]->supplier_id;
+		                			// $m_update_supplier->supplier_name = $ins_line[4]; 
+		                			// $m_update_supplier->modify($supplier_id);
 		                		}else{ // supplier does not exist
 		                			$m_create_supplier = $this->Suppliers_model;
 		                			$m_create_supplier->pos_supplier_id = $pos_supplier_id;

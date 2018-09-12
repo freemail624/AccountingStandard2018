@@ -182,7 +182,7 @@
 
 <ol class="breadcrumb" style="margin-bottom: 0px;">
     <li><a href="dashboard">Dashboard</a></li>
-    <li><a href="Collection_posting">Collection Posting</a></li>
+    <li><a href="Collection_posting">Revolving Fund Journal</a></li>
 </ol>
 
 <div class="container-fluid">
@@ -194,11 +194,11 @@
         <div class="panel panel-default" style="border-radius:6px;">
             <div id="collapseOne" class="collapse in">
                 <div class="panel-body" style="min-height: 400px;">
-                <h2 class="h2-panel-heading">Collection Posting </h2><hr>
+                <h2 class="h2-panel-heading">Revolving Fund Journal </h2><hr>
 
                 <div class="row">
                     <div class="col-lg-3">&nbsp;<br>
-                        <button class="btn btn-primary"  id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Collection" ><i class="fa fa-plus"></i> New Collection</button>
+                        <button class="btn btn-primary"  id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Journal" ><i class="fa fa-plus"></i> New Journal</button>
                     </div>
                     <div class="col-lg-3">
                             From :<br />
@@ -255,7 +255,7 @@
 <div class="col-sm-12">
     <div class="panel panel-default" >
             <div class="panel-body" style="min-height: 400px;">
-            <h2 class="h2-panel-heading">Collection Posting</h2><hr />
+            <h2 class="h2-panel-heading">Revolving Fund Journal</h2><hr />
                 <div>
                     <form id="frm_journal" role="form" class="form-horizontal">
 

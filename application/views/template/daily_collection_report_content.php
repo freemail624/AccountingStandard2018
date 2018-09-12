@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Daily Collection Report</title>
+	<title>Revolving Fund Monitor</title>
 	<style>
 		body {
 			font-family: 'Segoe UI',sans-serif;
@@ -40,7 +40,7 @@
         </tr>
     </table><hr>
     <div>
-        <center><strong> <br>Daily Collection Report</strong><br><i>As of <?php echo $_GET['date']; ?></i></center>
+        <center><strong> <br>Revolving Fund Monitor</strong><br><i>As of <?php echo $_GET['date']; ?></i></center>
     </div>
     <?php  $total_collection = 0; $total_carf = 0; $ending_balance = 0; ?>
         <table style="width:100%" class="table table-striped">
@@ -151,7 +151,7 @@
 
 <br>
 
-    <center><strong> <br>Daily Collection Report Summary</strong><br><i>As of <?php echo $_GET['date']; ?></i></center>
+    <center><strong> <br>Revolving Fund Monitor Summary</strong><br><i>As of <?php echo $_GET['date']; ?></i></center>
     <table style="width:100%" class="table table-striped">
     <tr>
         <td style="width:30%;"><strong>Date:</strong></td>

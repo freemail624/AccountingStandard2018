@@ -27,9 +27,11 @@ class Cash_receipt extends CORE_Controller
                 'Tax_model',
                 'Other_income_model',
                 'Customer_type_model'
+
             )
         );
-
+        $this->load->model('Payment_terms_model');
+        $this->load->model('Ar_trans_model');
     }
 
     public function index() {
@@ -48,7 +50,13 @@ class Cash_receipt extends CORE_Controller
         $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['banks']=$this->Bank_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['customer_type']=$this->Customer_type_model->get_list('is_deleted=FALSE');
- 
+         $data['payment_terms']=$this->Payment_terms_model->get_list(
+            'is_deleted=FALSE AND is_active = TRUE'
+        );
+
+        $data['ar_trans']=$this->Ar_trans_model->get_list(
+            'is_deleted=FALSE AND is_active = TRUE'
+        );
         $data['title'] = 'Cash Receipt';
         (in_array('1-5',$this->session->user_rights)? 
         $this->load->view('cash_receipt_journal_view', $data)

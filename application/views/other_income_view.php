@@ -232,16 +232,16 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="2" style="text-align: right;">Discount %:</td>
+                                <td colspan="2" style="text-align: right;"></td>
                                 <td>
-                                    <input type="text" id="txt_total_overall_discount" class="numeric form-control" name="total_overall_discount" value="0.00">
+                                    <input type="hidden" id="txt_total_overall_discount" class="numeric form-control" name="total_overall_discount" value="0.00">
                                     <input type="hidden" class="numeric form-control " name="total_overall_discount_amount" id="txt_total_overall_discount_amount" readonly>
                                 </td>
                                 <td colspan="1" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Amount :</strong></td>
                                 <td align="right" colspan="1" id="total_amount" color="red">0.00</td>
                                 <td></td>
                             </tr>
-                            <tr>
+                            <tr style="display: none;">
                             <td colspan="4" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Discount :</strong></td>
                                 <td align="right" colspan="1" id="total_amount_before_discount" color="red">0.00</td>
                                 <td></td>
