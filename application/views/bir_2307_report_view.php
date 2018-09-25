@@ -122,7 +122,7 @@
                             
                                         </div>
                                         <div class="col-xs-12 col-md-6">
-                                            <div class="col-md-6">TIN No:<br><input type="text" id="tin_no" class="form-control" readonly></div>
+                                            <div class="col-md-6">TIN:<br><input type="text" id="tin_no" class="form-control" readonly></div>
                                             <div class="col-md-6"></div>
                                         </div>
                                         </div>
