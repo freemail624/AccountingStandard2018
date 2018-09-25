@@ -476,14 +476,14 @@ echo $_side_bar_navigation;
                                         </div>
                                         <div class="col-md-12">
                                             <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;">Tin No :</label>
+                                                 <label class="control-label boldlabel" style="text-align:right;">TIN :</label>
                                             </div>
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-file-code-o"></i>
                                                     </span>
-                                                    <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="Tin No">
+                                                    <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="TIN">
                                                 </div>
                                             </div>
                                         </div>
