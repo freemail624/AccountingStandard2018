@@ -657,9 +657,9 @@
                                                         <th>&nbsp;&nbsp;</th>
                                                         <th>Customer Name</th>
                                                         <th>Contact Person</th>
-                                                        <th>Address</th>
+                                                        <th style="width: 30%;">Address</th>
                                                         <th>Contact No</th>
-                                                        <th><center>Action</center></th>
+                                                        <th style="width: 15%;"><center>Action</center></th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
