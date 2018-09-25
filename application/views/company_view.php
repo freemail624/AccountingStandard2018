@@ -199,13 +199,13 @@
 
 
                                                    <div class="form-group">
-                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong> Tin No. :</strong></label>
+                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong> TIN. :</strong></label>
                                                        <div class="col-md-7">
                                                            <div class="input-group">
                                                                 <span class="input-group-addon">
                                                                     <i class="fa fa-code"></i>
                                                                 </span>
-                                                               <input type="text" name="tin_no" class="form-control" value="<?php echo $company->tin_no; ?>" placeholder="TIN No" data-error-msg="Tin No. is required!">
+                                                               <input type="text" name="tin_no" class="form-control" value="<?php echo $company->tin_no; ?>" placeholder="TIN" data-error-msg="TIN. is required!">
                                                            </div>
                                                        </div>
                                                    </div>
