@@ -75,7 +75,7 @@
 					$data['payments'] = $m_sales->get_customer_soa_payment($customer_id);
 
 
-                    $file_name='Aging of Receivables';
+	                    $file_name='Statement of Account';
                     
                     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                     $pdf = $this->m_pdf->load("A4-L"); //pass the instance of the mpdf class
@@ -114,7 +114,7 @@
 	                $excel->getActiveSheet()->getColumnDimensionByColumn('A4')->setWidth('40');
 
 	                //name the worksheet
-	                $excel->getActiveSheet()->setTitle("Aging of Receivables Report");
+	                $excel->getActiveSheet()->setTitle("Statement of Account");
 	                $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
 	                $excel->getActiveSheet()->mergeCells('A1:B1');
 	                $excel->getActiveSheet()->mergeCells('A2:C2');
@@ -506,7 +506,7 @@
 	                $excel->getActiveSheet()->getColumnDimensionByColumn('A4')->setWidth('40');
 
 	                //name the worksheet
-	                $excel->getActiveSheet()->setTitle("Aging of Receivables Report");
+	                $excel->getActiveSheet()->setTitle("Statement of Account");
 	                $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
 	                $excel->getActiveSheet()->mergeCells('A1:B1');
 	                $excel->getActiveSheet()->mergeCells('A2:C2');
