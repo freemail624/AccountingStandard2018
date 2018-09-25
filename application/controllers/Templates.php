@@ -1482,11 +1482,15 @@ class Templates extends CORE_Controller {
                     array(
                         'customers.*',
                         'customer_photos.photo_path',
+                        'ar_trans.ar_trans_name',
+                        'customer_type.customer_type_name',
                         'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as user',
                         'DATE_FORMAT(customers.date_created,"%m/%d/%Y %r")as date_added',
                     ),
                     array(
                         array('customer_photos','customer_photos.customer_id=customers.customer_id','left'),
+                        array('customer_type','customer_type.customer_type_id=customers.customer_type_id','left'),
+                        array('ar_trans','ar_trans.ar_trans_id=customers.ar_trans_id','left'),
                         array('user_accounts','user_accounts.user_id=customers.posted_by_user','left')
                     )
                 );

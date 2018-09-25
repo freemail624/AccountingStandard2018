@@ -19,7 +19,6 @@ class Sales_order extends CORE_Controller
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
         $this->load->model('Customer_type_model');
-        $this->load->model('Payment_terms_model');
         $this->load->model('Ar_trans_model');
     }
 
@@ -87,10 +86,6 @@ class Sales_order extends CORE_Controller
 
         $data['customer_type_create']=$this->Customer_type_model->get_list(
             'is_deleted=FALSE'
-        );
-
-        $data['payment_terms']=$this->Payment_terms_model->get_list(
-            'is_deleted=FALSE AND is_active = TRUE'
         );
 
         $data['ar_trans']=$this->Ar_trans_model->get_list(

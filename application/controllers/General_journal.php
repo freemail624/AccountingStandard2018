@@ -29,7 +29,6 @@ class General_journal extends CORE_Controller
 
             )
         );
-        $this->load->model('Payment_terms_model');
         $this->load->model('Ar_trans_model');
     }
 
@@ -49,11 +48,6 @@ class General_journal extends CORE_Controller
         $data['accounts']=$this->Account_title_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['methods']=$this->Payment_method_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['customer_type']=$this->Customer_type_model->get_list('is_deleted=FALSE');
-
-        $data['payment_terms']=$this->Payment_terms_model->get_list(
-            'is_deleted=FALSE AND is_active = TRUE'
-        );
-
         $data['ar_trans']=$this->Ar_trans_model->get_list(
             'is_deleted=FALSE AND is_active = TRUE'
         );

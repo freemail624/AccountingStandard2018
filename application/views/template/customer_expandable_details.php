@@ -6,47 +6,55 @@
                 <div class="tab-container tab-top tab-default" style="height: auto;border-left: 0px!important;">
                     <ul class="nav nav-tabs">
                         <li class="active"><a href="#customer_info<?php echo $customer_info->customer_id; ?>" data-toggle="tab" class="tab-label"><i class="fa fa-users"></i> Information</a></li>
-                        <li ><a href="#invoice_info<?php echo $customer_info->customer_id; ?>" data-toggle="tab" class="tab-label"><i class="fa fa-users"></i> Customer Invoice</a></li>
-                        <li ><a href="#payment_info<?php echo $customer_info->customer_id; ?>" data-toggle="tab" class="tab-label"><i class="fa fa-users"></i> Payment Details</a></li>
+                        <li style="display: none;"><a href="#invoice_info<?php echo $customer_info->customer_id; ?>" data-toggle="tab" class="tab-label"><i class="fa fa-users"></i> Customer Invoice</a></li>
+                        <li style="display: none;"><a href="#payment_info<?php echo $customer_info->customer_id; ?>" data-toggle="tab" class="tab-label"><i class="fa fa-users"></i> Payment Details</a></li>
 
                     </ul>
                     <div class="tab-content" style="height: auto;">
                         <div class="tab-pane active" id="customer_info<?php echo $customer_info->customer_id; ?>" style="min-height: 300px;">
                             <div class="row">
-                                <div class="col-lg-7">
-                                    <h4><span style="margin-left: 1%;color: #FFF;"><strong><i class="fa fa-user"></i> <?php echo $customer_info->customer_name; ?></strong></span></h4>
+                                <div class="col-lg-8">
+                                    <h4><span style="margin-left: 1%;"><strong><i class="fa fa-user"></i> <?php echo $customer_info->customer_name; ?></strong></span></h4>
                                     <hr />
 
-                                    <div style="margin-left: 10%">
+                                    <div style="margin-left: 5%">
+                                    <div class="col-sm-6">
                                         <i class="fa fa-globe"></i> Address : <?php echo $customer_info->address; ?><br />
+                                        <i class="fa fa-phone-square"></i> Tax Identification Number : <?php echo $customer_info->tin_no; ?><br />
+                                        <i class="fa fa-code"></i> AR Transactions : <?php echo $customer_info->ar_trans_name; ?><br />
+                                        <i class="fa fa-user"></i> Customer Type : <?php echo $customer_info->customer_type_name; ?><br />
+                                        <i class="fa fa-globe"></i> Terms And Conditions : <?php echo $customer_info->payment_term_desc; ?><br />
+                                        <i class="fa fa-globe"></i> Business Organization : <?php echo $customer_info->business_organization; ?><br />
+                                    </div>
+                                    <div class="col-sm-6">
                                         <i class="fa fa-send-o"></i> Email : <?php echo $customer_info->email_address; ?><br />
                                         <i class="fa fa-phone-square"></i> Landline : <?php echo $customer_info->contact_no; ?><br />
-
+                                        <i class="fa fa-user"></i> Contact Person : <?php echo $customer_info->contact_name; ?><br />
+                                        <i class="fa fa-phone-square"></i> Office Fax Number : <?php echo $customer_info->office_fax_number; ?><br />
                                         <i class="fa fa-user"></i> Added : <?php echo $customer_info->user; ?><br />
                                         <i class="fa fa-calendar"></i> Date : <?php echo $customer_info->date_added; ?><br /><br /><br />
+                                    </div>
 
+
+                                    <div class="col-sm-6">
+                                        <i class="fa fa-user"></i> Your last payment : <?php echo (is_array($recent_payment)?$recent_payment[0]->date_paid:'none'); ?><br />
+                                        <i class="fa fa-calendar"></i> Reference : <?php echo (is_array($recent_payment)?$recent_payment[0]->receipt_no:'none'); ?><br />
+                                        <i class="fa fa-money"></i> Amount : <?php echo (is_array($recent_payment)?number_format($recent_payment[0]->total_paid_amount,2):'none'); ?><br /><br /><br />
+                                    </div>
 
                                     </div>
                                 </div>
 
-                                <div class="col-lg-5"><br />
+                                <div class="col-lg-4"><br />
                                     <center>
                                         <img class="img-circle" src="<?php echo $customer_info->photo_path; ?>" style="border: 2px solid #000000" height="150" width="150" /></center>
-
-                                    <br /><br />
-
-                                    <i class="fa fa-user"></i> Your last payment : <?php echo (is_array($recent_payment)?$recent_payment[0]->date_paid:'none'); ?><br />
-                                    <i class="fa fa-calendar"></i> Reference : <?php echo (is_array($recent_payment)?$recent_payment[0]->receipt_no:'none'); ?><br />
-                                    <i class="fa fa-money"></i> Amount : <?php echo (is_array($recent_payment)?number_format($recent_payment[0]->total_paid_amount,2):'none'); ?><br /><br /><br />
 
                                 <!--      <i class="fa fa-star-o"></i> Total Unpaid : <b><?php echo number_format($customer_info->total_receivable_amount,2); ?></b><br /><br /><br /><br /><br /> -->
                                 </div>
                             
-
-
-                            <span style="margin-left: 1%"><b><i class="fa fa-list"></i> List of Sales Order of <?php echo $customer_info->customer_name; ?></b> (Open and partially received)</span>
+                            <span style="margin-left: 1%;display: none;"><b><i class="fa fa-list"></i> List of Sales Order of <?php echo $customer_info->customer_name; ?></b> (Open and partially received)</span>
                             <hr />
-                            <div class="col-lg-12 table-responsive">
+                            <div class="col-lg-12 table-responsive" style="display: none;">
                                 <table id="tbl_so_<?php echo $customer_info->customer_id; ?>" class="table table-striped" cellspacing="0" width="100%">
                                     <thead>
                                     <tr>
@@ -73,20 +81,6 @@
                             </div>
                             </div>
                         </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
                         <div class="tab-pane" id="invoice_info<?php echo $customer_info->customer_id; ?>" style="min-height: 300px;">

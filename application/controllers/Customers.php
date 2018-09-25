@@ -18,7 +18,6 @@ class Customers extends CORE_Controller {
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
         $this->load->model('Customer_type_model');
-        $this->load->model('Payment_terms_model');
         $this->load->model('Ar_trans_model');
 
     }
@@ -35,10 +34,6 @@ class Customers extends CORE_Controller {
 
         $data['customer_type']=$this->Customer_type_model->get_list(
             'is_deleted=FALSE'
-        );
-
-        $data['payment_terms']=$this->Payment_terms_model->get_list(
-            'is_deleted=FALSE AND is_active = TRUE'
         );
 
         $data['ar_trans']=$this->Ar_trans_model->get_list(
@@ -100,7 +95,7 @@ class Customers extends CORE_Controller {
                 $m_customers->business_organization=$this->input->post('business_organization',TRUE);
                 $m_customers->office_fax_number=$this->input->post('office_fax_number',TRUE);
                 $m_customers->ar_trans_id=$this->input->post('ar_trans_id',TRUE);
-                $m_customers->payment_term_id=$this->input->post('payment_term_id',TRUE);
+                $m_customers->payment_term_desc=$this->input->post('payment_term_desc',TRUE);
                 $m_customers->set('date_created','NOW()');
                 $m_customers->posted_by_user=$this->session->user_id;
 
@@ -147,7 +142,7 @@ class Customers extends CORE_Controller {
                 $m_customers->business_organization=$this->input->post('business_organization',TRUE);
                 $m_customers->office_fax_number=$this->input->post('office_fax_number',TRUE);
                 $m_customers->ar_trans_id=$this->input->post('ar_trans_id',TRUE);
-                $m_customers->payment_term_id=$this->input->post('payment_term_id',TRUE);
+                $m_customers->payment_term_desc=$this->input->post('payment_term_desc',TRUE);
                 $m_customers->credit_limit=$this->input->post('credit_limit',TRUE);
 
                 $m_customers->set('date_created','NOW()');
@@ -272,7 +267,7 @@ class Customers extends CORE_Controller {
                 $m_customers->business_organization=$this->input->post('business_organization',TRUE);
                 $m_customers->office_fax_number=$this->input->post('office_fax_number',TRUE);
                 $m_customers->ar_trans_id=$this->input->post('ar_trans_id',TRUE);
-                $m_customers->payment_term_id=$this->input->post('payment_term_id',TRUE);
+                $m_customers->payment_term_desc=$this->input->post('payment_term_desc',TRUE);
                 $m_customers->modified_by_user=$this->session->user_id;
 
                 $m_customers->modify($customer_id);

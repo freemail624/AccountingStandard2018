@@ -61,7 +61,7 @@
     <script>
 
     $(document).ready(function(){
-        var dt; var _txnMode; var _selectedID; var _selectRowObj; var _selectedBranch; var _cboCustomerType; var _cboPaymentTerm;
+        var dt; var _txnMode; var _selectedID; var _selectRowObj; var _selectedBranch; var _cboCustomerType; 
         var _cboArTrans;
 
         /*$(document).ready(function(){
@@ -111,12 +111,6 @@
 
             _cboCustomerType=$("#cbo_customer_type").select2({
                 placeholder: "Please select Customer Type.",
-                allowClear: false
-            });
-
-
-            _cboPaymentTerm=$("#cbo_payment_term").select2({
-                placeholder: "Please select Payment Term.",
                 allowClear: false
             });
 
@@ -179,7 +173,6 @@
                 $('#modal_create_customer').modal('show');
                 clearFields($('#frm_customer'));
                 $('#cbo_customer_type').select2('val', 0);
-                $('#cbo_payment_term').select2('val',null);
                 $('#cbo_ar_trans').select2('val',null);
             });
 
@@ -206,7 +199,6 @@
                     $('#refcustomertype_id').val(data.refcustomertype_id);
                     _cboCustomerType.select2('val',data.customer_type_id);
                     _cboArTrans.select2('val',data.ar_trans_id);
-                    _cboPaymentTerm.select2('val',data.payment_term_id);
                     $('#term').val(data.term);
 
                     //alert(data.term);
@@ -1050,11 +1042,7 @@
                                                  <label class="control-label boldlabel" style="text-align:right;" >Terms and Conditions :</label>
                                             </div>
                                             <div class="col-md-8" style="padding: 0px;">
-                                            <select name="payment_term_id" id="cbo_payment_term" style="width: 100%" data-error-msg="Payment Terms and Condition is required." required>
-                                                <?php foreach($payment_terms as $payment_terms){ ?>
-                                                    <option value="<?php echo $payment_terms->payment_term_id; ?>"><?php echo $payment_terms->payment_term_name?></option>
-                                                <?php } ?>
-                                            </select>
+                                            <input type="text" name="payment_term_desc" class="form-control" data-error-msg="Payment Terms and Condition is required." required>
                                             </div>
                                         </div>
                                         <div class="col-md-12"><br>

@@ -499,11 +499,7 @@
                                                  <label class="control-label boldlabel" style="text-align:right;" >Terms and Conditions :</label>
                                             </div>
                                             <div class="col-md-8" style="padding: 0px;">
-                                            <select name="payment_term_id" id="cbo_payment_term" style="width: 100%" data-error-msg="Payment Terms and Condition is required." required>
-                                                <?php foreach($payment_terms as $payment_terms){ ?>
-                                                    <option value="<?php echo $payment_terms->payment_term_id; ?>"><?php echo $payment_terms->payment_term_name?></option>
-                                                <?php } ?>
-                                            </select>
+                                            <input type="text" name="payment_term_desc" class="form-control" data-error-msg="Payment Terms and Condition is required." required>
                                             </div>
                                         </div>
                                         <div class="col-md-12"><br>
@@ -809,10 +805,7 @@ $(document).ready(function(){
         });
 
 
-        _cboPaymentTerm=$("#cbo_payment_term").select2({
-            placeholder: "Please select Payment Term.",
-            allowClear: false
-        });
+
 
 
         _cboArTrans=$("#cbo_ar_trans").select2({
@@ -979,7 +972,6 @@ $(document).ready(function(){
             if(i==0){ //new customer
                 //clearFields($('#modal_new_customer').find('form'));
                 $('#cbo_customer_type').select2('val', 0);
-                $('#cbo_payment_term').select2('val',null);
                 $('#cbo_ar_trans').select2('val',null);
                 _cboCustomers.select2('val',null)
                 clearFields($('#frm_customer_new'));

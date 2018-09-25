@@ -18,7 +18,6 @@ class Service_invoice extends CORE_Controller
         $this->load->model('Service_invoice_item_model');
         $this->load->model('Services_model');
         $this->load->model('Users_model');
-        $this->load->model('Payment_terms_model');
         $this->load->model('Ar_trans_model');
         $this->load->model('Customer_type_model');
     }
@@ -46,11 +45,6 @@ class Service_invoice extends CORE_Controller
         //data required by active view
         $data['customers']=$this->Customers_model->get_list(
             array('customers.is_active'=>TRUE,'customers.is_deleted'=>FALSE)
-        );
-
-
-        $data['payment_terms']=$this->Payment_terms_model->get_list(
-            'is_deleted=FALSE AND is_active = TRUE'
         );
 
         $data['ar_trans']=$this->Ar_trans_model->get_list(
