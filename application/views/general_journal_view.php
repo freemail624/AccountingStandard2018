@@ -157,7 +157,7 @@
                                 <th>Department</th>
                                 <th>Date Issued</th>
                                 <th>Terms</th>
-                                <th>Remarks</th>
+                                <th style="width: 20%;">Remarks</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -180,7 +180,7 @@
                                 <th>Adjustment Code</th>
                                 <th>Adjustment Type</th>
                                 <th>Date Adjusted</th>
-                                <th>Remarks</th>
+                                <th style="width: 20%;">Remarks</th>
                                 <th>Department</th>
                             </tr>
                             </thead>
@@ -800,14 +800,14 @@
 
                                         <div class="col-md-12">
                                             <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;">Tin No :</label>
+                                                 <label class="control-label boldlabel" style="text-align:right;">TIN :</label>
                                             </div>
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-file-code-o"></i>
                                                     </span>
-                                                    <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="Tin No">
+                                                    <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="TIN">
                                                 </div>
                                             </div>
                                         </div>
