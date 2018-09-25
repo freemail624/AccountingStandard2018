@@ -557,10 +557,10 @@ $(document).ready(function(){
                                                         <th>&nbsp;&nbsp;</th>
                                                         <th>Company Name</th>
                                                         <th>Contact Person</th>
-                                                        <th>Address</th>
+                                                        <th style="width: 20%">Address</th>
                                                         <th>Contact No</th>
                                                         <th>Tax</th>
-                                                        <th><center>Action</center></th>
+                                                        <th style="width: 15%;"><center>Action</center></th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
