@@ -98,10 +98,19 @@
                                                     <?php } ?>
                                                 </select>
                                             </div>
-                                            <div class="col-xs-12 col-md-4" style="margin-bottom: 10px;">
+                                            <div class="col-xs-12 col-md-2" style="margin-bottom: 10px;">
                                                 <strong>Report Date:</strong>
                                                 <div class="input-group">
                                                     <input id="txt_date" type="text" class="date-picker form-control" value="<?php echo date('m/d/Y'); ?>">
+                                                    <div class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-md-2" style="margin-bottom: 10px;">
+                                                <strong>To:</strong>
+                                                <div class="input-group">
+                                                    <input id="txt_date_end" type="text" class="date-picker form-control" value="<?php echo date('m/d/Y'); ?>">
                                                     <div class="input-group-addon">
                                                         <i class="fa fa-calendar"></i>
                                                     </div>
@@ -205,16 +214,20 @@ $(document).ready(function(){
             InitializeDataTable();
         });
 
+        $('#txt_date_end').change(function(){
+            InitializeDataTable();
+        });
+
         _cboDepartments.on('select2:select', function(){
             InitializeDataTable();
         });
 
         $('#btn_print').click(function(){
-            window.open('Daily_collection_report/transaction/report?date='+$('#txt_date').val()+'&dep='+_cboDepartments.val());
+            window.open('Daily_collection_report/transaction/report?date='+$('#txt_date').val()+'&dep='+_cboDepartments.val()+'&date_to='+$('#txt_date_end').val());
         });
 
         $('#btn_export').click(function(){
-            window.open('Daily_collection_report/transaction/export-daily-collection?date='+$('#txt_date').val()+'&dep='+_cboDepartments.val());
+            window.open('Daily_collection_report/transaction/export-daily-collection?date='+$('#txt_date').val()+'&dep='+_cboDepartments.val()+'&date_to='+$('#txt_date_end').val());
         });
 
         
@@ -241,6 +254,7 @@ $(document).ready(function(){
         $('#tbl_daily_report').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
         var data = [];
             data.push({name : "date" ,value : $('#txt_date').val()});
+            data.push({name : "date_to" ,value : $('#txt_date_end').val()});
             data.push({name : "dep" ,value : _cboDepartments.val()});
 
 
@@ -269,7 +283,7 @@ $(document).ready(function(){
                     '<td style="width:20%;"></td>'+
                     '<td></td>'+
                     '<td></td>'+
-                    '<td class="right-align">'+$('#txt_date').val()+'</td>'+
+                    '<td class="right-align">'+$('#txt_date').val()+'-'+$('#txt_date_end').val()+'</td>'+
                     '</tr>'+
                     '<tr>'+
                     '<td style="width:30%;"><strong>Beginning Balance : </strong></td>'+

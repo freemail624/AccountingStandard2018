@@ -88,7 +88,7 @@ class Rights_link_model extends CORE_Model{
                                           (78,'12','12-7','Product List Report'),
                                           (79,'2','2-8','Purchase History'),
                                           (80,'2','2-7','Purchase Monitoring'),
-                                          (81,'6','6-12','Puchasing Integration'),
+                                          -- (81,'6','6-12','Puchasing Integration'),
                                           (82,'15','15-1','Product Management (Inventory Tab)'),
                                           (83,'3','3-4','Cash Invoice'),
                                           (84,'6','6-13','Audit Trail'),
@@ -102,7 +102,8 @@ class Rights_link_model extends CORE_Model{
                                           (92,'14','14-4','Revolving Fund Monitor'),
                                           (93,'16','16-1','Items Management'),
                                           (94,'16','16-2','Item Units Management'),
-                                          (95,'16','16-3','Other Income Invoice')
+                                          (95,'16','16-3','Other Income Invoice'),
+                                          (96,'6','6-14','Statement of Accounts Settings')
 
                                           ON DUPLICATE KEY UPDATE
                                           rights_links.parent_code=VALUES(rights_links.parent_code),

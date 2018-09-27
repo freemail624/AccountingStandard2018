@@ -42,11 +42,13 @@
 					$m_journal=$this->Journal_info_model;
 
 					$date=date('Y-m-d',strtotime($this->input->get('date',TRUE)));
+					$date_to=date('Y-m-d',strtotime($this->input->get('date_to',TRUE)));
+
 					$department=$this->input->get('dep',TRUE);
 					if($department == '1'){ $department = null; }
 					$bal = $m_journal->get_revolving_fund_balance($date,$department);
-					$response['carf'] = $m_journal->get_revolving_fund_carf($date,$department);
-					$response['collection'] = $m_journal->get_revolving_fund_collection($date,$department);
+					$response['carf'] = $m_journal->get_revolving_fund_carf($date,$department,$date_to);
+					$response['collection'] = $m_journal->get_revolving_fund_collection($date,$department,$date_to);
 					$response['balance']=$bal[0]->Balance;
 
 					echo json_encode($response);
@@ -58,16 +60,17 @@
 					$data['company_info']=$company_info[0];
 					$m_journal=$this->Journal_info_model;
 					$date=date('Y-m-d',strtotime($this->input->get('date',TRUE)));
+					$date_to=date('Y-m-d',strtotime($this->input->get('date_to',TRUE)));
 					$department=$this->input->get('dep',TRUE);
 					$department_info = $this->Departments_model->get_list($department);
 					if($department == '1'){ $department = null; }
 					$data['department_name'] = $department_info[0]->department_name;
 					$bal = $m_journal->get_revolving_fund_balance($date,$department);
-					$data['carf'] = $m_journal->get_revolving_fund_carf($date,$department);
-					$data['collection'] = $m_journal->get_revolving_fund_collection($date,$department);
+					$data['carf'] = $m_journal->get_revolving_fund_carf($date,$department,$date_to);
+					$data['collection'] = $m_journal->get_revolving_fund_collection($date,$department,$date_to);
 					$data['balance']=$bal[0]->Balance;
-					$data['out_summary'] = $m_journal->get_revolving_fund_summary($is_carf_collection = false,$date,$department);
-					$data['in_summary'] = $m_journal->get_revolving_fund_summary($is_carf_collection = true,$date,$department);
+					$data['out_summary'] = $m_journal->get_revolving_fund_summary($is_carf_collection = false,$date,$department,$date_to);
+					$data['in_summary'] = $m_journal->get_revolving_fund_summary($is_carf_collection = true,$date,$department,$date_to);
 
 					$this->load->view('template/daily_collection_report_content',$data);
 				break;
@@ -81,6 +84,7 @@
 				$m_journal=$this->Journal_info_model;
 
 				$date=date('Y-m-d',strtotime($this->input->get('date',TRUE)));
+				$date_to=date('Y-m-d',strtotime($this->input->get('date_to',TRUE)));
 				$department=$this->input->get('dep',TRUE);
 
 				$department_info = $this->Departments_model->get_list($department);
@@ -89,11 +93,11 @@
 				$department_name = $department_info[0]->department_name;
 
 				$bal = $m_journal->get_revolving_fund_balance($date,$department);
-				$carf = $m_journal->get_revolving_fund_carf($date,$department);
-				$collection = $m_journal->get_revolving_fund_collection($date,$department);
+				$carf = $m_journal->get_revolving_fund_carf($date,$department,$date_to);
+				$collection = $m_journal->get_revolving_fund_collection($date,$department,$date_to);
 				$beginning_balance=$bal[0]->Balance;
-				$out_summary = $m_journal->get_revolving_fund_summary($is_carf_collection = false,$date,$department);
-				$in_summary = $m_journal->get_revolving_fund_summary($is_carf_collection = true,$date,$department);
+				$out_summary = $m_journal->get_revolving_fund_summary($is_carf_collection = false,$date,$department,$date_to);
+				$in_summary = $m_journal->get_revolving_fund_summary($is_carf_collection = true,$date,$department,$date_to);
 
 
 
@@ -118,7 +122,7 @@
 
 				$excel->getActiveSheet()
                         ->mergeCells('A'.$i.':E'.$i)
-                        ->setCellValue('A'.$i, 'Revolving Fund Monitor as of '.$date)
+                        ->setCellValue('A'.$i, 'Revolving Fund Monitor '.$date.' - '.$date_to)
                         ->getStyle('A'.$i.':E'.$i)->applyFromArray(
                             array(
                                 'fill' => array(
@@ -141,7 +145,7 @@
 				$excel->getActiveSheet()->setCellValue('A'.$i,'Date');
 				$excel->getActiveSheet()->getStyle('A'.$i)->getFont()->setBold(TRUE);
 				$excel->getActiveSheet()->getStyle('E'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-				$excel->getActiveSheet()->setCellValue('E'.$i,$date);
+				$excel->getActiveSheet()->setCellValue('E'.$i,$date.' - '.$date_to);
 				$i++;
 
 				$excel->getActiveSheet()->mergeCells('A'.$i.':D'.$i);
@@ -263,7 +267,7 @@
 
 				$excel->getActiveSheet()
                         ->mergeCells('A'.$i.':B'.$i)
-                        ->setCellValue('A'.$i, 'Revolving Fund Monitor Summary as of '.$date)
+                        ->setCellValue('A'.$i, 'Revolving Fund Monitor Summary '.$date.' - '.$date_to)
                         ->getStyle('A'.$i.':B'.$i)->applyFromArray(
                             array(
                                 'fill' => array(

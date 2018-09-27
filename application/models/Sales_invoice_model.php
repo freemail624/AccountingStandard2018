@@ -137,7 +137,7 @@ $sql="SELECT main.* FROM(
         return $this->db->query($sql)->result();
 }
 
-    function get_customer_soa_final($date, $customer_id, $status, $payment_date){
+    function get_customer_soa_final($date, $customer_id, $status, $payment_date,$filter_accounts){
 $sql="
 SELECT 
 ji.journal_id,
@@ -153,7 +153,7 @@ IFNULL(payment.payment_amount,0) as payment_amount,
 LEFT JOIN customers c ON c.customer_id = ji.customer_id
 LEFT JOIN (
 SELECT ja.journal_id, SUM(dr_amount) as dr_amount FROM journal_accounts ja
-WHERE account_id = (SELECT receivable_account_id FROM account_integration)
+WHERE account_id IN ($filter_accounts)
 GROUP BY  ja.journal_id
 ) as receivables
 
@@ -303,7 +303,7 @@ $sql="SELECT * FROM (
 return $this->db->query($sql)->result();
 
     }
-    function get_customer_soa_payment($customer_id){
+    function get_customer_soa_payment($customer_id,$filter_accounts){
 $sql="SELECT * FROM
 (SELECT * FROM
         (SELECT
@@ -320,7 +320,7 @@ $sql="SELECT * FROM
         LEFT JOIN customers c ON c.customer_id = rp.customer_id
         LEFT JOIN (
         SELECT ja.journal_id, SUM(dr_amount) as dr_amount FROM journal_accounts ja
-        WHERE account_id = (SELECT receivable_account_id FROM account_integration)
+        WHERE account_id  IN ($filter_accounts)
         GROUP BY  ja.journal_id
         ) as receivables
 

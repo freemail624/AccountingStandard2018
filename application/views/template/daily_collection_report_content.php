@@ -40,7 +40,7 @@
         </tr>
     </table><hr>
     <div>
-        <center><strong> <br>Revolving Fund Monitor</strong><br><i>As of <?php echo $_GET['date']; ?></i></center>
+        <center><strong> <br>Revolving Fund Monitor</strong><br><i> <?php echo $_GET['date']; ?> - <?php echo $_GET['date_to']; ?></i></center>
     </div>
     <?php  $total_collection = 0; $total_carf = 0; $ending_balance = 0; ?>
         <table style="width:100%" class="table table-striped">
@@ -56,7 +56,7 @@
             <td style="width:20%;"></td>
             <td></td>
             <td></td>
-            <td class="right-align"><?php echo $_GET['date']; ?></td>
+            <td class="right-align"><?php echo $_GET['date']; ?> - <?php echo $_GET['date_to']; ?></td>
         </tr>
         <tr>
             <td style="width:30%;"><strong>Beginning Balance : </strong></td>
@@ -151,7 +151,7 @@
 
 <br>
 
-    <center><strong> <br>Revolving Fund Monitor Summary</strong><br><i>As of <?php echo $_GET['date']; ?></i></center>
+    <center><strong> <br>Revolving Fund Monitor Summary</strong><br><i> <?php echo $_GET['date']; ?> - <?php echo $_GET['date_to']; ?></i></center>
     <table style="width:100%" class="table table-striped">
     <tr>
         <td style="width:30%;"><strong>Date:</strong></td>
@@ -226,7 +226,7 @@
             </tbody>
         </table>
         <?php  $ending_balance_summary = $balance + $in_summary_total -$out_summary_total; ?>
-<br>
+        <br>
         <table style="width:100%" class="table table-striped">
             <thead>
             <th style="width:30%;text-align: left;">Daily Balance:</th>

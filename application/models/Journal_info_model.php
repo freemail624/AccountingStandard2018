@@ -1079,7 +1079,7 @@ class Journal_info_model extends CORE_Model{
             return $this->db->query($sql)->result();
     }
 
-    function get_revolving_fund_carf($date,$department_id){
+    function get_revolving_fund_carf($date,$department_id,$date_to){
              $sql="SELECT   
                     ji.txn_no,
                     ji.supplier_id,
@@ -1098,12 +1098,12 @@ class Journal_info_model extends CORE_Model{
                     LEFT JOIN carf_trans ct ON ct.carf_trans_id = ji.carf_trans_id
                     WHERE ji.is_active = TRUE AND ji.is_deleted = FALSE AND ji.is_carf_collection = FALSE AND ji.book_type = 'SPJ'
                      ".($department_id==null?"":" AND ji.department_id=".$department_id."")."
-                    AND ji.date_txn = '$date'
+                    AND DATE(ji.date_txn) BETWEEN '$date' AND '$date_to'
                     ";
             return $this->db->query($sql)->result();
     }
 
-    function get_revolving_fund_collection($date,$department_id){
+    function get_revolving_fund_collection($date,$department_id,$date_to){
              $sql="SELECT   
                 ji.txn_no,
                 ji.supplier_id,
@@ -1120,12 +1120,12 @@ class Journal_info_model extends CORE_Model{
                 LEFT JOIN payment_methods pm on pm.payment_method_id= ji.payment_method_id
                 WHERE ji.is_active = TRUE AND ji.is_deleted = FALSE AND ji.is_carf_collection = TRUE AND ji.book_type = 'SPJ'
                  ".($department_id==null?"":" AND ji.department_id=".$department_id."")."
-                    AND ji.date_txn = '$date'
+                AND DATE(ji.date_txn) BETWEEN '$date' AND '$date_to'
                     ";
             return $this->db->query($sql)->result();
     }
 
-    function get_revolving_fund_summary($is_carf_collection=false,$date,$department_id){
+    function get_revolving_fund_summary($is_carf_collection=false,$date,$department_id,$date_to){
              $sql="SELECT
             ji.payment_method_id,
             pm.payment_method,
@@ -1139,7 +1139,8 @@ class Journal_info_model extends CORE_Model{
             LEFT JOIN account_classes AS ac ON ac.`account_class_id`=atitles.`account_class_id`
             LEFT JOIN journal_info AS ji ON ji.journal_id=ja.`journal_id`
             LEFT JOIN payment_methods pm  ON pm.payment_method_id  = ji.payment_method_id
-            WHERE  ji.is_active=TRUE AND ji.is_deleted=FALSE AND ji.book_type = 'SPJ' AND ji.date_txn = '$date'
+            WHERE  ji.is_active=TRUE AND ji.is_deleted=FALSE AND ji.book_type = 'SPJ' 
+             AND DATE(ji.date_txn) BETWEEN '$date' AND '$date_to'
             ".($is_carf_collection!=false?" AND ji.is_carf_collection = TRUE ":" AND ji.is_carf_collection = FALSE ")."
             ".($department_id==null?"":" AND ji.department_id=".$department_id."")."
             GROUP BY ji.payment_method_id";
