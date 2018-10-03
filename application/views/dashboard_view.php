@@ -87,6 +87,9 @@
             font-size: 12px;
         }
 
+        #tbl_po_list .no-padding table{
+          font-size: 12px;
+        }
         th {
           background: rgba(255, 255, 255, .2)!important;
           border-bottom: 1px solid #525252;
@@ -401,16 +404,16 @@
 
                                                 </div>
                                                 <div class="row" style="margin-top: 20px;">
-                                                    <div class="col-xs-12 col-sm-8 <?php echo (in_array('7-1',$this->session->user_rights)?'':'hidden'); ?>">
+                                                    <div class="col-xs-12 col-sm-12 <?php echo (in_array('7-1',$this->session->user_rights)?'':'hidden'); ?>">
                                                       <div class="data-container table-responsive" style="padding: 20px 15px 20px 15px; min-height: 700px; max-height: 700px;">
                                                             <h6 class="visible-xs hidden-sm hidden-md hidden-lg po_title" style="position: absolute; top: 5px"><i class="fa fa-file-text-o"></i> <span >PURCHASE ORDER</span></h6>
-                                                            <h3 class="hidden-xs po_title" style="position: absolute; top: 5px"><i class="fa fa-file-text-o"  style="color: #067cb2;"></i> <span >PURCHASE ORDER FOR APPROVAL</span></h2>
+                                                            <h3 class="hidden-xs po_title" style="position: absolute; top: 5px"><i class="fa fa-file-text-o"  style="color: #067cb2;"></i> <span >PURCHASE ORDER FOR APPROVAL</span></h3>
                                                             <table id="tbl_po_list" class="table table-striped" cellspacing="0" width="100%">
                                                                 <thead>
                                                                     <th></th>
                                                                     <th>PO #</th>
                                                                     <th>Vendor</th>
-                                                                    <th>Terms </th>
+                                                                    <th>Remarks </th>
                                                                     <th>Posted by </th>
                                                                     <th style="text-align: center;"> <i class="fa fa-paperclip"></i></th>
                                                                     <th style="width: 15%!important;"><center>Action</center></th>
@@ -420,7 +423,7 @@
                                                             </table>
                                                       </div>
                                                     </div>
-                                                    <div class="col-xs-12 <?php echo ($this->session->user_group_id == 1 ? 'col-sm-4' : 'col-sm-12' ); ?>">
+                                                    <div class="col-xs-12 hidden <?php echo ($this->session->user_group_id == 1 ? 'col-sm-4' : 'col-sm-4' ); ?>">
                                                       <div id="style-1" class="data-container" style="min-height: 700px; max-height: 700px; overflow-y: scroll;">
                                                         <h3><i class="fa fa-rss" style="color: #067cb2;;"></i> ACTIVITY FEED</h3>
                                                         <div class="v-timeline vertical-container">
@@ -763,7 +766,7 @@ Chart.defaults.global.defaultFontColor = "#000000";
                     },
                     { targets:[1],data: "po_no" },
                     { targets:[2],data: "supplier_name" },
-                    { targets:[3],data: "term_description" },
+                    { targets:[3],data: "remarks" },
                     { targets:[4],data: "posted_by" },
                     {
                         targets:[5],data: "attachment",

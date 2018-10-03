@@ -458,6 +458,66 @@
     </div>
 </div><!---modal-->
 
+<div id="modal_confirmation_cancel" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Confirm Cancellation</h4>
+
+            </div>
+
+            <div class="modal-body">
+                Are you sure you want to cancel this PO?<br>
+                Please state the reason for cancellation: <br>
+                <textarea id="cancel_reason" class="form-control"></textarea>
+                <i style="font-size: 11px;">Note: This process is irreversible.<br>
+                Cancelled By : <?php  echo $this->session->user_fullname?></i>
+            </div>
+
+            <div class="modal-footer">
+                <button id="btn_cancel_yes" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Yes</button>
+                <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal_confirmation_already_cancelled" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Cancellation Details</h4>
+
+            </div>
+
+            <div class="modal-body">
+            <table width="100%" class="table table-striped">
+                <tbody>
+                    <tr>
+                        <td style="width: 30%;"><b>Purchase Order #: </b></td>
+                        <td id="cancelled_po_no"></td>
+                    </tr>
+                    <tr>
+                        <td><b>Reason:</b></td>
+                        <td id="cancelled_cancel_reason"></td>
+                    </tr>
+                    <tr>
+                        <td><b>Cancelled By: </b></td>
+                        <td id="cancelled_cancelled_by"></td>
+                    </tr>
+                    <tr>
+                        <td><b>Date and Time: </b></td>
+                        <td id="cancelled_date_cancelled"></td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="modal_new_department" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog modal-md">
         <div class="modal-content">
@@ -852,17 +912,18 @@ $(document).ready(function(){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
                         var btn_message='<a href="Po_messages?id='+full.purchase_order_id+'" target="_blank" class="btn btn-green btn-sm" name="message_po" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Message"><i class="fa fa-envelope-o"></i> </a>';
+                        var btn_cancel='<button class="btn btn-red btn-sm" name="cancel_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Cancel PO"><i class="fa fa-times"></i> </button>';
                  
 
-                        return '<center>'+btn_edit+'&nbsp;'+btn_message+'&nbsp;'+btn_trash+'</center>';
+                        return '<center>'+btn_edit+'&nbsp;'+btn_message+'&nbsp;'+btn_cancel+'</center>';
                     }
                 },
-                { targets:[9],data: "purchase_order_id" }
+                { targets:[9],data: "purchase_order_id",visible:false }
             ]
         });
 
         var createToolBarButton=function(){
-            var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Purcahase Order" >'+
+            var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Purchase Order" >'+
                 '<i class="fa fa-plus"></i> New Purchase Order</button>';
             $("div.toolbar").html(_btnNew);
         }();
@@ -1366,6 +1427,28 @@ $(document).ready(function(){
             $('#modal_confirmation').modal('show');
         });
 
+        $('#tbl_purchases tbody').on('click','button[name="cancel_info"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dt.row(_selectRowObj).data();
+            _selectedID=data.purchase_order_id;
+
+            if(data.approval_id == 3){
+            $('#modal_confirmation_already_cancelled').modal('show');
+                $('#cancelled_po_no').text(data.po_no);
+                $('#cancelled_cancel_reason').text(data.cancel_reason);
+                $('#cancelled_cancelled_by').text(data.cancelled_by);
+                $('#cancelled_date_cancelled').text(data.date_cancelled);
+
+            } else if (data.order_status_id == 2 || data.order_status_id == 3 ){
+                showNotification({title:"Error!",stat:"error",msg:"You cannot cancel a PO that is already been received."});
+            }else{
+            $('cancel_reason').val('');
+            $('#modal_confirmation_cancel').modal('show');
+
+
+            }
+        });
+
         $('#tbl_items tbody').on('change','select',function(){
             if(changetxn == 'active'){
                 var row=$(this).closest('tr');
@@ -1429,13 +1512,22 @@ $(document).ready(function(){
             removePurchaseOrder().done(function(response){
                 showNotification(response);
                 if(response.stat=="success"){
-                    dt.row(_selectRowObj).remove().draw();
+                    dt.row(_selectRowObj).remove().draw(false);
                 }
 
             });
             //}
         });
 
+        $('#btn_cancel_yes').click(function(){
+            cancelPurchaseOrder().done(function(response){
+                showNotification(response);
+                if(response.stat=="success"){
+                    dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
+                }
+
+            });
+        });
 
 
         $('#btn_cancel').click(function(){
@@ -1638,6 +1730,18 @@ $(document).ready(function(){
             "type":"POST",
             "url":"Purchases/transaction/delete",
             "data":{purchase_order_id : _selectedID}
+        });
+    };
+
+    var cancelPurchaseOrder=function(){
+        _data = [];
+        _data.push({name : "cancel_reason" ,value : $('#cancel_reason').val()});
+        _data.push({name : "purchase_order_id" ,value : _selectedID });
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Purchases/transaction/cancel_info",
+            "data":_data
         });
     };
 

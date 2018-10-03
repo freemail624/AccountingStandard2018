@@ -170,7 +170,7 @@ $(document).ready(function(){
         });
 
         $('#btn_print').click(function(){
-            window.open('Purchase_monitoring/transaction/report?supplier_id='+$('#product_id').val()+'&start_date='+$('#start_date').val()+'&end_date='+$('#end_date').val());
+            window.open('Purchase_monitoring/transaction/report?product_id='+$('#product_id').val()+'&start_date='+$('#start_date').val()+'&end_date='+$('#end_date').val());
         });
 
         // $('#btn_excel').click(function(){
@@ -311,7 +311,7 @@ $(document).ready(function(){
                                                     Product :
                                                     <select name="category_id" id="product_id" data-error-msg="Product is required." required>
                                                         <option value="">All Products</option>
-                                                        <?php foreach($products as $row) { echo '<option value="'.$row->product_id.'">'.$row->product_desc.' - '.$row->product_desc.'</option>'; } ?>
+                                                        <?php foreach($products as $row) { echo '<option value="'.$row->product_id.'">'.$row->product_code.' - '.$row->product_desc.'</option>'; } ?>
                                                     </select>
 
                                                 </div>

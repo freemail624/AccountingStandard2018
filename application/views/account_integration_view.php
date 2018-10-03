@@ -381,10 +381,23 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                         <div class="form-group">
                             <label class="col-md-3 control-label"> * Payment to Supplier :</label>
                             <div class="col-md-7">
-                                <select name="payment_to_supplier_id"  class="cbo_accounts" data-error-msg="Discount Account is required." required>
+                                <select name="payment_to_supplier_id"  class="cbo_accounts" data-error-msg="Payment to Supplier Account is required." required>
 
                                     <?php foreach($accounts as $account){ ?>
                                         <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->payment_to_supplier_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
+                                    <?php } ?>
+                                </select>
+
+                                <span class="help-block m-b-none">Please select the account where payment to supplier will be credited.</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> * Receivable from Supplier<br> (Other Income) :</label>
+                            <div class="col-md-7">
+                                <select name="other_income_receivable_account_id"  class="cbo_accounts" data-error-msg="Receivable from Supplier (Other Income) Account is required." required>
+
+                                    <?php foreach($accounts as $account){ ?>
+                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->other_income_receivable_account_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
                                     <?php } ?>
                                 </select>
 

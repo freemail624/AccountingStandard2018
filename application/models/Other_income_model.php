@@ -20,7 +20,7 @@ class Other_income_model extends CORE_Model
 
 			(SELECT 
 			oii.item_id,
-			(SELECT payable_account_id FROM account_integration) as account_id,
+			(SELECT other_income_receivable_account_id FROM account_integration) as account_id,
 			SUM(oii.oi_line_total_after_global) as dr_amount
 			 FROM
 

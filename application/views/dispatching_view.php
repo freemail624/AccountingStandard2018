@@ -630,11 +630,7 @@
                                      <label class="control-label boldlabel" style="text-align:right;" >Terms and Conditions :</label>
                                 </div>
                                 <div class="col-md-8" style="padding: 0px;">
-                                <select name="payment_term_id" id="cbo_payment_term" style="width: 100%" data-error-msg="Payment Terms and Condition is required." required>
-                                    <?php foreach($payment_terms as $payment_terms){ ?>
-                                        <option value="<?php echo $payment_terms->payment_term_id; ?>"><?php echo $payment_terms->payment_term_name?></option>
-                                    <?php } ?>
-                                </select>
+                                <input type="text" name="payment_term_desc" class="form-control" data-error-msg="Payment Terms and Condition is required." required>
                                 </div>
                             </div>
                             <div class="col-md-12"><br>
@@ -868,7 +864,6 @@ $(document).ready(function(){
     var _cboCustomerType; var prodstat;
     var _cboCustomerTypeCreate;
      var _line_unit;
-    var _cboPaymentTerm;
     var _cboArTrans;
     var oTableItems={
         qty : 'td:eq(0)',
@@ -1009,13 +1004,6 @@ $(document).ready(function(){
         _cboCustomerTypeCreate=$("#cbo_customer_type_create").select2({
             allowClear: false
         });
-
-
-        _cboPaymentTerm=$("#cbo_payment_term").select2({
-            placeholder: "Please select Payment Term.",
-            allowClear: false
-        });
-
 
         _cboArTrans=$("#cbo_ar_trans").select2({
             placeholder: "Please select AR Transaction.",
@@ -1279,7 +1267,6 @@ $(document).ready(function(){
                 //clearFields($('#modal_new_customer').find('form'));
                 clearFields($('#frm_customer_new'));
                 _cboCustomers.select2('val',null);
-                $('#cbo_payment_term').select2('val',null);
                 $('#cbo_ar_trans').select2('val',null);
                 $('#modal_new_customer').modal('show');
                  _cboCustomerTypeCreate.select2('val',0);

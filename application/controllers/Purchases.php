@@ -457,6 +457,48 @@ class Purchases extends CORE_Controller
                     }
                     break;
 
+                case 'cancel_info':
+                    $m_purchases=$this->Purchases_model;
+                    $purchase_order_id=$this->input->post('purchase_order_id',TRUE);
+                    $cancel_reason=$this->input->post('cancel_reason',TRUE);
+
+                    //validations
+                    $m_delivery=$this->Delivery_invoice_model;
+                    if(count($m_delivery->get_list(array('delivery_invoice.purchase_order_id'=>$purchase_order_id,'delivery_invoice.is_deleted'=>FALSE,'delivery_invoice.is_active'=>TRUE)))>0){
+                        $response['title']='Error!';
+                        $response['stat']='error';
+                        $response['msg']='Sorry, you cannot cancel Purchase Order that is already been received.';
+                        echo json_encode($response);
+                        exit;
+                    }
+
+
+
+                    // $m_purchases->set('date_deleted','NOW()'); //treat NOW() as function and not string, set date of deletion
+                    // $m_purchases->deleted_by_user=$this->session->user_id; //deleted by user
+                    $m_purchases->approval_id=3;
+                    $m_purchases->cancelled_by_user=$this->session->user_id;
+                    $m_purchases->set('date_cancelled','NOW()'); 
+                    $m_purchases->cancel_reason=$cancel_reason;
+                    if($m_purchases->modify($purchase_order_id)){
+
+                    $po_info=$m_purchases->get_list($purchase_order_id,'po_no');
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=4; //CRUD
+                    $m_trans->trans_type_id=11; // TRANS TYPE
+                    $m_trans->trans_log='Cancelled Purchase Order No: '.$po_info[0]->po_no;
+                    $m_trans->save();
+                    
+                        $response['title']='Success!';
+                        $response['stat']='success';
+                        $response['msg']='Purchase order successfully cancelled.';
+                        $response['row_updated'] = $this->row_response($purchase_order_id);
+                        echo json_encode($response);
+                    }
+                    break;
+
 
                 // case 'mark-approved': //called on DASHBOARD when approved button is clicked
                 //     $m_purchases=$this->Purchases_model;
@@ -688,15 +730,20 @@ class Purchases extends CORE_Controller
                 'suppliers.supplier_name',
                 'tax_types.tax_type',
                 'approval_status.approval_status',
+                'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as cancelled_by',
                 'order_status.order_status'
             ),
             array(
                 array('suppliers','suppliers.supplier_id=purchase_order.supplier_id','left'),
                 array('tax_types','tax_types.tax_type_id=purchase_order.tax_type_id','left'),
                 array('approval_status','approval_status.approval_id=purchase_order.approval_id','left'),
+                array('user_accounts','user_accounts.user_id=purchase_order.cancelled_by_user','left'),
                 array('order_status','order_status.order_status_id=purchase_order.order_status_id','left')
             ),
             'purchase_order.purchase_order_id DESC'
         );
     }
 }
+
+
+ 
