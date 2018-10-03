@@ -197,6 +197,7 @@
                             <ul class="acc-menu">
                                 <li class="<?php echo (in_array('16-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Monthly_percentage_tax_return">Monthly Percentage Tax Return</a></li>
                                 <li class="<?php echo (in_array('16-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Quarterly_percentage_tax_return">Quarterly Percentage Tax Return</a></li>
+                                <li class="<?php echo (in_array('16-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Certificate_of_creditable_tax">Certificate of Creditable Tax</a></li>
                             </ul>
                         </li>
                         <li class="<?php echo (in_array('8',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-pie-chart"></i><span>Sales & Purchasing</span></a>
