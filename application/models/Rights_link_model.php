@@ -95,7 +95,9 @@ class Rights_link_model extends CORE_Model{
                                           (85,'15','15-5','Item Transfer to Department'),
                                           (86,'15','15-6','Stock Card / Bin Card'),
                                           (87,'3','3-5','Warehouse Dispatching'),
-                                          (88,'4','4-7','Brands')
+                                          (88,'4','4-7','Brands'),
+                                          (89,'16','16-1','Monthly Percentage Tax Return'),
+                                          (90,'16','16-2','Quarterly Percentage Tax Return')
                                           ON DUPLICATE KEY UPDATE
                                           rights_links.parent_code=VALUES(rights_links.parent_code),
                                           rights_links.link_code=VALUES(rights_links.link_code),
