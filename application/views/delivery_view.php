@@ -1771,7 +1771,8 @@ $(document).ready(function(){
         });
 
         $('#btn_close_new_supplier').click(function() {
-            $('#modal_new_supplier').modal('hide');        });
+            $('#modal_new_supplier').modal('hide');        
+        });
 
         $('#btn_save').click(function(){
             //alert('save');
