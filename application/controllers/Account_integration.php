@@ -143,6 +143,7 @@ class Account_integration extends CORE_Controller
                 $m_integration->payable_discount_account_id=$this->input->post('payable_discount_account_id',TRUE);
                 $m_integration->payment_to_supplier_id=$this->input->post('payment_to_supplier_id',TRUE);
                 $m_integration->other_income_receivable_account_id=$this->input->post('other_income_receivable_account_id',TRUE);
+                $m_integration->supplier_wtax_account_id=$this->input->post('supplier_wtax_account_id',TRUE);
 
 
         
