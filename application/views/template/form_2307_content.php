@@ -1,101 +1,71 @@
+<style type="text/css">
+    span{
+        position: absolute;
+        z-index: 200;
+        font-size: 11pt;
+    }
+</style>
+<img src="../../assets/img/bir_forms/form_2307_1st_page.png" style="top: 0px; left: 0px; width: 100%;position: absolute;z-index: 100;">
+<span style="top: 80px; left: 110px;letter-spacing: 5px;"><?php echo $m; ?></span>
+<span style="top: 80px; left: 143px;letter-spacing: 5px;"><?php echo $from_period_day; ?></span>
+<span style="top: 80px; left: 175px;letter-spacing: 5px;"><?php echo $y; ?></span>
+
+<span style="top: 80px; left: 382px;letter-spacing: 5px;"><?php echo $m; ?></span>
+<span style="top: 80px; left: 418px;letter-spacing: 5px;"><?php echo $to_period_day; ?></span>
+<span style="top: 80px; left: 454px;letter-spacing: 5px;"><?php echo $y; ?></span>
+
+<span style="top: 120px; left: 130px;letter-spacing: 5px;"><?php echo $payee_tin_1;?></span>
+<span style="top: 120px; left: 185px;letter-spacing: 6px;"><?php echo $payee_tin_2;?></span>
+<span style="top: 120px; left: 248px;letter-spacing: 6px;"><?php echo $payee_tin_3;?></span>
+<span style="top: 120px; left: 310px;letter-spacing: 6px;"><?php echo $payee_tin_4;?></span>
+
+<span style="top: 143px; left: 130px;letter-spacing: 1px; width: 570px;max-width:570px;"><?php echo $info->payee_name; ?></span>
+
+<span style="top: 173px; left: 130px;letter-spacing: 1px; width: 420px;max-width:420px;"><?php echo $info->payee_address; ?></span>
+<span style="top: 173px; left: 635px;letter-spacing: 9px;"></span>
+
+<span style="top: 195px; left: 130px;letter-spacing: 1px; width: 420px;max-width:420px;"></span>
+<span style="top: 195px; left: 635px;letter-spacing: 9px;"></span>
+
+<span style="top: 233px; left: 130px;letter-spacing: 5px;"><?php echo $payor_tin_1; ?></span>
+<span style="top: 233px; left: 185px;letter-spacing: 6px;"><?php echo $payor_tin_2; ?></span>
+<span style="top: 233px; left: 248px;letter-spacing: 6px;"><?php echo $payor_tin_3; ?></span>
+<span style="top: 233px; left: 310px;letter-spacing: 6px;"><?php echo $payor_tin_4; ?></span>
+
+<span style="top: 255px; left: 130px;letter-spacing: 1px; width: 570px;max-width:570px;"><?php echo $info->payor_name; ?></span>
+
+<span style="top: 287px; left: 130px;letter-spacing: 1px; width: 420px;max-width:420px;"><?php echo $info->payor_address; ?></span>
+<span style="top: 287px; left: 635px;letter-spacing: 9px;"></span>
+
+<span style="top: 366px; left: 20px;width: 160px;max-width: 160px;height: 190px; max-height: 190px;font-size: 9pt;">
+    <?php echo $info->remarks; ?>
+</span>
+<span style="top: 367px; left: 185px;font-size: 9pt;text-align: center;width: 60px;max-width: 60px; "><?php echo $info->atc; ?></span>
+
+<?php if ($info->quarter == 1){?>
+<span style="top: 367px; left: 250px;font-size: 9pt;text-align: center;width: 80px;max-width: 80px; "><?php echo $info->gross_amount;?></span>
+<?php }else if ($info->quarter == 2){?>
+<span style="top: 367px; left: 333px;font-size: 9pt;text-align: center;width: 80px;max-width: 80px; "><?php echo $info->gross_amount;?></span>
+<?php }else if($info->quarter == 3){?>
+<span style="top: 367px; left: 413px;font-size: 9pt;text-align: center;width: 80px;max-width: 80px; "><?php echo $info->gross_amount;?></span>
+<?php }?>
+
+<span style="top: 367px; left: 496px;font-size: 9pt;text-align: center;width: 80px;max-width: 80px; "><?php echo $info->gross_amount;?></span>
+<span style="top: 367px; left: 580px;font-size: 9pt;text-align: center;width: 120px;max-width: 120px; "><?php echo $info->deducted_amount; ?></span>
+
+<?php if ($info->quarter == 1){?>
+<span style="top: 558px; left: 250px;font-size: 9pt;text-align: center;width: 80px;max-width: 80px; "><?php echo $info->gross_amount;?></span>
+<?php }else if ($info->quarter == 2){?>
+<span style="top: 558px; left: 333px;font-size: 9pt;text-align: center;width: 80px;max-width: 80px; "><?php echo $info->gross_amount;?></span>
+<?php }else if($info->quarter == 3){?>
+<span style="top: 558px; left: 413px;font-size: 9pt;text-align: center;width: 80px;max-width: 80px; "><?php echo $info->gross_amount;?></span>
+<?php }?>
+
+<span style="top: 558px; left: 496px;font-size: 9pt;text-align: center;width: 80px;max-width: 80px; "><?php echo $info->gross_amount;?></span>
+<span style="top: 558px; left: 580px;font-size: 9pt;text-align: center;width: 120px;max-width: 120px; "><?php echo $info->deducted_amount; ?></span>
+
+
+<!-- <img src="../../assets/img/bir_forms/form_2307_2nd_page.png" style="top: 1050px; left: 0px; width: 100%;position: absolute;z-index: 100;"> -->
 <script type="text/javascript">
     window.print();
 </script>
-<style type="text/css">
-    label{
- font-family:"Segoe UI", "Source Sans Pro", Calibri, Candara, Arial, sans-serif;font:rgb(51, 51, 51);    
- vertical-align:middle;
- position: absolute;
-    }
-</style>
-<img src="../../assets/img/bir_forms/2307.jpg" style="width: 8.5in;height: 13in;position: absolute;top: 0px;left: 0px;z-index: -999;">
-
-
-<!-- DATE FROM AND TO -->
-<label style=" top: 96px;left:130px;font-size:12px;font-weight:400; "><?php echo $form->date_month; ?></label>
-<label style=" top: 96px;left:170px;font-size:12px;font-weight:400; ">01</label>
-<label style=" top: 96px;left:205px;font-size:12px;font-weight:400; "><?php echo $form->date_year; ?></label>
-
-<label style=" top: 96px;left:437px;font-size:12px;font-weight:400;"><?php echo $form->date_month; ?></label>
-<label style=" top: 96px;left:477px;font-size:12px;font-weight:400;"><?php echo $form->month_end; ?></label>
-<label style=" top: 96px;left:517px;font-size:12px;font-weight:400;"><?php echo $form->date_year; ?></label>
-<!-- END OF DATE FROM AND TO -->
-
-<!-- TAXPAYER   -->
-
-<label style=" top: 169px;left:152px;font-size:12px;font-weight:400;"><?php echo $form->payee_name; ?></label>
-<label style=" top: 202px;left:150px;font-size:12px;font-weight:400;"><?php echo $form->payee_address; ?></label>
-<?php  $taxpayer_tin = explode('-', $form->payee_tin); ?>
-<label style=" top: 142px;left:154px;font-size:12px;font-weight:400; "><?php  echo $taxpayer_tin[0];?></label>
-<label style=" top: 142px;left:220px; font-size:12px;font-weight:400; "><?php  echo $taxpayer_tin[1];?></label>
-<label style=" top: 142px;left:290px;font-size:12px;font-weight:400; "><?php  echo $taxpayer_tin[2];?></label>
-<label style=" top: 142px;left:360px; font-size:12px;font-weight:400; "><?php  echo $taxpayer_tin[3];?></label>
-
-<!-- END OF TAXPAYER  -->
-
-
-<!-- TAX PAYOR -->
-
-<label style=" top: 290px;left:152px;font-size:12px;font-weight:400;"><?php echo $form->payor_name; ?></label>
-<label style=" top: 325px;left:151px; font-size:12px;font-weight:400;"><?php echo $form->payor_address; ?></label>
-<?php  $taxpayor_tin = explode('-', $form->payor_tin); ?>
-<label style=" top: 266px;left:154px;font-size:12px;font-weight:400;"><?php  echo $taxpayor_tin[0]; ?></label>
-<label style=" top: 266px;left:220px;font-size:12px;font-weight:400;"><?php  echo $taxpayor_tin[1]; ?></label>
-<label style=" top: 266px;left:290px;font-size:12px;font-weight:400;"><?php  echo $taxpayor_tin[2]; ?></label>
-<label style=" top: 266px;left:360px;font-size:12px;font-weight:400;"><?php  echo $taxpayor_tin[3]; ?></label>
-<!-- END TAX PAYOR -->
-
-
-<?php  $month = $form->date_month;
-
-    
-if($month == '01' || $month == '04' ||$month == '07' ||$month == '10'){ ?>
-
-
-<label style="text-align:right; top: 412px;left:288px; font-size:10px;font-weight:400; width: 85px;"><?php echo number_format($form->gross_amount,2); ?></label>
-<label  style="text-align:right; top: 445px;left:288px;font-size:10px;font-weight:700; width: 85px;"><b><?php echo number_format($form->gross_amount,2); ?></b></label>
-<!-- Zero on 2nd Month -->
-<label style="text-align:right; top: 412px;left:377px; font-size:10px;font-weight:400; width: 90px;">0.00</label>
-<label  style="text-align:right; top: 445px;left:377px;font-size:10px;font-weight:700; width: 90px;height: 18px;"><b>0.00</b></label>
-<!-- Zero on 3rd Month -->
-<label style="text-align:right; top: 412px;left:468px;font-size:10px; font-weight:400; width: 90px;">0.00</label>
-<label  style="text-align:right; top: 445px;left:468px;font-size:10px;font-weight:700; width: 90px;height: 18px;"><b>0.00</b></label>
-
-
-<?php }else if($month == '02' || $month == '05' || $month == '08' || $month == '11'){ ?>
-
-
-<label style="text-align:right; top: 412px;left:377px; font-size:10px;font-weight:400; width: 90px;"><?php echo number_format($form->gross_amount,2); ?></label>
-<label  style="text-align:right; top: 445px;left:377px;font-size:10px;font-weight:700; width: 90px;height: 18px;"><b><?php echo number_format($form->gross_amount,2); ?></b></label>
-
-<!-- Zero on 1st Month -->
-<label style="text-align:right; top: 412px;left:288px; font-size:10px;font-weight:400; width: 85px;">0.00</label>
-<label  style="text-align:right; top: 445px;left:288px;font-size:10px;font-weight:700; width: 85px;"><b>0.00</b></label>
-<!-- Zero on 3rd Month -->
-<label style="text-align:right; top: 412px;left:468px;font-size:10px; font-weight:400; width: 90px;">0.00</label>
-<label  style="text-align:right; top: 445px;left:468px;font-size:10px;font-weight:700; width: 90px;height: 18px;"><b>0.00</b></label>
-
-
-<?php } else if($month == '03' || $month == '06' || $month == '09' || $month == '12'){ ?>
-
-
-<label style="text-align:right; top: 412px;left:468px;font-size:10px; font-weight:400; width: 90px;"><?php echo number_format($form->gross_amount,2); ?></label>
-<label  style="text-align:right; top: 445px;left:468px;font-size:10px;font-weight:700; width: 90px;height: 18px;"><b><?php echo number_format($form->gross_amount,2); ?></b></label>
-
-<!-- Zero on 1st Month -->
-<label style="text-align:right; top: 412px;left:288px; font-size:10px;font-weight:400; width: 85px;">0.00</label>
-<label  style="text-align:right; top: 445px;left:288px;font-size:10px;font-weight:700; width: 85px;"><b>0.00</b></label>
-
-<!-- Zero on 2nd Month -->
-<label style="text-align:right; top: 412px;left:377px; font-size:10px;font-weight:400; width: 90px;">0.00</label>
-<label  style="text-align:right; top: 445px;left:377px;font-size:10px;font-weight:700; width: 90px;height: 18px;"><b>0.00</b></label>
-<?php } ?>
-
-
-
-
-
-<label style="text-align:right; top: 412px;left:562px; font-size:10px;font-weight:400; width: 90px;"><?php echo number_format($form->gross_amount,2); ?></label>
-<label style="text-align:right; top: 445px;left:562px; font-size:10px;font-weight:700; width: 90px;"><b><?php echo number_format($form->gross_amount,2); ?></b></label>
-<label style="text-align:right; top: 412px;left:660px;font-size:10px;font-weight:400; width: 135px;height: 18px;"><?php echo number_format($form->deducted_amount,2); ?></label>
-<label style="text-align:right; top: 445px;left:660px; font-size:10px;font-weight:700; width: 135px;"><?php echo number_format($form->deducted_amount,2); ?></label>

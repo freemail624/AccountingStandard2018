@@ -337,117 +337,155 @@
             <div>
 
                 <div class="row">
-                    <div class="col-lg-3">
-                       <b class="required"> * </b> <label>Txn #  :</label><br />
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="fa fa-code"></i>
-                            </span>
-                            <input type="text" name="txn_no" class="form-control" placeholder="TXN-YYYYMMDD-XXX" readonly>
-                        </div>
-                    </div>
-                    <div class="col-lg-3">
-                       <b class="required"> * </b> <label>Date  :</label><br />
-                        <div class="input-group">
+                    <div class="col-lg-6">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                       <b class="required"> * </b> <label>Txn #  :</label><br />
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-code"></i>
+                                            </span>
+                                            <input type="text" name="txn_no" class="form-control" placeholder="TXN-YYYYMMDD-XXX" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                       <b class="required"> * </b> <label>Date  :</label><br />
+                                        <div class="input-group">
                                             <span class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </span>
-                            <input type="text" name="date_txn" class="date-picker form-control" data-error-msg="Date is required." required>
+                                            <input type="text" name="date_txn" class="date-picker form-control" data-error-msg="Date is required." required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <b class="required"> * </b> <label>Reference type :</label><br />
+                                        <select id="cbo_refType" class="form-control" name="ref_type" data-error-msg="Reference type is required." required>
+                                            <option value="CV" selected>CV</option>
+                                            <option value="JV">JV</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <b class="required"> * </b> <label>Reference # :</label><br />
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-code"></i>
+                                            </span>
+                                            <input type="text" name="ref_no" maxlength="15" class="form-control"  data-error-msg="Reference # is required." required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <b class="required"> * </b> <label>Supplier  :</label><br />
+                                        <select id="cbo_suppliers" name="supplier_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Supplier name is required." required>
+                                            <option value="0">[ Create New Supplier ]</option>
+                                            <?php foreach($suppliers as $supplier){ ?>
+                                                <option value='<?php echo $supplier->supplier_id; ?>'><?php echo $supplier->supplier_name; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                       <b class="required"> * </b> <label>Department  :</label><br />
+                                        <select id="cbo_branch" name="department_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Department is required." required>
+                                            <option value="0">[ Create New Department ]</option>
+                                            <?php foreach($departments as $department){ ?>
+                                                <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-
-                    <div class="col-lg-4 col-lg-offset-2">
-                        <b class="required"> * </b> <label>Method of Payment  :</label><br />
-                        <select id="cbo_pay_type" name="payment_method" class="form-control" data-error-msg="Payment method is required." required>
-                            <?php foreach($payment_methods as $payment_method){ ?>
-                                <option value='<?php echo $payment_method->payment_method_id; ?>'><?php echo $payment_method->payment_method; ?></option>
-                            <?php } ?>
-                        </select>
-                    </div>
-
-
-                </div>
-
-                <div class="row">
-                    <div class="col-lg-3">
-                        <b class="required"> * </b> <label>Reference type :</label><br />
-                        <select id="cbo_refType" class="form-control" name="ref_type" data-error-msg="Reference type is required." required>
-                            <option value="CV" selected>CV</option>
-                            <option value="JV">JV</option>
-                        </select>
-                    </div>
-                    <div class="col-lg-3">
-                        <b class="required"> * </b> <label>Reference # :</label><br />
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="fa fa-code"></i>
-                            </span>
-                            <input type="text" name="ref_no" maxlength="15" class="form-control"  data-error-msg="Reference # is required." required>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-lg-offset-2">
-                        <label>Bank :</label><br />
-                        <select id="cbo_bank" class="form-control" name="bank_id">
-                            <option value="create_bank">[Create New Bank]</option>
-                            <?php foreach($bank_refs as $bank) { ?>
-                                <option value="<?php echo $bank->bank_id; ?>"><?php echo $bank->bank_name; ?></option>
-                            <?php } ?>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="row">
                     <div class="col-lg-6">
-                        <b class="required"> * </b> <label>Supplier  :</label><br />
-                        <select id="cbo_suppliers" name="supplier_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Supplier name is required." required>
-                            <option value="0">[ Create New Supplier ]</option>
-                            <?php foreach($suppliers as $supplier){ ?>
-                                <option value='<?php echo $supplier->supplier_id; ?>'><?php echo $supplier->supplier_name; ?></option>
-                            <?php } ?>
-                        </select>
-                    </div>
-
-                    <div class="col-lg-2 col-lg-offset-2">
-                        <label>Check Date :</label><br />
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="fa fa-calendar"></i>
-                            </span>
-                            <input type="text" name="check_date" id="check_date" class="date-picker form-control" data-error-msg="Check date is required!" >
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div style="margin-top: 25px;">
+                                            <input type="checkbox" id="2307_apply" value="1">
+                                            &nbsp;<label for="2307_apply">Apply 2307 Form</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div style="margin-top: 5px;">
+                                            <label>ATC :</label><br />
+                                            <div class="input-group">
+                                                <span class="input-group-addon">
+                                                    <i class="fa fa-code"></i>
+                                                </span>
+                                                <input type="text" name="2307_atc" id="2307_atc" class="form-control" data-error-msg="ATC is required.">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                            <label>Remarks :</label><br />
+                                            <textarea class="form-control" name="2307_remarks" id="2307_remarks" data-error-msg="Remarks is required." rows="5"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <b class="required"> * </b> <label>Method of Payment  :</label><br />
+                                        <select id="cbo_pay_type" name="payment_method" class="form-control" data-error-msg="Payment method is required." required>
+                                            <?php foreach($payment_methods as $payment_method){ ?>
+                                                <option value='<?php echo $payment_method->payment_method_id; ?>'><?php echo $payment_method->payment_method; ?></option>
+                                            <?php } ?>
+                                        </select>    
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label>Bank :</label><br />
+                                        <select id="cbo_bank" class="form-control" name="bank_id">
+                                            <option value="create_bank">[Create New Bank]</option>
+                                            <?php foreach($bank_refs as $bank) { ?>
+                                                <option value="<?php echo $bank->bank_id; ?>"><?php echo $bank->bank_name; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <label>Check Date :</label><br />
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                            <input type="text" name="check_date" id="check_date" class="date-picker form-control" data-error-msg="Check date is required!" >
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label>Check # :</label><br />
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-list-alt"></i>
+                                            </span>
+                                            <input type="text" name="check_no" id="check_no" maxlength="15" class="form-control" data-error-msg="Check number is required!">
+                                        </div>                                        
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <b class="required"> * </b>  <label>Amount  :</label><br />
+                                        <input class="form-control text-center numeric" id="cash_amount" type="text" maxlength="12" value="0.00" name="amount" required data-error-msg="Amount is Required!">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="col-lg-2">
-                        <label>Check # :</label><br />
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="fa fa-list-alt"></i>
-                            </span>
-                            <input type="text" name="check_no" id="check_no" maxlength="15" class="form-control" data-error-msg="Check number is required!">
-                        </div>
-                    </div>
-
                 </div>
-
-                <div class="row">
-                    <div class="col-lg-6">
-                       <b class="required"> * </b> <label>Department  :</label><br />
-                        <select id="cbo_branch" name="department_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Department is required." required>
-                            <option value="0">[ Create New Department ]</option>
-                            <?php foreach($departments as $department){ ?>
-                                <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
-                            <?php } ?>
-                        </select>
-                    </div>
-
-                    <div class="col-lg-4 col-lg-offset-2">
-                      <b class="required"> * </b>  <label>Amount  :</label><br />
-                        <input class="form-control text-center numeric" id="cash_amount" type="text" maxlength="12" value="0.00" name="amount" required data-error-msg="Amount is Required!">
-                    </div>
-                </div>
-
-
             </div>
 
             <hr />
@@ -1608,10 +1646,24 @@ $(document).ready(function(){
 
         });
 
+        $('#2307_apply').click(function(){
+            if ($(this).is(":checked") == false){
+                $('#2307_atc').val("");
+                $('#2307_remarks').val("");
+            }
+        });
 
+        $('#2307_atc').on('keyup',function(){
+            if($(this).val() != null || ""){
+                $('#2307_apply').prop('checked', true);
+            }
+        });
 
-
-
+        $('#2307_remarks').on('keyup',function(){
+            if($(this).val() != null || ""){
+                $('#2307_apply').prop('checked', true);
+            }
+        });
 
 
         $('#btn_new').click(function(){
@@ -1963,6 +2015,12 @@ $(document).ready(function(){
 
     var createJournal=function(){
         var _data=$('#frm_journal').serializeArray();
+        if($('#2307_apply').is(':checked')==true){
+        _data.push({name : "2307_apply" ,value : 1});
+        }else{ 
+        _data.push({name : "2307_apply" ,value : 0});
+        }
+
         return $.ajax({
             "dataType":"json",
             "type":"POST",
@@ -2250,6 +2308,12 @@ $(document).ready(function(){
 
         var finalizeJournalReview=function(){
             var _data_review=parent.find('form').serializeArray();
+            var chck_status = parent.find('form').find('input[type="checkbox"]').is(':checked');
+            if (chck_status == true){ 
+                _data_review.push({name : "2307_apply" ,value : 1});
+            }else{
+                _data_review.push({name : "2307_apply" ,value : 0});
+            }
 
             return $.ajax({
                 "dataType":"json",

@@ -7,6 +7,27 @@
 	        parent::__construct();
 	    }
 
+	    function get_2307_list($month=null,$year=null,$journal_id=null){
+	    	$sql="SELECT 
+				    form_2307.*,
+				    FORMAT(form_2307.gross_amount, 2) as gross_amount,
+				    FORMAT(form_2307.deducted_amount, 2) as deducted_amount,
+				    ji.date_txn,
+				    m.quarter
+				FROM
+				    form_2307 
+				    LEFT JOIN journal_info ji ON ji.journal_id = form_2307.journal_id
+				    LEFT JOIN months m ON m.month_id = MONTH(ji.date_txn)
+				    WHERE 
+				    	form_2307.is_active = TRUE
+				        AND form_2307.is_deleted = FALSE
+				        ".($month==null?"":" AND MONTH(ji.date_txn) = $month")."
+				        ".($year==null?"":" AND YEAR(ji.date_txn) = $year")."
+				        ".($journal_id==null?"":" AND form_2307.journal_id = $journal_id")."
+				        ";
+	    	return $this->db->query($sql)->result();
+	    }
+
         function get_2307($startDate,$endDate,$supplier_id) {
         $sql="SELECT 
 				((IFNULL(s.tax_output,0) /100)* ji.amount) as tax_deducted,

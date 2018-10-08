@@ -103,7 +103,9 @@ class Rights_link_model extends CORE_Model{
                                           (93,'16','16-1','Items Management'),
                                           (94,'16','16-2','Item Units Management'),
                                           (95,'16','16-3','Other Income Invoice'),
-                                          (96,'6','6-14','Statement of Accounts Settings')
+                                          (96,'6','6-14','Statement of Accounts Settings'),
+                                          (97,'17','17-1','Certificate of Creditable Tax')
+
 
                                           ON DUPLICATE KEY UPDATE
                                           rights_links.parent_code=VALUES(rights_links.parent_code),

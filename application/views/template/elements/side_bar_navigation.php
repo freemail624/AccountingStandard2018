@@ -219,6 +219,11 @@
                                 <li class="<?php echo (in_array('8-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Purchase_Invoice_Report">Purchase Invoice Report</a></li>
                             </ul>
                         </li>
+                        <li class="<?php echo (in_array('17',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-pie-chart"></i><span>BIR FORMS</span></a>
+                            <ul class="acc-menu">
+                                <li class="<?php echo (in_array('17-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Certificate_of_creditable_tax">Certificate of Creditable Tax</a></li>
+                            </ul>
+                        </li>
                         <li class="<?php echo (in_array('12',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-view-list-alt"></i><span>List</span></a>
                             <ul class="acc-menu">
                                 <li class="<?php echo (in_array('12-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Pick_list">Product Reorder (Pick-list)</a></li>

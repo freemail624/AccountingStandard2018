@@ -87,7 +87,6 @@ class Templates extends CORE_Controller {
         $this->load->model('Issuance_department_model');
         $this->load->model('Issuance_department_item_model');
 
-
         $this->load->model('Dispatching_invoice_model');
         $this->load->model('Dispatching_invoice_item_model');
 
@@ -96,6 +95,8 @@ class Templates extends CORE_Controller {
 
         $this->load->model('Jo_billing_model');
         $this->load->model('Jo_billing_items_model');
+
+        $this->load->model('Bir_2307_model');
 
         $this->load->library('M_pdf');
         $this->load->library('excel');
@@ -1800,6 +1801,34 @@ class Templates extends CORE_Controller {
 
                 break;
 
+            case 'print-form-2307':
+                $m_form_2307 = $this->Bir_2307_model;
+                $journal_id=$this->input->get('id',TRUE);
+                $type=$this->input->get('type',TRUE);
+
+                $info = $m_form_2307->get_2307_list(null,null,$journal_id);
+                $data['info'] = $info[0];
+
+                $payee_tin = $info[0]->payee_tin;
+                $data['payee_tin_1'] = substr($payee_tin,0, 3);
+                $data['payee_tin_2'] = substr($payee_tin,3, 3);
+                $data['payee_tin_3'] = substr($payee_tin,6, 3);
+                $data['payee_tin_4'] = substr($payee_tin,9, 3);
+
+                $payor_tin = $info[0]->payor_tin;
+                $data['payor_tin_1'] = substr($payor_tin,0, 3);
+                $data['payor_tin_2'] = substr($payor_tin,3, 3);
+                $data['payor_tin_3'] = substr($payor_tin,6, 3);
+                $data['payor_tin_4'] = substr($payor_tin,9, 3); 
+
+                $data['m'] = date("m",strtotime($info[0]->date_txn)); 
+                $data['y'] = date("y",strtotime($info[0]->date_txn));
+                $data['from_period_day'] = '01';
+                $data['to_period_day'] = date("t",strtotime($info[0]->date_txn));          
+
+                echo $this->load->view('template/form_2307_content',$data,TRUE); //load the template
+
+                break;
 
             case 'journal-cdj':
                 $m_journal_info=$this->Journal_info_model;
