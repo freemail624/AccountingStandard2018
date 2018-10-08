@@ -124,10 +124,10 @@
                 <tr>
                     <th></th>
                     <th>Job Order Billing #</th>
-                    <th>Job Order #</th>
-                    <th>Invoice Date</th>
-                    <th>Due Date</th>
                     <th>Supplier</th>
+                    <th>Rquested By</th>
+                    <th>Invoice Date</th>
+                    <th>End Date</th>
                     <th>Department</th>
                     <th>Remarks</th>
                     <th><center>Action</center></th>
@@ -197,8 +197,12 @@
                                 <?php } ?>
                             </select>
                         </div>
-                        <div class="col-sm-4 hidden">
-                            <label>Sales person :</label><br/>
+                        <div class="col-sm-4 ">
+                            <b class="required">*</b><label> Requested By: :</label><br/>
+                            <input type="text" name="requested_by" class="form-control" required data-error-msg="Requested By is required.">
+
+                        </div>
+                        <div class="hidden">
                             <select name="salesperson_id" id="cbo_salesperson">
                                 <option value="0">[ Create New Salesperson ]</option>
                                 <?php foreach($salespersons as $salesperson){ ?>
@@ -206,24 +210,14 @@
                                 <?php } ?>
                             </select>
                         </div>
-                        <div class="col-sm-4 col-sm-offset-4">
-                            <b class="required">* </b><label> Due Date : </label><br />
+                        <div class="col-sm-4 ">
+                            <b class="required">* </b><label> End Date : </label><br />
                             <div class="input-group">
                                 <input type="text" name="date_due" id="due_default" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date Due" data-error-msg="Please set the date this items are issued!" required>
                                  <span class="input-group-addon">
                                      <i class="fa fa-calendar"></i>
                                 </span>
                             </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-8">
-                            <label>Address :</label><br>
-                            <input class="form-control" id="txt_address" type="text" name="address" placeholder="Supplier Address">
-                        </div>
-                        <div class="col-sm-4">
-                            <b class="required">* </b><label>Contact Person :</label><br/>
-                            <input type="text" name="contact_person" id="contact_person" required placeholder="Contact Person" class="form-control" data-error-msg="Contact Person is required!">
                         </div>
                     </div>
                 </div>
@@ -739,10 +733,10 @@ $(document).ready(function(){
                     "defaultContent": ""
                 },
                 { targets:[1],data: "jo_billing_no" },
-                { targets:[2],data: "date_invoice" },
-                { targets:[3],data: "date_invoice" },
-                { targets:[4],data: "date_due" },
-                { targets:[5],data: "supplier_name" },
+                { targets:[2],data: "supplier_name" },
+                { targets:[3],data: "requested_by" },
+                { targets:[4],data: "date_invoice" },
+                { targets:[5],data: "date_due" },
                 { targets:[6],data: "department_name" },
                 { targets:[7],data: "remarks" },
                 {

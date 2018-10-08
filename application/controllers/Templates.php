@@ -94,6 +94,9 @@ class Templates extends CORE_Controller {
         $this->load->model('Other_income_model');
         $this->load->model('Other_invoice_items_model');
 
+        $this->load->model('Jo_billing_model');
+        $this->load->model('Jo_billing_items_model');
+
         $this->load->library('M_pdf');
         $this->load->library('excel');
         $this->load->model('Email_settings_model');
@@ -107,6 +110,178 @@ class Templates extends CORE_Controller {
 
     function layout($layout=null,$filter_value=null,$type=null){
         switch($layout){
+
+            case 'job-order-billing-dropdown':
+                $m_billing=$this->Jo_billing_model;
+                $m_billing_items=$this->Jo_billing_items_model;
+                $type=$this->input->get('type',TRUE);
+                $info= $m_billing->get_list(
+                $filter_value,
+                array(
+                'jo_billing.jo_billing_id',
+                'jo_billing.jo_billing_no',
+                'jo_billing.department_id',
+                'jo_billing.supplier_id',
+                'jo_billing.salesperson_id',
+                'jo_billing.contact_person',
+                'jo_billing.jo_billing_no',
+                'jo_billing.address',
+                'jo_billing.remarks',
+                'jo_billing.total_amount',
+                'jo_billing.total_overall_discount_amount',
+                'jo_billing.total_amount_after_discount',
+                'jo_billing.requested_by',
+                'jo_billing.total_overall_discount',
+                'jo_billing.is_journal_posted',
+                'DATE_FORMAT(jo_billing.date_invoice,"%m/%d/%Y") as date_invoice',
+                'DATE_FORMAT(jo_billing.date_due,"%m/%d/%Y") as date_due',
+                'DATE_FORMAT(jo_billing.date_start,"%m/%d/%Y") as date_start',
+                'suppliers.supplier_name',
+                'departments.department_name'),
+                array(
+                    array('departments','departments.department_id=jo_billing.department_id','left'),
+                    array('suppliers','suppliers.supplier_id=jo_billing.supplier_id','left')
+                    ),
+                'jo_billing.jo_billing_id DESC');
+
+
+                $data['billing_items']=$m_billing_items->get_list(
+                    array('jo_billing_id'=>$filter_value),
+                    array(
+                        'jo_billing_items.*',
+                        'jobs.job_unit',
+                        'job_unit.job_unit_id',
+                        'job_unit.job_unit_name'
+                    ),
+                    array(
+                        array('jobs','jobs.job_id=jo_billing_items.job_id','left'),
+                        array('job_unit','job_unit.job_unit_id=jo_billing_items.job_unit','left')
+                    ),
+                    'jo_billing_items.jo_billing_item_id ASC'
+                );
+
+                $data['billing']=$info[0];
+                $m_company=$this->Company_model;
+                $company=$m_company->get_list();
+                $data['company_info']=$company[0];
+
+                            
+                if($type=='fullview'||$type==null){
+                    echo $this->load->view('template/job_order_billing_content_wo_header',$data,TRUE);
+                    echo $this->load->view('template/job_order_billing_content_menus',$data,TRUE);
+                        }
+                if($type=='html'){
+
+                    // echo $this->load->view('template/job_order_billing_content',$data,TRUE);
+
+                    $file_name='Job Order';
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                    $content=$this->load->view('template/job_order_billing_content',$data,TRUE);//load the template
+                    $pdf->setFooter('{PAGENO}');
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output();
+                    // echo $this->load->view('template/service_invoice_content',$data,TRUE);
+                }
+
+                break;
+
+            case 'jo-journal-for-review':
+                $jo_billing_id=$this->input->get('jo_billing_id',TRUE);
+                $m_billing = $this->Jo_billing_model;
+                $m_suppliers=$this->Suppliers_model;
+                $m_accounts=$this->Account_title_model;
+                $m_purchases_items=$this->Delivery_invoice_item_model;
+                $m_purchases_info=$this->Delivery_invoice_model;
+                $m_departments=$this->Departments_model;
+                $m_billing_items=$this->Jo_billing_items_model;
+                $job_order_info= $m_billing->get_list(
+                $jo_billing_id,
+                array(
+                'jo_billing.jo_billing_id',
+                'jo_billing.jo_billing_no',
+                'jo_billing.department_id',
+                'jo_billing.supplier_id',
+                'jo_billing.salesperson_id',
+                'jo_billing.contact_person',
+                'jo_billing.jo_billing_no',
+                'jo_billing.address',
+                'jo_billing.remarks',
+                'jo_billing.total_amount',
+                'jo_billing.total_overall_discount_amount',
+                'jo_billing.total_amount_after_discount',
+                'jo_billing.requested_by',
+                'jo_billing.total_overall_discount',
+                'jo_billing.is_journal_posted',
+                'DATE_FORMAT(jo_billing.date_invoice,"%m/%d/%Y") as date_invoice',
+                'DATE_FORMAT(jo_billing.date_due,"%m/%d/%Y") as date_due',
+                'DATE_FORMAT(jo_billing.date_start,"%m/%d/%Y") as date_start',
+                'suppliers.supplier_name',
+                'departments.department_name'),
+                array(
+                    array('departments','departments.department_id=jo_billing.department_id','left'),
+                    array('suppliers','suppliers.supplier_id=jo_billing.supplier_id','left')
+                    ),
+                'jo_billing.jo_billing_id DESC');
+
+
+                $data['job_order_info']=$job_order_info[0];
+
+
+                $data['billing_items']=$m_billing_items->get_list(
+                    array('jo_billing_id'=>$jo_billing_id),
+                    array(
+                        'jo_billing_items.*',
+                        'jobs.job_unit',
+                        'job_unit.job_unit_id',
+                        'job_unit.job_unit_name'
+                    ),
+                    array(
+                        array('jobs','jobs.job_id=jo_billing_items.job_id','left'),
+                        array('job_unit','job_unit.job_unit_id=jo_billing_items.job_unit','left')
+                    ),
+                    'jo_billing_items.jo_billing_item_id ASC'
+                );
+
+                $data['departments']=$m_departments->get_list('is_active=TRUE AND is_deleted=FALSE');
+
+                $data['suppliers']=$m_suppliers->get_list(
+                    array(
+                        'suppliers.is_active'=>TRUE,
+                        'suppliers.is_deleted'=>FALSE
+                    ),
+
+                    array(
+                        'suppliers.supplier_id',
+                        'suppliers.supplier_name'
+                    )
+                );
+                $data['entries']=$m_billing->get_journal_entries_for_billing($jo_billing_id);
+                $data['accounts']=$m_accounts->get_list(
+                    array(
+                        'account_titles.is_active'=>TRUE,
+                        'account_titles.is_deleted'=>FALSE
+                    )
+                );
+
+
+                //validate if customer is not deleted
+                $valid_supplier=$m_suppliers->get_list(
+                    array(
+                        'supplier_id'=>$job_order_info[0]->supplier_id,
+                        'is_active'=>TRUE,
+                        'is_deleted'=>FALSE
+                    )
+                );
+                $data['valid_particular']=(count($valid_supplier)>0);
+                echo $this->load->view('template/jo_journal_for_review',$data,TRUE); //details of the journal
+
+
+                break;
+
+
+
               case 'services-journal-for-review':
 
                 $service_invoice_id = $this->input->get('id',TRUE);
@@ -2323,6 +2498,11 @@ class Templates extends CORE_Controller {
 
 
                 break;
+
+
+
+
+
 
             case 'ar-journal-for-review':
                 $sales_invoice_id=$this->input->get('id',TRUE);

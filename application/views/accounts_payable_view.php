@@ -178,7 +178,6 @@
                     <div class="panel-group panel-default" id="accordionA">
 
                         <div class="panel panel-default">
-
                             <div id="" class="">
                                 <div class="panel-body">
                              <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo" style="text-decoration: none;">
@@ -200,7 +199,34 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-
+                                        </tbody>
+                                    </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="panel panel-default">
+                            <div id="" class="">
+                                <div class="panel-body">
+                             <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo" style="text-decoration: none;">
+                            <h2 class="h2-panel-responsive">Job Order (Pending)</h2><hr>
+                            </a>
+                                    <div>
+                                    <table id="tbl_job_order_review" class="table table-striped" cellspacing="0" width="100%">
+                                        <thead class="">
+                                        <tr>
+                                            <th></th>
+                                            <th>Job Order Billing #</th>
+                                            <th>Supplier</th>
+                                            <th>Rquested By</th>
+                                            <th>Invoice Date</th>
+                                            <th>End Date</th>
+                                            <th>Department</th>
+                                            <th>Remarks</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
                                         </tbody>
                                     </table>
                                     </div>
@@ -867,6 +893,26 @@
                 ]
             });
 
+            dtJobOrderReview=$('#tbl_job_order_review').DataTable({
+                "bLengthChange":false,
+                "ajax" : "Jo_billing/transaction/list-invoice-unposted",
+                "columns": [
+                    {
+                        "targets": [0],
+                        "class":          "details-control",
+                        "orderable":      false,
+                        "data":           null,
+                        "defaultContent": ""
+                    },
+                { targets:[1],data: "jo_billing_no" },
+                { targets:[2],data: "supplier_name" },
+                { targets:[3],data: "requested_by" },
+                { targets:[4],data: "date_invoice" },
+                { targets:[5],data: "date_due" },
+                { targets:[6],data: "department_name" },
+                { targets:[7],data: "remarks" },
+                ]
+            });
 
 
             $('#cbo_particular').select2();
@@ -1035,7 +1081,56 @@
                 }
             } );
 
+            $('#tbl_job_order_review tbody').on( 'click', 'tr td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = dtJobOrderReview.row( tr );
+                var idx = $.inArray( tr.attr('id'), detailRows );
 
+                if ( row.child.isShown() ) {
+                    tr.removeClass( 'details' );
+                    row.child.hide();
+
+                    // Remove from the 'open' array
+                    detailRows.splice( idx, 1 );
+                }
+                else {
+                    tr.addClass( 'details' );
+                    //console.log(row.data());
+                    var d=row.data();
+                    $.ajax({
+                        "dataType":"html",
+                        "type":"POST",
+                        "url":"Templates/layout/jo-journal-for-review?jo_billing_id="+ d.jo_billing_id,
+                        "beforeSend" : function(){
+                            row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                        }
+                    }).done(function(response){
+                        row.child( response,'no-padding' ).show();
+                        reInitializeSpecificDropDown($('.cbo_supplier_list'));
+                        reInitializeSpecificDropDown($('.cbo_department_list'));
+
+                        reInitializeNumeric();
+
+                        var tbl=$('#tbl_entries_for_review_jo_'+ d.jo_billing_id);
+                        var parent_tab_pane=$('#journal_review_jo_'+ d.jo_billing_id);
+
+                        reInitializeDropDownAccounts(tbl);
+                        reInitializeChildEntriesTable(tbl);
+                        reInitializeChildElementsJo(parent_tab_pane);
+
+                        // Add to the 'open' array
+                        if ( idx === -1 ) {
+                            detailRows.push( tr.attr('id') );
+                        }
+
+
+                    });
+
+
+
+
+                }
+            } );
 
             $('#btn_new').click(function(){
                 _txnMode="new";
@@ -1648,7 +1743,61 @@
 
         };
 
+        var reInitializeChildElementsJo=function(parent){
+            var _dataParentID=parent.data('parent-id');
+            var btn=parent.find('button[name="btn_finalize_journal_review"]');
 
+            //initialize datepicker
+            parent.find('input.date-picker').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true
+
+            });
+
+
+            parent.on('click','button[name="btn_finalize_journal_review"]',function(){
+
+                var _curBtn=$(this);
+
+                if(isBalance('#tbl_entries_for_review_jo_'+_dataParentID)){
+                    finalizeJournalReview().done(function(response){
+                        showNotification(response);
+                        if(response.stat=="success"){
+                            dt.row.add(response.row_added[0]).draw();
+                            var _parentRow=_curBtn.parents('table.table_journal_entries_review_jo').parents('tr').prev();
+                            dtJobOrderReview.row(_parentRow).remove().draw();
+                        }
+
+
+                    }).always(function(){
+                        showSpinningProgress(_curBtn);
+                    });
+                }else{
+                    showNotification({title:"Not Balance!",stat:"error",msg:'Please make sure Debit and Credit amount are equal.'});
+                    stat=false;
+                }
+
+            });
+
+            var finalizeJournalReview=function(){
+                var _data_review=parent.find('form').serializeArray();
+
+                return $.ajax({
+                    "dataType":"json",
+                    "type":"POST",
+                    "url":"Account_payables/transaction/create",
+                    "data":_data_review,
+                    "beforeSend": showSpinningProgress(btn)
+
+                });
+            };
+
+
+
+        };
     });
 
 

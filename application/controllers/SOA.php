@@ -510,8 +510,14 @@
 
 					$customer_info = $customer_info[0];
 
-					$previous_balances = $m_sales->get_customer_soa_final('< MONTH(NOW())',$customer_id,null,null);
-					$current_balances = $m_sales->get_customer_soa_final('= MONTH(NOW())',$customer_id,null,null);
+
+	                $accounts=$this->Soa_settings_model->get_list(null,'soa_account_id');
+	                $acc = [];
+	                foreach ($accounts as $account) { $acc[]=$account->soa_account_id; }
+	                $filter_accounts =  implode(",", $acc);
+
+					$previous_balances = $m_sales->get_customer_soa_final('< MONTH(NOW())',$customer_id,null,null,$filter_accounts);
+					$current_balances = $m_sales->get_customer_soa_final('= MONTH(NOW())',$customer_id,null,null,$filter_accounts);
 					$payments = $m_sales->get_customer_soa_payment($customer_id,$filter_accounts);
 
 					ob_start();

@@ -54,7 +54,7 @@
                         </li>
                         <li class="<?php //echo (in_array('16',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-view-list-alt"></i><span>Job Order</span></a>
                             <ul class="acc-menu">
-                                <!-- <li class="<?php //echo (in_array('16-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Other_income">Other Income</a></li> -->
+                                <li class="<?php //echo (in_array('16-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Jo_billing">Job Order Invoice</a></li>
                                 <li class="<?php //echo (in_array('16-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Job_unit">Job Unit</a></li>
                                 <li class="<?php //echo (in_array('16-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Jobs">Jobs Management</a></li>
                             </ul>
@@ -169,7 +169,7 @@
                                     <ul class="acc-menu">
                                         <li class="<?php echo (in_array('9-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Customer_Subsidiary">Customer Subsidiary</a></li>
                                         <li class="<?php echo (in_array('9-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Account_receivable_schedule">AR Schedule</a></li>
-                                        <li class="<?php echo (in_array('9-15',$this->session->user_rights)?'':'hidden'); ?>"><a href="AR_Receivable">AR Reports</a></li>
+                                        <!-- <li class="<?php echo (in_array('9-15',$this->session->user_rights)?'':'hidden'); ?>"><a href="AR_Receivable">AR Reports</a></li> -->
                                         <li class="<?php echo (in_array('9-17',$this->session->user_rights)?'':'hidden'); ?>"><a href="Aging_receivables">Aging of Receivables</a></li>
                                         <li class="<?php echo (in_array('9-19',$this->session->user_rights)?'':'hidden'); ?>"><a href="SOA">Statement of Account</a></li>
                                     </ul>

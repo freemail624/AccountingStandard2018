@@ -21,6 +21,7 @@ class Account_payables extends CORE_Controller
                 'Departments_model',
                 'Users_model',
                 'Accounting_period_model',
+                'Jo_billing_model',
                 'Trans_model'
             )
         );
@@ -131,6 +132,26 @@ class Account_payables extends CORE_Controller
                 $m_trans->trans_key_id=8; //CRUD
                 $m_trans->trans_type_id=12; // TRANS TYPE
                 $m_trans->trans_log='Finalized Purchase Invoice No.'.$purchase_invoice[0]->dr_invoice_no.' For Purchase Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
+                $m_trans->save();
+                //AUDIT TRAIL END
+                }
+
+
+                //if dr invoice is available, purchase invoice is recorded as journal
+                $jo_billing_id=$this->input->post('jo_billing_id',TRUE);
+                if($jo_billing_id!=null){
+                    $m_billing=$this->Jo_billing_model;
+                    $m_billing->journal_id=$journal_id;
+                    $m_billing->is_journal_posted=TRUE;
+                    $m_billing->modify($jo_billing_id);
+                // AUDIT TRAIL START
+                $jo_invoice=$m_billing->get_list($jo_billing_id,'jo_billing_no');
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=8; //CRUD
+                $m_trans->trans_type_id=68; // TRANS TYPE
+                $m_trans->trans_log='Finalized Job Order No. '.$jo_invoice[0]->jo_billing_no.' For Purchase Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
                 $m_trans->save();
                 //AUDIT TRAIL END
                 }

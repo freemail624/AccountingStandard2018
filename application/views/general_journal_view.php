@@ -681,7 +681,7 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button id="btn_save_supplier" type="button" class="btn btn-primary" style="background-color:#2ecc71;color:white;">Save</button>
+                            <button id="btn_save_supplier" type="button" class="btn btn-primary" style="background-color:#2ecc71;color:white;"> <span class=""></span> Save</button>
                             <button id="btn_cancel_supplier" type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
                         </div>
                     </div><!---content---->
@@ -896,7 +896,7 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button id="btn_save_customer" type="button" class="btn" style="background-color:#2ecc71;color:white;"><span class=""></span>Save</button>
+                            <button id="btn_save_customer" type="button" class="btn" style="background-color:#2ecc71;color:white;"><span class=""></span> Save</button>
                             <button id="btn_cancel_customer" type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
                         </div>
                     </div><!---content---->
@@ -1516,6 +1516,10 @@ $(document).ready(function(){
             $('#div_no_check').hide();
             _cboDepartments.select2('val',null);
             $('#date_txn').datepicker('setDate','today');
+            $('#tbl_entries > tbody tr').slice(2).remove();
+
+            $('#tbl_entries > tfoot tr').find(oTFSummary.dr).html('<b>0.00</b>');
+            $('#tbl_entries > tfoot tr').find(oTFSummary.cr).html('<b>0.00</b>');
             showList(false);
             //$('#modal_journal_entry').modal('show');
         });
@@ -1537,14 +1541,15 @@ $(document).ready(function(){
 
             if(validateRequiredFields($('#frm_department_new'))){
                 var data=$('#frm_department_new').serializeArray();
-
+                 showSpinningProgress(btn);
                 $.ajax({
                     "dataType":"json",
                     "type":"POST",
                     "url":"Departments/transaction/create",
                     "data":data,
                     "beforeSend" : function(){
-                        showSpinningProgress(btn);
+                       
+
                     }
                 }).done(function(response){
                     showNotification(response);
@@ -1552,12 +1557,12 @@ $(document).ready(function(){
 
                     var _department=response.row_added[0];
                     $('#cbo_departments').append('<option value="'+_department.department_id+'" selected>'+_department.department_name+'</option>');
-                    $('#cbo_departments').select2('val',_department.department_id);
+                    _cboDepartments.select2('val',_department.department_id);
 
                     clearFields($('#modal_new_department'));
-
+                    showSpinningProgress($('#btn_create_department'));
                 }).always(function(){
-                    showSpinningProgress(btn);
+                    
                 });
             }
 
@@ -1732,7 +1737,7 @@ $(document).ready(function(){
                     $('input,textarea,select',$('#frm_customer')).val('');
                 }).always(function(){
                     $('#modal_create_customer').modal('toggle');
-                    showSpinningProgress($('#btn_save_supplier'));
+                    showSpinningProgress($('#btn_save_customer'));
                 });
                 return;
             }
@@ -2055,13 +2060,10 @@ $(document).ready(function(){
 
     var clearFields=function(f){
         $('input,textarea',f).val('');
-        $(f).find('select').select2('val',null); 
+        // $(f).find('select').select2('val',null); 
         //_cboDepartments.select2('val',null);
         $(f).find('input:first').focus();
-        $('#tbl_entries > tbody tr').slice(2).remove();
 
-        $('#tbl_entries > tfoot tr').find(oTFSummary.dr).html('<b>0.00</b>');
-        $('#tbl_entries > tfoot tr').find(oTFSummary.cr).html('<b>0.00</b>');
     };
 
     //initialize numeric text

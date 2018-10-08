@@ -415,7 +415,7 @@ return $this->db->query($sql)->result();
         return $this->db->query($sql)->result();
     }
 
-    function get_aging_receivables()
+    function get_aging_receivables($filter_account)
     {
         $sql = "SELECT
 n.customer_name,
@@ -466,7 +466,7 @@ GROUP BY rpl.journal_id) as payment
         ON payment.journal_id = ji.journal_id
         
         WHERE book_type = 'SJE'
-        AND ja.account_id = (SELECT receivable_account_id FROM account_integration)
+        AND ja.account_id IN ($filter_account)
         AND ji.is_active = TRUE
         AND ji.is_deleted = FALSE
 

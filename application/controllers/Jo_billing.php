@@ -78,6 +78,18 @@ class Jo_billing extends CORE_Controller
 
                 break;
 
+                case 'list-invoice-unposted' :
+                $m_invoice = $this->Jo_billing_model;
+                $response['data']= $this->response_rows_jo_billing(
+                     'jo_billing.is_active=TRUE AND jo_billing.is_deleted=FALSE AND jo_billing.is_journal_posted = FALSE'
+                   
+                    );
+                echo json_encode($response);
+
+                break;
+
+
+
             ////****************************************items/products of selected Items***********************************************
             case 'items-invoice':
                 $m_items=$this->Jo_billing_items_model;
@@ -107,12 +119,14 @@ class Jo_billing extends CORE_Controller
                 $m_invoice=$this->Jo_billing_model;
                 $m_invoice->set('date_created','NOW()');
                 $m_invoice->supplier_id=$this->input->post('supplier',TRUE);
-                $m_invoice->salesperson_id=$this->input->post('salesperson_id',TRUE);
+                // $m_invoice->salesperson_id=$this->input->post('salesperson_id',TRUE);
                 $m_invoice->department_id=$this->input->post('department',TRUE);
-                $m_invoice->contact_person=$this->input->post('contact_person',TRUE);
-                $m_invoice->address=$this->input->post('address',TRUE);
+                // $m_invoice->contact_person=$this->input->post('contact_person',TRUE);
+                // $m_invoice->address=$this->input->post('address',TRUE);
+                $m_invoice->requested_by=$this->input->post('requested_by',TRUE);
                 $m_invoice->remarks=$this->input->post('remarks',TRUE);
                 $m_invoice->date_due=date('Y-m-d',strtotime($this->input->post('date_due',TRUE)));
+                $m_invoice->date_start=date('Y-m-d',strtotime($this->input->post('date_start',TRUE)));
                 $m_invoice->date_invoice=date('Y-m-d',strtotime($this->input->post('date_invoice',TRUE)));
                 $m_invoice->total_amount=$this->get_numeric_value($this->input->post('summary_total_amount',TRUE));
                 $m_invoice->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
@@ -186,11 +200,13 @@ class Jo_billing extends CORE_Controller
                 $jo_billing_id=$this->input->post('jo_billing_id',TRUE);
                 $m_invoice->set('date_created','NOW()');
                 $m_invoice->supplier_id=$this->input->post('supplier',TRUE);
-                $m_invoice->salesperson_id=$this->input->post('salesperson_id',TRUE);
-                $m_invoice->contact_person=$this->input->post('contact_person',TRUE);
+                $m_invoice->requested_by=$this->input->post('requested_by',TRUE);
+                // $m_invoice->salesperson_id=$this->input->post('salesperson_id',TRUE);
+                // $m_invoice->contact_person=$this->input->post('contact_person',TRUE);
                 $m_invoice->department_id=$this->input->post('department',TRUE);
-                $m_invoice->address=$this->input->post('address',TRUE);
+                // $m_invoice->address=$this->input->post('address',TRUE);
                 $m_invoice->remarks=$this->input->post('remarks',TRUE);
+                $m_invoice->date_start=date('Y-m-d',strtotime($this->input->post('date_start',TRUE)));
                 $m_invoice->date_due=date('Y-m-d',strtotime($this->input->post('date_due',TRUE)));
                 $m_invoice->date_invoice=date('Y-m-d',strtotime($this->input->post('date_invoice',TRUE)));
                 $m_invoice->total_amount=$this->get_numeric_value($this->input->post('summary_total_amount',TRUE));
@@ -315,10 +331,12 @@ function response_rows_jo_billing($filter_value){
                 'jo_billing.jo_billing_no',
                 'jo_billing.address',
                 'jo_billing.remarks',
+                'jo_billing.requested_by',
                 'jo_billing.total_overall_discount',
                 'jo_billing.is_journal_posted',
                 'DATE_FORMAT(jo_billing.date_invoice,"%m/%d/%Y") as date_invoice',
                 'DATE_FORMAT(jo_billing.date_due,"%m/%d/%Y") as date_due',
+                'DATE_FORMAT(jo_billing.date_start,"%m/%d/%Y") as date_start',
                 'suppliers.supplier_name',
                 'departments.department_name'),
                 array(

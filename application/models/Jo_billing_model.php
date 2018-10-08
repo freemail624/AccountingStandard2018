@@ -82,75 +82,76 @@ class Jo_billing_model extends CORE_Model
 
             return $this->db->query($sql)->result();
     }
+        //  THIS IS THE DISCOUNT FOR get_journal_entries_for_billing - IT WAS REMOVED, BECAUSE IT IS NOT NEEDED IN ACCOUNTING
+            // UNION ALL
 
+
+            // SELECT acc_payable.account_id,
+            // acc_payable.memo,
+            // 0 as dr_amount,
+            // (line_total - line_total_after_global) as cr_amount
+            //  FROM
+            // (SELECT joi.job_id,
+
+            // (SELECT payable_discount_account_id FROM account_integration) as account_id
+            // ,
+            // '' as memo,
+            // 0 cr_amount,
+            // SUM(IFNULL(joi.job_line_total_after_global,0)) as line_total_after_global,
+            // SUM(IFNULL(joi.job_line_total,0)) as line_total
+
+            // FROM jo_billing_items as joi
+            // INNER JOIN jobs as j ON j.job_id=joi.job_id
+            // WHERE joi.jo_billing_id= $jo_billing_id AND j.expense_account_id>0
+            // ) as acc_payable GROUP BY acc_payable.account_id
 
 
     function get_journal_entries_for_billing($jo_billing_id){
 
 
         $sql="SELECT main.* FROM(
-SELECT acc_receivable.account_id,
-acc_receivable.memo,
-SUM(acc_receivable.dr_amount) as dr_amount,
-0 as cr_amount
-
-FROM 
-
-(SELECT joi.job_id,
-(SELECT receivable_account_id FROM account_integration) as account_id,
-'' as memo,
-SUM(joi.job_line_total_after_global) as dr_amount,
-0 as cr_amount
-
-FROM jo_billing_items as joi
-INNER JOIN jobs j ON j.job_id  = joi.job_id
-WHERE joi.jo_billing_id = $jo_billing_id AND j.income_account_id > 0
-
-) as acc_receivable 
-
-GROUP BY acc_receivable.account_id
+            SELECT 
+            j.expense_account_id as account_id,
+            '' as memo,
+            SUM(joi.job_line_total_after_global) as dr_amount,
+            0 as cr_amount
 
 
-UNION ALL
+            FROM 
+            jo_billing_items joi 
+            LEFT JOIN jobs j ON j.job_id = joi.job_id
+            WHERE joi.jo_billing_id= $jo_billing_id AND j.expense_account_id>0
+            GROUP BY j.expense_account_id
+
+            UNION ALL
 
 
-SELECT acc_receivable.account_id,
-acc_receivable.memo,
-(line_total - line_total_after_global) as dr_amount,
-0 as cr_amount
- FROM
-(SELECT joi.job_id,
+            SELECT acc_payable.account_id,
+            acc_payable.memo,
+            0 as dr_amount,
+            SUM(acc_payable.dr_amount) as cr_amount
 
-(SELECT receivable_discount_account_id FROM account_integration) as account_id
-,
-'' as memo,
-0 cr_amount,
-SUM(IFNULL(joi.job_line_total_after_global,0)) as line_total_after_global,
-SUM(IFNULL(joi.job_line_total,0)) as line_total
+            FROM 
 
-FROM jo_billing_items as joi
-INNER JOIN jobs as j ON j.job_id=joi.job_id
-WHERE joi.jo_billing_id= $jo_billing_id AND j.income_account_id>0
-) as acc_receivable GROUP BY acc_receivable.account_id
+            (SELECT joi.job_id,
+            (SELECT payable_account_id FROM account_integration) as account_id,
+            '' as memo,
+            SUM(joi.job_line_total_after_global) as dr_amount,
+            0 as cr_amount
 
-UNION ALL
+            FROM jo_billing_items as joi
+            INNER JOIN jobs j ON j.job_id  = joi.job_id
+            WHERE joi.jo_billing_id = $jo_billing_id AND j.expense_account_id > 0
+
+            ) as acc_payable 
+
+            GROUP BY acc_payable.account_id
 
 
+           
 
-SELECT 
-j.income_account_id as account_id,
-'' as memo,
-0 as dr_amount,
-SUM(joi.job_line_total) as cr_amount
-
-FROM 
-jo_billing_items joi 
-LEFT JOIN jobs j ON j.job_id = joi.job_id
-WHERE joi.jo_billing_id= $jo_billing_id AND j.income_account_id>0
-GROUP BY j.income_account_id
-
-)as main WHERE main.dr_amount>0 OR main.cr_amount>0
-";
+            )as main WHERE main.dr_amount>0 OR main.cr_amount>0
+            ";
 
         return $this->db->query($sql)->result();
 
