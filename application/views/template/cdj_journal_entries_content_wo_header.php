@@ -4,8 +4,8 @@
     <title>Cash Disbursement</title>
     <style type="text/css">
         body {
-            font-family: 'Calibri',sans-serif;
-            font-size: 12px;
+            /*font-family: 'Calibri',sans-serif;*/
+            /*font-size: 12px;*/
         }
 
         .align-right {

@@ -28,8 +28,9 @@ class Cash_disbursement extends CORE_Controller
                 'Company_model',
                 'Users_model',
                 'Bank_model',
-                'Trans_model'
-
+                'Trans_model',
+                'Bir_2307_model',
+                'Account_integration_model'
             )
         );
 
@@ -170,7 +171,11 @@ class Cash_disbursement extends CORE_Controller
 
             case 'create' :
                 $m_journal=$this->Journal_info_model;
+                $m_supplier=$this->Suppliers_model;
+                $m_form_2307=$this->Bir_2307_model;
                 $m_journal_accounts=$this->Journal_account_model;
+                $m_company=$this->Company_model;
+                $m_accounts=$this->Account_integration_model;
 
                 //validate if still in valid range
                 $valid_range=$this->Accounting_period_model->get_list("'".date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)))."'<=period_end");
@@ -195,9 +200,6 @@ class Cash_disbursement extends CORE_Controller
                 $m_journal->ref_no=$this->input->post('ref_no');
                 $m_journal->amount=$this->get_numeric_value($this->input->post('amount'));
 
-
-
-
                 //for audit details
                 $m_journal->set('date_created','NOW()');
                 $m_journal->created_by_user=$this->session->user_id;
@@ -209,7 +211,15 @@ class Cash_disbursement extends CORE_Controller
                 $dr_amounts=$this->input->post('dr_amount',TRUE);
                 $cr_amounts=$this->input->post('cr_amount',TRUE);
 
+                $total_amount=0;
+                $total_wtax=0;
+                $account_integration=$m_accounts->get_list();
+
                 for($i=0;$i<=count($accounts)-1;$i++){
+                    $total_amount+=$this->get_numeric_value($dr_amounts[$i]);
+                    if ($account_integration[0]->supplier_wtax_account_id == $accounts[$i]){
+                        $total_wtax+=($this->get_numeric_value($dr_amounts[$i])+$this->get_numeric_value($cr_amounts[$i]));
+                    }
                     $m_journal_accounts->journal_id=$journal_id;
                     $m_journal_accounts->account_id=$accounts[$i];
                     $m_journal_accounts->memo=$memos[$i];
@@ -218,10 +228,34 @@ class Cash_disbursement extends CORE_Controller
                     $m_journal_accounts->save();
                 }
 
-
                 //update transaction number base on formatted last insert id
                 $m_journal->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
                 $m_journal->modify($journal_id);
+
+                $form_2307_apply=$this->input->post('2307_apply',TRUE);
+                $supplier_id=$this->input->post('supplier_id',TRUE);
+                $supplier=$m_supplier->get_list($supplier_id);
+                $company=$m_company->get_list();
+
+                if ($form_2307_apply == 1){
+                    $m_form_2307->journal_id=$journal_id;
+                    $m_form_2307->supplier_id=$supplier_id;
+                    $m_form_2307->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
+                    $m_form_2307->date=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
+                    $m_form_2307->payee_tin=$supplier[0]->tin_no;
+                    $m_form_2307->payee_name=$supplier[0]->supplier_name;
+                    $m_form_2307->payee_address=$supplier[0]->address;
+                    $m_form_2307->payor_name=$company[0]->company_name;
+                    $m_form_2307->payor_tin=$company[0]->tin_no;
+                    $m_form_2307->payor_address=$company[0]->company_address;
+                    $m_form_2307->gross_amount=$this->get_numeric_value($total_amount);
+                    $m_form_2307->deducted_amount=$this->get_numeric_value($total_wtax);
+                    $m_form_2307->atc=$this->input->post('2307_atc',TRUE);
+                    $m_form_2307->remarks=$this->input->post('2307_remarks',TRUE);
+                    $m_form_2307->set('date_created','NOW()');
+                    $m_form_2307->created_by_user=$this->session->user_id;
+                    $m_form_2307->save();
+                }
 
 
                 //if dr invoice is available, purchase invoice is recorded as journal

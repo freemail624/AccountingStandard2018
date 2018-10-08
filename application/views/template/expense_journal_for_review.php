@@ -62,7 +62,23 @@
                                                         </span>
                                                         <input type="text" name="txn_no" class="form-control" value="TXN-YYYYMMDD-XXX" readonly>
                                                     </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    Date * :<br />
+                                                    <div class="input-group">
+                                                        <input type="text" name="date_txn" class="date-picker  form-control" value="<?php echo $payment_info->payment_date; ?>">
+                                                        <span class="input-group-addon">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-5"> 
+                                                    <div style="margin-top: 10px;">
+                                                        <input type="checkbox" class="2307_apply" id="2307_apply_<?php echo $payment_info->payment_id; ?>" value="1">
+                                                        &nbsp;<label for="2307_apply_<?php echo $payment_info->payment_id; ?>">Apply 2307 Form</label>
+                                                    </div>
                                                 </div><br />
+                                                <br />
                                             </div>
                                             <div class="row">
                                                 <div class="col-lg-7">
@@ -73,13 +89,13 @@
                                                         <?php } ?>
                                                     </select>
                                                 </div>
-                                                <div class="col-lg-4 col-lg-offset-1">
-                                                    Date * :<br />
+                                                <div class="col-lg-5"> 
+                                                    ATC :
                                                     <div class="input-group">
-                                                        <input type="text" name="date_txn" class="date-picker  form-control" value="<?php echo $payment_info->payment_date; ?>">
                                                         <span class="input-group-addon">
-                                                            <i class="fa fa-calendar"></i>
+                                                            <i class="fa fa-code"></i>
                                                         </span>
+                                                        <input type="text" name="2307_atc" class="2307_atc form-control" data-error-msg="ATC is required." style="width: 100%;">
                                                     </div>
                                                 </div><br />
                                             </div>
@@ -91,6 +107,10 @@
                                                             <option value="<?php echo $department->department_id; ?>" <?php echo ($payment_info->department_id===$department->department_id?'selected':''); ?>><?php echo $department->department_name; ?></option>
                                                         <?php } ?>
                                                     </select>
+                                                </div>
+                                                <div class="col-lg-5">
+                                                    Remarks :<br />
+                                                    <textarea class="2307_remarks form-control" name="2307_remarks" data-error-msg="Remarks is required." rows="5" style="width: 90%;"></textarea>
                                                 </div>
                                             </div>
                                         </div>

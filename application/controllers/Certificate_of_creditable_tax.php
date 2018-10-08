@@ -6,6 +6,8 @@ class Certificate_of_creditable_tax extends CORE_Controller {
         parent::__construct('');
         $this->validate_session();
         $this->load->model('Users_model');
+        $this->load->model('Months_model');
+        $this->load->model('Bir_2307_model');
     }
 
     public function index() {
@@ -15,6 +17,7 @@ class Certificate_of_creditable_tax extends CORE_Controller {
         $data['_switcher_settings'] = $this->load->view('template/elements/switcher', '', TRUE);
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
+        $data['months']=$this->Months_model->get_list();
         $data['title'] = 'Certificate of Creditable Tax';
         (in_array('16-3',$this->session->user_rights)? 
         $this->load->view('certificate_of_creditable_tax_view', $data)
@@ -25,8 +28,10 @@ class Certificate_of_creditable_tax extends CORE_Controller {
     function transaction($txn = null) {
         switch ($txn) {
             case 'list':
-                $m_bank = $this->Bank_model;
-                $response['data'] = $m_bank->get_list(array('bank.is_deleted'=>0));
+                $m_form_2307 = $this->Bir_2307_model;
+                $month = $this->input->get('month', TRUE);
+                $year = $this->input->get('year', TRUE);
+                $response['data'] = $m_form_2307->get_2307_list($month,$year);
                 echo json_encode($response);
                 break;
 
