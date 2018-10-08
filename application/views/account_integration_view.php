@@ -127,9 +127,7 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
 <div id="layout-static">
 
 
-<?php echo $_side_bar_navigation;
-
-?>
+<?php echo $_side_bar_navigation;?>
 
 
 <div class="static-content-wrapper white-bg">
@@ -389,6 +387,18 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                                 </select>
 
                                 <span class="help-block m-b-none">Please select the account where payment to supplier will be credited.</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> * Withholding Tax Account :</label>
+                            <div class="col-md-7">
+                                <select name="supplier_wtax_account_id" class="cbo_accounts" data-error-msg="Withholding Tax Account is required." required>
+
+                                    <?php foreach($accounts as $account){ ?>
+                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->supplier_wtax_account_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
+                                    <?php } ?>
+                                </select>
+                                <span class="help-block m-b-none">Please select the account where supplier withholding tax will be credited.</span>
                             </div>
                         </div>
                         <div class="col-sm-offset-3">
