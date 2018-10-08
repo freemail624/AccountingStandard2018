@@ -21,6 +21,7 @@ class Cash_receipt extends CORE_Controller
                 'Receivable_payment_model',
                 'Bank_model',
                 'Users_model',
+                'Account_integration_model',
                 'Accounting_period_model',
                 'Cash_invoice_model',
                 'Trans_model',
@@ -84,6 +85,25 @@ class Cash_receipt extends CORE_Controller
                 $m_journal=$this->Journal_info_model;
                 $m_journal_accounts=$this->Journal_account_model;
 
+                $account_tax=$this->Account_integration_model->get_list(1);
+                $tax_account = $account_tax[0]->customer_wtax_account_id;
+                $check_account=$this->input->post('accounts',TRUE);
+                $check_dr_amounts=$this->input->post('dr_amount',TRUE);
+
+                $file_2307=$this->input->post('file_2307',TRUE);
+                $stat = 'false';
+                for($i=0;$i<=count($check_account)-1;$i++){
+                    if($check_account[$i] == $tax_account && $check_dr_amounts[$i] > 0){ // CHECK IF THERE IS A FILE
+                        $stat='true';
+                        if($file_2307==null){
+                            $response['stat']='error';
+                            $response['title']='<b>Error!</b>';
+                            $response['msg']='Please upload a BIR Form 2307 Before Proceeding!!<br />';
+                            die(json_encode($response));
+                        }
+                    }
+                }
+
                 //validate if still in valid range
                 $valid_range=$this->Accounting_period_model->get_list("'".date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)))."'<=period_end");
                 if(count($valid_range)>0){
@@ -102,7 +122,12 @@ class Cash_receipt extends CORE_Controller
                     $m_journal->supplier_id=$particular[1];
                 }
 
+
+
                 $m_journal->remarks=$this->input->post('remarks',TRUE);
+                if($stat =='true' ){
+                    $m_journal->path_2307=$this->input->post('file_2307',TRUE);
+                }
                 $m_journal->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
                 $m_journal->book_type='CRJ';
                 $m_journal->department_id=$this->input->post('department_id');
@@ -186,6 +211,29 @@ class Cash_receipt extends CORE_Controller
                 $m_journal=$this->Journal_info_model;
                 $m_journal_accounts=$this->Journal_account_model;
 
+
+
+                $account_tax=$this->Account_integration_model->get_list(1);
+                $tax_account = $account_tax[0]->customer_wtax_account_id;
+                $check_account=$this->input->post('accounts',TRUE);
+                $check_dr_amounts=$this->input->post('dr_amount',TRUE);
+
+                $file_2307=$this->input->post('other_file_2307',TRUE);
+                $stat = 'false';
+                for($i=0;$i<=count($check_account)-1;$i++){
+                    if($check_account[$i] == $tax_account && $check_dr_amounts[$i] > 0){ // CHECK IF THERE IS A FILE
+                        $stat='true';
+                        if($file_2307==null){
+                            $response['stat']='error';
+                            $response['title']='<b>Error!</b>';
+                            $response['msg']='Please upload a BIR Form 2307 Before Proceeding!!<br />';
+                            die(json_encode($response));
+                        }
+                    }
+                }
+
+
+
                 //validate if still in valid range
                 $valid_range=$this->Accounting_period_model->get_list("'".date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)))."'<=period_end");
                 if(count($valid_range)>0){
@@ -195,6 +243,9 @@ class Cash_receipt extends CORE_Controller
                     die(json_encode($response));
                 }
 
+                if($stat =='true' ){
+                    $m_journal->path_2307=$this->input->post('other_file_2307',TRUE);
+                }
                 $m_journal->supplier_id=$this->input->post('supplier_id',TRUE);
                 $m_journal->remarks=$this->input->post('remarks',TRUE);
                 $m_journal->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));

@@ -77,7 +77,7 @@
                                     <div class="col-lg-8">
                                         <div style="border: 1px solid lightgrey;padding: 2%;border-radius: 5px;">
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     Txn # * :<br />
                                                     <div class="input-group">
                                                         <span class="input-group-addon">
@@ -85,7 +85,16 @@
                                                         </span>
                                                         <input type="text" name="txn_no" class="form-control" value="TXN-YYYYMMDD-XXX" readonly>
                                                     </div>
-                                                </div><br />
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    Date * :<br />
+                                                    <div class="input-group">
+                                                        <input type="text" name="date_txn" class="date-picker  form-control" value="<?php echo $payment_info->payment_date; ?>">
+                                                        <span class="input-group-addon">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-lg-7">
@@ -98,14 +107,9 @@
                                                         </optgroup>
                                                     </select>
                                                 </div>
-                                                <div class="col-lg-4 col-lg-offset-1">
-                                                    Date * :<br />
-                                                    <div class="input-group">
-                                                        <input type="text" name="date_txn" class="date-picker  form-control" value="<?php echo $payment_info->payment_date; ?>">
-                                                        <span class="input-group-addon">
-                                                            <i class="fa fa-calendar"></i>
-                                                        </span>
-                                                    </div>
+                                                <div class="col-lg-5 ">
+
+
                                                 </div><br />
                                             </div>
                                             <div class="row">
@@ -116,6 +120,13 @@
                                                             <option value="<?php echo $department->department_id; ?>" <?php echo ($payment_info->department_id===$department->department_id?'selected':''); ?>><?php echo $department->department_name; ?></option>
                                                         <?php } ?>
                                                     </select>
+                                                </div>
+                                                <div class="col-lg-5">BIR 2307
+                                                    <br>
+                                                    <span class="file_2307_value_<?php echo $payment_info->payment_id ?>">No File.</span><br>
+                                                    <button type="button" style="width:100px;" class="btn btn-primary btn_browse_bir2307_<?php echo $payment_info->payment_id ?>">Browse File</button>
+                                                    <button type="button" style="width:100px;" class="btn btn-danger btn_remove_bir2307_<?php echo $payment_info->payment_id ?>">Remove</button>
+                                                    <input type="file" name="file_2307_<?php echo $payment_info->payment_id ?>" class="hidden">
                                                 </div>
                                             </div>
                                         </div>

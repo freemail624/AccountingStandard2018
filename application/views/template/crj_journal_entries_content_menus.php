@@ -12,6 +12,10 @@
         <div class="title-action" style="margin-left: 3%;">
             <a href="Templates/layout/journal-crj?id=<?php echo $journal_info->journal_id; ?>&type=preview" target="_blank" class="btn btn-default" style="text-transform:none;font-family: tahoma;" ><i class="fa fa-print"></i> Print </a>
             <a href="Templates/layout/journal-crj?id=<?php echo $journal_info->journal_id; ?>&type=pdf" class="btn btn-default" style="text-transform:none;font-family: tahoma;" ><i class="fa fa-file-pdf-o"></i> Download as PDF </a>
+            <?php 
+            if($journal_info->path_2307 !=''){ ?>
+	            <a href="<?php echo base_url($journal_info->path_2307); ?>" target="_blank" class="btn btn-default">Download 2307</a>
+            <?php } ?>
 
 
         </div>

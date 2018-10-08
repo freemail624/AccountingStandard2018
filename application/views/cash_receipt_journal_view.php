@@ -476,6 +476,13 @@
                                         <?php      }  ?>
                                     </select>
                             </div>
+                            <div class="col-sm-4 col-sm-offset-4">BIR 2307
+                                <br>
+                                <span id="file_2307_value">No File.</span><br>
+                                 <button type="button" id="btn_browse_bir2307" style="width:150px;" class="btn btn-primary">Browse File</button>
+                                 <button type="button" id="btn_remove_bir2307" style="width:150px;" class="btn btn-danger">Remove</button>
+                                 <input type="file" name="file_2307" class="hidden">
+                            </div>
                         </div>
 
 
@@ -1446,6 +1453,7 @@ $(document).ready(function(){
                     reInitializeDropDownAccounts(tbl,false);
                     reInitializeChildEntriesTable(tbl);
                     reInitializeChildElements(parent_tab_pane);
+                    reInitializeUpload(d.payment_id);
 
                     // Add to the 'open' array
                     if ( idx === -1 ) {
@@ -1576,7 +1584,8 @@ $(document).ready(function(){
             $('#cbo_payment_method').select2('val',null);
             $('#cbo_banks').select2('val',null);
             $('#account_type').select2('val',null);
-
+            $('input[name="file_2307"]').removeAttr('val');
+            $('#file_2307_value').text('No File.');
             clearFields($('#frm_journal'));
             showList(false);
 
@@ -1853,6 +1862,43 @@ $(document).ready(function(){
         });
 
 
+        $('#btn_browse_bir2307').click(function(event){
+            event.preventDefault();
+            $('input[name="file_2307"]').click();
+        });
+
+        $('input[name="file_2307"]').change(function(event){
+            var _files=event.target.files;
+            var data=new FormData();
+            $.each(_files,function(key,value){
+                data.append(key,value);
+            });
+
+            $.ajax({
+                url : 'Customers/transaction/upload_2307',
+                type : "POST",
+                data : data,
+                cache : false,
+                dataType : 'json',
+                processData : false,
+                contentType : false,
+                success : function(response){
+                    if(response.stat == 'error'){
+                        showNotification(response)
+                    }else{
+                        $('input[name="file_2307"]').attr('val',response.path);
+                        $('#file_2307_value').text('File Uploaded.');
+                    }
+                }
+            });
+        });
+
+        $('#btn_remove_bir2307').click(function(event){
+            event.preventDefault();
+            $('input[name="file_2307"]').removeAttr('val');
+            $('#file_2307_value').text('No File.');
+        });
+
 
         $('#btn_browse_customer_photo').click(function(event){
             event.preventDefault();
@@ -1977,6 +2023,7 @@ $(document).ready(function(){
 
     var createJournal=function(){
         var _data=$('#frm_journal').serializeArray();
+        _data.push({name : "file_2307" ,value : $('input[name="file_2307"]').attr('val')});
         return $.ajax({
             "dataType":"json",
             "type":"POST",
@@ -2230,7 +2277,49 @@ $(document).ready(function(){
 
     };
     //***************************************************************************************************************88
+    var reInitializeUpload=function(payment_id){
+        $('.btn_browse_bir2307_'+payment_id).click(function(event){
+            event.preventDefault();
+            $('input[name="file_2307_'+payment_id+'"]').click();
+        });
 
+        $('input[name="file_2307_'+payment_id+'"]').change(function(event){
+            var _files=event.target.files;
+            var data=new FormData();
+            $.each(_files,function(key,value){
+                data.append(key,value);
+            });
+
+            $.ajax({
+                url : 'Customers/transaction/upload_2307',
+                type : "POST",
+                data : data,
+                cache : false,
+                dataType : 'json',
+                processData : false,
+                contentType : false,
+                success : function(response){
+                    if(response.stat == 'error'){
+                        showNotification(response)
+                    }else{
+                        alert();
+                        $('input[name="file_2307_'+payment_id+'"]').attr('val',response.path);
+                        $('.file_2307_value_'+payment_id).text('File Uploaded.');
+                        alert();
+                    }
+                }
+            });
+        });
+
+        $('.btn_remove_bir2307_'+payment_id).click(function(event){
+            event.preventDefault();
+            $('input[name="file_2307_'+payment_id+'"]').removeAttr('val');
+            $('input[name="file_2307_'+payment_id+'"]').attr('src','');
+            $('.file_2307_value_'+payment_id).text('No File.');
+        });
+
+
+    };
 
     var reInitializeChildElements=function(parent){
         var _dataParentID=parent.data('parent-id');
@@ -2273,7 +2362,7 @@ $(document).ready(function(){
 
         var finalizeJournalReview=function(){
             var _data_review=parent.find('form').serializeArray();
-
+            _data_review.push({name : "file_2307" ,value : $('input[name="file_2307_'+_dataParentID+'"]').attr('val')});
             return $.ajax({
                 "dataType":"json",
                 "type":"POST",

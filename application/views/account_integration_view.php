@@ -331,6 +331,19 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                             <span class="help-block m-b-none">Please select the account where payment of customer will be posted.</span>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label"> * Prepaid Income Tax Account :</label>
+                        <div class="col-md-7">
+                            <select name="customer_wtax_account_id"  class="cbo_accounts" data-error-msg="Prepaid Income Tax Account is required." required>
+
+                                <?php foreach($accounts as $account){ ?>
+                                    <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->customer_wtax_account_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
+                                <?php } ?>
+                            </select>
+
+                            <span class="help-block m-b-none">Please select the Prepaid Income Tax account of clients.</span>
+                        </div>
+                    </div>
                    <div class="col-sm-offset-3">
                         <button id="btn_save_customer_accounts" type="button" class="btn btn-primary" style="font-family: tahoma;text-transform: none;"><span class=""></span> Save Customer Configuration Changes</button>
                     </div>

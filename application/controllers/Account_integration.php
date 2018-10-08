@@ -171,7 +171,8 @@ class Account_integration extends CORE_Controller
                 $m_integration->output_tax_account_id=$this->input->post('output_tax_account_id',TRUE);
                 $m_integration->receivable_account_id=$this->input->post('receivable_account_id',TRUE);
                 $m_integration->receivable_discount_account_id=$this->input->post('receivable_discount_account_id',TRUE);
-                $m_integration->payment_from_customer_id=$this->input->post('payment_from_customer_id',TRUE);       
+                $m_integration->payment_from_customer_id=$this->input->post('payment_from_customer_id',TRUE);    
+                $m_integration->customer_wtax_account_id=$this->input->post('customer_wtax_account_id',TRUE);    
                 $m_integration->modify(1);
 
                 $response['stat']="success";
