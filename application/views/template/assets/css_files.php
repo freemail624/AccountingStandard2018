@@ -29,6 +29,12 @@
         overflow-x: hidden; 
     }
 
+    @media only screen and (max-width: 1000px) {
+        span.company_top_navigation{
+            display: none!important;
+        }
+    }
+
     .modal-backdrop {
         display: none;
     }
