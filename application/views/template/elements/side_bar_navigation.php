@@ -130,6 +130,7 @@
                                 <li class="<?php echo (in_array('6-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Tax">Setup Tax</a></li>
                                 <li class="<?php echo (in_array('6-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Account_titles">Setup Chart of Accounts</a></li>
                                 <li class="<?php echo (in_array('6-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Account_integration">General Configuration</a></li>
+                                <li class="<?php echo (in_array('6-14',$this->session->user_rights)?'':'hidden'); ?>"><a href="Soa_settings">SOA Settings</a></li>
                                 <li class="<?php echo (in_array('6-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="User_groups">Setup User Rights</a></li>
                                 <li class="<?php echo (in_array('6-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="users">Create User Account</a></li>
                                 <li class="<?php echo (in_array('6-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="company">Setup Company Info</a></li>
@@ -180,7 +181,7 @@
                                         <li class="<?php echo (in_array('9-8',$this->session->user_rights)?'':'hidden'); ?>"><a href="Account_Subsidiary">Account Subsidiary</a></li>
                                         <li class="<?php echo (in_array('9-13',$this->session->user_rights)?'':'hidden'); ?>"><a href="Replenishment_report">Replenishment Report</a></li>
                                         <li class="<?php echo (in_array('9-20',$this->session->user_rights)?'':'hidden'); ?>"><a href="Replenishment_batch">Replenishment Batch</a></li>
-                                        <li class="<?php echo (in_array('9-21',$this->session->user_rights)?'':'hidden'); ?>"><a href="General_Ledger">General Ledger</a></li>
+                                        <li class="<?php echo (in_array('9-21',$this->session->user_rights)?'':'hidden'); ?>"><a href="General_ledger">General Ledger</a></li>
                                     </ul>
                                 </li>
                                 <li class="hasChild secondChild">

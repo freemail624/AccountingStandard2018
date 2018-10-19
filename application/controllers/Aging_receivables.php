@@ -10,6 +10,7 @@
 			$this->load->model(
 				array(
 					'Sales_invoice_model',
+					'Soa_settings_model',
 					'Users_model',
 					'Company_model'
 				)
@@ -39,7 +40,12 @@
 				case 'list':
 					$m_sales = $this->Sales_invoice_model;
 
-					$response['data'] = $m_sales->get_aging_receivables();
+	                $accounts=$this->Soa_settings_model->get_list(null,'soa_account_id'); 
+	                $acc = []; 
+	                foreach ($accounts as $account) { $acc[]=$account->soa_account_id; } 
+	                $filter_accounts =  implode(",", $acc); 
+
+					$response['data'] = $m_sales->get_aging_receivables($filter_accounts);
 
 					echo json_encode($response);
 					break;
@@ -52,7 +58,11 @@
 					$company_info = $m_company->get_list();
 
 					$data['company_info'] = $company_info[0];
-					$data['receivables'] = $m_sales->get_aging_receivables();
+	                $accounts=$this->Soa_settings_model->get_list(null,'soa_account_id'); 
+	                $acc = []; 
+	                foreach ($accounts as $account) { $acc[]=$account->soa_account_id; } 
+	                $filter_accounts =  implode(",", $acc); 
+					$data['receivables'] = $m_sales->get_aging_receivables($filter_accounts);
 
                     $file_name='Aging of Receivables';
                     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
@@ -80,7 +90,11 @@
 					$company_info = $m_company->get_list();
 
 					$data['company_info'] = $company_info[0];
-					$receivables = $m_sales->get_aging_receivables();
+	                $accounts=$this->Soa_settings_model->get_list(null,'soa_account_id'); 
+	                $acc = []; 
+	                foreach ($accounts as $account) { $acc[]=$account->soa_account_id; } 
+	                $filter_accounts =  implode(",", $acc); 
+					$receivables = $m_sales->get_aging_receivables($filter_accounts);
 
 	                $excel->setActiveSheetIndex(0);
 
@@ -239,7 +253,11 @@
 					$company_info = $m_company->get_list();
 
 					$data['company_info'] = $company_info[0];
-					$receivables = $m_sales->get_aging_receivables();
+	                $accounts=$this->Soa_settings_model->get_list(null,'soa_account_id'); 
+	                $acc = []; 
+	                foreach ($accounts as $account) { $acc[]=$account->soa_account_id; } 
+	                $filter_accounts =  implode(",", $acc); 
+					$receivables = $m_sales->get_aging_receivables($filter_accounts);
 
 					ob_start();
 	                $excel->setActiveSheetIndex(0);
