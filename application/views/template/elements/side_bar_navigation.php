@@ -188,7 +188,7 @@
                                 <li class="hasChild secondChild">
                                     <a href="#/"><span>Cost</span></a>
                                     <ul class="acc-menu">
-                                        <li class="<?php echo (in_array('9-12',$this->session->user_rights)?'':'hidden'); ?>"><a href="Cogs">Cost of Goods</a></li>
+                                        <li class="<?php echo (in_array('9-12',$this->session->user_rights)?'':'hidden'); ?>"><a href="Cost_of_goods_sold">Cost of Goods</a></li>
                                         <li class="<?php echo (in_array('9-10',$this->session->user_rights)?'':'hidden'); ?>"><a href="Vat_relief_report">Vat Relief Report</a></li>
 
                                     </ul>

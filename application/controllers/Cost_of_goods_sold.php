@@ -21,9 +21,9 @@ class Cost_of_goods_sold extends CORE_Controller {
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['title'] = 'Cost of Goods Sold';
         $data['departments']=$this->Departments_model->get_list('is_deleted=0');
-        // (in_array('4-3',$this->session->user_rights)? 
-        $this->load->view('cost_of_goods_sold_v2', $data);
-        // :redirect(base_url('dashboard')));
+        (in_array('9-12',$this->session->user_rights)? 
+        $this->load->view('cost_of_goods_sold_v2', $data)
+        :redirect(base_url('dashboard')));
         
     }
 
