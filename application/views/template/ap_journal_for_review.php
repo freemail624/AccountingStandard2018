@@ -206,7 +206,7 @@
                                                 <td align="right"><?php echo number_format($item->dr_price,2); ?></td>
                                                 <td align="right"><?php echo number_format($item->po_price,2); ?></td>
                                                 <td align="right"><?php echo number_format($item->dr_tax_amount,2); ?></td>
-                                                <td align="right"><?php echo number_format($item->dr_line_total_price,2); ?></td>
+                                                <td align="right"><?php echo number_format($item->dr_line_total_after_global,2); ?></td>
                                             </tr>
                                             <?php
                                                     $dr_total_price+=$item->dr_line_total_price;
