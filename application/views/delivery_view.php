@@ -1120,9 +1120,9 @@ $(document).ready(function(){
                     dr_discount : "0.00",
                     tax_type_id : null,
                     dr_line_total_price : temp_inv_price,
+                    total_after_global : temp_inv_price,
                     dr_non_tax_amount: net_vat,
                     dr_tax_amount:vat_input,
-                    total_after_global : 0.00,
                         bulk_price: bulk_price,
                         retail_price: retail_price,
                         is_bulk: suggestion.is_bulk,
@@ -1417,7 +1417,7 @@ $(document).ready(function(){
                             parent_unit_id : value.parent_unit_id,
                             child_unit_id : value.child_unit_id,
                             // exp_date: exp_date,
-                            total_after_global : 0.00,
+                            total_after_global : value.dr_line_total_after_global,
                             batch_no:"",
                             a:a
                         }));
