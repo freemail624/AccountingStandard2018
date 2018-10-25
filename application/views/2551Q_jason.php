@@ -104,7 +104,7 @@
         background: none!important; 
         background-color: transparent!important; 
         } 
-        #tbl_2551M td:nth-child(5), #tbl_2551M td:nth-child(6), #tbl_2551M td:nth-child(7){
+        #tbl_2551M td:nth-child(4), #tbl_2551M td:nth-child(5), #tbl_2551M td:nth-child(6){
             text-align: right;
         }
 
@@ -170,7 +170,6 @@
                                                     <th width="2%"></th>
                                                     <th width="10%">Month</th>
                                                     <th width="20%">Industry Classification</th>
-                                                    <th width="5%">ATC</th>
                                                     <th width="10%" style="text-align: right;">Taxable Amount</th>
                                                     <th width="10%" style="text-align: right;">Tax Rate</th>
                                                     <th width="10%" style="text-align: right;">Tax Due</th>
@@ -332,7 +331,7 @@ $(document).ready(function(){
         dt=$('#tbl_2551M').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 8, "desc" ]],
+            "order": [[ 7, "desc" ]],
             oLanguage: {
                     sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
             },
@@ -356,18 +355,17 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "month_name" },
                 { targets:[2],data: "industry_classification" },
-                { targets:[3],data: "atc" },
-                { targets:[4],data: "taxable_amount" },
-                { targets:[5],data: "tax_rate" },
-                { targets:[6],data: "tax_due" },
+                { targets:[3],data: "taxable_amount" },
+                { targets:[4],data: "tax_rate" },
+                { targets:[5],data: "tax_due" },
                 {
-                    targets:[7],data: null,
+                    targets:[6],data: null,
                     render: function (data, type, full, meta){
                         var btn_print='<button class="btn btn-primary btn-sm" name="print_form_2551m" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Print Form 2551M"><i class="fa fa-print"></i> </button>';
                         return '<center>'+btn_print+'</center>';
                     }
                 },
-                { visible:false, targets:[8],data: "month_id" }
+                { visible:false, targets:[7],data: "month_id" }
             ]
         });
 
@@ -661,4 +659,4 @@ $(document).ready(function(){
 
 </body>
 
-</html>
+</html>vie

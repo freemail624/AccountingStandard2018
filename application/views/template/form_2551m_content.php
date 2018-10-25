@@ -4,6 +4,11 @@
         z-index: 200;
         font-size: 11pt;
     }
+    @page {
+	  size: A4;
+	  margin: default;
+	  scale: 100%;
+	}
 </style>
 <img src="../../assets/img/bir_forms/form_2551m_1.png" style="top: 0px; left: 0px; width: 100%;position: absolute;z-index: 100;">
 <span style="top: 158px; left: 112px;letter-spacing: 6px;">12</span>

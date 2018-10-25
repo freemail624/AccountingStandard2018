@@ -6,6 +6,9 @@ class Quarterly_percentage_tax_return extends CORE_Controller {
         parent::__construct('');
         $this->validate_session();
         $this->load->model('Users_model');
+        $this->load->model('Months_model');
+        $this->load->model('Bir_2551m_model');
+        $this->load->model('Company_model');
     }
 
     public function index() {
@@ -25,8 +28,9 @@ class Quarterly_percentage_tax_return extends CORE_Controller {
     function transaction($txn = null) {
         switch ($txn) {
             case 'list':
-                $m_bank = $this->Bank_model;
-                $response['data'] = $m_bank->get_list(array('bank.is_deleted'=>0));
+                $m_2551 = $this->Bir_2551m_model;
+                $year = $this->input->get('year', TRUE);
+                $response['data'] = $m_2551->get_2551q_list($year);
                 echo json_encode($response);
                 break;
 
