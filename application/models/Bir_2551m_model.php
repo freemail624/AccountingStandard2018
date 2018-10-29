@@ -157,7 +157,7 @@
 				        ci.is_journal_posted = TRUE
                         ".($month==null?"":" AND MONTH(ci.date_invoice) = $month")."
                         ".($quarter==null?"":" AND m.quarterly = $quarter")."
-				        AND YEAR(ci.date_invoice) = 2018) AS main
+				        AND YEAR(ci.date_invoice) = $year) AS main
                         ORDER BY month_id ASC, invoice_type DESC, ref_no DESC";
 				        return $this->db->query($sql)->result();
 	    }

@@ -859,7 +859,7 @@ $(document).ready(function(){
                         return '<center>'+btn_edit+'&nbsp;'+btn_message+'&nbsp;'+btn_trash+'</center>';
                     }
                 },
-                { targets:[9],data: "purchase_order_id" }
+                { targets:[9],data: "purchase_order_id",visible:false }
             ]
         });
 
