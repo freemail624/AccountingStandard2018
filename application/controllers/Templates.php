@@ -97,6 +97,8 @@ class Templates extends CORE_Controller {
         $this->load->model('Jo_billing_items_model');
 
         $this->load->model('Bir_2307_model');
+        $this->load->model('Bir_2551m_model'); 
+        $this->load->model('Months_model'); 
 
         $this->load->library('M_pdf');
         $this->load->library('excel');
@@ -1829,6 +1831,162 @@ class Templates extends CORE_Controller {
                 echo $this->load->view('template/form_2307_content',$data,TRUE); //load the template
 
                 break;
+
+            case 'print-form-2551m': 
+                $m_form_2551m = $this->Bir_2551m_model; 
+                $form_2551m_id=$this->input->get('id',TRUE); 
+                $type=$this->input->get('type',TRUE); 
+ 
+                $info = $m_form_2551m->get_2551m_list(null,$form_2551m_id); 
+                $data['info'] = $info[0]; 
+ 
+                $payor_tin = $info[0]->payor_tin; 
+                $data['payor_tin_1'] = substr($payor_tin,0, 3); 
+                $data['payor_tin_2'] = substr($payor_tin,3, 3); 
+                $data['payor_tin_3'] = substr($payor_tin,6, 3); 
+                $data['payor_tin_4'] = substr($payor_tin,9, 3);  
+ 
+                $data['m'] = str_pad($info[0]->month_id, 2, '0', STR_PAD_LEFT);  
+                $data['y'] = $info[0]->year; 
+ 
+                echo $this->load->view('template/form_2551m_content',$data,TRUE); //load the template 
+ 
+                break;    
+
+            case 'print-form-2551q': 
+                $m_form_2551 = $this->Bir_2551m_model; 
+                $m_company = $this->Company_model; 
+ 
+                $quarter=$this->input->get('quarter',TRUE); 
+                $year=$this->input->get('year',TRUE); 
+                $type=$this->input->get('type',TRUE); 
+ 
+                $company = $m_company->get_list(); 
+                $q_info = $m_form_2551->get_2551q_list($year,$quarter); 
+                $m_info = $m_form_2551->get_2551m_quarterly($year,$quarter); 
+ 
+                $data['company'] = $company[0]; 
+                $data['q_info'] = $q_info[0]; 
+                $data['m_info'] = $m_info; 
+ 
+                $tin_no = $company[0]->tin_no; 
+                $data['tin_1'] = substr($tin_no,0, 3); 
+                $data['tin_2'] = substr($tin_no,3, 3); 
+                $data['tin_3'] = substr($tin_no,6, 3); 
+                $data['tin_4'] = substr($tin_no,9, 3);  
+ 
+                $data['m'] = 12;  
+                $data['y'] = $q_info[0]->year; 
+ 
+                echo $this->load->view('template/form_2551q_content',$data,TRUE); //load the template 
+ 
+                break;    
+ 
+            case 'form_2551q_details': 
+                $m_form_2551 = $this->Bir_2551m_model; 
+                $m_company=$this->Company_model; 
+                $m_month = $this->Months_model; 
+ 
+                $quarter=$this->input->get('quarter',TRUE); 
+                $year=$this->input->get('year',TRUE); 
+                $type=$this->input->get('type',TRUE); 
+ 
+                $company = $m_company->get_list(); 
+                $q_info = $m_form_2551->get_2551q_list($year,$quarter); 
+                $invoices = $m_form_2551->generate_sales_cash_invoice(null,$year,$quarter); 
+                $months = $m_month->get_list(); 
+ 
+                $data['company'] = $company[0]; 
+                $data['q_info'] = $q_info[0]; 
+                $data['invoices'] = $invoices; 
+ 
+                //show only inside grid with menu button 
+                if($type=='fullview'||$type==null){ 
+                    echo $this->load->view('template/form_2551q_info',$data,TRUE); 
+                    echo $this->load->view('template/form_2551q_info_menus',$data,TRUE); 
+                } 
+ 
+                // //download pdf 
+                // if($type=='pdf'){ 
+                //     $file_name=$journal_info[0]->txn_no; 
+                //     $pdfFilePath = $file_name.".pdf"; //generate filename base on id 
+                //     $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class 
+                //     $content=$this->load->view('template/cdj_journal_entries_content',$data,TRUE); //load the template 
+                //     echo $content; 
+                //     //$pdf->setFooter('{PAGENO}'); 
+                //     //$pdf->WriteHTML($content); 
+                //     //download it. 
+                //     //$pdf->Output($pdfFilePath,"D"); 
+ 
+                // } 
+ 
+                //preview on browser 
+                if($type=='preview'){ 
+                    $file_name='2551Q Details ('.$q_info[0]->quarter.' of '.$q_info[0]->year.')'; 
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id 
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class 
+                    $content=$this->load->view('template/form_2551q_info_print',$data,TRUE); //load the template 
+                    // $pdf->setFooter('{PAGENO}'); 
+                    $pdf->WriteHTML($content); 
+                    //download it. 
+                    $pdf->Output(); 
+                } 
+ 
+                break;    
+ 
+            case 'form_2551m_details': 
+                $m_form_2551m = $this->Bir_2551m_model; 
+                $m_company=$this->Company_model; 
+                $m_month = $this->Months_model; 
+ 
+                $form_2551m_id=$this->input->get('id',TRUE); 
+                $type=$this->input->get('type',TRUE); 
+ 
+                $company=$m_company->get_list(); 
+                $info = $m_form_2551m->get_2551m_list(null,$form_2551m_id); 
+ 
+                $month = $info[0]->month_id; 
+                $year = $info[0]->year; 
+                $invoices = $m_form_2551m->generate_sales_cash_invoice($month,$year); 
+                $months = $m_month->get_list($month); 
+ 
+                $data['info'] = $info[0]; 
+                $data['invoices'] = $invoices; 
+                $data['company']=$company[0]; 
+ 
+                //show only inside grid with menu button 
+                if($type=='fullview'||$type==null){ 
+                    echo $this->load->view('template/form_2551m_info',$data,TRUE); 
+                    echo $this->load->view('template/form_2551m_info_menus',$data,TRUE); 
+                } 
+ 
+                // //download pdf 
+                // if($type=='pdf'){ 
+                //     $file_name=$journal_info[0]->txn_no; 
+                //     $pdfFilePath = $file_name.".pdf"; //generate filename base on id 
+                //     $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class 
+                //     $content=$this->load->view('template/cdj_journal_entries_content',$data,TRUE); //load the template 
+                //     echo $content; 
+                //     //$pdf->setFooter('{PAGENO}'); 
+                //     //$pdf->WriteHTML($content); 
+                //     //download it. 
+                //     //$pdf->Output($pdfFilePath,"D"); 
+ 
+                // } 
+ 
+                //preview on browser 
+                if($type=='preview'){ 
+                    $file_name='2551M Info '.$months[0]->month_name.' '.$year; 
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id 
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class 
+                    $content=$this->load->view('template/form_2551m_info_print',$data,TRUE); //load the template 
+                    // $pdf->setFooter('{PAGENO}'); 
+                    $pdf->WriteHTML($content); 
+                    //download it. 
+                    $pdf->Output(); 
+                } 
+ 
+                break;                  
 
             case 'journal-cdj':
                 $m_journal_info=$this->Journal_info_model;

@@ -104,7 +104,9 @@ class Rights_link_model extends CORE_Model{
                                           (94,'16','16-2','Item Units Management'),
                                           (95,'16','16-3','Other Income Invoice'),
                                           (96,'6','6-14','Statement of Accounts Settings'),
-                                          (97,'17','17-1','Certificate of Creditable Tax')
+                                          (97,'17','17-1','Certificate of Creditable Tax'),
+                                          (98,'17','17-2','Monthly Percentage Tax Return'),
+                                          (99,'17','17-3','Quarterly Percentage Tax Return')
 
 
                                           ON DUPLICATE KEY UPDATE

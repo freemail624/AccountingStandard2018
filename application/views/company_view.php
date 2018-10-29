@@ -129,12 +129,14 @@
                                                 <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Company Information</b>
                                             </div> -->
                                             <div class="panel-body">
-                                            <h2 class="h2-panel-heading">Company Information</h2><hr>
+                                            <h2 class="h2-panel-heading">
+                                              <i class="fa fa-building"></i> Company Information
+                                            </h2><hr>
                                                <form id="frm_company" role="form" class="form-horizontal row-border">
 
 
                                                    <div class="form-group">
-                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong>* Company Name :</strong></label>
+                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong><i>*</i> Company Name :</strong></label>
                                                        <div class="col-md-7">
                                                            <div class="input-group">
                                                                 <span class="input-group-addon">
@@ -197,55 +199,6 @@
                                                        </div>
                                                    </div>
 
-
-                                                   <div class="form-group">
-                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong> TIN. :</strong></label>
-                                                       <div class="col-md-7">
-                                                           <div class="input-group">
-                                                                <span class="input-group-addon">
-                                                                    <i class="fa fa-code"></i>
-                                                                </span>
-                                                               <input type="text" name="tin_no" class="form-control" value="<?php echo $company->tin_no; ?>" placeholder="TIN" data-error-msg="TIN. is required!">
-                                                           </div>
-                                                       </div>
-                                                   </div>
-
-                                                   <div class="form-group">
-                                                       <label class="col-md-2 col-md-offset-1 control-label"> <strong>Registered to :</strong></label>
-                                                       <div class="col-md-7">
-                                                           <div class="input-group">
-                                                                <span class="input-group-addon">
-                                                                    <i class="fa fa-users"></i>
-                                                                </span>
-                                                               <input type="text" name="registered_to" class="form-control" value="<?php echo $company->registered_to; ?>" placeholder="Registered to" data-error-msg="Registered to is required!">
-                                                           </div>
-                                                       </div>
-                                                   </div>
-
-                                                   <div class="form-group">
-                                                       <label class="col-md-2 col-md-offset-1 control-label"> <strong>RDO # :</strong></label>
-                                                       <div class="col-md-7">
-                                                           <div class="input-group">
-                                                                <span class="input-group-addon">
-                                                                    <i class="fa fa-code"></i>
-                                                                </span>
-                                                               <input type="text" name="rdo_no" class="form-control" value="<?php echo $company->rdo_no; ?>" placeholder="RDO #" data-error-msg="RDO # to is required!">
-                                                           </div>
-                                                       </div>
-                                                   </div>
-
-                                                   <div class="form-group">
-                                                       <label class="col-md-2 col-md-offset-1 control-label"> <strong> Nature of Business :</strong></label>
-                                                       <div class="col-md-7">
-                                                           <div class="input-group">
-                                                                <span class="input-group-addon">
-                                                                    <i class="fa fa-building"></i>
-                                                                </span>
-                                                               <input type="text" name="nature_of_business" class="form-control" value="<?php echo $company->nature_of_business; ?>" placeholder="Nature of Business" data-error-msg="Nature of Business to is required!">
-                                                           </div>
-                                                       </div>
-                                                   </div>
-
                                                    <div class="form-group">
                                                        <label class="col-md-3 control-label"><strong> *Business Type :</strong></label>
                                                        <div class="col-md-7">
@@ -291,18 +244,105 @@
                                                        </div>
                                                    </div>
 
+                                                <h2 class="h2-panel-heading">
+                                                  <i class="fa fa-cog"></i> BIR Form Settings
+                                                </h2><hr>
+
+                                                   <div class="form-group">
+                                                       <label class="col-md-2 col-md-offset-1 control-label"> <strong>Taxpayer's Name :</strong></label>
+                                                       <div class="col-md-7">
+                                                           <div class="input-group">
+                                                                <span class="input-group-addon">
+                                                                    <i class="fa fa-users"></i>
+                                                                </span>
+                                                               <input type="text" name="registered_to" class="form-control" value="<?php echo $company->registered_to; ?>" placeholder="Taxpayer" data-error-msg="Taxpayer is required!">
+                                                           </div>
+                                                       </div>
+                                                   </div>
+                                                   <div class="form-group">
+                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong>Registered Address :</strong></label>
+                                                       <div class="col-md-7">
+                                                           <div class="input-group">
+                                                                <span class="input-group-addon">
+                                                                    <i class="fa fa-file"></i>
+                                                                </span>
+                                                               <input type="text" name="registered_address" class="form-control" value="<?php echo $company->registered_address; ?>" placeholder="Registered Address" data-error-msg="Registered address is required!">
+                                                           </div>
+                                                       </div>
+                                                   </div>
+                                                   <div class="form-group">
+                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong>Zip Code :</strong></label>
+                                                       <div class="col-md-7">
+                                                           <div class="input-group">
+                                                                <span class="input-group-addon">
+                                                                    <i class="fa fa-code"></i>
+                                                                </span>
+                                                               <input type="text" name="zip_code" class="form-control" value="<?php echo $company->zip_code; ?>" placeholder="Zip Code" data-error-msg="Zip Code is required!">
+                                                           </div>
+                                                       </div>
+                                                   </div>
+                                                   <div class="form-group">
+                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong>Telephone No# :</strong></label>
+                                                       <div class="col-md-7">
+                                                           <div class="input-group">
+                                                                <span class="input-group-addon">
+                                                                    <i class="fa fa-phone"></i>
+                                                                </span>
+                                                               <input type="text" name="telephone_no" class="form-control" value="<?php echo $company->telephone_no; ?>" placeholder="Telephone No">
+                                                           </div>
+                                                       </div>
+                                                   </div>
+
+                                                   <div class="form-group">
+                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong> TIN :</strong></label>
+                                                       <div class="col-md-7">
+                                                           <div class="input-group">
+                                                                <span class="input-group-addon">
+                                                                    <i class="fa fa-code"></i>
+                                                                </span>
+                                                               <input type="text" name="tin_no" class="form-control" value="<?php echo $company->tin_no; ?>" placeholder="TIN" data-error-msg="TIN. is required!">
+                                                           </div>
+                                                       </div>
+                                                   </div>
+
+
+                                                   <div class="form-group">
+                                                       <label class="col-md-2 col-md-offset-1 control-label"> <strong>RDO # :</strong></label>
+                                                       <div class="col-md-7">
+                                                           <div class="input-group">
+                                                                <span class="input-group-addon">
+                                                                    <i class="fa fa-code"></i>
+                                                                </span>
+                                                               <input type="text" name="rdo_no" class="form-control" value="<?php echo $company->rdo_no; ?>" placeholder="RDO #" data-error-msg="RDO # to is required!">
+                                                           </div>
+                                                       </div>
+                                                   </div>
+
+                                                  <div class="form-group">
+                                                         <label class="col-md-2 col-md-offset-1 control-label"> <strong> Nature of Business :</strong></label>
+                                                         <div class="col-md-7">
+                                                             <div class="input-group">
+                                                                  <span class="input-group-addon">
+                                                                      <i class="fa fa-building"></i>
+                                                                  </span>
+                                                                 <input type="text" name="nature_of_business" class="form-control" value="<?php echo $company->nature_of_business; ?>" placeholder="Nature of Business" data-error-msg="Nature of Business to is required!">
+                                                             </div>
+                                                         </div>
+                                                     </div>         
+
+                                                  <div class="form-group">
+                                                       <label class="col-md-2 col-md-offset-1 control-label"> <strong> Industry Classification :</strong></label>
+                                                       <div class="col-md-7">
+                                                           <div class="input-group">
+                                                                <span class="input-group-addon">
+                                                                    <i class="fa fa-building"></i>
+                                                                </span>
+                                                               <input type="text" name="industry_classification" class="form-control" value="<?php echo $company->industry_classification; ?>" placeholder="Industry Classification" data-error-msg="Industry Classification is required!">
+                                                           </div>
+                                                       </div>
+                                                   </div>                                                                                      
                                                </form>
-
-
                                                     <br /><br />
-
-
-
-
-
-
-
-
                                             </div>
                                             <div class="panel-footer">
                                                 <div class="row">

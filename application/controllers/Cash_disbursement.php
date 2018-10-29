@@ -219,7 +219,7 @@ class Cash_disbursement extends CORE_Controller
                 for($i=0;$i<=count($accounts)-1;$i++){
                     $total_amount+=$this->get_numeric_value($dr_amounts[$i]);
                     if ($account_integration[0]->supplier_wtax_account_id == $accounts[$i]){
-                        $total_wtax+=($this->get_numeric_value($dr_amounts[$i])+$this->get_numeric_value($cr_amounts[$i]));
+                        $total_wtax+=$this->get_numeric_value($cr_amounts[$i]);
                     }
                     $m_journal_accounts->journal_id=$journal_id;
                     $m_journal_accounts->account_id=$accounts[$i];
@@ -246,9 +246,10 @@ class Cash_disbursement extends CORE_Controller
                     $m_form_2307->payee_tin=$supplier[0]->tin_no;
                     $m_form_2307->payee_name=$supplier[0]->supplier_name;
                     $m_form_2307->payee_address=$supplier[0]->address;
-                    $m_form_2307->payor_name=$company[0]->company_name;
+                    $m_form_2307->payor_name=$company[0]->registered_to;
                     $m_form_2307->payor_tin=$company[0]->tin_no;
-                    $m_form_2307->payor_address=$company[0]->company_address;
+                    $m_form_2307->payor_address=$company[0]->registered_address;
+                    $m_form_2307->zip_code = $company[0]->zip_code; 
                     $m_form_2307->gross_amount=$this->get_numeric_value($total_amount);
                     $m_form_2307->deducted_amount=$this->get_numeric_value($total_wtax);
                     $m_form_2307->atc=$this->input->post('2307_atc',TRUE);

@@ -4,6 +4,12 @@
         z-index: 200;
         font-size: 11pt;
     }
+    @page { 
+	  size: A4; 
+	  margin: default; 
+	  scale: 100%; 
+	}
+    
 </style>
 <img src="../../assets/img/bir_forms/form_2307_1st_page.png" style="top: 0px; left: 0px; width: 100%;position: absolute;z-index: 100;">
 <span style="top: 80px; left: 110px;letter-spacing: 5px;"><?php echo $m; ?></span>
@@ -34,8 +40,8 @@
 
 <span style="top: 255px; left: 130px;letter-spacing: 1px; width: 570px;max-width:570px;"><?php echo $info->payor_name; ?></span>
 
-<span style="top: 287px; left: 130px;letter-spacing: 1px; width: 420px;max-width:420px;"><?php echo $info->payor_address; ?></span>
-<span style="top: 287px; left: 635px;letter-spacing: 9px;"></span>
+<span style="top: 287px; left: 130px;letter-spacing: 1px; width: 420px;max-width:420px;display: inline;font-size: 9pt;"><?php echo $info->payor_address; ?></span>
+<span style="top: 287px; left: 635px;letter-spacing: 9px;"><?php echo $info->zip_code; ?></span>
 
 <span style="top: 366px; left: 20px;width: 160px;max-width: 160px;height: 190px; max-height: 190px;font-size: 9pt;">
     <?php echo $info->remarks; ?>

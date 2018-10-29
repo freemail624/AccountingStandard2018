@@ -41,19 +41,27 @@ class Company extends CORE_Controller
 
                 $m_company->delete(1);
 
+                // Company Info
                 $m_company->company_id=1;
                 $m_company->company_name=$this->input->post('company_name',TRUE);
                 $m_company->company_address=$this->input->post('company_address',TRUE);
                 $m_company->email_address=$this->input->post('email_address',TRUE);
                 $m_company->mobile_no=$this->input->post('mobile_no',TRUE);
                 $m_company->landline=$this->input->post('landline',TRUE);
-                $m_company->tin_no=$this->input->post('tin_no',TRUE);
-                $m_company->registered_to=$this->input->post('registered_to',TRUE);
+                $m_company->business_type=$this->input->post('business_type',TRUE);
                 $m_company->logo_path=$this->input->post('photo_path',TRUE);
                 $m_company->tax_type_id=$this->input->post('tax_type_id',TRUE);
+
+                // Bir Form Settings
+
+                $m_company->registered_to=$this->input->post('registered_to',TRUE);
+                $m_company->registered_address=$this->input->post('registered_address',TRUE);
+                $m_company->zip_code=$this->input->post('zip_code',TRUE);
+                $m_company->telephone_no=$this->input->post('telephone_no',TRUE);
+                $m_company->tin_no=$this->input->post('tin_no',TRUE);
                 $m_company->rdo_no=$this->input->post('rdo_no',TRUE);
                 $m_company->nature_of_business=$this->input->post('nature_of_business',TRUE);
-                $m_company->business_type=$this->input->post('business_type',TRUE);
+                $m_company->industry_classification=$this->input->post('industry_classification',TRUE);
                 $m_company->save();
 
                 $response['title']='Success!';
