@@ -62,7 +62,7 @@ FROM
         WHERE ja.account_id = (SELECT payable_account_id FROM account_integration)
         AND ji.is_active=TRUE AND ji.is_deleted = FALSE
         GROUP BY ja.journal_id
-        ) as M
+        ) as m
     ) n
 GROUP BY n.supplier_id HAVING total_balance > 0
 
