@@ -106,7 +106,7 @@
                                                 <div class="col-lg-3">
                                                         From :<br />
                                                         <div class="input-group">
-                                                            <input type="text" id="txt_start_date" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                                                            <input type="text" id="txt_start_date" name="" class="date-picker form-control" value="01/01/<?php echo date("Y"); ?>">
                                                              <span class="input-group-addon">
                                                                     <i class="fa fa-calendar"></i>
                                                              </span>
