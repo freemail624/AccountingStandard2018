@@ -245,7 +245,7 @@ class Account_titles extends CORE_Controller
             array(
                 'account_titles.account_id as id',
                 'IF(account_titles.parent_account_id=0,CONCAT("C",CAST(account_titles.account_class_id AS CHAR)),account_titles.parent_account_id) as pId',
-                'account_titles.account_title as name',
+                'CONCAT(account_titles.account_no," - ", account_titles.account_title) as name',
                 'account_titles.account_title as title',
                 '"true" as open',
                 '"assets/plugins/zTree/img/diy/3.png" as icon'

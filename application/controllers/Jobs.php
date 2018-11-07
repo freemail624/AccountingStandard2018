@@ -29,7 +29,7 @@ class Jobs extends CORE_Controller
 
         $data['units'] = $this->Job_unit_model->get_list(array('job_unit.is_deleted'=>FALSE));
 
-        $data['accounts'] = $this->Account_title_model->get_list((array('is_active'=>TRUE,'is_deleted'=>FALSE),'account_id,account_title');
+        $data['accounts'] = $this->Account_title_model->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE),'account_id,account_title');
 
         // (in_array('13-5',$this->session->user_rights)?
         $this->load->view('jobs_view', $data);
