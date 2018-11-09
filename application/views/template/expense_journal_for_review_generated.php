@@ -38,6 +38,11 @@
                                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                                 </div> <br /> <br />
                             <?php } ?>
+                                <div class="alert alert-dismissable " style="background-color: #d9edf7;border-color: #bcdff1;color: #31708f;">
+                                    <i class="ti ti-close"></i>&nbsp; <strong>Temporary Voucher for this payment is already generated.</strong> <br />
+                                    <i class="ti ti-close"></i>&nbsp; Temporary Voucher Transaction Number : <strong><?php echo $gen_info->temp_voucher_no; ?></strong>
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                </div>
                             <?php if(!$valid_particular){ ?>
                                 <div class="alert alert-dismissable alert-danger">
                                     <i class="ti ti-close"></i>&nbsp; <strong>Sorry!</strong> We could not find the record of <b><?php echo $payment_info->supplier_name; ?></b>.<br />
@@ -69,14 +74,14 @@
                                                     Supplier * :<br />
                                                     <select name="supplier_id" class="cbo_customer_list">
                                                         <?php foreach($suppliers as $supplier){ ?>
-                                                            <option value="<?php echo $supplier->supplier_id; ?>" <?php echo ($payment_info->supplier_id===$supplier->supplier_id?'selected':''); ?>><?php echo $supplier->supplier_name; ?></option>
+                                                            <option value="<?php echo $supplier->supplier_id; ?>" <?php echo ($gen_info->supplier_id===$supplier->supplier_id?'selected':''); ?>><?php echo $supplier->supplier_name; ?></option>
                                                         <?php } ?>
                                                     </select>
                                                 </div>
                                                 <div class="col-lg-4 col-lg-offset-1">
                                                     Date * :<br />
                                                     <div class="input-group">
-                                                        <input type="text" name="date_txn" class="date-picker  form-control" value="<?php echo $payment_info->payment_date; ?>">
+                                                        <input type="text" name="date_txn" class="date-picker  form-control" value="<?php echo $gen_info->date_txn; ?>">
                                                         <span class="input-group-addon">
                                                             <i class="fa fa-calendar"></i>
                                                         </span>
@@ -88,7 +93,7 @@
                                                     Branch * :<br />
                                                     <select name="department_id" class="cbo_department_list">
                                                         <?php foreach($departments as $department){ ?>
-                                                            <option value="<?php echo $department->department_id; ?>" <?php echo ($payment_info->department_id===$department->department_id?'selected':''); ?>><?php echo $department->department_name; ?></option>
+                                                            <option value="<?php echo $gen_info->department_id; ?>" <?php echo ($gen_info->department_id===$department->department_id?'selected':''); ?>><?php echo $department->department_name; ?></option>
                                                         <?php } ?>
                                                     </select>
                                                 </div>
@@ -102,7 +107,7 @@
                                                     Method of Payment * :<br />
                                                     <select name="payment_method" class="cbo_payment_method">
                                                         <?php foreach($methods as $method){ ?>
-                                                            <option value="<?php echo $method->payment_method_id; ?>" <?php echo ($payment_info->payment_method_id==$method->payment_method_id?'selected':''); ?>><?php echo $method->payment_method; ?></option>
+                                                            <option value="<?php echo $gen_info->payment_method; ?>" <?php echo ($gen_info->payment_method==$method->payment_method_id?'selected':''); ?>><?php echo $method->payment_method; ?></option>
                                                         <?php } ?>
                                                     </select>
                                                 </div>
@@ -114,19 +119,19 @@
                                                         <span class="input-group-addon">
                                                             <i class="fa fa-code"></i>
                                                         </span>
-                                                        <input type="text" name="or_no" class="form-control" value="<?php echo $payment_info->receipt_no; ?>">
+                                                        <input type="text" name="or_no" class="form-control" value="<?php echo $gen_info->receipt_no; ?>">
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6">
                                                     Amount* :<br />
-                                                    <input type="text" name="amount" class="numeric form-control" value="<?php echo number_format($payment_info->total_paid_amount,2); ?>">
+                                                    <input type="text" name="amount" class="numeric form-control" value="<?php echo number_format($gen_info->amount,2); ?>">
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-lg-6">
                                                     Check Date :<br />
                                                     <div class="input-group">
-                                                        <input type="text" name="check_date" class="date-picker form-control" value="<?php echo ($payment_info->payment_method_id==2?$payment_info->date_check:''); ?>">
+                                                        <input type="text" name="check_date" class="date-picker form-control" value="<?php echo ($gen_info->payment_method==2?$gen_info->check_date:''); ?>">
                                                             <span class="input-group-addon">
                                                                 <i class="fa fa-calendar"></i>
                                                             </span>
@@ -134,7 +139,7 @@
                                                 </div>
                                                 <div class="col-lg-6">
                                                     Check # :<br />
-                                                    <input type="text" name="check_no" class="form-control" value="<?php echo ($payment_info->payment_method_id==2?$payment_info->check_no:''); ?>">
+                                                    <input type="text" name="check_no" class="form-control" value="<?php echo ($gen_info->payment_method==2?$gen_info->check_no:''); ?>">
                                                 </div>
                                             </div>
                                         </div>
@@ -171,7 +176,9 @@
                                             <td>
                                         <button type="button" class="btn btn-default add_account"><i class="fa fa-plus-circle" style="color: green;"></i></button>
                                         <button type="button" class="btn btn-default remove_account"><i class="fa fa-times-circle" style="color: red;"></i></button>
-
+<!--                                                 <button type="button" class="btn btn-primary add_account"><i class="fa fa-plus" style="color: white;"></i></button>
+                                                <button type="button" class="btn btn-red remove_account"><i class="fa fa-times" style="color: white;"></i></button>
+ -->
                                             </td>
                                         </tr>
                                         <?php
@@ -199,11 +206,9 @@
                             <br /><br /><hr />
                             <div class="row">
                                 <div class="col-lg-12">
-                                    <button name="btn_finalize_journal_review" class="btn btn-primary <?php echo ($is_check_not_due?'disabled':''); ?> <?php echo (!$valid_particular?'disabled':''); ?>"><i class="fa fa-check-circle"></i> <span class=""></span> Finalize this Journal</button>
-                                    <button name="btn_create_temporary_voucher" class="btn btn-primary <?php echo ($is_check_not_due?'':'hidden'); ?>"><i class="fa fa-check-circle"></i> <span class=""></span> Generate a Temporary Voucher</button>
-                                    <a name="btn_print_voucher_temp" class="btn btn-success hidden" href=""  target="_blank"><i class="fa fa-check-circle"></i> <span class=""></span> Print Voucher</a> 
-                                    <button name="btn_print_check_temp" class="btn btn-primary hidden"> <span class=""></span>Print Check</button>
-                                    
+                                    <button name="btn_finalize_journal_review" class="btn btn-primary <?php echo ($is_check_not_due?'disabled':''); ?> <?php echo (!$valid_particular?'disabled':''); ?>"><i class="fa fa-check-circle"></i> <span class=""></span> Finalize this Journal</button> 
+                                    <a class="btn btn-success" href="Templates/layout/temp-voucher?id=<?php echo $gen_info->temp_voucher_id; ?>&type=voucher"  target="_blank"><i class="fa fa-check-circle"></i> <span class=""></span> Print Voucher</a> 
+                                    <button name="btn_print_check_temp" class="btn btn-primary"> <span class=""></span>Print Check</button>
                                 </div>
                             </div>
                         </div>

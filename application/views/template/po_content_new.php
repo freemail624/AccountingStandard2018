@@ -116,8 +116,8 @@
                 <td width="10%" style="border-bottom: 1px solid gray;text-align: center;height: 10px;padding: 6px;"><?php echo $item->unit_name; ?></td>
                 <td width="15%" style="border-bottom: 1px solid gray;text-align: right;height: 10px;padding: 6px;"><?php echo number_format($item->po_qty,2); ?></td>
                 <td width="15%" style="border-bottom: 1px solid gray;text-align: right;height: 10px;padding: 6px;"><?php echo number_format($item->po_price,2); ?></td>
-                <td width="15%" style="border-bottom: 1px solid gray;text-align: right;height: 10px;padding: 6px;"><?php echo number_format($item->po_discount,2); ?></td>
-                <td width="10%" style="border-bottom: 1px solid gray;text-align: right;height: 10px;padding: 6px;"><?php echo number_format($item->po_line_total_after_global,2); ?></td>
+                <td width="10%" style="border-bottom: 1px solid gray;text-align: right;height: 10px;padding: 6px;"><?php echo number_format($item->po_discount,2); ?></td>
+                <td width="15%" style="border-bottom: 1px solid gray;text-align: right;height: 10px;padding: 6px;"><?php echo number_format($item->po_line_total_after_global,2); ?></td>
             </tr>
         <?php } ?>
 
@@ -140,7 +140,7 @@
         <tr>
             <td  align="left" colspan="2"  style="border-bottom: 1px solid gray;border-left: 1px solid gray;"></td>
             <td colspan="3" style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-left: 1px solid gray;" align="left">Total Before Tax:</td>
-            <td colspan="2" style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-right: 1px solid gray;" align="right"><?php echo number_format($purchase_info->total_before_tax,4); ?></td>
+            <td colspan="1" style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-right: 1px solid gray;" align="right"><?php echo number_format($purchase_info->total_before_tax,4); ?></td>
         </tr>
         <tr>
         	<td align="left" colspan="2" style="border-left: 1px solid gray;"><b>Received By:</b></td>
@@ -148,15 +148,15 @@
         	<td style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-right: 1px solid gray;" align="right"><?php echo number_format($purchase_info->total_tax_amount,2); ?></td>
         </tr>
         <tr>
-        	<td align="left" colspan="1" style="border-left: 1px solid gray;" ></td>
+        	<td align="left" colspan="2" style="border-left: 1px solid gray;" ></td>
         	<td colspan="3" style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-left: 1px solid gray;" align="left">Total After Tax:</td>
-        	<td colspan="2" style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-right: 1px solid gray;" align="right"><?php echo number_format($purchase_info->total_after_tax,4); ?></td>
+        	<td colspan="1" style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-right: 1px solid gray;" align="right"><?php echo number_format($purchase_info->total_after_tax,4); ?></td>
         </tr>
 
         <tr>
             <td align="left" colspan="2"  style="border-bottom: 1px solid gray;border-left: 1px solid gray;">Date</td>
             <td  colspan="3"  style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-left: 1px solid gray;" align="left"><strong>Total:</strong></td>
-            <td colspan="2" style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-right: 1px solid gray;" align="right"><strong><?php echo number_format($purchase_info->total_after_discount,4); ?></strong></td>
+            <td colspan="1" style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-right: 1px solid gray;" align="right"><strong><?php echo number_format($purchase_info->total_after_discount,4); ?></strong></td>
         </tr>
 	</table>
 

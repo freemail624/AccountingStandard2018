@@ -27,6 +27,8 @@ class Cash_disbursement extends CORE_Controller
                 'Journal_template_entry_model',
                 'Company_model',
                 'Users_model',
+                'Temporary_voucher_items_model',
+                'Temporary_voucher_model',
                 'Bank_model',
                 'Trans_model'
 
@@ -256,6 +258,14 @@ class Cash_disbursement extends CORE_Controller
                 //AUDIT TRAIL END
 
                 }
+                $m_temp_voucher=$this->Temporary_voucher_model;
+                $check_payment_id_temporary = $m_temp_voucher->get_list(array('payment_id'=>$payment_id));
+                if(count($check_payment_id_temporary) > 0){ // THERE IS A TEMPORARY VOUCHER DETECTED
+                    $temp_voucher_id = $check_payment_id_temporary[0]->temp_voucher_id;
+                    $m_temp_voucher->journal_id=$journal_id;
+                    $m_temp_voucher->is_posted=TRUE;
+                    $m_temp_voucher->modify($temp_voucher_id);
+                }
 
                 // AUDIT TRAIL START
 
@@ -272,6 +282,80 @@ class Cash_disbursement extends CORE_Controller
                 $response['title']='Success!';
                 $response['msg']='Journal successfully posted';
                 $response['row_added']=$this->get_response_rows($journal_id);
+                echo json_encode($response);
+                break;
+
+
+
+                case 'create-temporary-voucher' :
+                $m_temp_voucher = $this->Temporary_voucher_model;
+                $m_temp_voucher_items = $this->Temporary_voucher_items_model;
+                $payment_id= $this->input->post('payment_id',TRUE);
+                //validate if still in valid range
+                $valid_range=$this->Accounting_period_model->get_list("'".date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)))."'<=period_end");
+                if(count($valid_range)>0){
+                    $response['stat']='error';
+                    $response['title']='<b>Accounting Period is Closed!</b>';
+                    $response['msg']='Please make sure transaction date is valid!<br />';
+                    die(json_encode($response));
+                }
+
+                // NEW FOR PRIME ASIA ONLY 
+                // $m_temp_voucher->is_active=FALSE;
+
+                $m_temp_voucher->receipt_no=$this->input->post('or_no',TRUE);
+                $m_temp_voucher->supplier_id=$this->input->post('supplier_id',TRUE);
+                $m_temp_voucher->payment_id=$this->input->post('payment_id',TRUE);
+                $m_temp_voucher->remarks=$this->input->post('remarks',TRUE);
+                $m_temp_voucher->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
+                $m_temp_voucher->department_id=$this->input->post('department_id');
+                $m_temp_voucher->payment_method=$this->input->post('payment_method');
+                $m_temp_voucher->check_no=$this->input->post('check_no');
+                $m_temp_voucher->check_date=date('Y-m-d',strtotime($this->input->post('check_date',TRUE)));
+                $m_temp_voucher->amount=$this->get_numeric_value($this->input->post('amount'));
+
+
+                //for audit details
+                $m_temp_voucher->set('date_generated','NOW()');
+                $m_temp_voucher->generated_by=$this->session->user_id;
+                $m_temp_voucher->save();
+
+                $temp_voucher_id=$m_temp_voucher->last_insert_id();
+                $accounts=$this->input->post('accounts',TRUE);
+                $memos=$this->input->post('memo',TRUE);
+                $dr_amounts=$this->input->post('dr_amount',TRUE);
+                $cr_amounts=$this->input->post('cr_amount',TRUE);
+
+                for($i=0;$i<=count($accounts)-1;$i++){
+                    $m_temp_voucher_items->temp_voucher_id=$temp_voucher_id;
+                    $m_temp_voucher_items->account_id=$accounts[$i];
+                    $m_temp_voucher_items->memo=$memos[$i];
+                    $m_temp_voucher_items->dr_amount=$this->get_numeric_value($dr_amounts[$i]);
+                    $m_temp_voucher_items->cr_amount=$this->get_numeric_value($cr_amounts[$i]);
+                    $m_temp_voucher_items->save();
+                }
+
+                //update transaction number base on formatted last insert id
+                $m_temp_voucher->temp_voucher_no='TEMP-'.date('Ymd').'-'.$temp_voucher_id;
+                $m_temp_voucher->modify($temp_voucher_id);
+
+
+                // AUDIT TRAIL START
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=1; //CRUD
+                $m_trans->trans_type_id=67; // TRANS TYPE
+                $m_trans->trans_log='Created Temporary Voucher TEMP-'.date('Ymd').'-'.$temp_voucher_id.' for payment ID ('.$payment_id.')';
+                $m_trans->save();
+                //AUDIT TRAIL END
+
+                $response['stat']='success';
+                $response['title']='Success!';
+                $response['msg']='Temporary Voucher successfully generated';
+                $response['temp_voucher_id']=$temp_voucher_id;
+                $response['row_updated_payment'] = $this->get_updated_payment_id($payment_id);
                 echo json_encode($response);
                 break;
             case 'update':
@@ -487,7 +571,36 @@ class Cash_disbursement extends CORE_Controller
         );
     }
 
+    function get_updated_payment_id($id){
+        $m_payments=$this->Payable_payment_model;
+        return $m_payments->get_list(
+            //filter
+            'payable_payments.is_deleted=0 AND payable_payments.payment_id='.$id.' AND payable_payments.is_journal_posted=FALSE AND payable_payments.is_active=TRUE',
+            //fields
+            array(
+                'payable_payments.*',
+                'DATE_FORMAT(payable_payments.date_paid,"%m/%d/%Y")as date_paid',
+                'FORMAT(payable_payments.total_paid_amount,2)as total_paid_amount',
+                'suppliers.supplier_name',
+                'payment_methods.payment_method',
+                'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by_user',
+                'DATEDIFF(payable_payments.check_date,NOW()) as rem_day_for_due',
+                'IFNULL(temp_voucher_info.temp_voucher_id,0) as is_generated',
+                'temp_voucher_info.temp_voucher_no'
 
+            ),
+            //joins
+            array(
+                array('suppliers','suppliers.supplier_id=payable_payments.supplier_id','left'),
+                array('user_accounts','user_accounts.user_id=payable_payments.created_by_user','left'),
+                array('payment_methods','payment_methods.payment_method_id=payable_payments.payment_method_id','left'),
+                array('temp_voucher_info','temp_voucher_info.payment_id=payable_payments.payment_id','left')
+
+            ),
+            'payable_payments.payment_id DESC'
+
+        );
+    }
 
 
 

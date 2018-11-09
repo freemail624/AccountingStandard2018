@@ -213,6 +213,7 @@
                                 <th>Remarks</th>
                                 <th>Payment</th>
                                 <th>Notice</th>
+                                <th style="text-align: center;">Temporary</th>
                                 <th>Amount</th>
                             </tr>
                             </thead>
@@ -959,7 +960,40 @@
     </div>
 </div><!---modal-->
 
+<div id="modal_check_layout_temporary" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#2ecc71;">
+                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title" style="color:#ecf0f1 !important;"><span id="modal_mode"> </span>Select Check Layout</h4>
 
+            </div>
+
+            <div class="modal-body" style="padding-right: 20px;">
+
+                <div class="row">
+                        <div class="container-fluid">
+                            <div class="col-xs-12">
+                                <select class="form-control" id="cbo_check_layout">
+                                    <?php foreach($layouts as $layout){ ?>
+                                        <option value="<?php echo $layout->check_layout_id; ?>"><?php echo $layout->check_layout; ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+
+                        </div>
+                </div>
+
+
+            </div>
+
+            <div class="modal-footer">
+                <button id="btn_print_check_temp" type="button" class="btn btn-primary"  style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span> Print Check</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
+            </div>
+        </div><!---content-->
+    </div>
+</div><!---modal-->
 
 
 <div id="modal_bank" class="modal fade" tabindex="-1" role="dialog">
@@ -1051,8 +1085,8 @@
 $(document).ready(function(){
     var _txnMode; var _cboSuppliers; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode, _cboBranches, _cboPaymentMethod, _cboBanks, _cboAccountType;
     var dtReview; var cbo_refType; var _cboLayouts; var dtRecurring; var dtCheckList; var _attribute; var _cboTax;
-
-
+    var _cboCheckLayout;
+    var _temp_voucher_id;
     var oTBJournal={
         "dr" : "td:eq(2)",
         "cr" : "td:eq(3)"
@@ -1204,7 +1238,18 @@ $(document).ready(function(){
                         }
                     }
                 },
-                { targets:[6],data: "total_paid_amount" }
+                {
+                    targets:[6],
+                    data: "is_generated",
+                    render: function (data, type, full, meta){
+                        if(full.payment_method_id==2&&data>0){ //if check and remaining day before due is greater than 0
+                            return "<center><span style='color: green'><b><i class='fa fa-check-circle' title="+full.temp_voucher_no+"></i></center>";
+                        }else{
+                            return "";
+                        }
+                    }
+                },
+                { targets:[7],data: "total_paid_amount" }
             ]
         });
 
@@ -1353,6 +1398,11 @@ $(document).ready(function(){
         //});
 
         //_cboMethods.select2('val',null);
+        _cboCheckLayout=$('#cbo_check_layout').select2({
+            placeholder: "Please select check layout.",
+            allowClear: true
+        });
+        _cboCheckLayout.select2('val',null);
     }();
 
 
@@ -1582,6 +1632,12 @@ $(document).ready(function(){
                 showNotification({ title: 'Error', msg: 'Please select check layout!', stat: 'error' });
         });
 
+        $('#btn_print_check_temp').click(function(){
+            if ($('#cbo_check_layout').select2('val') != null || $('#cbo_check_layout').select2('val') != undefined)
+                window.open('Templates/layout/print-check-temp?layout='+$('#cbo_check_layout').val()+'&id='+_temp_voucher_id);
+            else
+                showNotification({ title: 'Error', msg: 'Please select check layout!', stat: 'error' });
+        });
 
         //loads modal to create new department
         _cboBranches.on("select2:select", function (e) {
@@ -2231,6 +2287,7 @@ $(document).ready(function(){
     var reInitializeChildElements=function(parent){
         var _dataParentID=parent.data('parent-id');
         var btn=parent.find('button[name="btn_finalize_journal_review"]');
+        var btn_generate_temp=parent.find('button[name="btn_create_temporary_voucher"]');
 
         //initialize datepicker
         parent.find('input.date-picker').datepicker({
@@ -2241,7 +2298,45 @@ $(document).ready(function(){
             autoclose: true
 
         });
+        parent.on('click','button[name="btn_create_temporary_voucher"]',function(){
+            var _curBtnGenerateTemporary=$(this);
+            var _data_review_generate_temporary=parent.find('form').serializeArray();
 
+            if(isBalance('#tbl_entries_for_review_'+_dataParentID)){
+                finalizeGenerateReview().done(function(response){
+                    showNotification(response);
+                    if(response.stat=="success"){
+                        _curBtnGenerateTemporary.addClass('hidden');
+                        var _parentRow=_curBtnGenerateTemporary.parents('table.table_journal_entries_review').parents('tr').prev();
+                        dtReview.row(_parentRow).data(response.row_updated_payment[0]).draw(false);
+                        // // select2("enable",false);
+                        // parent.find('.cbo_department_list').select2("enable",false);
+                        // parent.find('.cbo_customer_list').select2("enable",false);
+                        // parent.find('.cbo_payment_method').select2("enable",false);
+                        // $('#tbl_entries_for_review_'+_dataParentID).find('.selectpicker').prop("disabled",true);
+                        // $('#tbl_entries_for_review_'+_dataParentID).find('input').prop("readonly",true);
+                        parent.find('button[name="btn_print_check_temp"]').removeClass('hidden');
+                        parent.find('a[name="btn_print_voucher_temp"]').removeClass('hidden');
+                        parent.find('a[name="btn_print_voucher_temp"]').prop('href','Templates/layout/temp-voucher?id='+response.temp_voucher_id+'&type=voucher');
+
+                    }
+
+                }).always(function(){
+                    showSpinningProgress(btn_generate_temp);
+                });
+            }else{
+                showNotification({title:"Not Balance!",stat:"error",msg:'Please make sure Debit and Credit amount are equal.'});
+                stat=false;
+            }
+
+              
+              
+        });
+
+        parent.on('click','button[name="btn_print_check_temp"]',function(){
+            _temp_voucher_id =_dataParentID;  
+            $('#modal_check_layout_temporary').modal('show');
+        });
 
         parent.on('click','button[name="btn_finalize_journal_review"]',function(){
 
@@ -2276,6 +2371,19 @@ $(document).ready(function(){
                 "url":"Cash_disbursement/transaction/create",
                 "data":_data_review,
                 "beforeSend": showSpinningProgress(btn)
+
+            });
+        };
+
+        var finalizeGenerateReview=function(){
+            var _data_review=parent.find('form').serializeArray();
+
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Cash_disbursement/transaction/create-temporary-voucher",
+                "data":_data_review,
+                "beforeSend": showSpinningProgress(btn_generate_temp)
 
             });
         };

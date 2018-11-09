@@ -209,13 +209,18 @@ class Payable_payments extends CORE_Controller
                 'suppliers.supplier_name',
                 'payment_methods.payment_method',
                 'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by_user',
-                'DATEDIFF(payable_payments.check_date,NOW()) as rem_day_for_due'
+                'DATEDIFF(payable_payments.check_date,NOW()) as rem_day_for_due',
+                'IFNULL(temp_voucher_info.temp_voucher_id,0) as is_generated',
+                'temp_voucher_info.temp_voucher_no'
+
             ),
             //joins
             array(
                 array('suppliers','suppliers.supplier_id=payable_payments.supplier_id','left'),
                 array('user_accounts','user_accounts.user_id=payable_payments.created_by_user','left'),
-                array('payment_methods','payment_methods.payment_method_id=payable_payments.payment_method_id','left')
+                array('payment_methods','payment_methods.payment_method_id=payable_payments.payment_method_id','left'),
+                array('temp_voucher_info','temp_voucher_info.payment_id=payable_payments.payment_id','left')
+
             ),
             'payable_payments.payment_id DESC'
 

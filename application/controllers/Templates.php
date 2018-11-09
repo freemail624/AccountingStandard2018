@@ -91,9 +91,13 @@ class Templates extends CORE_Controller {
         $this->load->model('Dispatching_invoice_model');
         $this->load->model('Dispatching_invoice_item_model');
 
+        $this->load->model('Temporary_voucher_items_model');
+        $this->load->model('Temporary_voucher_model');
+
         $this->load->library('M_pdf');
         $this->load->library('excel');
         $this->load->model('Email_settings_model');
+
 
     }
 
@@ -2676,30 +2680,50 @@ class Templates extends CORE_Controller {
                 $m_departments=$this->Departments_model;
                 $m_pay_list=$this->Payable_payment_list_model;
 
-                $payment_info=$m_payments->get_list(
-                    $payment_id,
-                    array(
-                        'payable_payments.*',
-                        'DATE_FORMAT(payable_payments.date_paid,"%m/%d/%Y") as payment_date',
-                        'DATE_FORMAT(payable_payments.check_date,"%m/%d/%Y") as date_check',
-                        'DATEDIFF(payable_payments.check_date,NOW()) as rem_day_for_due',
-                        'departments.department_name',
-                        'suppliers.supplier_name',
-                        'payment_methods.payment_method'
-                    ),
+                $temp_items=$this->Temporary_voucher_items_model;
+                $temp_info=$this->Temporary_voucher_model;
 
-                    array(
-                        array('departments','departments.department_id=payable_payments.department_id','left'),
-                        array('suppliers','suppliers.supplier_id=payable_payments.supplier_id','left'),
-                        array('payment_methods','payment_methods.payment_method_id=payable_payments.payment_method_id','left')
-                    )
-                );
-                $data['payment_info']=$payment_info[0];
+                // CHECK IF TEMPORARY EXISTS
+                $temp_check = $temp_info->get_list(array('payment_id'=>$payment_id));
+                $check_payment_id=count($temp_check);
+
+                if($check_payment_id > 0){
+                    $temp_voucher_id = $temp_check[0]->temp_voucher_id;
+                    $gen_info = $temp_info->get_list($temp_voucher_id,'*,DATE_FORMAT(check_date,"%m/%d/%Y") as check_date,DATE_FORMAT(date_txn,"%m/%d/%Y") as date_txn');
+                    $data['gen_info']= $gen_info[0];
+                    $data['entries']=$temp_items->get_list(array('temp_voucher_id'=>$temp_voucher_id));
+
+                }else {
+                    $data['entries']=$m_payments->get_journal_entries($payment_id);
+                }
+
+                    $payment_info=$m_payments->get_list(
+                        $payment_id,
+                        array(
+                            'payable_payments.*',
+                            'DATE_FORMAT(payable_payments.date_paid,"%m/%d/%Y") as payment_date',
+                            'DATE_FORMAT(payable_payments.check_date,"%m/%d/%Y") as date_check',
+                            'DATEDIFF(payable_payments.check_date,NOW()) as rem_day_for_due',
+                            'departments.department_name',
+                            'suppliers.supplier_name',
+                            'payment_methods.payment_method',
+                            'IFNULL(temp_voucher_info.temp_voucher_id,0) as is_generated',
+                            'temp_voucher_info.temp_voucher_no'
+                        ),
+                        array(
+                            array('departments','departments.department_id=payable_payments.department_id','left'),
+                            array('suppliers','suppliers.supplier_id=payable_payments.supplier_id','left'),
+                            array('payment_methods','payment_methods.payment_method_id=payable_payments.payment_method_id','left'),
+                            array('temp_voucher_info','temp_voucher_info.payment_id=payable_payments.payment_id','left')
+                        )
+                    );
+                    
+                    $data['payment_info']=$payment_info[0];
 
 
 
                 $data['methods']=$m_methods->get_list();
-                $data['departments']=$m_departments->get_list();
+                $data['departments']=$m_departments->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
 
                 $data['suppliers']=$m_suppliers->get_list(
                     array(
@@ -2712,7 +2736,6 @@ class Templates extends CORE_Controller {
                         'suppliers.supplier_name'
                     )
                 );
-                $data['entries']=$m_payments->get_journal_entries($payment_id);
 
                 $data['accounts']=$m_accounts->get_list(
                     array(
@@ -2720,7 +2743,6 @@ class Templates extends CORE_Controller {
                         'account_titles.is_deleted'=>FALSE
                     )
                 );
-
 
                 $data['payments_list']=$m_pay_list->get_list(
 
@@ -2753,9 +2775,11 @@ class Templates extends CORE_Controller {
                 );
                 $data['valid_particular']=(count($valid_supplier)>0);
 
-                echo $this->load->view('template/expense_journal_for_review',$data,TRUE); //details of the journal
-
-
+                if($check_payment_id > 0){
+                    echo $this->load->view('template/expense_journal_for_review_generated',$data,TRUE); //details of the journal which has a generated voucher temporary
+                } else {
+                    echo $this->load->view('template/expense_journal_for_review',$data,TRUE); //details of the journal
+                }
                 break;
 
             case 'inventory':
@@ -5085,7 +5109,65 @@ class Templates extends CORE_Controller {
 
                 break;
 
+            case 'temp-voucher':
+                $m_company_info=$this->Company_model;
+                $company_info=$m_company_info->get_list();
+                $data['company_info']=$company_info[0];
+                $temp_items=$this->Temporary_voucher_items_model;
+                $temp_info=$this->Temporary_voucher_model;
+                $temp_voucher_id=$this->input->get('id',TRUE);
+                $type=$this->input->get('type',TRUE);
+                $gen_info = $temp_info->get_list($temp_voucher_id,'temp_voucher_info.*,DATE_FORMAT(temp_voucher_info.check_date,"%m/%d/%Y") as check_date,suppliers.supplier_name,payment_methods.payment_method',
 
+                  array(array('suppliers','suppliers.supplier_id=temp_voucher_info.supplier_id','left'),
+                    array('payment_methods','payment_methods.payment_method_id=temp_voucher_info.payment_method','left'))
+                    );
+                $data['gen_info']= $gen_info[0];
+                $data['entries']=$temp_items->get_list(array('temp_voucher_items.temp_voucher_id'=>$temp_voucher_id),
+                    'temp_voucher_items.*,
+                    account_titles.account_no,account_titles.account_title',
+                    array(
+                        array('account_titles','account_titles.account_id=temp_voucher_items.account_id','left')
+                    )
+
+                    );
+
+                if($type == 'voucher'){ 
+                    echo $this->load->view('template/temp_voucher_content',$data,TRUE); 
+                }
+                if($type == 'check'){ 
+                    echo $this->load->view('template/temp_voucher_content',$data,TRUE); 
+                }
+                break;
+
+            case 'print-check-temp':
+                $check_layout_id=$this->input->get('layout',TRUE);
+                $payment_id=$this->input->get('id',TRUE);
+                $temp_info=$this->Temporary_voucher_model;
+                $m_layout=$this->Check_layout_model;
+                $layout_info=$m_layout->get_list(array('check_layout_id'=>$check_layout_id));
+                $layouts=$layout_info[0];
+
+                $data['layouts']=$layouts;
+                $data['title']="Print Check";
+                $temp_check = $temp_info->get_list(array('payment_id'=>$payment_id));
+                $temp_voucher_id = $temp_check[0]->temp_voucher_id;
+                $check_info = $temp_info->get_list($temp_voucher_id,'temp_voucher_info.*,DATE_FORMAT(temp_voucher_info.check_date,"%m/%d/%Y") as check_date,suppliers.supplier_name,payment_methods.payment_method',
+
+                  array(array('suppliers','suppliers.supplier_id=temp_voucher_info.supplier_id','left'),
+                    array('payment_methods','payment_methods.payment_method_id=temp_voucher_info.payment_method','left'))
+                    );
+
+                $data['num_words']=$this->convertDecimalToWords($check_info[0]->amount);
+                $data['check_info']=$check_info[0];
+
+
+                $this->load->view('template/check_view',$data); //load the template
+
+
+
+
+                break;
         }
     }
 
