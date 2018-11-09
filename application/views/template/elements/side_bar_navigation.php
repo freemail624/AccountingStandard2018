@@ -42,6 +42,8 @@
                                 <li class="<?php echo (in_array('1-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Accounts_receivable">Sales Journal</a></li>
                                 <li class="<?php echo (in_array('1-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Petty_cash_journal">Petty Cash Journal</a></li>
                                 <li class="<?php echo (in_array('1-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Cash_receipt">Cash Receipt Journal</a></li>
+                                <li class="<?php echo (in_array('1-8',$this->session->user_rights)?'':'hidden'); ?>"><a href="Temporary_voucher">Temporary Voucher</a></li>
+                                <!-- 1-7 is the Cash Disbursement Approval -->
                             </ul>
                         </li>
                         <li class="<?php echo (in_array('13',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-view-list-alt"></i><span>Services</span></a>
