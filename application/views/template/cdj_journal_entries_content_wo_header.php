@@ -70,7 +70,7 @@
         <?php if ($journal_info->payment_method_id == 2) { ?>
             <tr> 
                 <td style="padding: 4px;" width="50%"><strong>CHECK # :</strong> <?php echo $journal_info->check_no; ?></td>
-                <td style="padding: 4px;" width="50%"><strong>CHECK DATE :</strong> <?php echo date_format(new DateTime($journal_info->check_date),"m/d/Y"); ?></td>
+                <td style="padding: 4px;" width="50%"><strong>CHECK DATE :</strong> <?php if($journal_info->check_date == '0000-00-00'){ echo ''; }else {  echo date_format(new DateTime($journal_info->check_date),"m/d/Y"); }?></td>
             </tr>
         <?php } ?>
         <tr>

@@ -106,7 +106,9 @@ class Rights_link_model extends CORE_Model{
                                           (96,'6','6-14','Statement of Accounts Settings'),
                                           (97,'17','17-1','Certificate of Creditable Tax'),
                                           (98,'17','17-2','Monthly Percentage Tax Return'),
-                                          (99,'17','17-3','Quarterly Percentage Tax Return')
+                                          (99,'17','17-3','Quarterly Percentage Tax Return'),
+                                          (100,'1','1-7','Vouchers (Check Details Edit)')
+
 
 
                                           ON DUPLICATE KEY UPDATE

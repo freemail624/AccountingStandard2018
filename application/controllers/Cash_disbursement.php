@@ -195,8 +195,10 @@ class Cash_disbursement extends CORE_Controller
                 $m_journal->payment_method_id=$this->input->post('payment_method');
                 // $m_journal->bank=$this->input->post('bank');
                 $m_journal->bank_id=$this->input->post('bank_id');
-                $m_journal->check_no=$this->input->post('check_no');
-                $m_journal->check_date=date('Y-m-d',strtotime($this->input->post('check_date',TRUE)));
+                if($this->input->post('check_date',TRUE) != '' || $this->input->post('check_date',TRUE) != null){
+                    $m_journal->check_no=$this->input->post('check_no');
+                    $m_journal->check_date=date('Y-m-d',strtotime($this->input->post('check_date',TRUE)));
+                }
                 $m_journal->ref_type=$this->input->post('ref_type');
                 $m_journal->ref_no=$this->input->post('ref_no');
                 $m_journal->amount=$this->get_numeric_value($this->input->post('amount'));

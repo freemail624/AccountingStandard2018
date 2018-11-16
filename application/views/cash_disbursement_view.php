@@ -1971,8 +1971,8 @@ $(document).ready(function(){
 
         $("#cbo_pay_type").change(function(){
             if($(this).val() == 2) {
-                $('#check_date').prop('required',true);
-                $('#check_no').prop('required',true);
+                // $('#check_date').prop('required',true);
+                // $('#check_no').prop('required',true);
             } else {
                 $('#check_date').prop('required',false);
                 $('#check_no').prop('required',false);
