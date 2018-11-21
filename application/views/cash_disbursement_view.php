@@ -436,13 +436,17 @@
                             </div>
                             <div class="col-md-8">
                                 <div class="row">
-                                    <div class="col-sm-12">
+                                    <div class="col-sm-6">
                                         <b class="required"> * </b> <label>Method of Payment  :</label><br />
                                         <select id="cbo_pay_type" name="payment_method" class="form-control" data-error-msg="Payment method is required." required>
                                             <?php foreach($payment_methods as $payment_method){ ?>
                                                 <option value='<?php echo $payment_method->payment_method_id; ?>'><?php echo $payment_method->payment_method; ?></option>
                                             <?php } ?>
                                         </select>    
+                                    </div>
+                                    <div class="col-sm-6">
+                                    <label for="is_for_assignment">For Check Assignment?  :</label><br />
+                                    <input type="checkbox" name="is_for_assignment" id="is_for_assignment">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -1683,6 +1687,7 @@ $(document).ready(function(){
             //set defaults
             _cboPaymentMethod.select2('val',1);//set cash as default
             $('input[name="date_txn"]').val(_currentDate);
+            $('#is_for_assignment').prop('checked',false);
 
             showList(false);
 
@@ -2016,10 +2021,12 @@ $(document).ready(function(){
     var createJournal=function(){
         var _data=$('#frm_journal').serializeArray();
         if($('#2307_apply').is(':checked')==true){
-        _data.push({name : "2307_apply" ,value : 1});
-        }else{ 
-        _data.push({name : "2307_apply" ,value : 0});
-        }
+        _data.push({name : "2307_apply" ,value : 1}); }else{ 
+        _data.push({name : "2307_apply" ,value : 0}); }
+
+        if($('#is_for_assignment').is(':checked')==true){
+        _data.push({name : "is_for_assignment" ,value : 1}); }else{ 
+        _data.push({name : "is_for_assignment" ,value : 0}); }
 
         return $.ajax({
             "dataType":"json",

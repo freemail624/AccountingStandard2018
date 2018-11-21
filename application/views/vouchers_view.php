@@ -264,7 +264,7 @@
     <div class="panel panel-default" style="margin: 1%;">
     <div class="panel-body panel-responsive">
     <h2 class="h2-panel-heading"> Cash Disbursement Journal</h2>
-    <i>Editable fields are: Bank, Check Date, Check Number, Amount, and Remarks.</i>
+    <i>Editable fields are: Bank, Check Date, Check Number, Amount, Remarks, and Account Title of the Credit Entry.</i>
         <form id="frm_journal" role="form" class="form-horizontal">
 
             <div>
@@ -289,7 +289,7 @@
                                             <span class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </span>
-                                            <input type="text" class="date-picker form-control" disabled>
+                                            <input type="text" name="date_txn" class="date-picker form-control" disabled>
                                         </div>
                                     </div>
                                 </div>
@@ -339,7 +339,7 @@
                     <div class="col-lg-6">
                         <div class="row">
                             <div class="col-md-4">
-                                <div class="row">
+                                <div class="row" style="display: none;">
                                     <div class="col-sm-12">
                                         <div style="margin-top: 25px;">
                                             <input type="checkbox" id="2307_apply" value="1" disabled="">
@@ -347,7 +347,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row" style="display: none;">
                                     <div class="col-sm-12">
                                         <div style="margin-top: 5px;">
                                             <label>ATC :</label><br />
@@ -360,7 +360,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row" style="display: none;">
                                     <div class="col-sm-12">
                                             <label>Remarks :</label><br />
                                             <textarea class="form-control" name="2307_remarks" id="2307_remarks" data-error-msg="Remarks is required." rows="5" disabled></textarea>
@@ -785,9 +785,14 @@ $(document).ready(function(){
                 reInitializeDropDownAccounts($('#tbl_entries'),false); //do not clear dropdown accounts
                 reComputeTotals($('#tbl_entries'));
 
-            $('#tbl_entries > tbody').find('input,select').each(function(){
+            $('#tbl_entries > tbody').find('input').each(function(){
+                 $(this).prop('readonly',true);
+            });
+
+            $('#tbl_entries > tbody').find('select:not(.enable)').each(function(){
                  $(this).prop('disabled',true);
             });
+
             });
 
                 showList(false);
@@ -801,11 +806,14 @@ $(document).ready(function(){
             var f=$('#frm_journal');
 
             if(validateRequiredFields(f)){
+                $('#tbl_entries > tbody').find('select').each(function(){
+                     $(this).prop('disabled',false);
+                });
                 console.log($('#frm_journal').serializeArray())
                     UpdateCheckDetails().done(function(response){
                         showNotification(response);
                         if(response.stat=="success"){
-                            dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
+                            dt.row(_selectRowObj).remove().draw();
                             clearFields(f);
                             showList(true);
                         }

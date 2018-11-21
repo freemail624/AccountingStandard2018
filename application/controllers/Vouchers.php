@@ -76,18 +76,37 @@ class Vouchers extends CORE_Controller
 
             case 'update-check-info':
                 $m_journal = $this->Journal_info_model;
+                $m_journal_accounts=$this->Journal_account_model;
                 $journal_id =$this->input->get('id');
                 $m_journal->bank_id =$this->input->post('bank_id',TRUE);
                 $m_journal->check_date =date('Y-m-d',strtotime($this->input->post('check_date',TRUE)));
                 $m_journal->check_no =$this->input->post('check_no',TRUE);
                 $m_journal->amount =$this->input->post('amount',TRUE);
                 $m_journal->remarks =$this->input->post('remarks',TRUE);
+                $m_journal->is_for_assignment =0;
                 $m_journal->modify($journal_id);
+
+
+                $accounts=$this->input->post('accounts',TRUE);
+                $memos=$this->input->post('memo',TRUE);
+                $dr_amounts=$this->input->post('dr_amount',TRUE);
+                $cr_amounts=$this->input->post('cr_amount',TRUE);
+
+                $m_journal_accounts->delete_via_fk($journal_id);
+
+                for($i=0;$i<=count($accounts)-1;$i++){
+                    $m_journal_accounts->journal_id=$journal_id;
+                    $m_journal_accounts->account_id=$accounts[$i];
+                    $m_journal_accounts->memo=$memos[$i];
+                    $m_journal_accounts->dr_amount=$this->get_numeric_value($dr_amounts[$i]);
+                    $m_journal_accounts->cr_amount=$this->get_numeric_value($cr_amounts[$i]);
+                    $m_journal_accounts->save();
+                }
 
                 $response['title']='Success!';
                 $response['stat']='success';
                 $response['msg']='Voucher Successfully Updated.';
-                $response['row_updated']=$this->get_response_rows($journal_id);
+                // $response['row_updated']=$this->get_response_rows($journal_id);
                 echo json_encode($response);
                 break;
         };
@@ -99,7 +118,7 @@ class Vouchers extends CORE_Controller
         $m_journal=$this->Journal_info_model;
         return $m_journal->get_list(
 
-            "journal_info.is_deleted=FALSE AND journal_info.book_type='CDJ' AND journal_info.payment_method_id=2 ".($criteria==null?'':' AND journal_info.journal_id='.$criteria)."".($additional==null?'':$additional),
+            "journal_info.is_deleted=FALSE AND journal_info.book_type='CDJ' AND journal_info.payment_method_id=2 AND journal_info.is_for_assignment=1 ".($criteria==null?'':' AND journal_info.journal_id='.$criteria)."".($additional==null?'':$additional),
 
             array(
                 'journal_info.journal_id',

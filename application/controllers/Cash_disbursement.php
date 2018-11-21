@@ -201,6 +201,7 @@ class Cash_disbursement extends CORE_Controller
                 }
                 $m_journal->ref_type=$this->input->post('ref_type');
                 $m_journal->ref_no=$this->input->post('ref_no');
+                $m_journal->is_for_assignment=$this->input->post('is_for_assignment');
                 $m_journal->amount=$this->get_numeric_value($this->input->post('amount'));
 
                 //for audit details
