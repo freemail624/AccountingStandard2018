@@ -118,13 +118,17 @@
                                     <div class="col-lg-4">
                                         <div style="border: 1px solid lightgrey;padding: 4%;border-radius: 5px;">
                                             <div class="row">
-                                                <div class="col-lg-12">
+                                                <div class="col-lg-6">
                                                     Method of Payment * :<br />
                                                     <select name="payment_method" class="cbo_payment_method">
                                                         <?php foreach($methods as $method){ ?>
                                                             <option value="<?php echo $method->payment_method_id; ?>" <?php echo ($payment_info->payment_method_id==$method->payment_method_id?'selected':''); ?>><?php echo $method->payment_method; ?></option>
                                                         <?php } ?>
                                                     </select>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <label for="is_for_assignment">For Check Assignment?  :</label><br />
+                                                    <input type="checkbox" name="is_for_assignment" id="is_for_assignment">
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -146,7 +150,12 @@
                                                 <div class="col-lg-6">
                                                     Check Date :<br />
                                                     <div class="input-group">
-                                                        <input type="text" name="check_date" class="date-picker form-control" value="<?php echo ($payment_info->payment_method_id==2?$payment_info->date_check:''); ?>">
+                                                        <input type="text" name="check_date" class="date-picker form-control" value="
+                                                        <?php if($payment_info->payment_method_id==2){
+                                                            if($payment_info->date_check != '0000-00-00'){
+                                                                    echo $payment_info->date_check;
+                                                                }
+                                                            } ?>">
                                                             <span class="input-group-addon">
                                                                 <i class="fa fa-calendar"></i>
                                                             </span>
@@ -221,7 +230,7 @@
                             <br /><br /><hr />
                             <div class="row">
                                 <div class="col-lg-12">
-                                    <button name="btn_finalize_journal_review" class="btn btn-primary <?php echo ($is_check_not_due?'disabled':''); ?> <?php echo (!$valid_particular?'disabled':''); ?>"><i class="fa fa-check-circle"></i> <span class=""></span> Finalize this Journal</button>
+                                    <button name="btn_finalize_journal_review" class="btn btn-primary <?php echo (!$valid_particular?'disabled':''); ?>"><i class="fa fa-check-circle"></i> <span class=""></span> Finalize this Journal</button>
                                 </div>
                             </div>
                         </div>

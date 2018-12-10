@@ -444,6 +444,7 @@ class Cash_disbursement extends CORE_Controller
                 'journal_info.ref_type',
                 'journal_info.ref_no',
                 'journal_info.amount',
+                'journal_info.is_for_assignment',
                 'CONCAT(IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,""))as particular',
                 'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by'
             ),

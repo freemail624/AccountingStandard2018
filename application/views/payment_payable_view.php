@@ -273,7 +273,7 @@
                             </div>
 
                             <div class="col-lg-12">
-                                <b class="required">*</b> Check #  : <br />
+                                Check #  : <br />
                                 <div class="input-group">
                                     <input type="text" name="check_no" class="form-control">
                                                                      <span class="input-group-addon">
@@ -285,12 +285,12 @@
 
 
                             <div class="col-lg-12">
-                               <b class="required">*</b> Check Date : <br />
+                               Check Date : <br />
                                 <div class="input-group">
                                                                     <span class="input-group-addon">
                                                                          <i class="fa fa-calendar"></i>
                                                                     </span>
-                                    <input type="text" name="check_date" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date of Payment" data-error-msg="Payment Date is required!" required>
+                                    <input type="text" name="check_date" class="date-picker form-control" value="" placeholder="Date of Payment">
                                 </div>
                             </div>
 

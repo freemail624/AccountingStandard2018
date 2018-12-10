@@ -59,7 +59,18 @@ class Purchases_integration_model extends CORE_Model{
              0 as dr_amount,
             IFNULL(pi.total_amount,0) as cr_amount
             FROM purchase_integration pi
-            WHERE pi.purchase_integration_id = $purchase_integration_id) as main WHERE main.dr_amount>0 OR main.cr_amount>0 ";
+            WHERE pi.purchase_integration_id = $purchase_integration_id
+
+            UNION ALL
+            SELECT 
+            (SELECT supplier_wtax_account_id FROM account_integration) as account_id,
+            '' as memo,
+             0 as dr_amount,
+            IFNULL(pi.total_wtax,0) as cr_amount
+            FROM purchase_integration pi
+            WHERE pi.purchase_integration_id = $purchase_integration_id
+
+            ) as main WHERE main.dr_amount>0 OR main.cr_amount>0 ";
 
         return $this->db->query($sql)->result();
 }

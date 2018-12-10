@@ -157,15 +157,15 @@
 		                	$exp_line =explode('|', $lines);
 		                	$temp_count = count($exp_line);
 		                		// VALIDATION  Check if every Line if the contents are complete. 29 lines
-			                	if($temp_count != 11){ 
+			                	if($temp_count != 12){ 
 			                		$stat = 'FALSE';
 			                		echo json_encode($this->invalid_file());
 			                		exit;
 			                	}
 						 		if(!(is_numeric($exp_line[5])) ||    //Total Amount
 						 			!(is_numeric($exp_line[6])) ||  // Tax Amount 
-						 			!(is_numeric($exp_line[7]))     //  Total amount before tax
-						 		){ echo json_encode($this->invalid_file()); exit; }
+						 			!(is_numeric($exp_line[7])) //  Total amount before tax
+						 		){  print_r($exp_line); echo json_encode($this->invalid_file()); exit; }
 						 			$invoice_id = $exp_line[0];  // Invoice ID Check if Exists // if 
 						 			if(COUNT($m_check->get_list(array('invoice_id'=>$invoice_id))) > 0){
 						 				echo json_encode($this->invalid_file_duplication()); exit;
@@ -184,6 +184,7 @@
 		                		$m_purchase_items->total_amount = $this->get_numeric_value($ins_line[5]); // Total Amount
 		                		$m_purchase_items->total_tax_amount = $this->get_numeric_value($ins_line[6]); // Total Tax Amount
 		                		$m_purchase_items->total_before_tax_amount =$this->get_numeric_value($ins_line[7]); // Total Before Tax Amount
+		                		$m_purchase_items->total_wtax =$this->get_numeric_value($ins_line[11]); // Total Before Tax Amount
 		                		$m_purchase_items->remarks = $ins_line[8]; // Remarks
 		                		$m_purchase_items->external_ref_no = $ins_line[9]; // External Reference No
 		                		$m_purchase_items->terms = $ins_line[10]; //Terms

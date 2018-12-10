@@ -93,7 +93,11 @@ class Payable_payments extends CORE_Controller
                 if($payment_method_id==2){ //if check, insert additional infos
                     $m_payment->check_date_type=($this->input->post('check_date_type',TRUE)?1:2);
                     $m_payment->check_no=$this->input->post('check_no',TRUE);
-                    $m_payment->check_date=date('Y-m-d',strtotime($this->input->post('check_date',TRUE)));
+                    if($this->input->post('check_date',TRUE) == '' ||$this->input->post('check_date',TRUE) == null){
+                        $m_payment->check_date='0000-00-00';
+                    }else{
+                        $m_payment->check_date=date('Y-m-d',strtotime($this->input->post('check_date',TRUE)));
+                    }
                 }
 
                 $m_payment->total_paid_amount=$this->get_numeric_value($this->input->post('total_paid_amount',TRUE));

@@ -138,11 +138,25 @@
           -webkit-transform: scale(1.5); /* Safari and Chrome */
           -o-transform: scale(1.5); /* Opera */
         }
+        .right_align{
+            text-align: right;
+        }
 
         #tbl_check_list td:nth-child(6),#tbl_check_list th:nth-child(6){
             text-align: center;
         }
-        
+button[name="print_check"]{
+    padding-top: 0px!important;
+    padding-bottom: 0px!important;
+}
+
+button[name="mark_delivered"]{
+    padding-top: 0px!important;
+    padding-bottom: 0px!important;
+    font-size: 12px!important;
+}
+
+
     </style>
 
 </head>
@@ -172,11 +186,11 @@
 <div class="col-md-12">
 
 <div id="div_payable_list">
-    <div class="col-sm-6">
+    <!-- <div class="col-sm-6"> -->
         <div class="panel panel-default" style="border-radius:6px;">
              <div class="panel-body panel-responsive" style="min-height: 400px;">
                 <a data-toggle="collapse" data-parent="#accordionA" href="#collapseOne" style="text-decoration: none;">
-                    <h2 class="h2-panel-heading"> For Check Assignment</h2>
+                    <h2 class="h2-panel-heading"> For Release</h2>
                 </a>
                 <button class="btn btn-green" id="btn_refresh_check_list" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Refresh" ><i class="fa fa-refresh"></i> Refresh</button>
                         <div >
@@ -184,14 +198,16 @@
                                 <thead>
                                 <tr>
                                     <th>Bank</th>
-                                    <th>Transaction Date</th>
+                                    <th>Transaction #</th>
                                     <th>Particular</th>
                                     <th>Check Date</th>
+                                    <th>Check No</th>
+                                    <th>Amount</th>
                                     <th>Voucher #</th>
-                                    <th>Particular</th>
                                     <th>Remarks</th>
-                                    <th style="width: 10px;">Status</th>
+                                    <th style="width: 10px;">Release Status</th>
                                     <th><center>Action</center></th>
+                                    <th><center>ID</center></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -201,23 +217,26 @@
                         </div>
              </div>
         </div>
-    </div>
-    <div class="col-sm-6">
+<!--     </div>
+    <div class="col-sm-6"> -->
         <div class="panel panel-primary">
 
             <div class="panel-body" style="min-height: 400px;">
             <h2 class="h2-panel-heading">
-                For Release
+                Released
             </h2>
             <button class="btn btn-green" id="btn_refresh_check_release" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Refresh" ><i class="fa fa-refresh"></i> Refresh</button>
                 <table id="tbl_for_release" class="table table-striped" cellspacing="0" width="100%">
                     <thead>
                     <tr>
+                        <th>Transaction #</th>
                         <th>Particular</th>
+                        <th>Check Date.</th>
                         <th>Check No.</th>
                         <th>Amount</th>
-                        <th style="width: 10px;">Status</th>
-                        <th>Action</th>
+                        <th style="width: 10%;"><center>Delivery Status</center></th>
+                        <th style="width: 20%;"><center>Action</center></th>
+                        <th style="width: 20%;"><center>ID</center></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -226,7 +245,32 @@
                 </table>
             </div>
         </div>
-    </div>
+    <!-- </div> -->
+        <div class="panel panel-primary">
+
+            <div class="panel-body" style="min-height: 400px;">
+            <h2 class="h2-panel-heading">
+                Delivered
+            </h2>
+            <button class="btn btn-green" id="btn_refresh_check_delivered" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Refresh" ><i class="fa fa-refresh"></i> Refresh</button>
+                <table id="tbl_delivered" class="table table-striped" cellspacing="0" width="100%">
+                    <thead>
+                    <tr>
+                        <th>Transaction #</th>
+                        <th>Particular</th>
+                        <th  style="width: 10%">Check Date</th>
+                        <th  style="width: 10%">Check No</th>
+                        <th style="width: 10px;">Amount</th>
+                        <th style="width: 10%"><center>Delivery Status</center></th>
+                        <th style="width: 10%"><center>ID</center></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
 
@@ -942,7 +986,7 @@
 $(document).ready(function(){
     var _txnMode; var _cboSuppliers; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode, _cboBranches, _cboPaymentMethod, _cboBanks, _cboAccountType;
     var dtReview; var cbo_refType; var _cboLayouts; var dtRecurring; var dtCheckList; var _attribute; var _cboTax;
-
+    var dtCheckDelivered;
 
     var oTBJournal={
         "dr" : "td:eq(2)",
@@ -989,6 +1033,7 @@ $(document).ready(function(){
             "dom": '<"print">frtip',
             "bLengthChange":false,
             "pageLength" : 7,
+            "order": [[ 8, "desc" ]],
             "ajax" : "Treasury/transaction/get-check-list",
             "columnDefs": [
                 { "visible": false, "targets": 0 }
@@ -998,10 +1043,11 @@ $(document).ready(function(){
                 { targets:[0],data: "bank" },
                 { targets:[1],data: "txn_no" },
                 { targets:[2],data: "supplier_name"},
-                { "visible": false, targets:[3],data: "check_date" },
-                { "visible": false, targets:[4],data: "ref_no" },
-                { "visible": false, targets:[5],data: "supplier_name" },
-                { "visible": false, targets:[6],data: "remarks" },
+                { targets:[3],data: "check_date" },
+                { targets:[4],data: "check_no" },
+                {sClass:"right_align", targets:[5],data: "amount", render: $.fn.dataTable.render.number( ',', '.', 2) },
+                { "visible": false, targets:[6],data: "ref_no" },
+                { "visible": false, targets:[7],data: "remarks" },
                 {  targets:[7],data: "check_status",
                     render: function (data, type, full, meta){
                         //alert(data.check_status);
@@ -1017,25 +1063,30 @@ $(document).ready(function(){
                 {  targets:[8],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
-                        var btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-print"></i> Print Check</button>';
+                        var btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Print Check"><i class="fa fa-print"></i> Print Check</button>';
 
 
                         return '<center>'+btn_check_print+'</center>';
-                    } }
+                    } 
+                },
+                { targets:[9],data: "journal_id", visible:false },
             ]
         });
         dtCheckRelease=$('#tbl_for_release').DataTable({
             "dom": '<"print">frtip',
             "bLengthChange":false,
             "pageLength" : 7,
+            "order": [[ 7, "desc" ]],
             "ajax" : "Treasury/transaction/check-for-release",
             "columns": [
-                { targets:[0],data: "supplier_name" },
-                { targets:[1],data: "check_no" },
-                { targets:[2],data: "amount",
+                { targets:[0],data: "txn_no" },
+                { targets:[1],data: "supplier_name" },
+                { targets:[2],data: "check_date" },
+                { targets:[3],data: "check_no" },
+                {sClass:"right_align", targets:[4],data: "amount",
                 render: $.fn.dataTable.render.number( ',', '.', 2)
                  },
-                { targets:[4],data: "check_status",
+                { targets:[5],data: "is_check_delivered",
                     render: function (data, type, full, meta){
                         //alert(data.check_status);
                         if(data=="1"){
@@ -1046,13 +1097,47 @@ $(document).ready(function(){
 
                         return '<center><i '+_attribute+'></i></center>';
                     }
-                },                {  targets:[5],
+                },                
+                {  targets:[6],
                     render: function (data, type, full, meta){
-                        var btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-print"></i> Print</button>';
+                        var btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Reprint"><i class="fa fa-print"></i> RePrint Check</button>';
+                        var btn_mark_delivered='<button class="btn btn-success btn-sm" name="mark_delivered" style="margin-left:10px;margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Mark as Delivered"><i class="fa fa-check"></i> </button>';
 
+                        return '<center>'+btn_check_print+''+btn_mark_delivered+'</center>';
+                    } 
+                },
+                { targets:[7],data: "journal_id", visible:false },
+            ]
+        });
 
-                        return '<center>'+btn_check_print+'</center>';
-                    } }
+        dtCheckDelivered=$('#tbl_delivered').DataTable({
+            "dom": '<"print">frtip',
+            "bLengthChange":false,
+            "pageLength" : 7,
+            "order": [[ 6, "desc" ]],
+            "ajax" : "Treasury/transaction/check-delivered",
+            "columns": [
+                { targets:[0],data: "txn_no" },
+                { targets:[1],data: "supplier_name" },
+                { targets:[2],data: "check_date" },
+                { targets:[3],data: "check_no" },
+                { sClass:"right_align", targets:[4],data: "amount",
+                render: $.fn.dataTable.render.number( ',', '.', 2)
+                 },
+                { targets:[5],data: "is_check_delivered",
+                    render: function (data, type, full, meta){
+                        //alert(data.check_status);
+                        if(data=="1"){
+                            _attribute=' class="fa fa-check-circle" style="color:green;" ';
+                        }else{
+                            _attribute=' class="fa fa-times-circle" style="color:red;" ';
+                        }
+
+                        return '<center><i '+_attribute+'></i></center>';
+                    }
+                },
+                { targets:[6],data: "journal_id",visible:false }
+
             ]
         });
 
@@ -1226,6 +1311,10 @@ $(document).ready(function(){
             dtCheckRelease.ajax.reload();
             dtCheckList.ajax.reload();
         });
+
+        $('#btn_refresh_check_delivered').click(function(){
+            dtCheckDelivered.ajax.reload();
+        });
         $('#btn_print_check_list').on('click',function(){
             $('#modal_print_check_list_option').modal('show');
         });
@@ -1366,8 +1455,19 @@ $(document).ready(function(){
             $('#modal_check_layout').modal('show');
         });
 
+        $('#tbl_for_release').on('click','button[name="mark_delivered"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dtCheckRelease.row(_selectRowObj).data();
+            _selectedID=data.journal_id;
+            markDeliveredCheck().done(function(response){
+                showNotification(response);
+                dtCheckRelease.row(_selectRowObj).remove().draw();   
+                dtCheckDelivered.ajax.reload();         
+            });
+        });
+
         $('#tbl_check_list').on('click','button[name="edit_info"]',function(){
-   _txnMode="edit";
+            _txnMode="edit";
 
             $('#div_check').hide();
             $('#div_no_check').show();
@@ -1708,6 +1808,15 @@ $(document).ready(function(){
         });
     };
 
+    var markDeliveredCheck=function(){
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Treasury/transaction/mark-delivered",
+            "data":{journal_id : _selectedID}
+        });
+    };
     var createTemplate=function(){
         var _data=$('#frm_journal').serializeArray();
         _data.push({ name:'template_code', value:$("#cbo_suppliers option:selected").text() });

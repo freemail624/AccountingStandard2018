@@ -209,7 +209,6 @@
                                 <th>Supplier</th>
                                 <th>Remarks</th>
                                 <th>Payment</th>
-                                <th>Notice</th>
                                 <th>Amount</th>
                             </tr>
                             </thead>
@@ -272,6 +271,7 @@
                                     <th>Txn Date</th>
                                     <th>Posted</th>
                                     <th>Status</th>
+                                    <th>Assigned</th>
                                     <th style="width: 15%;"><center>Action</center></th>
                                     <th></th>
 
@@ -1132,7 +1132,7 @@ $(document).ready(function(){
         dt=$('#tbl_cash_disbursement_list').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 9, "desc" ]],
+            "order": [[ 10, "desc" ]],
             oLanguage: {
                     sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
             },
@@ -1177,8 +1177,25 @@ $(document).ready(function(){
                     }
 
                 },
+                {
+                    targets:[8],data: null,
+                    render: function (data, type, full, meta){
+                        var _attribute='';
+                        //console.log(data.is_email_sent);
+                        if(data.payment_method_id == "2" && data.is_for_assignment == 0){
+                            _attribute=' class="fa fa-check-circle" style="color:green;" ';
+                        }else if(data.payment_method_id=="2" && data.is_for_assignment == 1){
+                            _attribute=' class="fa fa-times-circle" style="color:red;" ';
+                        }else{
+                            _attribute=''
+                        }
+
+                        return '<center><i '+_attribute+'></i></center>';
+                    }
+
+                },
                 {sClass: "right_align_items",
-                    targets:[8],data:null,
+                    targets:[9],data:null,
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_cancel='<button class="btn btn-red btn-sm" name="cancel_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Cancel Journal"><i class="fa fa-times"></i> </button>';
@@ -1195,7 +1212,7 @@ $(document).ready(function(){
                         
                     }
                 },
-                { targets:[9],data: "journal_id",visible:false },
+                { targets:[10],data: "journal_id",visible:false },
 
 
             ]
@@ -1216,18 +1233,7 @@ $(document).ready(function(){
                 { targets:[2],data: "supplier_name" },
                 { targets:[3],data: "remarks" },
                 { targets:[4],data: "date_paid" },
-                {
-                    targets:[5],
-                    data: "rem_day_for_due",
-                    render: function (data, type, full, meta){
-                        if(full.payment_method_id==2&&data>0){ //if check and remaining day before due is greater than 0
-                            return "<span style='color: red'><b><i class='fa fa-times-circle'></i> "+data+"</b> day(s) before Check is due.</span>";
-                        }else{
-                            return "";
-                        }
-                    }
-                },
-                { targets:[6],data: "total_paid_amount" }
+                { targets:[5],data: "total_paid_amount" }
             ]
         });
 
@@ -2321,6 +2327,10 @@ $(document).ready(function(){
             }else{
                 _data_review.push({name : "2307_apply" ,value : 0});
             }
+
+            if($('#is_for_assignment').is(':checked')==true){
+            _data_review.push({name : "is_for_assignment" ,value : 1}); }else{ 
+            _data_review.push({name : "is_for_assignment" ,value : 0}); }
 
             return $.ajax({
                 "dataType":"json",

@@ -763,6 +763,7 @@ $(document).ready(function(){
                     }
                 });
             });
+            $('#cash_amount').prop('readonly',true);
             $('#cbo_pay_type').select2('val',data.payment_method_id);
             $('#cbo_suppliers').select2('val',data.supplier_id);
             $('#cbo_branch').select2('val',data.department_id);
