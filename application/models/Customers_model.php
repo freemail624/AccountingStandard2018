@@ -81,7 +81,7 @@ class Customers_model extends CORE_Model{
     //     return $this->db->query($sql)->result();
     // }
 
-    function get_customer_receivable_list($customer_id)
+    function get_customer_receivable_list($customer_id,$filter_accounts)
     {
         $sql = "SELECT
                 unpaid.*,
@@ -100,7 +100,7 @@ class Customers_model extends CORE_Model{
                 ji.is_sales
                 FROM
                 (journal_info ji
-                INNER JOIN journal_accounts ja ON ja.journal_id = ji.journal_id)
+                INNER JOIN (SELECT * FROM journal_accounts ja WHERE ja.account_id IN ($filter_accounts)) ja ON ja.journal_id = ji.journal_id)
                 LEFT JOIN customers c ON c.customer_id = ji.customer_id
                 LEFT JOIN sales_invoice si ON si.sales_inv_no = ji.ref_no AND ji.is_sales=1
                 LEFT JOIN service_invoice serv_inv ON serv_inv.service_invoice_no = ji.ref_no AND ji.is_sales=0
