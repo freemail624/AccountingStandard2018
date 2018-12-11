@@ -74,7 +74,7 @@ class Suppliers_model extends CORE_Model {
         SUM(ja.cr_amount)  as journal_payable_amount
         FROM
         (journal_info ji
-        INNER JOIN journal_accounts ja ON ja.journal_id = ji.journal_id)
+        INNER JOIN (SELECT * FROM journal_accounts WHERE account_id = (SELECT payable_account_id FROM account_integration)) ja ON ja.journal_id = ji.journal_id)
         LEFT JOIN suppliers s ON s.supplier_id = ji.supplier_id
         LEFT JOIN delivery_invoice di ON di.dr_invoice_no = ji.ref_no
         LEFT JOIN purchase_integration pi  ON pi.purchase_integration_id = ji.pos_integration_id AND pi.invoice_no = ji.ref_no

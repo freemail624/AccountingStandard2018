@@ -18,6 +18,7 @@ class Customers extends CORE_Controller {
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
         $this->load->model('Customer_type_model');
+        $this->load->model('Soa_settings_model');
         $this->load->model('Ar_trans_model');
 
     }
@@ -361,8 +362,11 @@ class Customers extends CORE_Controller {
             case 'receivables':
                 $customer_id=$this->input->get('id',TRUE);
                 $m_customers=$this->Customers_model;
-
-                $data['receivables']=$m_customers->get_customer_receivable_list($customer_id);
+                $accounts=$this->Soa_settings_model->get_list(null,'soa_account_id');
+                $acc = [];
+                foreach ($accounts as $account) { $acc[]=$account->soa_account_id; }
+                $filter_accounts =  implode(",", $acc);
+                $data['receivables']=$m_customers->get_customer_receivable_list($customer_id,$filter_accounts);
                 $structured_content=$this->load->view('template/customer_receivable_list',$data,TRUE);
                 echo $structured_content;
 
