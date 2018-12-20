@@ -161,7 +161,7 @@
                     <th></th>
                     <th>Receipt #</th>
                     <th>Supplier</th>
-                    <th>Remarks</th>
+                    <th width="20%">Remarks</th>
                     <th>Posted by</th>
                     <th>Date Paid</th>
                     <th>Amount</th>
@@ -481,7 +481,7 @@
 
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
-
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 
 
 
@@ -554,7 +554,7 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "receipt_no" },
                 { targets:[2],data: "supplier_name" },
-                { targets:[3],data: "remarks" },
+                { targets:[3],data: "remarks"  ,render: $.fn.dataTable.render.ellipsis(60) },
                 { targets:[4],data: "posted_by_user" },
                 { targets:[5],data: "date_paid" },
                 { targets:[6],data: "total_paid_amount" },
@@ -610,6 +610,7 @@ $(document).ready(function(){
             placeholder: "Please select branch.",
             allowClear: false
         });
+        _cboBranch.select2("val",null);
 
         _cboReceiptType = $('#cbo_receipt_type').select2({
             placeholder: "Please select receipt type.",

@@ -226,7 +226,7 @@
                                 <th>Invoice #</th>
                                 <th>Customer</th>
                                 <th>Invoice Date</th>
-                                <th>Remarks</th>
+                                <th width="25%">Remarks</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -254,7 +254,7 @@
                             <th></th>
                             <th>Txn #</th>
                             <th>Particular</th>
-                            <th>Remarks</th>
+                            <th width="20%">Remarks</th>
                             <th>Txn Date</th>
                             <th>Posted</th>
                             <th>Status</th>
@@ -736,7 +736,7 @@
 
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
-
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 <!-- Select2-->
 <script src="assets/plugins/select2/select2.full.min.js"></script>
 <!---<script src="assets/plugins/dropdown-enhance/dist/js/bootstrar-select.min.js"></script>-->
@@ -798,7 +798,7 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "txn_no" },
                 { targets:[2],data: "particular" },
-                { targets:[3],data: "remarks" },
+                { targets:[3],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(60)},
                 { targets:[4],data: "date_txn" },
                 { targets:[5],data: "posted_by" },
                 {
@@ -845,7 +845,7 @@ $(document).ready(function(){
                 { targets:[1],data: "service_invoice_no" },
                 { targets:[2],data: "customer_name" },
                 { targets:[3],data: "date_invoice" },
-                { targets:[4],data: "remarks" }
+                { targets:[4],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(80)}
             ]
         });
 

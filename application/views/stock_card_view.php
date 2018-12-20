@@ -68,6 +68,11 @@
         .class-title{
             font-weight: bold;
         }
+        .ellipsis {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
     </style>
     <?php echo $_def_css_files; ?>
 
@@ -193,6 +198,7 @@
 <script src="assets/plugins/formatter/accounting.js" type="text/javascript"></script>
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 <script src="assets/plugins/select2/select2.full.min.js"></script>
 
 <script>

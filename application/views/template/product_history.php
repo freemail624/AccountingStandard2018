@@ -16,7 +16,7 @@
                     <td style="border: 1px solid lightgrey;padding: 5px;"><b>Txn Type</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;"><b>Description</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;"><b>Department</b></td>
-                    <td style="border: 1px solid lightgrey;padding: 5px;"><b>Remarks</b></td>
+                    <td style="border: 1px solid lightgrey;padding: 5px;width: 20%;"><b>Remarks</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>In</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>Out</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>Balance</b></td>

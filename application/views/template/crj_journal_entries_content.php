@@ -144,8 +144,7 @@
                         <td style="border: 1px solid black;text-align: right;padding: 6px;" align="right"><strong><?php echo number_format($cr_amount,2); ?></strong></td>
                     </tr>
                     <tr style="border: 1px solid black;">
-                        <td colspan="2" style="border: 1px solid black;text-align: left;padding: 6px;"><?php echo $journal_info->remarks; ?>&nbsp;</td>
-                        <td colspan="3" style="border: 1px solid black;text-align: left;padding: 6px;"></td>
+                        <td colspan="5" style="border: 1px solid black;text-align: left;padding: 6px;"><?php echo $journal_info->remarks; ?>&nbsp;</td>
                     </tr>
                 </tfoot>    
         </table><br><br>

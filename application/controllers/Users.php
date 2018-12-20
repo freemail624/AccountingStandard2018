@@ -124,7 +124,7 @@ class Users extends CORE_Controller
 
                 $user_account_id=$this->input->post('user_id',TRUE);
                 $m_users->user_name=$this->input->post('user_name',TRUE);
-                $m_users->user_pword=sha1($this->input->post('user_pword',TRUE));
+                // $m_users->user_pword=sha1($this->input->post('user_pword',TRUE));
                 $m_users->user_lname=$this->input->post('user_lname',TRUE);
                 $m_users->user_fname=$this->input->post('user_fname',TRUE);
                 $m_users->user_mname=$this->input->post('user_mname',TRUE);
@@ -154,6 +154,28 @@ class Users extends CORE_Controller
                 $m_trans->trans_key_id=2; //CRUD
                 $m_trans->trans_type_id=43; // TRANS TYPE
                 $m_trans->trans_log='Updated User : '.$this->input->post('user_name',TRUE).' ID('.$user_account_id.')';
+                $m_trans->save();
+                echo json_encode($response);
+
+                break;
+
+                case 'change' :
+                $m_users=$this->Users_model;
+                $user_account_id=$this->input->post('user_id',TRUE);
+                $m_users->user_pword=sha1($this->input->post('change_user_pword',TRUE));
+                $m_users->modify($user_account_id);
+
+                $response['title']='Success!';
+                $response['stat']='success';
+                $response['msg']='User Account Password Changed Successfully .';
+                $transinfo=$m_users->get_user_list($user_account_id);
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=43; // TRANS TYPE
+                $m_trans->trans_log='Change the Password of : '.$transinfo[0]->user_fname.' '.$transinfo[0]->user_mname.''.$transinfo[0]->user_lname.' ID('.$user_account_id.')';
                 $m_trans->save();
                 echo json_encode($response);
 

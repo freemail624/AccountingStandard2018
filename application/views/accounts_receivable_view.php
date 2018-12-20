@@ -163,6 +163,9 @@
                 background: none!important; 
                 background-color: transparent!important; 
         } 
+        .right-align{
+            text-align: right;
+        }
     </style>
 
 </head>
@@ -213,7 +216,8 @@
                             <th>Invoice #</th>
                             <th>Customer</th>
                             <th>Invoice Date</th>
-                            <th>Remarks</th>
+                            <th>Total</th>
+                            <th style="width: 25%;">Remarks</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -269,7 +273,7 @@
                             <th></th>
                             <th width="15%">Txn #</th>
                             <th>Particular</th>
-                            <th width="40%">Remarks</th>
+                            <th width="25%">Remarks</th>
                             <th>Txn Date</th>
                             <th>Posted</th>
                             <th>Status</th>
@@ -783,7 +787,7 @@
 
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
-
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 <!-- Select2-->
 <script src="assets/plugins/select2/select2.full.min.js"></script>
 <!---<script src="assets/plugins/dropdown-enhance/dist/js/bootstrar-select.min.js"></script>-->
@@ -860,7 +864,7 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "txn_no" },
                 { targets:[2],data: "particular" },
-                { targets:[3],data: "remarks" },
+                { targets:[3],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(80)},
                 { targets:[4],data: "date_txn" },
                 { targets:[5],data: "posted_by" },
                 {
@@ -907,7 +911,8 @@ $(document).ready(function(){
                 { targets:[1],data: "sales_inv_no" },
                 { targets:[2],data: "customer_name" },
                 { targets:[3],data: "date_invoice" },
-                { targets:[4],data: "remarks" }
+                { targets:[4],data: "total_after_tax", render: $.fn.dataTable.render.number( ',', '.', 2), sClass: "right-align" },
+                { targets:[5],data: "remarks",render: $.fn.dataTable.render.ellipsis(80)  }
             ]
         });
 

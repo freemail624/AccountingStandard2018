@@ -72,13 +72,10 @@ class Products extends CORE_Controller
 
     function transaction($txn = null) {
         switch ($txn) {
+                // Products List, All Sales and Cash Invoices are included in the computation. 
+                //Inventory Report is the only report where Cash and Sales invoice inclusion is optional
             case 'list':
                 $m_products = $this->Products_model;
-
-                $account_integration =$this->Account_integration_model;
-                $a_i=$account_integration->get_list();
-                $account =$a_i[0]->sales_invoice_inventory;
-
                 $response['data']=$m_products->product_list(1,null,null,null,null,null,null,null,1);
                 // $response['data']=$this->response_rows(array('products.is_deleted'=>FALSE));
                 echo json_encode($response);

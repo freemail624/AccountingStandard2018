@@ -137,7 +137,7 @@
                                                         <th></th>
                                                         <th>Username</th>
                                                         <th>Fullname</th>
-                                                        <th>Address</th>
+                                                        <th width="25%">Address</th>
                                                         <th>Mobile #</th>
                                                         <th>User Group</th>
                                                         <th><center>Action</center></th>
@@ -328,7 +328,7 @@
                                                                <div class="" style="border:1px solid black;height: 230px;width: 210px;vertical-align: middle;margin-bottom: 20px;">
 
                                                                    <div id="div_img_user" style="position:relative;">
-                                                                       <img name="img_user" src="assets/img/anonymous-icon.png" style="padding-bottom: 50px; height: 277px; width: 207px;"/>
+                                                                       <img name="img_user" src="assets/img/anonymous-icon.png" style="object-fit: fill; !important; height: 100%;width: 100%;"/>
                                                                        <input type="file" name="file_upload[]" class="hidden">
                                                                    </div>
 
@@ -472,7 +472,51 @@
 
 
 
+<div id="modal_change_password" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header ">
+                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Change Password</h4>
+            </div>
+            <div class="modal-body">
+                <form id="frm_change_password" role="form" class="form-horizontal row-border">
+                   <div class="form-group">
+                       <label class="col-md-4 control-label"><strong><b class="required">*</b> Password :</strong></label>
+                       <div class="col-md-8">
+                           <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-lock"></i>
+                                </span>
+                               <input type="password" name="change_user_pword" class="form-control" placeholder="Password" data-error-msg="Password is required!" required>
+                           </div>
+                       </div>
+                   </div>
 
+                   <div class="form-group">
+                       <label class="col-md-4 control-label"><strong><b class="required">*</b> Confirm Password :</strong></label>
+                       <div class="col-md-8">
+                           <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-lock"></i>
+                                </span>
+                               <input type="password" name="change_user_confirm_pword" class="form-control" placeholder="Confirm Password" data-error-msg="Please confirm password!" required>
+                           </div>
+                           <span class="help-block m-b-none">Please make sure password match.</span>
+                       </div>
+                   </div>
+                </form>
+                <span><i>Password Changed by:  <?php  echo $this->session->user_fullname?></i></span>
+
+
+            </div>
+            <div class="modal-footer">
+                <button id="btn_save_password" type="button" class="btn btn-success" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Confirm</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 
             <footer role="contentinfo">
                 <div class="clearfix">
@@ -502,7 +546,7 @@
 
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
-
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 
 
 
@@ -540,16 +584,17 @@
                     },
                     { targets:[1],data: "user_name" },
                     { targets:[2],data: "full_name" },
-                    { targets:[3],data: "user_address" },
+                    { targets:[3],data: "user_address" ,render: $.fn.dataTable.render.ellipsis(80)},
                     { targets:[4],data: "user_mobile" },
                     { targets:[5],data: "user_group" },
                     {
                         targets:[6],
                         render: function (data, type, full, meta){
-                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
-                        var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
+                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
+                        var btn_password='<button class="btn btn-warning btn-sm" name="password_info"  style="" data-toggle="tooltip" data-placement="top" title="Change Password"><i class="fa fa-user-secret"></i> </button>';
+                        var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
 
-                        return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
+                        return '<center>'+btn_edit+'&nbsp;'+btn_password+'&nbsp;'+btn_trash+'</center>';
                     }
                     }
                 ]
@@ -616,6 +661,10 @@
 
             $('#btn_new').click(function(){
                     _txnMode="new";
+                    $('input[name="user_confirm_pword"]').prop('disabled',false);
+                    $('input[name="user_confirm_pword"]').prop('required',true);
+                    $('input[name="user_pword"]').prop('disabled',false);
+                    $('input[name="user_pword"]').prop('required',true);
                     showList(false);
             });
 
@@ -664,7 +713,16 @@
 
             });
 
+            $('#tbl_user_list tbody').on('click','button[name="password_info"]',function(){
+                _selectRowObj=$(this).closest('tr');
+                var data=dt.row(_selectRowObj).data();
+                _selectedID=data.user_id;
 
+              _txnMode="change_password";
+              $('input[name="change_user_confirm_pword"]').val('');
+              $('input[name="change_user_pword"]').val('');
+              $('#modal_change_password').modal('show');
+            });
 
             $('#tbl_user_list tbody').on('click','button[name="edit_info"]',function(){
                     ///alert("ddd");
@@ -685,6 +743,10 @@
                         $('#cbo_user_groups').select2('val',data.user_group_id);
                     });
 
+                    $('input[name="user_confirm_pword"]').prop('disabled',true);
+                    $('input[name="user_confirm_pword"]').prop('required',false);
+                    $('input[name="user_pword"]').prop('disabled',true);
+                    $('input[name="user_pword"]').prop('required',false);
                     $('img[name="img_user"]').attr('src',data.photo_path);
                     showList(false);
 
@@ -789,7 +851,25 @@
 
                 });
 
+                $('#btn_save_password').click(function(){
+                   if(validateRequiredFields($('#frm_change_password'))){
+                    if($('input[name="change_user_confirm_pword"]').val()!=$('input[name="change_user_pword"]').val()){
+                        showNotification({title:"Error!",stat:"error",msg:"Passwords do not match."});
+                        $('input[name="change_user_confirm_pword"]').focus();
+                        stat=false;
+                    }else{
+                        changePasswordAccount().done(function(response){
+                            showNotification(response);
+                            if(response.stat=="success"){
+                                $('#modal_change_password').modal('hide');
+                            }
+                        }).always(function(){
+                            showSpinningProgress($('#btn_save'));
+                        });
 
+                    }
+                  }
+                });
         })();
 
 
@@ -821,13 +901,13 @@
 
                   });
 
-
+                if(_txnMode=="new"){
                     if($('input[name="user_confirm_pword"]').val()!=$('input[name="user_pword"]').val()){
                         showNotification({title:"Error!",stat:"error",msg:"Password did not match."});
                         $('input[name="user_confirm_pword"]').focus();
                         stat=false;
                     }
-
+                }
                 return stat;
         };
 
@@ -841,6 +921,19 @@
                 "dataType":"json",
                 "type":"POST",
                 "url":"Users/transaction/create",
+                "data":_data,
+                "beforeSend": showSpinningProgress($('#btn_save'))
+            });
+        };
+
+        var changePasswordAccount=function(){
+            var _data=$('#frm_change_password').serializeArray();
+            _data.push({name : "user_id" ,value : _selectedID });
+
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Users/transaction/change",
                 "data":_data,
                 "beforeSend": showSpinningProgress($('#btn_save'))
             });
@@ -905,12 +998,12 @@
         function format ( d ) {
             // `d` is the original data object for the row
             //alert(d.photo_path);
-            return '<br /><table style="margin-left:10%;width: 80%;border:none!important;">' +
+            return '<br /><table style="width: 100%;border:none!important;">' +
                     '<thead>' +
                     '</thead>' +
                     '<tbody style="border:none!important">' +
                     '<tr>' +
-                    '<td width="20%" class="child">Name : </td><td width="50%"  class="child"><b>'+ d.user_name+'</b></td>' +
+                    '<td width="20%" class="child">Name : </td><td width="50%"  class="child"><b>'+ d.user_fname+' '+ d.user_mname+' '+ d.user_lname+'</b></td>' +
                     '<td rowspan="5" valign="top"  class="child"><div class="avatar"  class="child">'+
                     '<img src="'+ d.photo_path+'" class="img-circle" style="margin-top:0px;height: 100px;width: 100px;">'+
                     '</div></td>' +

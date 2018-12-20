@@ -128,7 +128,7 @@
                     <th>Due Date</th>
                     <th>Customer</th>
                     <th>Department</th>
-                    <th>Remarks</th>
+                    <th width="20%">Remarks</th>
                     <th><center>Action</center></th>
                     <th></th>
 
@@ -619,6 +619,7 @@
 <script src="assets/plugins/spinner/dist/ladda.min.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 <!-- Date range use moment.js same as full calendar plugin -->
 <script src="assets/plugins/fullcalendar/moment.min.js"></script>
 <!-- Data picker -->
@@ -671,7 +672,7 @@ $(document).ready(function(){
                 { targets:[3],data: "date_due" },
                 { targets:[4],data: "customer_name" },
                 { targets:[5],data: "department_name" },
-                { targets:[6],data: "remarks" },
+                { targets:[6],data: "remarks",render: $.fn.dataTable.render.ellipsis(60)},
                 {
                     targets:[7],
                     render: function (data, type, full, meta){

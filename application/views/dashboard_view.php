@@ -296,6 +296,9 @@
         -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
         background-color: #555;
       }
+      table, table.table-striped{
+        font-size: 12px;
+      }
     </style>
 
 </head>

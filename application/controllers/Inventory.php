@@ -45,13 +45,19 @@ class Inventory extends CORE_Controller
                 $m_products = $this->Products_model;
                 $date = date('Y-m-d',strtotime($this->input->post('date',TRUE)));
                 $depid = $this->input->post('depid',TRUE);
+                $currentcountfilter = $this->input->post('ccf',TRUE);
 
                 $account_integration =$this->Account_integration_model;
                 $a_i=$account_integration->get_list();
                 $account =$a_i[0]->sales_invoice_inventory;
                 $account_cii =$a_i[0]->cash_invoice_inventory; // Cash Invoice 
                 $account_dis =$a_i[0]->dispatching_invoice_inventory; // Cash Invoice 
-                $response['data']=$m_products->product_list($account,$date,null,null,null,1,null,$depid,$account_cii,$account_dis);
+
+                // Current Quantity Current Count Filter , 1 for ALL, 2 for Greater than 0, 3 for Less than Zero
+                if($currentcountfilter  == 1){ $ccf = null; }else if ($currentcountfilter  == 2) { $ccf = ' > 0'; }
+                else if($currentcountfilter  == 3){ $ccf = ' < 0'; }else if($currentcountfilter  == 4){ $ccf = ' = 0';}
+
+                $response['data']=$m_products->product_list($account,$date,null,null,null,1,null,$depid,$account_cii,$account_dis, $ccf);
                 // $response['data'] = $m_products->get_product_list_inventory($date,$depid,$account);
 
 
@@ -63,7 +69,7 @@ class Inventory extends CORE_Controller
                 $a_i=$account_integration->get_list();
                 $account =$a_i[0]->sales_invoice_inventory;
                 $ci_account =$a_i[0]->cash_invoice_inventory;
-
+                $account_dis =$a_i[0]->dispatching_invoice_inventory;
 
                 $m_products = $this->Products_model;
                 $m_department = $this->Departments_model;
@@ -71,7 +77,12 @@ class Inventory extends CORE_Controller
                 $date = date('Y-m-d',strtotime($this->input->get('date',TRUE)));
                 $depid = $this->input->get('depid',TRUE);
                 $info = $m_department->get_department_list($depid);
-                $data['products']=$m_products->product_list($account,$date,null,null,null,1,null,$depid,$ci_account);
+                $currentcountfilter = $this->input->get('ccf',TRUE);
+                // Current Quantity Current Count Filter , 1 for ALL, 2 for Greater than 0, 3 for Less than Zero
+                if($currentcountfilter  == 1){ $ccf = null; }else if ($currentcountfilter  == 2) { $ccf = ' > 0'; }
+                else if($currentcountfilter  == 3){ $ccf = ' < 0'; }else if($currentcountfilter  == 4){ $ccf = ' = 0';}
+
+                $data['products']=$m_products->product_list($account,$date,null,null,null,1,null,$depid,$ci_account,$account_dis, $ccf);
                 // $data['products'] = $m_products->get_product_list_inventory($date,$depid,$account);
                 $data['date'] = date('m/d/Y',strtotime($date));
 
@@ -94,15 +105,22 @@ class Inventory extends CORE_Controller
                 $a_i=$account_integration->get_list();
                 $account =$a_i[0]->sales_invoice_inventory;
                 $ci_account =$a_i[0]->cash_invoice_inventory;
-
+                $account_dis =$a_i[0]->dispatching_invoice_inventory;
                 $m_products = $this->Products_model;
                 $m_department = $this->Departments_model;
 
                 $date = date('Y-m-d',strtotime($this->input->get('date',TRUE)));
                 $depid = $this->input->get('depid',TRUE);
                 $info = $m_department->get_department_list($depid);
+                $currentcountfilter = $this->input->get('ccf',TRUE);
+                // Current Quantity Current Count Filter , 1 for ALL, 2 for Greater than 0, 3 for Less than Zero
+                if($currentcountfilter  == 1){ $ccf = null; }else if ($currentcountfilter  == 2) { $ccf = ' > 0'; }
+                else if($currentcountfilter  == 3){ $ccf = ' < 0'; }else if($currentcountfilter  == 4){ $ccf = ' = 0';}
 
-                $products=$m_products->product_list($account,$date,null,null,null,1,null,$depid,$ci_account);
+                if($currentcountfilter  == 1){ $ccf_data = 'All Count Items'; }else if ($currentcountfilter  == 2) { $ccf_data = 'Items Greater than Zero'; }
+                else if($currentcountfilter  == 3){ $ccf_data = 'Items Less than Zero'; }else if($currentcountfilter  == 4){ $ccf_data = 'Items Equal to Zero';}
+
+                $products=$m_products->product_list($account,$date,null,null,null,1,null,$depid,$ci_account,$account_dis,$ccf);
                 $data['date'] = date('m/d/Y',strtotime($date));
 
                 if(isset($info[0])){
@@ -139,6 +157,8 @@ class Inventory extends CORE_Controller
                                         ->getStyle('A6')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('A7','As of '.$date)
                                         ->getStyle('A7')->getFont()->setItalic(TRUE);
+                $excel->getActiveSheet()->setCellValue('A8',$ccf_data)
+                                        ->getStyle('A8')->getFont()->setItalic(TRUE);
 
                 $excel->getActiveSheet()->getColumnDimension('A')->setWidth('40');
                 $excel->getActiveSheet()->getColumnDimension('B')->setWidth('25');
@@ -234,8 +254,8 @@ class Inventory extends CORE_Controller
                 $account_integration =$this->Account_integration_model;
                 $a_i=$account_integration->get_list();
                 $account =$a_i[0]->sales_invoice_inventory;
-                 $ci_account =$a_i[0]->cash_invoice_inventory;
-
+                $ci_account =$a_i[0]->cash_invoice_inventory;
+                $account_dis =$a_i[0]->dispatching_invoice_inventory;
 
                 $m_products = $this->Products_model;
                 $m_department = $this->Departments_model;
@@ -243,8 +263,15 @@ class Inventory extends CORE_Controller
                 $date = date('Y-m-d',strtotime($this->input->get('date',TRUE)));
                 $depid = $this->input->get('depid',TRUE);
                 $info = $m_department->get_department_list($depid);
+                $currentcountfilter = $this->input->get('ccf',TRUE);
+                // Current Quantity Current Count Filter , 1 for ALL, 2 for Greater than 0, 3 for Less than Zero
+                if($currentcountfilter  == 1){ $ccf = null; }else if ($currentcountfilter  == 2) { $ccf = ' > 0'; }
+                else if($currentcountfilter  == 3){ $ccf = ' < 0'; }else if($currentcountfilter  == 4){ $ccf = ' = 0';}
 
-                $products=$m_products->product_list($account,$date,null,null,null,1,null,$depid,$ci_account);
+                if($currentcountfilter  == 1){ $ccf_data = 'All Count Items'; }else if ($currentcountfilter  == 2) { $ccf_data = 'Items Greater than Zero'; }
+                else if($currentcountfilter  == 3){ $ccf_data = 'Items Less than Zero'; }else if($currentcountfilter  == 4){ $ccf_data = 'Items Equal to Zero';}
+
+                $products=$m_products->product_list($account,$date,null,null,null,1,null,$depid,$ci_account,$account_dis,$ccf);
                 $data['date'] = date('m/d/Y',strtotime($date));
 
                 if(isset($info[0])){
@@ -282,7 +309,8 @@ class Inventory extends CORE_Controller
                                         ->getStyle('A6')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('A7','As of '.$date)
                                         ->getStyle('A7')->getFont()->setItalic(TRUE);
-
+                $excel->getActiveSheet()->setCellValue('A8',$ccf_data)
+                                        ->getStyle('A8')->getFont()->setItalic(TRUE);
                 $excel->getActiveSheet()->getColumnDimension('A')->setWidth('40');
                 $excel->getActiveSheet()->getColumnDimension('B')->setWidth('25');
                 $excel->getActiveSheet()->getColumnDimension('C')->setWidth('25');

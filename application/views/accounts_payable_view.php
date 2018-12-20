@@ -196,7 +196,7 @@
                                             <th>Vendor</th>
                                             <th>Terms</th>
                                             <th>Delivered</th>
-                                            <th>Remarks</th>
+                                            <th width="25%">Remarks</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -252,7 +252,7 @@
                                                 <th></th>
                                                 <th>Txn #</th>
                                                 <th>Particular</th>
-                                                <th>Remarks</th>
+                                                <th width="20%">Remarks</th>
                                                 <th>Txn Date</th>
                                                 <th>Posted</th>
                                                 <th>Status</th>
@@ -740,7 +740,7 @@
 
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
-
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 <!-- Select2-->
 <script src="assets/plugins/select2/select2.full.min.js"></script>
 <!---<script src="assets/plugins/dropdown-enhance/dist/js/bootstrap-select.min.js"></script>-->
@@ -813,7 +813,7 @@
                     },
                     { targets:[1],data: "txn_no" },
                     { targets:[2],data: "particular" },
-                    { targets:[3],data: "remarks" },
+                    { targets:[3],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(60) },
                     { targets:[4],data: "date_txn" },
                     { targets:[5],data: "posted_by" },
                     {
@@ -863,7 +863,7 @@
                     { targets:[2],data: "supplier_name" },
                     { targets:[3],data: "term_description" },
                     { targets:[4],data: "date_delivered" },
-                    { targets:[5],data: "remarks" }
+                    { targets:[5],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(80)}
                 ]
             });
 
