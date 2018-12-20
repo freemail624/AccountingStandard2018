@@ -162,7 +162,7 @@
                                                     <h2 class="h2-panel-heading">Inventory Report</h2><hr>
 
                                                             <div class="row">
-                                                                <div class="col-lg-9">
+                                                                <div class="col-lg-6">
                                                                     Department * : <br />
                                                                     <select id="cbo_department" class="form-control">
                                                                         <option value="0">All Department</option>
@@ -172,6 +172,16 @@
                                                                     </select>
 
                                                                 </div>
+                                                                <div class="col-lg-3"> 
+                                                                    Current Count :<br /> 
+                                                                    <select id="cbo_current_count" class="form-control"> 
+                                                                        <option value="1">All</option> 
+                                                                        <option value="2">Greater than Zero</option> 
+                                                                        <option value="3">Less than Zero</option> 
+                                                                        <option value="4">Equal to Zero</option> 
+ 
+                                                                    </select> 
+                                                                </div> 
                                                                 <div class="col-lg-3">
                                                                     As of Date * :<br />
                                                                     <div class="input-group">
@@ -284,7 +294,13 @@
             placeholder: "Choose Department",
             allowClear: false
             });
-
+            
+            _cboCurrentCount=$("#cbo_current_count").select2({ 
+            placeholder: "Choose Count Filter", 
+            allowClear: false, 
+            minimumResultsForSearch: -1 
+            }); 
+            _cboCurrentCount.select2("val", 1); 
             reloadList();
 
             createToolBarButton();
@@ -310,14 +326,19 @@
                 reloadList();
                 createToolBarButton();
             });
-
+            _cboCurrentCount.on('select2:select',function(e){ 
+                dt.clear().draw(); 
+                dt.destroy(); 
+                reloadList(); 
+                createToolBarButton(); 
+            }); 
             $(document).on('click','#btn_print',function(){
-                window.open('Inventory/transaction/preview-inventory?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val());
+                window.open('Inventory/transaction/preview-inventory?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val()+'&ccf='+$('#cbo_current_count').val());
             });
 
 
             $(document).on('click','#btn_export',function(){
-                window.open('Inventory/transaction/export-inventory?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val());
+                window.open('Inventory/transaction/export-inventory?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val()+'&ccf='+$('#cbo_current_count').val());
             });
 
             $(document).on('click','#btn_email',function(){
@@ -328,7 +349,7 @@
                 $.ajax({
                     "dataType":"json",
                     "type":"POST",
-                    "url":'Inventory/transaction/email-inventory?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val(),
+                    "url":'Inventory/transaction/email-inventory?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val()+'&ccf='+$('#cbo_current_count').val(), 
                     "beforeSend": showSpinningProgress(btn)
                 }).done(function(response){
                     showNotification(response);
@@ -432,7 +453,8 @@
                     "data": function ( d ) {
                         return $.extend( {}, d, {
                             "depid": $('#cbo_department').val(),
-                            "date" : $('#txt_date').val()
+                            "date" : $('#txt_date').val(), 
+                            "ccf" : $('#cbo_current_count').val() 
                         });
                     }
                 },

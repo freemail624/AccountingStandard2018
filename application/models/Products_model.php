@@ -1183,7 +1183,7 @@ Product Pick List
 
 */
 
-function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=null,$category_id=null,$item_type_id=null,$pick_list=null,$depid=null,$account_cii,$account_dis=null){
+function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=null,$category_id=null,$item_type_id=null,$pick_list=null,$depid=null,$account_cii,$account_dis=null,$CurrentQtyCount=null){
     $sql="SELECT main.*
          ".($pick_list==TRUE?",(main.product_ideal - main.CurrentQty) as recommended_qty":"")."
             FROM 
@@ -1374,7 +1374,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
 
                 ORDER BY core.product_desc) as main
                 ".($pick_list==TRUE?" WHERE main.CurrentQty < main.product_warn ":" ")."
-
+                ".($CurrentQtyCount==null?" ":" WHERE main.CurrentQty ".$CurrentQtyCount)." 
 
     ";
 
