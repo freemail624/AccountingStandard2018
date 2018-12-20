@@ -157,7 +157,7 @@
                     <th></th>
                     <th>#</th>
                     <th>Department</th>
-                    <th>Remarks</th>
+                    <th width="25%">Remarks</th>
                     <th>Adjustment</th>
                     <th><center>Action</center></th>
                     <th></th>
@@ -485,7 +485,7 @@
 
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
-
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 
 
 
@@ -582,7 +582,7 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "adjustment_code" },
                 { targets:[2],data: "department_name" },
-                { targets:[3],data: "remarks" },
+                { targets:[3],data: "remarks",render: $.fn.dataTable.render.ellipsis(80) },
                 { targets:[4],data: "adjustment_type" },
                 {
                     targets:[5],

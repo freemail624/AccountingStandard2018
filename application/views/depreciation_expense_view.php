@@ -153,7 +153,7 @@
                                             <button class="btn btn-primary pull-left" id="btn_print"><i class="fa fa-print"></i>&nbsp; Print Report</button>
                                             <button class="btn btn-success pull-left" id="btn_export" style="margin-left: 10px;"><i class="fa fa-file-excel-o"></i>&nbsp; Export</button>
                                             <button class="btn btn-success pull-left" id="btn_email" style="margin-left: 10px;"><i class="fa fa-share"></i>&nbsp; Email</button>
-                                            <button class="btn btn-success pull-left" id="btn_save" style="margin-left: 10px;"><i class="fa fa-print"></i>&nbsp; Save</button>
+                                            <button class="btn btn-success pull-left" id="btn_save" style="margin-left: 10px;padding: 2px 7px!important;"><i class="fa fa-print"></i>&nbsp; Save</button>
                                             <table id="tbl_depreciation" class="table table-striped" width="100%" class="">
                                                 <thead>
                                                     <tr>

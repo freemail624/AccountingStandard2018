@@ -161,12 +161,13 @@
                     <th></th>
                     <th>Receipt #</th>
                     <th>Supplier</th>
-                    <th>Remarks</th>
+                    <th width="20%">Remarks</th>
                     <th>Posted by</th>
                     <th>Date Paid</th>
                     <th>Amount</th>
                     <th>Status</th>
                     <th><center>Action</center></th>
+                    <th><center>ID</center></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -481,7 +482,7 @@
 
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
-
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 
 
 
@@ -544,6 +545,7 @@ $(document).ready(function(){
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "ajax" : "Payable_payments/transaction/list",
+            "order": [[ 9, "desc" ]],
             "columns": [
                 {
                     "targets": [0],
@@ -554,7 +556,7 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "receipt_no" },
                 { targets:[2],data: "supplier_name" },
-                { targets:[3],data: "remarks" },
+                { targets:[3],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(60)},
                 { targets:[4],data: "posted_by_user" },
                 { targets:[5],data: "date_paid" },
                 { targets:[6],data: "total_paid_amount" },
@@ -580,7 +582,8 @@ $(document).ready(function(){
                         
                     }
                 }
-            }
+            },
+            { targets:[9],data: "payment_id", visible:false }
                 // {
                 //     targets:[8],data: null,
                 //     render: function (data, type, full, meta){

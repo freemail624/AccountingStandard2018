@@ -207,7 +207,7 @@
                                 <th></th>
                                 <th>Receipt #</th>
                                 <th>Supplier</th>
-                                <th>Remarks</th>
+                                <th width="25%">Remarks</th>
                                 <th>Payment</th>
                                 <th>Amount</th>
                             </tr>
@@ -304,7 +304,7 @@
                                     <th>Check Date</th>
                                     <th>Voucher #</th>
                                     <th>Particular</th>
-                                    <th>Remarks</th>
+                                    <th width="20%">Remarks</th>
                                     <th>Issued</th>
                                     <th><center>Action</center></th>
                                 </tr>
@@ -1063,7 +1063,7 @@
 
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
-
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 <!-- Select2-->
 <script src="assets/plugins/select2/select2.full.min.js"></script>
 <!---<script src="assets/plugins/dropdown-enhance/dist/js/bootstrap-select.min.js"></script>-->
@@ -1231,9 +1231,9 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "receipt_no" },
                 { targets:[2],data: "supplier_name" },
-                { targets:[3],data: "remarks" },
+                { targets:[3],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(80)},
                 { targets:[4],data: "date_paid" },
-                { targets:[5],data: "total_paid_amount" }
+                { targets:[5],data: "total_paid_amount" ,sClass: "right_align_items"}
             ]
         });
 
@@ -1257,7 +1257,7 @@ $(document).ready(function(){
                 { targets:[3],data: "check_date" },
                 { targets:[4],data: "ref_no" },
                 { targets:[5],data: "supplier_name" },
-                { targets:[6],data: "remarks" },
+                { targets:[6],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(60) },
                 {  targets:[7],data: "check_status",
                     render: function (data, type, full, meta){
                         //alert(data.check_status);

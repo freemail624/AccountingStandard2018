@@ -141,7 +141,7 @@
                                                     <th>Receipt #</th>
                                                     <th>Customer</th>
                                                     <th>Method</th>
-                                                    <th>Remarks</th>
+                                                    <th width="20%">Remarks</th>
                                                     <th>Posted by</th>
                                                     <th>Date Paid</th>
                                                     <th>Amount</th>
@@ -401,6 +401,7 @@
 
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 
 
 
@@ -474,7 +475,7 @@
                     { targets:[1],data: "receipt_no" },
                     { targets:[2],data: "customer_name" },
                     { targets:[3],data: "payment_method" },
-                    { targets:[4],data: "remarks" },
+                    { targets:[4],data: "remarks",render: $.fn.dataTable.render.ellipsis(60) },
                     { targets:[5],data: "posted_by_user" },
                     { targets:[6],data: "date_paid" },
                     { targets:[7],data: "total_paid_amount" },

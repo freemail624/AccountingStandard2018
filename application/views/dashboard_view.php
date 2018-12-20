@@ -413,7 +413,7 @@
                                                                     <th></th>
                                                                     <th>PO #</th>
                                                                     <th>Vendor</th>
-                                                                    <th>Remarks </th>
+                                                                    <th width="20%">Remarks </th>
                                                                     <th>Posted by </th>
                                                                     <th style="text-align: center;"> <i class="fa fa-paperclip"></i></th>
                                                                     <th style="width: 15%!important;"><center>Action</center></th>
@@ -474,6 +474,8 @@
 <!-- DATATABLE -->
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
+
 <script>
 var ctx = document.getElementById("salesChart").getContext('2d');
 var ctxIE = document.getElementById("testChart").getContext('2d');
@@ -766,7 +768,7 @@ Chart.defaults.global.defaultFontColor = "#000000";
                     },
                     { targets:[1],data: "po_no" },
                     { targets:[2],data: "supplier_name" },
-                    { targets:[3],data: "remarks" },
+                    { targets:[3],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(60)},
                     { targets:[4],data: "posted_by" },
                     {
                         targets:[5],data: "attachment",

@@ -157,7 +157,7 @@
                                 <th>Department</th>
                                 <th>Date Issued</th>
                                 <th>Terms</th>
-                                <th>Remarks</th>
+                                <th width="20%">Remarks</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -180,7 +180,7 @@
                                 <th>Adjustment Code</th>
                                 <th>Adjustment Type</th>
                                 <th>Date Adjusted</th>
-                                <th>Remarks</th>
+                                <th width="20%">Remarks</th>
                                 <th>Department</th>
                             </tr>
                             </thead>
@@ -235,7 +235,7 @@
                                 <th></th>
                                 <th>Txn #</th>
                                 <th>Particular</th>
-                                <th>Remarks</th>
+                                <th width="20%">Remarks</th>
                                 <th>Txn Date</th>
                                 <th>Posted</th>
                                 <th>Status</th>
@@ -958,7 +958,7 @@
 
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
-
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 <!-- Select2-->
 <script src="assets/plugins/select2/select2.full.min.js"></script>
 <!---<script src="assets/plugins/dropdown-enhance/dist/js/bootstrar-select.min.js"></script>-->
@@ -1055,7 +1055,7 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "txn_no" },
                 { targets:[2],data: "particular" },
-                { targets:[3],data: "remarks" },
+                { targets:[3],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(60)},
                 { targets:[4],data: "date_txn" },
                 { targets:[5],data: "posted_by" },
                 {
@@ -1102,7 +1102,7 @@ $(document).ready(function(){
                 { targets:[3],data: "department" },
                 { targets:[4],data: "date_issued" },
                 { targets:[5],data: "terms" },
-                { targets:[6],data: "remarks" }
+                { targets:[6],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(60)}
             ]
         });
 
@@ -1121,7 +1121,7 @@ $(document).ready(function(){
                 { targets:[1],data: "adjustment_code" },
                 { targets:[2],data: "adjustment_type" },
                 { targets:[3],data: "date_adjusted" },
-                { targets:[4],data: "remarks" },
+                { targets:[4],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(60)},
                 { targets:[5],data: "department_name" }
             ]
         });

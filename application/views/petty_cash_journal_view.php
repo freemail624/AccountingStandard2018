@@ -146,7 +146,7 @@
                                                                 <th>Particular</th>
                                                                 <th>Department</th>
                                                                 <th>Status</th>
-                                                                <th>Remarks</th>
+                                                                <th width="15%">Remarks</th>
                                                                 <th>Amount</th>
                                                                 <th>Action</th>
                                                                 <th></th>
@@ -590,6 +590,7 @@
     <script src="assets/plugins/select2/select2.full.min.js"></script>
     <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
     <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
+    <script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 
     <script>
 
@@ -754,7 +755,7 @@
                             return status;
                         }
                     },
-                    { targets:[6],data: "remarks" },
+                    { targets:[6],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(40)},
                     {
                         className: "text-right",
                         targets:[7],data: "amount",

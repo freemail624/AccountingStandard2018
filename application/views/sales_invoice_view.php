@@ -144,7 +144,7 @@
                     <th>Due Date</th>
                     <th>Customer</th>
                     <th>Department</th>
-                    <th>Remarks</th>
+                    <th width="20%">Remarks</th>
                     <th><center>Action</center></th>
                     <th></th>
 
@@ -437,13 +437,13 @@
                 <h2 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Sales Order</h2>
             </div>
             <div class="modal-body">
-                <table id="tbl_so_list" class="table table-striped" cellspacing="0" width="100%">
+                <table id="tbl_so_list" class="table table-striped" cellspacing="0" width="100%" style="width: 100%">
                     <thead class="">
                     <tr>
                         <th></th>
                         <th>SO#</th>
                         <th>Customer</th>
-                        <th>Remarks</th>
+                        <th width="20%">Remarks</th>
                         <th>Order</th>
                         <th>Status</th>
                         <th><center>Action</center></th>
@@ -854,6 +854,7 @@
 <script src="assets/plugins/spinner/dist/ladda.min.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 <!-- Date range use moment.js same as full calendar plugin -->
 <script src="assets/plugins/fullcalendar/moment.min.js"></script>
 <!-- Data picker -->
@@ -923,7 +924,7 @@ $(document).ready(function(){
                 { targets:[3],data: "date_due" },
                 { targets:[4],data: "customer_name" },
                 { targets:[5],data: "department_name" },
-                { targets:[6],data: "remarks" },
+                { targets:[6],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(60)},
                 {
                     targets:[7],
                     render: function (data, type, full, meta){
@@ -938,6 +939,7 @@ $(document).ready(function(){
         dt_so=$('#tbl_so_list').DataTable({
             "bLengthChange":false,
             "ajax" : "Sales_order/transaction/open",
+            "autoWidth":false,
             "columns": [
                 {
                     "targets": [0],
@@ -948,7 +950,7 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "so_no" },
                 { targets:[2],data: "customer_name" },
-                { targets:[3],data: "remarks" },
+                { targets:[3],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(60)},
                 { targets:[4],data: "date_order" },
                 { targets:[5],data: "order_status" },
                 {

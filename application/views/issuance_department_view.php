@@ -110,7 +110,7 @@ echo $_side_bar_navigation;
                     <th>Transfer #</th>
                     <th>From Department</th>
                     <th>To Department</th>
-                    <th>Remarks</th>
+                    <th width="20%">Remarks</th>
                     <th><center>Action</center></th>
                     <th></th>
 
@@ -379,6 +379,7 @@ echo $_side_bar_navigation;
 <script src="assets/plugins/spinner/dist/ladda.min.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 <!-- Date range use moment.js same as full calendar plugin -->
 <script src="assets/plugins/fullcalendar/moment.min.js"></script>
 <!-- Data picker -->
@@ -525,7 +526,7 @@ dt_si = $('#tbl_si_list').DataTable({
                 { targets:[1],data: "trn_no" },
                 { targets:[2],data: "from_department_name" },
                 { targets:[3],data: "to_department_name" },
-                { targets:[4],data: "remarks" },
+                { targets:[4],data: "remarks",render: $.fn.dataTable.render.ellipsis(60) },
                 {
                     targets:[5],
                     render: function (data, type, full, meta){

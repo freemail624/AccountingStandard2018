@@ -157,7 +157,7 @@
                     <th>Due Date</th>
                     <th>Customer</th>
                     <th>Department</th>
-                    <th>Remarks</th>
+                    <th width="20%">Remarks</th>
                     <th><center>Action</center></th>
                     <th></th>
                 </tr>
@@ -431,7 +431,7 @@
                         <th></th>
                         <th>Invoice #</th>
                         <th>Customer</th>
-                        <th>Remarks</th>
+                        <th width="20%">Remarks</th>
                         <th>Order</th>
                         <th>Status</th>
                         <th><center>Action</center></th>
@@ -842,6 +842,7 @@
 <script src="assets/plugins/spinner/dist/ladda.min.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 <!-- Date range use moment.js same as full calendar plugin -->
 <script src="assets/plugins/fullcalendar/moment.min.js"></script>
 <!-- Data picker -->
@@ -911,7 +912,7 @@ $(document).ready(function(){
                 { targets:[3],data: "date_due" },
                 { targets:[4],data: "customer_name" },
                 { targets:[5],data: "department_name" },
-                { targets:[6],data: "remarks" },
+                { targets:[6],data: "remarks",render: $.fn.dataTable.render.ellipsis(60) },
                 {
                     targets:[7],
                     render: function (data, type, full, meta){
@@ -926,6 +927,7 @@ $(document).ready(function(){
         dt_so=$('#tbl_inv_list').DataTable({
             "bLengthChange":false,
             "ajax" : "Dispatching/transaction/open",
+            "autoWidth":false,
             "columns": [
                 {   visible:false,
                     "targets": [0],
@@ -936,7 +938,7 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "inv_no" },
                 { targets:[2],data: "customer_name" },
-                { targets:[3],data: "remarks" },
+                { targets:[3],data: "remarks",render: $.fn.dataTable.render.ellipsis(60) },
                 { targets:[4],data: "date_invoice" },
                 { targets:[5],data: "order_status" },
                 {
