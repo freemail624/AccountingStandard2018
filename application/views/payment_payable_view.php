@@ -335,7 +335,7 @@
                             <th>Reference #</th>
                             <th>Due Date</th>
                             <th>Terms</th>
-                            <th>Remarks</th>
+                            <th style="width:20%;">Remarks</th>
                             <th style="text-align: right;">Payable</th>
                             <th>Payment</th>
                             <th>Action</th>

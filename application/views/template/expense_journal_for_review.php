@@ -256,18 +256,20 @@
                                 <table class="table table-striped" style="width: 100% !important;">
                                     <thead>
                                     <tr style="border-bottom: solid gray;">
-                                        <td width="12%"><strong>Invoice #</strong></td>
-                                        <td width="12%"><strong>Received Date</strong></td>
-                                        <td width="12%"><strong>Term</strong></td>
-                                        <td width="12%"><strong>Due Date</strong></td>
-                                        <td width="38%"><strong>Remarks</strong></td>
-                                        <td width="14%" style="text-align: right;"><strong>Paid Amount</strong></td>
+                                        <td width=""><strong>Invoice #</strong></td>
+                                        <td width=""><strong>External Ref #</strong></td>
+                                        <td width=""><strong>Received Date</strong></td>
+                                        <td width=""><strong>Term</strong></td>
+                                        <td width=""><strong>Due Date</strong></td>
+                                        <td width="25%"><strong>Remarks</strong></td>
+                                        <td width="15%" style="text-align: right;"><strong>Paid Amount</strong></td>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <?php foreach($payments_list as $pay){ ?>
                                         <tr>
                                             <td><?php echo $pay->dr_invoice_no; ?></td>
+                                            <td><?php echo $pay->external_ref_no; ?></td>
                                             <td><?php echo $pay->delivered_date; ?></td>
                                             <td><?php echo $pay->terms; ?></td>
                                             <td><?php echo $pay->due_date; ?></td>
