@@ -290,7 +290,7 @@
                                     </div>
                                     <div class="col-lg-4" style="margin:0px;">
                                         <div class="form-group" style="margin-bottom:0px;">
-                                                    <label class="">Link to Credit Account :</label>
+                                                    <label class="">Link to Credit Account (Income Account):</label>
                                                     <select name="income_account_id" id="income_account_id" data-error-msg="Link to Account is required." required>
                                                         <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
                                                         <option value="0">None</option>

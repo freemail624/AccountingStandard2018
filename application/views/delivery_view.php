@@ -1634,7 +1634,7 @@ $(document).ready(function(){
                             total_non_tax_amount+=getFloat(value.non_tax_amount);
                             gross_amount+=getFloat(value.dr_line_total_price);*/
                             _line_unit=$('.line_unit'+a).select2({
-             
+                                minimumResultsForSearch: -1
                             });
                             _line_unit.select2('val',value.unit_id);
                             a++;
