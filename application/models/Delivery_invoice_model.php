@@ -356,6 +356,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
         di.dr_invoice_id,
         di.dr_invoice_no,
         di.remarks,
+        di.external_ref_no,
         CONCAT_WS(" ",di.terms,di.duration)as term_description,
         DATE_FORMAT(di.date_delivered,"%m/%d/%Y") as date_delivered,
         s.supplier_name

@@ -192,6 +192,7 @@
                                         <tr>
                                             <th></th>
                                             <th>Invoice #</th>
+                                            <th>External Ref #</th>
                                             <th>Vendor</th>
                                             <th>Terms</th>
                                             <th>Delivered</th>
@@ -886,10 +887,11 @@
                         "defaultContent": ""
                     },
                     { targets:[1],data: "dr_invoice_no" },
-                    { targets:[2],data: "supplier_name" },
-                    { targets:[3],data: "term_description" },
-                    { targets:[4],data: "date_delivered" },
-                    { targets:[5],data: "remarks",render: $.fn.dataTable.render.ellipsis(60) }
+                    { targets:[2],data: "external_ref_no" },
+                    { targets:[3],data: "supplier_name" },
+                    { targets:[4],data: "term_description" },
+                    { targets:[5],data: "date_delivered" },
+                    { targets:[6],data: "remarks",render: $.fn.dataTable.render.ellipsis(60) }
                 ]
             });
 
