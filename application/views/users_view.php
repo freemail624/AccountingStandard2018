@@ -408,7 +408,7 @@
 
             <div id="modal_confirmation" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
                 <div class="modal-dialog modal-sm">
-                    <div class="modal-content"><!---content--->
+                    <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" style="color:white;"  data-dismiss="modal" aria-hidden="true">X</button>
                             <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Confirm Deletion</h4>
@@ -423,7 +423,63 @@
                             <button id="btn_yes" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Yes</button>
                             <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">No</button>
                         </div>
-                    </div><!---content---->
+                    </div>
+                </div>
+            </div>
+
+            <div id="modal_confirmation_change_password" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+                <div class="modal-dialog modal-md">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" style="color:white;"  data-dismiss="modal" aria-hidden="true">X</button>
+                            <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Confirm Change of Password</h4>
+
+                        </div>
+
+                        <div class="modal-body row" style="padding-top: 10px;padding-bottom: 0px;">
+
+                        <form id="frm_change_password">
+                           <div class="form-group">
+                               <label class="col-md-12 control-label" style="font-weight: normal;">Change the Password of <strong><span id="change_password_fullname"></span></strong></label>
+                           </div>
+
+                           <div class="form-group">
+                               <label class="col-md-4 control-label"><strong><b class="required">*</b> Password :</strong></label>
+                               <div class="col-md-8">
+                                   <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-lock"></i>
+                                        </span>
+                                        <input type="hidden" name="user_full_name" id="user_full_name">
+                                       <input type="password" name="user_pword_change" class="form-control" placeholder="Password" data-error-msg="Password is required!" required>
+                                   </div>
+                               </div>
+                           </div>
+
+                           <div class="form-group">
+                               <label class="col-md-4 control-label"><strong><b class="required">*</b> Confirm Password :</strong></label>
+                               <div class="col-md-8">
+                                   <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-lock"></i>
+                                        </span>
+                                       <input type="password" name="user_confirm_pword_change" class="form-control" placeholder="Confirm Password" data-error-msg="Please confirm password!" required>
+                                   </div>
+                                   <span class="help-block m-b-none"><i>Please make sure passwords match.</i></span>
+                               </div>
+                           </div> 
+                        </form>
+                           <div class="form-group">
+                               <label class="col-md-12 control-label"><span class="help-block m-b-none">Changed by: <?php echo $this->session->user_fullname; ?></span></label>
+                           </div> 
+                        
+                        </div>
+                        <div class="modal-footer">
+                       
+                            <button id="btn_yes_change_password" type="button" class="btn btn-success" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Confirm</button>
+                            <button id="btn_cancel_change_password" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
+                        </div>
+                    </div>
                 </div>
             </div><!---modal-->
 
@@ -546,10 +602,11 @@
                     {
                         targets:[6],
                         render: function (data, type, full, meta){
-                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
-                        var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
+                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
+                        var btn_change='<button class="btn btn-info btn-sm" name="change_password"  style="" data-toggle="tooltip" data-placement="top" title="Change Password"><i class="fa fa-user-secret"></i> </button>';
+                        var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
 
-                        return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
+                        return '<center>'+btn_edit+'&nbsp;'+btn_change+'&nbsp;'+btn_trash+'</center>';
                     }
                     }
                 ]
@@ -625,6 +682,24 @@
              });
 
 
+             $('#btn_yes_change_password').click(function(event){
+                    if(validateRequiredFields($('#frm_change_password'))){
+                        if(_txnMode=="change"){
+                            changePasswordUserAccount().done(function(response){
+                                showNotification(response);
+                                if(response.stat=="success"){
+                                    $('#modal_confirmation_change_password').modal('hide');
+                                }
+                            }).always(function(){
+                                showSpinningProgress($('#btn_yes_change_password'));
+                            });
+                        }
+                    }
+
+             });
+
+
+
             $('#btn_remove_photo').click(function(event){
                 event.preventDefault();
                 $('img[name="img_user"]').attr('src','assets/img/anonymous-icon.png');
@@ -688,6 +763,19 @@
                     $('img[name="img_user"]').attr('src',data.photo_path);
                     showList(false);
 
+            });
+
+            $('#tbl_user_list tbody').on('click','button[name="change_password"]',function(){
+                    ///alert("ddd");
+                    _txnMode="change";
+                    _selectRowObj=$(this).closest('tr');
+                    var data=dt.row(_selectRowObj).data();
+                    _selectedID=data.user_id;
+                    $('input[name="user_confirm_pword_change"]').val('');
+                    $('input[name="user_pword_change"]').val('');
+                    $('#user_full_name').val(data.full_name);
+                    $('#modal_confirmation_change_password').modal('show');
+                    $('#change_password_fullname').text(data.full_name);
             });
 
             $('#tbl_user_list tbody').on('click','button[name="remove_info"]',function(){
@@ -821,11 +909,18 @@
 
                   });
 
-
-                    if($('input[name="user_confirm_pword"]').val()!=$('input[name="user_pword"]').val()){
-                        showNotification({title:"Error!",stat:"error",msg:"Password did not match."});
-                        $('input[name="user_confirm_pword"]').focus();
-                        stat=false;
+                    if(_txnMode=="new" || _txnMode=="edit"){
+                      if($('input[name="user_confirm_pword"]').val()!=$('input[name="user_pword"]').val()){
+                          showNotification({title:"Error!",stat:"error",msg:"Password did not match."});
+                          $('input[name="user_confirm_pword"]').focus();
+                          stat=false;
+                      }
+                    } else if (_txnMode=="change"){
+                      if($('input[name="user_confirm_pword_change"]').val()!=$('input[name="user_pword_change"]').val()){
+                          showNotification({title:"Error!",stat:"error",msg:"Passwords did not match."});
+                          $('input[name="user_confirm_pword_change"]').focus();
+                          stat=false;
+                      }
                     }
 
                 return stat;
@@ -843,6 +938,18 @@
                 "url":"Users/transaction/create",
                 "data":_data,
                 "beforeSend": showSpinningProgress($('#btn_save'))
+            });
+        };
+
+        var changePasswordUserAccount=function(){
+            var _data=$('#frm_change_password').serializeArray();
+            _data.push({name : "user_id" ,value : _selectedID});
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Users/transaction/change",
+                "data":_data,
+                "beforeSend": showSpinningProgress($('#btn_yes_change_password'))
             });
         };
 
@@ -932,9 +1039,6 @@
                     '</tr>' +
                     '</tbody></table><br />';
         };
-
-
-
 
         var substringMatcher = function(strs) {
             return function findMatches(q, cb) {

@@ -87,12 +87,12 @@
             <td colspan="6" style="text-align: left;height: 30px;padding: 6px;border-left: 1px solid gray;border-bottom: 1px solid gray;border-right: 1px solid gray;"><?php echo $purchase_info->remarks; ?></td>
         </tr>
         <tr>
-        	<td align="left" colspan="2" style="border-left: 1px solid gray;"><b>Prepared By:</b></td>
+        	<td align="left" colspan="2" style="border-left: 1px solid gray;"><b>Approved By:</b></td>
         	<td colspan="3" style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-left: 1px solid gray;" align="left">Global Discount %:</td>
         	<td style="padding: 6px;border-bottom: 1px solid gray;height: 30px; border-right: 1px solid gray;" align="right"><?php echo number_format($purchase_info->total_overall_discount,2); ?></td>
         </tr>
         <tr>
-            <td align="left" colspan="2"  style="border-left: 1px solid gray;"></td>
+            <td align="left" colspan="2"  style="border-left: 1px solid gray;"><?php echo $purchase_info->user ?></td>
             <td  colspan="3"  style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-left: 1px solid gray;" align="left">Total Discount :</td>
             <td style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-right: 1px solid gray;" align="right"><?php echo number_format($purchase_info->total_overall_discount_amount +$purchase_info->total_discount ,2); ?></td>
         </tr>
@@ -102,18 +102,18 @@
             <td style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-right: 1px solid gray;" align="right"><?php echo number_format($purchase_info->total_before_tax,2); ?></td>
         </tr>
         <tr>
-        	<td align="left" colspan="2" style="border-left: 1px solid gray;"><b>Received By:</b></td>
+        	<td align="left" colspan="2" style="border-left: 1px solid gray;"><b>Date:</b></td>
         	<td colspan="3" style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-left: 1px solid gray;" align="left">Total Tax Amount:</td>
         	<td style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-right: 1px solid gray;" align="right"><?php echo number_format($purchase_info->total_tax_amount,2); ?></td>
         </tr>
         <tr>
-        	<td align="left" colspan="2" style="border-left: 1px solid gray;" ></td>
+        	<td align="left" colspan="2" style="border-left: 1px solid gray;" ><?php echo ($purchase_info->date_approved!= '0000-00-00 00:00:00'? $purchase_info->date_approved :'' ) ?></td>
         	<td colspan="3" style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-left: 1px solid gray;" align="left">Total After Tax:</td>
         	<td style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-right: 1px solid gray;" align="right"><?php echo number_format($purchase_info->total_after_tax,2); ?></td>
         </tr>
 
         <tr>
-            <td align="left" colspan="2"  style="border-bottom: 1px solid gray;border-left: 1px solid gray;">Date</td>
+            <td align="left" colspan="2"  style="border-bottom: 1px solid gray;border-left: 1px solid gray;"></td>
             <td  colspan="3"  style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-left: 1px solid gray;" align="left"><strong>Total:</strong></td>
             <td style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-right: 1px solid gray;" align="right"><strong><?php echo number_format($purchase_info->total_after_discount,2); ?></strong></td>
         </tr>

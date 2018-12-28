@@ -16,12 +16,11 @@ class Trans_model extends CORE_Model {
 			LEFT JOIN trans_type tt ON tt.trans_type_id = t.trans_type_id
 			LEFT JOIN user_accounts ua ON ua.user_id = t.user_id
 
-			WHERE t.trans_date BETWEEN '$startDate' AND '$endDate'
+			WHERE CAST(t.trans_date as date) BETWEEN '$startDate' AND '$endDate'
 
             ".($trans_type_id==null?"":" AND t.trans_type_id = '$trans_type_id'")."
             ".($trans_key_id==null?"":" AND t.trans_key_id = '$trans_key_id'")."
             ".($user_id==null?"":" AND t.user_id = '$user_id'")."
-
 
             ORDER BY t.trans_id ASC
         ";

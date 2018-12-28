@@ -331,13 +331,14 @@
                     <table id="tbl_payables" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;border: 1px solid gray;">
                         <thead class="">
                         <tr>
-                            <th width="12%">Invoice #</th>
-                            <th width="12%">Due Date</th>
-                            <th width="12%">Terms</th>
-                            <th width="30%">Remarks</th>
-                            <th width="12%" style="text-align: right;">Payable</th>
-                            <th width="14%">Payment</th>
-                            <th width="5%">Action</th>
+                            <th>Invoice #</th>
+                            <th>Reference #</th>
+                            <th>Due Date</th>
+                            <th>Terms</th>
+                            <th>Remarks</th>
+                            <th style="text-align: right;">Payable</th>
+                            <th>Payment</th>
+                            <th>Action</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -346,10 +347,10 @@
                         <tfoot>
 
                         <tr>
-                            <td colspan="7" style="height: 50px;">&nbsp;</td>
+                            <td colspan="8" style="height: 50px;">&nbsp;</td>
                         </tr>
                         <tr>
-                            <td colspan="4" align="right"><b>Total : </b></td>
+                            <td colspan="5" align="right"><b>Total : </b></td>
                             <td id="td_total_payables" align="right"><b>0.00</b></td>
                             <td id="td_total_payments" align="right"><b>0.00</b></td>
                             <td></td>
@@ -573,9 +574,9 @@ $(document).ready(function(){
                     }
                 },
                 {
-                    targets:[8],data: "is_active",
+                    targets:[8],data: null ,
                     render: function (data, type, full, meta){
-                        if(data=="1"){
+                        if(data.is_active=="1" && data.is_journal_posted == '0' ){
                              return '<center><button type="button" class="btn btn-default btn_cancel_or"><i class="fa fa-times-circle"></i></button></center>';
                         }else{
                             return '<center><button type="button" class="btn btn-default btn_cancel_or" disabled><i class="fa fa-times-circle"></i></button></center>';

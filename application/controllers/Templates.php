@@ -477,8 +477,10 @@ class Templates extends CORE_Controller {
 
                         $info=$m_purchases->get_list(
                                 $filter_value,
-                                'purchase_order.*,CONCAT_WS(" ",purchase_order.terms,purchase_order.duration)as term_description,suppliers.supplier_name,suppliers.address,suppliers.email_address,suppliers.contact_no',
+                                'purchase_order.*,CONCAT_WS(" ",purchase_order.terms,purchase_order.duration)as term_description,suppliers.supplier_name,suppliers.address,suppliers.email_address,suppliers.contact_no,
+                                    CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as user',
                                 array(
+                                    array('user_accounts','user_accounts.user_id=purchase_order.approved_by_user','left'),
                                     array('suppliers','suppliers.supplier_id=purchase_order.supplier_id','left')
                                 )
                             );

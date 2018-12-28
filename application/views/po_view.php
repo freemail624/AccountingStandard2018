@@ -877,9 +877,9 @@ $(document).ready(function(){
                 {
                     targets:[1], data:null,
                     render: function (data, type, full, meta){
-                        var btn_email='<button id="btn_email" class="btn-primary btn btn-sm " style="margin-left:-15px;" data-toggle="tooltip" data-placement="top"><i class="fa fa-share"></i> <span class="display" style="display:none;"></span></button> ';
+                        var btn_email='<button id="btn_email" class="btn-primary btn btn-sm " style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Manually Send Email"><i class="fa fa-share"></i> <span class="display" style="display:none;"></span></button> ';
                         var btn_disabled='<button id="btn_email" class="btn-primary btn btn-sm disabled" style="margin-left:-15px;" data-toggle="tooltip" data-placement="top"><i class="fa fa-share"></i> <span class="display" style="display:none;"></span></button> ';
-                        if(data.approval_id =="1"){
+                        if(data.approval_id !="1"){
                             return '<center>'+btn_email+'</center>';
                         }else{
                             return '<center>'+btn_disabled+'</center>';
@@ -1209,18 +1209,23 @@ $(document).ready(function(){
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.purchase_order_id;
             var btn=$(this);
-        
-            $.ajax({
-                "dataType":"json",
-                "type":"POST",
-                "url":"Purchases/transaction/email/"+_selectedID,
-                "beforeSend": showSpinningProgress(btn)
-            }).done(function(response){
-                showNotification(response);
-                dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
+            sendCreatePO(_selectedID).done(function(response){
+                            showNotification(response);
+            }).always(function(){
+                        });
+
+
+            // $.ajax({
+            //     "dataType":"json",
+            //     "type":"POST",
+            //     "url":"Purchases/transaction/email/"+_selectedID,
+            //     "beforeSend": showSpinningProgress(btn)
+            // }).done(function(response){
+            //     showNotification(response);
+            //     dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
  
     
-            });
+            // });
         });
 
         $('#btn_new').click(function(){
@@ -1554,8 +1559,13 @@ $(document).ready(function(){
                         dt.row.add(response.row_added[0]).draw();
                         clearFields($('#frm_purchases'));
                         showList(true);
-                    }).always(function(){
                         showSpinningProgress($('#btn_save'));
+                        sendCreatePO(response.row_added[0].purchase_order_id).done(function(response){
+                            showNotification(response);
+                        }).always(function(){
+                        });
+                    }).always(function(){
+
                     });
                 }else{
                     updatePurchaseOrder().done(function(response){
@@ -1563,6 +1573,11 @@ $(document).ready(function(){
                         dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
                         clearFields($('#frm_purchases'));
                         showList(true);
+                        sendUpdatePO(response.row_updated[0].purchase_order_id).done(function(response){
+                            showNotification(response);
+                        }).always(function(){
+                        });
+
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
                     });
@@ -1683,6 +1698,21 @@ $(document).ready(function(){
             "url":"Suppliers/transaction/create",
             "data":_data,
             "beforeSend": showSpinningProgress($('#btn_create_new_supplier'))
+        });
+    };
+    var sendCreatePO=function(purchase_order_id){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Email_po_settings/transaction/send-email/"+purchase_order_id
+        });
+    };
+
+    var sendUpdatePO=function(purchase_order_id){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Email_po_settings/transaction/send-email-update/"+purchase_order_id
         });
     };
 

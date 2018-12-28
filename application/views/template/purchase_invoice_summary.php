@@ -66,7 +66,8 @@
     <table width="95%" style="margin-left: 5%; text-align: right;">
     	<thead>
     		<tr>
-    			<td style="text-align: left;"><strong>Ref #</strong></td>
+                <td style="text-align: left;"><strong>Ref #</strong></td>
+    			<td style="text-align: left;"><strong>External Ref #</strong></td>
     			<td style="text-align: left;"><strong>Date</strong></td>
     			<td><strong>Invoice Amount</strong></td>
     		</tr>
@@ -77,7 +78,8 @@
     		 foreach ($purchase_invoice_summary as $summary) {
 				if ($summary->supplier_id==$supplier->supplier_id) { ?> 
     					<tr>
-    						<td style="text-align: left;"><?php echo $summary->dr_invoice_no; ?></td>
+                            <td style="text-align: left;"><?php echo $summary->dr_invoice_no; ?></td>
+    						<td style="text-align: left;"><?php echo $summary->external_ref_no; ?></td>
     						<td style="text-align: left;"><?php echo $summary->date_delivered; ?></td>
     						<td><?php echo number_format($summary->total_after_discount,4); ?></td>
     					</tr>		

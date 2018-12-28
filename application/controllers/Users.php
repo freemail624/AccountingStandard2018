@@ -158,11 +158,35 @@ class Users extends CORE_Controller
                 echo json_encode($response);
 
                 break;
+
+            case 'change' :
+                $m_users=$this->Users_model;
+                $user_account_id=$this->input->post('user_id',TRUE);
+                $m_users->user_pword=sha1($this->input->post('user_pword_change',TRUE));
+                $m_users->set('date_modified','NOW()');
+                $m_users->modified_by_user=$this->session->user_id;
+                $m_users->modify($user_account_id);
+
+
+                $response['title']='Success!';
+                $response['stat']='success';
+                $response['msg']='User Account Password Successfully Updated.';
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=43; // TRANS TYPE
+                $m_trans->trans_log='Updated User Password: '.$this->input->post('user_full_name',TRUE).' ID('.$user_account_id.')';
+                $m_trans->save();
+
+                echo json_encode($response);
+
+                break;
             //****************************************************************************************************************
             case 'delete':
                 $m_users=$this->Users_model;
                 $user_account_id=$this->input->post('user_id',TRUE);
-
                 $m_users->set('date_deleted','NOW()');
                 $m_users->deleted_by_user=$this->session->user_id;
                 $m_users->is_deleted=1;

@@ -61,7 +61,7 @@
         <p style="text-align: center;">Period <?php echo $_GET['startDate']; ?> to <?php echo $_GET['endDate']; ?></p>
     </div>
     <?php foreach ($invoice_numbers as $invoice_number) { ?>
-		<span><strong><?php echo $invoice_number->dr_invoice_no; ?></strong></span><br><hr>
+		<span><strong><?php echo $invoice_number->dr_invoice_no; ?></strong>  <?php if($invoice_number->external_ref_no !='' ){ ?>(<?php echo $invoice_number->external_ref_no; ?>)<?php } ?></span><br><hr>
 
 
 					<span style="margin-left: 50px;"><strong><?php echo $invoice_number->supplier_name; ?></strong><hr></span>

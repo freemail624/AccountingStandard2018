@@ -74,6 +74,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
     function get_report_summary($startDate,$endDate,$supplier_id){
         $sql="SELECT
             di.dr_invoice_no,
+            di.external_ref_no,
             s.*,
             di.date_delivered,
             di.total_after_discount + di.total_discount + di.total_overall_discount_amount as total_after_discount 

@@ -156,6 +156,16 @@ class Payable_payments extends CORE_Controller
                 $m_payment=$this->Payable_payment_model;
 
 
+
+                $payment_verification= $m_payment->get_list($payment_id); 
+                if($payment_verification[0]->is_journal_posted == TRUE){
+                    $response['stat']='error';
+                    $response['title']='<b>Error!</b>';
+                    $response['msg']='Payment Already Posted in Accounting!<br />';
+                    die(json_encode($response));
+                }
+
+
                 $m_payment->begin();
 
                 $m_payment->set('date_cancelled','NOW()');

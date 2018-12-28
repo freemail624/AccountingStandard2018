@@ -79,7 +79,7 @@ class Rights_link_model extends CORE_Model{
                                           (69,'9','9-17','Aging of Receivables'),
                                           (70,'9','9-18','Aging of Payables'),
                                           (71,'9','9-19','Statement of Account'),
-                                          (72,'6','6-10','Email Settings'),
+                                          -- (72,'6','6-10','Email Settings'),
                                           (73,'14','14-1','Treasury'),
                                           (74,'9','9-20','Replenishment Batch Report'),
                                           (75,'9','9-21','General Ledger'),
@@ -107,7 +107,8 @@ class Rights_link_model extends CORE_Model{
                                           (97,'17','17-1','Certificate of Creditable Tax'),
                                           (98,'17','17-2','Monthly Percentage Tax Return'),
                                           (99,'17','17-3','Quarterly Percentage Tax Return'),
-                                          (100,'1','1-7','Vouchers (Check Details Edit)')
+                                          (100,'1','1-7','Vouchers (Check Details Edit)'),
+                                          (101,'6','6-15','Purchase Order Email Settings')
 
 
 

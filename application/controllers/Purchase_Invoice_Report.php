@@ -104,7 +104,7 @@
 
                         $data['invoice_numbers']=$m_delivery_invoice->get_list(
                             'date_delivered BETWEEN "'.$startDate.'" AND "'.$endDate.'" '.($sup_id==0?'':' AND suppliers.supplier_id='.$sup_id).' AND  delivery_invoice.is_active=TRUE AND delivery_invoice.is_deleted=FALSE',
-                            'DISTINCT(delivery_invoice.dr_invoice_no), delivery_invoice.supplier_id,delivery_invoice.dr_invoice_id,delivery_invoice.supplier_id,suppliers.supplier_name',
+                            'DISTINCT(delivery_invoice.dr_invoice_no), delivery_invoice.external_ref_no, delivery_invoice.supplier_id,delivery_invoice.dr_invoice_id,delivery_invoice.supplier_id,suppliers.supplier_name',
                             array(
                                 array('suppliers','suppliers.supplier_id=delivery_invoice.supplier_id','left')
                             )
@@ -277,7 +277,7 @@
                         $excel->getActiveSheet()->mergeCells('D'.$i.':F'.$i);
                         $excel->getActiveSheet()->mergeCells('G'.$i.':I'.$i);
 
-                        $excel->getActiveSheet()->setCellValue('A'.$i,$summary->dr_invoice_no);
+                        $excel->getActiveSheet()->setCellValue('A'.$i,$summary->dr_invoice_no.' '.($summary->external_ref_no != '' ? ' ('.$summary->external_ref_no.')' : ''));
                         $excel->getActiveSheet()->setCellValue('D'.$i,$summary->date_delivered);
                         $excel->getActiveSheet()->getStyle('G'.$i)->getNumberFormat()->setFormatCode('###,##0.0000;(###,##0.0000)');
                         $excel->getActiveSheet()->setCellValue('G'.$i,number_format($summary->total_after_discount,2))
@@ -324,7 +324,7 @@
 
                         $invoice_numbers=$m_delivery_invoice->get_list(
                             'date_delivered BETWEEN "'.$startDate.'" AND "'.$endDate.'" '.($sup_id==0?'':' AND suppliers.supplier_id='.$sup_id).' AND  delivery_invoice.is_active=TRUE AND delivery_invoice.is_deleted=FALSE',
-                            'DISTINCT(delivery_invoice.dr_invoice_no), delivery_invoice.supplier_id,delivery_invoice.dr_invoice_id,delivery_invoice.supplier_id,suppliers.supplier_name',
+                            'DISTINCT(delivery_invoice.dr_invoice_no), delivery_invoice.external_ref_no, delivery_invoice.supplier_id,delivery_invoice.dr_invoice_id,delivery_invoice.supplier_id,suppliers.supplier_name',
                             array(
                                 array('suppliers','suppliers.supplier_id=delivery_invoice.supplier_id','left')
                             )
@@ -417,7 +417,7 @@
 
                         $excel->getActiveSheet()->mergeCells('A'.$i.':I'.$i);
                         $excel->getActiveSheet()->getStyle('A'.$i)->getAlignment()->setIndent(0);
-                        $excel->getActiveSheet()->setCellValue('A'.$i,$invoice_number->dr_invoice_no)
+                        $excel->getActiveSheet()->setCellValue('A'.$i,$invoice_number->dr_invoice_no.' '.($invoice_number->external_ref_no != '' ? ' ('.$invoice_number->external_ref_no.')' : '') )
                                                 ->getStyle('A'.$i)->getFont()->setBold(TRUE)
                                                 ->setSize(12);
                         $excel->getActiveSheet()->getStyle('A'.$i.':I'.$i)->applyFromArray($border);

@@ -140,6 +140,7 @@
                                                                             <thead class="">
                                                                             <tr>
                                                                                 <th>Ref #</th>
+                                                                                <th>External Ref #</th>
                                                                                 <th>Supplier</th>
                                                                                 <th>Date</th>
                                                                                 <th>Invoice Amount</th>
@@ -149,11 +150,11 @@
                                                                             </tbody>
                                                                             <tfoot>
                                                                                 <tr>
-                                                                                    <td align="right" colspan="3">Current Page Total : </td>
+                                                                                    <td align="right" colspan="4">Current Page Total : </td>
                                                                                     <td id="td_page_total_summary" align="right"></td>
                                                                                 </tr>
                                                                                 <tr>
-                                                                                    <td align="right" colspan="3">Grand Total : </td>
+                                                                                    <td align="right" colspan="4">Grand Total : </td>
                                                                                     <td id="td_grand_total_summary" align="right"></td>
                                                                                 </tr>
                                                                             </tfoot>
@@ -167,6 +168,7 @@
                                                                             <thead class="">
                                                                             <tr>
                                                                                 <th>Ref #</th>
+                                                                                <th>External Ref #</th>
                                                                                 <th>Supplier</th>
                                                                                 <th>Product</th>
                                                                                 <th>Unit Cost</th>
@@ -178,11 +180,11 @@
                                                                             </tbody>
                                                                             <tfoot>
                                                                                 <tr>
-                                                                                    <td align="right" colspan="5">Current Page Total : </td>
+                                                                                    <td align="right" colspan="6">Current Page Total : </td>
                                                                                     <td id="td_page_total_detailed" align="right"></td>
                                                                                 </tr>
                                                                                 <tr>
-                                                                                    <td align="right" colspan="5">Grand Total : </td>
+                                                                                    <td align="right" colspan="6">Grand Total : </td>
                                                                                     <td id="td_grand_total_detailed" align="right"></td>
                                                                                 </tr>
                                                                             </tfoot>
@@ -307,11 +309,12 @@
                     
                         "columns":[
                             { targets:[0],data: "dr_invoice_no" },
-                            { targets:[1],data: "supplier_name" },
-                            { targets:[2],data: "date_delivered" },
+                            { targets:[1],data: "external_ref_no" },
+                            { targets:[2],data: "supplier_name" },
+                            { targets:[3],data: "date_delivered" },
                             {
                                 sClass: "numericCol", 
-                                targets:[3],data: "total_after_discount",
+                                targets:[4],data: "total_after_discount",
                                 render: function(data,type,full,meta){
                                     return accounting.formatNumber(data,2);
                                 }
@@ -330,7 +333,7 @@
 
                             // Total over all pages
                             total = api
-                                .column( 3 )
+                                .column( 4 )
                                 .data()
                                 .reduce( function (a, b) {
                                     return intVal(a) + intVal(b);
@@ -338,7 +341,7 @@
 
                             // Total over this page
                             pageTotal = api
-                                .column( 3, { page: 'current'} )
+                                .column( 4, { page: 'current'} )
                                 .data()
                                 .reduce( function (a, b) {
                                     return intVal(a) + intVal(b);
@@ -373,19 +376,20 @@
                     
                         "columns":[
                             { targets:[0],data: "dr_invoice_no" },
-                            { targets:[1],data: "supplier_name" },
-                            { targets:[2],data: "product_desc" },
+                            { targets:[1],data: "external_ref_no" },
+                            { targets:[2],data: "supplier_name" },
+                            { targets:[3],data: "product_desc" },
                             { 
                                 sClass: "numericCol", 
-                                targets:[3],data: "dr_price", 
+                                targets:[4],data: "dr_price", 
                                 render: function(data,type,full,meta){
                                     return accounting.formatNumber(data,2);
                                 } 
                             },
-                            { targets:[4],data: "dr_qty" },
+                            { targets:[5],data: "dr_qty" },
                             {
                                 sClass: "numericCol", 
-                                targets:[3],data: "total_amount",
+                                targets:[6],data: "total_amount",
                                 render: function(data,type,full,meta){
                                     return accounting.formatNumber(data,2);
                                 }
@@ -404,7 +408,7 @@
 
                             // Total over all pages
                             total = api
-                                .column( 5 )
+                                .column( 6 )
                                 .data()
                                 .reduce( function (a, b) {
                                     return intVal(a) + intVal(b);
@@ -412,7 +416,7 @@
 
                             // Total over this page
                             pageTotal = api
-                                .column( 5, { page: 'current'} )
+                                .column( 6, { page: 'current'} )
                                 .data()
                                 .reduce( function (a, b) {
                                     return intVal(a) + intVal(b);

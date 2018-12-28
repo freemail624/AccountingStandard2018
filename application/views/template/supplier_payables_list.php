@@ -2,6 +2,7 @@
     <?php foreach($payables as $item){ ?>
         <tr>
             <td><?php echo $item->inv_no; ?></td>
+            <td><?php echo $item->ext_ref_no; ?></td>
             <td><?php echo $item->date_due; ?></td>
             <td><?php echo $item->terms; ?></td>
             <td><?php echo $item->remarks; ?></td>

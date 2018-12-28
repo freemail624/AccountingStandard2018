@@ -156,7 +156,8 @@
                                 <li class="<?php echo (in_array('6-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="company">Setup Company Info</a></li>
                                 <li class="<?php echo (in_array('6-7',$this->session->user_rights)?'':'hidden'); ?>"><a href="Check_layout">Setup Check Layout</a></li>
                                 <li class="<?php echo (in_array('6-8',$this->session->user_rights)?'':'hidden'); ?>"><a href="Recurring_template">Recurring Template</a></li>
-                                <li class="<?php echo (in_array('6-10',$this->session->user_rights)?'':'hidden'); ?>"><a href="Email_settings">Email Settings</a></li>
+                                <li class="<?php echo (in_array('6-15',$this->session->user_rights)?'':'hidden'); ?>"><a href="Email_po_settings">Purchase Order Email Settings</a></li>
+                                <!-- <li class="<?php echo (in_array('6-10',$this->session->user_rights)?'':'hidden'); ?>"><a href="Email_settings">Email Settings</a></li> -->
                                 <li class="<?php echo (in_array('6-11',$this->session->user_rights)?'':'hidden'); ?>"><a href="Email_report_settings">Email Report Settings</a></li>
                                 <li class="<?php echo (in_array('6-9',$this->session->user_rights)?'':'hidden'); ?>"><a href="DBBackup">Backup Database</a></li>
                                 <li class="<?php echo (in_array('6-13',$this->session->user_rights)?'':'hidden'); ?>"><a href="Trail">Audit Trail</a></li>

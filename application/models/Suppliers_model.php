@@ -71,6 +71,7 @@ class Suppliers_model extends CORE_Model {
         di.date_due,
         COALESCE(di.remarks,pi.remarks,ji.remarks) remarks,
         IFNULL(ref_no, txn_no) inv_no,
+        IFNULL(di.external_ref_no, '') ext_ref_no,
         SUM(ja.cr_amount)  as journal_payable_amount
         FROM
         (journal_info ji
