@@ -111,7 +111,7 @@
             <td colspan="8" style="text-align: left;font-weight: bolder; ;height: 30px;padding: 6px;" class="left right"><b>Remarks</b> </td>
             </tr>
             <tr>
-            <td colspan="8" style="text-align: left;font-weight: bolder; ;height: 30px;padding: 6px;" class="right left bottom"><?php echo $billing->remarks; ?></td>
+            <td colspan="8" style="text-align: left;;height: 30px;padding: 6px;" class="right left bottom"><?php echo $billing->remarks; ?></td>
             </tr>
                 <tr>
                 <td colspan="2" class="left ">Prepared By:</td>

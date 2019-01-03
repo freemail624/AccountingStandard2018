@@ -1548,9 +1548,7 @@ $(document).ready(function(){
                 _selectRowObj=$(this).closest('tr');
                 var data=dt.row(_selectRowObj).data();
                 _selectedID=data.dr_invoice_id;
-
                 $('#span_invoice_no').html(data.dr_invoice_no);
-
                 $('textarea[name="remarks"]').val(data.remarks);
                 $('#cbo_suppliers').select2('val',data.supplier_id);
                 $('#cbo_departments').select2('val',data.department_id);

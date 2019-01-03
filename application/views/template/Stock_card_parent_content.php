@@ -69,7 +69,7 @@
                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>Out</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>Balance</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;"><b>Department</b></td>
-                    <td style="border: 1px solid lightgrey;padding: 5px;"><b>Remarks</b></td>
+                    <td style="border: 1px solid lightgrey;padding: 5px;width: 25%"><b>Remarks</b></td>
 
                 </tr>
 

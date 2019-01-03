@@ -358,10 +358,7 @@ class Journal_account_model extends CORE_Model{
             ORDER BY ja.account_id ASC) as journal_data
         GROUP BY journal_data.account_id";
         return $this->db->query($sql)->result();
-
-
-
-}
+    }
 
 
 }

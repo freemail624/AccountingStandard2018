@@ -113,7 +113,7 @@
                                                <form id="frm_settings" role="form" class="form-horizontal row-border">
                                                 <div class="row" style="margin-left: 0px;"><h5 class="h2-panel-heading">Email Settings (From) </h5></div><hr>
                                                   <div class="form-group">
-                                                       <label class="col-md-2  control-label"><strong> Send After PO Create :</strong></label>
+                                                       <label class="col-md-4  control-label"><strong> Send Manually and/or After PO Create :</strong></label>
                                                        <div class="col-md-7">
                                                            <div class="input-group">
                                                                 <span class="input-group-addon">
@@ -127,7 +127,7 @@
                                                        </div>
                                                    </div>
                                                   <div class="form-group">
-                                                       <label class="col-md-2  control-label"><strong> Send After PO Update :</strong></label>
+                                                       <label class="col-md-4  control-label"><strong> Send After PO Update :</strong></label>
                                                        <div class="col-md-7">
                                                            <div class="input-group">
                                                                 <span class="input-group-addon">
@@ -141,7 +141,7 @@
                                                        </div>
                                                    </div>
                                                   <div class="form-group">
-                                                       <label class="col-md-2  control-label"><strong> Email Address :</strong></label>
+                                                       <label class="col-md-4  control-label"><strong> Email Address :</strong></label>
                                                        <div class="col-md-7">
                                                            <div class="input-group">
                                                                 <span class="input-group-addon">
@@ -155,7 +155,7 @@
                                                        </div>
                                                    </div>
                                                    <div class="form-group">
-                                                       <label class="col-md-2 control-label"><strong> Password :</strong></label>
+                                                       <label class="col-md-4 control-label"><strong> Password :</strong></label>
                                                        <div class="col-md-7">
                                                            <div class="input-group">
                                                                 <span class="input-group-addon">
@@ -166,7 +166,7 @@
                                                        </div>
                                                    </div>
                                                    <div class="form-group">
-                                                       <label class="col-md-2 control-label"> <strong>Name (From) :</strong></label>
+                                                       <label class="col-md-4 control-label"> <strong>Name (From) :</strong></label>
                                                        <div class="col-md-7">
                                                            <div class="input-group">
                                                                 <span class="input-group-addon">
@@ -177,7 +177,7 @@
                                                        </div>
                                                    </div>
                                                    <div class="form-group">
-                                                       <label class="col-md-2 control-label"> <strong>Company Abbreviation :</strong></label>
+                                                       <label class="col-md-4 control-label"> <strong>Company Abbreviation :</strong></label>
                                                        <div class="col-md-7">
                                                            <div class="input-group">
                                                                 <span class="input-group-addon">
@@ -188,7 +188,7 @@
                                                        </div>
                                                    </div>
                                                    <div class="form-group">
-                                                       <label class="col-md-2 control-label"> <strong>System Website :</strong></label>
+                                                       <label class="col-md-4 control-label"> <strong>System Website :</strong></label>
                                                        <div class="col-md-7">
                                                            <div class="input-group">
                                                                 <span class="input-group-addon">
@@ -199,7 +199,7 @@
                                                        </div>
                                                    </div>
                                                    <div class="form-group">
-                                                       <label class="col-md-2 control-label"> <strong>Default Message :</strong></label>
+                                                       <label class="col-md-4 control-label"> <strong>Default Message :</strong></label>
                                                        <div class="col-md-7">
                                                            <div class="input-group">
                                                                 <span class="input-group-addon">
