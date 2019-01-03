@@ -97,17 +97,9 @@ class Cash_invoice_model extends CORE_Model
 		cash_invoice ci
 
 		LEFT JOIN customers c ON c.customer_id = ci.customer_id
-		LEFT JOIN (
-			SELECT cii.cash_invoice_id, SUM(IFNULL(p.income_account_id,0)) as identifier
-			FROM cash_invoice_items cii
-			LEFT JOIN products p ON p.product_id = cii.product_id
-			GROUP BY cii.cash_invoice_id
-			) as cii ON cii.cash_invoice_id = ci.cash_invoice_id
-
 		WHERE ci.is_active = TRUE AND
 		ci.is_deleted = FALSE AND 
-		ci.is_journal_posted = FALSE
-		AND cii.identifier > 0';
+		ci.is_journal_posted = FALSE';
 		
 		return $this->db->query($sql)->result();
 		}

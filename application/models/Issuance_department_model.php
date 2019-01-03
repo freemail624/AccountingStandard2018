@@ -55,13 +55,9 @@ class Issuance_department_model extends CORE_Model
 
 		FROM issuance_department_info  idi
 		LEFT JOIN departments d ON d.department_id = idi.from_department_id 
-		LEFT JOIN (SELECT idii.issuance_department_id,SUM(IFNULL(p.expense_account_id,0)) as identifier FROM issuance_department_items idii
-		LEFT JOIN products p on p.product_id = idii.product_id
-		GROUP BY idii.issuance_department_id) as idii ON idii.issuance_department_id = idi.issuance_department_id
 		WHERE idi.is_journal_posted_from = FALSE
 		AND idi.is_active = TRUE
 		AND idi.is_deleted = FALSE
-        AND idii.identifier > 0
 
 		UNION ALL 
 
@@ -76,13 +72,9 @@ class Issuance_department_model extends CORE_Model
 
 		FROM issuance_department_info idi
 		LEFT JOIN departments d ON d.department_id = idi.to_department_id 
-		LEFT JOIN(SELECT idii.issuance_department_id,SUM(IFNULL(p.expense_account_id,0)) as identifier FROM issuance_department_items idii
-		LEFT JOIN products p on p.product_id = idii.product_id
-		GROUP BY idii.issuance_department_id) as idii ON idii.issuance_department_id = idi.issuance_department_id
 		WHERE idi.is_journal_posted_to = FALSE
 		AND idi.is_active = TRUE
-		AND idi.is_deleted = FALSE
-        AND idii.identifier > 0) as main
+		AND idi.is_deleted = FALSE) as main
 		ORDER BY main.issuance_department_id
 
 

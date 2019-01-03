@@ -361,14 +361,10 @@ GROUP BY n.supplier_id HAVING total_balance > 0
 
         FROM delivery_invoice di
         LEFT JOIN suppliers s ON s.supplier_id = di.supplier_id
-        LEFT JOIN (SELECT dii.dr_invoice_id,SUM(IFNULL(p.expense_account_id,0)) as identifier FROM delivery_invoice_items dii
-        LEFT JOIN products p ON p.product_id = dii.product_id
-        GROUP BY dii.dr_invoice_id ) as dii ON dii.dr_invoice_id = di.dr_invoice_id
 
         WHERE di.is_active = TRUE AND
         di.is_deleted = FALSE AND
-        di.is_journal_posted = FALSE
-        AND dii.identifier > 0';
+        di.is_journal_posted = FALSE';
 
          return $this->db->query($sql)->result();
 

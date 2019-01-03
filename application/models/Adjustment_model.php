@@ -100,25 +100,15 @@ parent::__construct();
 			d.department_name
 
 			FROM adjustment_info ai
-
 			LEFT JOIN departments d ON d.department_id = ai.department_id
-
-			LEFT JOIN (SELECT 
-			aii.adjustment_id, SUM(IFNULL(p.expense_account_id,0)) as identifier
-			FROM adjustment_items aii 
-			LEFT JOIN products p ON p.product_id = aii.product_id
-			GROUP BY aii.adjustment_id) as aii ON aii.adjustment_id = ai.adjustment_id
-
 
 			WHERE
 			ai.is_active=TRUE AND
 			ai.is_deleted=FALSE AND 
 			is_journal_posted=FALSE
 			AND ai.adjustment_type = "IN"
-			AND aii.identifier > 0
 
 			UNION ALL
-
 
 			SELECT 
 
@@ -132,21 +122,13 @@ parent::__construct();
 			d.department_name
 
 			FROM adjustment_info ai
-
 			LEFT JOIN departments d ON d.department_id = ai.department_id
-
-			LEFT JOIN (SELECT 
-			aii.adjustment_id, SUM(IFNULL(p.expense_account_id,0)) as identifier
-			FROM adjustment_items aii 
-			LEFT JOIN products p ON p.product_id = aii.product_id
-			GROUP BY aii.adjustment_id) as aii ON aii.adjustment_id = ai.adjustment_id
 
 			WHERE
 			ai.is_active=TRUE AND
 			ai.is_deleted=FALSE AND 
 			is_journal_posted=FALSE
-			AND ai.adjustment_type = "OUT"
-			AND aii.identifier > 0) as main
+			AND ai.adjustment_type = "OUT") as main
 
 			ORDER BY main.adjustment_id';
         return $this->db->query($sql)->result();
