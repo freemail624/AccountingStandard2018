@@ -90,6 +90,32 @@ class Cash_invoice extends CORE_Controller
 
     function transaction($txn = null,$id_filter=null) {
         switch ($txn){
+
+
+            case'close-invoice':  
+            $m_sales=$this->Cash_invoice_model;
+            $cash_invoice_id =$this->input->post('cash_invoice_id');
+            $m_sales->closing_reason = $this->input->post('closing_reason');
+            $m_sales->closed_by_user = $this->session->user_id;
+            $m_sales->is_closed = TRUE;
+            $m_sales->modify($cash_invoice_id);
+
+
+            $cash_inv_info=$m_sales->get_list($cash_invoice_id,'cash_inv_no');
+            $m_trans=$this->Trans_model;
+            $m_trans->user_id=$this->session->user_id;
+            $m_trans->set('trans_date','NOW()');
+            $m_trans->trans_key_id=11; //CRUD
+            $m_trans->trans_type_id=65; // TRANS TYPE
+            $m_trans->trans_log='Closed/ Did Not Post Cash Invoice No: '.$cash_inv_info[0]->cash_inv_no.' from Cash Receipt Pending with reason: '.$this->input->post('closing_reason');
+            $m_trans->save();
+            $response['title'] = 'Success!';
+            $response['stat'] = 'success';
+            $response['msg'] = 'Cash Invoice successfully closed.';
+            echo json_encode($response);    
+
+            break;
+            
             case 'list':
             $m_pf_invoice = $this->Cash_invoice_model;
             $response['data']=$this->response_rows();

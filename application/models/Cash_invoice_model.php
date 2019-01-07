@@ -99,7 +99,8 @@ class Cash_invoice_model extends CORE_Model
 		LEFT JOIN customers c ON c.customer_id = ci.customer_id
 		WHERE ci.is_active = TRUE AND
 		ci.is_deleted = FALSE AND 
-		ci.is_journal_posted = FALSE';
+		ci.is_journal_posted = FALSE AND
+		ci.is_closed = FALSE';
 		
 		return $this->db->query($sql)->result();
 		}

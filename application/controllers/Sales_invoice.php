@@ -143,6 +143,31 @@ class Sales_invoice extends CORE_Controller
 
     function transaction($txn = null,$id_filter=null) {
         switch ($txn){
+
+            case'close-invoice':  
+            $m_sales=$this->Sales_invoice_model;
+            $sales_invoice_id =$this->input->post('sales_invoice_id');
+            $m_sales->closing_reason = $this->input->post('closing_reason');
+            $m_sales->closed_by_user = $this->session->user_id;
+            $m_sales->is_closed = TRUE;
+            $m_sales->modify($sales_invoice_id);
+
+
+            $sal_inv_info=$m_sales->get_list($sales_invoice_id,'sales_inv_no');
+            $m_trans=$this->Trans_model;
+            $m_trans->user_id=$this->session->user_id;
+            $m_trans->set('trans_date','NOW()');
+            $m_trans->trans_key_id=11; //CRUD
+            $m_trans->trans_type_id=17; // TRANS TYPE
+            $m_trans->trans_log='Closed/ Did Not Post Sales Invoice No: '.$sal_inv_info[0]->sales_inv_no.' from Accounts Receivable Pending with reason: '.$this->input->post('closing_reason');
+            $m_trans->save();
+            $response['title'] = 'Success!';
+            $response['stat'] = 'success';
+            $response['msg'] = 'Sales Invoice successfully closed.';
+            echo json_encode($response);    
+
+            break;
+
             case 'current-invoice-no':
                 $user_id=$this->session->user_id;
                 $invoice_no=$this->get_current_invoice_no($user_id);

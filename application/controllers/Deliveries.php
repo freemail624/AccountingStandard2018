@@ -92,6 +92,29 @@ class Deliveries extends CORE_Controller
     function transaction($txn = null,$id_filter=null) {
         switch ($txn){
 
+                case'close-invoice':  
+                $m_delivery=$this->Delivery_invoice_model;
+                $dr_invoice_id =$this->input->post('dr_invoice_id');
+                $m_delivery->closing_reason = $this->input->post('closing_reason');
+                $m_delivery->closed_by_user = $this->session->user_id;
+                $m_delivery->is_closed = TRUE;
+                $m_delivery->modify($dr_invoice_id);
+
+
+                $invoice_info=$m_delivery->get_list($dr_invoice_id,'dr_invoice_no');
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=11; //CRUD
+                $m_trans->trans_type_id=12; // TRANS TYPE
+                $m_trans->trans_log='Closed/ Did Not Post Purchase Invoice No: '.$invoice_info[0]->dr_invoice_no.' from Accounts Payable Pending with reason: '.$this->input->post('closing_reason');
+                $m_trans->save();
+                $response['title'] = 'Success!';
+                $response['stat'] = 'success';
+                $response['msg'] = 'Purchase Invoice successfully closed.';
+                echo json_encode($response);    
+
+                break;
             case'delivery_list_count':  //this returns JSON of Purchase Order to be rendered on Datatable with validation of count in invoice
             $m_delivery=$this->Delivery_invoice_model;
             $response['data']=$m_delivery->delivery_list_count($id_filter);

@@ -1646,6 +1646,7 @@ $(document).ready(function(){
     var reInitializeChildElements=function(parent){
         var _dataParentID=parent.data('parent-id');
         var btn=parent.find('button[name="btn_finalize_journal_review"]');
+        var btnClose=parent.find('button[name="btn_close_journal_review"]');
 
         //initialize datepicker
         parent.find('input.date-picker').datepicker({
@@ -1692,8 +1693,39 @@ $(document).ready(function(){
             });
         };
 
+        parent.on('click','button[name="btn_close_journal_review"]',function(){
+
+            var _curBtnClose=$(this);
+            if(parent.find('input[name="closing_reason"]').val()=='' || parent.find('input[name="closing_reason"]').val() == null){
+                showNotification({title:"Error!",stat:"error",msg:'Please state the reason for Closing.'});
+                parent.find('input[name="closing_reason"]').focus();
+            }else{
+                CloseInvoice().done(function(response){
+                    showNotification(response);
+                    if(response.stat=="success"){
+                        var _parentRow=_curBtnClose.parents('table.table_journal_entries_review').parents('tr').prev();
+                        dtReview.row(_parentRow).remove().draw();
+                    }
+                }).always(function(){
+                    showSpinningProgress(_curBtnClose);
+                });
+            }
 
 
+        });
+
+        var CloseInvoice=function(){
+            var _dataClose=[]
+            _dataClose.push({ name:'sales_invoice_id', value: _dataParentID});
+            _dataClose.push({ name:'closing_reason', value: parent.find('input[name="closing_reason"]').val()});
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Sales_invoice/transaction/close-invoice",
+                "data":_dataClose,
+                "beforeSend": showSpinningProgress(btnClose)
+            });
+        };
     };
 
 

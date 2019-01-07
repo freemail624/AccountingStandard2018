@@ -751,7 +751,8 @@ GROUP BY n.customer_id HAVING total_balance > 0";
         WHERE
         si.is_active = TRUE AND
         si.is_deleted = FALSE AND
-        si.is_journal_posted = FALSE';
+        si.is_journal_posted = FALSE
+        ANd si.is_closed = FALSE';
 
         return $this->db->query($sql)->result();
     }

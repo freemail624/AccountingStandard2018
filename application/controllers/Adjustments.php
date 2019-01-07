@@ -79,6 +79,40 @@ class Adjustments extends CORE_Controller
 
     function transaction($txn = null,$id_filter=null) {
         switch ($txn){
+
+            case'close-invoice':  
+            $m_sales=$this->Adjustment_model;
+            $adjustment_id =$this->input->post('adjustment_id');
+            if($this->input->post('trn_type') == 'From'){
+                $m_sales->closing_reason_from = $this->input->post('closing_reason');
+                $m_sales->closed_by_user_from = $this->session->user_id;
+                $m_sales->is_closed_from = TRUE;
+            $m_sales->modify($adjustment_id);
+
+            }else if($this->input->post('trn_type') == 'To'){
+                $m_sales->closing_reason_to = $this->input->post('closing_reason');
+                $m_sales->closed_by_user_to = $this->session->user_id;
+                $m_sales->is_closed_to = TRUE;
+                $m_sales->modify($adjustment_id);
+            }
+
+
+
+            $adj_inv_info=$m_sales->get_list($adjustment_id,'adjustment_code');
+            $m_trans=$this->Trans_model;
+            $m_trans->user_id=$this->session->user_id;
+            $m_trans->set('trans_date','NOW()');
+            $m_trans->trans_key_id=11; //CRUD
+            $m_trans->trans_type_id=15; // TRANS TYPE
+            $m_trans->trans_log='Closed/Did Not Post Adjustment No: '.$adj_inv_info[0]->adjustment_code.' from General Journal Pending with reason: '.$this->input->post('closing_reason');
+            $m_trans->save();
+            $response['title'] = 'Success!';
+            $response['stat'] = 'success';
+            $response['msg'] = 'Adjustments successfully closed.';
+            echo json_encode($response);    
+            break;
+
+            
             case 'list':  //this returns JSON of Issuance to be rendered on Datatable
                 $m_adjustment=$this->Adjustment_model;
                 $response['data']=$this->response_rows(

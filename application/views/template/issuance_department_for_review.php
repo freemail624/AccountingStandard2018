@@ -134,7 +134,17 @@
                             <br /><br /><hr />
                             <div class="row">
                                 <div class="col-lg-12">
+                                <div class="col-sm-6">
                                     <button name="btn_finalize_journal_review" class="btn btn-primary <?php if(!$valid_particular){ echo "disabled"; }?>"><i class="fa fa-check-circle"></i> <span class=""></span> Finalize and Post this Journal</button>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="input-group" style="float: right;">
+                                        <input type="text" name="closing_reason" class="form-control" placeholder="Close Notes/Remarks" >
+                                         <span class="input-group-addon " style="padding: 0px;background-color: #ff0039!important;">
+                                            <button name="btn_close_journal_review" class="btn btn-danger " title="Click this if you don't want to post this in Accounting, and it will be removed from the list of Pending for Review" style="">Close</button>    
+                                        </span>
+                                    </div>
+                                </div>
                                 </div>
                             </div>
                         </div>

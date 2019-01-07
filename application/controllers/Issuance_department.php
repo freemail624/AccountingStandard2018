@@ -41,6 +41,40 @@ class Issuance_department extends CORE_Controller
     }
     function transaction($txn = null,$id_filter=null) {
         switch ($txn){
+
+            case'close-invoice':  
+            $m_invoice=$this->Issuance_department_model;
+                $issuance_department_id =$this->input->post('issuance_department_id');
+            if($this->input->post('trn_type') == 'From'){
+
+                $m_invoice->closing_reason_from = $this->input->post('closing_reason');
+                $m_invoice->closed_by_user_from = $this->session->user_id;
+                $m_invoice->is_closed_from = TRUE;
+                $m_invoice->modify($issuance_department_id);
+            }else if($this->input->post('trn_type') == 'To'){
+                $m_invoice->closing_reason_to = $this->input->post('closing_reason');
+                $m_invoice->closed_by_user_to = $this->session->user_id;
+                $m_invoice->is_closed_to = TRUE;
+                $m_invoice->modify($issuance_department_id);
+            }
+
+
+
+            $iss_inv_no=$m_invoice->get_list($issuance_department_id,'trn_no');
+            $m_trans=$this->Trans_model;
+            $m_trans->user_id=$this->session->user_id;
+            $m_trans->set('trans_date','NOW()');
+            $m_trans->trans_key_id=11; //CRUD
+            $m_trans->trans_type_id=66; // TRANS TYPE
+            $m_trans->trans_log='Closed/Did Not Post Issuance Department '.$this->input->post('trn_type').' : '.$iss_inv_no[0]->trn_no.' from General Journal Pending with reason: '.$this->input->post('closing_reason');
+            $m_trans->save();
+            $response['title'] = 'Success!';
+            $response['stat'] = 'success';
+            $response['msg'] = 'Issuance Department successfully closed.';
+            echo json_encode($response);    
+            break;
+
+
             case 'list':  //this returns JSON of Issuance to be rendered on Datatable
                 $m_issuance=$this->Issuance_department_model;
                 $response['data']=$this->response_rows(
@@ -54,12 +88,6 @@ class Issuance_department extends CORE_Controller
                 $response['data']=$this->Issuance_department_model->issuance_department_for_review();
                 echo json_encode($response);
                 break;
-
-
-
-
-
-
 
             ////****************************************items/products of selected Items***********************************************
             case 'items': //items on the specific PO, loads when edit button is called

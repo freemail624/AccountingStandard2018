@@ -364,7 +364,8 @@ GROUP BY n.supplier_id HAVING total_balance > 0
 
         WHERE di.is_active = TRUE AND
         di.is_deleted = FALSE AND
-        di.is_journal_posted = FALSE';
+        di.is_journal_posted = FALSE AND
+        di.is_closed = FALSE';
 
          return $this->db->query($sql)->result();
 

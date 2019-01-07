@@ -58,6 +58,7 @@ class Issuance_department_model extends CORE_Model
 		WHERE idi.is_journal_posted_from = FALSE
 		AND idi.is_active = TRUE
 		AND idi.is_deleted = FALSE
+		AND idi.is_closed_from = FALSE
 
 		UNION ALL 
 
@@ -74,7 +75,10 @@ class Issuance_department_model extends CORE_Model
 		LEFT JOIN departments d ON d.department_id = idi.to_department_id 
 		WHERE idi.is_journal_posted_to = FALSE
 		AND idi.is_active = TRUE
-		AND idi.is_deleted = FALSE) as main
+		AND idi.is_deleted = FALSE
+		AND idi.is_closed_to = FALSE
+
+		) as main
 		ORDER BY main.issuance_department_id
 
 

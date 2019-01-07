@@ -107,6 +107,7 @@ parent::__construct();
 			ai.is_deleted=FALSE AND 
 			is_journal_posted=FALSE
 			AND ai.adjustment_type = "IN"
+			AND ai.is_closed = FALSE
 
 			UNION ALL
 
@@ -128,7 +129,8 @@ parent::__construct();
 			ai.is_active=TRUE AND
 			ai.is_deleted=FALSE AND 
 			is_journal_posted=FALSE
-			AND ai.adjustment_type = "OUT") as main
+			AND ai.adjustment_type = "OUT"
+			AND ai.is_closed = FALSE) as main
 
 			ORDER BY main.adjustment_id';
         return $this->db->query($sql)->result();
