@@ -105,9 +105,20 @@
             }
         }
 
+        #tbl_payments_filter{
+            display: none;
+        }
 
-
-
+        div.dataTables_processing{ 
+        position: absolute!important; 
+        top: 0%!important; 
+        right: -45%!important; 
+        left: auto!important; 
+        width: 100%!important; 
+        height: 40px!important; 
+        background: none!important; 
+        background-color: transparent!important; 
+        } 
 
 
     </style>
@@ -153,8 +164,45 @@
             <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Payment History</b>
         </div> -->
 
-        <div class="panel-body table-responsive">
+        <div class="panel-body table-responsive" style="overflow-x: hidden;">
             <h2 class="h2-panel-heading">Payment History</h2><hr>
+                <div class="row">
+                    <div class="col-lg-3"><br>
+                    <button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Payment" ><i class="fa fa-plus"></i> New Payment</button>
+                    </div>
+                    <div class="col-lg-2">
+                            From :<br />
+                            <div class="input-group">
+                                <input type="text" id="txt_start_date" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                                 <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                 </span>
+                            </div>
+                    </div>
+                    <div class="col-lg-2">
+                            To :<br />
+                            <div class="input-group">
+                                <input type="text" id="txt_end_date" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
+                                 <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                 </span>
+                            </div>
+                    </div>
+                    <div class="col-lg-2">
+                            Filter :<br />
+                                <select id="cbo_filter_active"  class="form-control">
+                                    <option value="1" selected>ALL</option>
+                                    <option value="2">Active</option>
+                                    <option value="3">Cancelled</option>
+                                </select>
+                    </div>
+                    <div class="col-lg-3">
+                            Search :<br />
+                             <input type="text" id="searchbox_payment" class="form-control">
+                    </div>
+                </div>
+<br>
+
             <table id="tbl_payments" class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
                 <tr>
@@ -517,7 +565,7 @@
 
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboSuppliers; var _cboTaxType;
-    var _cboPaymentMethod;
+    var _cboPaymentMethod; var _cboFilterActive;
 
 
     var oTableItems={
@@ -545,7 +593,22 @@ $(document).ready(function(){
         dt=$('#tbl_payments').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "ajax" : "Payable_payments/transaction/list",
+            "ajax" : "",
+            oLanguage: {
+                    sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+            },
+            processing : true,
+            "ajax" : {
+                "url" : "Payable_payments/transaction/list",
+                "bDestroy": true,            
+                "data": function ( d ) {
+                        return $.extend( {}, d, {
+                            "tsd":$('#txt_start_date').val(),
+                            "ted":$('#txt_end_date').val(),
+                            "flt": $('#cbo_filter_active').val()
+                        });
+                    }
+            }, 
             "order": [[ 9, "desc" ]],
             "columns": [
                 {
@@ -599,12 +662,6 @@ $(document).ready(function(){
         });
 
 
-        var createToolBarButton=function(){
-            var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Payment" >'+
-                '<i class="fa fa-plus"></i> New Payment</button>';
-            $("div.toolbar").html(_btnNew);
-        }();
-
         _cboPaymentMethod = $('#cbo_payment_method').select2({
             placeholder: "Please select receipt type.",
             allowClear: false
@@ -618,6 +675,13 @@ $(document).ready(function(){
         _cboReceiptType = $('#cbo_receipt_type').select2({
             placeholder: "Please select receipt type.",
             allowClear: false
+        });
+
+        _cboFilterActive = $('#cbo_filter_active').select2({
+            placeholder: "Please select Filter.",
+            allowClear: false,
+            minimumResultsForSearch: -1
+
         });
 
         _cboSuppliers=$("#cbo_suppliers").select2({
@@ -784,6 +848,13 @@ $(document).ready(function(){
             $('#modal_confirmation').modal('show');
         });
 
+        $("#txt_start_date,#txt_end_date").on("change", function () {        
+            $('#tbl_payments').DataTable().ajax.reload()
+        });
+
+        _cboFilterActive.on('select2:select',function(e){
+            $('#tbl_payments').DataTable().ajax.reload()
+        });
 
         $('#tbl_payables > tbody').on('click','button.btn_set_amount',function(e){
             var row=$(this).closest('tr');
@@ -812,6 +883,11 @@ $(document).ready(function(){
 
         });
 
+        $("#searchbox_payment").keyup(function(){         
+            dt
+                .search(this.value)
+                .draw();
+        });
 
     })();
 
