@@ -99,7 +99,6 @@
                     <td width="12%" style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;"><?php echo number_format($item->dr_qty,2); ?></td>
                     <td width="12%" style="border-bottom: 1px solid gray;text-align: center;height: 15px;padding: 6px;"><?php echo $item->unit_name; ?></td>
                     <td width="12%" style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;"><?php echo number_format($item->dr_price,2); ?></td>
-
                     <td width="12%" style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;"><?php echo number_format($item->dr_line_total_after_global,2); ?></td>
                 </tr>
             <?php } ?>
@@ -107,7 +106,7 @@
             <td colspan="5" style="text-align: left;font-weight: bolder; ;height: 30px;padding: 6px;border-left: 1px solid gray;border-right: 1px solid gray;"><b>Remarks:</b></td>
             </tr>
             <tr>
-            <td colspan="5" style="text-align: left;font-weight: bolder; ;height: 30px;padding: 6px;border-left: 1px solid gray;border-bottom: 1px solid gray;border-right: 1px solid gray;"><?php echo $delivery_info->remarks; ?></td>
+            <td colspan="5" style="text-align: left;font-weight: normal;height: 30px;padding: 6px;border-left: 1px solid gray;border-bottom: 1px solid gray;border-right: 1px solid gray;"><?php echo $delivery_info->remarks; ?></td>
             </tr>
             </tbody>
             <tfoot>
@@ -132,12 +131,10 @@
                 <td style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;border-right: 1px solid gray;"><?php echo number_format($delivery_info->total_tax_amount,2); ?></td>
             </tr>
             <tr>
-                
                 <td align="left" colspan="2" style="border-left: 1px solid gray;"></td>
                 <td colspan="2" style="border-bottom: 1px solid gray;text-align: left;height: 15px;padding: 6px;border-left: 1px solid gray;">Total After Tax : </td>
                 <td style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;border-right: 1px solid gray;"><?php echo number_format($delivery_info->total_after_tax,2); ?></td>
             </tr>
-
             <tr>
                 <td colspan="2" style="text-align: left;height: 15px;padding: 6px;border-bottom: 1px solid gray;border-left: 1px solid gray;">Date:</td>
                 <td colspan="2" style="border-bottom: 1px solid gray;text-align: left;height: 15px;padding: 6px;border-left: 1px solid gray;"><strong>Total: </strong></td>

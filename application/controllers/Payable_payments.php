@@ -43,7 +43,21 @@ class Payable_payments extends CORE_Controller
     function transaction($txn=null,$filter_value=null){
         switch($txn){
             case 'list':
-                $response['data']=$this->response_rows($filter_value,FALSE);
+                // $response['data']=$this->response_rows($filter_value,FALSE);
+                $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
+                $ted = date('Y-m-d',strtotime($this->input->get('ted')));
+                $flt = $this->input->get('flt');
+                if($flt == 1){
+                    $filter_active = " AND DATE(payable_payments.date_paid) BETWEEN '$tsd' AND '$ted'";
+
+                }else if ($flt==2){
+                $filter_active = " AND DATE(payable_payments.date_paid) BETWEEN '$tsd' AND '$ted' AND payable_payments.is_active = TRUE";
+
+                }elseif ($flt==3) {
+                $filter_active = " AND DATE(payable_payments.date_paid) BETWEEN '$tsd' AND '$ted' AND payable_payments.is_active = FALSE";
+                    # code...
+                }
+                $response['data']=$this->response_rows($filter_value,NULL,$filter_active);
                 echo json_encode($response);
                 break;
 
@@ -195,12 +209,13 @@ class Payable_payments extends CORE_Controller
         }
     }
 
-    function response_rows($id,$show_unposted=FALSE){
+    function response_rows($id,$show_unposted=FALSE,$filter_active=FALSE){
         $m_payments=$this->Payable_payment_model;
         return $m_payments->get_list(
             //filter
             'payable_payments.is_deleted=0 '.($id==null?'':' AND payable_payments.payment_id='.$id).
-            ($show_unposted==FALSE?"":" AND payable_payments.is_posted=FALSE AND payable_payments.is_active=TRUE"),
+            ($show_unposted==FALSE?"":" AND payable_payments.is_posted=FALSE AND payable_payments.is_active=TRUE")." 
+            ".($filter_active==FALSE?"": $filter_active),
             //fields
             array(
                 'payable_payments.*',
