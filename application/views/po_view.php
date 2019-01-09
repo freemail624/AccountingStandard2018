@@ -874,7 +874,7 @@ $(document).ready(function(){
                     "defaultContent": ""
                 },
                 
-                { visible:false,
+                { 
                     targets:[1], data:null,
                     render: function (data, type, full, meta){
                         var btn_email='<button id="btn_email" class="btn-primary btn btn-sm " style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Manually Send Email"><i class="fa fa-share"></i> <span class="display" style="display:none;"></span></button> ';
