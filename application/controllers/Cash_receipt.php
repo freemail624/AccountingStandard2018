@@ -71,6 +71,16 @@ class Cash_receipt extends CORE_Controller
                 $response['data']=$this->get_response_rows(null,$additional);
                 echo json_encode($response);
                 break;
+
+            case 'list-other': // list of journals in inner joined in other income
+                $m_journal=$this->Journal_info_model;
+                $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
+                $ted = date('Y-m-d',strtotime($this->input->get('ted')));
+                $additional = " AND DATE(journal_info.date_txn) BETWEEN '$tsd' AND '$ted'";
+                $response['data']=$this->get_response_rows_other_income(null,$additional);
+                echo json_encode($response);
+                break;
+
             case 'get-entries':
                 $journal_id=$this->input->get('id');
                 $m_accounts=$this->Account_title_model;
@@ -298,7 +308,7 @@ class Cash_receipt extends CORE_Controller
                 $response['stat']='success';
                 $response['title']='Success!';
                 $response['msg']='Journal successfully posted';
-                $response['row_added']=$this->get_response_rows($journal_id);
+                $response['row_added']=$this->get_response_rows_other_income($journal_id);
                 echo json_encode($response);
                 break;
 
@@ -531,6 +541,43 @@ class Cash_receipt extends CORE_Controller
 
 
 
+    public function get_response_rows_other_income($criteria=null,$additional=null){
+        $m_journal=$this->Journal_info_model;
+        return $m_journal->get_list_v2(
+
+            "journal_info.is_deleted=FALSE AND journal_info.book_type='CRJ'".($criteria==null?'':' AND journal_info.journal_id='.$criteria)."".($additional==null?'':$additional),
+
+            array(
+                'journal_info.journal_id',
+                'journal_info.txn_no',
+                'DATE_FORMAT(journal_info.date_txn,"%m/%d/%Y")as date_txn',
+                'journal_info.is_active',
+                'journal_info.remarks',
+                'journal_info.or_no',
+                'journal_info.check_no',
+                'payment_methods.payment_method_id',
+                'journal_info.department_id',
+                'DATE_FORMAT(journal_info.check_date,"%m/%d/%Y")as check_date',
+                'journal_info.amount',
+                'journal_info.bank_id',
+                'CONCAT(IF(NOT ISNULL(customers.customer_id),CONCAT("C-",customers.customer_id),""),IF(NOT ISNULL(suppliers.supplier_id),CONCAT("S-",suppliers.supplier_id),"")) as particular_id',
+                'CONCAT_WS(" ",IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,"")) as particular',
+                'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by'
+            ),
+            array(
+                array('customers','customers.customer_id=journal_info.customer_id','left'),
+                array('suppliers','suppliers.supplier_id=journal_info.supplier_id','left'),
+                array('user_accounts','user_accounts.user_id=journal_info.created_by_user','left'),
+                array('payment_methods','payment_methods.payment_method_id=journal_info.payment_method_id','left'),
+                array('departments','departments.department_id=journal_info.department_id','left')
+            ),
+            array(
+                array('other_invoice','other_invoice.other_invoice_no=journal_info.ref_no'),
+            ),
+
+            'journal_info.journal_id DESC'
+        );
+    }
 
 
 

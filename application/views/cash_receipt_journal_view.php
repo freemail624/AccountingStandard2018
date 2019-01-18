@@ -248,33 +248,7 @@
         </div>
 
         <br>
-                <div class="panel panel-default" style="border-radius:6px;">
 
-            <div id="collapseTwo" class="collapse in">
-                <div class="panel-body">    
-                    <h2 class="h2-panel-heading">Review Other Income (Pending)</h2><hr>
-                    <div >
-                        <table id="tbl_other_income_for_review" class="table table-striped" cellspacing="0" width="100%">
-                            <thead class="">
-                            <tr>
-                                <th></th>
-                                <th>Invoice #</th>
-                                <th>Invoice Date</th>
-                                <th>Supplier</th>
-                                <th>Department</th>
-                                <th style="width: 20%">Remarks</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-
-                            </tbody>
-                        </table>
-                    </div>
-
-
-                </div>
-            </div>
-        </div>
 
         <br>
         <div class="panel panel-default" style="border-radius:6px;">
@@ -1123,7 +1097,7 @@
 $(document).ready(function(){
     var _txnMode; var _cboParticulars; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode;
     var dtReview; var _cbo_paymentMethod; var _cbo_departments; var dt; var _cbo_banks; var _cbo_accounttype;
-    var _cboCustomerType; var dtReviewOther; var _cboTaxGroup;
+    var _cboCustomerType;  var _cboTaxGroup;
     var _cboArTrans;
 
     var oTBJournal={
@@ -1240,24 +1214,6 @@ $(document).ready(function(){
         });
 
 
-        dtReviewOther=$('#tbl_other_income_for_review').DataTable({
-            "bLengthChange":false,
-            "ajax" : "Other_income/transaction/list-invoice-for-review",
-            "columns": [
-                {
-                    "targets": [0],
-                    "class":          "details-control",
-                    "orderable":      false,
-                    "data":           null,
-                    "defaultContent": ""
-                },
-                { targets:[1],data: "other_invoice_no" },
-                { targets:[2],data: "date_invoice" },
-                { targets:[3],data: "supplier_name" },
-                { targets:[4],data: "department_name" },
-                { targets:[5],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(60)}            
-            ]
-        });
 
 
 
@@ -1518,57 +1474,7 @@ $(document).ready(function(){
             }
         } );
 
-        $('#tbl_other_income_for_review tbody').on( 'click', 'tr td.details-control', function () {
-            var tr = $(this).closest('tr');
-            var row = dtReviewOther.row( tr );
-            var idx = $.inArray( tr.attr('id'), detailRows );
 
-            if ( row.child.isShown() ) {
-                tr.removeClass( 'details' );
-                row.child.hide();
-
-                // Remove from the 'open' array
-                detailRows.splice( idx, 1 );
-            }
-            else {
-                tr.addClass( 'details' );
-                //console.log(row.data());
-                var d=row.data();
-
-                $.ajax({
-                    "dataType":"html",
-                    "type":"POST",
-                    "url":"Templates/layout/other-income-for-review?id="+ d.other_invoice_id,
-                    "beforeSend" : function(){
-                        row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
-                    }
-                }).done(function(response){
-                    row.child( response,'no-padding' ).show();
-
-                    reInitializeSpecificDropDown($('.cbo_supplier_list'));
-                    reInitializeSpecificDropDown($('.cbo_department_list'));
-                    reInitializeSpecificDropDown($('.cbo_payment_method'));
-
-
-                    reInitializeNumeric();
-
-                    var tbl=$('#tbl_entries_for_review_'+ d.other_invoice_id);
-                    var parent_tab_pane=$('#journal_review_'+ d.other_invoice_id);
-
-                    reInitializeDropDownAccounts(tbl,false);
-                    reInitializeChildEntriesTable(tbl);
-                    reInitializeChildElementsOther(parent_tab_pane);
-
-                    // Add to the 'open' array
-                    if ( idx === -1 ) {
-                        detailRows.push( tr.attr('id') );
-                    }
-
-
-                });
-
-            }
-        } );
 
 
         $('#btn_new').click(function(){
@@ -2432,61 +2338,7 @@ $(document).ready(function(){
 
     };
 
-    var reInitializeChildElementsOther=function(parent){
-        var _dataParentID=parent.data('parent-id');
-        var btn=parent.find('button[name="btn_finalize_journal_review"]');
 
-        //initialize datepicker
-        parent.find('input.date-picker').datepicker({
-            todayBtn: "linked",
-            keyboardNavigation: false,
-            forceParse: true,
-            calendarWeeks: true,
-            autoclose: true
-
-        });
-
-
-        parent.on('click','button[name="btn_finalize_journal_review"]',function(){
-
-            var _curBtn=$(this);
-            if(isBalance('#tbl_entries_for_review_'+_dataParentID)){
-                finalizeJournalReview().done(function(response){
-                    showNotification(response);
-                    if(response.stat=="success"){
-                        dt.row.add(response.row_added[0]).draw();
-                        var _parentRow=_curBtn.parents('table.table_journal_entries_review').parents('tr').prev();
-                        dtReviewOther.row(_parentRow).remove().draw();
-                    }
-
-                }).always(function(){
-                    showSpinningProgress(_curBtn);
-                });
-            }else{
-                showNotification({title:"Not Balance!",stat:"error",msg:'Please make sure Debit and Credit amount are equal.'});
-                stat=false;
-            }
-
-
-
-        });
-
-        var finalizeJournalReview=function(){
-            var _data_review=parent.find('form').serializeArray();
-
-            return $.ajax({
-                "dataType":"json",
-                "type":"POST",
-                "url":"Cash_receipt/transaction/create-from-other-income",
-                "data":_data_review,
-                "beforeSend": showSpinningProgress(btn)
-
-            });
-        };
-
-
-
-    };
 
 });
 

@@ -158,6 +158,9 @@
         background: none!important; 
         background-color: transparent!important; 
         } 
+        #tbl_accounts_receivable_filter{
+            display: none;
+        }
     </style>
 
 </head>
@@ -222,7 +225,6 @@
         </div>
 
 <br>
-
         <div class="panel panel-default" style="border-radius:6px;">
             <div class="panel-body panel-responsive">
               <a data-toggle="collapse" data-parent="#accordionA" href="#collapseOne" style="text-decoration: none;">
@@ -284,13 +286,98 @@
                         </div>
                     </div>                </div>
                 </div>
+
+<br>
+        <div class="panel panel-default" style="border-radius:6px;">
+            <div id="collapseTwo" class="collapse in">
+                <div class="panel-body">    
+                    <h2 class="h2-panel-heading">Review Other Income (Pending)</h2><hr>
+                    <div >
+                        <table id="tbl_other_income_for_review" class="table table-striped" cellspacing="0" width="100%">
+                            <thead class="">
+                            <tr>
+                                <th></th>
+                                <th>Invoice #</th>
+                                <th>Invoice Date</th>
+                                <th>Supplier</th>
+                                <th>Department</th>
+                                <th style="width: 20%">Remarks</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
+        <br>
 
         <div class="panel panel-default" style="border-radius:6px;">
+            <div id="collapseOne" class="collapse in">
+                <div class="panel-body" style="min-height: 400px;">
+                <h2 class="h2-panel-heading">Cash Receipt Journal (Other Income)</h2><hr>
+
+                <div class="row">
+                    <div class="col-lg-3">&nbsp;<br>
+
+                    </div>
+                    <div class="col-lg-3">
+                            From :<br />
+                            <div class="input-group">
+                                <input type="text" id="txt_start_date_crj" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                                 <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                 </span>
+                            </div>
+                    </div>
+                    <div class="col-lg-3">
+                            To :<br />
+                            <div class="input-group">
+                                <input type="text" id="txt_end_date_crj" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
+                                 <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                 </span>
+                            </div>
+                    </div>
+                    <div class="col-lg-3">
+                            Search :<br />
+                             <input type="text" id="searchbox_crj" class="form-control">
+                    </div>
+                </div><br>
+                    <div >
+                        <table id="tbl_accounts_receivable" class="table table-striped" cellspacing="0" width="100%">
+                            <thead class="">
+                            <tr>
+                                <th></th>
+                                <th>Transaction #</th>
+                                <th>Particular</th>
+                                <th width="20%">Remarks</th>
+                                <th>Txn Date</th>
+                                <th>Posted</th>
+                                <th>Status</th>
+                                <th><center>Action</center></th>
+                                <th></th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        </div>
+
+<!--         <div class="panel panel-default" style="border-radius:6px;">
 
                     <div class="panel-body panel-responsive" style="min-height: 400px;">
             <a data-toggle="collapse" data-parent="#accordionA" href="#collapseOne" style="text-decoration: none;">
-<!--             <div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Check Summary</b></div> -->
+
     <h2 class="h2-panel-heading"> Check Summary</h2>
             </a>
                 <div id="collapseOne" class="collapse in">
@@ -316,7 +403,7 @@
                         </div>
                     </div>
                 </div>
-        </div>
+        </div> -->
 
     </div>
 
@@ -598,6 +685,8 @@
         </div>
     </div>
     </div>
+
+
     <table id="table_hidden" class="hidden">
         <tr>
             <td width="30%">
@@ -696,7 +785,26 @@
         </div><!---content---->
     </div>
 </div><!---modal-->
+    <div id="modal_confirmation_crj" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header ">
+                    <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                    <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Confirm Cancellation</h4>
 
+                </div>
+
+                <div class="modal-body">
+                    <p id="modal-body-message">Are you sure you want to cancel this journal?</p>
+                </div>
+
+                <div class="modal-footer">
+                    <button id="btn_yes_crj" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Yes</button>
+                    <button id="btn_close_crj" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">No</button>
+                </div>
+            </div>
+        </div>
+    </div><!---modal-->
 <div id="modal_print_check_list_option" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog modal-md">
         <div class="modal-content">
@@ -1086,7 +1194,7 @@
 <script>
 $(document).ready(function(){
     var _txnMode; var _cboSuppliers; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode, _cboBranches, _cboPaymentMethod, _cboBanks, _cboAccountType;
-    var dtReview; var cbo_refType; var _cboLayouts; var dtRecurring; var dtCheckList; var _attribute; var _cboTax;
+    var dtReview; var cbo_refType; var _cboLayouts; var dtRecurring; var dtCheckList; var _attribute; var _cboTax; var dtReviewOther; var dtCashReceipt;
 
 
     var oTBJournal={
@@ -1237,6 +1345,26 @@ $(document).ready(function(){
             ]
         });
 
+        dtReviewOther=$('#tbl_other_income_for_review').DataTable({
+            "bLengthChange":false,
+            "ajax" : "Other_income/transaction/list-invoice-for-review",
+            "columns": [
+                {
+                    "targets": [0],
+                    "class":          "details-control",
+                    "orderable":      false,
+                    "data":           null,
+                    "defaultContent": ""
+                },
+                { targets:[1],data: "other_invoice_no" },
+                { targets:[2],data: "date_invoice" },
+                { targets:[3],data: "supplier_name" },
+                { targets:[4],data: "department_name" },
+                { targets:[5],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(60)}            
+            ]
+        });
+
+
         dtCheckList=$('#tbl_check_list').DataTable({
             "dom": '<"print">frtip',
             "bLengthChange":false,
@@ -1301,6 +1429,70 @@ $(document).ready(function(){
                     }
                 } );
             }
+        });
+
+
+        dtCashReceipt=$('#tbl_accounts_receivable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "bLengthChange":false,
+            "order": [[ 8, "desc" ]],
+            oLanguage: {
+                    sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+            },
+            processing : true,
+            "ajax" : {
+                "url" : "Cash_receipt/transaction/list-other",
+                "bDestroy": true,            
+                "data": function ( d ) {
+                        return $.extend( {}, d, {
+                            "tsd":$('#txt_start_date_crj').val(),
+                            "ted":$('#txt_end_date_crj').val()
+
+                        });
+                    }
+            },
+            "columns": [
+                {
+                    "targets": [0],
+                    "class":          "details-control",
+                    "orderable":      false,
+                    "data":           null,
+                    "defaultContent": ""
+                },
+                { targets:[1],data: "txn_no" },
+                { targets:[2],data: "particular" },
+                { targets:[3],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(60)},
+                { targets:[4],data: "date_txn" },
+                { targets:[5],data: "posted_by" },
+                {
+                    targets:[6],data: null,
+                    render: function (data, type, full, meta){
+                        var _attribute='';
+                        //console.log(data.is_email_sent);
+                        if(data.is_active=="1"){
+                            _attribute=' class="fa fa-check-circle" style="color:green;" ';
+                        }else{
+                            _attribute=' class="fa fa-times-circle" style="color:red;" ';
+                        }
+
+                        return '<center><i '+_attribute+'></i></center>';
+                    }
+
+
+                },
+                {
+                    targets:[7],
+                    render: function (data, type, full, meta){
+                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
+                        var btn_trash='<button class="btn btn-red btn-sm" name="cancel_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Cancel Journal"><i class="fa fa-times"></i> </button>';
+
+                        /*return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';*/
+                        return '<center>'+btn_trash+'</center>';
+                    }
+                },
+                { targets:[8],data: "journal_id", visible:false },
+
+            ]
         });
 
         reInitializeNumeric();
@@ -1449,6 +1641,131 @@ $(document).ready(function(){
             }
         } );
 
+        $('#tbl_other_income_for_review tbody').on( 'click', 'tr td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = dtReviewOther.row( tr );
+            var idx = $.inArray( tr.attr('id'), detailRows );
+
+            if ( row.child.isShown() ) {
+                tr.removeClass( 'details' );
+                row.child.hide();
+
+                // Remove from the 'open' array
+                detailRows.splice( idx, 1 );
+            }
+            else {
+                tr.addClass( 'details' );
+                //console.log(row.data());
+                var d=row.data();
+
+                $.ajax({
+                    "dataType":"html",
+                    "type":"POST",
+                    "url":"Templates/layout/other-income-for-review?id="+ d.other_invoice_id,
+                    "beforeSend" : function(){
+                        row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                    }
+                }).done(function(response){
+                    row.child( response,'no-padding' ).show();
+
+                    reInitializeSpecificDropDown($('.cbo_supplier_list'));
+                    reInitializeSpecificDropDown($('.cbo_department_list'));
+                    reInitializeSpecificDropDown($('.cbo_payment_method'));
+
+
+                    reInitializeNumeric();
+
+                    var tbl=$('#tbl_entries_for_review_'+ d.other_invoice_id);
+                    var parent_tab_pane=$('#journal_review_'+ d.other_invoice_id);
+
+                    reInitializeDropDownAccounts(tbl,false);
+                    reInitializeChildEntriesTable(tbl);
+                    reInitializeChildElementsOther(parent_tab_pane);
+
+                    // Add to the 'open' array
+                    if ( idx === -1 ) {
+                        detailRows.push( tr.attr('id') );
+                    }
+
+
+                });
+
+            }
+        } );
+        $("#txt_start_date_crj").on("change", function () {        
+            $('#tbl_accounts_receivable').DataTable().ajax.reload()
+        });
+
+        $("#txt_end_date_crj").on("change", function () {        
+            $('#tbl_accounts_receivable').DataTable().ajax.reload()
+        });
+        $("#searchbox_ar").keyup(function(){         
+            dt
+                .search(this.value)
+                .draw();
+        });
+
+        $('#tbl_accounts_receivable tbody').on( 'click', 'tr td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = dtCashReceipt.row( tr );
+            var idx = $.inArray( tr.attr('id'), detailRows );
+
+            if ( row.child.isShown() ) {
+                tr.removeClass( 'details' );
+                row.child.hide();
+
+                // Remove from the 'open' array
+                detailRows.splice( idx, 1 );
+            }
+            else {
+                tr.addClass( 'details' );
+                //console.log(row.data());
+                var d=row.data();
+
+                $.ajax({
+                    "dataType":"html",
+                    "type":"POST",
+                    "url":"Templates/layout/journal-crj?id="+ d.journal_id,
+                    "beforeSend" : function(){
+                        row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                    }
+                }).done(function(response){
+                    row.child( response,'no-padding' ).show();
+                    // Add to the 'open' array
+                    if ( idx === -1 ) {
+                        detailRows.push( tr.attr('id') );
+                    }
+                });
+
+
+
+
+            }
+        } );
+
+        $('#tbl_accounts_receivable').on('click','button[name="cancel_info"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dtCashReceipt.row(_selectRowObj).data();
+            _selectedID=data.journal_id;
+            $('#modal_confirmation_crj').modal('show');
+        });
+
+
+        $('#btn_yes_crj').click(function(){
+            $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Cash_receipt/transaction/cancel",
+                "data":{journal_id : _selectedID},
+                "success": function(response){
+                    showNotification(response);
+                    if(response.stat=="success"){
+                        dtCashReceipt.row(_selectRowObj).data(response.row_updated[0]).draw();
+                    }
+
+                }
+            });
+        });
         $('#tbl_recurring tbody').on('click', 'button[name="accept_rt"]', function() {
             _selectRowObj=$(this).closest('tr');
             var data=dtRecurring.row(_selectRowObj).data();
@@ -2346,6 +2663,62 @@ $(document).ready(function(){
 
     };
 
+
+    var reInitializeChildElementsOther=function(parent){
+        var _dataParentID=parent.data('parent-id');
+        var btn=parent.find('button[name="btn_finalize_journal_review"]');
+
+        //initialize datepicker
+        parent.find('input.date-picker').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            calendarWeeks: true,
+            autoclose: true
+
+        });
+
+
+        parent.on('click','button[name="btn_finalize_journal_review"]',function(){
+
+            var _curBtn=$(this);
+            if(isBalance('#tbl_entries_for_review_'+_dataParentID)){
+                finalizeJournalReview().done(function(response){
+                    showNotification(response);
+                    if(response.stat=="success"){
+                        dtCashReceipt.row.add(response.row_added[0]).draw();
+                        var _parentRow=_curBtn.parents('table.table_journal_entries_review').parents('tr').prev();
+                        dtReviewOther.row(_parentRow).remove().draw();
+                    }
+
+                }).always(function(){
+                    showSpinningProgress(_curBtn);
+                });
+            }else{
+                showNotification({title:"Not Balance!",stat:"error",msg:'Please make sure Debit and Credit amount are equal.'});
+                stat=false;
+            }
+
+
+
+        });
+
+        var finalizeJournalReview=function(){
+            var _data_review=parent.find('form').serializeArray();
+
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Cash_receipt/transaction/create-from-other-income",
+                "data":_data_review,
+                "beforeSend": showSpinningProgress(btn)
+
+            });
+        };
+
+
+
+    };
 
 });
 
