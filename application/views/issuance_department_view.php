@@ -622,7 +622,7 @@ dt_si = $('#tbl_si_list').DataTable({
                 vat_input=0;
             }
 
-           bulk_price = suggestion.sale_price;
+           bulk_price = suggestion.purchase_cost;
             if(suggestion.is_bulk == 1){
                 retail_price = getFloat(suggestion.purchase_cost) / getFloat(suggestion.child_unit_desc);
             }else if (suggestion.is_bulk== 0){
