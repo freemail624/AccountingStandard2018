@@ -33,9 +33,9 @@ class Soa_settings extends CORE_Controller
                 array('account_classes','account_classes.account_class_id=account_titles.account_class_id','left')) 
             ); 
  
-        // (in_array('6-14',$this->session->user_rights)?  
-        $this->load->view('soa_settings_view', $data);
-        // :redirect(base_url('dashboard'))); 
+        (in_array('6-14',$this->session->user_rights)?  
+        $this->load->view('soa_settings_view', $data)
+        :redirect(base_url('dashboard'))); 
          
  
     } 
