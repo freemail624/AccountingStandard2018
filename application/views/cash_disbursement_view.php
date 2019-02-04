@@ -2010,7 +2010,7 @@ $(document).ready(function(){
             //set defaults
             _cboPaymentMethod.select2('val',1);//set cash as default
             $('input[name="date_txn"]').val(_currentDate);
-            $('#is_for_assignment').prop('checked',false);
+            $('#is_for_assignment').prop('checked',true);
 
             showList(false);
 
