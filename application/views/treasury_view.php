@@ -740,14 +740,14 @@
 
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;">Mobile No :</label>
+                                     <label class="control-label boldlabel" style="text-align:right;">Contact No :</label>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">
                                         <span class="input-group-addon">
                                             <i class="fa fa-mobile"></i>
                                         </span>
-                                        <input type="text" name="mobile_no" id="mobile_no" class="form-control" placeholder="Mobile No">
+                                        <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Contact No">
                                     </div>
                                 </div>
                             </div>
