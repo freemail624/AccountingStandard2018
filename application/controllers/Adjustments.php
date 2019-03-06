@@ -83,19 +83,10 @@ class Adjustments extends CORE_Controller
             case'close-invoice':  
             $m_sales=$this->Adjustment_model;
             $adjustment_id =$this->input->post('adjustment_id');
-            if($this->input->post('trn_type') == 'From'){
-                $m_sales->closing_reason_from = $this->input->post('closing_reason');
-                $m_sales->closed_by_user_from = $this->session->user_id;
-                $m_sales->is_closed_from = TRUE;
+            $m_sales->closing_reason = $this->input->post('closing_reason');
+            $m_sales->closed_by_user = $this->session->user_id;
+            $m_sales->is_closed = TRUE;
             $m_sales->modify($adjustment_id);
-
-            }else if($this->input->post('trn_type') == 'To'){
-                $m_sales->closing_reason_to = $this->input->post('closing_reason');
-                $m_sales->closed_by_user_to = $this->session->user_id;
-                $m_sales->is_closed_to = TRUE;
-                $m_sales->modify($adjustment_id);
-            }
-
 
 
             $adj_inv_info=$m_sales->get_list($adjustment_id,'adjustment_code');
@@ -112,6 +103,7 @@ class Adjustments extends CORE_Controller
             echo json_encode($response);    
             break;
 
+            
             
             case 'list':  //this returns JSON of Issuance to be rendered on Datatable
                 $m_adjustment=$this->Adjustment_model;
