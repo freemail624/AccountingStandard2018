@@ -399,6 +399,10 @@
                                                                         <label  for="is_tax_exempt" style="text-align: left;vertical-align: middle;"><input type="checkbox" name="is_tax_exempt" class="" id="is_tax_exempt" style="transform: scale(2.0);">  &nbsp;&nbsp;Tax Exempt ?</label>
 
                                                                 </div>
+                                                            <div class="form-group" style="margin-bottom:0px;text-align: left;vertical-align: middle;">
+                                                                    <label class="" for="is_manual_price" style="text-align: left;">
+                                                                    <input type="checkbox" id="is_manual_price" style="transform: scale(2.0);">  &nbsp;&nbsp; Is Manual Price ?</label>
+                                                            </div>
                                                             </div>
 
 
@@ -1741,6 +1745,7 @@ $(document).ready(function(){
            $('#child_unit_id').prop('required',false);
             $('#is_tax_exempt').attr('checked', false);
             $('#is_bulk').attr('checked', false);
+            $('#is_manual_price').attr('checked', false);
 
             showPanelActive('entry');
         });
@@ -1789,6 +1794,7 @@ $(document).ready(function(){
             });
 
             $('#is_tax_exempt').prop('checked', (data.is_tax_exempt==1?true:false));
+            $('#is_manual_price').prop('checked', (data.is_manual_price==1?true:false));
             $('#is_bulk').prop('checked', (data.is_bulk==1?true:false));
 
        
@@ -1929,6 +1935,7 @@ $(document).ready(function(){
        // _data.push({name : "is_tax_exempt" ,value : _isTaxExempt});
 $('#is_tax_exempt').prop("checked") ?  _data.push({name : "is_tax_exempt" , value : '1'   }) : _data.push({name : "is_tax_exempt" , value : '0'   });
 $('#is_bulk').prop("checked") ?  _data.push({name : "is_bulk" , value : '1'   }) : _data.push({name : "is_bulk" , value : '0'   });
+$('#is_manual_price').prop("checked") ?  _data.push({name : "is_manual_price" , value : '1'   }) : _data.push({name : "is_manual_price" , value : '0'   });
 
         return $.ajax({
             "dataType":"json",
@@ -1943,6 +1950,7 @@ $('#is_bulk').prop("checked") ?  _data.push({name : "is_bulk" , value : '1'   })
         var _data=$('#frm_product').serializeArray();
 $('#is_tax_exempt').prop("checked") ?  _data.push({name : "is_tax_exempt" , value : '1'   }) : _data.push({name : "is_tax_exempt" , value : '0'   });
 $('#is_bulk').prop("checked") ?  _data.push({name : "is_bulk" , value : '1'   }) : _data.push({name : "is_bulk" , value : '0'   });
+$('#is_manual_price').prop("checked") ?  _data.push({name : "is_manual_price" , value : '1'   }) : _data.push({name : "is_manual_price" , value : '0'   });
         _data.push({name : "product_id" ,value : _selectedID});
 
         return $.ajax({ 
