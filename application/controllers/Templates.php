@@ -96,6 +96,9 @@ class Templates extends CORE_Controller {
         $this->load->model('Jo_billing_model');
         $this->load->model('Jo_billing_items_model');
 
+        $this->load->model('Temp_journal_info_model');
+        $this->load->model('Temp_journal_accounts_model');
+
         $this->load->model('Bir_2307_model');
         $this->load->model('Bir_2551m_model'); 
         $this->load->model('Months_model'); 
@@ -5738,6 +5741,121 @@ class Templates extends CORE_Controller {
 
                 break;
 
+
+            case 'billing-journal-for-review':
+                $temp_journal_id=$this->input->get('id',TRUE);
+
+                $m_customers=$this->Customers_model;
+                $m_accounts=$this->Account_title_model;
+                $m_temp_info=$this->Temp_journal_info_model;
+                $m_temp_items=$this->Temp_journal_accounts_model;
+
+
+                $m_departments=$this->Departments_model;
+
+
+                $info = $m_temp_info->get_list($temp_journal_id,
+                        '*,
+                        DATE_FORMAT(date_txn,"%m/%d/%Y") as date_txn'
+                    );
+                $data['info']=$info[0];
+                $data['departments']=$m_departments->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
+                $data['customers']=$m_customers->get_list(
+                    array(
+                        'customers.is_active'=>TRUE,
+                        'customers.is_deleted'=>FALSE
+                    ),
+
+                    array(
+                        'customers.customer_id',
+                        'customers.customer_name'
+                    )
+                );
+                $data['entries']=$m_temp_items->get_list(array('temp_journal_id'=>$temp_journal_id),null,null,'dr_amount DESC');
+                $data['accounts']=$m_accounts->get_list(
+                    array(
+                        'account_titles.is_active'=>TRUE,
+                        'account_titles.is_deleted'=>FALSE
+                    )
+                );
+
+                // validate if customer is not deleted
+                $valid_customer=$m_customers->get_list(
+                    array(
+                        'customer_id'=>$info[0]->customer_id,
+                        'is_active'=>TRUE,
+                        'is_deleted'=>FALSE
+                    )
+                );
+                $data['valid_particular']=(count($valid_customer)>0);
+
+                echo $this->load->view('template/billing_journal_for_review',$data,TRUE); //details of the journal
+
+                break;
+
+
+            case 'billing-payment-for-review':
+                $temp_journal_id=$this->input->get('id',TRUE);
+
+                $m_temp_info=$this->Temp_journal_info_model;
+                $m_temp_items=$this->Temp_journal_accounts_model;
+
+
+
+                $m_customers=$this->Customers_model;
+                $m_accounts=$this->Account_title_model;
+                $m_payments=$this->Receivable_payment_model;
+                $m_methods=$this->Payment_method_model;
+                $m_departments=$this->Departments_model;
+                $m_pay_list=$this->Receivable_payment_list_model;
+
+                $info = $m_temp_info->get_list($temp_journal_id,
+                        '*,
+                        DATE_FORMAT(date_txn,"%m/%d/%Y") as date_txn,
+                        IF(payment_method_id = 1, 2, 1) as payment_method_id,
+                        DATE_FORMAT(check_date,"%m/%d/%Y") as check_date'
+                    );
+                $data['info']=$info[0];
+
+
+
+                $data['methods']=$m_methods->get_list();
+                $data['departments']=$m_departments->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
+
+                $data['customers']=$m_customers->get_list(
+                    array(
+                        'customers.is_active'=>TRUE,
+                        'customers.is_deleted'=>FALSE
+                    ),
+
+                    array(
+                        'customers.customer_id',
+                        'customers.customer_name'
+                    )
+                );
+                $data['entries']=$m_temp_items->get_list(array('temp_journal_id'=>$temp_journal_id),null,null,'dr_amount DESC');
+
+                $data['accounts']=$m_accounts->get_list(
+                    array(
+                        'account_titles.is_active'=>TRUE,
+                        'account_titles.is_deleted'=>FALSE
+                    )
+                );
+
+                //validate if customer is not deleted
+                $valid_customer=$m_customers->get_list(
+                    array(
+                        'customer_id'=>$info[0]->customer_id,
+                        'is_active'=>TRUE,
+                        'is_deleted'=>FALSE
+                    )
+                );
+                $data['valid_particular']=(count($valid_customer)>0);
+
+                echo $this->load->view('template/billing_payment_journal_for_review',$data,TRUE); //details of the journal
+
+
+                break;
 
         }
     }

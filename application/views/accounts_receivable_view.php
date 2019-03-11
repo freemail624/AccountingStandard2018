@@ -225,6 +225,32 @@
             </div>
         </div>
         <br>
+        <div class="panel panel-default">
+            <div id="" class="">
+                <div class="panel-body">
+                    <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo" style="text-decoration: none;">
+                    <h2 class="h2-panel-heading">Review Billing (Pending)</h2><hr>
+                    </a>
+                    <div >
+                    <table id="tbl_billing_review" class="table table-striped" cellspacing="0" width="100%">
+                        <thead class="">
+                        <tr>
+                            <th>&nbsp;</th>
+                            <th>Billing Reference No</th>
+                            <th>Customer</th>
+                            <th>Transaction Date</th>
+                            <th width="25%">Remarks</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
         <div class="panel panel-default" style="border-radius:6px;">
                 <div class="panel-body" style="min-height: 400px;">
                             <a data-toggle="collapse" data-parent="#accordionA" href="#collapseOne" style="text-decoration: none;">
@@ -971,6 +997,24 @@ $(document).ready(function(){
             ]
         });
 
+        dtReviewBilling=$('#tbl_billing_review').DataTable({
+            "bLengthChange":false,
+            "ajax" : "Billing_review/transaction/list-billing-for-review",
+            "columns": [
+                {
+                    "targets": [0],
+                    "class":          "details-control",
+                    "orderable":      false,
+                    "data":           null,
+                    "defaultContent": ""
+                },
+                { targets:[1],data: "ref_no" },
+                { targets:[2],data: "customer_name" },
+                { targets:[3],data: "date_txn" },
+                { targets:[4],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(80)}
+            ]
+        });
+
         $('.numeric').autoNumeric('init');
 
         $('#mobile_no').keypress(validateNumber);
@@ -1143,7 +1187,57 @@ $(document).ready(function(){
             }
         } );
 
+        $('#tbl_billing_review tbody').on( 'click', 'tr td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = dtReviewBilling.row( tr );
+            var idx = $.inArray( tr.attr('id'), detailRows );
 
+            if ( row.child.isShown() ) {
+                tr.removeClass( 'details' );
+                row.child.hide();
+
+                // Remove from the 'open' array
+                detailRows.splice( idx, 1 );
+            }
+            else {
+                tr.addClass( 'details' );
+                //console.log(row.data());
+                var d=row.data();
+
+                $.ajax({
+                    "dataType":"html",
+                    "type":"POST",
+                    "url":"Templates/layout/billing-journal-for-review?id="+ d.temp_journal_id,
+                    "beforeSend" : function(){
+                        row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                    }
+                }).done(function(response){
+                    row.child( response,'no-padding' ).show();
+
+                    reInitializeSpecificDropDown($('.cbo_customer_list'));
+                    reInitializeSpecificDropDown($('.cbo_department_list'));
+                    reInitializeNumeric();
+
+                    var tbl=$('#tbl_entries_for_review_billing_'+ d.temp_journal_id);
+                    var parent_tab_pane=$('#journal_review_'+ d.temp_journal_id);
+
+                    reInitializeDropDownAccounts(tbl);
+                    reInitializeChildEntriesTable(tbl);
+                    reInitializeChildElementsBilling(parent_tab_pane);
+
+                    // Add to the 'open' array
+                    if ( idx === -1 ) {
+                        detailRows.push( tr.attr('id') );
+                    }
+
+
+                });
+
+
+
+
+            }
+        } );
 
         $('#btn_new').click(function(){
             _txnMode="new";
@@ -1757,6 +1851,58 @@ $(document).ready(function(){
 
 
     };
+    var reInitializeChildElementsBilling=function(parent){
+        var _dataParentID=parent.data('parent-id');
+        var btn=parent.find('button[name="btn_finalize_billing_journal_review"]');
+
+        //initialize datepicker
+        parent.find('input.date-picker').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: true,
+            autoclose: true
+
+        });
+
+
+        parent.on('click','button[name="btn_finalize_billing_journal_review"]',function(){
+
+            var _curBtn=$(this);
+            if(isBalance('#tbl_entries_for_review_billing_'+_dataParentID)){
+                finalizeJournalReview().done(function(response){
+                    showNotification(response);
+                    if(response.stat=="success"){
+                        dt.row.add(response.row_added[0]).draw();
+                        var _parentRow=_curBtn.parents('table.table_journal_entries_review').parents('tr').prev();
+                        dtReviewBilling.row(_parentRow).remove().draw();
+                    }
+                }).always(function(){
+                    showSpinningProgress(_curBtn);
+                });
+            }else{
+                showNotification({title:"Not Balance!",stat:"error",msg:'Please make sure Debit and Credit amount are equal.'});
+                stat=false;
+            }
+
+        });
+
+        var finalizeJournalReview=function(){
+            var _data_review=parent.find('form').serializeArray();
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Accounts_receivable/transaction/create",
+                "data":_data_review,
+                "beforeSend": showSpinningProgress(btn)
+
+            });
+        };
+
+
+
+    };
+
 
 
 });

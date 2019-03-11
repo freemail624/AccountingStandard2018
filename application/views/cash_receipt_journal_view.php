@@ -246,6 +246,30 @@
                 </div>
             </div>
         </div>
+        <br>
+        <div class="panel panel-default" style="border-radius:6px;">
+            <div id="collapseOne" class="collapse in">
+                <div class="panel-body" style="">
+                <h2 class="h2-panel-heading">Billing Payment (Pending)</h2><hr>
+                    <div >
+                        <table id="tbl_billing_payment_for_review" class="table table-striped" cellspacing="0" width="100%">
+                            <thead class="">
+                            <tr>
+                                <th>&nbsp;</th>
+                                <th>Billing Reference No</th>
+                                <th>Customer</th>
+                                <th>Transaction Date</th>
+                                <th width="25%">Remarks</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <br>
 
@@ -1235,6 +1259,24 @@ $(document).ready(function(){
             ]
         });
 
+        dtReviewBilling=$('#tbl_billing_payment_for_review').DataTable({
+            "bLengthChange":false,
+            "ajax" : "Billing_review/transaction/list-billing-payment-for-review",
+            "columns": [
+                {
+                    "targets": [0],
+                    "class":          "details-control",
+                    "orderable":      false,
+                    "data":           null,
+                    "defaultContent": ""
+                },
+                { targets:[1],data: "ref_no" },
+                { targets:[2],data: "customer_name" },
+                { targets:[3],data: "date_txn" },
+                { targets:[4],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(80)}
+            ]
+        });
+
         $('#mobile_no').keypress(validateNumber);
 
         $('#landline').keypress(validateNumber);
@@ -1474,7 +1516,57 @@ $(document).ready(function(){
             }
         } );
 
+        $('#tbl_billing_payment_for_review tbody').on( 'click', 'tr td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = dtReviewBilling.row( tr );
+            var idx = $.inArray( tr.attr('id'), detailRows );
 
+            if ( row.child.isShown() ) {
+                tr.removeClass( 'details' );
+                row.child.hide();
+
+                // Remove from the 'open' array
+                detailRows.splice( idx, 1 );
+            }
+            else {
+                tr.addClass( 'details' );
+                //console.log(row.data());
+                var d=row.data();
+
+                $.ajax({
+                    "dataType":"html",
+                    "type":"POST",
+                    "url":"Templates/layout/billing-payment-for-review?id="+ d.temp_journal_id,
+                    "beforeSend" : function(){
+                        row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                    }
+                }).done(function(response){
+                    row.child( response,'no-padding' ).show();
+
+                    reInitializeSpecificDropDown($('.cbo_customer_list'));
+                    reInitializeSpecificDropDown($('.cbo_department_list'));
+                    reInitializeSpecificDropDown($('.cbo_payment_method'));
+
+
+                    reInitializeNumeric();
+
+                    var tbl=$('#tbl_entries_for_review_'+ d.temp_journal_id);
+                    var parent_tab_pane=$('#journal_review_'+ d.temp_journal_id);
+
+                    reInitializeDropDownAccounts(tbl,false);
+                    reInitializeChildEntriesTable(tbl);
+                    reInitializeChildElementsBilling(parent_tab_pane);
+
+                    // Add to the 'open' array
+                    if ( idx === -1 ) {
+                        detailRows.push( tr.attr('id') );
+                    }
+
+
+                });
+
+            }
+        } );
 
 
         $('#btn_new').click(function(){
@@ -2339,7 +2431,61 @@ $(document).ready(function(){
     };
 
 
+    var reInitializeChildElementsBilling=function(parent){
+        var _dataParentID=parent.data('parent-id');
+        var btn=parent.find('button[name="btn_finalize_journal_review"]');
 
+        //initialize datepicker
+        parent.find('input.date-picker').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            calendarWeeks: true,
+            autoclose: true
+
+        });
+
+
+        parent.on('click','button[name="btn_finalize_journal_review"]',function(){
+
+            var _curBtn=$(this);
+            if(isBalance('#tbl_entries_for_review_'+_dataParentID)){
+                finalizeJournalReview().done(function(response){
+                    showNotification(response);
+                    if(response.stat=="success"){
+                        dt.row.add(response.row_added[0]).draw();
+                        var _parentRow=_curBtn.parents('table.table_journal_entries_review').parents('tr').prev();
+                        dtReviewBilling.row(_parentRow).remove().draw();
+                    }
+
+                }).always(function(){
+                    showSpinningProgress(_curBtn);
+                });
+            }else{
+                showNotification({title:"Not Balance!",stat:"error",msg:'Please make sure Debit and Credit amount are equal.'});
+                stat=false;
+            }
+
+
+
+        });
+
+        var finalizeJournalReview=function(){
+            var _data_review=parent.find('form').serializeArray();
+
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Cash_receipt/transaction/create-from-cash-invoice",
+                "data":_data_review,
+                "beforeSend": showSpinningProgress(btn)
+
+            });
+        };
+
+
+
+    };
 });
 
 
