@@ -8,6 +8,7 @@ class Units extends CORE_Controller {
         $this->load->model('Units_model');
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
+        $this->load->model('Sync_references_model');
 
     }
 
@@ -50,6 +51,12 @@ class Units extends CORE_Controller {
                 $m_trans->trans_log='Created  Unit: '.$this->input->post('unit_name', TRUE);
                 $m_trans->save();
 
+                $m_sync=$this->Sync_references_model;
+                $m_sync->reference_id=$unit_id;
+                $m_sync->reference_type = 3;
+                $m_sync->save();
+
+
                 $response['title'] = 'Success!';
                 $response['stat'] = 'success';
                 $response['msg'] = 'Unit information successfully created.';
@@ -78,6 +85,11 @@ class Units extends CORE_Controller {
                     $m_trans->trans_log='Deleted Unit: '.$unit_name[0]->unit_name;
                     $m_trans->save();
 
+                    $m_sync=$this->Sync_references_model;
+                    $m_sync->reference_id=$unit_id;
+                    $m_sync->reference_type = 3;
+                    $m_sync->save();
+
                     echo json_encode($response);
                 }
 
@@ -100,6 +112,11 @@ class Units extends CORE_Controller {
                 $m_trans->trans_log='Updated Unit: '.$this->input->post('unit_name',TRUE).' ID('.$unit_id.')';
                 $m_trans->save();
 
+                $m_sync=$this->Sync_references_model;
+                $m_sync->reference_id=$unit_id;
+                $m_sync->reference_type = 3;
+                $m_sync->save();
+                
                 $response['title']='Success!';
                 $response['stat']='success';
                 $response['msg']='Unit information successfully updated.';

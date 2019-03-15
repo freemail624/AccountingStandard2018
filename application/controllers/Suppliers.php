@@ -14,6 +14,7 @@ class Suppliers extends CORE_Controller {
         $this->load->model('Payable_payment_model');
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
+        $this->load->model('Sync_references_model');
     }
 
     public function index() {
@@ -97,6 +98,11 @@ class Suppliers extends CORE_Controller {
                 $m_trans->trans_log='Created a Supplier: '.$this->input->post('supplier_name',TRUE);
                 $m_trans->save();
 
+                $m_sync=$this->Sync_references_model;
+                $m_sync->reference_id=$supplier_id;
+                $m_sync->reference_type = 2;
+                $m_sync->save();
+
                 echo json_encode($response);
 
                 break;
@@ -158,6 +164,11 @@ class Suppliers extends CORE_Controller {
                         $m_trans->trans_log='Deleted Supplier: '.$supplier_name[0]->supplier_name;
                         $m_trans->save();
 
+                        $m_sync=$this->Sync_references_model;
+                        $m_sync->reference_id=$supplier_id;
+                        $m_sync->reference_type = 2;
+                        $m_sync->save();
+
                         echo json_encode($response);
                     }
                 }
@@ -201,6 +212,12 @@ class Suppliers extends CORE_Controller {
                 $m_trans->trans_type_id=51; // TRANS TYPE
                 $m_trans->trans_log='Updated a Supplier : '.$this->input->post('supplier_name',TRUE).' ID('.$supplier_id.')';
                 $m_trans->save();
+
+                $m_sync=$this->Sync_references_model;
+                $m_sync->reference_id=$supplier_id;
+                $m_sync->reference_type = 2;
+                $m_sync->save();
+
                 echo json_encode($response);
 
                 break;

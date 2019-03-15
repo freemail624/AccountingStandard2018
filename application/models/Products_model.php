@@ -405,6 +405,27 @@ class Products_model extends CORE_Model {
             UNION ALL
 
             SELECT
+            CAST(pis.end_datetime as DATE) as txn_date,
+            pis.end_datetime as date_created,
+            CONCAT('X Reading # ' ,pis.x_reading_id) as ref_no,
+            ('POS Sales') as type,
+            ('POS Sales') as Description,
+            pis.product_id,
+            'Bulk' as identifier,
+            0 as parent_in_qty,
+            0 as child_in_qty,
+            pis.product_quantity as parent_out_qty,
+            pis.product_quantity as child_out_qty,
+            'None' department_name,
+            '' as remarks
+
+            FROM pos_item_sales  pis
+            WHERE pis.product_id= $product_id
+            ".($as_of_date==null?"":" AND CAST(pis.end_datetime as DATE)<='".$as_of_date."'")."
+
+            UNION ALL
+
+            SELECT
             ii.date_issued as txn_date,
             ii.date_created ,
             ii.slip_no as ref_no,
@@ -1199,7 +1220,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 (SELECT uc.unit_name as child_unit_name FROM units as uc WHERE uc.unit_id = core.parent_unit_id) as parent_unit_name,
                 (SELECT uc.unit_name as child_unit_name FROM units as uc WHERE uc.unit_id = core.child_unit_id) as child_unit_name,
 
-                ROUND((ReceiveQtyP+AdjustInQtyP".($account==TRUE?"-SalesOUtQtyP":"")."".($account_cii==TRUE?"-CInvOutP":"")."".($account_dis==TRUE?"-DInvOutP":"")."-IssueQtyP-AdjustOutP".($depid==0?"":"-IssueFromInvOutP+IssueToInvInP")."),2) as CurrentQty,
+                ROUND((ReceiveQtyP+AdjustInQtyP".($account==TRUE?"-SalesOUtQtyP-POSInvOutP":"")."".($account_cii==TRUE?"-CInvOutP":"")."".($account_dis==TRUE?"-DInvOutP":"")."-IssueQtyP-AdjustOutP".($depid==0?"":"-IssueFromInvOutP+IssueToInvInP")."),2) as CurrentQty,
                 ROUND((ReceiveQtyC+AdjustInQtyC".($account==TRUE?" -SalesOUtQtyC":"")."".($account_cii==TRUE?"-CInvOutC":"")."".($account_dis==TRUE?"-DInvOutC":"")."-IssueQtyC-AdjustOutC".($depid==0?"":"-IssueFromInvOutC+IssueToInvInC")."),2) as CurrentQtyChild
 
             
@@ -1225,7 +1246,9 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 IFNULL(issuefromout.parent_out_qty,0) as IssueFromInvOutP,
                 IFNULL(issuefromout.child_out_qty,0) as IssueFromInvOutC,
                 IFNULL(issuetoin.parent_in_qty,0) as IssueToInvInP,
-                IFNULL(issuetoin.child_in_qty,0) as IssueToInvInC
+                IFNULL(issuetoin.child_in_qty,0) as IssueToInvInC,
+                IFNULL(possalesout.parent_out_qty,0) as POSInvOutP,
+                IFNULL(possalesout.child_out_qty,0) as POSInvOutC
 
 
                 FROM
@@ -1300,6 +1323,15 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                  ".($depid==null||$depid==0?"":" AND ii.from_department_id=".$depid)."
                 GROUP BY iii.product_id) as issuefromout ON issuefromout.product_id = pQ.product_id
 
+
+                LEFT JOIN
+                (SELECT pis.product_id,
+                SUM(pis.product_quantity) as parent_out_qty,
+                SUM(pis.product_quantity) as child_out_qty
+                FROM pos_item_sales pis
+                WHERE  pis.x_reading_id != 0 
+                ".($as_of_date==null?"":" AND CAST(pis.end_datetime as DATE)<='".$as_of_date."'")."
+                GROUP BY pis.product_id) as possalesout ON possalesout.product_id = pQ.product_id 
 
 
                 LEFT JOIN

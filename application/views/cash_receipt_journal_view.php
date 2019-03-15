@@ -162,6 +162,9 @@
                 background: none!important; 
                 background-color: transparent!important; 
         } 
+        .right-align{
+            text-align: right;
+        }
     </style>
 
 </head>
@@ -236,6 +239,30 @@
                                 <th>Customer Name</th>
                                 <th>Invoice Date</th>
                                 <th>Remarks</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<br>
+        <div class="panel panel-default" style="border-radius:6px;">
+            <div id="collapseOne" class="collapse in">
+                <div class="panel-body" style="">
+                <h2 class="h2-panel-heading">Pos Sales (Pending)</h2><hr>
+                    <div >
+                        <table id="tbl_pos_sales_for_review" class="table table-striped" cellspacing="0" width="100%">
+                            <thead class="">
+                            <tr>
+                                <th></th>
+                                <th>X Reading #</th>
+                                <th>Transaction Date</th>
+                                <th>Total Amount</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -859,7 +886,7 @@ $(document).ready(function(){
     var _txnMode; var _cboCustomers; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode;
     var dtReview; var _cbo_paymentMethod; var _cbo_departments; var dt; var _cbo_banks; var _cbo_accounttype;
     var _cboCustomerType;
- 
+    var dtReviewPos;
 
     var oTBJournal={
         "dr" : "td:eq(2)",
@@ -986,6 +1013,26 @@ $(document).ready(function(){
                 { targets:[2],data: "customer_name" },
                 { targets:[4],data: "date_invoice" },
                 { targets:[3],data: "remarks" }
+            ]
+        });
+
+        dtReviewPos=$('#tbl_pos_sales_for_review').DataTable({
+            "bLengthChange":false,
+            "ajax" : "X_reading_report/transaction/pos-sales-for-review",
+            "columns": [
+                {
+                    "targets": [0],
+                    "class":          "details-control",
+                    "orderable":      false,
+                    "data":           null,
+                    "defaultContent": ""
+                },
+                { targets:[1],data: "x_reading_desc" },
+                { targets:[2],data: "trans_date" },
+                { sClass:"right_align",targets:[4],data: "trans_total",
+                     render: function(data,type,full,meta){
+                        return accounting.formatNumber(data,2);
+                } }
             ]
         });
 
@@ -1214,6 +1261,58 @@ $(document).ready(function(){
             }
         } );
 
+
+        $('#tbl_pos_sales_for_review tbody').on( 'click', 'tr td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = dtReviewPos.row( tr );
+            var idx = $.inArray( tr.attr('id'), detailRows );
+
+            if ( row.child.isShown() ) {
+                tr.removeClass( 'details' );
+                row.child.hide();
+
+                // Remove from the 'open' array
+                detailRows.splice( idx, 1 );
+            }
+            else {
+                tr.addClass( 'details' );
+                //console.log(row.data());
+                var d=row.data();
+
+                $.ajax({
+                    "dataType":"html",
+                    "type":"POST",
+                    "url":"Templates/layout/pos-sales-for-review?id="+ d.x_reading_id,
+                    "beforeSend" : function(){
+                        row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                    }
+                }).done(function(response){
+                    row.child( response,'no-padding' ).show();
+
+                    reInitializeSpecificDropDown($('.cbo_customer_list'));
+                    reInitializeSpecificDropDown($('.cbo_department_list'));
+                    reInitializeSpecificDropDown($('.cbo_payment_method'));
+
+
+                    reInitializeNumeric();
+
+                    var tbl=$('#tbl_entries_for_review_'+ d.x_reading_id);
+                    var parent_tab_pane=$('#journal_review_'+ d.x_reading_id);
+
+                    reInitializeDropDownAccounts(tbl,false);
+                    reInitializeChildEntriesTable(tbl);
+                    reInitializeChildElementsPOS(parent_tab_pane);
+
+                    // Add to the 'open' array
+                    if ( idx === -1 ) {
+                        detailRows.push( tr.attr('id') );
+                    }
+
+
+                });
+
+            }
+        } );
 
         $('#btn_new').click(function(){
             _txnMode="new";
@@ -1914,6 +2013,63 @@ $(document).ready(function(){
 
 
     };
+
+    var reInitializeChildElementsPOS=function(parent){
+        var _dataParentID=parent.data('parent-id');
+        var btn=parent.find('button[name="btn_finalize_journal_review"]');
+
+        //initialize datepicker
+        parent.find('input.date-picker').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            calendarWeeks: true,
+            autoclose: true
+
+        });
+
+
+        parent.on('click','button[name="btn_finalize_journal_review"]',function(){
+
+            var _curBtn=$(this);
+            if(isBalance('#tbl_entries_for_review_'+_dataParentID)){
+                finalizeJournalReview().done(function(response){
+                    showNotification(response);
+                    if(response.stat=="success"){
+                        dt.row.add(response.row_added[0]).draw();
+                        var _parentRow=_curBtn.parents('table.table_journal_entries_review').parents('tr').prev();
+                        dtReviewPos.row(_parentRow).remove().draw();
+                    }
+
+                }).always(function(){
+                    showSpinningProgress(_curBtn);
+                });
+            }else{
+                showNotification({title:"Not Balance!",stat:"error",msg:'Please make sure Debit and Credit amount are equal.'});
+                stat=false;
+            }
+
+
+
+        });
+
+        var finalizeJournalReview=function(){
+            var _data_review=parent.find('form').serializeArray();
+
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Cash_receipt/transaction/create-from-pos",
+                "data":_data_review,
+                "beforeSend": showSpinningProgress(btn)
+
+            });
+        };
+
+
+
+    };
+
 
 });
 

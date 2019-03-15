@@ -87,6 +87,7 @@ class Templates extends CORE_Controller {
         $this->load->model('Issuance_department_model');
         $this->load->model('Issuance_department_item_model');
 
+        $this->load->model('Pos_item_sales_model');
 
         $this->load->model('Dispatching_invoice_model');
         $this->load->model('Dispatching_invoice_item_model');
@@ -5098,6 +5099,56 @@ class Templates extends CORE_Controller {
                 $data['valid_particular']=(count($valid_supplier)>0);
                 $data['supplier_info']=$supplier_id[0];
                 echo $this->load->view('template/issuance_department_for_review',$data,TRUE); //details of the journal
+
+
+                break;
+
+
+            case 'pos-sales-for-review':
+                $x_reading_id=$this->input->get('id',TRUE);
+
+                $m_pos_sales =  $this->Pos_item_sales_model;
+
+
+
+                $m_customers=$this->Customers_model;
+                $m_accounts=$this->Account_title_model;
+                $m_payments=$this->Receivable_payment_model;
+                $m_methods=$this->Payment_method_model;
+                $m_departments=$this->Departments_model;
+                $m_pay_list=$this->Receivable_payment_list_model;
+
+                $info=$m_pos_sales->get_list(array('x_reading_id'=>$x_reading_id),
+                '*, DATE_FORMAT(end_datetime,"%m/%d/%Y")as trans_date'
+                );
+                $data['info']=$info[0];
+
+
+
+                $data['methods']=$m_methods->get_list();
+                $data['departments']=$m_departments->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
+
+                $data['customers']=$m_customers->get_list(
+                    array(
+                        'customers.is_active'=>TRUE,
+                        'customers.is_deleted'=>FALSE
+                    ),
+
+                    array(
+                        'customers.customer_id',
+                        'customers.customer_name'
+                    )
+                );
+                $data['entries']=$m_pos_sales->get_journal_entries($x_reading_id);
+
+                $data['accounts']=$m_accounts->get_list(
+                    array(
+                        'account_titles.is_active'=>TRUE,
+                        'account_titles.is_deleted'=>FALSE
+                    )
+                );
+
+                echo $this->load->view('template/pos_sales_for_review',$data,TRUE); //details of the journal
 
 
                 break;

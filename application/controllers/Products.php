@@ -31,6 +31,9 @@ class Products extends CORE_Controller
         $this->load->model('Company_model');
         $this->load->model('Trans_model');
         $this->load->model('Brands_model');
+        $this->load->model('Sync_references_model');
+
+
     }
 
     public function index() {
@@ -166,6 +169,12 @@ class Products extends CORE_Controller
                 $m_trans->trans_log='Created a new Product: '.$this->input->post('product_desc', TRUE);
                 $m_trans->save();
 
+
+                $m_sync=$this->Sync_references_model;
+                $m_sync->reference_id=$product_id;
+                $m_sync->reference_type = 0;
+                $m_sync->save();
+
                 echo json_encode($response);
 
                 break;
@@ -229,6 +238,13 @@ class Products extends CORE_Controller
                 $response['msg']='Product information successfully updated.';
                 $response['row_updated']=$m_products->product_list(1,null,$product_id,null,null,null,null,null,1);
 
+
+                $m_sync=$this->Sync_references_model;
+                $m_sync->reference_id=$product_id;
+                $m_sync->reference_type = 0;
+                $m_sync->save();
+
+                
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
                 $m_trans->set('trans_date','NOW()');
