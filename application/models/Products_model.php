@@ -1400,8 +1400,8 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 LEFT JOIN tax_types ON tax_types.tax_type_id=core.tax_type_id
 
                 WHERE core.is_active = TRUE
-                ".($supplier_id==null?"":" AND core.supplier_id='".$supplier_id."'")."
-                ".($category_id==null?"":" AND core.category_id='".$category_id."'")."
+                ".($supplier_id==null|| $supplier_id==0?"":" AND core.supplier_id='".$supplier_id."'")."
+                ".($category_id==null || $category_id==0?"":" AND core.category_id='".$category_id."'")."
                 ".($item_type_id==null?"":" AND core.item_type_id='".$item_type_id."'")."
 
                 ORDER BY core.product_desc) as main

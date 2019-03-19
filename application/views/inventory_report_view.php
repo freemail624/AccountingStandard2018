@@ -165,12 +165,32 @@
                                                     <h2 class="h2-panel-heading">Inventory Report</h2><hr>
 
                                                             <div class="row">
-                                                                <div class="col-lg-9">
+                                                                <div class="col-lg-3">
                                                                     Department * : <br />
                                                                     <select id="cbo_department" class="form-control">
                                                                         <option value="0">All Department</option>
                                                                         <?php foreach($departments as $department){ ?>
                                                                             <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
+                                                                        <?php } ?>
+                                                                    </select>
+
+                                                                </div>
+                                                                <div class="col-lg-3">
+                                                                    Supplier * : <br />
+                                                                    <select id="cbo_supplier" class="form-control">
+                                                                        <option value="0">All Suppliers</option>
+                                                                        <?php foreach($suppliers as $supplier){ ?>
+                                                                            <option value="<?php echo $supplier->supplier_id; ?>"><?php echo $supplier->supplier_name; ?></option>
+                                                                        <?php } ?>
+                                                                    </select>
+
+                                                                </div>
+                                                                <div class="col-lg-3">
+                                                                    Categories * : <br />
+                                                                    <select id="cbo_categories" class="form-control">
+                                                                        <option value="0">All Categories</option>
+                                                                        <?php foreach($categories as $category){ ?>
+                                                                            <option value="<?php echo $category->category_id; ?>"><?php echo $category->category_name; ?></option>
                                                                         <?php } ?>
                                                                     </select>
 
@@ -289,7 +309,7 @@
 
 <script>
     $(document).ready(function(){
-        var dt; var _cboDepartment;
+        var dt; var _cboDepartment; var _cboCategories; 
 
 
         var initializeControls=function(){
@@ -307,6 +327,17 @@
             allowClear: false
             });
 
+            _cboCategories=$("#cbo_categories").select2({
+            placeholder: "Choose Category",
+            allowClear: false
+            });
+
+            _cboSuppliers=$("#cbo_supplier").select2({
+            placeholder: "Choose Supplier",
+            allowClear: false
+            });
+
+            $('#cbo_categories').select2('val',23);
             reloadList();
 
             // createToolBarButton();
@@ -323,31 +354,45 @@
                 dt.clear().draw();
                 dt.destroy();
                 reloadList();
-                createToolBarButton();
+                // createToolBarButton();
             });
 
             $('#cbo_department').on('change',function(){
                 dt.clear().draw();
                 dt.destroy();
                 reloadList();
-                createToolBarButton();
+                // createToolBarButton();
+            });
+
+            $('#cbo_categories').on('change',function(){
+                dt.clear().draw();
+                dt.destroy();
+                reloadList();
+                // createToolBarButton();
+            });
+
+            $('#cbo_supplier').on('change',function(){
+                dt.clear().draw();
+                dt.destroy();
+                reloadList();
+                // createToolBarButton();
             });
 
             $(document).on('click','#btn_print',function(){
-                window.open('Inventory/transaction/preview-inventory?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val());
+                window.open('Inventory/transaction/preview-inventory?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val()+'&catid='+$('#cbo_categories').val()+'&supid='+$('#cbo_supplier').val());
             });
 
             $(document).on('click','#btn_print_detailed',function(){
-                window.open('Inventory/transaction/preview-inventory-with-total?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val());
+                window.open('Inventory/transaction/preview-inventory-with-total?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val()+'&catid='+$('#cbo_categories').val()+'&supid='+$('#cbo_supplier').val());
             });
 
 
             $(document).on('click','#btn_export',function(){
-                window.open('Inventory/transaction/export-inventory?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val());
+                window.open('Inventory/transaction/export-inventory?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val()+'&catid='+$('#cbo_categories').val()+'&supid='+$('#cbo_supplier').val());
             });
 
             $(document).on('click','#btn_export_detailed',function(){
-                window.open('Inventory/transaction/export-inventory-with-total?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val());
+                window.open('Inventory/transaction/export-inventory-with-total?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val()+'&catid='+$('#cbo_categories').val()+'&supid='+$('#cbo_supplier').val());
             });
 
             $(document).on('click','#btn_email',function(){
@@ -358,7 +403,7 @@
                 $.ajax({
                     "dataType":"json",
                     "type":"POST",
-                    "url":'Inventory/transaction/email-inventory?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val(),
+                    "url":'Inventory/transaction/email-inventory?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val()+'&catid='+$('#cbo_categories').val()+'&supid='+$('#cbo_supplier').val(),
                     "beforeSend": showSpinningProgress(btn)
                 }).done(function(response){
                     showNotification(response);
@@ -371,7 +416,7 @@
                 dt.clear().draw();
                 dt.destroy();
                 reloadList();
-                createToolBarButton();
+                // createToolBarButton();
             });
 
 
@@ -471,6 +516,8 @@
                     "data": function ( d ) {
                         return $.extend( {}, d, {
                             "depid": $('#cbo_department').val(),
+                            "catid": $('#cbo_categories').val(),
+                            "supid": $('#cbo_supplier').val(),
                             "date" : $('#txt_date').val()
                         });
                     }
