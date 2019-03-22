@@ -161,10 +161,32 @@ class Deliveries extends CORE_Controller
                 );
                 $purchase_order_id=(count($arr_po_info)>0?$arr_po_info[0]->purchase_order_id:0);
 
+
+
+                $external_ref_no = $this->input->post('external_ref_no',TRUE);
+                $supplier_id = $this->input->post('supplier',TRUE);
+                if( count(
+                        $m_delivery_invoice->get_list(
+                            array(
+                                'delivery_invoice.external_ref_no'=>$external_ref_no,
+                                'delivery_invoice.supplier_id'=>$supplier_id,
+                                'delivery_invoice.is_active'=>TRUE,
+                                'delivery_invoice.is_deleted'=>FALSE
+                            )
+                        )
+                    )  > 0
+                ){
+                    $response['title']="Error!";
+                    $response['stat']="error";
+                    $response['msg']="External Reference Number exists.";
+                    echo json_encode($response);
+                    exit;
+                }
+
+
+
                 $m_delivery_invoice->begin();
-
                 $m_delivery_invoice->set('date_created','NOW()'); //treat NOW() as function and not string
-
                 $m_delivery_invoice->purchase_order_id=$purchase_order_id;
                 //$m_delivery_invoice->dr_invoice_no=$this->input->post('dr_invoice_no',TRUE);
                 //$m_delivery_invoice->batch_no=$this->input->post('batch_no',TRUE);
@@ -300,6 +322,27 @@ class Deliveries extends CORE_Controller
                     'purchase_order.purchase_order_id'
                 );
                 $purchase_order_id=(count($arr_po_info)>0?$arr_po_info[0]->purchase_order_id:0);
+
+                $external_ref_no = $this->input->post('external_ref_no',TRUE);
+                $supplier_id = $this->input->post('supplier',TRUE);
+                if( count(
+                        $m_delivery_invoice->get_list(
+                            array(
+                                'delivery_invoice.external_ref_no'=>$external_ref_no,
+                                'delivery_invoice.supplier_id'=>$supplier_id,
+                                'delivery_invoice.is_active'=>TRUE,
+                                'delivery_invoice.is_deleted'=>FALSE
+                            )
+                        )
+                    )  > 0
+                ){
+                    $response['title']="Error!";
+                    $response['stat']="error";
+                    $response['msg']="External Reference Number exists.";
+                    echo json_encode($response);
+                    exit;
+                }
+
 
                 $m_delivery_invoice->begin();
 

@@ -1778,18 +1778,23 @@ $(document).ready(function(){
                 if(_txnMode=="new"){
                     createDeliverInvoice().done(function(response){
                         showNotification(response);
+                        if(response.stat == 'success'){
                         dt.row.add(response.row_added[0]).draw();
                         clearFields($('#frm_deliveries'));
                         showList(true);
+                        }
+
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
                     });
                 }else{
                     updatePurchaseOrder().done(function(response){
                         showNotification(response);
-                        dt.row(_selectRowObj).data(response.row_updated[0]).draw();
-                        clearFields($('#frm_deliveries'));
-                        showList(true);
+                        if(response.stat == 'success'){
+                            dt.row(_selectRowObj).data(response.row_updated[0]).draw();
+                            clearFields($('#frm_deliveries'));
+                            showList(true);
+                        }
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
                     });
@@ -1935,7 +1940,6 @@ $(document).ready(function(){
         _data.push({name : "summary_before_discount", value :tbl_summary.find(oTableDetails.before_tax).text()});
         _data.push({name : "summary_tax_amount", value : tbl_summary.find(oTableDetails.tax_amount).text()});
         _data.push({name : "summary_after_tax", value : tbl_summary.find(oTableDetails.after_tax).text()});
-        console.log(_data);
         return $.ajax({ 
             "dataType":"json",
             "type":"POST",
@@ -1956,7 +1960,6 @@ $(document).ready(function(){
         _data.push({name : "summary_tax_amount", value : tbl_summary.find(oTableDetails.tax_amount).text()});
         _data.push({name : "summary_after_tax", value : tbl_summary.find(oTableDetails.after_tax).text()});
         _data.push({name : "dr_invoice_id" ,value : _selectedID});
-        console.log(_data);
         return $.ajax({
             "dataType":"json",
             "type":"POST",
