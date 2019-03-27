@@ -293,7 +293,7 @@ class Suppliers extends CORE_Controller {
                                         ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no)
                                         ->setCellValue('A4',$company_info[0]->email_address);
 
-                $excel->getActiveSheet()->setCellValue('A6','Inventory Report ')
+                $excel->getActiveSheet()->setCellValue('A6','Supplier Masterfile')
                                         ->getStyle('A6')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('A7','')
                                         ->getStyle('A7')->getFont()->setItalic(TRUE);

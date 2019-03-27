@@ -1,4 +1,4 @@
-<head>  <title>Supplier Masterfile </title></head>
+<head>  <title>Customer Masterfile </title></head>
 <body> <style type="text/css">
            body {
             font-family: 'Calibri',sans-serif;
@@ -46,30 +46,28 @@
             </td>
         </tr>
     </table>
-    <h2>Supplier Masterfile</h2>
+    <h2>Customer Masterfile</h2>
         <table width="100%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11" id="tbl_supplier">
             <thead>
             <tr>
-                <th>Company Name</th>
-                <th>TIN</th>
-                <th width="20%">Address</th>
+                <th>Customer Name</th>
                 <th>Contact Person</th>
                 <th>Contact No</th>
-                <th>Email</th>
-                <th width="5%">Tax</th>
+                <th width="20%">Address</th>
+                <th>Email Address</th>
+                <th>TIN</th>
             </tr>
             </thead>
             <tbody>
             
-            <?php foreach ($suppliers as $supplier) { ?>
+            <?php foreach ($customers as $customer) { ?>
             <tr>
-                <td><?php echo $supplier->supplier_name ?></td>
-                <td><?php echo $supplier->tin_no ?></td>
-                <td><?php echo $supplier->address ?></td>
-                <td><?php echo $supplier->contact_person ?></td>
-                <td><?php echo $supplier->contact_no ?></td>
-                <td><?php echo $supplier->email_address ?></td>
-                <td><?php echo $supplier->tax_type ?></td>
+                <td><?php echo $customer->customer_name ?></td>
+                <td><?php echo $customer->contact_name ?></td>
+                <td><?php echo $customer->contact_no ?></td>
+                <td><?php echo $customer->address ?></td>
+                <td><?php echo $customer->email_address ?></td>
+                <td><?php echo $customer->tin_no ?></td>
             </tr>
             <?php } ?>
 
