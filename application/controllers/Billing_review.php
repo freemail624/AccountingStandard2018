@@ -25,7 +25,7 @@ class Billing_review extends CORE_Controller
     public function transaction($txn=null){
         switch($txn){
             case 'list-billing-for-review':
-                $response['data']=$this->Temp_journal_info_model->get_list(array('is_sales'=>1,'is_journal_posted'=>FALSE),
+                $response['data']=$this->Temp_journal_info_model->get_list(array('is_sales'=>1,'book_type_id'=>0,'is_journal_posted'=>FALSE),
                     'temp_journal_info.*,
                     customers.customer_name',
                     array(array('customers','customers.customer_id = temp_journal_info.customer_id','left'))
@@ -34,7 +34,16 @@ class Billing_review extends CORE_Controller
                 break;
 
             case 'list-billing-payment-for-review':
-                $response['data']=$this->Temp_journal_info_model->get_list(array('is_sales'=>0,'is_journal_posted'=>FALSE),
+                $response['data']=$this->Temp_journal_info_model->get_list(array('is_sales'=>0,'book_type_id'=>1,'is_journal_posted'=>FALSE),
+                    'temp_journal_info.*,
+                    customers.customer_name',
+                    array(array('customers','customers.customer_id = temp_journal_info.customer_id','left'))
+                    );
+                echo json_encode($response);
+                break;
+
+            case 'list-billing-advances-for-review':
+                $response['data']=$this->Temp_journal_info_model->get_list(array('book_type_id'=>2,'is_journal_posted'=>FALSE),
                     'temp_journal_info.*,
                     customers.customer_name',
                     array(array('customers','customers.customer_id = temp_journal_info.customer_id','left'))

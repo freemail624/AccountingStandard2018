@@ -5857,6 +5857,58 @@ class Templates extends CORE_Controller {
 
                 break;
 
+            case 'billing-advances-for-review':
+                $temp_journal_id=$this->input->get('id',TRUE);
+                $m_accounts=$this->Account_title_model;
+                $m_departments=$this->Departments_model;
+                $m_temp_info=$this->Temp_journal_info_model;
+                $m_temp_items=$this->Temp_journal_accounts_model;
+                $m_suppliers=$this->Suppliers_model;
+
+                $info = $m_temp_info->get_list($temp_journal_id,
+                        '*,
+                        DATE_FORMAT(date_txn,"%m/%d/%Y") as date_txn'
+                    );
+                $data['info']=$info[0];
+                $data['departments']=$m_departments->get_list('is_active=TRUE AND is_deleted=FALSE');
+                $data['entries']=$m_temp_items->get_list(array('temp_journal_id'=>$temp_journal_id),null,null,'dr_amount DESC');
+                $data['suppliers']=$m_suppliers->get_list(
+                    array(
+                        'suppliers.is_active'=>TRUE,
+                        'suppliers.is_deleted'=>FALSE
+                    ),
+
+                    array(
+                        'suppliers.supplier_id',
+                        'suppliers.supplier_name'
+                    )
+                );
+
+                $m_customers=$this->Customers_model;
+                $data['customers']=$m_customers->get_list(
+                    array(
+                        'customers.is_active'=>TRUE,
+                        'customers.is_deleted'=>FALSE
+                    ),
+
+                    array(
+                        'customers.customer_id',
+                        'customers.customer_name'
+                    )
+                );
+
+                
+                $data['accounts']=$m_accounts->get_list(
+                    array(
+                        'account_titles.is_active'=>TRUE,
+                        'account_titles.is_deleted'=>FALSE
+                    )
+                );
+
+                echo $this->load->view('template/billing_advances_for_review',$data,TRUE); //details of the journal
+
+
+                break;
         }
     }
 

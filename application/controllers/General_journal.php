@@ -25,6 +25,7 @@ class General_journal extends CORE_Controller
                 'Trans_model',
                 'Adjustment_model',
                 'Issuance_department_model',
+                'Temp_journal_info_model',
                 'Customer_type_model'
 
             )
@@ -183,6 +184,25 @@ class General_journal extends CORE_Controller
                 $m_trans->trans_key_id=8; //CRUD
                 $m_trans->trans_type_id=15; // TRANS TYPE
                 $m_trans->trans_log='Finalized Adjustment No. '.$adjustment[0]->adjustment_code.' For General Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
+                $m_trans->save();
+                //AUDIT TRAIL END
+                }
+
+                $temp_journal_id=$this->input->post('temp_journal_id',TRUE);
+                if($temp_journal_id!=null){
+                    $m_journal->is_billing=1;
+                    $m_journal->modify($journal_id);
+                    $m_temp_journal=$this->Temp_journal_info_model;
+                    $m_temp_journal->journal_id=$journal_id;
+                    $m_temp_journal->is_journal_posted=TRUE;
+                    $m_temp_journal->modify($temp_journal_id);
+                // AUDIT TRAIL START
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=8; //CRUD
+                $m_trans->trans_type_id=69; // TRANS TYPE
+                $m_trans->trans_log='Finalized Customer Advances Reference No. '.$this->input->post('ref_no',TRUE).' For General Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
                 $m_trans->save();
                 //AUDIT TRAIL END
                 }
