@@ -374,6 +374,18 @@ GROUP BY n.supplier_id HAVING total_balance > 0
 
      }
 
+      function get_count_exref($external_ref_no,$supplier_id,$dr_invoice_id){ 
+        $sql="SELECT dr_invoice_id  
+            FROM delivery_invoice WHERE  
+            external_ref_no = '$external_ref_no' 
+            AND  supplier_id = '$supplier_id' 
+            AND  dr_invoice_id != '$dr_invoice_id' 
+            AND  is_active = TRUE 
+            AND  is_deleted = FALSE"; 
+ 
+         return $this->db->query($sql)->result(); 
+ 
+     } 
 
 }
 

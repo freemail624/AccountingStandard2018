@@ -29,6 +29,7 @@ class Purchase_items_model extends CORE_Model {
                         p.product_desc,                        
                         p.purchase_cost,
                         p.parent_unit_id,
+                        p.sale_price,
                         p.child_unit_id,
                         p.child_unit_desc,
                         p.is_bulk,

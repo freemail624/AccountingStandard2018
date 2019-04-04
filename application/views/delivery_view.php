@@ -202,6 +202,7 @@
                     <th>Terms</th>
                     <th>Delivered</th>
                     <th><center>Action</center></th>
+                    <th><center></center></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -380,6 +381,7 @@
                     <!-- DISPLAY -->
                     <th width="15%">Item</th>
                     <th width="10%" style="text-align: right;">Unit Price</th>
+                    <th width="10%" style="text-align: right;">SRP</th>
                     <th width="10%" style="text-align: right;">Discount (%)</th>
                     <!-- display: none; -->
                     <th width="5%" style="display: none;">T.D</th> <!-- total discount -->
@@ -400,7 +402,7 @@
 
                 <tfoot>
                     <tr>
-                        <td colspan="9" style="height: 20px;">&nbsp;</td>
+                        <td colspan="10" style="height: 20px;">&nbsp;</td>
                     </tr>
                     <tr>
                         <td colspan="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount (%) :</strong></td>
@@ -873,16 +875,17 @@ $(document).ready(function(){
         unit_value: 'td:eq(1)',
         unit_identifier : 'td:eq(2)',
         unit_price : 'td:eq(3)',
-        discount : 'td:eq(4)',
-        total_line_discount : 'td:eq(5)',
-        tax : 'td:eq(6)',
-        total : 'td:eq(7)',
-        vat_input : 'td:eq(8)',
-        net_vat : 'td:eq(9)',
-        total_after_global : 'td:eq(11)',
-        item_id : 'td:eq(10)',
-        bulk_price : 'td:eq(13)',
-        retail_price : 'td:eq(14)'
+        sale_price : 'td:eq(4)',
+        discount : 'td:eq(5)',
+        total_line_discount : 'td:eq(6)',
+        tax : 'td:eq(7)',
+        total : 'td:eq(8)',
+        vat_input : 'td:eq(9)',
+        net_vat : 'td:eq(10)',
+        total_after_global : 'td:eq(12)',
+        item_id : 'td:eq(11)',
+        bulk_price : 'td:eq(14)',
+        retail_price : 'td:eq(15)'
 
     };
 
@@ -927,7 +930,7 @@ $(document).ready(function(){
         dt=$('#tbl_delivery_invoice').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 1, "desc" ]],
+            "order": [[ 8, "desc" ]],
             "language": {
                 "searchPlaceholder":"Search Purchase Invoice"
             },
@@ -954,7 +957,9 @@ $(document).ready(function(){
 
                         return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                     }
-                }
+                },
+                { targets:[8],data: "dr_invoice_id",visible:false },
+
             ]
         });
 
@@ -1111,6 +1116,8 @@ $(document).ready(function(){
                     unit_name : suggestion.unit_name,
                     product_id: suggestion.product_id,
                     product_desc : suggestion.product_desc,
+                    sale_price : suggestion.sale_price,
+                    orig_srp : suggestion.sale_price,
                     dr_line_total_discount : "0.00",
                     tax_exempt : false,
                     dr_tax_rate : tax_rate,
@@ -1366,7 +1373,7 @@ $(document).ready(function(){
                 processData : false,
                 contentType : false,
                 beforeSend : function(){
-                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="9"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
                 },
                 success : function(response){
                     var rows=response.data;
@@ -1401,6 +1408,8 @@ $(document).ready(function(){
                             tax_exempt : false,
                             dr_tax_rate : value.po_tax_rate,
                             dr_price : value.po_price,
+                            sale_price : value.sale_price,
+                            orig_srp : value.sale_price,
                             dr_discount : value.po_discount,
                             tax_type_id : null,
                             dr_line_total_price : value.po_line_total,
@@ -1575,7 +1584,7 @@ $(document).ready(function(){
                     processData : false,
                     contentType : false,
                     beforeSend : function(){
-                        $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                        $('#tbl_items > tbody').html('<tr><td align="center" colspan="9"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
                     },
                     success : function(response){
                         var rows=response.data;
@@ -1608,6 +1617,8 @@ $(document).ready(function(){
                                 tax_exempt : false,
                                 dr_tax_rate : value.dr_tax_rate,
                                 dr_price : value.dr_price,
+                                sale_price : value.sale_price,
+                                orig_srp : value.orig_srp,
                                 dr_discount : value.dr_discount,
                                 tax_type_id : null,
                                 dr_line_total_price : value.dr_line_total_price,
@@ -2045,6 +2056,7 @@ $(document).ready(function(){
         '<td ><input name="dr_qty[]" type="text" class="numeric form-control trigger-keyup" value="'+ d.dr_qty +'"></td>'+unit+
         '<td >'+d.product_desc+'<input type="text" style="display: none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
         '<td ><input name="dr_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.dr_price,2)+'" style="text-align:right;"></td>'+
+        '<td ><input name="sale_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.sale_price,2)+'" style="text-align:right;"></td>'+
         '<td ><input name="dr_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_discount,2)+'" style="text-align:right;"></td>'+
         // display: none;
         '<td  style="display: none;"><input name="dr_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_line_total_discount,2)+'" readonly></td>'+
@@ -2060,6 +2072,7 @@ $(document).ready(function(){
         '<td  align="center"><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>'+
         '<td  style="display: none;" ><input type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.bulk_price,2)+'" readonly></td>'+
         '<td  style="display: none;" ><input type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.retail_price,2)+'" readonly></td>'+
+        '<td style="display: none;"><input name="orig_srp[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.orig_srp,2)+'" style="text-align:right;"></td>'+
         '</tr>';
     };
 
