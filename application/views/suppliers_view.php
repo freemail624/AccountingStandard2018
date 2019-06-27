@@ -193,9 +193,6 @@ $(document).ready(function(){
             _cboTaxGroup.select2('val',data.tax_type_id);
         });
 
-        $('input[name="purchase_cost"],input[name="markup_percent"],input[name="sale_price"]').keyup(function(){
-            reComputeSRP();
-        });
 
         $('#tbl_suppliers tbody').on('click','button[name="remove_info"]',function(){
             $('#modal_confirmation').modal('show');

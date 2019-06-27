@@ -196,9 +196,8 @@
                                                         <th>PLU</th>
                                                         <th>Product Description</th>
                                                         <th>Category</th>
-                                                        <th style="text-align: right;">Bulk</th>
-                                                        <th style="text-align: right;">Retail</th>
-                                                        <th style="text-align: right;"><center>Bulk and Retail ?</th></th>
+                                                        <th style="width: 10%;">UOM</th>
+                                                        <th style="text-align: right;width: 10%;">SRP</th>
                                                         <th><center>Action</center></th>
                                                     </tr>
                                                     </thead>
@@ -433,16 +432,6 @@
 
                                                                 </div>
 
-                                                                <!-- <div class="form-group" style="margin-bottom:0px;">
-                                                                    <label class="">Purchase Cost 2 (Viz-Min Area):</label>
-                                                                    <div class="input-group">
-                                                                            <span class="input-group-addon">
-                                                                                <i class="fa fa-toggle-off"></i>
-                                                                            </span>
-                                                                        <input type="text" name="purchase_cost_2" class="form-control numeric">
-                                                                    </div>
-
-                                                                </div> -->
 
 
                                                                 <div class="form-group" style="margin-bottom:0px;">
@@ -1077,7 +1066,7 @@ $(document).ready(function(){
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "pageLength":15,
-            "order": [[ 1, "asc" ]],
+            "order": [[ 2, "asc" ]],
             "ajax" : "Products/transaction/list",
             "columns": [
                 {
@@ -1090,45 +1079,12 @@ $(document).ready(function(){
                 { targets:[1],data: "product_code" },
                 { targets:[2],data: "product_desc" },
                 { targets:[3],data: "category_name" },
-                {
-                    targets:[4],data: "CurrentQty",
-                    render: function (data, type, full, meta) {
-                        if(isNaN(data)){
-                            return 0.00;
-                        }else{
-                            return  accounting.formatNumber(parseFloat(data),2);
-                        }
+                { targets:[4],data: "parent_unit_name" },
+                { targets:[5],data: "sale_price" , render: $.fn.dataTable.render.number( ',', '.', 2)
 
-                    }
-                },
+},
                 {
-                    targets:[5],data: "CurrentQtyChild",
-                    render: function (data, type, full, meta) {
-                        if(isNaN(data)){
-                            return 0.00;
-                        }else{
-                            return  accounting.formatNumber(parseFloat(data),2);
-                        }
-
-                    }
-                },
-                {
-                    targets:[6],data: null,
-                    render: function (data, type, full, meta){
-                        var _attribute='';
-                        //console.log(data.is_email_sent);
-                        if(data.is_bulk=="1"){
-                            _attribute=' class="fa fa-check-circle" style="color:green;" ';
-                        }else{
-                            _attribute=' class="fa fa-times-circle" style="color:red;" ';
-                        }
-
-                        return '<center><i '+_attribute+'></i></center>';
-                    }
-
-                },
-                {
-                    targets:[7],
+                    targets:[6],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"   data-toggle="tooltip" data-placement="top" title="Edit" style="margin-left:-5px;"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info"  data-toggle="tooltip" data-placement="top" title="Move to trash" style="margin-right:-5px;"><i class="fa fa-trash-o"></i> </button>';
@@ -1142,10 +1098,6 @@ $(document).ready(function(){
                          searchPlaceholder: "Search Product Name"
                      },
             "rowCallback":function( row, data, index ){
-
-                $(row).find('td').eq(4).attr({
-                    "align": "right"
-                });
                 $(row).find('td').eq(5).attr({
                     "align": "right"
                 });
@@ -1812,9 +1764,6 @@ $(document).ready(function(){
         });
 
 
-        // $('input[name="purchase_cost"],input[name="markup_percent"],input[name="sale_price"]').keyup(function(){
-        //     reComputeSRP();
-        // });
 
         $('#tbl_products tbody').on('click','button[name="remove_info"]',function(){
             $('#modal_confirmation').modal('show');
@@ -2081,7 +2030,7 @@ $('#is_manual_price').prop("checked") ?  _data.push({name : "is_manual_price" , 
         '<td>Vat Exempt : </td><td>'+ d.is_tax_exempt+'</td>' +
         '</tr>' +
         '<tr>' +
-        '<td>Equivalent Points : </td><td>'+ d.equivalent_points+'</td>' +
+        '<td>Equivalent Points : </td><td></td>' +
         '</tr>' +
         '<tr>' +
         '<td>Warn Qty : </td><td>'+ d.product_warn+'</td>' +
@@ -2093,22 +2042,22 @@ $('#is_manual_price').prop("checked") ?  _data.push({name : "is_manual_price" , 
         '<td>Purchase Cost : </td><td>'+ accounting.formatNumber(d.purchase_cost,2)+'</td>' +
         '</tr>' +
         '<tr>' +
-        '<td>Markup Percent : </td><td>'+ d.markup_percent+'</td>' +
+        '<td>Markup Percent : </td><td></td>' +
         '</tr>' +
         '<tr>' +
         '<td>Sale Price : </td><td>'+ accounting.formatNumber(d.sale_price,2)+'</td>' +
         '</tr>' +
         '<tr>' +
-        '<td>Whole Sale Price : </td><td>'+ accounting.formatNumber(d.whole_sale,2)+'</td>' +
+        '<td>Whole Sale Price : </td><td></td>' +
         '</tr>' +
         '<tr>' +
-        '<td>Retailer Price : </td><td>'+ accounting.formatNumber(d.retailer_price,2)+'</td>' +
+        '<td>Retailer Price : </td><td></td>' +
         '</tr>' +
         '<tr>' +
-        '<td>Special Discount Price : </td><td>'+ accounting.formatNumber(d.special_disc,2)+'</td>' +
+        '<td>Special Discount Price : </td><td></td>' +
         '</tr>' +
         '<tr>' +
-        '<td>Valued Customer Price : </td><td>'+ accounting.formatNumber(d.valued_customer,2)+'</td>' +
+        '<td>Valued Customer Price : </td><td></td>' +
         '</tr>' +
         '<tr>' +
         '<td>Discount Price : </td><td>'+ accounting.formatNumber(d.discounted_price,2)+'</td>' +
@@ -2125,19 +2074,6 @@ $('#is_manual_price').prop("checked") ?  _data.push({name : "is_manual_price" , 
         '</tbody></table><br />';
     };
 
-    // MARKUP + PURCHASE COST
-    /*var reComputeSRP=function(){
-        var markupPercent=getFloat($('input[name="markup_percent"]').val());
-        var purchaseAmount=getFloat($('input[name="purchase_cost"]').val());
-
-        if(markupPercent>0){
-            var markupDecimal=markupPercent/100;
-            var newAmount=purchaseAmount*markupDecimal;
-            var srpAmount=purchaseAmount+newAmount;
-            $('input[name="sale_price"]').val(accounting.formatNumber(srpAmount,2));
-        }
-
-    };*/
 
     var getFloat=function(f){
         return parseFloat(accounting.unformat(f));
