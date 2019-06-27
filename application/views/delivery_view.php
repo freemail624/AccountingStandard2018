@@ -414,13 +414,13 @@
                         <td style="text-align: right;"><strong><i class="glyph-icon icon-star"></i></strong></td>
                         <td id="td_total_after_discount" style="text-align: right;display: none;"><strong>0.00</strong></td><td style="border-right: none;"></td>
                         <td style="text-align: right;border-left: none;"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
-                        <td align="right" colspan="4" id="td_before_tax" color="red">0.00</td>
+                        <td align="right" colspan="5" id="td_before_tax" color="red">0.00</td>
                     </tr>
                     <tr>
                         <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
                         <td align="right" colspan="1" id="td_tax" color="red">0.00</td>
                         <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
-                        <td align="right" colspan="4" id="td_after_tax" color="red">0.00</td>
+                        <td align="right" colspan="5" id="td_after_tax" color="red">0.00</td>
                     </tr>
                 </tfoot>
 
