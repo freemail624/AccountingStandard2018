@@ -167,23 +167,23 @@ class Deliveries extends CORE_Controller
 
                 $external_ref_no = $this->input->post('external_ref_no',TRUE);
                 $supplier_id = $this->input->post('supplier',TRUE);
-                if( count(
-                        $m_delivery_invoice->get_list(
-                            array(
-                                'delivery_invoice.external_ref_no'=>$external_ref_no,
-                                'delivery_invoice.supplier_id'=>$supplier_id,
-                                'delivery_invoice.is_active'=>TRUE,
-                                'delivery_invoice.is_deleted'=>FALSE
-                            )
-                        )
-                    )  > 0
-                ){
-                    $response['title']="Error!";
-                    $response['stat']="error";
-                    $response['msg']="External Reference Number exists.";
-                    echo json_encode($response);
-                    exit;
-                }
+                // if( count(
+                //         $m_delivery_invoice->get_list(
+                //             array(
+                //                 'delivery_invoice.external_ref_no'=>$external_ref_no,
+                //                 'delivery_invoice.supplier_id'=>$supplier_id,
+                //                 'delivery_invoice.is_active'=>TRUE,
+                //                 'delivery_invoice.is_deleted'=>FALSE
+                //             )
+                //         )
+                //     )  > 0
+                // ){
+                //     $response['title']="Error!";
+                //     $response['stat']="error";
+                //     $response['msg']="External Reference Number exists.";
+                //     echo json_encode($response);
+                //     exit;
+                // }
 
 
 
@@ -221,6 +221,8 @@ class Deliveries extends CORE_Controller
                 $dr_price=$this->input->post('dr_price',TRUE);
                 $sale_price=$this->input->post('sale_price',TRUE);
                 $orig_srp=$this->input->post('orig_srp',TRUE);
+                $orig_cost=$this->input->post('orig_cost',TRUE);
+                $markuppercent=$this->input->post('markuppercent',TRUE);
                 $dr_discount=$this->input->post('dr_discount',TRUE);
                 $dr_line_total_discount=$this->input->post('dr_line_total_discount',TRUE);
                 $dr_line_total_after_global=$this->input->post('dr_line_total_after_global',TRUE);
@@ -237,9 +239,11 @@ class Deliveries extends CORE_Controller
                     $m_dr_items->dr_invoice_id=$dr_invoice_id;
                     $m_dr_items->product_id=$this->get_numeric_value($prod_id[$i]);
                     $m_dr_items->dr_qty=$this->get_numeric_value($dr_qty[$i]);
+                    $m_dr_items->markuppercent=$this->get_numeric_value($markuppercent[$i]);
                     $m_dr_items->dr_price=$this->get_numeric_value($dr_price[$i]);
                     $m_dr_items->sale_price=$this->get_numeric_value($sale_price[$i]);
                     $m_dr_items->orig_srp=$this->get_numeric_value($orig_srp[$i]);
+                    $m_dr_items->orig_cost=$this->get_numeric_value($orig_cost[$i]);
                     $m_dr_items->dr_discount=$this->get_numeric_value($dr_discount[$i]);
                     $m_dr_items->dr_line_total_discount=$this->get_numeric_value($dr_line_total_discount[$i]);
                     $m_dr_items->dr_tax_rate=$this->get_numeric_value($dr_tax_rate[$i]);
@@ -271,14 +275,16 @@ class Deliveries extends CORE_Controller
                                             $m_dr_items->unit_id=$unit_id[0]->child_unit_id;
                     }   
                     $m_dr_items->save();
-                    if($this->get_numeric_value($orig_srp[$i]) != $this->get_numeric_value($sale_price[$i])){
+                    if($this->get_numeric_value($orig_srp[$i]) != $this->get_numeric_value($sale_price[$i]) || $this->get_numeric_value($orig_cost[$i]) != $this->get_numeric_value($dr_price[$i])){
                     $m_sync=$this->Sync_references_model;
                     $m_sync->reference_id=$this->get_numeric_value($prod_id[$i]);
                     $m_sync->reference_type = 0;
                     $m_sync->save();
 
                     }
+
                     $m_products->sale_price=$this->get_numeric_value($sale_price[$i]);
+                    $m_products->purchase_cost=$this->get_numeric_value($dr_price[$i]);
                     $m_products->on_hand=$m_products->get_product_qty($this->get_numeric_value($prod_id[$i]));
                     $m_products->modify($this->get_numeric_value($prod_id[$i]));
                 }
@@ -337,24 +343,24 @@ class Deliveries extends CORE_Controller
 
                 $external_ref_no = $this->input->post('external_ref_no',TRUE);
                 $supplier_id = $this->input->post('supplier',TRUE);
-                if( count(
-                        // $m_delivery_invoice->get_list(
-                        //     array(
-                        //         'delivery_invoice.external_ref_no'=>$external_ref_no,
-                        //         'delivery_invoice.supplier_id'=>$supplier_id,
-                        //         'delivery_invoice.is_active'=>TRUE,
-                        //         'delivery_invoice.is_deleted'=>FALSE
-                        //     )
-                        // )
-                    $m_delivery_invoice->get_count_exref($external_ref_no,$supplier_id,$dr_invoice_id) 
-                    )  > 0
-                ){
-                    $response['title']="Error!";
-                    $response['stat']="error";
-                    $response['msg']="External Reference Number exists.";
-                    echo json_encode($response);
-                    exit;
-                }
+                // if( count(
+                //         // $m_delivery_invoice->get_list(
+                //         //     array(
+                //         //         'delivery_invoice.external_ref_no'=>$external_ref_no,
+                //         //         'delivery_invoice.supplier_id'=>$supplier_id,
+                //         //         'delivery_invoice.is_active'=>TRUE,
+                //         //         'delivery_invoice.is_deleted'=>FALSE
+                //         //     )
+                //         // )
+                //     $m_delivery_invoice->get_count_exref($external_ref_no,$supplier_id,$dr_invoice_id) 
+                //     )  > 0
+                // ){
+                //     $response['title']="Error!";
+                //     $response['stat']="error";
+                //     $response['msg']="External Reference Number exists.";
+                //     echo json_encode($response);
+                //     exit;
+                // }
 
 
                 $m_delivery_invoice->begin();
@@ -407,6 +413,8 @@ class Deliveries extends CORE_Controller
                 $is_parent=$this->input->post('is_parent',TRUE);
                 $sale_price=$this->input->post('sale_price',TRUE); 
                 $orig_srp=$this->input->post('orig_srp',TRUE); 
+                $orig_cost=$this->input->post('orig_cost',TRUE);
+                $markuppercent=$this->input->post('markuppercent',TRUE);
                 $m_products=$this->Products_model;
 
                 for($i=0;$i<count($prod_id);$i++){
@@ -415,6 +423,8 @@ class Deliveries extends CORE_Controller
                     $m_dr_items->dr_price=$this->get_numeric_value($dr_price[$i]);
                     $m_dr_items->sale_price=$this->get_numeric_value($sale_price[$i]); 
                     $m_dr_items->orig_srp=$this->get_numeric_value($orig_srp[$i]); 
+                    $m_dr_items->markuppercent=$this->get_numeric_value($markuppercent[$i]);
+                    $m_dr_items->orig_cost=$this->get_numeric_value($orig_cost[$i]);
                     $m_dr_items->dr_discount=$this->get_numeric_value($dr_discount[$i]);
                     $m_dr_items->dr_line_total_discount=$this->get_numeric_value($dr_line_total_discount[$i]);
                     $m_dr_items->dr_tax_rate=$this->get_numeric_value($dr_tax_rate[$i]);
@@ -438,13 +448,14 @@ class Deliveries extends CORE_Controller
                     }   
                     $m_dr_items->save();
 
-                    if($this->get_numeric_value($orig_srp[$i]) != $this->get_numeric_value($sale_price[$i])){
+                    if($this->get_numeric_value($orig_srp[$i]) != $this->get_numeric_value($sale_price[$i]) || $this->get_numeric_value($orig_cost[$i]) != $this->get_numeric_value($dr_price[$i])){
                     $m_sync=$this->Sync_references_model;
                     $m_sync->reference_id=$this->get_numeric_value($prod_id[$i]);
                     $m_sync->reference_type = 0;
                     $m_sync->save();
 
                     }
+                    $m_products->purchase_cost=$this->get_numeric_value($dr_price[$i]);
                     $m_products->sale_price=$this->get_numeric_value($sale_price[$i]);
                     $m_products->on_hand=$m_products->get_product_qty($this->get_numeric_value($tmp_prod_id[$i]->product_id));
                     $m_products->modify($this->get_numeric_value($tmp_prod_id[$i]->product_id));

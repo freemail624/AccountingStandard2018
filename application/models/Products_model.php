@@ -1257,7 +1257,6 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 LEFT JOIN categories as c ON c.category_id=p.category_id
                 WHERE p.is_deleted = FALSE 
                 ".($product_id==NULL?"":" AND p.product_id = $product_id")."
-
                  )as pQ
 
 
@@ -1405,6 +1404,8 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 ".($item_type_id==null?"":" AND core.item_type_id='".$item_type_id."'")."
 
                 ORDER BY core.product_desc) as main
+                ORDER BY  LENGTH(main.product_code)  ASC ,main.product_code desc
+
                 ".($pick_list==TRUE?" WHERE main.CurrentQty < main.product_warn ":" ")."
 
 

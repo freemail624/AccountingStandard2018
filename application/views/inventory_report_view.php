@@ -508,7 +508,8 @@
             dt=$('#tbl_inventory').DataTable({
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
-                "bPaginate":false,
+                "order": [[ 2, "asc" ]],
+                "pageLength": 15,
                 "ajax": {
                     "url": "Inventory/transaction/get-inventory",
                     "type": "POST",

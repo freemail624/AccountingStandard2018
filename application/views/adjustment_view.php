@@ -720,7 +720,7 @@ $(document).ready(function(){
         _cboCustomers.select2('val',null);
 
         products = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1'),
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             local : products
         });

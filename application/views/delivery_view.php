@@ -377,23 +377,30 @@
                 <thead class="">
                 <tr>
                     <th width="5%">Qty</th>
-                    <th width="10%" style="">UM</th>
+                    <th width="5%">Barcode</th>
+                    <th width="5%" style="">UM</th>
                     <!-- DISPLAY -->
                     <th width="15%">Item</th>
-                    <th width="10%" style="text-align: right;">Unit Price</th>
-                    <th width="10%" style="text-align: right;">SRP</th>
-                    <th width="10%" style="text-align: right;">Discount (%)</th>
+                    <th width="5%" style="text-align: right;">Cost</th>
+                    <th width="5%" style="text-align: right;">SRP</th>
+                    <th width="5%" style="text-align: right;">%</th>
+                    <th width="5%" style="text-align: right;display: none;">Discount (%)</th>
                     <!-- display: none; -->
-                    <th width="5%" style="display: none;">T.D</th> <!-- total discount -->
-                    <th width="2%" style="display: none;">Tax %</th>
-                    <!--  DISPLAY -->
-                    <th width="15%" colspan="3" style="text-align: right;"">Total</th>
-                    <!-- display: none; -->
-                    <th width="5%" style="display: none;">V.I</th> <!-- vat input -->
-                    <th width="5%" style="display: none;">N.V</th> <!-- net of vat -->
+                    <th style="display: none;">T.D</th> <!-- total discount -->
+                    <th style="display: none;">Tax %</th>
+                    <th style="text-align: right;display: none;">Total</th>
+                    <th style="display: none;">V.I</th> <!-- vat input -->
+                    <th style="display: none;">N.V</th> <!-- net of vat -->
                     <td style="display: none;">Item ID</td><!-- product id -->
-                    <td style="display: none;">Total After Global</td>
+                    <!-- DISPLAY -->
+                    <th width="5%" >C COST</td>
+                    <th width="5%" >C SRP</td>
+                    <th width="5%">TOTAL </th> <!-- After Global -->
+                    <!-- display: none; -->
                     <th width="5%" ><center><strong>Action</strong></center></td>
+                    <th style="display: none;">bulk</td>
+                    <th style="display: none;">retail</td>
+
                 </tr>
                 </thead>
                 <tbody>
@@ -402,7 +409,7 @@
 
                 <tfoot>
                     <tr>
-                        <td colspan="10" style="height: 20px;">&nbsp;</td>
+                        <td colspan="11" style="height: 20px;">&nbsp;</td>
                     </tr>
                     <tr>
                         <td colspan="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount (%) :</strong></td>
@@ -412,14 +419,14 @@
                             
                         </td>
                         <td style="text-align: right;"><strong><i class="glyph-icon icon-star"></i></strong></td>
-                        <td id="td_total_after_discount" style="text-align: right;display: none;"><strong>0.00</strong></td><td style="border-right: none;"></td>
-                        <td style="text-align: right;border-left: none;"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
+                        <td colspan="" id="td_total_after_discount" style="text-align: right;display: none;"><strong>0.00</strong></td><td style="border-right: none;"></td>
+                        <td style="text-align: right;border-left: none;" colspan="2"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
                         <td align="right" colspan="5" id="td_before_tax" color="red">0.00</td>
                     </tr>
                     <tr>
                         <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
                         <td align="right" colspan="1" id="td_tax" color="red">0.00</td>
-                        <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
+                        <td colspan="3" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
                         <td align="right" colspan="5" id="td_after_tax" color="red">0.00</td>
                     </tr>
                 </tfoot>
@@ -872,21 +879,23 @@ $(document).ready(function(){
 
     var oTableItems={
         qty : 'td:eq(0)',
-        unit_value: 'td:eq(1)',
-        unit_identifier : 'td:eq(2)',
-        unit_price : 'td:eq(3)',
-        sale_price : 'td:eq(4)',
-        discount : 'td:eq(5)',
-        total_line_discount : 'td:eq(6)',
-        tax : 'td:eq(7)',
-        total : 'td:eq(8)',
-        vat_input : 'td:eq(9)',
-        net_vat : 'td:eq(10)',
-        total_after_global : 'td:eq(12)',
-        item_id : 'td:eq(11)',
-        bulk_price : 'td:eq(14)',
-        retail_price : 'td:eq(15)'
-
+        unit_value: 'td:eq(2)',
+        unit_identifier : 'td:eq(3)',
+        unit_price : 'td:eq(4)',
+        sale_price : 'td:eq(5)',
+        markuppercent : 'td:eq(6)', // NEW 
+        discount : 'td:eq(7)',
+        total_line_discount : 'td:eq(8)',
+        tax : 'td:eq(9)',
+        total : 'td:eq(10)',
+        vat_input : 'td:eq(11)',
+        net_vat : 'td:eq(12)',
+        item_id : 'td:eq(13)',
+        orig_cost : 'td:eq(14)',
+        orig_srp : 'td:eq(15)',        
+        total_after_global : 'td:eq(16)',
+        bulk_price : 'td:eq(18)',
+        retail_price : 'td:eq(19)'
     };
 
 
@@ -1108,6 +1117,10 @@ $(document).ready(function(){
                     net_vat = getFloat(net_vat) / getFloat(suggestion.child_unit_desc);
                     vat_input = getFloat(vat_input) / getFloat(suggestion.child_unit_desc);
                 }
+
+                var dividend = suggestion.sale_price - temp_inv_price;
+                var markuppercent_sugg = (dividend/temp_inv_price)*100;
+
                 $('#tbl_items > tbody').append(newRowItem({
                     //dr_qty : value.dr_qty,
                     dr_qty : "1",
@@ -1118,6 +1131,8 @@ $(document).ready(function(){
                     product_desc : suggestion.product_desc,
                     sale_price : suggestion.sale_price,
                     orig_srp : suggestion.sale_price,
+                    orig_cost : temp_inv_price,
+                    markuppercent : markuppercent_sugg,
                     dr_line_total_discount : "0.00",
                     tax_exempt : false,
                     dr_tax_rate : tax_rate,
@@ -1399,6 +1414,8 @@ $(document).ready(function(){
                             retail_price = 0;
                         }
                         changetxn ='inactive';
+                        var dividend = value.sale_price - value.po_price;
+                        var markuppercent_sugg = (dividend/value.po_price)*100;
                         $('#tbl_items > tbody').append(newRowItem({
                             dr_qty : value.po_qty,
                             product_code : value.product_code,
@@ -1410,6 +1427,8 @@ $(document).ready(function(){
                             dr_price : value.po_price,
                             sale_price : value.sale_price,
                             orig_srp : value.sale_price,
+                            orig_cost : value.purchase_cost,
+                            markuppercent : getFloat(markuppercent_sugg),
                             dr_discount : value.po_discount,
                             tax_type_id : null,
                             dr_line_total_price : value.po_line_total,
@@ -1619,6 +1638,8 @@ $(document).ready(function(){
                                 dr_price : value.dr_price,
                                 sale_price : value.sale_price,
                                 orig_srp : value.orig_srp,
+                                orig_cost : value.orig_cost,
+                                markuppercent : value.markuppercent,
                                 dr_discount : value.dr_discount,
                                 tax_type_id : null,
                                 dr_line_total_price : value.dr_line_total_price,
@@ -1693,8 +1714,9 @@ $(document).ready(function(){
         }
         $(oTableItems.unit_price,row).find('input').val(accounting.formatNumber(price,2));  
         $(oTableItems.unit_identifier,row).find('input').val(accounting.formatNumber(unit_value,2)); 
-        }
         $('.trigger-keyup').keyup();
+        }
+        
         });
 
         $('#tbl_items tbody').on('keyup','input.numeric',function(){
@@ -1703,6 +1725,9 @@ $(document).ready(function(){
             var discount=parseFloat(accounting.unformat(row.find(oTableItems.discount).find('input.numeric').val()));
             var qty=parseFloat(accounting.unformat(row.find(oTableItems.qty).find('input.numeric').val()));
             var tax_rate=parseFloat(accounting.unformat(row.find(oTableItems.tax).find('input.numeric').val()))/100;
+            var sale_price=parseFloat(accounting.unformat(row.find(oTableItems.sale_price).find('input.numeric').val()));
+            var dividend = sale_price - price;
+            var markuppercent = (dividend/price)*100;
 
             // if(discount>price){
             //     showNotification({title:"Invalid",stat:"error",msg:"Discount must not greater than unit price."});
@@ -1720,6 +1745,7 @@ $(document).ready(function(){
             var vat_input=total_after_global-net_vat;
 
 
+            $(oTableItems.markuppercent,row).find('input.numeric').val(accounting.formatNumber(markuppercent,2)); // MARK UP FROM UNIT COST 
             $(oTableItems.total,row).find('input.numeric').val(accounting.formatNumber(new_line_total,2)); // line total amount
             $(oTableItems.total_line_discount,row).find('input.numeric').val(accounting.formatNumber(new_discount_price,2)); //line total discount
             $(oTableItems.net_vat,row).find('input.numeric').val(accounting.formatNumber(net_vat,2)); //net of vat
@@ -1785,6 +1811,9 @@ $(document).ready(function(){
 
         $('#btn_save').click(function(){
             //alert('save');
+
+
+
             if(validateRequiredFields($('#frm_deliveries'))){
                 if(_txnMode=="new"){
                     createDeliverInvoice().done(function(response){
@@ -2052,28 +2081,30 @@ $(document).ready(function(){
         }else{ 
             unit  = '<td ><select class="line_unit'+d.a+'" name="unit_id[]" ><option value="'+d.parent_unit_id+'" data-unit-identifier="1" '+parent+'>'+d.parent_unit_name+'</option></select></td>';
         }
-        return '<tr>'+
-        '<td ><input name="dr_qty[]" type="text" class="numeric form-control trigger-keyup" value="'+ d.dr_qty +'"></td>'+unit+
-        '<td >'+d.product_desc+'<input type="text" style="display: none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
-        '<td ><input name="dr_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.dr_price,2)+'" style="text-align:right;"></td>'+
-        '<td ><input name="sale_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.sale_price,2)+'" style="text-align:right;"></td>'+
-        '<td ><input name="dr_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_discount,2)+'" style="text-align:right;"></td>'+
-        // display: none;
-        '<td  style="display: none;"><input name="dr_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_line_total_discount,2)+'" readonly></td>'+
-        '<td  style="display: none;"><input name="dr_tax_rate[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_tax_rate,2)+'"></td>'+
-        //display
-        '<td colspan="3"  align="right" style="display: none;"><input name="dr_line_total_price[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_line_total_price,2)+'" readonly></td>'+
-        //display: none;
-        '<td  style="display: none;"><input name="dr_tax_amount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_tax_amount,2)+'" readonly></td>'+
-        '<td  style="display: none;"><input name="dr_non_tax_amount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_non_tax_amount,2)+'" readonly></td>'+
-        '<td  style="display: none;" ><input name="product_id[]" type="text" class="numeric form-control" value="'+ d.product_id+'" readonly></td>'+
-        '<td  style="" colspan="3"><input name="dr_line_total_after_global[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.total_after_global,2)+'" readonly></td>'+
-        //display
-        '<td  align="center"><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>'+
-        '<td  style="display: none;" ><input type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.bulk_price,2)+'" readonly></td>'+
-        '<td  style="display: none;" ><input type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.retail_price,2)+'" readonly></td>'+
-        '<td style="display: none;"><input name="orig_srp[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.orig_srp,2)+'" style="text-align:right;"></td>'+
-        '</tr>';
+return '<tr>'+
+'<td ><input name="dr_qty[]" type="text" class="numeric form-control trigger-keyup" value="'+ d.dr_qty +'"></td>'+
+'<td >'+d.product_code+'</td>'+unit+
+'<td >'+d.product_desc+'<input type="hidden" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
+'<td ><input name="dr_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.dr_price,2)+'" style="text-align:right;"></td>'+
+'<td ><input name="sale_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.sale_price,2)+'" style="text-align:right;"></td>'+
+'<td ><input name="markuppercent[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.markuppercent,2)+'" style="text-align:right;" readonly></td>'+
+'<td style="display:none;"><input name="dr_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_discount,2)+'" style="text-align:right;"></td>'+
+// display: none;
+'<td style="display:none;"><input name="dr_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_line_total_discount,2)+'" readonly></td>'+
+'<td style="display:none;"><input name="dr_tax_rate[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_tax_rate,2)+'"></td>'+
+'<td colspan="3"  align="right" style="display:none;"><input name="dr_line_total_price[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_line_total_price,2)+'" readonly></td>'+
+'<td style="display:none;"><input name="dr_tax_amount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_tax_amount,2)+'" readonly></td>'+
+'<td style="display:none;"><input name="dr_non_tax_amount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_non_tax_amount,2)+'" readonly></td>'+
+'<td style="display:none;"><input name="product_id[]" type="text" class="numeric form-control" value="'+ d.product_id+'" readonly></td>'+
+//display
+'<td><input name="orig_cost[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.orig_cost,2)+'" style="text-align:right;" readonly></td>'+
+'<td><input name="orig_srp[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.orig_srp,2)+'" style="text-align:right;" readonly></td>'+
+'<td><input name="dr_line_total_after_global[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.total_after_global,2)+'" readonly></td>'+
+'<td align="center"><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>'+
+'<td style="display:none;"><input type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.bulk_price,2)+'" readonly></td>'+
+'<td style="display:none;"><input type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.retail_price,2)+'" readonly></td>'+
+
+'</tr>';
     };
 
     $('#txt_overall_discount').on('keyup',function(){
