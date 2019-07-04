@@ -417,11 +417,34 @@ class Products_model extends CORE_Model {
             pis.product_quantity as parent_out_qty,
             pis.product_quantity as child_out_qty,
             'None' department_name,
-            '' as remarks
+            'Sales' as remarks
 
             FROM pos_item_sales  pis
             WHERE pis.product_id= $product_id
             ".($as_of_date==null?"":" AND CAST(pis.end_datetime as DATE)<='".$as_of_date."'")."
+
+
+            UNION ALL
+
+            SELECT
+            CAST(pir.end_datetime as DATE) as txn_date,
+            pir.end_datetime as date_created,
+            CONCAT('X Reading # ' ,pir.x_reading_id) as ref_no,
+            ('POS Returns') as type,
+            ('POS Returns') as Description,
+            pir.product_id,
+            'Bulk' as identifier,
+            pir.product_quantity as parent_in_qty,
+            pir.product_quantity as child_in_qty,
+            0 as parent_out_qty,
+            0 as child_out_qty,
+            'None' department_name,
+            'Returns' as remarks
+
+            FROM pos_item_returns pir
+            WHERE pir.product_id= $product_id
+            ".($as_of_date==null?"":" AND CAST(pir.end_datetime as DATE)<='".$as_of_date."'")."
+
 
             UNION ALL
 
@@ -1220,8 +1243,8 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 (SELECT uc.unit_name as child_unit_name FROM units as uc WHERE uc.unit_id = core.parent_unit_id) as parent_unit_name,
                 (SELECT uc.unit_name as child_unit_name FROM units as uc WHERE uc.unit_id = core.child_unit_id) as child_unit_name,
 
-                ROUND((ReceiveQtyP+AdjustInQtyP".($account==TRUE?"-SalesOUtQtyP-POSInvOutP":"")."".($account_cii==TRUE?"-CInvOutP":"")."".($account_dis==TRUE?"-DInvOutP":"")."-IssueQtyP-AdjustOutP".($depid==0?"":"-IssueFromInvOutP+IssueToInvInP")."),2) as CurrentQty,
-                ROUND((ReceiveQtyC+AdjustInQtyC".($account==TRUE?" -SalesOUtQtyC":"")."".($account_cii==TRUE?"-CInvOutC":"")."".($account_dis==TRUE?"-DInvOutC":"")."-IssueQtyC-AdjustOutC".($depid==0?"":"-IssueFromInvOutC+IssueToInvInC")."),2) as CurrentQtyChild
+                ROUND((ReceiveQtyP+AdjustInQtyP".($account==TRUE?"-SalesOUtQtyP-POSInvOutP+POSInvInP":"")."".($account_cii==TRUE?"-CInvOutP":"")."".($account_dis==TRUE?"-DInvOutP":"")."-IssueQtyP-AdjustOutP".($depid==0?"":"-IssueFromInvOutP+IssueToInvInP")."),2) as CurrentQty,
+                ROUND((ReceiveQtyC+AdjustInQtyC".($account==TRUE?" -SalesOUtQtyC-POSInvOutC+POSInvInC":"")."".($account_cii==TRUE?"-CInvOutC":"")."".($account_dis==TRUE?"-DInvOutC":"")."-IssueQtyC-AdjustOutC".($depid==0?"":"-IssueFromInvOutC+IssueToInvInC")."),2) as CurrentQtyChild
 
             
 
@@ -1248,7 +1271,9 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 IFNULL(issuetoin.parent_in_qty,0) as IssueToInvInP,
                 IFNULL(issuetoin.child_in_qty,0) as IssueToInvInC,
                 IFNULL(possalesout.parent_out_qty,0) as POSInvOutP,
-                IFNULL(possalesout.child_out_qty,0) as POSInvOutC
+                IFNULL(possalesout.child_out_qty,0) as POSInvOutC,
+                IFNULL(possalesreturn.parent_in_qty,0) as POSInvInP,
+                IFNULL(possalesreturn.child_in_qty,0) as POSInvInC
 
 
                 FROM
@@ -1332,6 +1357,14 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 ".($as_of_date==null?"":" AND CAST(pis.end_datetime as DATE)<='".$as_of_date."'")."
                 GROUP BY pis.product_id) as possalesout ON possalesout.product_id = pQ.product_id 
 
+                LEFT JOIN
+                (SELECT pir.product_id,
+                SUM(pir.product_quantity) as parent_in_qty,
+                SUM(pir.product_quantity) as child_in_qty
+                FROM pos_item_returns pir
+                WHERE  pir.x_reading_id != 0 
+                #".($as_of_date==null?"":" AND CAST(pir.end_datetime as DATE)<='".$as_of_date."'")."
+                GROUP BY pir.product_id) as possalesreturn ON possalesreturn.product_id = pQ.product_id 
 
                 LEFT JOIN
 
