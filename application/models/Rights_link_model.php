@@ -102,7 +102,10 @@ class Rights_link_model extends CORE_Model{
                                           (92,'7','7-2','Inventory Report Detailed'),
                                           (93,'8','8-6','Profit Report'),
                                           (94,'6','6-14','Statement of Account Settings'),
-                                          (95,'3','3-7','X Reading Report')
+                                          (95,'3','3-7','X Reading Report'),
+                                          (96,'3','3-8','Sales Return Report')
+
+                                          
 
                                           ON DUPLICATE KEY UPDATE
                                           rights_links.parent_code=VALUES(rights_links.parent_code),

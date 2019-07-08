@@ -25,6 +25,7 @@ class General_journal extends CORE_Controller
                 'Trans_model',
                 'Adjustment_model',
                 'Issuance_department_model',
+                'Pos_item_returns_model',
                 'Customer_type_model'
 
             )
@@ -192,6 +193,14 @@ class General_journal extends CORE_Controller
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_log='Created General Journal TXN-'.date('Ymd').'-'.$journal_id;
                 $m_trans->save();
+
+
+                $x_reading_id=$this->input->post('x_reading_id',TRUE);
+                if($x_reading_id!=null){
+                    $m_pos=$this->Pos_item_returns_model->set_as_posted($journal_id,$x_reading_id);
+
+                }
+
 
                 $response['stat']='success';
                 $response['title']='Success!';

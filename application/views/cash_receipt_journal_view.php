@@ -162,7 +162,7 @@
                 background: none!important; 
                 background-color: transparent!important; 
         } 
-        .right-align{
+        .right_align{
             text-align: right;
         }
     </style>
