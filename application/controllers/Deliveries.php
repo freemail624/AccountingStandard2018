@@ -457,8 +457,8 @@ class Deliveries extends CORE_Controller
                     }
                     $m_products->purchase_cost=$this->get_numeric_value($dr_price[$i]);
                     $m_products->sale_price=$this->get_numeric_value($sale_price[$i]);
-                    $m_products->on_hand=$m_products->get_product_qty($this->get_numeric_value($tmp_prod_id[$i]->product_id));
-                    $m_products->modify($this->get_numeric_value($tmp_prod_id[$i]->product_id));
+                    $m_products->on_hand=$m_products->get_product_qty($this->get_numeric_value($prod_id[$i]));
+                    $m_products->modify($this->get_numeric_value($prod_id[$i]));
                 }
 
 
