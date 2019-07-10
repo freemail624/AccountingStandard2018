@@ -113,11 +113,11 @@
                                                                     </div>
                                                                 </div> -->
                                                                 <div class="col-sm-4">
-                                                                    X Reading * : <br />
+                                                                    Sales Date * : <br />
                                                                     <select id="cbo_xreading" style="width: 100%;">
                                                                         <!-- <option value="0">ALL</option> -->
                                                                         <?php foreach($xreadings as $xreading){ ?>
-                                                                            <option value="<?php echo $xreading->x_reading_id; ?>" >X Reading # <?php echo $xreading->x_reading_id; ?></option>
+                                                                            <option value="<?php echo $xreading->x_reading_id; ?>" ><?php echo $xreading->trans_date; ?></option>
                                                                         <?php } ?>
                                                                     </select>
                                                                 </div>
@@ -274,7 +274,7 @@
                 dtSummary=tbl_summary.DataTable({   
                     "dom": '<"toolbar">frtip',
                     "bLengthChange":false,
-                    "bPaginate":false,
+                    // "bPaginate":false,
                     "language": { searchPlaceholder: "Search" },
                     "ajax": {
                         "url":"X_reading_report/transaction/list",
@@ -291,7 +291,7 @@
                     },
                     
                         "columns":[
-                            { targets:[0],data: "x_reading_id" },
+                            { targets:[0],data: "x_reading_id", visible:false },
                             { targets:[1],data: "product_desc" },
                             {
                                 sClass: "numericCol", 

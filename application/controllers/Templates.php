@@ -5123,7 +5123,7 @@ class Templates extends CORE_Controller {
                 $m_pay_list=$this->Receivable_payment_list_model;
 
                 $info=$m_pos_sales->get_list(array('x_reading_id'=>$x_reading_id),
-                '*, DATE_FORMAT(end_datetime,"%m/%d/%Y")as trans_date'
+                '*, DATE_FORMAT(start_datetime,"%m/%d/%Y")as trans_date'
                 );
                 $data['info']=$info[0];
 
@@ -5166,7 +5166,7 @@ class Templates extends CORE_Controller {
                 $m_customers=$this->Customers_model;
                 $m_pos_returns =  $this->Pos_item_returns_model;
                 $info=$m_pos_returns->get_list(array('x_reading_id'=>$x_reading_id),
-                '*, DATE_FORMAT(end_datetime,"%m/%d/%Y")as trans_date'
+                '*, DATE_FORMAT(start_datetime,"%m/%d/%Y")as trans_date'
                 );
                 $data['return_info']=$info[0];
                 $data['customers']=$m_customers->get_list(

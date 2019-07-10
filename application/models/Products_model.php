@@ -405,8 +405,8 @@ class Products_model extends CORE_Model {
             UNION ALL
 
             SELECT
-            CAST(pis.end_datetime as DATE) as txn_date,
-            pis.end_datetime as date_created,
+            CAST(pis.start_datetime as DATE) as txn_date,
+            pis.start_datetime as date_created,
             CONCAT('X Reading # ' ,pis.x_reading_id) as ref_no,
             ('POS Sales') as type,
             ('POS Sales') as Description,
@@ -421,14 +421,14 @@ class Products_model extends CORE_Model {
 
             FROM pos_item_sales  pis
             WHERE pis.product_id= $product_id
-            ".($as_of_date==null?"":" AND CAST(pis.end_datetime as DATE)<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND CAST(pis.start_datetime as DATE)<='".$as_of_date."'")."
 
 
             UNION ALL
 
             SELECT
-            CAST(pir.end_datetime as DATE) as txn_date,
-            pir.end_datetime as date_created,
+            CAST(pir.start_datetime as DATE) as txn_date,
+            pir.start_datetime as date_created,
             CONCAT('X Reading # ' ,pir.x_reading_id) as ref_no,
             ('POS Returns') as type,
             ('POS Returns') as Description,
@@ -443,7 +443,7 @@ class Products_model extends CORE_Model {
 
             FROM pos_item_returns pir
             WHERE pir.product_id= $product_id
-            ".($as_of_date==null?"":" AND CAST(pir.end_datetime as DATE)<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND CAST(pir.start_datetime as DATE)<='".$as_of_date."'")."
 
 
             UNION ALL
@@ -1354,7 +1354,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 SUM(pis.product_quantity) as child_out_qty
                 FROM pos_item_sales pis
                 WHERE  pis.x_reading_id != 0 
-                ".($as_of_date==null?"":" AND CAST(pis.end_datetime as DATE)<='".$as_of_date."'")."
+                ".($as_of_date==null?"":" AND CAST(pis.start_datetime as DATE)<='".$as_of_date."'")."
                 GROUP BY pis.product_id) as possalesout ON possalesout.product_id = pQ.product_id 
 
                 LEFT JOIN
@@ -1363,7 +1363,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 SUM(pir.product_quantity) as child_in_qty
                 FROM pos_item_returns pir
                 WHERE  pir.x_reading_id != 0 
-                #".($as_of_date==null?"":" AND CAST(pir.end_datetime as DATE)<='".$as_of_date."'")."
+                #".($as_of_date==null?"":" AND CAST(pir.start_datetime as DATE)<='".$as_of_date."'")."
                 GROUP BY pir.product_id) as possalesreturn ON possalesreturn.product_id = pQ.product_id 
 
                 LEFT JOIN

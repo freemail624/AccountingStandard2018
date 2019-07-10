@@ -9,14 +9,14 @@ class Pos_item_returns_model extends CORE_Model {
     }
 
     function get_xreading() {
-        $sql="  SELECT distinct x_reading_id FROM pos_item_returns";
+        $sql="  SELECT distinct x_reading_id,DATE_FORMAT(CAST(start_datetime as DATE),'%m/%d/%Y') as trans_date FROM pos_item_returns";
         return $this->db->query($sql)->result();
     }
 
 
     function get_pos_returns_for_review() {
         $sql="SELECT 
-			DATE_FORMAT(CAST(end_datetime as DATE),'%m/%d/%Y')  as trans_date,
+			DATE_FORMAT(CAST(start_datetime as DATE),'%m/%d/%Y')  as trans_date,
 			x_reading_id,
 			CONCAT('X Reading # ', x_reading_id) x_reading_desc,
 			SUM(item_total) as trans_total
