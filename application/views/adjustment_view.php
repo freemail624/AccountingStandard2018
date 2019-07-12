@@ -202,7 +202,7 @@
                         </div>
                         <div class="col-sm-3">
                             
-                            <input type="checkbox" name="accounting[]" value="is_adjustment" id="is_adjustment" class="css-checkbox" style="font-size: 12px!important;"><label class="css-label " for="is_adjustment" style="font-size: 12px!important;">Adjustment</label><br>
+                            <input type="checkbox" name="accounting[]" value="is_adjustment" id="is_adjustment" class="css-checkbox" style="font-size: 12px!important;"><label class="css-label " for="is_adjustment" style="font-size: 12px!important;">Adjustment</label>
                             <input type="checkbox" name="accounting[]" value="is_returns" id="is_returns" class="css-checkbox" style="font-size: 12px!important;"><label class="css-label " for="is_returns" style="font-size: 12px!important;">Sales Return</label><br>
                             <input type="hidden" name="adjustment_is_return" id="adjustment_is_return" class="form-control">
                         </div>
@@ -239,6 +239,12 @@
                         </div>
 
                         <div class="col-sm-3">
+                            <b class="required">*</b> Supplier:<br />
+                            <select name="supplier_id" id="cbo_suppliers" data-error-msg="Supplier is required." required>
+                                <?php foreach($suppliers as $supplier){ ?>
+                                    <option value="<?php echo $supplier->supplier_id; ?>" ><?php echo $supplier->supplier_name; ?></option>
+                                <?php } ?>
+                            </select>
                         </div>
 
                         <div class="col-sm-3"><div class="checkhidden">
@@ -289,6 +295,7 @@
                         <table id="tbl_items" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
                             <thead class="">
                             <tr>
+                                <th width="10%">Barcode</th>
                                 <th width="10%">Qty</th>
                                 <th width="10%">UM</th>
                                 <th width="30%">Item</th>
@@ -571,21 +578,21 @@
 
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboAdjustments; var products; var _cboCustomers; var dtCustomer;
-    var _line_unit; var changetxn;
+    var _line_unit; var changetxn; var _cboSuppliers;
     var oTableItems={
         qty : 'td:eq(0)',
-        unit_value: 'td:eq(1)',
-        unit_identifier : 'td:eq(2)',
-        unit_price : 'td:eq(3)',
-        discount : 'td:eq(4)',
-        total_line_discount : 'td:eq(5)',
-        tax : 'td:eq(6)',
-        total : 'td:eq(7)',
-        vat_input : 'td:eq(8)',
-        net_vat : 'td:eq(9)',
-        item_id : 'td:eq(10)',
-        bulk_price : 'td:eq(12)',
-        retail_price : 'td:eq(13)'
+        unit_value: 'td:eq(2)',
+        unit_identifier : 'td:eq(3)',
+        unit_price : 'td:eq(4)',
+        discount : 'td:eq(5)',
+        total_line_discount : 'td:eq(6)',
+        tax : 'td:eq(7)',
+        total : 'td:eq(8)',
+        vat_input : 'td:eq(9)',
+        net_vat : 'td:eq(10)',
+        item_id : 'td:eq(11)',
+        bulk_price : 'td:eq(13)',
+        retail_price : 'td:eq(14)'
     };
 
 
@@ -648,7 +655,7 @@ $(document).ready(function(){
         dt=$('#tbl_issuances').DataTable(
 {            "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 8, "desc" ]],
+            "order": [[ 9, "desc" ]],
             "ajax" : "Adjustments/transaction/list",
             "columns": [
                 {
@@ -674,7 +681,7 @@ $(document).ready(function(){
                         return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                     }
                 },
-                { targets:[8],data: "adjustment_id",visible:false }
+                { targets:[9],data: "adjustment_id",visible:false }
             ]
 
         });
@@ -703,9 +710,15 @@ $(document).ready(function(){
             placeholder: "Please select type of adjustment."
         });
 
+        _cboSuppliers=$("#cbo_suppliers").select2({
+            placeholder: "Please Select a Supplier."
+        });
+
         _cboAdjustments.select2('val',null);
 
         _cboDepartments.select2('val',null);
+
+        _cboSuppliers.select2('val',null);
 
 
         $('#custom-templates .typeahead').keypress(function(event){
@@ -1007,6 +1020,7 @@ $(document).ready(function(){
             clearFields($('#frm_adjustments'));
             $('#tbl_items > tbody').html('');
             $('#cbo_departments').select2('val', null);
+            $('#cbo_suppliers').select2('val', null);
             $('#typeaheadsearch').val('');
             // REMOVE CHECKED ATTRIBUTE FOR BOTH
             $('input[id="is_returns"]').prop('checked', false);
@@ -1140,6 +1154,7 @@ $(document).ready(function(){
             $('#note').text('');
             _cboAdjustments.select2('val',data.adjustment_type);
             $('#cbo_departments').select2('val',data.department_id);
+            $('#cbo_suppliers').select2('val',data.supplier_id);
             $('#cbo_customers').select2('val',data.customer_id);
 
 
@@ -1535,7 +1550,7 @@ $(document).ready(function(){
             unit  = '<td ><select class="line_unit'+d.a+'" name="unit_id[]" ><option value="'+d.parent_unit_id+'" data-unit-identifier="1" '+parent+'>'+d.parent_unit_name+'</option></select></td>';
         }
         return '<tr>'+
-        '<td width="10%"><input name="adjust_qty[]" type="text" class="numeric form-control trigger-change" value="'+ d.adjust_qty+'"></td>'+unit+
+        '<td width="10%"><input name="adjust_qty[]" type="text" class="numeric form-control trigger-change" value="'+ d.adjust_qty+'"></td><td width="10%">'+ d.product_code+'</td>'+unit+
         '<td width="30%">'+d.product_desc+'<input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
         '<td width="11%"><input name="adjust_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.adjust_price,2)+'" style="text-align:right;"></td>'+
         '<td width="11%" style="display:none;"><input name="adjust_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.adjust_discount,2)+'" style="text-align:right;"></td>'+

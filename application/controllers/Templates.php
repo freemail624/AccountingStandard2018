@@ -751,9 +751,10 @@ class Templates extends CORE_Controller {
 
                 $info=$m_adjustment->get_list(
                     $filter_value,
-                    'adjustment_info.*,departments.department_name',
+                    'adjustment_info.*,departments.department_name,suppliers.supplier_name',
                     array(
-                        array('departments','departments.department_id=adjustment_info.department_id','left')
+                        array('departments','departments.department_id=adjustment_info.department_id','left'),
+                        array('suppliers','suppliers.supplier_id=adjustment_info.supplier_id','left')
                     )
                 );
 
@@ -763,7 +764,7 @@ class Templates extends CORE_Controller {
                 $data['company_info']=$company[0];
                 $data['adjustment_items']=$m_adjustment_items->get_list(
                     array('adjustment_items.adjustment_id'=>$filter_value),
-                    'adjustment_items.*,products.product_desc,units.unit_name',
+                    'adjustment_items.*,products.product_desc,units.unit_name,products.product_code',
                     array(
                         array('products','products.product_id=adjustment_items.product_id','left'),
                         array('units','units.unit_id=adjustment_items.unit_id','left')

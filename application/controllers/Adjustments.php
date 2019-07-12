@@ -20,6 +20,7 @@ class Adjustments extends CORE_Controller
         $this->load->model('Customers_model');
         $this->load->model('Sales_invoice_model');
         $this->load->model('Cash_invoice_model');
+        $this->load->model('Suppliers_model');
 
 
     }
@@ -72,6 +73,16 @@ class Adjustments extends CORE_Controller
         //     )
 
         // );
+
+        $data['suppliers']=$this->Suppliers_model->get_list(
+            array('suppliers.is_active'=>TRUE,'suppliers.is_deleted'=>FALSE),
+            'suppliers.*,IFNULL(tax_types.tax_rate,0)as tax_rate',
+            array(
+                array('tax_types','tax_types.tax_type_id=suppliers.tax_type_id','left')
+            ),
+            'suppliers.supplier_name ASC'
+        );
+
 
         $data['title'] = 'Inventory Adjustment';
         
@@ -189,6 +200,7 @@ class Adjustments extends CORE_Controller
                 $m_adjustment->department_id=$this->input->post('department',TRUE);
                 $m_adjustment->adjustment_type=$this->input->post('adjustment_type',TRUE);
                 $m_adjustment->customer_id=$this->input->post('customer_id',TRUE);
+                $m_adjustment->supplier_id=$this->input->post('supplier_id',TRUE);
                 $m_adjustment->inv_no=$this->input->post('inv_no',TRUE);
                 $m_adjustment->remarks=$this->input->post('remarks',TRUE);
                 $m_adjustment->is_returns=$this->get_numeric_value($this->input->post('adjustment_is_return',TRUE));
@@ -276,6 +288,7 @@ class Adjustments extends CORE_Controller
 
                 $m_adjustment->begin();
                 $m_adjustment->customer_id=$this->input->post('customer_id',TRUE);
+                $m_adjustment->supplier_id=$this->input->post('supplier_id',TRUE);
                 $m_adjustment->is_returns=$this->get_numeric_value($this->input->post('adjustment_is_return',TRUE));
                 $m_adjustment->inv_no=$this->input->post('inv_no',TRUE);
                 $m_adjustment->department_id=$this->input->post('department',TRUE);
@@ -428,6 +441,7 @@ class Adjustments extends CORE_Controller
                 'adjustment_info.is_journal_posted',
                 'adjustment_info.date_created',
                 'adjustment_info.customer_id',
+                'adjustment_info.supplier_id',
                 'adjustment_info.is_returns as adjustment_is_return',
                 'adjustment_info.inv_no',
                 'DATE_FORMAT(adjustment_info.date_adjusted,"%m/%d/%Y") as date_adjusted',
