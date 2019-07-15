@@ -83,7 +83,7 @@
                                                                     Sales Date * : <br />
                                                                     <select id="cbo_xreading" style="width: 100%;">
                                                                         <?php foreach($xreadings as $xreading){ ?>
-                                                                            <option value="<?php echo $xreading->x_reading_id; ?>" ><?php echo $xreading->trans_date;?></option>
+                                                                            <option value="<?php echo $xreading->x_reading_id; ?>" ><?php echo $xreading->trans_date;?> -  Terminal <?php echo $xreading->terminal_id; ?></option>
                                                                         <?php } ?>
                                                                     </select>
                                                                 </div>

@@ -9,7 +9,7 @@ class Pos_item_sales_model extends CORE_Model {
     }
 
     function get_xreading() {
-        $sql="  SELECT distinct x_reading_id,DATE_FORMAT(CAST(start_datetime as DATE),'%m/%d/%Y')  as trans_date FROM pos_item_sales";
+        $sql="  SELECT distinct x_reading_id,DATE_FORMAT(CAST(start_datetime as DATE),'%m/%d/%Y')  as trans_date, terminal_id FROM pos_item_sales";
         return $this->db->query($sql)->result();
     }
 
