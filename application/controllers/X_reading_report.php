@@ -45,10 +45,7 @@
 					$x_id=$this->input->get('x_id',TRUE);
 					$m_xreading=$this->Pos_item_sales_model;
 
-					$response['data']=$m_xreading->get_list(array('x_reading_id'=>$x_id),
-                        'pos_item_sales.*,products.product_desc',
-                        array(array('products','products.product_id = pos_item_sales.product_id','left'))
-                        );
+					$response['data']=$m_xreading->get_x_reading_sales($x_id);
 					echo json_encode($response);
 
                 break;

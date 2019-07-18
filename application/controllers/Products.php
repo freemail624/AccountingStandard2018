@@ -32,6 +32,7 @@ class Products extends CORE_Controller
         $this->load->model('Trans_model');
         $this->load->model('Brands_model');
         $this->load->model('Sync_references_model');
+        $this->load->model('Pos_item_sales_model');
 
 
     }
@@ -266,6 +267,23 @@ class Products extends CORE_Controller
 
                 $product_id=$this->input->post('product_id',TRUE);
 
+
+                if(count(
+                        $this->Pos_item_sales_model->get_list(
+                            array(
+                                'pos_item_sales.product_id'=>$product_id,
+                            )
+                        )
+                    )>0
+                ) {
+                    $response['title']="Error!";
+                    $response['stat']="error";
+                    $response['msg']="This product still has an active transaction in POS.";
+                    echo json_encode($response);
+                    exit;
+                }
+
+
                 if(count($m_purchase_items->get_list(
 
                     'purchase_order.is_deleted=0 AND product_id='.$product_id,
@@ -372,6 +390,10 @@ class Products extends CORE_Controller
                         $response['stat']='success';
                         $response['msg']='Product information successfully deleted.';
 
+                    $m_sync=$this->Sync_references_model;
+                    $m_sync->reference_id=$product_id;
+                    $m_sync->reference_type = 0;
+                    $m_sync->save();
 
                     $product_desc= $m_products->get_list($product_id,'product_desc');
                     $m_trans=$this->Trans_model;

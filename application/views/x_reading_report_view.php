@@ -419,7 +419,7 @@
 
 
                             totalZero = api
-                                .column( 6 )
+                                .column( 7 )
                                 .data()
                                 .reduce( function (a, b) {
                                     return intVal(a) + intVal(b);
@@ -427,7 +427,7 @@
 
                             // Total over this page
                             pageTotalZero = api
-                                .column( 6, { page: 'current'} )
+                                .column( 7, { page: 'current'} )
                                 .data()
                                 .reduce( function (a, b) {
                                     return intVal(a) + intVal(b);

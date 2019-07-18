@@ -13,7 +13,23 @@ class Pos_item_sales_model extends CORE_Model {
         return $this->db->query($sql)->result();
     }
 
+    function get_x_reading_sales($x_id) {
+        $sql="SELECT   pos_item_sales.*,products.product_desc,pos_item_sales.x_reading_id,
+            SUM(pos_item_sales.product_quantity) as product_quantity,
+            SUM(pos_item_sales.discount_amount) as discount_amount,
+            SUM(pos_item_sales.vatable_sales) as vatable_sales,
+            SUM(pos_item_sales.vat_amount) as vat_amount,
+            SUM(pos_item_sales.vat_exempt_sales) as vat_exempt_sales,
+            SUM(pos_item_sales.zero_rated_sales) as zero_rated_sales,
+            SUM(pos_item_sales.item_total) as item_total
 
+         FROM pos_item_sales
+        LEFT JOIN products ON products.product_id = pos_item_sales.product_id WHERE pos_item_sales.x_reading_id = $x_id
+
+        GROUP BY products.product_id
+        ";
+        return $this->db->query($sql)->result();
+    }
     function get_pos_sales_for_review() {
         $sql="SELECT 
 			DATE_FORMAT(CAST(start_datetime as DATE),'%m/%d/%Y')  as trans_date,
