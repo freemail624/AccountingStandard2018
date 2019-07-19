@@ -69,6 +69,7 @@
                                 <li class="<?php echo (in_array('3-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Cash_invoice">Cash Invoice</a></li>
                                 <li class="<?php echo (in_array('3-7',$this->session->user_rights)?'':'hidden'); ?>"><a href="X_reading_report">X Reading Report</a></li>
                                 <li class="<?php echo (in_array('3-8',$this->session->user_rights)?'':'hidden'); ?>"><a href="Sales_returns">Sales Returns Report</a></li>
+                                <li class="<?php echo (in_array('3-9',$this->session->user_rights)?'':'hidden'); ?>"><a href="Report_sales">Sales Report By Date</a></li>
                                 <li class="<?php echo (in_array('3-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Sales_history">Sales/Cash Invoice History</a></li>
                                 <li class="<?php echo (in_array('3-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Dispatching">Warehouse Dispatching</a></li>
                                 <!-- <li><a href="Sales_invoice_other">Other Sales Invoice</a></li> -->

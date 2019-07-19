@@ -42,6 +42,9 @@
             text-align: right;
             font-weight: bolder;
         }
+        #tbl_pi_summary_filter{
+            display: none;
+        }
     </style>
 
 </head>
@@ -80,38 +83,7 @@
                                                     <h2 class="h2-panel-heading">X Reading Report</h2><hr>
                                                         <div>
                                                             <div class="row">
-                                                                 <!-- <div class="col-lg-4">
-                                                                    Report Type :<br />
-                                                                    <div class="input-group">
-                                                                        <select class="form-control" id="cboType">
-                                                                            <option value="0">Summary</option>
-                                                                            <option value="1">Detailed</option>
-                                                                        </select>
-                                                                         <span class="input-group-addon">
-                                                                                <i class="fa fa-code"></i>
-                                                                         </span>
-                                                                    </div>
-                                                                </div> -->
 
-<!--                                                                 <div class="col-lg-4">
-                                                                    Period Start * :<br />
-                                                                    <div class="input-group">
-                                                                        <input type="text" id="txt_date" name="date_from" class="date-picker form-control" value="01/01/<?php echo date("Y"); ?>">
-                                                                         <span class="input-group-addon">
-                                                                                <i class="fa fa-calendar"></i>
-                                                                         </span>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="col-lg-4">
-                                                                    Period End * :<br />
-                                                                    <div class="input-group">
-                                                                        <input type="text" id="txt_date" name="date_to" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>">
-                                                                         <span class="input-group-addon">
-                                                                                <i class="fa fa-calendar"></i>
-                                                                         </span>
-                                                                    </div>
-                                                                </div> -->
                                                                 <div class="col-sm-4">
                                                                     Sales Date * : <br />
                                                                     <select id="cbo_xreading" style="width: 100%;">
@@ -121,60 +93,57 @@
                                                                         <?php } ?>
                                                                     </select>
                                                                 </div>
+                                                                <div class="col-sm-4">
+                                                                    Search : <br />
+                                                                    <input type="text" id="tbl_pi_summary_search" class="form-control">
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                <br>
+                                                                    <button class="btn btn-success pull-left" style="margin-left: 5px;" id="btn_export_summary"><i class="fa fa-file-excel-o"></i>&nbsp; Export</button>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                         <br />
 
-                                                        <div>
-                                                            <div class="tab-container tab-top tab-primary">
-<!--                                                                 <ul class="nav nav-tabs">
-                                                                    <li class="active"><a data-toggle="tab" href="#summary">Summary</a></li>
-                                                                    <li><a data-toggle="tab" href="#detailed">Detailed</a></li>
-                                                                </ul> -->
-                                                                <div class="tab-content">
-                                                                    <div id="summary" class="tab-pane fade in active">
-<!--                                                                         <button class="btn btn-primary pull-left" id="btn_print_summary"><i class="fa fa-print"></i>&nbsp; Print Report</button>
-                                                                        <button class="btn btn-success pull-left" style="margin-left: 5px;" id="btn_export_summary"><i class="fa fa-file-excel-o"></i>&nbsp; Export</button> -->
-                                                                        <!-- <button class="btn btn-success pull-left" style="margin-left: 5px;" id="btn_email_summary"><i class="fa fa-share"></i>&nbsp; Email</button> -->
-                                                                        <table id="tbl_pi_summary" class="table table-striped" cellspacing="0" width="100%">
-                                                                            <thead class="">
-                                                                            <tr>
-                                                                                <th>X Reading ID</th>
-                                                                                <th>Product</th>
-                                                                                <th>Quantity</th>
-                                                                                <th>Discount</th>
-                                                                                <th>Vatable Sales</th>
-                                                                                <th>Vat Amount</th>
-                                                                                <th>Vat Excempt Sales</th>
-                                                                                <th>Zero Rated</th>
-                                                                                <th>Invoice Amount</th>
-                                                                            </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                            </tbody>
-                                                                            <tfoot>
-                                                                                <tr>
-                                                                                    <td align="right" colspan="3">Current Page Total : </td>
-                                                                                    <td id="td_page_total_detailed_discount" align="right"></td>
-                                                                                    <td id="td_page_total_detailed_vatable" align="right"></td>
-                                                                                    <td id="td_page_total_detailed_vat" align="right"></td>
-                                                                                    <td id="td_page_total_detailed_exempt" align="right"></td>
-                                                                                    <td id="td_page_total_detailed_zero" align="right"></td>
-                                                                                    <td id="td_page_total_detailed" align="right"></td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td align="right" colspan="3">Grand Total : </td>
-                                                                                    <td id="td_grand_total_detailed_discount" align="right"></td>
-                                                                                    <td id="td_grand_total_detailed_vatable" align="right"></td>
-                                                                                    <td id="td_grand_total_detailed_vat" align="right"></td>
-                                                                                    <td id="td_grand_total_detailed_exempt" align="right"></td>
-                                                                                    <td id="td_grand_total_detailed_zero" align="right"></td>
-                                                                                    <td id="td_grand_total_detailed" align="right"></td>
-                                                                                </tr>
-                                                                            </tfoot>
-                                                                        </table>
-                                                                    </div>
-                                                                </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <table id="tbl_pi_summary" class="table table-striped" cellspacing="0" width="100%">
+                                                                    <thead class="">
+                                                                    <tr>
+                                                                        <th>X Reading ID</th>
+                                                                        <th>Product</th>
+                                                                        <th>Quantity</th>
+                                                                        <th>Discount</th>
+                                                                        <th>Vatable Sales</th>
+                                                                        <th>Vat Amount</th>
+                                                                        <th>Vat Excempt Sales</th>
+                                                                        <th>Zero Rated</th>
+                                                                        <th>Invoice Amount</th>
+                                                                    </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                    </tbody>
+                                                                    <tfoot>
+                                                                        <tr>
+                                                                            <td align="right" colspan="3">Current Page Total : </td>
+                                                                            <td id="td_page_total_detailed_discount" align="right"></td>
+                                                                            <td id="td_page_total_detailed_vatable" align="right"></td>
+                                                                            <td id="td_page_total_detailed_vat" align="right"></td>
+                                                                            <td id="td_page_total_detailed_exempt" align="right"></td>
+                                                                            <td id="td_page_total_detailed_zero" align="right"></td>
+                                                                            <td id="td_page_total_detailed" align="right"></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td align="right" colspan="3">Grand Total : </td>
+                                                                            <td id="td_grand_total_detailed_discount" align="right"></td>
+                                                                            <td id="td_grand_total_detailed_vatable" align="right"></td>
+                                                                            <td id="td_grand_total_detailed_vat" align="right"></td>
+                                                                            <td id="td_grand_total_detailed_exempt" align="right"></td>
+                                                                            <td id="td_grand_total_detailed_zero" align="right"></td>
+                                                                            <td id="td_grand_total_detailed" align="right"></td>
+                                                                        </tr>
+                                                                    </tfoot>
+                                                                </table>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -474,95 +443,37 @@
                 });
         };
 
-                var bindEventControls=function(){
-            // cbo_Type.on('change', function(){
-            //     loadTable();
-            //     (cbo_Type.val() == 0 ? dtDetailed.destroy() : dtSummary.destroy())
-            //     initializeDataTable();cbo_xreading
-            // });
-
-            $('#btn_print_summary').on('click', function(){
-                window.open('Purchase_Invoice_Report/transaction/purchase-invoice?type=summary&startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&x_id='+_cboXReading.val());
-            });
-
+        var bindEventControls=function(){
             $('#btn_export_summary').on('click', function(){
-                window.open('Purchase_Invoice_Report/transaction/purchase-invoice-export?type=summary&startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&x_id='+_cboXReading.val());
+                window.open('X_reading_report/transaction/export?x_id='+_cboXReading.val());
             });
 
-            $('#btn_email_summary').on('click', function(){
-                showNotification({title:"Sending!",stat:"info",msg:"Please wait for a few seconds."});
-
-                var btn=$(this);
-            
-                $.ajax({
-                    "dataType":"json",
-                    "type":"POST",
-                    "url":'Purchase_Invoice_Report/transaction/purchase-invoice-email?type=summary&startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&x_id='+_cboXReading.val(),
-                    "beforeSend": showSpinningProgress(btn)
-                }).done(function(response){
-                    showNotification(response);
-                    showSpinningProgress(btn);
-
-                }); 
-            });
-
-
-            $('#btn_print_detailed').on('click', function(){
-                window.open('Purchase_Invoice_Report/transaction/purchase-invoice?type=detailed&startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&x_id='+_cboXReading.val());
-            });
-
-            $('#btn_export_detailed').on('click', function(){
-                window.open('Purchase_Invoice_Report/transaction/purchase-invoice-export?type=detailed&startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&x_id='+_cboXReading.val());
-            });
-
-            $('#btn_email_detailed').on('click', function(){
-                showNotification({title:"Sending!",stat:"info",msg:"Please wait for a few seconds."});
-
-                var btn=$(this);
-            
-                $.ajax({
-                    "dataType":"json",
-                    "type":"POST",
-                    "url":'Purchase_Invoice_Report/transaction/purchase-invoice-email?type=detailed&startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&x_id='+_cboXReading.val(),
-                    "beforeSend": showSpinningProgress(btn)
-                }).done(function(response){
-                    showNotification(response);
-                    showSpinningProgress(btn);
-
-                }); 
-            });
-
-            _date_from.on('change', function(){
-                //(cbo_Type.val() == 0 ? dtSummary.destroy() : dtDetailed.destroy())
-                dtSummary.destroy();
-                initializeDataTable();
-            });
-
-            _date_to.on('change', function(){
-                //(cbo_Type.val() == 0 ? dtSummary.destroy() : dtDetailed.destroy())
-                dtSummary.destroy();
-                initializeDataTable();
-            });
 
             _cboXReading.on("select2:select", function (e) {
                 dtSummary.destroy();
                 initializeDataTable();
 
             });
-        var showSpinningProgress=function(e){
-            $(e).toggleClass('disabled');
-            $(e).find('span').toggleClass('glyphicon glyphicon-refresh spinning');
-        };
 
+            var showSpinningProgress=function(e){
+                $(e).toggleClass('disabled');
+                $(e).find('span').toggleClass('glyphicon glyphicon-refresh spinning');
+            };
 
-        var showNotification=function(obj){
-            PNotify.removeAll(); //remove all notifications
-            new PNotify({
-                title:  obj.title,
-                text:  obj.msg,
-                type:  obj.stat
+            $("#tbl_pi_summary_search").keyup(function(){         
+                dtSummary
+                    .search(this.value)
+                    .draw();
             });
-        };
+
+            var showNotification=function(obj){
+                PNotify.removeAll(); //remove all notifications
+                new PNotify({
+                    title:  obj.title,
+                    text:  obj.msg,
+                    type:  obj.stat
+                });
+            };
         
         }();
 

@@ -103,7 +103,8 @@ class Rights_link_model extends CORE_Model{
                                           (93,'8','8-6','Profit Report'),
                                           (94,'6','6-14','Statement of Account Settings'),
                                           (95,'3','3-7','X Reading Report'),
-                                          (96,'3','3-8','Sales Return Report')
+                                          (96,'3','3-8','Sales Return Report'),
+                                          (97,'3','3-9','Sales Return Report')
 
                                           
 
