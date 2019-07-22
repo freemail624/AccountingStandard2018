@@ -435,8 +435,8 @@
                                 </div>
 
                                     <hr />
-                                    <label>Remarks :</label><br />
-                                    <textarea name="remarks" class="col-lg-12 form-control"></textarea>
+                                    <label><b class="required">*</b> Remarks :</label><br />
+                                    <textarea name="remarks" class="col-lg-12 form-control" data-error-msg="Remarks is required." required></textarea>
 
                                 </form>
                                 <div id="div_check">

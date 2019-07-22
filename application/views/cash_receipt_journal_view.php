@@ -529,8 +529,8 @@
 
 
                         <hr />
-                        <label>Remarks :</label><br />
-                        <textarea name="remarks" class="form-control col-lg-12"></textarea>
+                        <label> <b class="required">*</b>Remarks :</label><br />
+                        <textarea name="remarks" class="form-control col-lg-12" data-error-msg="Remarks is required." required></textarea>
 
                     </form>
 
