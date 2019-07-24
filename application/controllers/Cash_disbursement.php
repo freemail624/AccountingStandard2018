@@ -221,6 +221,9 @@ class Cash_disbursement extends CORE_Controller
 
                 //update transaction number base on formatted last insert id
                 $m_journal->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
+                if($this->input->post('auto',TRUE) == 1){
+                    $m_journal->ref_no = $journal_id;
+                }
                 $m_journal->modify($journal_id);
 
 

@@ -378,12 +378,14 @@
                         </select>
                     </div>
                     <div class="col-lg-3">
-                        <b class="required"> * </b> <label>Reference # :</label><br />
+                         <label>Reference # :</label><br />
                         <div class="input-group">
                             <span class="input-group-addon">
                                 <i class="fa fa-code"></i>
                             </span>
-                            <input type="text" name="ref_no" maxlength="15" class="form-control"  data-error-msg="Reference # is required." required>
+                            <input type="text"  name="ref_no" class="form-control"  readonly value="AUTO">
+                            <input type="hidden"  name="auto" class="form-control"   value="1">
+                            <!-- <input type="text" name="ref_no" maxlength="15" class="form-control"  data-error-msg="Reference # is required." required> -->
                         </div>
                     </div>
                     <div class="col-lg-4 col-lg-offset-2">
@@ -1629,6 +1631,8 @@ $(document).ready(function(){
             //set defaults
             _cboPaymentMethod.select2('val',1);//set cash as default
             $('input[name="date_txn"]').val(_currentDate);
+            $('input[name="ref_no"]').val('AUTO');
+            $('input[name="auto"]').val('1');
 
             showList(false);
 
