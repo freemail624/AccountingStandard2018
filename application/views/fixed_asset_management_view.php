@@ -291,7 +291,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button id="btn_save" type="button" class="btn btn-primary"  style="background-color:#2ecc71;color:white;"><span class=""></span>  Save</button>
-                                    <button id="btn_cancel_assets" type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                                    <button id="btn_cancel_assets" type="button" class="btn btn-danger" data-dismiss="modal" style="padding: 6.5px!important;">Cancel</button>
                                 </div>
                             </form>
                         </div>
