@@ -130,43 +130,84 @@ function restore_default_account_title(){
         ";
         return $this->db->query($sql)->result();
     }
+    // function get_account_titles_balance($start=null,$end=null){
+    //     $sql="SELECT
+
+    //             at.account_no,at.account_title,
+    //             IFNULL(SUM(ja.dr_amount),0) as dr_amount,
+    //             IFNULL(SUM(ja.cr_amount),0) as cr_amount,
+    //             ac.account_class_id,ac.account_type_id,
+
+    //             IF(
+    //                 ac.account_type_id=1 OR ac.account_type_id=5,
+    //                 IFNULL(SUM(ja.dr_amount),0)-IFNULL(SUM(ja.cr_amount),0),
+    //                 IFNULL(SUM(ja.cr_amount),0)-IFNULL(SUM(ja.dr_amount),0)
+    //             ) as balance
 
 
+    //             FROM (account_titles as at LEFT JOIN `account_classes` as ac ON at.`account_class_id`=ac.account_class_id)
+    //             LEFT JOIN
+
+    //             (
+
+    //             SELECT ja.* FROM journal_accounts as ja INNER
+    //             JOIN journal_info as ji ON ja.journal_id=ji.journal_id
+    //             WHERE ji.is_active AND ji.is_deleted=FALSE
+    //             ".($start!=null&&$end!=null?" AND ji.date_txn BETWEEN '$start' AND '$end'":"")."
+
+    //             )as ja
+
+    //             ON at.account_id=ja.account_id
+
+
+
+    //             GROUP BY at.account_id";
+
+    //         return $this->db->query($sql)->result();
+    // }
+    
     function get_account_titles_balance($start=null,$end=null){
-        $sql="SELECT
+        $sql="SELECT act.account_id,
+              act.account_no,
+                act.account_title,
+                IFNULL(dr_amount,0) as dr_amount,
+                IFNULL(cr_amount,0) as cr_amount,
+                IFNULL(balance,0) as balance,
+                act.account_class_id,
+                ac.account_type_id
+             FROM 
 
-                at.account_no,at.account_title,
-                IFNULL(SUM(ja.dr_amount),0) as dr_amount,
-                IFNULL(SUM(ja.cr_amount),0) as cr_amount,
-                ac.account_class_id,ac.account_type_id,
+            account_titles act
 
-                IF(
-                    ac.account_type_id=1 OR ac.account_type_id=5,
-                    IFNULL(SUM(ja.dr_amount),0)-IFNULL(SUM(ja.cr_amount),0),
-                    IFNULL(SUM(ja.cr_amount),0)-IFNULL(SUM(ja.dr_amount),0)
-                ) as balance
+            LEFT JOIN
+            (SELECT
+            at.account_id,
+            IFNULL(SUM(ja.dr_amount),0) as dr_amount,
+            IFNULL(SUM(ja.cr_amount),0) as cr_amount,
+            IF(
+              ac.account_type_id=1 OR ac.account_type_id=5,
+              IFNULL(SUM(ja.dr_amount),0)-IFNULL(SUM(ja.cr_amount),0),
+              IFNULL(SUM(ja.cr_amount),0)-IFNULL(SUM(ja.dr_amount),0)
+            ) as balance
+            FROM (account_titles as at LEFT JOIN `account_classes` as ac ON at.account_class_id=ac.account_class_id)
+            RIGHT JOIN
 
+            (SELECT ja.* FROM journal_accounts as ja INNER
+            JOIN journal_info as ji ON ja.journal_id=ji.journal_id
+            WHERE ji.is_active = TRUE AND ji.is_deleted=FALSE
+             ".($start!=null&&$end!=null?" AND ji.date_txn BETWEEN '$start' AND '$end'":"")."
+            )as ja
 
-                FROM (account_titles as at LEFT JOIN `account_classes` as ac ON at.`account_class_id`=ac.account_class_id)
-                LEFT JOIN
+            ON at.account_id=ja.account_id
+            GROUP BY at.account_id) as main
+            ON main.account_id = act.account_id
 
-                (
-
-                SELECT ja.* FROM journal_accounts as ja INNER
-                JOIN journal_info as ji ON ja.journal_id=ji.journal_id
-                WHERE ji.is_active AND ji.is_deleted=FALSE
-                ".($start!=null&&$end!=null?" AND ji.date_txn BETWEEN '$start' AND '$end'":"")."
-
-                )as ja
-
-                ON at.account_id=ja.account_id
-
-
-
-                GROUP BY at.account_id";
+            LEFT JOIN account_classes as ac ON act.account_class_id=ac.account_class_id";
 
             return $this->db->query($sql)->result();
     }
+
+
 
 
 
