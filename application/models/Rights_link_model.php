@@ -99,7 +99,9 @@ class Rights_link_model extends CORE_Model{
                                           (89,'16','16-1','Monthly Percentage Tax Return'),
                                           (90,'16','16-2','Quarterly Percentage Tax Return'),
                                           (91,'16','16-3','Certificate of Creditable Tax'),
-                                          (92,'6','6-14','Statement of Accounts Settings')
+                                          (92,'6','6-14','Statement of Accounts Settings'),
+                                          (93,'6','6-15','Fixed Asset Settings'),
+                                          (94,'10','10-3','Movement of Assets')
 
 
                                           ON DUPLICATE KEY UPDATE

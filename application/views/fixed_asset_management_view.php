@@ -89,6 +89,10 @@
         table#fix_extend{
             border: none!important;
         }
+
+        #tbl_fixed_management_filter{
+            display: none;
+        }
 /*        table#fix_extend tr:nth-child(odd) {
             background: #303030 !important;
             color: #FFF !important;
@@ -131,8 +135,27 @@
                                             <!-- <div class="panel-heading">
                                                 <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Fixed Asset Management</b>
                                             </div> -->
+
                                             <div class="panel-body table-responsive">
                                             <h2 class="h2-panel-heading">Fixed Asset Management</h2><hr>
+
+
+                                            <div class="row">
+                                                <div class="col-lg-3"><br>
+                                                        <button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New unit" ><i class="fa fa-plus"></i> New Asset</button>
+                                                </div>
+                                                <div class="col-lg-offset-3 col-lg-3" style="text-align: right;">
+                                                &nbsp;<br>
+                                                        <button class="btn btn-primary" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-placement="left" title="Print"><i class="fa fa-print"></i> Print</button> &nbsp;
+                                                        <button class="btn btn-success" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-placement="left" title="Export"><i class="fa fa-file-excel-o"></i> Export</button>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                        Search :<br />
+                                                        <input type="text" id="searchbox_fixed" class="form-control">
+                                                </div>
+                                            </div><br>
+
+
                                                 <table id="tbl_fixed_management" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead class="">
                                                     <tr>
@@ -506,8 +529,7 @@ $(document).ready(function(){
         _cboDepartments.select2('val',null);
 
         var createToolBarButton=function(){
-            var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New unit" >'+
-                '<i class="fa fa-plus"></i> New Asset</button>';
+            var _btnNew='';
             $("div.toolbar").html(_btnNew);
         }();
 
@@ -556,6 +578,12 @@ $(document).ready(function(){
             $('#modal_new_category').modal('hide');            
         });
 
+        $("#searchbox_fixed").keyup(function(){         
+            dt
+                .search(this.value)
+                .draw();
+        });
+
         $('#tbl_fixed_management tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
             var row = dt.row( tr );
@@ -568,15 +596,25 @@ $(document).ready(function(){
                 detailRows.splice( idx, 1 );
             }
             else {
-                tr.addClass( 'details' );
-
-                row.child( format( row.data() ),'no-padding' ).show();
-
-                if ( idx === -1 ) {
-                    detailRows.push( tr.attr('id') );
-                }
+                _selectRowObj=$(this).closest('tr');
+                var d=dt.row(_selectRowObj).data();
+                $.ajax({
+                    "dataType":"html",
+                    "type":"POST",
+                    "url":"Fixed_asset_management/transaction/asset-history?id="+ d.fixed_asset_id+'&type=preview',
+                    "beforeSend" : function(){
+                        row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                    }
+                }).done(function(response){
+                    row.child( response,'no-padding' ).show();
+                    tr.addClass( 'details' );
+                    // Add to the 'open' array
+                    if ( idx === -1 ) {
+                        detailRows.push( tr.attr('id') );
+                    }
+                });
             }
-        } );
+        });
 
         $('.numeric').autoNumeric('init',{mDec:2});
 
@@ -593,6 +631,14 @@ $(document).ready(function(){
             autoclose: true
 
         });
+
+        $('#btn_print').click(function(){
+           window.open('Fixed_asset_management/transaction/print');
+        });  
+
+        $('#btn_export').click(function(){
+           window.open('Fixed_asset_management/transaction/export');
+        }); 
 
         $('#btn_new').click(function(){
             _txnMode="new";

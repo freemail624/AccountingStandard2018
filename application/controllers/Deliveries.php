@@ -16,6 +16,7 @@ class Deliveries extends CORE_Controller
         $this->load->model('Purchases_model');
         $this->load->model('Departments_model');
         $this->load->model('Refproduct_model');
+        $this->load->model('Asset_settings_model');
         $this->load->model('Users_model');
         $this->load->model('Trans_model');          
 
@@ -159,6 +160,20 @@ class Deliveries extends CORE_Controller
                 );
 
 
+                echo json_encode($response);
+                break;
+
+            case 'fixed_asset_items':
+                $m_items=$this->Delivery_invoice_item_model;
+                $accounts=$this->Asset_settings_model->get_list(null,'asset_account_id');  
+                $acc = [];  
+                foreach ($accounts as $account) { $acc[]=$account->asset_account_id; }  
+                $fixed_asset_accounts =  implode(",", $acc);  
+                // echo $fixed_asset_accounts;
+
+                $dr_invoice_id = $id_filter; 
+
+                $response['data']=$m_items->get_fixed_asset_items($dr_invoice_id,$fixed_asset_accounts);
                 echo json_encode($response);
                 break;
 

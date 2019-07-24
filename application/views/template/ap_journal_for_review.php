@@ -48,6 +48,7 @@
                     <ul class="nav nav-tabs">
                         <li class="active"><a href="#journal_review_<?php echo $purchase_info->dr_invoice_id; ?>" data-toggle="tab"><i class="fa fa-gavel"></i> Review Journal</a></li>
                         <li class=""><a href="#purchase_review_<?php echo $purchase_info->dr_invoice_id; ?>" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Transaction</a></li>
+                        <li style="<?php if($fixed_asset_count <= 0){ echo 'display: none;'; }?>"><a href="#fixed_asset_<?php echo $purchase_info->dr_invoice_id; ?>" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Fixed Asset</a></li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="journal_review_<?php echo $purchase_info->dr_invoice_id; ?>" data-parent-id="<?php echo $purchase_info->dr_invoice_id; ?>" style="min-height: 300px;">
@@ -263,6 +264,29 @@
                                             </tr>                                        </tfoot>
                                     </table>
                                     <br /><br />
+                                </div>
+                        </div>
+                        <div class="tab-pane" id="fixed_asset_<?php echo $purchase_info->dr_invoice_id; ?>" >
+                                <h4><span style="margin-left: 1%"><strong><i class="fa fa-bars"></i> Fixed Asset</strong></span></h4>
+                                <hr />
+                                <div style="margin-left: 2%;margin-right: 20px;">
+                                    <div class="row">
+                                        <table class="tbl_items table-striped table" cellspacing="0" width="100%" id="tbl_items_<?php echo $purchase_info->dr_invoice_id; ?>">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Code</th>
+                                                    <th>Item</th>
+                                                    <th align="right" style="text-align: right;">Qty</th>
+                                                    <th>UM</th>
+                                                    <th align="right" style="text-align: right;">Price</th>
+                                                    <th><center>Status</center></th>
+                                                </tr> 
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                         </div>
                     </div>

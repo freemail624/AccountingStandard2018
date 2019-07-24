@@ -68,5 +68,42 @@
 			return $this->db->query($sql)->result();
 
 		}
+
+		function get_history_asset($fixed_asset_id) {
+			$sql="SELECT main.*,
+			l.location_name, aps.asset_property_status FROM 
+			(SELECT 0 as asset_movement_id,
+			'Acquisition' as asset_no,
+			fa.date_acquired as date,
+			fa.location_id,
+			fa.asset_status_id,
+			fa.remarks
+
+			FROM fixed_assets fa
+			WHERE fa.fixed_asset_id = $fixed_asset_id
+
+			UNION ALL
+
+			SELECT am.asset_movement_id,
+			am.asset_no,
+			am.date_movement,
+			am.location_id_to,
+			am.asset_status_id,
+			am.remarks
+
+			 FROM asset_movement am
+
+			WHERE am.fixed_asset_id = $fixed_asset_id
+			 AND am.is_active = TRUE 
+			 AND am.is_deleted = FALSE) as main
+			 
+			 LEFT JOIN locations l ON l.location_id = main.location_id
+			 LEFT JOIN asset_property_status aps ON aps.asset_status_id = main.asset_status_id
+			 
+			 ORDER BY main.date ASC, main.asset_movement_id ASC";
+
+			return $this->db->query($sql)->result();
+
+		}
 	}
 ?>

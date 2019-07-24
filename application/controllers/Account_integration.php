@@ -113,7 +113,8 @@ class Account_integration extends CORE_Controller
                 $m_integration->retained_earnings_id=$this->input->post('retained_earnings_id',TRUE);
                 $m_integration->petty_cash_account_id=$this->input->post('petty_cash_account_id',TRUE);
                 $m_integration->depreciation_expense_debit_id=$this->input->post('depreciation_expense_debit_id',TRUE);
-                $m_integration->depreciation_expense_credit_id=$this->input->post('depreciation_expense_credit_id',TRUE);        
+                $m_integration->depreciation_expense_credit_id=$this->input->post('depreciation_expense_credit_id',TRUE);
+                $m_integration->fixed_asset_account_id=$this->input->post('fixed_asset_account_id',TRUE);            
                 $m_integration->modify(1);
 
                 $response['stat']="success";

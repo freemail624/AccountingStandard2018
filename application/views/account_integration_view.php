@@ -441,6 +441,21 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                             </div>
                         </div>
                         <br >
+                        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Fixed Asset Account</strong></span></h4>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> * Fixed Asset :</label>
+                            <div class="col-md-7">
+                                <select name="fixed_asset_account_id" class="cbo_accounts" data-error-msg="Fixed Asset account is required." required>
+
+                                    <?php foreach($accounts as $account){ ?>
+                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->fixed_asset_account_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
+                                    <?php } ?>
+                                </select>
+
+                                <span class="help-block m-b-none">Please select the account where the fixed asset will be forwarded.</span>
+                            </div>
+                        </div>
+                        <br >
                         <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Depreciation Expense Account</strong></span></h4>
                         <div class="form-group">
                             <label class="col-md-3 control-label"> * Debit Account :</label>

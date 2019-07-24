@@ -90,6 +90,11 @@ class Templates extends CORE_Controller {
         $this->load->model('Dispatching_invoice_model');
         $this->load->model('Dispatching_invoice_item_model');
 
+        $this->load->model('Account_integration_model');
+        $this->load->model('Locations_model');
+        $this->load->model('Categories_model');
+        $this->load->model('Departments_model');
+
         $this->load->model('Bir_2307_model');
         $this->load->model('Bir_2551m_model');
         $this->load->model('Months_model');
@@ -103,8 +108,7 @@ class Templates extends CORE_Controller {
     public function index() {
 
     }
-
-
+    
     function layout($layout=null,$filter_value=null,$type=null){
         switch($layout){
               case 'services-journal-for-review':
@@ -2223,6 +2227,7 @@ class Templates extends CORE_Controller {
                 $m_purchases_items=$this->Delivery_invoice_item_model;
                 $m_purchases_info=$this->Delivery_invoice_model;
                 $m_departments=$this->Departments_model;
+                $current_accounts= $this->Account_integration_model->get_list();
 
                 $purchase_info=$m_purchases_info->get_list(
                     array(
@@ -2264,6 +2269,11 @@ class Templates extends CORE_Controller {
 
                 );
                 $data['purchase_info']=$purchase_info[0];
+
+                // Count Fixed Asset Items in DR
+                $fixed_asset_account_id = $current_accounts[0]->fixed_asset_account_id;
+                $count = $m_purchases_items->get_fixed_asset_items($purchase_invoice_id,$fixed_asset_account_id);
+                $data['fixed_asset_count'] = count($count);
 
                 $data['departments']=$m_departments->get_list('is_active=TRUE AND is_deleted=FALSE');
 
@@ -2426,6 +2436,20 @@ class Templates extends CORE_Controller {
 
                 echo $this->load->view('template/ar_journal_for_review',$data,TRUE); //details of the journal
 
+
+                break;
+
+            case 'fixed_asset_item_entry':
+                $dr_invoice_item_id=$this->input->get('id',TRUE);
+
+                $m_dr_items = $this->Delivery_invoice_item_model;
+                $data = $m_dr_items->get_fixed_asset_items(null,null,$dr_invoice_item_id);
+                $data['items'] = $data[0];
+                $data['location'] = $this->Locations_model->get_list(array("is_deleted"=>FALSE,"is_active"=>TRUE));
+                $data['categories'] = $this->Categories_model->get_list(array("is_deleted"=>FALSE,"is_active"=>TRUE));
+                $data['departments'] = $this->Departments_model->get_list(array("is_deleted"=>FALSE,"is_active"=>TRUE));
+
+                echo $this->load->view('template/fixed_asset_item_entry',$data,TRUE);
 
                 break;
 
