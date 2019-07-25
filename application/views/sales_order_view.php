@@ -1524,10 +1524,11 @@ $(document).ready(function(){
                 var price=parseFloat(accounting.unformat(row.find(oTableItems.retail_price).find('input.numeric').val()));
             }
             $(oTableItems.unit_price,row).find('input').val(accounting.formatNumber(price,2));   
-            $(oTableItems.unit_identifier,row).find('input').val(unit_value); 
+            $(oTableItems.unit_identifier,row).find('input').val(unit_value); $('.number').keyup();
+            $('.number').keyup();
         }
 
-        $('.number').keyup();
+        
         });
 
         $('#tbl_items tbody').on('keyup','input.numeric,input.number',function(){
