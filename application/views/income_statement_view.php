@@ -84,7 +84,7 @@
                                 <div class="modal-dialog modal-md">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h4 class="modal-title" style="color: white;">Income Statement</h4>
+                                            <h4 class="modal-title" style="color: white;">Income Statement <small style="color: white;"> | <a href="assets/manual/accountingreport/financialstatement/Income_Statement.pdf" target="_blank" style="color:white;"><i class="fa fa-question-circle"></i></a></small></h4>
                                         </div>
                                         <div class="modal-body">
 

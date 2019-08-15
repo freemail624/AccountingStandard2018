@@ -140,8 +140,18 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
     <li><a href="dashboard">Dashboard</a></li>
     <li><a href="Account_integration">Account Integration  <?php //print_r($user_groups); ?></a></li>
 </ol>
+<div class="container-fluid">
+    <div data-widget-group="group1">    
+        <div class="row">
+            <div class="col-md-12">
 
-
+                <div id="div_customer_list">
+                    <div class="panel panel-default">
+                       <!--  <div class="panel-heading">
+                            <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Customers</b>
+                        </div>              -->                     
+                        <div class="panel-body table-responsive">
+                        <h2 class="h2-panel-heading">General Configuration<small> | <a href="assets/manual/settings/General_Configuration.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
 <div class="container-fluid">
 <div data-widget-group="group1">
 <div class="row">
@@ -641,7 +651,7 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
 </div>
 </div>
 </div> <!-- .container-fluid -->
-
+</div></div></div></div>
 </div> <!-- #page-content -->
 </div>
 

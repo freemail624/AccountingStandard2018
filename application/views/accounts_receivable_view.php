@@ -206,7 +206,7 @@
 <!--                 <div class="panel-heading">
                     <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Review Sales Journal (Pending)</b>
                 </div> -->
-            <h2 class="h2-panel-heading">Review Sales Journal (Pending)</h2><hr>
+            <h2 class="h2-panel-heading">Review Sales Journal<small> | Pending  <a href="assets/manual/financing/Review_Sales_Journal_Pending.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
             </a>
                     <div >
                     <table id="tbl_sales_review" class="table table-striped" cellspacing="0" width="100%">
@@ -235,7 +235,7 @@
 <!--                 <div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;">
                     <b style="font-size: 11pt;color:white;"><i class="fa fa-bars"></i> Sales / AR Journal</b>
                 </div> -->
-                <h2 class="h2-panel-heading"> Sales / AR Journal</h2>
+                <h2 class="h2-panel-heading"> Sales / AR Journal<small> | <a href="assets/manual/financing/Sales_Journal.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2>
             </a>
 
                 <div class="row">

@@ -118,7 +118,7 @@
  -->
         <div class="panel-body table-responsive">
             <div class="row panel-row">
-             <h2 class="h2-panel-heading">Service Invoice</h2><hr>           
+             <h2 class="h2-panel-heading">Service Invoice<small> | <a href="assets/manual/services/Service_Invoice.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>           
                 <table id="tbl_service_invoice" class="table table-striped"  cellspacing="0" width="100%" style="">
                 <thead class="">
                 <tr>

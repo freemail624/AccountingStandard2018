@@ -84,7 +84,7 @@
                                     <div id="div_movement_list">
                                         <div class="panel panel-default">
                                             <div class="panel-body table-responsive">
-                                            <h2 class="h2-panel-heading" >Movement of Assets</h2><hr>
+                                            <h2 class="h2-panel-heading" >Movement of Assets<small> | <a href="assets/manual/fixedassetmanagement/Movement_of_Assets.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                             <button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"  title="Record Movement" ><i class="fa fa-plus"></i> Record Movement</button>
                                                 <table id="tbl_asset_move" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead>

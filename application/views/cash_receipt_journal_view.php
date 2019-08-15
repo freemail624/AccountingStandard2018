@@ -198,7 +198,7 @@
 
             <div id="collapseTwo" class="collapse in">
                 <div class="panel-body">    
-                    <h2 class="h2-panel-heading">Review Collection (Pending)</h2><hr>
+                    <h2 class="h2-panel-heading">Review Collection<small> | Pending  <a href="assets/manual/financing/Review_Collection_Pending.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                     <div >
                         <table id="tbl_collection_for_review" class="table table-striped" cellspacing="0" width="100%">
                             <thead class="">
@@ -226,7 +226,7 @@
         <div class="panel panel-default" style="border-radius:6px;">
             <div id="collapseOne" class="collapse in">
                 <div class="panel-body" style="">
-                <h2 class="h2-panel-heading">Cash Invoice (Pending)</h2><hr>
+                <h2 class="h2-panel-heading">Cash Invoice<small> | Pending  <a href="assets/manual/financing/Cash_Invoice_Pending.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                     <div >
                         <table id="tbl_cash_invoice_for_review" class="table table-striped" cellspacing="0" width="100%">
                             <thead class="">
@@ -251,7 +251,7 @@
         <div class="panel panel-default" style="border-radius:6px;">
             <div id="collapseOne" class="collapse in">
                 <div class="panel-body" style="min-height: 400px;">
-                <h2 class="h2-panel-heading">Cash Receipt Journal (History)</h2><hr>
+                <h2 class="h2-panel-heading">Cash Receipt Journal<small> | <a href="assets/manual/financing/Cash_Receipt_Journal.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
 
                 <div class="row">
                     <div class="col-lg-3">&nbsp;<br>

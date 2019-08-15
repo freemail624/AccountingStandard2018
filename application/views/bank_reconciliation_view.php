@@ -151,7 +151,7 @@
                                <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Bank Reconciliation</b> 
                             </div> -->
                             <div class="panel-body">
-                            <h2 class="h2-panel-heading">Bank Reconciliation</h2><hr>
+                            <h2 class="h2-panel-heading">Bank Reconciliation<small> | <a href="assets/manual/bankreconciliation/Bank_Reconciliation.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                 <div class="row">
                                     <div class="container-fluid">
                                         <ul class="nav nav-tabs">
@@ -346,7 +346,7 @@
                                 <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Reconciliation History</b> 
                             </div> -->
                             <div class="panel-body">
-                            <h2 class="h2-panel-heading">Reconciliation History</h2><hr>
+                            <h2 class="h2-panel-heading">Reconciliation History<small> | <a href="assets/manual/bankreconciliation/Reconciliation_History.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                 <table id="tbl_history" class="table table-striped" width="100%">
                                     <thead>
                                         <th></th>

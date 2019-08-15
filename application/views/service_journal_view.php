@@ -217,7 +217,7 @@
             </a> -->
             <div id="" class="">
                 <div class="panel-body">
-                    <h2 class="h2-panel-heading">Review Service Journal</h2><hr>
+                    <h2 class="h2-panel-heading">Review Service Journal<small> | Pending  <a href="assets/manual/services/Review_Service_Journal.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                     <div class="row-panel">
                         <table id="tbl_service_review" class="table table-striped" cellspacing="0" width="100%">
                             <thead >
@@ -246,7 +246,7 @@
             </a> -->
 
                 <div class="panel-body" style="min-height: 400px;">
-                <h2 class="h2-panel-heading">Services / AR Journal</h2> <hr>
+                <h2 class="h2-panel-heading">Services / AR Journal<small> | <a href="assets/manual/services/Service_Ar_Journal.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2> <hr>
                     <div class="row-panel">
                     <table id="tbl_service_journal" class="table table-striped table-striped-padding" cellspacing="0" width="100%">
                         <thead class="">

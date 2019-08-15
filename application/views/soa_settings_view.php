@@ -108,12 +108,10 @@
 <div class="row"> 
     <div class="col-md-12"> 
         <div class="tab-container tab-top tab-primary"> 
-            <ul class="nav nav-tabs"> 
-                <li class="active"><a href="#soa_settings" data-toggle="tab" style="font-family: tahoma;">Statement of Accounts Settings</a></li> 
-            </ul> 
             <div class="tab-content"> 
 <!-- ITEM TRANSFER START --> 
             <div class="tab-pane active" id="soa_settings" style="min-height: 300px;"> 
+            <h2 class="h2-panel-heading">Statement of Accounts Settings<small> | <a href="assets/manual/settings/Statement_of_Account_Settings.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                 <form id="frm_account_integration_item_transfer" role="form" class="form-horizontal row-border"> 
       <!--                   <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Accounts Receivable Accounts </strong></span></h4> --> 
                             <i>Note: Please check the appropriate accounts to be included in the computation of SOA and Aging of Receivables</i> 

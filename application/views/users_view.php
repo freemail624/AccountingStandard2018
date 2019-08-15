@@ -130,7 +130,7 @@
                                                 <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; User Accounts</b>
                                             </div> -->
                                             <div class="panel-body table-responsive">
-                                            <h2 class="h2-panel-heading">User Accounts</h2><hr>
+                                            <h2 class="h2-panel-heading">User Accounts<small> | <a href="assets/manual/settings/Create_User_Accounts.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                                 <table id="tbl_user_list" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead class="">
                                                     <tr>

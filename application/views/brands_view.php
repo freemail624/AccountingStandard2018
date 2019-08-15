@@ -82,7 +82,7 @@
                                     <div id="div_brand_list">
                                         <div class="panel panel-default">
                                             <div class="panel-body table-responsive">
-                                            <h2 class="h2-panel-heading">Brands</h2><hr>
+                                            <h2 class="h2-panel-heading">Brands<small> | <a href="assets/manual/references/Brands_Management.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                                 <table id="tbl_brands" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead>
 

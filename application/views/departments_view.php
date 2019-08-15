@@ -86,7 +86,7 @@
                                                 <b style="color: white; font-size: 12pt;"><i style="color: #ffce3a;" class="ti ti-layout-accordion-merged"></i>&nbsp; Departments</b>
                                             </div> -->
                                             <div class="panel-body table-responsive">
-                                            <h2 class="h2-panel-heading">Departments</h2><hr>
+                                            <h2 class="h2-panel-heading">Departments<small> | <a href="assets/manual/references/Department_Management.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                                 <table id="tbl_departments" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead>
 

@@ -195,7 +195,7 @@
             <div class="panel-body panel-responsive" >
             <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo" style="text-decoration: none;">
 <!--             <div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Review Expense (Pending)</b></div> -->
-            <h2 class="h2-panel-heading"> Review Expense (Pending)</h2><hr>
+            <h2 class="h2-panel-heading"> Review Expense<small> | Pending  <a href="assets/manual/financing/Review_Expense_Pending.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
             </a>
 
             <div id="collapseTwo" class="collapse in">
@@ -228,7 +228,7 @@
             <div class="panel-body panel-responsive">
               <a data-toggle="collapse" data-parent="#accordionA" href="#collapseOne" style="text-decoration: none;">
 <!--               <div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Cash Disbursement Journal</b></div> -->
-            <h2 class="h2-panel-heading">Cash Disbursement Journal</h2><hr>
+            <h2 class="h2-panel-heading">Cash Disbursement Journal<small> | <a href="assets/manual/financing/Cash_Disbursement_Journal.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
 
               </a>
                 <div id="collapseOne" class="collapse in">

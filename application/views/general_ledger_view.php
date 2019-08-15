@@ -60,7 +60,7 @@
                                             <div class="panel panel-default" style="border-radius: 6px;border: 1px solid lightgrey;">
                                                 <div id="collapseTwo" class="collapse in">
                                                     <div class="panel-body">
-                                                    <h2 class="h2-panel-heading">General Ledger</h2><hr>
+                                                    <h2 class="h2-panel-heading">General Ledger<small> | <a href="assets/manual/accountingreport/otheraccountingreports/General_Ledger.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                                         <div>
                                                             <div class="row">
                                                                 <div class="col-lg-6">

@@ -91,7 +91,7 @@
                                                 <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Locations Management</b>
                                             </div> -->
                                             <div class="panel-body table-responsive">
-                                            <h2 class="h2-panel-heading">Locations Managements</h2><hr>
+                                            <h2 class="h2-panel-heading">Locations Managements<small> | <a href="assets/manual/references/Location_Management.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                                 <table id="tbl_locations" class="table table-striped" cellspacing="0" width="100%">
 
                                                     <thead>

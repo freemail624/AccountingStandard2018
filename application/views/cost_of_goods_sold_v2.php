@@ -92,7 +92,7 @@
                                     <div id="div_department_list">
                                         <div class="panel panel-default">
                                             <div class="panel-body table-responsive">
-                                            <h2 class="h2-panel-heading">Cost of Goods Sold</h2><hr>
+                                            <h2 class="h2-panel-heading">Cost of Goods Sold<small> | <a href="assets/manual/accountingreport/cost/Cost_of_Goods_Sold.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                             <div class="row">
                                                 <div class="col-lg-6">
                                                     Department * : <br />

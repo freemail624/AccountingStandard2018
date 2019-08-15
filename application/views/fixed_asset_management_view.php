@@ -137,7 +137,7 @@
                                             </div> -->
 
                                             <div class="panel-body table-responsive">
-                                            <h2 class="h2-panel-heading">Fixed Asset Management</h2><hr>
+                                            <h2 class="h2-panel-heading">Fixed Asset Management<small> | <a href="assets/manual/fixedassetmanagement/Fixed_Asset_Management.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
 
 
                                             <div class="row">

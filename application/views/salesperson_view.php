@@ -95,7 +95,7 @@
                                                         <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Sales Person</b>
                                                     </div> -->
                                                     <div class="panel-body table-responsive">
-                                                    <h2 class="h2-panel-heading">Salesperson</h2><hr>
+                                                    <h2 class="h2-panel-heading">Salesperson<small> | <a href="assets/manual/masterfiles/Salesperson_Management.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                                         <table id="tbl_salesperson" class="table table-striped" cellspacing="0" width="100%">
                                                             <thead class="">
                                                             <tr>

@@ -86,7 +86,7 @@
                                 <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; </b>
                             </div> -->
                             <div class="panel-body">
-                            <h2 class="h2-panel-heading">Replenishment Report</h2><hr>
+                            <h2 class="h2-panel-heading">Replenishment Report<small> | <a href="assets/manual/accountingreport/otheraccountingreports/Replenishment_Report.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                 <div class="row">
                                     <div class="container-fluid">
                                         <div class="container-fluid group-box">

@@ -129,7 +129,7 @@
                                             </div> -->
                                             
                                             <div class="panel-body table-responsive">
-                                            <h2 class="h2-panel-heading">Account Clasification</h2><hr>
+                                            <h2 class="h2-panel-heading">Account Classification<small> | <a href="assets/manual/references/Account_Classification.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                                 <table id="tbl_account_class" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead class="">
                                                     <tr>

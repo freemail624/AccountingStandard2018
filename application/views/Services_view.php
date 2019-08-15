@@ -175,7 +175,7 @@
                                                 <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Services</b>
                                             </div> -->
                                             <div class="panel-body table-responsive">
-                                                <h2 class="h2-panel-heading"> Services</h2><hr>
+                                                <h2 class="h2-panel-heading"> Services<small> | <a href="assets/manual/services/Service_Management.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                             <div class="row-panel">
                                                 <button class="btn btn-primary" id="btn_new" style="float: left; text-transform: capitalize;font-family: Tahoma, Georgia, Serif;margin-bottom: 0px !important;" data-toggle="modal" data-target="" data-placement="left" title="Create New Service" ><i class="fa fa-plus"></i> Create New Service</button>
                                                 <table id="tbl_services" class="table table-striped" cellspacing="0" width="100%">

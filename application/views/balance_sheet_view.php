@@ -84,7 +84,7 @@
                                 <div class="modal-dialog modal-md">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h4 class="modal-title" style="color: white;">Balance Sheet</h4>
+                                            <h4 class="modal-title" style="color: white;">Balance Sheet<small style="color: white;"> | <a href="assets/manual/accountingreport/financialstatement/Balance_Sheet.pdf" target="_blank" style="color:white;"><i class="fa fa-question-circle"></i></a></small></h4>
                                         </div>
                                         <div class="modal-body">
 

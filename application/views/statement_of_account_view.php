@@ -87,7 +87,7 @@
                                 <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Statement of Account</b>
                             </div> -->
                             <div class="panel-body">
-                                <h1 style="margin-bottom: 30px;">Statement of Account</h1><hr>
+                                <h2 class="h2-panel-heading">Statement of Account<small> | <a href="assets/manual/accountingreport/client/Statement_of_Account.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                 <div class="row">
                                     <div class="container-fluid">
                                         <div class="col-xs-12 col-sm-6">

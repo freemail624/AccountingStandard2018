@@ -159,7 +159,7 @@
                                                <!--  <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;;"><b style="color:white;font-size: 12pt;><i class="fa fa-bars"></i> Inventory Report</b></div></a> -->
                                                 <div id="collapseTwo" class="collapse in">
                                                     <div class="panel-body">
-                                                    <h2 class="h2-panel-heading">Inventory Report</h2><hr>
+                                                    <h2 class="h2-panel-heading">Inventory Report<small> | <a href="assets/manual/inventory/Inventory_Report.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
 
                                                             <div class="row">
                                                                 <div class="col-lg-6">

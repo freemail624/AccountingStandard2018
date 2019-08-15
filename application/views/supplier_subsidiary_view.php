@@ -76,7 +76,7 @@
                                                 <!-- <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;;"><b style="color:white;font-size: 12pt;"><i class="fa fa-bars"></i> Supplier Subsidiary</b></div></a> -->
                                                 <div id="collapseTwo" class="collapse in">
                                                     <div class="panel-body">
-                                                    <h2 class="h2-panel-heading">Supplier Subsidiary</h2><hr>
+                                                    <h2 class="h2-panel-heading">Supplier Subsidiary<small> | <a href="assets/manual/accountingreport/vendor/Supplier_Subsidiary.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                                         <div>
                                                             <div class="row">
                                                                 <div class="col-lg-4">

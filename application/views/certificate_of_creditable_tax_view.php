@@ -137,7 +137,7 @@
                                     <div id="div_2307_form_list">
                                         <div class="panel panel-default">
                                             <div class="panel-body">
-                                            <h2 class="h2-panel-heading">Certificate of Creditable Tax (BIR FORM #2307)</h2><hr>
+                                            <h2 class="h2-panel-heading">Certificate of Creditable Tax (BIR FORM #2307)<small> | <a href="assets/manual/birforms/2307.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                             <div class="row" style="margin-bottom: 20px;">
                                                 <div class="col-lg-3">
                                                     <b>Month:</b><br>
@@ -415,4 +415,4 @@ $(document).ready(function(){
 
 </body>
 
-</html>vie
+</html>

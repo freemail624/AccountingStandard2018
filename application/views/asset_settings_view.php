@@ -110,7 +110,7 @@
         <div class="panel panel-default">
         <div class="panel-body table-responsive">
         <div class="row panel-row">
-        <h2 class="h2-panel-heading">Fixed Asset Account Settings</h2><hr>
+        <h2 class="h2-panel-heading">Fixed Asset Account Settings<small> | <a href="assets/manual/settings/Fixed_Asset_Settings.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                 <form id="frm_account_integration_item_transfer" role="form" class="form-horizontal row-border">
       <!--                   <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Accounts Receivable Accounts </strong></span></h4> -->
                             <i>Note: Please check the appropriate Fixed Asset Accounts used in Product Management (Link to Debit Account) to be included in the Fixed Asset Generation in Purchase Journal</i>

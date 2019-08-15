@@ -665,7 +665,7 @@
                                                 <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Customers</b>
                                             </div>              -->                     
                                             <div class="panel-body table-responsive">
-                                            <h2 class="h2-panel-heading">Customers</h2><hr>
+                                            <h2 class="h2-panel-heading">Customers<small> | <a href="assets/manual/masterfiles/Customer_Management.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
 
                                             <div class="row">
                                                 <div class="col-lg-3"><br>

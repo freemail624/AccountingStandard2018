@@ -147,7 +147,7 @@
     <div class="panel panel-default">
         <div class="panel-body table-responsive">
         <div class="row panel-row">
-        <h2 class="h2-panel-heading">Warehouse Dispatching</h2><hr>
+        <h2 class="h2-panel-heading">Warehouse Dispatching<small> | <a href="assets/manual/sales/Warehouse_Dispatching.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
             <table id="tbl_warehouse_dispatching" class="table table-striped" cellspacing="0" width="100%" style="">
                 <thead >
                 <tr>

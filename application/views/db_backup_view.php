@@ -84,7 +84,7 @@
                                 <div class="modal-dialog modal-md">
                                     <div class="modal-content">
                                         <div class="modal-header modal-erp">
-                                            <h4 class="modal-title" style="color: white;"> <i class="fa fa-hdd-o"></i> Backup Database</h4>
+                                            <h4 class="modal-title" style="color: white;"> <i class="fa fa-hdd-o"></i> Backup Database<small style="color: white;"> | <a href="assets/manual/settings/Backup_Database.pdf" target="_blank" style="color:white;"><i class="fa fa-question-circle"></i></a></small></h4>
                                         </div>
                                         <div class="modal-body">
                                             <div class="col-xs-12 col-sm-12 progress-container">
@@ -193,7 +193,7 @@
         });
 
 
-    })();
+    });
 </script>
 
 <script src="assets/plugins/spinner/dist/spin.min.js"></script>

@@ -93,7 +93,7 @@
                                                 <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Aging of Receivables</b>
                                             </div> -->
                                             <div class="panel-body table-responsive">
-                                            <h2 class="h2-panel-heading">Aging of Receivables</h2><hr>
+                                            <h2 class="h2-panel-heading">Aging of Receivables<small> | <a href="assets/manual/accountingreport/client/Aging_of_Receivables.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                                 <table id="tbl_aging" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead class="">
                                                     <tr>

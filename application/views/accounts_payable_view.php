@@ -188,7 +188,7 @@
      <!--                            <div class="panel-heading">
                                     <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Accounts Payable (Pending)</b>
                                 </div> -->
-                            <h2 class="h2-panel-responsive">Purchase Journal (Pending)</h2><hr>
+                            <h2 class="h2-panel-responsive">Purchase Journal<small> | Pending  <a href="assets/manual/financing/Purchase_Journal_Pending.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                             </a>
                                     <div>
                                     <table id="tbl_purchase_review" class="table table-striped" cellspacing="0" width="100%">
@@ -217,7 +217,7 @@
 <!--                                 <div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;">
                                     <b style="font-size: 12pt;color:white;"><i class="fa fa-bars"></i> Accounts Payable Journal</b>
                                 </div> -->
-                                <h2 class="h2-panel-responsive">Purchase Journal</h2>
+                                <h2 class="h2-panel-responsive">Purchase Journal<small> | <a href="assets/manual/financing/Purchase_Journal.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2>
                             </a>   
 
                 <div class="row">

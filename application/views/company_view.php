@@ -130,7 +130,7 @@
                                             </div> -->
                                             <div class="panel-body">
                                             <h2 class="h2-panel-heading">
-                                              <i class="fa fa-building"></i> Company Information
+                                              <i class="fa fa-building"></i> Company Information<small> | <a href="assets/manual/settings/Setup_Company_Information.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small>
                                             </h2><hr>
                                                <form id="frm_company" role="form" class="form-horizontal row-border">
 

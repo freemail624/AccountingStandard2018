@@ -152,7 +152,7 @@
                                     <ul class="acc-menu">
                                         <li class="<?php echo (in_array('9-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Customer_Subsidiary">Customer Subsidiary</a></li>
                                         <li class="<?php echo (in_array('9-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Account_receivable_schedule">AR Schedule</a></li>
-                                        <li class="<?php echo (in_array('9-15',$this->session->user_rights)?'':'hidden'); ?>"><a href="AR_Receivable">AR Reports</a></li>
+                                        <!-- <li class="<?php echo (in_array('9-15',$this->session->user_rights)?'':'hidden'); ?>"><a href="AR_Receivable">AR Reports</a></li> -->
                                         <li class="<?php echo (in_array('9-17',$this->session->user_rights)?'':'hidden'); ?>"><a href="Aging_receivables">Aging of Receivables</a></li>
                                         <li class="<?php echo (in_array('9-19',$this->session->user_rights)?'':'hidden'); ?>"><a href="SOA">Statement of Account</a></li>
                                     </ul>
@@ -189,7 +189,7 @@
                                 <li class="hasChild secondChild">
                                     <a href="#/"><span>Cost</span></a>
                                     <ul class="acc-menu">
-                                        <li class="<?php echo (in_array('9-12',$this->session->user_rights)?'':'hidden'); ?>"><a href="Cogs">Cost of Goods</a></li>
+                                        <li class="<?php echo (in_array('9-12',$this->session->user_rights)?'':'hidden'); ?>"><a href="Cost_of_goods_sold">Cost of Goods</a></li>
                                         <li class="<?php echo (in_array('9-10',$this->session->user_rights)?'':'hidden'); ?>"><a href="Vat_relief_report">Vat Relief Report</a></li>
 
                                     </ul>

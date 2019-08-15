@@ -117,7 +117,7 @@
                                                         <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Petty Cash Journal</b>
                                                     </div> -->
                                                     <div class="panel-body table-responsive">
-                                                    <h2 class="h2-panel-heading"> Petty Cash Journal</h2><hr>
+                                                    <h2 class="h2-panel-heading"> Petty Cash Journal<small> | <a href="assets/manual/financing/Petty_Cash_Journal.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                                         <div style="margin-bottom: 15px;">
                                                             <div class="col-xs-12 col-md-3" style="margin-bottom: 10px;">
                                                                 <strong>As of Date :</strong>

@@ -92,7 +92,7 @@
                                                 <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Aging of Payables</b>
                                             </div> -->
                                             <div class="panel-body table-responsive">
-                                            <h2 class="h2-panel-heading">Aging of Payables</h2><hr>
+                                            <h2 class="h2-panel-heading">Aging of Payables<small> | <a href="assets/manual/accountingreport/vendor/Aging_of_Payables.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                                 <table id="tbl_aging" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead class="">
                                                     <tr>

@@ -305,13 +305,13 @@ $(document).ready(function(){
                                                 <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Products</b>
                                             </div> -->
                                             <div class="panel-body table-responsive" id="product_list_panel">
-                                            <h2 class="h2-panel-heading">Purchase Monitoring</h2><hr>
+                                            <h2 class="h2-panel-heading">Purchase Monitoring<small> | <a href="assets/manual/purchasing/Purchase_Monitoring.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                                 <div class="row">
                                                 <div class="col-sm-8" >
                                                     Product :
                                                     <select name="category_id" id="product_id" data-error-msg="Product is required." required>
                                                         <option value="">All Products</option>
-                                                        <?php foreach($products as $row) { echo '<option value="'.$row->product_id.'">'.$row->product_desc.' - '.$row->product_desc.'</option>'; } ?>
+                                                        <?php foreach($products as $row) { echo '<option value="'.$row->product_id.'">'.$row->product_code.' - '.$row->product_desc.'</option>'; } ?>
                                                     </select>
 
                                                 </div>

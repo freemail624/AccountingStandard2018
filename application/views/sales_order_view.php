@@ -150,7 +150,7 @@
     <div class="panel panel-default" style="border: 4px solid #2980b9;">
 <!--         <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Sales Order</b></div></a> -->
         <div class="panel-body table-responsive" >
-        <h2 class="h2-panel-heading">Sales Order</h2><hr>
+        <h2 class="h2-panel-heading">Sales Order<small> | <a href="assets/manual/sales/Sales_Order.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
             <table id="tbl_sales_order"  class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
                 <tr>

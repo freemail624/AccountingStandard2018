@@ -94,7 +94,7 @@
                                         <div class="panel panel-default">
 
                                             <div class="panel-body table-responsive">
-                                            <h2 class="h2-panel-heading">Purchase History</h2><hr>
+                                            <h2 class="h2-panel-heading">Purchase History<small> | <a href="assets/manual/purchasing/Purchase_History.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                             <div class="row">
                                             <div class="col-sm-3">
                                                 <b class="required">*</b> <label>Invoice Date From: </label>:<br />

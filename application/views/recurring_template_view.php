@@ -94,7 +94,7 @@
                                 <b style="color:white;font-size: 12pt;" class="panel-title"><i class="fa fa-bars"></i> Recurring Template </b>
                             </div> -->
                             <div class="panel-body">
-                            <h2 class="h2-panel-heading">Recurring Template</h2><hr>
+                            <h2 class="h2-panel-heading">Recurring Template<small> | <a href="assets/manual/settings/Recurring_Templates.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                 <div id="panel_list">
                                     <button id="btn_create" class="btn btn-primary pull-left" style="text-transform: capitalize;"><i class="fa fa-plus"></i>&nbsp; Create New Template</button>
                                     <table id="tbl_recurring_templates" class="table table-striped" width="100%">

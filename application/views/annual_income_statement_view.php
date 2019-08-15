@@ -101,7 +101,7 @@
                                     <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Annual Income Statement <?php echo '('.date('Y').')'; ?></b>
                                 </div>
  -->                                <div class="panel-body" style="overflow-x: auto;">
-                                <h2 class="h2-panel-heading">Annual Income Statement <?php echo '('.date('Y').')'; ?></h2><hr>
+                                <h2 class="h2-panel-heading">Annual Income Statement <?php echo '('.date('Y').')'; ?><small> | <a href="assets/manual/accountingreport/financialstatement/Annual_Income_Statement.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                     <div class="row">
                                         <div class="container-fluid">
                                             <div class="col-sm-2" style="padding-left: 0; padding-right: 0; margin-bottom: 10px;">

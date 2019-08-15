@@ -150,7 +150,7 @@
                                                         <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Categories</b>
                                                     </div> -->
                                                     <div class="panel-body table-responsive">
-                                                    <h2 class="h2-panel-heading">Categories</h2><hr>
+                                                    <h2 class="h2-panel-heading">Categories<small> | <a href="assets/manual/references/Category_Management.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                                         <table id="tbl_categories" class="table table-striped" cellspacing="0" width="100%">
                                                             <thead class="">
 

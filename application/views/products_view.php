@@ -187,7 +187,7 @@
                                                 <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Products</b>
                                             </div> -->
                                             <div class="panel-body table-responsive" id="product_list_panel">
-                                            <h2 class="h2-panel-heading">Products</h2><hr>
+                                            <h2 class="h2-panel-heading">Products<small> | <a href="assets/manual/masterfiles/Product_Management.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                                 <button class="btn btn-primary" id="btn_new" style="float: left; text-transform: capitalize;font-family: Tahoma, Georgia, Serif;margin-bottom: 0px !important;" data-toggle="modal" data-target="" data-placement="left" title="Create New product" ><i class="fa fa-plus"></i> Create New Product</button>
                                                 <table id="tbl_products" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead class="">
@@ -196,8 +196,8 @@
                                                         <th>PLU</th>
                                                         <th>Product Description</th>
                                                         <th>Category</th>
-                                                        <th style="text-align: right;">Bulk</th>
-                                                        <th style="text-align: right;">Retail</th>
+                                                        <th style="text-align: right;">Bulk Qty</th>
+                                                        <th style="text-align: right;">Retail Qty</th>
                                                         <th style="text-align: right;"><center>Bulk and Retail ?</th></th>
                                                         <th><center>Action</center></th>
                                                     </tr>
@@ -1107,7 +1107,7 @@ $(document).ready(function(){
 
                     }
                 },
-                {
+                {   visible:false,
                     targets:[6],data: null,
                     render: function (data, type, full, meta){
                         var _attribute='';

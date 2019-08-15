@@ -76,7 +76,7 @@
                                                 <!-- <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;;"><b style="color:white;font-size: 12pt;"><i class="fa fa-bars"></i> Customer Subsidiary</b></div></a> -->
                                                 <div id="collapseTwo" class="collapse in">
                                                     <div class="panel-body">
-                                                    <h2 class="h2-panel-heading">Customer Subsidiary</h2><hr>
+                                                    <h2 class="h2-panel-heading">Customer Subsidiary<small> | <a href="assets/manual/accountingreport/client/Customer_Subsidiary.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                                         <div style="border: 1px solid #a0a4a5;padding: 1%;border-radius: 5px;padding-bottom: 2%;">
                                                             <div class="row">
                                                                 <div class="col-lg-4">

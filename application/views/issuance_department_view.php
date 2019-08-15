@@ -102,7 +102,7 @@ echo $_side_bar_navigation;
             <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Issuance</b>
         </div> -->
         <div class="panel-body table-responsive">
-        <h2 class="h2-panel-heading">Issuance to Department</h2><hr>
+        <h2 class="h2-panel-heading">Issuance to Department<small> | <a href="assets/manual/inventory/Issuance_to_Department.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
             <table id="tbl_issuances" class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
                 <tr>

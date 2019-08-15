@@ -176,7 +176,7 @@
         <div class="panel panel-default" style="border-radius:6px;">
              <div class="panel-body panel-responsive" style="min-height: 400px;">
                 <a data-toggle="collapse" data-parent="#accordionA" href="#collapseOne" style="text-decoration: none;">
-                    <h2 class="h2-panel-heading"> For Check Assignment</h2>
+                    <h2 class="h2-panel-heading"> For Check Assignment<small> | <a href="assets/manual/treasury/Treasury.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2>
                 </a>
                 <button class="btn btn-green" id="btn_refresh_check_list" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Refresh" ><i class="fa fa-refresh"></i> Refresh</button>
                         <div >
@@ -207,7 +207,7 @@
 
             <div class="panel-body" style="min-height: 400px;">
             <h2 class="h2-panel-heading">
-                For Release
+                For Release<small> | <a href="assets/manual/treasury/Treasury.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small>
             </h2>
             <button class="btn btn-green" id="btn_refresh_check_release" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Refresh" ><i class="fa fa-refresh"></i> Refresh</button>
                 <table id="tbl_for_release" class="table table-striped" cellspacing="0" width="100%">

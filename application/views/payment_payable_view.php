@@ -165,7 +165,7 @@
         </div> -->
 
         <div class="panel-body table-responsive" style="overflow-x: hidden;">
-            <h2 class="h2-panel-heading">Payment History</h2><hr>
+            <h2 class="h2-panel-heading">Payment History<small> | <a href="assets/manual/purchasing/Record_Payment.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                 <div class="row">
                     <div class="col-lg-3"><br>
                     <button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Payment" ><i class="fa fa-plus"></i> New Payment</button>

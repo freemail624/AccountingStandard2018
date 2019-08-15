@@ -159,7 +159,7 @@
                                                     <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Check Layout</b>
                                                 </div> -->
                                                 <div class="panel-body" style="min-height: 400px;">
-                                                <h2 class="h2-panel-heading">Check Layout</h2><hr>
+                                                <h2 class="h2-panel-heading">Check Layout<small> | <a href="assets/manual/settings/Setup_Check_Layout.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                                     <div >
                                                         <table id="tbl_check_layouts" class="table table-striped" cellspacing="0" width="100%">
                                                             <thead class="">

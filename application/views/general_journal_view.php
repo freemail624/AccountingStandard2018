@@ -149,7 +149,7 @@
                     <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; General Journal </b>
                 </div> -->
                 <div class="panel-body table-responsive" style="">
-                    <h2 class="h2-panel-heading">Review General Journal (Item Transfer)</h2><hr>
+                    <h2 class="h2-panel-heading">Review General Journal <small>| Item Transfer  <a href="assets/manual/financing/Review_General_Journal_Item_Transfer.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                     <div class="row-panel">
                         <table id="tbl_issuance_review" class="table table-striped" cellspacing="0" width="100%">
                             <thead class="">
@@ -174,7 +174,7 @@
 
         <div class="panel panel-default">
                 <div class="panel-body table-responsive">
-                    <h2 class="h2-panel-heading">Review General Journal (Adjustments)</h2><hr>
+                    <h2 class="h2-panel-heading">Review General Journal<small> | Adjustments  <a href="assets/manual/financing/Review_General_Journal_Adjustments.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                     <div class="row-panel">
                         <table id="tbl_adjustment_review" class="table table-striped" cellspacing="0" width="100%">
                             <thead class="">
@@ -201,7 +201,7 @@
                     <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; General Journal </b>
                 </div> -->
                 <div class="panel-body table-responsive">
-                    <h2 class="h2-panel-heading">General Journal</h2><hr>
+                    <h2 class="h2-panel-heading">General Journal<small> | <a href="assets/manual/financing/General_Journal.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
 
                 <div class="row">
                     <div class="col-lg-3"><br>
