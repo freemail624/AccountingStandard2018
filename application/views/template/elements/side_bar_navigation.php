@@ -92,6 +92,7 @@
                                 <li  class="<?php echo (in_array('4-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Locations">Locations Management</a></li>
                                 <li  class="<?php echo (in_array('4-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Bank">Bank Management</a></li>
                                 <li  class="<?php echo (in_array('4-7',$this->session->user_rights)?'':'hidden'); ?>"><a href="Brands">Brands Management</a></li>
+                                <li  class="<?php echo (in_array('4-8',$this->session->user_rights)?'':'hidden'); ?>"><a href="Order_source">Order Source Management</a></li>
                             </ul>
                         </li>
                         <li class="<?php echo (in_array('5',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-harddrive"></i><span>Masterfiles</span></a>
@@ -206,6 +207,7 @@
                         <li class="<?php echo (in_array('8',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-pie-chart"></i><span>Sales &amp; Purchasing</span></a>
                             <ul class="acc-menu">
                                 <li class="<?php echo (in_array('8-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Sales_detailed_summary">Sales Report</a></li>
+                                <li class="<?php echo (in_array('8-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Sales_report_source">Sales Report by Source</a></li>
                                 <li class="<?php echo (in_array('8-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Purchase_Invoice_Report">Purchase Invoice Report</a></li>
                             </ul>
                         </li>

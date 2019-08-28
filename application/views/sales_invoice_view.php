@@ -107,6 +107,10 @@
         .form-group {
             margin-bottom: 15px;
         }
+        #tbl_sales_invoice_filter    
+        { 
+            display:none; 
+        } 
     </style>
     <link type="text/css" href="assets/css/light-theme.css" rel="stylesheet">
 </head>
@@ -134,7 +138,34 @@
         </div> -->
         <div class="panel-body table-responsive">
         <div class="row panel-row">
-        <h2 class="h2-panel-heading">Sales Invoice<small> | <a href="assets/manual/sales/Sales_Invoice.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
+        <h2 class="h2-panel-heading">Sales Invoice</h2><hr>
+            <div class="row"> 
+                <div class="col-lg-3"><br> 
+                <button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Record Sales Invoice" ><i class="fa fa-plus"></i> Record Sales Invoice</button> 
+                </div> 
+                <div class="col-lg-3"> 
+                        From :<br /> 
+                        <div class="input-group"> 
+                            <input type="text" id="txt_start_date_sales" name="" class="date-picker form-control" value="<?php echo date("m"); ?>/01/<?php echo date("Y"); ?>"> 
+                             <span class="input-group-addon"> 
+                                    <i class="fa fa-calendar"></i> 
+                             </span> 
+                        </div> 
+                </div> 
+                <div class="col-lg-3"> 
+                        To :<br /> 
+                        <div class="input-group"> 
+                            <input type="text" id="txt_end_date_sales" name="" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>"> 
+                             <span class="input-group-addon"> 
+                                    <i class="fa fa-calendar"></i> 
+                             </span> 
+                        </div> 
+                </div> 
+                <div class="col-lg-3"> 
+                        Search :<br /> 
+                         <input type="text" id="tbl_sales_invoice_search" class="form-control"> 
+                </div> 
+            </div> 
             <table id="tbl_sales_invoice" class="table table-striped" cellspacing="0" width="100%" style="">
                 <thead >
                 <tr>
@@ -144,10 +175,9 @@
                     <th>Due Date</th>
                     <th>Customer</th>
                     <th>Department</th>
-                    <th style="width: 25%;">Remarks</th>
+                    <th style="width: 20%">Remarks</th>
                     <th><center>Action</center></th>
-                    <th></th>
-
+                    <th>Invoice #</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -192,8 +222,8 @@
                             </div>
                         </div>
                         <div class="col-sm-4">
-                            <label>Sales person :</label><br/>
-                            <select name="salesperson_id" id="cbo_salesperson">
+                            <b class="required">*</b><label>Sales person :</label><br/>
+                            <select name="salesperson_id" id="cbo_salesperson" required data-error-msg="Salesperson is required.">
                                 <option value="0">[ Create New Salesperson ]</option>
                                 <?php foreach($salespersons as $salesperson){ ?>
                                     <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->acr_name.' - '.$salesperson->fullname; ?></option>
@@ -224,7 +254,7 @@
                         <div class="col-sm-2">
                             <label>Customer Type :</label><br/>
                             <select name="customer_type_id" id="cbo_customer_type">
-                                <option value="0">None</option>
+                                <option value="0">Walk In</option>
                                 <?php foreach($customer_type as $customer_type){ ?>
                                     <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name?></option>
                                 <?php } ?>
@@ -246,6 +276,15 @@
                         </div>
                     </div>
                     <div class="row">
+                    <div class="col-sm-4">
+                       <b>* </b>  Order Source :<br />
+                        <select name="order_source_id" id="cbo_order_source" data-error-msg="Order Source is required." required>
+                            <option value="0">[ Create New Order Source ]</option>
+                            <?php foreach($order_sources as $order_source){ ?>
+                                <option value="<?php echo $order_source->order_source_id; ?>"><?php echo $order_source->order_source_name; ?></option>
+                            <?php } ?>
+                        </select>
+                    </div> 
                         <div class="col-sm-8">
                             <label>Address :</label><br>
                             <input class="form-control" id="txt_address" type="text" name="address" placeholder="Customer Address">
@@ -399,6 +438,8 @@
     <div class="panel-footer" >
         <div class="row">
             <div class="col-sm-12">
+            <input type="checkbox" name="chk_dispatching" id="checkcheck">&nbsp;&nbsp;<label for="checkcheck"><strong>For Dispatching ?</strong></label><br>
+            <input type="hidden" name="for_dispatching" id="for_dispatching" class="form-control"><br>
                 <button id="btn_save" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Save Changes</button>
                 <button id="btn_cancel" class="btn-default btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
             </div>
@@ -555,27 +596,27 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;">Contact No :</label>
+                                     <label class="control-label boldlabel" style="text-align:right;">Mobile No :</label>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">
                                         <span class="input-group-addon">
                                             <i class="fa fa-mobile"></i>
                                         </span>
-                                        <input type="text" name="contact_no" id="mobile_no" class="form-control" placeholder="Contact No">
+                                        <input type="text" name="mobile_no" id="mobile_no" class="form-control" placeholder="Mobile No">
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;">TIN :</label>
+                                     <label class="control-label boldlabel" style="text-align:right;">Tin No :</label>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">
                                         <span class="input-group-addon">
                                             <i class="fa fa-file-code-o"></i>
                                         </span>
-                                        <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="TIN">
+                                        <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="Tin No">
                                     </div>
                                 </div>
                             </div>
@@ -738,6 +779,45 @@
         </div>
     </div>
 </div>
+
+
+ 
+<div id="modal_new_order_source" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background: #2ecc71">
+                 <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                 <h2 id="" class="modal-title" style="color:white;">New Order Status</h2>
+            </div>
+            <div class="modal-body">
+                <form id="frm_order_source" role="form" class="form-horizontal">
+                    <div class="row" style="margin: 1%;">
+                        <div class="col-lg-12">
+                            <div class="form-group" style="margin-bottom:0px;">
+                                <label class=""><B> * </B> Order Source Name :</label>
+                                <textarea name="order_source_name" class="form-control" data-error-msg="Order Source Name is required!" placeholder="Order Source Name" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin: 1%;">
+                        <div class="col-lg-12">
+                            <div class="form-group" style="margin-bottom:0px;">
+                                    <label class="">Order Source Description :</label>
+                                    <textarea name="order_source_description" class="form-control" placeholder="Order Source Description"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="btn_create_order_source" class="btn btn-primary">Save</button>
+                <button  class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+
 <div id="modal_new_department_sp" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -809,7 +889,7 @@
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboDepartments; var _cboCustomers; var dt_so; var products; var changetxn;
     var _cboCustomerType; var prodstat;
-    var _cboCustomerTypeCreate;
+    var _cboCustomerTypeCreate; var _cboSource;
      var _line_unit;
     var oTableItems={
         qty : 'td:eq(0)',
@@ -840,7 +920,16 @@ $(document).ready(function(){
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "order": [[ 8, "desc" ]],
-            "ajax" : "Sales_invoice/transaction/list_with_count",
+            "ajax" : { 
+                "url":"Sales_invoice/transaction/list", 
+                "bDestroy": true,             
+                "data": function ( d ) { 
+                        return $.extend( {}, d, { 
+                            "tsd":$('#txt_start_date_sales').val(), 
+                            "ted":$('#txt_end_date_sales').val() 
+                        }); 
+                    } 
+            }, 
             "language": {
                 "searchPlaceholder":"Search Invoice"
             },
@@ -854,10 +943,10 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "sales_inv_no" },
                 { targets:[2],data: "date_invoice" },
-                { targets:[3],data: "date_due" },
+                { targets:[3],data: "date_due" ,visible:false},
                 { targets:[4],data: "customer_name" },
                 { targets:[5],data: "department_name" },
-                { targets:[6],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(80) },
+                { targets:[6],data: "remarks"  ,render: $.fn.dataTable.render.ellipsis(60)},
                 {
                     targets:[7],
                     render: function (data, type, full, meta){
@@ -896,11 +985,6 @@ $(document).ready(function(){
         });
         $('.numeric').autoNumeric('init');
         $('#contact_no').keypress(validateNumber);
-        var createToolBarButton=function(){
-            var _btnNew='<button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Record Sales Invoice" >'+
-                '<i class="fa fa-plus"></i> Record Sales Invoice</button>';
-            $("div.toolbar").html(_btnNew);
-        }();
         _cboDepartments=$("#cbo_departments").select2({
             placeholder: "Please select Department.",
             allowClear: true
@@ -918,6 +1002,10 @@ $(document).ready(function(){
         });
         _cboSalesperson=$("#cbo_salesperson").select2({
             placeholder: "Please select sales person.",
+            allowClear: true
+        });
+        _cboSource=$("#cbo_order_source").select2({
+            placeholder: "Please select Order Source.",
             allowClear: true
         });
         _cboSalesperson.select2('val',null);
@@ -1079,6 +1167,15 @@ $(document).ready(function(){
         });
     }();
     var bindEventHandlers=(function(){
+            $('[id=checkcheck]').click(function(event) {
+                if(this.checked == true) {
+                    $('#for_dispatching').val('1');
+                }else{
+                     $('#for_dispatching').val('0');
+                }
+            });
+
+
         var detailRows = [];
         $('#tbl_sales_invoice tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
@@ -1124,6 +1221,15 @@ $(document).ready(function(){
             var nextDate = moment(dd, 'MM/DD/YYYY').add('days', term_days).format('MM/DD/YYYY');
             $('input[name="date_due"]').val(nextDate);
         });*/
+        _cboSource.on("select2:select", function (e) {
+            var i=$(this).select2('val');
+                if(i==0){ 
+                clearFields($('#frm_order_source'));
+                _cboSource.select2('val',null);
+                $('#modal_new_order_source').modal('show');
+                 }
+        });
+
         $('#tbl_so_list tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
             var row = dt_so.row( tr );
@@ -1169,6 +1275,18 @@ $(document).ready(function(){
         $('#btn_close_salesperson').on('click',function(){
             $('#modal_new_salesperson').modal('hide');
         });
+
+         $("#tbl_sales_invoice_search").keyup(function(){          
+                dt 
+                        .search(this.value) 
+                        .draw(); 
+        }); 
+        $("#txt_start_date_sales").on("change", function () {         
+            $('#tbl_sales_invoice').DataTable().ajax.reload() 
+        }); 
+        $("#txt_end_date_sales").on("change", function () {         
+            $('#tbl_sales_invoice').DataTable().ajax.reload() 
+        }); 
         //loads modal to create new department
         _cboDepartments.on('select2:select', function(){
             if (_cboDepartments.val() == 0) {
@@ -1233,6 +1351,32 @@ $(document).ready(function(){
             }
         });
 
+        //create new order source
+ 
+        $('#btn_create_order_source').click(function(){
+            var btn=$(this);
+            if(validateRequiredFields($('#frm_order_source'))){
+                var data=$('#frm_order_source').serializeArray();
+                $.ajax({
+                    "dataType":"json",
+                    "type":"POST",
+                    "url":"Order_source/transaction/create",
+                    "data":data,
+                    "beforeSend" : function(){
+                        showSpinningProgress(btn);
+                    }
+                }).done(function(response){
+                    showNotification(response);
+                    $('#modal_new_order_source').modal('hide');
+                    var _order=response.row_added[0];
+                    $('#cbo_order_source').append('<option value="'+_order.order_source_id+'" selected>'+_order.order_source_name+'</option>');
+                    $('#cbo_order_source').select2('val',_order.order_source_id);
+                }).always(function(){
+                    showSpinningProgress(btn);
+                });
+            }
+        });
+ 
          $('#refreshproducts').click(function(){
             getproduct().done(function(data){
                 products.clear();
@@ -1329,7 +1473,7 @@ $(document).ready(function(){
             clearFields($('#div_sales_invoice_fields'));
             $('#span_invoice_no').html('SAL-INV-YYYYMMDD-XX');
             showList(false);
-
+            _cboSource.select2('val',1);
             $('#tbl_items > tbody').html('');
             $('#cbo_departments').select2('val', null);
             $('#cbo_department').select2('val', null);
@@ -1346,6 +1490,8 @@ $(document).ready(function(){
             $('#invoice_default').datepicker('setDate', 'today');
             $('#due_default').datepicker('setDate', 'today');
             $('#typeaheadsearch').val('');
+            $('input[id="checkcheck"]').prop('checked', false);
+            $('#for_dispatching').val('0');
             getproduct().done(function(data){
                 products.clear();
                 products.local = data.data;
@@ -1376,6 +1522,7 @@ $(document).ready(function(){
                 $('#cbo_department').select2('val',data.department_id);
                 $('#cbo_salesperson').select2('val',data.salesperson_id);
                 $('#cbo_customer_type').select2('val',data.customer_type_id);
+                $('#cbo_order_source').select2('val',data.order_source_id);
             });
             $('#modal_so_list').modal('hide');
             resetSummary();
@@ -1474,11 +1621,20 @@ $(document).ready(function(){
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.sales_invoice_id;
             _is_journal_posted=data.is_journal_posted;
+
             if(_is_journal_posted > 0){
                 showNotification({title:"<b style='color:white;'> Error!</b>",stat:"error",msg:"Cannot Edit: Invoice is already Posted in Sales Journal."});
             }
             else
             {
+
+            if(data.for_dispatching == 1){
+                $('input[id="checkcheck"]').prop('checked', true);
+                $('#for_dispatching').val('1');
+            }else{
+                $('input[id="checkcheck"]').prop('checked', false);
+                $('#for_dispatching').val('0');
+            }
 
             getproduct().done(function(data){
                 products.clear();
@@ -1506,7 +1662,7 @@ $(document).ready(function(){
                     }
                 });
             });
-
+            $('#cbo_order_source').select2('val',data.order_source_id);
             $('#cbo_customer_type').select2('val',data.customer_type_id);
             $('#cbo_departments').select2('val',data.department_id);
             $('#cbo_department').select2('val',data.department_id);
@@ -1590,6 +1746,7 @@ $(document).ready(function(){
                     });
                     changetxn = 'active';
                     reComputeTotal();
+                    reInitializeNumeric();
                 }
             });
             $('#span_invoice_no').html(data.sales_inv_no);
@@ -1600,12 +1757,36 @@ $(document).ready(function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.sales_invoice_id;
+
             _is_journal_posted=data.is_journal_posted;
-            if(_is_journal_posted > 0){
-                showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Cannot Delete: Invoice is already Posted in Sales Journal."});
-            } else {
-                $('#modal_confirmation').modal('show');
-            }
+
+                _selectRowObj=$(this).closest('tr');
+                var data=dt.row(_selectRowObj).data();
+                _selectedID=data.sales_invoice_id;
+                $.ajax({
+                    "url":"Adjustments/transaction/check-invoice-for-returns?id="+_selectedID,
+                type : "GET",
+                cache : false,
+                dataType : 'json',
+                processData : false,
+                contentType : false,
+                }).done(function(response){
+                    var row = response.data;
+                    if(row.length > 0){
+                        showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Cannot Delete: Sales Return exists on this invoice."});
+                    return;
+                    }
+                    if(_is_journal_posted > 0){
+                        showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Cannot Delete: Invoice is already Posted in Sales Journal."});
+                    }else {
+                        $('#modal_confirmation').modal('show');
+                    }
+                });
+
+
+
+
+
         });
         //track every changes on numeric fields
         $('#txt_overall_discount').on('keyup',function(){
@@ -1624,8 +1805,8 @@ $(document).ready(function(){
         $(oTableItems.unit_price,row).find('input').val(accounting.formatNumber(price,2));  
         $(oTableItems.unit_identifier,row).find('input').val(accounting.formatNumber(unit_value,2)); 
         $('.trigger-keyup').keyup();
-        }   
         
+        }   
         });
 
         $('#tbl_items tbody').on('keyup','input.numeric',function(){
@@ -1822,6 +2003,7 @@ $(document).ready(function(){
         var _data=$('#frm_sales_invoice,#frm_items').serializeArray();
         var tbl_summary=$('#tbl_sales_invoice_summary');
         _data.push({name : "remarks", value : $('textarea[name="remarks"]').val()});
+        _data.push({name : "for_dispatching", value : $('#for_dispatching').val()});
 
         _data.push({name : "total_after_discount", value: $('#td_total_after_discount').text()});
         _data.push({name : "summary_discount", value : tbl_summary.find(oTableDetails.discount).text()});
@@ -1840,7 +2022,7 @@ $(document).ready(function(){
         var _data=$('#frm_sales_invoice,#frm_items').serializeArray();
         var tbl_summary=$('#tbl_sales_invoice_summary');
         _data.push({name : "remarks", value : $('textarea[name="remarks"]').val()});
-
+        _data.push({name : "for_dispatching", value : $('#for_dispatching').val()});
         _data.push({name : "total_after_discount", value: $('#td_total_after_discount').text()});
         _data.push({name : "summary_discount", value : tbl_summary.find(oTableDetails.discount).text()});
         _data.push({name : "summary_before_discount", value :tbl_summary.find(oTableDetails.before_tax).text()});

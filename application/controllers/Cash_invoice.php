@@ -23,6 +23,7 @@ class Cash_invoice extends CORE_Controller
         $this->load->model('Trans_model');
         $this->load->model('Sales_invoice_model');
         $this->load->model('Customer_type_model');
+        $this->load->model('Order_source_model');
     }
 
     public function index() {
@@ -79,6 +80,7 @@ class Cash_invoice extends CORE_Controller
             'is_deleted=FALSE'
         );
  
+ $data['order_sources'] = $this->Order_source_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
 
         $data['title'] = 'Cash Invoice';
         
@@ -118,7 +120,10 @@ class Cash_invoice extends CORE_Controller
             
             case 'list':
             $m_pf_invoice = $this->Cash_invoice_model;
-            $response['data']=$this->response_rows();
+            $tsd = date('Y-m-d',strtotime($this->input->get('tsd'))); 
+            $ted = date('Y-m-d',strtotime($this->input->get('ted'))); 
+            $additional = " AND DATE(cash_invoice.date_invoice) BETWEEN '$tsd' AND '$ted'"; 
+            $response['data']=$this->response_rows(null,null,$additional); 
                     echo json_encode($response);
 
         
@@ -177,7 +182,9 @@ class Cash_invoice extends CORE_Controller
                     'sales_order.sales_order_id'
                 );
                 $sales_order_id=(count($arr_so_info)>0?$arr_so_info[0]->sales_order_id:0);
+                $m_invoice->for_dispatching=$this->get_numeric_value($this->input->post('for_dispatching',TRUE));
                 $m_invoice->sales_order_id=$sales_order_id;
+                $m_invoice->order_source_id=$this->input->post('order_source_id',TRUE);
                 $m_invoice->customer_type_id=$this->input->post('customer_type_id',TRUE);
                 $m_invoice->customer_id=$this->input->post('customer',TRUE);
                 $m_invoice->sales_order_no=$this->input->post('so_no',TRUE);
@@ -241,10 +248,10 @@ class Cash_invoice extends CORE_Controller
 
                     $m_invoice_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                     if($is_parent[$i] == '1'){
-                            $unit_id=$m_products->get_list(array('product_id'=>$prod_id[$i]));
+                            $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
                             $m_invoice_items->unit_id=$unit_id[0]->parent_unit_id;
                     }else{
-                             $unit_id=$m_products->get_list(array('product_id'=>$prod_id[$i]));
+                             $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
                             $m_invoice_items->unit_id=$unit_id[0]->child_unit_id;
                     }   
 
@@ -298,6 +305,8 @@ class Cash_invoice extends CORE_Controller
                     );
                     $sales_order_id=(count($arr_so_info)>0?$arr_so_info[0]->sales_order_id:0);
                     $m_invoice->sales_order_id=$sales_order_id;
+                    $m_invoice->for_dispatching=$this->get_numeric_value($this->input->post('for_dispatching',TRUE));
+                    $m_invoice->order_source_id=$this->input->post('order_source_id',TRUE);
                     $m_invoice->customer_type_id=$this->input->post('customer_type_id',TRUE);
                     $m_invoice->customer_id=$this->input->post('customer',TRUE);
                     $m_invoice->department_id=$this->input->post('department',TRUE);
@@ -360,10 +369,10 @@ class Cash_invoice extends CORE_Controller
 
                     $m_invoice_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                     if($is_parent[$i] == '1'){
-                        $unit_id=$m_products->get_list(array('product_id'=>$prod_id[$i]));
+                        $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
                         $m_invoice_items->unit_id=$unit_id[0]->parent_unit_id;
                     }else{
-                         $unit_id=$m_products->get_list(array('product_id'=>$prod_id[$i]));
+                         $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
                         $m_invoice_items->unit_id=$unit_id[0]->child_unit_id;
                     }   
 
@@ -484,9 +493,9 @@ class Cash_invoice extends CORE_Controller
     }
 
 
-    function response_rows($id_filter=null,$show_unposted=FALSE){
+    function response_rows($id_filter=null,$show_unposted=FALSE,$additional=null){
         return $this->Cash_invoice_model->get_list(
-            'cash_invoice.is_active = TRUE AND cash_invoice.is_deleted = FALSE '.($id_filter==null?'':' AND cash_invoice.cash_invoice_id='.$id_filter). ($show_unposted==FALSE?"":" AND cash_invoice.is_journal_posted=FALSE "),
+            'cash_invoice.is_active = TRUE AND cash_invoice.is_deleted = FALSE '.($id_filter==null?'':' AND cash_invoice.cash_invoice_id='.$id_filter).''.($additional==null?'':$additional).''. ($show_unposted==FALSE?"":" AND cash_invoice.is_journal_posted=FALSE "), 
             array(
                 'cash_invoice.*',
                 'DATE_FORMAT(cash_invoice.date_invoice,"%m/%d/%Y") as date_invoice',

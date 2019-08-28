@@ -23,6 +23,7 @@ class Sales_invoice extends CORE_Controller
         $this->load->model('Trans_model');
         $this->load->model('Cash_invoice_model');
         $this->load->model('Customer_type_model');
+        $this->load->model('Order_source_model');
 
 
     }
@@ -131,7 +132,7 @@ class Sales_invoice extends CORE_Controller
         // );
 
         $data['invoice_counter']=$this->Invoice_counter_model->get_list(array('user_id'=>$this->session->user_id));
-
+        $data['order_sources'] = $this->Order_source_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
 
         $data['title'] = 'Sales Invoice';
         
@@ -182,12 +183,21 @@ class Sales_invoice extends CORE_Controller
                 break;
 
 
+            // case 'list':  //this returns JSON of Issuance to be rendered on Datatable
+            //     $m_invoice=$this->Sales_invoice_model;
+            //     $response['data']=$this->response_rows(
+            //         'sales_invoice.is_active=TRUE AND sales_invoice.is_deleted=FALSE'.($id_filter==null?'':' AND sales_invoice.sales_invoice_id='.$id_filter),
+            //         'sales_invoice.sales_invoice_id DESC'
+            //     );
+            //     echo json_encode($response);
+            //     break;
+
             case 'list':  //this returns JSON of Issuance to be rendered on Datatable
                 $m_invoice=$this->Sales_invoice_model;
-                $response['data']=$this->response_rows(
-                    'sales_invoice.is_active=TRUE AND sales_invoice.is_deleted=FALSE'.($id_filter==null?'':' AND sales_invoice.sales_invoice_id='.$id_filter),
-                    'sales_invoice.sales_invoice_id DESC'
-                );
+                $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
+                $ted = date('Y-m-d',strtotime($this->input->get('ted')));
+                $additional = " AND DATE(sales_invoice.date_invoice) BETWEEN '$tsd' AND '$ted'";
+                $response['data']=$this->response_rows($id_filter,$additional);
                 echo json_encode($response);
                 break;
 
@@ -261,6 +271,8 @@ class Sales_invoice extends CORE_Controller
 
                 //treat NOW() as function and not string
                 $m_invoice->set('date_created','NOW()'); //treat NOW() as function and not string
+                $m_invoice->order_source_id=$this->input->post('order_source_id',TRUE);
+                $m_invoice->for_dispatching=$this->get_numeric_value($this->input->post('for_dispatching',TRUE));
                 $m_invoice->customer_type_id=$this->input->post('customer_type_id',TRUE);
                 $m_invoice->customer_id=$this->input->post('customer',TRUE);
                 $m_invoice->salesperson_id=$this->input->post('salesperson_id',TRUE);
@@ -329,10 +341,10 @@ class Sales_invoice extends CORE_Controller
                     //unit id retrieval is change, because of TRIGGER restriction
                     $m_invoice_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                     if($is_parent[$i] == '1'){
-                                            $unit_id=$m_products->get_list(array('product_id'=>$prod_id[$i]));
+                                            $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
                                             $m_invoice_items->unit_id=$unit_id[0]->parent_unit_id;
                     }else{
-                                             $unit_id=$m_products->get_list(array('product_id'=>$prod_id[$i]));
+                                             $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
                                             $m_invoice_items->unit_id=$unit_id[0]->child_unit_id;
                     }   
 
@@ -402,7 +414,9 @@ class Sales_invoice extends CORE_Controller
 
                     $m_invoice->begin();
 
+                    $m_invoice->for_dispatching=$this->get_numeric_value($this->input->post('for_dispatching',TRUE));
                     //$m_invoice->sales_inv_no=$sales_inv_no;
+                    $m_invoice->order_source_id=$this->input->post('order_source_id',TRUE);
                     $m_invoice->customer_type_id=$this->input->post('customer_type_id',TRUE);
                     $m_invoice->customer_id=$this->input->post('customer',TRUE);
                     $m_invoice->department_id=$this->input->post('department',TRUE);
@@ -471,10 +485,10 @@ class Sales_invoice extends CORE_Controller
                         //unit id retrieval is change, because of TRIGGER restriction
                         $m_invoice_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                         if($is_parent[$i] == '1'){
-                                                $unit_id=$m_products->get_list(array('product_id'=>$prod_id[$i]));
+                                                $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
                                                 $m_invoice_items->unit_id=$unit_id[0]->parent_unit_id;
                         }else{
-                                                 $unit_id=$m_products->get_list(array('product_id'=>$prod_id[$i]));
+                                                 $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
                                                 $m_invoice_items->unit_id=$unit_id[0]->child_unit_id;
                         }   
                         //$m_invoice_items->set('unit_id','(SELECT unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
@@ -710,9 +724,9 @@ class Sales_invoice extends CORE_Controller
 
 
 //**************************************user defined*************************************************
-    function response_rows($filter_value){
+    function response_rows($filter_value,$additional=null){
         return $this->Sales_invoice_model->get_list(
-            $filter_value,
+             'sales_invoice.is_active = TRUE AND sales_invoice.is_deleted = FALSE '.($filter_value==null?'':' AND sales_invoice.sales_invoice_id='.$filter_value).''.($additional==null?'':$additional),
             array(
                 'sales_invoice.sales_invoice_id',
                 'sales_invoice.sales_inv_no',
@@ -722,6 +736,8 @@ class Sales_invoice extends CORE_Controller
                 'sales_invoice.inv_type',
                 'sales_invoice.contact_person',
                 'sales_invoice.customer_type_id',
+                'sales_invoice.order_source_id',
+                'sales_invoice.for_dispatching',
                 'sales_invoice.is_journal_posted',
                 'DATE_FORMAT(sales_invoice.date_invoice,"%m/%d/%Y") as date_invoice',
                 'DATE_FORMAT(sales_invoice.date_due,"%m/%d/%Y") as date_due',

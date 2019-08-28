@@ -101,7 +101,9 @@ class Rights_link_model extends CORE_Model{
                                           (91,'16','16-3','Certificate of Creditable Tax'),
                                           (92,'6','6-14','Statement of Accounts Settings'),
                                           (93,'6','6-15','Fixed Asset Settings'),
-                                          (94,'10','10-3','Movement of Assets')
+                                          (94,'10','10-3','Movement of Assets'),
+                                          (95,'8','8-5','Sales Report by Source'),
+                                          (96,'4','4-8','Order Source Management')
 
 
                                           ON DUPLICATE KEY UPDATE
