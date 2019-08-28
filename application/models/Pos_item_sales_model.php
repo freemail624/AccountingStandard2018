@@ -169,7 +169,140 @@ class Pos_item_sales_model extends CORE_Model {
         return $this->db->query($sql)->result();
     }
 
+    function get_sales_from_date_all_products($start,$end) {
+        $sql="SELECT *,
+                IF(m.CurrentQty < m.product_quantity, 'Yes','') as critical
+                 FROM (SELECT  core.product_id,core.product_desc,core.product_code,core.purchase_cost,core.sale_price,
+                core.product_quantity,
+                core.item_total,
+                ROUND((ReceiveQtyP+AdjustInQtyP-SalesOUtQtyP-POSInvOutP+POSInvInP-CInvOutP-AdjustOutP-IssueFromInvOutP+IssueToInvInP),2) as CurrentQty
 
+                 FROM 
+
+                (
+
+                SELECT core.*,
+                p.product_desc,
+                p.product_code,
+                p.purchase_cost,
+                p.sale_price,
+                IFNULL(aiin.parent_in_qty,0) as AdjustInQtyP,
+                IFNULL(di.parent_in_qty,0) as ReceiveQtyP,
+                IFNULL(si.parent_out_qty,0) as SalesOUtQtyP,
+                IFNULL(aiout.parent_out_qty,0) as AdjustOutP,
+                IFNULL(ciout.parent_out_qty,0) as CInvOutP,
+                IFNULL(issuefromout.parent_out_qty,0) as IssueFromInvOutP,
+                IFNULL(issuetoin.parent_in_qty,0) as IssueToInvInP,
+                IFNULL(possalesout.parent_out_qty,0) as POSInvOutP,
+                IFNULL(possalesreturn.parent_in_qty,0) as POSInvInP
+                 FROM ( 
+                SELECT   pos_item_sales.product_id,
+                            SUM(pos_item_sales.product_quantity) as product_quantity,
+                            SUM(pos_item_sales.item_total) as item_total
+                         FROM pos_item_sales
+                         WHERE  CAST(start_datetime as DATE) BETWEEN '$start' AND '$end'
+
+                        GROUP BY pos_item_sales.product_id) as core
+
+                RIGHT JOIN products p On p.product_id = core.product_id
+                        
+                LEFT JOIN 
+
+                (SELECT aii.product_id,
+                SUM(IF(aii.is_parent = 1, IFNULL(aii.adjust_qty,0),IFNULL(aii.adjust_qty,0)/IFNULL(p.child_unit_desc,0))) as parent_in_qty
+                FROM adjustment_info as ai
+                INNER JOIN adjustment_items as aii ON aii.adjustment_id=ai.adjustment_id
+                LEFT JOIN products p on p.product_id = aii.product_id
+                WHERE ai.adjustment_type='IN' 
+                AND ai.is_deleted=0 
+                GROUP BY aii.product_id) as aiin ON aiin.product_id = p.product_id 
+                
+                
+                LEFT JOIN
+                (SELECT dii.product_id,
+                SUM(IF(dii.is_parent = 1, IFNULL(dii.dr_qty,0),IFNULL(dii.dr_qty,0)/IFNULL(p.child_unit_desc,0))) as parent_in_qty
+                FROM delivery_invoice as di
+                INNER JOIN delivery_invoice_items as dii ON dii.dr_invoice_id=di.dr_invoice_id
+                LEFT JOIN products p on p.product_id = dii.product_id
+                 WHERE  di.is_deleted=0 
+                GROUP BY dii.product_id) as di ON di.product_id = p.product_id
+                
+                
+          
+                LEFT JOIN
+
+                (SELECT sii.product_id,
+                SUM(IF(sii.is_parent = 1, IFNULL(sii.inv_qty,0),IFNULL(sii.inv_qty,0)/IFNULL(p.child_unit_desc,0))) as parent_out_qty
+                FROM sales_invoice si
+                INNER JOIN sales_invoice_items  sii ON sii.sales_invoice_id =  si.sales_invoice_id
+                LEFT JOIN products p on p.product_id = sii.product_id
+                WHERE  si.is_deleted = 0 
+                GROUP BY sii.product_id) as si on si.product_id = p.product_id      
+                
+                
+                LEFT JOIN
+
+                (SELECT iii.product_id,
+                SUM(IF(iii.is_parent = 1, IFNULL(iii.issue_qty,0),IFNULL(iii.issue_qty,0)/IFNULL(p.child_unit_desc,0))) as parent_out_qty
+                FROM issuance_department_info as ii 
+                INNER JOIN issuance_department_items as iii ON iii.issuance_department_id=ii.issuance_department_id
+                LEFT JOIN products p on p.product_id = iii.product_id
+                WHERE ii.is_deleted=0
+                GROUP BY iii.product_id) as issuefromout ON issuefromout.product_id = p.product_id
+                
+                
+                LEFT JOIN
+                (SELECT pis.product_id,
+                SUM(pis.product_quantity) as parent_out_qty
+                FROM pos_item_sales pis
+                WHERE  pis.x_reading_id != 0 
+                GROUP BY pis.product_id) as possalesout ON possalesout.product_id = p.product_id 
+
+                LEFT JOIN
+                (SELECT pir.product_id,
+                SUM(pir.product_quantity) as parent_in_qty
+                FROM pos_item_returns pir
+                WHERE  pir.x_reading_id != 0 
+                GROUP BY pir.product_id) as possalesreturn ON possalesreturn.product_id = p.product_id 
+                
+                LEFT JOIN
+
+                (SELECT iii.product_id,
+                SUM(IF(iii.is_parent = 1, IFNULL(iii.issue_qty,0),IFNULL(iii.issue_qty,0)/IFNULL(p.child_unit_desc,0))) as parent_in_qty
+                FROM issuance_department_info as ii 
+                INNER JOIN issuance_department_items as iii ON iii.issuance_department_id=ii.issuance_department_id
+                LEFT JOIN products p on p.product_id = iii.product_id
+                WHERE ii.is_deleted=0
+                GROUP BY iii.product_id) as issuetoin ON issuetoin.product_id = p.product_id
+
+          
+                LEFT JOIN
+
+                (SELECT aii.product_id,
+                SUM(IF(aii.is_parent = 1, IFNULL(aii.adjust_qty,0),IFNULL(aii.adjust_qty,0)/IFNULL(p.child_unit_desc,0))) as parent_out_qty
+                FROM adjustment_info as ai
+                INNER JOIN adjustment_items as aii ON aii.adjustment_id=ai.adjustment_id
+                LEFT JOIN products p on p.product_id = aii.product_id
+                WHERE ai.adjustment_type='OUT' 
+                AND ai.is_deleted=0 
+                GROUP BY aii.product_id) as aiout ON aiout.product_id = p.product_id
+      
+                LEFT JOIN
+
+                (SELECT cii.product_id,
+                SUM(IF(cii.is_parent = 1, IFNULL(cii.inv_qty,0),IFNULL(cii.inv_qty,0)/IFNULL(p.child_unit_desc,0))) as parent_out_qty
+                FROM cash_invoice ci
+                INNER JOIN cash_invoice_items  cii ON cii.cash_invoice_id =  ci.cash_invoice_id
+                LEFT JOIN products p on p.product_id = cii.product_id
+                WHERE  ci.is_deleted = 0
+                AND ci.is_active=1 
+                GROUP BY cii.product_id) as ciout ON ciout.product_id = p.product_id
+                
+                ) as core ) as m
+                ORDER BY m.product_quantity DESC
+        ";
+        return $this->db->query($sql)->result();
+    }
 
 
     function get_pos_sales_for_review() {

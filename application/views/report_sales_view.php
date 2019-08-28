@@ -94,7 +94,7 @@
                                                         <div>
                                                             <div class="row">
 
-                                                                <div class="col-lg-3">
+                                                                <div class="col-lg-2">
                                                                     Period Start * :<br />
                                                                     <div class="input-group">
                                                                         <input type="text" id="txt_date" name="date_from" class="date-picker form-control" value="<?php echo date("m"); ?>/01/<?php echo date("Y"); ?>">
@@ -103,7 +103,7 @@
                                                                          </span>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-lg-3">
+                                                                <div class="col-lg-2">
                                                                     Period End * :<br />
                                                                     <div class="input-group">
                                                                         <input type="text" id="txt_date" name="date_to" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>">
@@ -112,11 +112,15 @@
                                                                          </span>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-lg-3"><br>
-                                                                    <button class="btn btn-success pull-left" id="btn_export_sales" title="Export to Excel" >
+                                                                <div class="col-lg-2"><br>
+                                                                    <button class="btn btn-success pull-left" id="btn_export_sales" title="Export to Excel" style="padding: 7px 7px!important;">
                                                                     <i class="fa fa-file-excel-o"></i> Export to Excel</button>
                                                                 </div>
-                                                                <div class="col-lg-3"><br>
+                                                                <div class="col-lg-2"><br>
+                                                                    <button class="btn btn-success pull-left" id="btn_export_sales_all" title="Export All Products to Excel" style="padding: 7px 7px!important;">
+                                                                    <i class="fa fa-file-excel-o"></i> Export All to Excel </button>
+                                                                </div>
+                                                                <div class="col-lg-4"><br>
                                                                    <input type="text" id="tbl_pi_summary_search" class="form-control">
                                                                 </div>
                                                             </div>
@@ -249,6 +253,7 @@
                     "dom": '<"toolbar">frtip',
                     "bLengthChange":false,
                     // "bPaginate":false,
+                    "pageLength": 15,
                     "language": { searchPlaceholder: "Search" },
                     oLanguage: {
                             sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
@@ -352,6 +357,9 @@
                 window.open('Report_sales/transaction/export?startDate='+_date_from.val()+'&endDate='+_date_to.val());
             });
 
+            $('#btn_export_sales_all').on('click', function(){
+                window.open('Report_sales/transaction/export-all?startDate='+_date_from.val()+'&endDate='+_date_to.val());
+            });
         
             _date_from.on('change', function(){
                 $('#tbl_pi_summary').DataTable().ajax.reload()
