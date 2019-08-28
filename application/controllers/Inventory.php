@@ -98,6 +98,39 @@ class Inventory extends CORE_Controller
                 $this->load->view('template/batch_inventory_report',$data);
                 break;
 
+            case 'preview-inventory-with-total':
+                $account_integration =$this->Account_integration_model;
+                $a_i=$account_integration->get_list();
+                $account =$a_i[0]->sales_invoice_inventory;
+                $ci_account =$a_i[0]->cash_invoice_inventory;
+                $account_dis =$a_i[0]->dispatching_invoice_inventory;
+
+                $m_products = $this->Products_model;
+                $m_department = $this->Departments_model;
+
+                $date = date('Y-m-d',strtotime($this->input->get('date',TRUE)));
+                $depid = $this->input->get('depid',TRUE);
+                $currentcountfilter = $this->input->get('ccf',TRUE);
+                // Current Quantity Current Count Filter , 1 for ALL, 2 for Greater than 0, 3 for Less than Zero
+                if($currentcountfilter  == 1){ $ccf = null; }else if ($currentcountfilter  == 2) { $ccf = ' > 0'; }
+                else if($currentcountfilter  == 3){ $ccf = ' < 0'; }else if($currentcountfilter  == 4){ $ccf = ' = 0';}
+                $info = $m_department->get_department_list($depid);
+                $data['products']=$m_products->product_list($account,$date,null,null,null,1,null,$depid,$ci_account,$account_dis,$ccf);
+                // $data['products'] = $m_products->get_product_list_inventory($date,$depid,$account);
+                $data['date'] = date('m/d/Y',strtotime($date));
+
+                if(isset($info[0])){
+                    $data['department'] =$info[0]->department_name;
+                }else{
+                    $data['department'] = 'All';
+                }
+
+                $m_company_info=$this->Company_model;
+                $company_info=$m_company_info->get_list();
+                $data['company_info']=$company_info[0];
+                $this->load->view('template/batch_inventory_report_with_total',$data);
+                break;
+
             case 'export-inventory':
 
                 $excel = $this->excel;
@@ -245,6 +278,202 @@ class Inventory extends CORE_Controller
                      
             break;
 
+            case 'export-inventory-with-total':
+
+                $excel = $this->excel;
+                $account_integration =$this->Account_integration_model;
+                $a_i=$account_integration->get_list();
+                $account =$a_i[0]->sales_invoice_inventory;
+                $ci_account =$a_i[0]->cash_invoice_inventory;
+                $account_dis =$a_i[0]->dispatching_invoice_inventory;
+                $m_products = $this->Products_model;
+                $m_department = $this->Departments_model;
+
+                $date = date('Y-m-d',strtotime($this->input->get('date',TRUE)));
+                $depid = $this->input->get('depid',TRUE);
+                $info = $m_department->get_department_list($depid);
+
+                $currentcountfilter = $this->input->get('ccf',TRUE);
+                // Current Quantity Current Count Filter , 1 for ALL, 2 for Greater than 0, 3 for Less than Zero
+                if($currentcountfilter  == 1){ $ccf = null; }else if ($currentcountfilter  == 2) { $ccf = ' > 0'; }
+                else if($currentcountfilter  == 3){ $ccf = ' < 0'; }else if($currentcountfilter  == 4){ $ccf = ' = 0';}
+
+                if($currentcountfilter  == 1){ $ccf_data = 'All Count Items'; }else if ($currentcountfilter  == 2) { $ccf_data = 'Items Greater than Zero'; }
+                else if($currentcountfilter  == 3){ $ccf_data = 'Items Less than Zero'; }else if($currentcountfilter  == 4){ $ccf_data = 'Items Equal to Zero';}
+
+
+                $products=$m_products->product_list($account,$date,null,null,null,1,null,$depid,$ci_account,$account_dis,$ccf);
+                $data['date'] = date('m/d/Y',strtotime($date));
+
+                if(isset($info[0])){
+                    $department =$info[0]->department_name;
+                }else{
+                    $department= 'All';
+                }
+
+                $m_company_info=$this->Company_model;
+                $company_info=$m_company_info->get_list();
+                $data['company_info']=$company_info[0];
+
+                $excel->setActiveSheetIndex(0);
+
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A1:B1')->setWidth('30');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A2:C2')->setWidth('50');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A3')->setWidth('30');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A4')->setWidth('40');
+
+                //name the worksheet
+                $excel->getActiveSheet()->setTitle("Inventory Report");
+                $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->mergeCells('A1:B1');
+                $excel->getActiveSheet()->mergeCells('A2:C2');
+                $excel->getActiveSheet()->mergeCells('A3:B3');
+                $excel->getActiveSheet()->mergeCells('A4:B4');
+
+                $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
+                                        ->setCellValue('A2',$company_info[0]->company_address)
+                                        ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no)
+                                        ->setCellValue('A4',$company_info[0]->email_address);
+
+                $excel->getActiveSheet()->setCellValue('A6','Inventory Report - '.$department)
+                                        ->getStyle('A6')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('A7','As of '.$date)
+                                        ->getStyle('A7')->getFont()->setItalic(TRUE);
+                $excel->getActiveSheet()->setCellValue('A8',$ccf_data)
+                                        ->getStyle('A8')->getFont()->setItalic(TRUE);
+                $excel->getActiveSheet()->getColumnDimension('A')->setWidth('40');
+                $excel->getActiveSheet()->getColumnDimension('B')->setWidth('25');
+                $excel->getActiveSheet()->getColumnDimension('C')->setWidth('25');
+                $excel->getActiveSheet()->getColumnDimension('D')->setWidth('25');
+                $excel->getActiveSheet()->getColumnDimension('E')->setWidth('30');
+    
+                $excel->getActiveSheet()
+                        ->getStyle('E9')
+                        ->getAlignment()
+                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                $excel->getActiveSheet()
+                        ->getStyle('F9')
+                        ->getAlignment()
+                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                $excel->getActiveSheet()
+                        ->getStyle('G9')
+                        ->getAlignment()
+                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                 $style_header = array(
+
+                    'fill' => array(
+                        'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                        'color' => array('rgb'=>'CCFF99'),
+                    ),
+                    'font' => array(
+                        'bold' => true,
+                    )
+                );
+
+
+                $excel->getActiveSheet()->getStyle('A9:G9')->applyFromArray( $style_header );
+
+                $excel->getActiveSheet()->setCellValue('A9','PLU')
+                                        ->getStyle('A9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('B9','Description')
+                                        ->getStyle('B9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('C9','Category')
+                                        ->getStyle('C9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('D9','Unit')
+                                        ->getStyle('D9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('E9','Current Qty')
+                                        ->getStyle('E9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('F9','Unit Cost')
+                                        ->getStyle('F9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('G9','Total')
+                                        ->getStyle('G9')->getFont()->setBold(TRUE);
+
+                $i=10;
+                $gtotal=0;
+                foreach($products as $product){
+                        $excel->getActiveSheet()->getColumnDimension('A')->setWidth('40');
+                        $excel->getActiveSheet()->getColumnDimension('B')->setWidth('50');
+                        $excel->getActiveSheet()->getColumnDimension('C')->setWidth('40');
+                        $excel->getActiveSheet()->getColumnDimension('D')->setWidth('25');
+                        $excel->getActiveSheet()->getColumnDimension('E')->setWidth('25');
+                        $excel->getActiveSheet()->getColumnDimension('F')->setWidth('25');
+                        $excel->getActiveSheet()->getColumnDimension('G')->setWidth('25');
+
+            
+                        $excel->getActiveSheet()
+                                ->getStyle('A'.$i)
+                                ->getAlignment()
+                                ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+                        $excel->getActiveSheet()
+                                ->getStyle('E'.$i)
+                                ->getAlignment()
+                                ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                        $excel->getActiveSheet()
+                                ->getStyle('F'.$i)
+                                ->getAlignment()
+                                ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                        $excel->getActiveSheet()
+                                ->getStyle('G'.$i)
+                                ->getAlignment()
+                                ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                        $excel->getActiveSheet()->setCellValue('A'.$i,$product->product_code);
+                        $excel->getActiveSheet()->setCellValue('B'.$i,$product->product_desc);
+                        $excel->getActiveSheet()->setCellValue('C'.$i,$product->category_name);
+                        $excel->getActiveSheet()->setCellValue('D'.$i,$product->parent_unit_name);
+
+                                         
+                        $excel->getActiveSheet()->setCellValue('E'.$i,number_format($product->CurrentQty,2));
+                        $excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');      
+                        $excel->getActiveSheet()->setCellValue('F'.$i,number_format($product->purchase_cost,2));
+                        $excel->getActiveSheet()->getStyle('F'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                        $excel->getActiveSheet()->setCellValue('G'.$i,number_format(($product->CurrentQty * $product->purchase_cost),2));
+                        $excel->getActiveSheet()->getStyle('G'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                        $gtotal += ($product->CurrentQty * $product->purchase_cost);
+                        $i++;                  
+                }
+
+                        $excel->getActiveSheet()->setCellValue('A'.$i,'Grand Total');
+                        $excel->getActiveSheet()->setCellValue('G'.$i,number_format($gtotal,2));
+                        $excel->getActiveSheet()->getStyle('G'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+
+
+                $excel->getActiveSheet()
+                        ->getStyle('G'.$i)
+                        ->getAlignment()
+                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                $excel->getActiveSheet()
+                        ->getStyle('G'.$i)->getFont()->setBold(TRUE);
+                 $excel->getActiveSheet()
+                        ->getStyle('A'.$i)->getFont()->setBold(TRUE);
+
+                        $i++;
+
+
+                if(count($products)==0){
+
+                        $excel->getActiveSheet()->setCellValue('A'.$i,'No Records Found');
+
+                }
+
+                $excel->getActiveSheet()->getStyle('A'.$i.':'.'G'.$i)->applyFromArray( $style_header );
+
+                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                header('Content-Disposition: attachment;filename="Inventory Report '.date('M-d-Y',NOW()).'.xlsx"');
+                header('Cache-Control: max-age=0');
+                // If you're serving to IE 9, then the following may be needed
+                header('Cache-Control: max-age=1');
+
+                // If you're serving to IE over SSL, then the following may be needed
+                header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+                header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+                header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+                header ('Pragma: public'); // HTTP/1.0
+
+                $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+                $objWriter->save('php://output');            
+                     
+            break;
 
             case 'email-inventory':
 

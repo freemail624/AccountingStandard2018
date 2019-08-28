@@ -103,7 +103,9 @@ class Rights_link_model extends CORE_Model{
                                           (93,'6','6-15','Fixed Asset Settings'),
                                           (94,'10','10-3','Movement of Assets'),
                                           (95,'8','8-5','Sales Report by Source'),
-                                          (96,'4','4-8','Order Source Management')
+                                          (96,'4','4-8','Order Source Management'),
+                                          (97,'7','7-2','Inventory Report Detailed'),
+                                          (98,'8','8-6','Profit Report')
 
 
                                           ON DUPLICATE KEY UPDATE
