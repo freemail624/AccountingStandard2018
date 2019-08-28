@@ -222,8 +222,8 @@
                             </div>
                         </div>
                         <div class="col-sm-4">
-                            <b class="required">*</b><label>Sales person :</label><br/>
-                            <select name="salesperson_id" id="cbo_salesperson" required data-error-msg="Salesperson is required.">
+                            <label>Sales person :</label><br/>
+                            <select name="salesperson_id" id="cbo_salesperson" >
                                 <option value="0">[ Create New Salesperson ]</option>
                                 <?php foreach($salespersons as $salesperson){ ?>
                                     <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->acr_name.' - '.$salesperson->fullname; ?></option>
