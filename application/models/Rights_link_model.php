@@ -17,7 +17,6 @@ class Rights_link_model extends CORE_Model{
                                           (6,'2','2-1','Purchase Order'),
                                           (7,'2','2-2','Purchase Invoice'),
                                           (8,'2','2-3','Record Payment'),
-                                          -- (9,'15','15-2','Item Issuance'),
                                           (10,'15','15-3','Item Adjustment'),
                                           (11,'3','3-1','Sales Order'),
                                           (12,'3','3-2','Sales Invoice'),
@@ -41,7 +40,6 @@ class Rights_link_model extends CORE_Model{
                                           (30,'8','8-1','Sales Report'),
                                           (31,'15','15-4','Inventory Report'),
                                           (32,'5','5-4','Salesperson Management'),
-                                          (33,'2','2-6','Item Adjustment (Out)'),
                                           (34,'8','8-3','Export Sales Summary'),
                                           (35,'9','9-3','Export Trial Balance'),
                                           (36,'6','6-7','Setup Check Layout'),
@@ -88,7 +86,6 @@ class Rights_link_model extends CORE_Model{
                                           (78,'12','12-7','Product List Report'),
                                           (79,'2','2-8','Purchase History'),
                                           (80,'2','2-7','Purchase Monitoring'),
-                                          -- (81,'6','6-12','Puchasing Integration'),
                                           (82,'15','15-1','Product Management (Inventory Tab)'),
                                           (83,'3','3-4','Cash Invoice'),
                                           (84,'6','6-13','Audit Trail'),
@@ -105,8 +102,9 @@ class Rights_link_model extends CORE_Model{
                                           (95,'8','8-5','Sales Report by Source'),
                                           (96,'4','4-8','Order Source Management'),
                                           (97,'7','7-2','Inventory Report Detailed'),
-                                          (98,'8','8-6','Profit Report')
-
+                                          (98,'8','8-6','Profit Report'),
+                                          (99,'3','3-6','Sales/Cash Invoice History'),
+                                          (100,'3','3-7','Customer Sales History')
 
                                           ON DUPLICATE KEY UPDATE
                                           rights_links.parent_code=VALUES(rights_links.parent_code),

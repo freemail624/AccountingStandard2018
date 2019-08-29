@@ -929,6 +929,7 @@ class Templates extends CORE_Controller {
                         'sales_invoice.salesperson_id',
                         'sales_invoice.address',
                         'sales_order.so_no',
+                        'order_source.order_source_name',
                         'CONCAT(salesperson.firstname," ",salesperson.lastname) AS salesperson_name'
                     ),
                     array(
@@ -936,13 +937,14 @@ class Templates extends CORE_Controller {
                         array('salesperson','salesperson.salesperson_id=sales_invoice.salesperson_id','left'),
                         array('customers','customers.customer_id=sales_invoice.customer_id','left'),
                         array('sales_order','sales_order.sales_order_id=sales_invoice.sales_order_id','left'),
+                        array('order_source','order_source.order_source_id=sales_invoice.order_source_id','left'),
                     )
                 );
 
                 $data['sales_info']=$info[0];
                 $data['sales_invoice_items']=$m_sales_invoice_items->get_list(
                     array('sales_invoice_items.sales_invoice_id'=>$filter_value),
-                    'sales_invoice_items.*,products.product_desc,products.size,units.unit_name',
+                    'sales_invoice_items.*,products.product_desc,products.size,units.unit_name,products.product_code',
                     array(
                         array('products','products.product_id=sales_invoice_items.product_id','left'),
                         array('units','units.unit_id=sales_invoice_items.unit_id','left')
@@ -960,6 +962,9 @@ class Templates extends CORE_Controller {
                     echo $this->load->view('template/sales_invoice_content_standard',$data);
                 }
 
+                if($type=='viewport'){
+                    echo $this->load->view('template/sales_invoice_for_history',$data,TRUE);
+                }
                 //show only inside grid without menu button
                 // if($type=='contentview'){
                 //     echo $this->load->view('template/sales_invoice_content_standard',$data,TRUE);

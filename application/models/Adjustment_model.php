@@ -85,6 +85,58 @@ parent::__construct();
 
     }
 
+	function list_per_customer($customer_id = null){
+        $sql="SELECT 
+			si.sales_inv_no as inv_no,
+			p.product_code,
+			p.product_desc,
+			sii.inv_qty,
+			u.unit_name,
+			p.is_bulk,
+			p.child_unit_id,
+			p.parent_unit_id,
+			p.child_unit_desc,
+			p.sale_price,
+			IF(si.is_journal_posted = TRUE, 'Note: Invoice is posted in Accounting', 'Note: Invoice is not yet posted in Accounting') as note,
+			(SELECT units.unit_name  FROM units WHERE  units.unit_id = p.parent_unit_id) as parent_unit_name,
+			(SELECT units.unit_name  FROM units WHERE  units.unit_id = p.child_unit_id) as child_unit_name,
+			sii.* FROM sales_invoice_items sii
+
+			LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
+			LEFT JOIN products p ON p.product_id = sii.product_id
+			LEFT JOIN units u ON u.unit_id = sii.unit_id
+			WHERE si.is_active = TRUE 
+			AND si.is_deleted = FALSE
+			AND si.customer_id= '$customer_id'
+
+			UNION ALL
+
+			SELECT
+			ci.cash_inv_no as inv_no,
+			p.product_code,
+			p.product_desc,
+			cii.inv_qty,
+			u.unit_name,
+			p.is_bulk,
+			p.child_unit_id,
+			p.parent_unit_id,
+			p.child_unit_desc,
+			p.sale_price,
+			IF(ci.is_journal_posted = TRUE, 'Invoice is posted in Accounting', 'Invoice is not yet posted in Accounting') as note,
+			(SELECT units.unit_name  FROM units WHERE  units.unit_id = p.parent_unit_id) as parent_unit_name,
+			(SELECT units.unit_name  FROM units WHERE  units.unit_id = p.child_unit_id) as child_unit_name,
+			cii.* FROM cash_invoice_items cii
+			LEFT JOIN cash_invoice ci ON ci.cash_invoice_id = cii.cash_invoice_id
+			LEFT JOIN products p ON p.product_id = cii.product_id
+			LEFT JOIN units u ON u.unit_id = cii.unit_id
+			WHERE ci.is_active = TRUE 
+			AND ci.is_deleted = FALSE
+			AND ci.customer_id= '$customer_id'
+			";
+
+        return $this->db->query($sql)->result();
+
+    }
 
      function get_adjustments_for_review(){
         $sql='SELECT main.*
