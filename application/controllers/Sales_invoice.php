@@ -314,11 +314,7 @@ class Sales_invoice extends CORE_Controller
                                             $m_invoice_items->unit_id=$unit_id[0]->child_unit_id;
                     }   
 
-                    //$on_hand=$m_products->get_product_current_qty($batch_no[$i], $prod_id[$i], date('Y-m-d', strtotime($exp_date[$i])));
-
                     $m_invoice_items->save();
-                    $m_products->on_hand=$m_products->get_product_qty($this->get_numeric_value($prod_id[$i]));
-                    $m_products->modify($this->get_numeric_value($prod_id[$i]));
                 }
 
                 //update invoice number base on formatted last insert id
@@ -455,13 +451,8 @@ class Sales_invoice extends CORE_Controller
                                                  $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
                                                 $m_invoice_items->unit_id=$unit_id[0]->child_unit_id;
                         }   
-                        //$m_invoice_items->set('unit_id','(SELECT unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
-
-                        //$on_hand=$m_products->get_product_current_qty($batch_no[$i], $prod_id[$i], date('Y-m-d', strtotime($exp_date[$i])));
 
                         $m_invoice_items->save();
-                        $m_products->on_hand=$m_products->get_product_qty($this->get_numeric_value($prod_id[$i]));
-                        $m_products->modify($this->get_numeric_value($prod_id[$i]));
                     }
 
 
@@ -536,7 +527,6 @@ class Sales_invoice extends CORE_Controller
 
                 $m_invoice=$this->Sales_invoice_model;
                 $m_invoice_items=$this->Sales_invoice_item_model;
-                $m_products=$this->Products_model;
                 $m_sales_invoice_count = $this->Customers_model;
                 $sales_invoice_id=$this->input->post('sales_invoice_id',TRUE);
 
@@ -557,18 +547,7 @@ class Sales_invoice extends CORE_Controller
                 $m_invoice->is_deleted=1;//mark as deleted
                 $m_invoice->modify($sales_invoice_id);
 
-                //update product on_hand after invoice is deleted...
-                $products=$m_invoice_items->get_list(
-                    'sales_invoice_id='.$sales_invoice_id,
-                    'product_id'
-                ); 
 
-                for($i=0;$i<count($products);$i++) {
-                    $prod_id=$products[$i]->product_id;
-                    $m_products->on_hand=$m_products->get_product_qty($prod_id);
-                    $m_products->modify($prod_id);
-                }
-                //end update product on_hand after invoice is deleted...
 
                 $so_info=$m_invoice->get_list($sales_invoice_id,'sales_invoice.sales_order_id');// get purchase order first
 

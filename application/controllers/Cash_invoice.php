@@ -226,8 +226,6 @@ class Cash_invoice extends CORE_Controller
                             $m_invoice_items->unit_id=$unit_id[0]->child_unit_id;
                     }   
 
-                    $unit_id=$m_products->get_list(array('product_id'=>$prod_id[$i]));
-
                     $m_invoice_items->save();
                 }
 
@@ -345,8 +343,6 @@ class Cash_invoice extends CORE_Controller
                         $m_invoice_items->unit_id=$unit_id[0]->child_unit_id;
                     }   
 
-                    //unit id retrieval is change, because of TRIGGER restriction
-                    $unit_id=$m_products->get_list(array('product_id'=>$prod_id[$i]));
                     $m_invoice_items->save();
                 }
 

@@ -125,7 +125,6 @@ class Issuance_department extends CORE_Controller
                 $batch_no=$this->input->post('batch_no',TRUE);
                 $exp_date=$this->input->post('exp_date',TRUE);
                 $is_parent=$this->input->post('is_parent',TRUE);
-                $m_products=$this->Products_model;
                 for($i=0;$i<count($prod_id);$i++){
                     $m_issue_items->issuance_department_id=$issuance_department_id;
                     $m_issue_items->product_id=$this->get_numeric_value($prod_id[$i]);
@@ -147,8 +146,6 @@ class Issuance_department extends CORE_Controller
                              $m_issue_items->set('unit_id','(SELECT child_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
                         } 
                     $m_issue_items->save();
-                    $m_products->on_hand=$m_products->get_product_qty($this->get_numeric_value($prod_id[$i]));
-                    $m_products->modify($this->get_numeric_value($prod_id[$i]));
                 }
                 //update invoice number base on formatted last insert id
                 $m_issuance->trn_no='TRN-'.date('Ymd').'-'.$issuance_department_id;
@@ -204,9 +201,6 @@ class Issuance_department extends CORE_Controller
                 $issue_non_tax_amount=$this->input->post('issue_non_tax_amount',TRUE);
                 $is_parent=$this->input->post('is_parent',TRUE);
 
-
-
-                $m_products=$this->Products_model;
                 for($i=0;$i<count($prod_id);$i++){
                     $m_issue_items->issuance_department_id=$issuance_department_id;
                     $m_issue_items->product_id=$this->get_numeric_value($prod_id[$i]);
@@ -250,7 +244,6 @@ class Issuance_department extends CORE_Controller
             case 'delete':
                 $m_issuance=$this->Issuance_department_model;
                 $m_issuance_items=$this->Issuance_department_item_model;
-                $m_products=$this->Products_model;
                 $issuance_department_id=$this->input->post('issuance_department_id',TRUE);
                 //mark Items as deleted
                 $m_issuance->set('date_deleted','NOW()'); //treat NOW() as function and not string, set deletion date
