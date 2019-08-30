@@ -28,7 +28,7 @@ class Sales_report_source_model extends CORE_Model
         sii.inv_price,
         sii.inv_gross,
         sii.inv_discount,
-        sii.inv_line_total_price
+        sii.inv_line_total_after_global  as inv_line_total_price
 
 		FROM sales_invoice_items sii
 		LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id 
@@ -53,7 +53,7 @@ class Sales_report_source_model extends CORE_Model
         cii.inv_price,
         cii.inv_gross,
         cii.inv_discount,
-        cii.inv_line_total_price
+        cii.inv_line_total_after_global as inv_line_total_price
         
         FROM cash_invoice_items cii
         LEFT JOIN cash_invoice ci ON ci.cash_invoice_id = cii.cash_invoice_id 
@@ -72,7 +72,7 @@ class Sales_report_source_model extends CORE_Model
 		".($all==1?" WHERE source_invoice = 1":"")."
 		".($all==2?" WHERE source_invoice = 2":"")."
 		
-
+        ORDER BY main.date DESC
 
 		".($get_source==TRUE?") as main":"")."
 		".($get_totals==TRUE?") as n GROUP BY n.order_source_id":"")."
