@@ -1376,10 +1376,6 @@ $(document).ready(function(){
 
             $('#modal_po_list').modal('hide');
             resetSummary();
-
-
-            // var exp_date = <?php echo json_encode(date("m/d/Y")); ?>;
-
             $.ajax({
                 url : 'Purchases/transaction/item-balance/'+data.purchase_order_id,
                 type : "GET",
@@ -1400,11 +1396,6 @@ $(document).ready(function(){
                     var gross_amount=0;
                     var a = 0;
                     $.each(rows,function(i,value){
-
-                        var _deductionVat = 0, _newTaxAmount = 0;
-
-                        _deductionVat = (value.po_price / (1 + ((value.po_tax_rate)/100)));
-                        _newTaxAmount = (value.po_price - _deductionVat) * value.po_qty;
                         bulk_price = value.purchase_cost;
                         var retail_price = 0;
                         if(value.is_bulk == 1){
@@ -1433,7 +1424,7 @@ $(document).ready(function(){
                             tax_type_id : null,
                             dr_line_total_price : value.po_line_total,
                             dr_non_tax_amount: value.non_tax_amount,
-                            dr_tax_amount: _newTaxAmount,
+                            dr_tax_amount: value.tax_amount,
                             bulk_price : bulk_price,
                             retail_price : retail_price,
                             is_bulk: value.is_bulk,
@@ -1443,7 +1434,7 @@ $(document).ready(function(){
                             parent_unit_id : value.parent_unit_id,
                             child_unit_id : value.child_unit_id,
                             // exp_date: exp_date,
-                            total_after_global : value.dr_line_total_after_global,
+                            total_after_global : value.po_line_total_after_global,
                             batch_no:"",
                             a:a
                         }));
