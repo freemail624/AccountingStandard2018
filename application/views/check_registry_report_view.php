@@ -86,7 +86,7 @@ tr:nth-child(even){background-color:none !important;}*/
 	                    <div class="panel panel-default">
 	                    	<!-- <div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;;"><b style="color:white;font-size: 12pt;"><i class="fa fa-bars"></i></b></div> -->
 		                    <div class="panel-body">
-                            <h2 class="h2-panel-heading"> Check Registry Report </h2><hr>
+                            <h2 class="h2-panel-heading"> Check Registry Report<small> | <a href="assets/manual/list/Check_Registry_Report.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
 		                    	<div class="row">
 		                    		<div class="container-fluid">
 		                    			<div class="container-fluid group-box">

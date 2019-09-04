@@ -77,7 +77,7 @@
                                                 <!-- <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;;"><b style="color:white;font-size: 12pt;"><i class="fa fa-bars"></i> Purchase Invoice Report</b></div></a> -->
                                                 <div id="collapseTwo" class="collapse in">
                                                     <div class="panel-body">
-                                                    <h2 class="h2-panel-heading">Purchase Invoice Report</h2><hr>
+                                                    <h2 class="h2-panel-heading">Purchase Invoice Report<small> | <a href="assets/manual/salesandpurchasing/Purchase_Invoice_Report.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                                         <div>
                                                             <div class="row">
                                                                  <!-- <div class="col-lg-4">

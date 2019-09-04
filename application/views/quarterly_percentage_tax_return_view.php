@@ -137,7 +137,7 @@
                                     <div id="div_2551Q_form_list">
                                         <div class="panel panel-default">
                                             <div class="panel-body">
-                                            <h2 class="h2-panel-heading">Quarterly Percentage Tax Return (BIR FORM #2551Q)</h2><hr>
+                                            <h2 class="h2-panel-heading">Quarterly Percentage Tax Return (BIR FORM #2551Q)<small> | <a href="assets/manual/birforms/2551Q.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                             <div class="row" style="margin-bottom: 20px;">
                                                 <div class="col-lg-3">
                                                     <b>Year:</b><br>
