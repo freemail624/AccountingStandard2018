@@ -137,7 +137,7 @@
                                     <div id="div_2551M_form_list">
                                         <div class="panel panel-default">
                                             <div class="panel-body">
-                                            <h2 class="h2-panel-heading">Monthly Percentage Tax Return (BIR FORM #2551M)</h2><hr>
+                                            <h2 class="h2-panel-heading">Monthly Percentage Tax Return (BIR FORM #2551M)<small> | <a href="assets/manual/birforms/2551M.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                             <div class="row" style="margin-bottom: 20px;">
                                                 <div class="col-lg-3">
                                                     <br />

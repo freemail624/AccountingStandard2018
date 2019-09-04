@@ -187,7 +187,7 @@
             <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; </b>
         </div> -->
         <div class="panel-body table-responsive">
-        <h2 class="h2-panel-heading">Open Sales</h2><hr>
+        <h2 class="h2-panel-heading">Open Sales<small> | <a href="assets/manual/list/Open_Sales_Report.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                 <button class="btn btn-primary pull-left" style="margin-right: 5px; margin-top: 0; margin-bottom: 10px;" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif; ">
                     <i class="fa fa-print"></i> Print Report
                 </button>

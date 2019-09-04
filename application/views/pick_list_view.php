@@ -300,7 +300,7 @@ $(document).ready(function(){
                                                 <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Products</b>
                                             </div> -->
                                             <div class="panel-body table-responsive" id="product_list_panel">
-                                            <h2 class="h2-panel-heading">Reorder Product (Pick-List)</h2><hr>
+                                            <h2 class="h2-panel-heading">Reorder Product (Pick-List)<small> | <a href="assets/manual/list/Product_Reorder.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                                 <div class="row">
                                                 <div class="col-sm-3" >
                                                     Category :
