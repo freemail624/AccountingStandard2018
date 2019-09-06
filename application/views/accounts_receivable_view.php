@@ -415,10 +415,11 @@
                                             <thead class="">
                                             <tr>
                                                 <th style="width: 30%;">Account</th>
-                                                <th style="width: 30%;">Memo</th>
+                                                <th style="width: 15%;">Memo</th>
                                                 <th style="width: 15%;text-align: right;">Dr</th>
                                                 <th style="width: 15%;text-align: right;">Cr</th>
-                                                <th>Action</th>
+                                                <th style="width: 15%;text-align: left;">Department</th>
+                                                <th style="width: 10%;"">Action</th>
                                             </tr>
                                             </thead>
 
@@ -434,6 +435,12 @@
                                                     <td><input type="text" name="memo[]" class="form-control"></td>
                                                     <td><input type="text" name="dr_amount[]" class="form-control numeric"></td>
                                                     <td><input type="text" name="cr_amount[]" class="form-control numeric"></td>
+                                                    <td><select  name="department_id_line[]" class="dept show-tick form-control selectpicker" data-live-search="true" > 
+                                                        <option value="0">[ None ]</option> 
+                                                        <?php foreach($departments as $department){ ?> 
+                                                            <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option> 
+                                                        <?php } ?> 
+                                                    </select></td> 
                                                     <td>
                                                         <button type="button" class="btn btn-default add_account"><i class="fa fa-plus-circle" style="color: green;"></i></button>
                                                         <button type="button" class="btn btn-default remove_account"><i class="fa fa-times-circle" style="color: red;"></i></button>
@@ -450,6 +457,12 @@
                                                     <td><input type="text" name="memo[]" class="form-control"></td>
                                                     <td><input type="text" name="dr_amount[]" class="form-control numeric"></td>
                                                     <td><input type="text" name="cr_amount[]" class="form-control numeric"></td>
+                                                    <td><select  name="department_id_line[]" class="dept show-tick form-control selectpicker" data-live-search="true" > 
+                                                        <option value="0">[ None ]</option> 
+                                                        <?php foreach($departments as $department){ ?> 
+                                                            <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option> 
+                                                        <?php } ?> 
+                                                    </select></td> 
                                                     <td>
                                                         <button type="button" class="btn btn-default add_account"><i class="fa fa-plus-circle" style="color: green;"></i></button>
                                                         <button type="button" class="btn btn-default remove_account"><i class="fa fa-times-circle" style="color: red;"></i></button>
@@ -463,6 +476,7 @@
                                                 <td colspan="2" align="right"><strong>Total</strong></td>
                                                 <td align="right"><strong>0.00</strong></td>
                                                 <td align="right"><strong>0.00</strong></td>
+                                                <td></td>
                                                 <td></td>
                                             </tr>
                                             </tfoot>
@@ -514,6 +528,12 @@
                         <td><input type="text" name="memo[]" class="form-control"></td>
                         <td><input type="text" name="dr_amount[]" class="form-control numeric"></td>
                         <td><input type="text" name="cr_amount[]" class="form-control numeric"></td>
+                        <td><select  name="department_id_line[]" class="dept show-tick form-control selectpicker" data-live-search="true" > 
+                            <option value="0">[ None ]</option> 
+                            <?php foreach($departments as $department){ ?> 
+                                <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option> 
+                            <?php } ?> 
+                        </select></td> 
                         <td>
                             <button type="button" class="btn btn-default add_account"><i class="fa fa-plus-circle" style="color: green;"></i></button>
                             <button type="button" class="btn btn-default remove_account"><i class="fa fa-times-circle" style="color: red;"></i></button>
@@ -1024,7 +1044,7 @@ $(document).ready(function(){
         $('#cbo_particular').select2();
 
         reInitializeNumeric();
-        reInitializeDropDownAccounts($('#tbl_entries'));
+        reInitializeDropDownAccounts($('#tbl_entries'),false);
 
 
         $('.date-picker').datepicker({
@@ -1169,7 +1189,7 @@ $(document).ready(function(){
                     var tbl=$('#tbl_entries_for_review_'+ d.sales_invoice_id);
                     var parent_tab_pane=$('#journal_review_'+ d.sales_invoice_id);
 
-                    reInitializeDropDownAccounts(tbl);
+                    reInitializeDropDownAccounts(tbl,false);
                     reInitializeChildEntriesTable(tbl);
                     reInitializeChildElements(parent_tab_pane);
 
@@ -1221,7 +1241,7 @@ $(document).ready(function(){
                     var tbl=$('#tbl_entries_for_review_billing_'+ d.temp_journal_id);
                     var parent_tab_pane=$('#journal_review_'+ d.temp_journal_id);
 
-                    reInitializeDropDownAccounts(tbl);
+                    reInitializeDropDownAccounts(tbl,false);
                     reInitializeChildEntriesTable(tbl);
                     reInitializeChildElementsBilling(parent_tab_pane);
 
@@ -1242,6 +1262,7 @@ $(document).ready(function(){
         $('#btn_new').click(function(){
             _txnMode="new";
             clearFields($('#div_receivable_fields'));
+            reInitializeDropDownAccounts($('#tbl_entries'),true);
             _cboCustomers.select2('val',null);
             _cboDepartments.select2('val',null);
             $('#date_txn').datepicker('setDate','today');
@@ -1308,7 +1329,7 @@ $(document).ready(function(){
             row.clone().insertAfter('#tbl_entries > tbody > tr:last');
 
             reInitializeNumeric();
-            reInitializeDropDownAccounts($('#tbl_entries'));
+            reInitializeDropDownAccounts($('#tbl_entries'),false);
 
         });
 
@@ -1392,7 +1413,7 @@ $(document).ready(function(){
             }).done(function(response){
                 $('#tbl_entries > tbody').html(response);
                 reInitializeNumeric();
-                reInitializeDropDownAccounts($('#tbl_entries'));
+                reInitializeDropDownAccounts($('#tbl_entries'),false);
                 reComputeTotals($('#tbl_entries'));
             });
 
@@ -1627,11 +1648,26 @@ $(document).ready(function(){
         $('.numeric').autoNumeric('init');
     };
 
-    function reInitializeDropDownAccounts(tbl){
-        tbl.find('select.selectpicker').select2({
-            placeholder: "Please select account.",
+    function reInitializeDropDownAccounts(tbl,bClear=false){
+        var obj=tbl.find('select.selectpicker');
+        var objdept=tbl.find('select.dept');
+
+        obj.select2({
+            placeholder: "Please Select an Account.",
             allowClear: false
         });
+
+
+        if(bClear){
+            $.each(obj,function(){
+                $(this).select2('val',null);
+            });
+
+            $.each(objdept,function(){
+                $(this).select2('val',0);
+            });
+        }
+
     };
 
 
@@ -1774,7 +1810,7 @@ $(document).ready(function(){
             row.clone().insertAfter(tbl.find('tbody > tr:last'));
 
             reInitializeNumeric();
-            reInitializeDropDownAccounts(tbl);
+            reInitializeDropDownAccounts(tbl,false);
 
         });
 

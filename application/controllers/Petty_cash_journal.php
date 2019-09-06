@@ -163,6 +163,7 @@
 					$m_accounts->journal_id=$journal_id;
 					$m_accounts->account_id=$this->input->post('account_id',TRUE);
 					$m_accounts->dr_amount=$this->get_numeric_value($this->input->post('amount',TRUE));
+					$m_accounts->department_id=$this->input->post('department_id',TRUE);
 					$m_accounts->save();
 
 					$petty_cash_account_id=$petty_cash_id[0]->petty_cash_account_id;
@@ -170,6 +171,7 @@
 					$m_accounts->account_id=$petty_cash_account_id;
 					$m_accounts->dr_amount=$this->get_numeric_value('0');
 					$m_accounts->cr_amount=$this->get_numeric_value($this->input->post('amount',TRUE));
+					$m_accounts->department_id=$this->input->post('department_id',TRUE);
 					$m_accounts->save();
 
 					$m_journal->txn_no='PCV-'.date('Ymd').'-'.$journal_id;

@@ -165,10 +165,11 @@
                                                         <thead class="">
                                                         <tr>
                                                             <th style="width: 30%;">Account</th>
-                                                            <th style="width: 30%;">Memo</th>
+                                                            <th style="width: 15%;">Memo</th>
                                                             <th style="width: 15%;text-align: right;">Dr</th>
                                                             <th style="width: 15%;text-align: right;">Cr</th>
-                                                            <th align="center">Action</th>
+                                                            <th style="width: 15%;text-align: left;">Department</th>
+                                                            <th align="center" style="width: 10%">Action</th>
                                                         </tr>
                                                         </thead>
 
@@ -184,6 +185,14 @@
                                                             <td><input type="text" name="memo[]" class="form-control"></td>
                                                             <td><input type="text" name="dr_amount[]" class="form-control numeric text-right"></td>
                                                             <td><input type="text" name="cr_amount[]" class="form-control numeric text-right"></td>
+                                                            <td>       
+                                                                <select  name="department_id_line[]" class="selectpicker show-tick form-control dept" data-live-search="true" >
+                                                                    <option value="0">[ None ]</option>
+                                                                    <?php foreach($departments as $department){ ?>
+                                                                        <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
+                                                                    <?php } ?>
+                                                                </select>
+                                                            </td>
                                                             <td>
                                                                 <button type="button" class="btn btn-default add_account"><i class="fa fa-plus-circle" style="color: green;"></i></button>
                                                                 <button type="button" class="btn btn-default remove_account"><i class="fa fa-times-circle" style="color: red;"></i></button>
@@ -201,6 +210,14 @@
                                                             <td><input type="text" name="memo[]" class="form-control"></td>
                                                             <td><input type="text" name="dr_amount[]" class="form-control numeric text-right"></td>
                                                             <td><input type="text" name="cr_amount[]" class="form-control numeric text-right"></td>
+                                                            <td>       
+                                                                <select  name="department_id_line[]" class="selectpicker show-tick form-control dept" data-live-search="true" >
+                                                                    <option value="0">[ None ]</option>
+                                                                    <?php foreach($departments as $department){ ?>
+                                                                        <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
+                                                                    <?php } ?>
+                                                                </select>
+                                                            </td>
                                                             <td>
                                                                 <button type="button" class="btn btn-default add_account"><i class="fa fa-plus-circle" style="color: green;"></i></button>
                                                                 <button type="button" class="btn btn-default remove_account"><i class="fa fa-times-circle" style="color: red;"></i></button>
@@ -214,6 +231,7 @@
                                                             <td colspan="2" align="right"><strong>Total</strong></td>
                                                             <td align="right"><strong>0.00</strong></td>
                                                             <td align="right"><strong>0.00</strong></td>
+                                                            <td></td>
                                                             <td></td>
                                                         </tr>
                                                         </tfoot>
@@ -251,6 +269,14 @@
                                 <td><input type="text" name="memo[]" class="form-control"></td>
                                 <td><input type="text" name="dr_amount[]" class="form-control numeric text-right"></td>
                                 <td><input type="text" name="cr_amount[]" class="form-control numeric text-right"></td>
+                                <td>       
+                                    <select  name="department_id_line[]" class="selectpicker show-tick form-control dept" data-live-search="true" >
+                                        <option value="0">[ None ]</option>
+                                        <?php foreach($departments as $department){ ?>
+                                            <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </td>
                                 <td>
                                     <button type="button" class="btn btn-default add_account"><i class="fa fa-plus-circle" style="color: green;"></i></button>
                                     <button type="button" class="btn btn-default remove_account"><i class="fa fa-times-circle" style="color: red;"></i></button>
@@ -391,7 +417,7 @@ $(document).ready(function(){
         _cboBookType.select2('val',null);
 
         reInitializeNumeric();
-        reInitializeDropDownAccounts($('#tbl_entries'));
+        reInitializeDropDownAccounts($('#tbl_entries'),true);
         showList(true);
     }();
 
@@ -402,6 +428,7 @@ $(document).ready(function(){
             clearFields($('#frm_journal'));
             showList(false);
             $('#modal_booktype').modal('hide');
+            reInitializeDropDownAccounts($('#tbl_entries'),true);
         });
 
         $('#btn_cancel').on('click', function(){
@@ -472,7 +499,7 @@ $(document).ready(function(){
             }).done(function(response){
                 $('#tbl_entries > tbody').html(response);
                 reInitializeNumeric();
-                reInitializeDropDownAccounts($('#tbl_entries'));
+                reInitializeDropDownAccounts($('#tbl_entries'),false);
                 reComputeTotals($('#tbl_entries'));
             });
 
@@ -487,7 +514,7 @@ $(document).ready(function(){
             row.clone().insertAfter('#tbl_entries > tbody > tr:last');
 
             reInitializeNumeric();
-            reInitializeDropDownAccounts($('#tbl_entries'));
+            reInitializeDropDownAccounts($('#tbl_entries'),false);
 
         });
 
@@ -660,11 +687,25 @@ $(document).ready(function(){
         tbl.find('tfoot tr').find(oTFSummary.cr).html('<b>'+accounting.formatNumber(_CR_amount,2)+'</b>');
     };
 
-    function reInitializeDropDownAccounts(tbl){
-        tbl.find('select.selectpicker').select2({
-            placeholder: "Please select account.",
+    function reInitializeDropDownAccounts(tbl,bClear=false){
+        var obj=tbl.find('select.selectpicker');
+        var objdept=tbl.find('select.dept');
+
+        obj.select2({
+            placeholder: "Please Select an Account.",
             allowClear: false
         });
+
+
+        if(bClear){
+            $.each(obj,function(){
+                $(this).select2('val',null);
+            });
+
+            $.each(objdept,function(){
+                $(this).select2('val',0);
+            });
+        }
     };
 
     function reInitializeNumeric(){

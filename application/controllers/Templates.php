@@ -2541,11 +2541,13 @@ class Templates extends CORE_Controller {
                     array(
                         'journal_accounts.*',
                         'account_titles.account_no',
-                        'account_titles.account_title'
+                        'account_titles.account_title',
+                        'departments.department_name'
                     ),
 
                     array(
-                        array('account_titles','account_titles.account_id=journal_accounts.account_id','left')
+                        array('account_titles','account_titles.account_id=journal_accounts.account_id','left'),
+                        array('departments','departments.department_id=journal_accounts.department_id','left') 
                     )
 
                 );

@@ -16,7 +16,8 @@
 					'Suppliers_model',
 					'Account_title_model',
 					'Journal_template_info_model',
-					'Journal_template_entry_model'
+					'Journal_template_entry_model',
+					'Departments_model'
 				)
 			);
 		}
@@ -30,7 +31,7 @@
 	        $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
 	        $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
 	        $data['title']="Recurring Templates";
-
+	        $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE');
 	        $data['customers']=$this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
 	        $data['suppliers']=$this->Suppliers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
 	        $data['accounts']=$this->Account_title_model->get_list('is_active=TRUE AND is_deleted=FALSE');
@@ -111,6 +112,7 @@
 	                $memos=$this->input->post('memo',TRUE);
 	                $dr_amounts=$this->input->post('dr_amount',TRUE);
 	                $cr_amounts=$this->input->post('cr_amount',TRUE);
+	                $department_id_line=$this->input->post('department_id_line');
 
 	                for($i=0;$i<=count($accounts)-1;$i++) {
 	                	$m_journal_temp_entry->template_id=$journal_template_id;
@@ -118,6 +120,7 @@
 	                	$m_journal_temp_entry->memo=$memos[$i];
 	                	$m_journal_temp_entry->dr_amount=$this->get_numeric_value($dr_amounts[$i]);
 	                	$m_journal_temp_entry->cr_amount=$this->get_numeric_value($cr_amounts[$i]);
+	                	$m_journal_temp_entry->department_id=$this->get_numeric_value($department_id_line[$i]);
 	                	$m_journal_temp_entry->save();
 	                }
 
@@ -153,6 +156,7 @@
 	                $memos=$this->input->post('memo',TRUE);
 	                $dr_amounts=$this->input->post('dr_amount',TRUE);
 	                $cr_amounts=$this->input->post('cr_amount',TRUE);
+	                $department_id_line=$this->input->post('department_id_line');
 
 	                $m_journal_temp_entry->delete_via_fk($template_id);
 
@@ -162,6 +166,7 @@
 	                	$m_journal_temp_entry->memo=$memos[$i];
 	                	$m_journal_temp_entry->dr_amount=$this->get_numeric_value($dr_amounts[$i]);
 	                	$m_journal_temp_entry->cr_amount=$this->get_numeric_value($cr_amounts[$i]);
+	                	$m_journal_temp_entry->department_id=$this->get_numeric_value($department_id_line[$i]);
 	                	$m_journal_temp_entry->save();
 	                }
 
@@ -190,7 +195,7 @@
 	                $journal_template_id=$this->input->get('id');
 	                $m_accounts=$this->Account_title_model;
 	                $m_journal_temp_entry=$this->Journal_template_entry_model;
-
+	                $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE');
 	                $data['accounts']=$m_accounts->get_list();
 	                $data['entries']=$m_journal_temp_entry->get_list('journal_entry_templates.template_id='.$journal_template_id);
 
