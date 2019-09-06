@@ -60,13 +60,13 @@
                                 <li class="<?php //echo (in_array('16-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Jobs">Jobs Management</a></li>
                             </ul>
                         </li>
-                        <li class="<?php echo (in_array('16',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-view-list-alt"></i><span>Other Income</span></a>
+<!--                         <li class="<?php echo (in_array('16',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-view-list-alt"></i><span>Other Income</span></a>
                             <ul class="acc-menu">
                                 <li class="<?php echo (in_array('16-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Other_income">Other Income</a></li>
                                 <li class="<?php echo (in_array('16-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Item_units">Item Unit</a></li>
                                 <li class="<?php echo (in_array('16-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Items">Items Management</a></li>
                             </ul>
-                        </li>
+                        </li> -->
                         <li class="<?php echo (in_array('2',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-package"></i><span>Purchasing</span></a>
                             <ul class="acc-menu">
                                 <li class="<?php echo (in_array('2-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Purchases">Purchase Order</a></li>
@@ -121,9 +121,9 @@
                         <li class="<?php echo (in_array('14',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-view-list-alt"></i><span>Treasury</span></a>
                             <ul class="acc-menu">
                                 <li class="<?php echo (in_array('14-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Treasury">Treasury</a></li>
-                                <li class="<?php echo (in_array('14-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Carf">Cash Advance Request Form</a></li>
+<!--                                 <li class="<?php echo (in_array('14-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Carf">Cash Advance Request Form</a></li>
                                 <li class="<?php echo (in_array('14-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Collection_posting">Revolving Fund Journal</a></li>
-                                <li class="<?php echo (in_array('14-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Daily_collection_report">Revolving Fund Monitor</a></li>
+                                <li class="<?php echo (in_array('14-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Daily_collection_report">Revolving Fund Monitor</a></li> -->
                             </ul>
                         </li>
                         <li class="<?php echo (in_array('11',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-credit-card"></i><span>Bank Reconciliation</span></a>

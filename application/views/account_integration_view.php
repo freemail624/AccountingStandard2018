@@ -415,7 +415,7 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                                 <span class="help-block m-b-none">Please select the account where payment to supplier will be credited.</span>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group hidden">
                             <label class="col-md-3 control-label"> * Receivable from Supplier<br> (Other Income) :</label>
                             <div class="col-md-7">
                                 <select name="other_income_receivable_account_id"  class="cbo_accounts" data-error-msg="Receivable from Supplier (Other Income) Account is required." required>
@@ -481,8 +481,8 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                         </div>
                         <br >
 
-                        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Purchase Integration</strong></span></h4>
-                        <div class="form-group">
+                        <h4 class="hidden"><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Purchase Integration</strong></span></h4>
+                        <div class="form-group hidden">
                             <label class="col-md-3 control-label"> * Purchases Integration Purchase Account :</label>
                             <div class="col-md-7">
                                 <select name="supplier_inventory_debit_account_id" class="cbo_accounts" data-error-msg=" Purchase Integration account is required." required>
@@ -500,8 +500,8 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
 
 
                         
-                        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Revolving Fund Account</strong></span></h4>
-                        <div class="form-group">
+                        <h4 class="hidden"><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Revolving Fund Account</strong></span></h4>
+                        <div class="form-group hidden">
                             <label class="col-md-3 control-label"> * Revolving Fund:</label>
                             <div class="col-md-7">
                                 <select name="revolving_fund_account_id" class="cbo_accounts" data-error-msg="Revolving Fund account is required." required>

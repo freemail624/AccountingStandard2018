@@ -288,7 +288,7 @@
                 </div>
 
 <br>
-        <div class="panel panel-default" style="border-radius:6px;">
+        <div class="panel panel-default hidden" style="border-radius:6px;">
             <div id="collapseTwo" class="collapse in">
                 <div class="panel-body">    
                     <h2 class="h2-panel-heading">Review Other Income (Pending)</h2><hr>
@@ -314,7 +314,7 @@
         </div>
         <br>
 
-        <div class="panel panel-default" style="border-radius:6px;">
+        <div class="panel panel-default hidden" style="border-radius:6px;">
             <div id="collapseOne" class="collapse in">
                 <div class="panel-body" style="min-height: 400px;">
                 <h2 class="h2-panel-heading">Cash Receipt Journal (Other Income)</h2><hr>
