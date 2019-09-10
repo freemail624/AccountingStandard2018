@@ -338,15 +338,6 @@
 
                 <div class="row">
                     <div class="col-lg-3">
-                       <b class="required"> * </b> <label>Txn #  :</label><br />
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="fa fa-code"></i>
-                            </span>
-                            <input type="text" name="txn_no" class="form-control" placeholder="TXN-YYYYMMDD-XXX" readonly>
-                        </div>
-                    </div>
-                    <div class="col-lg-3">
                        <b class="required"> * </b> <label>Date  :</label><br />
                         <div class="input-group">
                                             <span class="input-group-addon">
@@ -355,6 +346,16 @@
                             <input type="text" name="date_txn" class="date-picker form-control" data-error-msg="Date is required." required>
                         </div>
                     </div>
+                    <div class="col-lg-3">
+                       <b class="required"> * </b> <label>Txn #  :</label><br />
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <i class="fa fa-code"></i>
+                            </span>
+                            <input type="text" name="txn_no" class="form-control" placeholder="TXN-YYYYMMDD-XXX" readonly>
+                        </div>
+                    </div>
+
 
 
                     <div class="col-lg-4 col-lg-offset-2">
@@ -378,13 +379,12 @@
                         </select>
                     </div>
                     <div class="col-lg-3">
-                         <label>Reference # :</label><br />
+                         <label>Reference # (AUTO):</label><br />
                         <div class="input-group">
                             <span class="input-group-addon">
                                 <i class="fa fa-code"></i>
                             </span>
-                            <input type="text"  name="ref_no" class="form-control"  readonly value="AUTO">
-                            <input type="hidden"  name="auto" class="form-control"   value="1">
+                            <input type="text" maxlength="15" class="form-control"  readonly placeholder="XXXXXXXX">
                             <!-- <input type="text" name="ref_no" maxlength="15" class="form-control"  data-error-msg="Reference # is required." required> -->
                         </div>
                     </div>
@@ -1631,8 +1631,6 @@ $(document).ready(function(){
             //set defaults
             _cboPaymentMethod.select2('val',1);//set cash as default
             $('input[name="date_txn"]').val(_currentDate);
-            $('input[name="ref_no"]').val('AUTO');
-            $('input[name="auto"]').val('1');
 
             showList(false);
 

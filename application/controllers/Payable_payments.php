@@ -84,7 +84,7 @@ class Payable_payments extends CORE_Controller
                 //payment details
                 $m_payment->receipt_no=$receipt_no;
                 $m_payment->supplier_id=$this->input->post('supplier_id',TRUE);
-
+                $m_payment->receipt_type = $this->input->post('receipt_type');
 
                 $m_payment->department_id=$this->input->post('department',TRUE);
                 $payment_method_id=$this->input->post('payment_method',TRUE);
@@ -108,11 +108,14 @@ class Payable_payments extends CORE_Controller
                 $payable_amount=$this->input->post('payable_amount',TRUE);
 
                 for($i=0;$i<=count($payment_amount)-1;$i++){
-                    $m_payment_items->payment_id=$payment_id;
-                    $m_payment_items->dr_invoice_id=$dr_invoice_id[$i];
-                    $m_payment_items->payment_amount=$this->get_numeric_value($payment_amount[$i]);
-                    $m_payment_items->payable_amount=$this->get_numeric_value($payable_amount[$i]);
-                    $m_payment_items->save();
+                    if($this->get_numeric_value($payment_amount[$i]) >0){
+                        $m_payment_items->payment_id=$payment_id;
+                        $m_payment_items->dr_invoice_id=$dr_invoice_id[$i];
+                        $m_payment_items->payment_amount=$this->get_numeric_value($payment_amount[$i]);
+                        $m_payment_items->payable_amount=$this->get_numeric_value($payable_amount[$i]);
+                        $m_payment_items->save();
+                    }
+
                 }
 
 

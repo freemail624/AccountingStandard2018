@@ -206,8 +206,8 @@
                             <div class="col-lg-6">
                                 <b class="required">*</b> Receipt/Voucher type  : <br />
                                 <select id="cbo_receipt_type" name="receipt_type" class="form-control">
-                                    <option value="1" selected>CV</option>
-                                    <option value="2">JV</option>
+                                    <option value="CV" selected>CV</option>
+                                    <option value="JV">JV</option>
                                 </select>
                             </div>
                         </div>

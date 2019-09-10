@@ -180,6 +180,11 @@ class Cash_disbursement extends CORE_Controller
                     $response['msg']='Please make sure transaction date is valid!<br />';
                     die(json_encode($response));
                 }
+                $ref_type = $this->input->post('ref_type');
+                $ref_type_count = COUNT($m_journal->get_list(array('ref_type'=>$ref_type)))+1;
+
+                $m_journal->ref_type=$ref_type;
+                $m_journal->ref_no=str_pad($ref_type_count, 8, "0", STR_PAD_LEFT);
 
                 $m_journal->supplier_id=$this->input->post('supplier_id',TRUE);
                 $m_journal->remarks=$this->input->post('remarks',TRUE);
@@ -191,8 +196,6 @@ class Cash_disbursement extends CORE_Controller
                 $m_journal->bank_id=$this->input->post('bank_id');
                 $m_journal->check_no=$this->input->post('check_no');
                 $m_journal->check_date=date('Y-m-d',strtotime($this->input->post('check_date',TRUE)));
-                $m_journal->ref_type=$this->input->post('ref_type');
-                $m_journal->ref_no=$this->input->post('ref_no');
                 $m_journal->amount=$this->get_numeric_value($this->input->post('amount'));
 
 
@@ -221,9 +224,9 @@ class Cash_disbursement extends CORE_Controller
 
                 //update transaction number base on formatted last insert id
                 $m_journal->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
-                if($this->input->post('auto',TRUE) == 1){
-                    $m_journal->ref_no = $journal_id;
-                }
+                // if($this->input->post('auto',TRUE) == 1){
+                //     $m_journal->ref_no = $journal_id;
+                // }
                 $m_journal->modify($journal_id);
 
 
@@ -406,7 +409,7 @@ class Cash_disbursement extends CORE_Controller
                 'journal_info.check_no',
                 'DATE_FORMAT(journal_info.check_date,"%m/%d/%Y") as check_date',
                 'journal_info.ref_type',
-                'journal_info.ref_no',
+                'CONCAT(journal_info.ref_type,"-",journal_info.ref_no) as ref_no',
                 'journal_info.amount',
                 'CONCAT(IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,""))as particular',
                 'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by'
