@@ -899,6 +899,7 @@ class Journal_info_model extends CORE_Model{
             
             SUM(ji.amount) AS summmary,
             ji.*,
+            CONCAT(ji.ref_type,'-',ji.ref_no) as ref_no,
             s.*
 
             FROM
