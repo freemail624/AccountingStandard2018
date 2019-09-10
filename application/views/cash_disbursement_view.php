@@ -2429,7 +2429,7 @@ $(document).ready(function(){
 
 
 
-        $(f).find('input:first').focus();
+        // $(f).find('input:first').focus();
         $('#tbl_entries > tbody tr').slice(2).remove();
 
 
