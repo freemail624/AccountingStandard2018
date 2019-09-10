@@ -98,7 +98,7 @@ class Payable_payments extends CORE_Controller
                 //payment details
                 $m_payment->receipt_no=$receipt_no;
                 $m_payment->supplier_id=$this->input->post('supplier_id',TRUE);
-
+                $m_payment->receipt_type = $this->input->post('receipt_type');
 
                 $m_payment->department_id=$this->input->post('department',TRUE);
                 $payment_method_id=$this->input->post('payment_method',TRUE);

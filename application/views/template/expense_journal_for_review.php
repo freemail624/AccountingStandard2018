@@ -117,8 +117,23 @@
                                     </div>
                                     <div class="col-lg-4">
                                         <div style="border: 1px solid lightgrey;padding: 4%;border-radius: 5px;">
+                                            <div class="row"> 
+                                                <div class="col-sm-6"> 
+                                                    <b class="required"> * </b> <label>Reference type :</label><br /> 
+                                                    <select class="cbo_customer_list" name="ref_type" data-error-msg="Reference type is required." required> 
+                                                        <option value="CV" <?php if($payment_info->receipt_type == 'CV'){ echo 'SELECTED';} ?>>CV</option> 
+                                                        <option value="JV" <?php if($payment_info->receipt_type == 'JV'){ echo 'SELECTED';} ?>>JV</option> 
+                                                    </select> 
+                                                </div> 
+                                                <div class="col-sm-6"> 
+                                                     <label>Reference # (AUTO):</label><br /> 
+                                                    <div class="input-group"> 
+                                                        <input type="text" maxlength="15" class="form-control"  readonly placeholder="XXXXXXXX"> 
+                                                    </div> 
+                                                </div> 
+                                            </div> 
                                             <div class="row">
-                                                <div class="col-lg-6">
+                                                <div class="col-lg-12">
                                                     Method of Payment * :<br />
                                                     <select name="payment_method" class="cbo_payment_method">
                                                         <?php foreach($methods as $method){ ?>
@@ -126,7 +141,7 @@
                                                         <?php } ?>
                                                     </select>
                                                 </div>
-                                                <div class="col-lg-6">
+                                                <div class="col-lg-6 hidden">
                                                     <label for="is_for_assignment">For Check Assignment?  :</label><br />
                                                     <input type="checkbox" name="is_for_assignment" id="is_for_assignment" checked>
                                                 </div>
