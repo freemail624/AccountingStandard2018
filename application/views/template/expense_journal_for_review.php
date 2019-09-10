@@ -133,7 +133,7 @@
                                                 </div> 
                                             </div> 
                                             <div class="row">
-                                                <div class="col-lg-12">
+                                                <div class="col-lg-6">
                                                     Method of Payment * :<br />
                                                     <select name="payment_method" class="cbo_payment_method">
                                                         <?php foreach($methods as $method){ ?>
