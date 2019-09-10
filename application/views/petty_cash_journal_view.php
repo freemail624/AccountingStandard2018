@@ -471,8 +471,8 @@
                                     <div class="container-fluid">
                                         <form id="frm_petty_cash" role="form">
                                             <div class="col-xs-12 col-sm-6">
-                                                <strong>* Ref # :</strong><br>
-                                                <input type="text" name="ref_no" class="form-control" data-error-msg="Ref # is required" placeholder="Ref #" required>
+                                                <strong>Reference # (AUTO):</strong><br>
+                                                <input type="text" name="ref_no" class="form-control" placeholder="PCV-XXXXX" readonly>
                                                 <strong>* Supplier :</strong><br>
                                                 <select id="cbo_supplier" class="form-control" name="supplier_id" style="width: 100%;" data-error-msg="Supplier is required" required>
                                                     <option value="create_supplier">[Create New Supplier]</option>

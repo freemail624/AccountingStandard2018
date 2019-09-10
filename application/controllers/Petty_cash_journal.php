@@ -142,8 +142,9 @@
 					$m_journal->begin();
 
 					$m_journal->set('date_created','NOW()');
-
-					$m_journal->ref_no=$this->input->post('ref_no',TRUE);
+                	$ref_no_count = COUNT($m_journal->get_list(array('book_type'=>'PCV')))+1;
+                	$m_journal->ref_no='PCV-'.str_pad($ref_no_count, 5, "0", STR_PAD_LEFT);
+					// $m_journal->ref_no=$this->input->post('ref_no',TRUE);
 					$m_journal->supplier_id=$this->input->post('supplier_id',TRUE);
 					$m_journal->department_id=$this->input->post('department_id',TRUE);
 					$m_journal->book_type='PCV';
@@ -207,7 +208,7 @@
 
 					$m_journal->begin();
 
-					$m_journal->ref_no=$this->input->post('ref_no',TRUE);
+					// $m_journal->ref_no=$this->input->post('ref_no',TRUE);
 					$m_journal->supplier_id=$this->input->post('supplier_id',TRUE);
 					$m_journal->department_id=$this->input->post('department_id',TRUE);
 					$m_journal->book_type='PCV';
