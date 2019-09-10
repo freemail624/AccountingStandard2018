@@ -429,21 +429,21 @@
                             <div class="col-md-12">
                                 <div class="row">
                                     <div class="col-sm-6">
-                                       <b class="required"> * </b> <label>Txn #  :</label><br />
-                                        <div class="input-group">
-                                            <span class="input-group-addon">
-                                                <i class="fa fa-code"></i>
-                                            </span>
-                                            <input type="text" name="txn_no" class="form-control" placeholder="TXN-YYYYMMDD-XXX" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6">
                                        <b class="required"> * </b> <label>Date  :</label><br />
                                         <div class="input-group">
                                             <span class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </span>
                                             <input type="text" name="date_txn" class="date-picker form-control" data-error-msg="Date is required." required>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                       <b class="required"> * </b> <label>Txn #  :</label><br />
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-code"></i>
+                                            </span>
+                                            <input type="text" name="txn_no" class="form-control" placeholder="TXN-YYYYMMDD-XXX" readonly>
                                         </div>
                                     </div>
                                 </div>
@@ -456,12 +456,12 @@
                                         </select>
                                     </div>
                                     <div class="col-sm-6">
-                                        <b class="required"> * </b> <label>Reference # :</label><br />
+                                         <label>Reference # (AUTO):</label><br />
                                         <div class="input-group">
                                             <span class="input-group-addon">
                                                 <i class="fa fa-code"></i>
                                             </span>
-                                            <input type="text" name="ref_no" maxlength="15" class="form-control"  data-error-msg="Reference # is required." required>
+                                            <input type="text" maxlength="15" class="form-control"  readonly placeholder="XXXXXXXX">
                                         </div>
                                     </div>
                                 </div>
