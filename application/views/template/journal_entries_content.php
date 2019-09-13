@@ -5,7 +5,7 @@
     <style type="text/css">
         body {
             font-family: 'Calibri',sans-serif;
-            font-size: 12px;
+            font-size: 11px;
         }
 
         .align-right {
@@ -116,9 +116,9 @@
 
                 ?>
                 <tr>
-                    <td width="30%" style="border: 1px solid black;text-align: left;padding: 6px;"><?php echo $account->account_no; ?></td>
+                    <td width="10%" style="border: 1px solid black;text-align: left;padding: 6px;"><?php echo $account->account_no; ?></td>
                     <td width="30%" style="border: 1px solid black;text-align: left;padding: 6px;"><?php echo $account->account_title; ?></td>
-                    <td width="30%" style="border: 1px solid black;text-align: right;padding: 6px;"><?php echo $account->memo; ?></td>
+                    <td width="15%" style="border: 1px solid black;text-align: right;padding: 6px;"><?php echo $account->memo; ?></td>
                     <td width="15%" style="border: 1px solid black;text-align: right;padding: 6px;"><?php echo number_format($account->dr_amount,2); ?></td>
                     <td width="15%" style="border: 1px solid black;text-align: right;padding: 6px;"><?php echo number_format($account->cr_amount,2); ?></td>
                     <td width="15%" style="border: 1px solid black;text-align: right;padding: 6px;"><?php echo $account->department_name ?></td>
