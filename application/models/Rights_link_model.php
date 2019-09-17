@@ -109,7 +109,8 @@ class Rights_link_model extends CORE_Model{
                                           (99,'17','17-3','Quarterly Percentage Tax Return'),
                                           -- (100,'1','1-7','Vouchers (Check Details Edit)'),
                                           (101,'6','6-15','Purchase Order Email Settings'),
-                                          (102,'9','9-22','Income Statement (Department - Costing)')
+                                          (102,'9','9-22','Income Statement (Department - Costing)'),
+                                          (103,'7','7-2','Purchase Order for Review')
 
 
 

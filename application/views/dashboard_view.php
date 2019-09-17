@@ -81,13 +81,13 @@
             overflow-x: hidden!important;
         }
 
-        #tbl_po_list {
+        #tbl_po_list ,#tbl_po_list_review{
 /*            color: white!important;
             border: none!important;*/
             font-size: 12px;
         }
 
-        #tbl_po_list .no-padding table{
+        #tbl_po_list,#tbl_po_list_review .no-padding table{
           font-size: 12px;
         }
         th {
@@ -299,6 +299,9 @@
         -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
         background-color: #555;
       }
+      #tbl_po_list_filter, #tbl_po_list_review_filter{
+        display:none;
+      }
     </style>
 
 </head>
@@ -400,14 +403,46 @@
                                                             <span style="font-weight: bolder;">Month</span>
                                                         </div>
                                                     </div>
-                                                    
+                                                </div>
+                                                <div class="row" style="margin-top: 20px;">
+                                                    <div class="col-xs-12 col-sm-12 <?php echo (in_array('7-2',$this->session->user_rights)?'':'hidden'); ?>">
+                                                      <div class="data-container table-responsive" style="min-height: 300px; max-height: 700px;overflow-x: hidden;">
+                                                      <div class="row">
+                                                        <div class="col-sm-9"><h3 class="po_title" style=""><i class="fa fa-file-text-o"  style="color: #067cb2;"></i> <span >PURCHASE ORDER FOR CHECKING</span></h3>
+                                                        </div>
+                                                        <div class="col-sm-3">
+                                                        <input type="text" id="search_tbl_po_list_review" class="form-control">
+                                                        </div>
+                                                      <div class="col-sm-12">
+                                                            <table id="tbl_po_list_review" class="table table-striped" cellspacing="0" width="100%">
+                                                                <thead>
+                                                                    <th></th>
+                                                                    <th>PO #</th>
+                                                                    <th>Vendor</th>
+                                                                    <th width="20%">Remarks </th>
+                                                                    <th>Posted by </th>
+                                                                    <th style="text-align: center;"> <i class="fa fa-paperclip"></i></th>
+                                                                    <th style="width: 15%!important;"><center>Action</center></th>
+                                                                </thead>
+                                                                <tbody>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                      </div>
 
+                                                      </div>
+                                                    </div>
                                                 </div>
                                                 <div class="row" style="margin-top: 20px;">
                                                     <div class="col-xs-12 col-sm-12 <?php echo (in_array('7-1',$this->session->user_rights)?'':'hidden'); ?>">
-                                                      <div class="data-container table-responsive" style="padding: 20px 15px 20px 15px; min-height: 700px; max-height: 700px;">
-                                                            <h6 class="visible-xs hidden-sm hidden-md hidden-lg po_title" style="position: absolute; top: 5px"><i class="fa fa-file-text-o"></i> <span >PURCHASE ORDER</span></h6>
-                                                            <h3 class="hidden-xs po_title" style="position: absolute; top: 5px"><i class="fa fa-file-text-o"  style="color: #067cb2;"></i> <span >PURCHASE ORDER FOR APPROVAL</span></h3>
+                                                      <div class="data-container table-responsive" style="min-height: 300px; max-height: 700px;overflow-x: hidden;">
+                                                      <div class="row">
+                                                        <div class="col-sm-9"><h3 class="po_title" style=""><i class="fa fa-file-text-o"  style="color: #067cb2;"></i> <span >PURCHASE ORDER FOR APPROVAL</span></h3>
+                                                        </div>
+                                                        <div class="col-sm-3">
+                                                        <input type="text" id="search_tbl_po_list" class="form-control">
+                                                        </div>
+                                                      <div class="col-sm-12">
                                                             <table id="tbl_po_list" class="table table-striped" cellspacing="0" width="100%">
                                                                 <thead>
                                                                     <th></th>
@@ -421,14 +456,9 @@
                                                                 <tbody>
                                                                 </tbody>
                                                             </table>
-                                                      </div>
-                                                    </div>
-                                                    <div class="col-xs-12 hidden <?php echo ($this->session->user_group_id == 1 ? 'col-sm-4' : 'col-sm-4' ); ?>">
-                                                      <div id="style-1" class="data-container" style="min-height: 700px; max-height: 700px; overflow-y: scroll;">
-                                                        <h3><i class="fa fa-rss" style="color: #067cb2;;"></i> ACTIVITY FEED</h3>
-                                                        <div class="v-timeline vertical-container">
-                                                            <?php echo ($this->session->user_group_id != 1 ? '' : $news_feed); ?>
                                                         </div>
+                                                      </div>
+
                                                       </div>
                                                     </div>
                                                 </div>
@@ -440,7 +470,109 @@
                     </div> <!-- #page-content -->
             </div>
 
+      <div id="modal_confirmation" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+          <div class="modal-dialog modal-md">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                      <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Disapproval Confirmation</h4>
 
+                  </div>
+
+                  <div class="modal-body">
+                  <table width="100%" class="table table-striped" style="font-size: 12px;margin-bottom: 0px;">
+                      <tbody>
+                          <tr>
+                              <td style="width: 30%;"><b>Purchase Order No: </b></td>
+                              <td id="disapproved_po_no"></td>
+                          </tr>
+                          <tr>
+                              <td><b>Disapproved By: </b></td>
+                              <td id=""><?php echo $this->session->user_fullname; ?></td>
+                          </tr>
+                          <tr>
+                              <td><b>Optional Remarks:</b></td>
+                              <td id=""><textarea id="disapproval_remarks" class="form-control" placeholder="Disapproval Remarks"></textarea></td>
+                          </tr>
+                      </tbody>
+                  </table>
+                  </div>
+            <div class="modal-footer">
+                <button id="btn_yes_disapprove" type="button" class="btn btn-danger" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Accept</button>
+
+            </div>
+              </div>
+          </div>
+      </div>
+
+      <div id="modal_confirmation_review" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+          <div class="modal-dialog modal-md">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                      <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Review Confirmation</h4>
+
+                  </div>
+
+                  <div class="modal-body">
+                  <table width="100%" class="table table-striped" style="font-size: 12px;margin-bottom: 0px;">
+                      <tbody>
+                          <tr>
+                              <td style="width: 30%;"><b>Purchase Order No: </b></td>
+                              <td id="review_po_no"></td>
+                          </tr>
+                          <tr>
+                              <td><b>Reviewed By: </b></td>
+                              <td id=""><?php echo $this->session->user_fullname; ?></td>
+                          </tr>
+                          <tr>
+                              <td><b>Optional Remarks:</b></td>
+                              <td id=""><textarea id="review_remarks" class="form-control" placeholder="Optional Remarks"></textarea></td>
+                          </tr>
+                      </tbody>
+                  </table>
+                  </div>
+            <div class="modal-footer">
+                <button id="btn_yes_review" type="button" class="btn btn-danger" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Accept</button>
+
+            </div>
+              </div>
+          </div>
+      </div>
+      <div id="modal_confirmation_approval" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+          <div class="modal-dialog modal-md">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                      <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Approval Confirmation</h4>
+
+                  </div>
+
+                  <div class="modal-body">
+                  <table width="100%" class="table table-striped" style="font-size: 12px;margin-bottom: 0px;">
+                      <tbody>
+                          <tr>
+                              <td style="width: 30%;"><b>Purchase Order No: </b></td>
+                              <td id="approval_po_no"></td>
+                          </tr>
+                          <tr>
+                              <td><b>Approved By: </b></td>
+                              <td id=""><?php echo $this->session->user_fullname; ?></td>
+                          </tr>
+                          <tr>
+                              <td><b>Approval Remarks:</b></td>
+                              <td id=""><textarea id="approval_remarks" class="form-control" placeholder="Optional Remarks"></textarea></td>
+                          </tr>
+                      </tbody>
+                  </table>
+                  </div>
+            <div class="modal-footer">
+                <button id="btn_yes_approval" type="button" class="btn btn-danger" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Accept</button>
+
+            </div>
+              </div>
+          </div>
+      </div>
             <footer role="contentinfo">
                 <div class="clearfix">
                     <ul class="list-unstyled list-inline pull-left">
@@ -749,8 +881,6 @@ Chart.defaults.global.defaultFontColor = "#000000";
         var dt; var _selectedID; var _selectRowObj;
 
         var initializeControls=(function(){
-
-
             dt=$('#tbl_po_list').DataTable({
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
@@ -783,7 +913,49 @@ Chart.defaults.global.defaultFontColor = "#000000";
                         render: function (data, type, full, meta){
                             //alert(full.purchase_order_id);
 
-                            var btn_approved='<button class="btn btn-success btn-sm" name="approve_po"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Approve this PO"><i class="fa fa-check" style="color: white;"></i> <span class=""></span></button>';
+                            var btn_approved='<button class="btn btn-success btn-sm" name="approve_po"  data-toggle="tooltip" data-placement="top" title="Approve this PO"><i class="fa fa-check" style="color: white;"></i> <span class=""></span></button>';
+                            var btn_conversation='<a id="link_conversation" href="Po_messages?id='+full.purchase_order_id+'" target="_blank" class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="Open Conversation"><i class="fa fa-envelope"></i> </a>';
+                            var btn_disapproved='<button class="btn btn-danger btn-sm" name="disapprove_po" data-toggle="tooltip" data-placement="top" title="Disapprove this PO"><i class="fa fa-times" style="color: white;"></i> <span class=""></span></button>';
+
+                            return '<center>'+btn_approved+'&nbsp;'+btn_conversation+'&nbsp;'+btn_disapproved+'</center>';
+                        }
+                    }
+                ]
+            });
+
+            dtreview=$('#tbl_po_list_review').DataTable({
+                "dom": '<"toolbar">frtip',
+                "bLengthChange":false,
+                "ajax" : "Purchases/transaction/po-for-review",
+                "language": {
+                  "searchPlaceholder":"Search Purchase Order"
+                },
+                "columns": [
+                    {
+                        "targets": [0],
+                        "class":          "details-control",
+                        "orderable":      false,
+                        "data":           null,
+                        "defaultContent": ""
+                    },
+                    { targets:[1],data: "po_no" },
+                    { targets:[2],data: "supplier_name" },
+                    { targets:[3],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(60)},
+                    { targets:[4],data: "posted_by" },
+                    {
+                        targets:[5],data: "attachment",
+                        render: function (data, type, full, meta){
+
+                            return '<center>'+ data +' <i class="fa fa-paperclip"></i></classenter>';
+                        }
+
+                    },
+                    {
+                        targets:[6],
+                        render: function (data, type, full, meta){
+                            //alert(full.purchase_order_id);
+
+                            var btn_approved='<button class="btn btn-primary btn-sm" name="reviewed_po"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Mark this PO as reviewed"><i class="fa fa-check" style="color: white;"></i> <span class=""></span></button>';
                             var btn_conversation='<a id="link_conversation" href="Po_messages?id='+full.purchase_order_id+'" target="_blank" class="btn btn-info btn-sm"  style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Open Conversation"><i class="fa fa-envelope"></i> </a>';
 
                             return '<center>'+btn_approved+'&nbsp;'+btn_conversation+'</center>';
@@ -791,7 +963,6 @@ Chart.defaults.global.defaultFontColor = "#000000";
                     }
                 ]
             });
-
              $('div.dataTables_filter input').addClass('dash_search_field');
         })();
 
@@ -840,6 +1011,43 @@ Chart.defaults.global.defaultFontColor = "#000000";
                 }
             } );
 
+            $('#tbl_po_list_review tbody').on( 'click', 'tr td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = dtreview.row( tr );
+                var idx = $.inArray( tr.attr('id'), detailRows );
+
+                if ( row.child.isShown() ) {
+                    tr.removeClass( 'details' );
+                    row.child.hide();
+
+                    // Remove from the 'open' array
+                    detailRows.splice( idx, 1 );
+                }
+                else {
+                    tr.addClass( 'details' );
+                    //console.log(row.data());
+                    var d=row.data();
+
+                    $.ajax({
+                        "dataType":"html",
+                        "type":"POST",
+                        "url":"Templates/layout/po/"+ d.purchase_order_id+'?type=reviewed',
+                        "beforeSend" : function(){
+                            row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                        }
+                    }).done(function(response){
+                        row.child( response,'no-padding' ).show();
+                        // Add to the 'open' array
+                        if ( idx === -1 ) {
+                            detailRows.push( tr.attr('id') );
+                        }
+                    });
+
+
+
+
+                }
+            } );
 
             //*****************************************************************************************
             $('#tbl_po_list > tbody').on('click','button[name="approve_po"]',function(){
@@ -848,21 +1056,76 @@ Chart.defaults.global.defaultFontColor = "#000000";
 
                 var data=dt.row(_selectRowObj).data();
                 _selectedID=data.purchase_order_id;
+                $('#modal_confirmation_approval').modal('show');
+                $('#approval_po_no').text(data.po_no);
+                $('#approval_remarks').val('');
 
+            });
+
+              $('#btn_yes_approval').click(function(){
                  approvePurchaseOrder().done(function(response){
                     showNotification(response);
                     if(response.stat=="success"){
                         dt.row(_selectRowObj).remove().draw();
+                        $('#modal_confirmation_approval').modal('hide');
                     }
 
                 });
+              });
+
+            $('#tbl_po_list > tbody').on('click','button[name="disapprove_po"]',function(){
+                _selectRowObj=$(this).closest('tr'); //hold dom of tr which is selected
+                var data=dt.row(_selectRowObj).data();
+                _selectedID=data.purchase_order_id;
+                $('#modal_confirmation').modal('show');
+                $('#disapproved_po_no').text(data.po_no);
+                $('#disapproval_remarks').val('');
+
             });
 
+              $('#btn_yes_disapprove').click(function(){
+                 disapprovePurchaseOrder().done(function(response){
+                    showNotification(response);
+                    if(response.stat=="success"){
+                        dt.row(_selectRowObj).remove().draw();
+                        $('#modal_confirmation').modal('hide');
+                    }
+                });
+              });
+
+            $('#tbl_po_list_review > tbody').on('click','button[name="reviewed_po"]',function(){
+            // showNotification({title:"Approving PO and Sending Email!",stat:"info",msg:"Please wait for a few seconds."});
+                _selectRowObj=$(this).closest('tr'); //hold dom of tr which is selected
+                var data=dtreview.row(_selectRowObj).data();
+                _selectedIDreviewed=data.purchase_order_id;
+                $('#modal_confirmation_review').modal('show');
+                $('#review_po_no').text(data.po_no);
+                $('#review_remarks').val('');
+
+            });
+
+              $('#btn_yes_review').click(function(){
+                 reviewPurchaseOrder().done(function(response){
+                    showNotification(response);
+                    if(response.stat=="success"){
+                        dtreview.row(_selectRowObj).remove().draw();
+                        dt.row.add(response.data).draw();
+                        $('#modal_confirmation_review').modal('hide');
+                    }
+
+                });
+              });
 
             //****************************************************************************************
             $('#tbl_po_list > tbody').on('click','button[name="mark_as_approved"]',function(){
                 _selectRowObj=$(this).parents('tr').prev();
                 _selectRowObj.find('button[name="approve_po"]').click();
+                showSpinningProgress($(this));
+            });
+
+            $('#tbl_po_list_review > tbody').on('click','button[name="mark_as_reviewed"]',function(){
+                _selectRowObj=$(this).parents('tr').prev();
+                _selectRowObj.find('button[name="reviewed_po"]').click();
                 showSpinningProgress($(this));
             });
 
@@ -874,7 +1137,17 @@ Chart.defaults.global.defaultFontColor = "#000000";
                 //alert(_selectRowObj.find('a[id="link_conversation"]').length);
             });
 
+            $("#search_tbl_po_list_review").keyup(function(){         
+                dtreview
+                    .search(this.value)
+                    .draw();
+            });
 
+            $("#search_tbl_po_list").keyup(function(){         
+                dt
+                    .search(this.value)
+                    .draw();
+            });
 
 
         })();
@@ -890,10 +1163,31 @@ Chart.defaults.global.defaultFontColor = "#000000";
                 "dataType":"json",
                 "type":"POST",
                 "url":"Purchases/transaction/mark-approved",
-                "data":{purchase_order_id : _selectedID}
+                "data":{purchase_order_id : _selectedID, approval_remarks : $('#approval_remarks').val()}
 
             });
         };
+
+        var disapprovePurchaseOrder=function(){
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Purchases/transaction/mark-disapproved",
+                "data":{purchase_order_id : _selectedID, disapproval_remarks : $('#disapproval_remarks').val()}
+
+            });
+        };
+
+        var reviewPurchaseOrder=function(){
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Purchases/transaction/mark-reviewed",
+                "data":{purchase_order_id : _selectedIDreviewed, review_remarks : $('#review_remarks').val()}
+
+            });
+        };
+
 
         var showNotification=function(obj){
             PNotify.removeAll(); //remove all notifications

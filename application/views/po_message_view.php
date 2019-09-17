@@ -367,24 +367,97 @@
 
                             <div class="row">
                                 <div class="col-lg-12">
-
-                                    <div class="pull-right">
-                                        <a href="#" id="btn_mark_approved_po" data-id="<?php echo $po_info[0]->purchase_order_id; ?>" class="btn btn-primary btn-sm btn_mark_approved <?php echo (in_array('7-1',$this->session->user_rights)?'':'disabled'); ?>" style="text-transform: none;" data-toggle="tooltip" data-placement="top" title="Mark as Approved"><i class="fa fa-check-circle"></i> <span class=""></span> Approved this Purchase Order</a>
+                                    <div class="pull-right hidden" style="text-align: right">
+                                        <a href="#" id="btn_mark_reviewed_po" data-id="<?php echo $po_info[0]->purchase_order_id; ?>" class="btn btn-warning btn-sm btn_mark_reviewed <?php echo (in_array('7-1',$this->session->user_rights)?'':'disabled'); ?>" style="text-transform: none;" data-toggle="tooltip" data-placement="top" title="Mark as Reviewed"><i class="fa fa-check-circle"></i> <span class=""></span> Mark this Purchase Order as Reviewed</a><br>
+                                        <a href="#" id="btn_mark_approved_po" data-id="<?php echo $po_info[0]->purchase_order_id; ?>" class="btn btn-primary btn-sm btn_mark_approved <?php echo (in_array('7-2',$this->session->user_rights)?'':'disabled'); ?>" style="text-transform: none;" data-toggle="tooltip" data-placement="top" title="Mark as Approved"><i class="fa fa-check-circle"></i> <span class=""></span> Approve this Purchase Order</a>
                                     </div>
 
-
-                                    Purchase Order # :
-                                    <h4>
-                                        <strong><?php echo $po_info[0]->po_no; ?></strong>
-                                    </h4>
-
-
-                                    <div>
-                                        <br /> Supplier :<br /> <strong><?php echo $po_info[0]->supplier_name; ?></strong>
+                                    <div class="col-sm-4">
+                                       Purchase Order # :
+                                    <h4><strong><?php echo $po_info[0]->po_no; ?></strong></h4>
+                                                                            <br /> Supplier :<br /> <strong><?php echo $po_info[0]->supplier_name; ?></strong>
                                         <br /><br />  Terms :<br /> <strong><?php echo $po_info[0]->term_description; ?></strong>
                                         <br /><br />  Remarks :<br /> <strong><?php echo $po_info[0]->remarks; ?></strong>
+                                    </div>
 
+                                    <div class="col-sm-4">
+                                      <table width="100%" class="table table-striped" style="font-size: 12px;margin-bottom: 0px;">
+                                          <tbody>
+                                              <?php if($po_info[0]->disapproved_by_user != 0){ ?>
+                                              <tr>
+                                                  <td colspan="2"><b>DISAPPROVAL DETAILS </b></td>
+                                              </tr>
+                                              <tr>
+                                                  <td style="width: 30%;">Date: </td>
+                                                  <td id=""><?php echo $po_info[0]->date_disapproved; ?></td>
+                                              </tr>
+                                              <tr>
+                                                  <td>By: </td>
+                                                  <td id=""><?php echo $po_info[0]->disapproved_by; ?></td>
+                                              </tr>
+                                              <tr>
+                                                  <td>Remarks:</td>
+                                                  <td id=""><?php echo $po_info[0]->disapproval_remarks; ?></td>
+                                              </tr>
+                                            <?php } ?>
+                                            <?php if($po_info[0]->approved_by_user != 0){ ?>
+                                            <tr>
+                                              <td colspan="2"><b>APPROVAL DETAILS </b></td>
+                                            </tr>
+                                            <tr>
+                                              <td style="width: 30%;">Date: </td>
+                                              <td id=""><?php echo $po_info[0]->date_approved; ?></td>
+                                            </tr>
+                                            <tr>
+                                              <td>By: </td>
+                                              <td id=""><?php echo $po_info[0]->approved_by; ?></td>
+                                            </tr>
+                                            <tr>
+                                              <td>Remarks:</td>
+                                              <td id=""><?php echo $po_info[0]->approval_remarks; ?></td>
+                                            </tr>
+                                            <?php } ?>
+                                          </tbody>
+                                      </table>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <table width="100%" class="table table-striped" style="font-size: 12px;margin-bottom: 0px;">
+                                        <?php if($po_info[0]->reviewed_by_user != 0){ ?>
+                                          <tr>
+                                              <td colspan="2"><b>REVIEW DETAILS </b></td>
+                                          </tr>
+                                          <tr>
+                                              <td style="width: 30%;">Date: </td>
+                                              <td id=""><?php echo $po_info[0]->date_reviewed; ?></td>
+                                          </tr>
+                                          <tr>
+                                              <td>By: </td>
+                                              <td id=""><?php echo $po_info[0]->reviewed_by; ?></td>
+                                          </tr>
+                                          <tr>
+                                              <td>Remarks:</td>
+                                              <td id=""><?php echo $po_info[0]->review_remarks; ?></td>
+                                          </tr>
+                                          <?php } ?>
+                                        <?php if($po_info[0]->cancelled_by_user != 0){ ?>
+                                          <tr>
+                                              <td colspan="2"><b>CANCELLATION DETAILS </b></td>
+                                          </tr>
+                                          <tr>
+                                              <td style="width: 30%;">Date: </td>
+                                              <td id=""><?php echo $po_info[0]->date_cancelled; ?></td>
+                                          </tr>
+                                          <tr>
+                                              <td>By: </td>
+                                              <td id=""><?php echo $po_info[0]->cancelled_by; ?></td>
+                                          </tr>
+                                          <tr>
+                                              <td>Remarks:</td>
+                                              <td id=""><?php echo $po_info[0]->cancel_reason; ?></td>
+                                          </tr>
+                                        <?php } ?>
 
+                                        </table>
                                     </div>
                                 </div>
                             </div>

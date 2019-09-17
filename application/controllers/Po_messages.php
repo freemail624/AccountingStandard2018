@@ -30,11 +30,19 @@ class Po_messages extends CORE_Controller
 
             'purchase_order.*,CONCAT_WS(" ",purchase_order.terms,
             purchase_order.duration)as term_description,DATE_FORMAT(purchase_order.date_created,"%M %d %Y %r")as date_created,
-            CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by,suppliers.supplier_name',
+            CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by,suppliers.supplier_name,
+            CONCAT_WS(" ",uac.user_fname,uac.user_lname)as cancelled_by,
+            CONCAT_WS(" ",uar.user_fname,uar.user_lname)as reviewed_by,
+            CONCAT_WS(" ",uaa.user_fname,uaa.user_lname)as approved_by,
+            CONCAT_WS(" ",uad.user_fname,uad.user_lname)as disapproved_by',
 
             array(
                 array('suppliers','suppliers.supplier_id=purchase_order.supplier_id','left'),
-                array('user_accounts','user_accounts.user_id=purchase_order.posted_by_user','left')
+                array('user_accounts','user_accounts.user_id=purchase_order.posted_by_user','left'),
+                array('user_accounts uac','uac.user_id=purchase_order.cancelled_by_user','left'),
+                array('user_accounts uar','uar.user_id=purchase_order.reviewed_by_user','left'),
+                array('user_accounts uaa','uaa.user_id=purchase_order.approved_by_user','left'),
+                array('user_accounts uad','uad.user_id=purchase_order.disapproved_by_user','left')
             )
         );
 

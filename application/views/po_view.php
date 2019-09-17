@@ -518,6 +518,77 @@
     </div>
 </div>
 
+
+<div id="modal_confirmation_disapproved" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Disapproval Details</h4>
+
+            </div>
+
+            <div class="modal-body">
+            <table width="100%" class="table table-striped">
+                <tbody>
+                    <tr>
+                        <td style="width: 30%;"><b>Purchase Order #: </b></td>
+                        <td id="disapproved_po_no"></td>
+                    </tr>
+                    <tr>
+                        <td><b>Disapproval Remarks:</b></td>
+                        <td id="disapproval_remarks"></td>
+                    </tr>
+                    <tr>
+                        <td><b>Disapproved By: </b></td>
+                        <td id="disapproved_cancelled_by"></td>
+                    </tr>
+                    <tr>
+                        <td><b>Date and Time: </b></td>
+                        <td id="disapproved_date_cancelled"></td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal_confirmation_already_approved" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Approval Details</h4>
+
+            </div>
+
+            <div class="modal-body">
+            <table width="100%" class="table table-striped">
+                <tbody>
+                    <tr>
+                        <td style="width: 30%;"><b>Purchase Order #: </b></td>
+                        <td id="approved_po_no"></td>
+                    </tr>
+                    <tr>
+                        <td><b>Remarks:</b></td>
+                        <td id="approval_remarks"></td>
+                    </tr>
+                    <tr>
+                        <td><b>Approved By: </b></td>
+                        <td id="approved_by"></td>
+                    </tr>
+                    <tr>
+                        <td><b>Date and Time: </b></td>
+                        <td id="date_approved"></td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="modal_new_department" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog modal-md">
         <div class="modal-content">
@@ -874,7 +945,7 @@ $(document).ready(function(){
                     "defaultContent": ""
                 },
                 
-                { 
+                {   visible:false,
                     targets:[1], data:null,
                     render: function (data, type, full, meta){
                         var btn_email='<button id="btn_email" class="btn-primary btn btn-sm " style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Manually Send Email"><i class="fa fa-share"></i> <span class="display" style="display:none;"></span></button> ';
@@ -892,7 +963,7 @@ $(document).ready(function(){
                 { targets:[4],data: "term_description" },
                 { targets:[5],data: "approval_status" },
                 { targets:[6],data: "order_status" },
-                {
+                { visible:false,
                     targets:[7],data: null,
                     render: function (data, type, full, meta){
                         var _attribute='';
@@ -908,12 +979,19 @@ $(document).ready(function(){
 
                 },
                 {
-                    targets:[8],
+                    targets:[8],data: null,
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
                         var btn_message='<a href="Po_messages?id='+full.purchase_order_id+'" target="_blank" class="btn btn-green btn-sm" name="message_po" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Message"><i class="fa fa-envelope-o"></i> </a>';
-                        var btn_cancel='<button class="btn btn-red btn-sm" name="cancel_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Cancel PO"><i class="fa fa-times"></i> </button>';
+                        if(data.approval_id  == 4 || data.approval_id  == 3 || data.approval_id  == 1 ){
+                            favicon = '<i class="fa fa-info-circle"></i>';
+                            btncolor = 'btn-info';
+                        }else{
+                            favicon = '<i class="fa fa-times"></i>';
+                            btncolor = 'btn-danger';
+                        }
+                        var btn_cancel='<button class="btn '+btncolor+' btn-sm" name="cancel_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title=""> '+favicon+'</button>';
                  
 
                         return '<center>'+btn_edit+'&nbsp;'+btn_message+'&nbsp;'+btn_cancel+'</center>';
@@ -1314,11 +1392,14 @@ $(document).ready(function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.purchase_order_id;
-
+            if(data.approval_id == 3 || data.approval_id == 4){ 
+            showNotification({title:"Error!",stat:"info",msg:"Purchase Order is Cancelled or Disapproved."});
+                return false;
+            }
             $('#span_po_no').html(data.po_no);
 
             if(getFloat(data.order_status_id)>1){
-                showNotification({"title":"Error!","stat":"error","msg":"Sorry, you cannot edit purchase order that is already been received."});
+                showNotification({"title":"Error!","stat":"info","msg":"Purchase Order is Already Been Received."});
                 return;
             }
                 getproduct().done(function(data){
@@ -1438,18 +1519,29 @@ $(document).ready(function(){
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.purchase_order_id;
 
-            if(data.approval_id == 3){
-            $('#modal_confirmation_already_cancelled').modal('show');
+            if(data.approval_id == 4){ // DISAPPROVE
+                $('#modal_confirmation_disapproved').modal('show');
+                $('#disapproved_po_no').text(data.po_no);
+                $('#disapproval_remarks').text(data.disapproval_remarks);
+                $('#disapproved_cancelled_by').text(data.disapproved_by);
+                $('#disapproved_date_cancelled').text(data.date_disapproved);
+            }else if(data.approval_id == 3){ // CANCELLED
+                $('#modal_confirmation_already_cancelled').modal('show');
                 $('#cancelled_po_no').text(data.po_no);
                 $('#cancelled_cancel_reason').text(data.cancel_reason);
                 $('#cancelled_cancelled_by').text(data.cancelled_by);
                 $('#cancelled_date_cancelled').text(data.date_cancelled);
-
-            } else if (data.order_status_id == 2 || data.order_status_id == 3 ){
-                showNotification({title:"Error!",stat:"error",msg:"You cannot cancel a PO that is already been received."});
-            }else{
-            $('cancel_reason').val('');
-            $('#modal_confirmation_cancel').modal('show');
+            }else if (data.approval_id == 1 ){ // APPROVED
+                $('#modal_confirmation_already_approved').modal('show');
+                $('#approved_po_no').text(data.po_no);
+                $('#approval_remarks').text(data.approval_remarks);
+                $('#approved_by').text(data.approved_by);
+                $('#date_approved').text(data.date_approved);
+            }else if (data.order_status_id == 2 || data.order_status_id == 3 ){ // PARTIALLY RECEIVED OR CLOSED
+                showNotification({title:"Error!",stat:"error",msg:"Purchase Order is Already Been Received."});
+            }else{ // OK FOR CANCELLATION
+                $('cancel_reason').val('');
+                $('#modal_confirmation_cancel').modal('show');
 
 
             }

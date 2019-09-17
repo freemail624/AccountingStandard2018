@@ -519,6 +519,14 @@ class Templates extends CORE_Controller {
                             echo $this->load->view('template/po_content_approval_menus',$data,TRUE);
                         }
 
+                        if($type=='reviewed'){
+
+                            //echo '<br /><hr /><center><strong>Purchase Order for Approval</strong></center><hr />';
+                            echo '<br />';
+                            echo $this->load->view('template/po_content_new_wo_header',$data,TRUE);
+                            echo $this->load->view('template/po_content_approval_menus_review',$data,TRUE);
+                        }
+
                         //show only inside grid
                         if($type=='contentview'){
                             echo $this->load->view('template/po_content_new',$data,TRUE);
