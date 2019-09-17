@@ -20,6 +20,7 @@ class Purchases extends CORE_Controller
         $this->load->model('Company_model');
         $this->load->model('Email_settings_model');
         $this->load->model('Trans_model');
+        $this->load->model('Approval_status_model');
         
 
         $this->load->library('M_pdf');
@@ -44,6 +45,10 @@ class Purchases extends CORE_Controller
         //data required by active view
         $data['departments']=$this->Departments_model->get_list(
             array('departments.is_active'=>TRUE,'departments.is_deleted'=>FALSE)
+        );
+
+        $data['approvals']=$this->Approval_status_model->get_list(
+            array('is_active'=>TRUE,'is_deleted'=>FALSE)
         );
 
         //data required by active view
@@ -96,12 +101,16 @@ class Purchases extends CORE_Controller
             switch ($txn){
                 case 'list':  //this returns JSON of Purchase Order to be rendered on Datatable
                     $m_purchases=$this->Purchases_model;
-                    $response['data']=$this->row_response(
-                        array(
-                            'purchase_order.is_deleted'=>FALSE,
-                            'purchase_order.is_active'=>TRUE
-                        )
-                    );
+                $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
+                $ted = date('Y-m-d',strtotime($this->input->get('ted')));
+                $approval_id = $this->input->get('approval_id');
+                if($approval_id == 0){
+                    $filter_value = "purchase_order.is_deleted = FALSE AND  purchase_order.is_active = TRUE AND DATE(purchase_order.date_created) BETWEEN '$tsd' AND '$ted'";
+                }else{
+                    $filter_value = "purchase_order.is_deleted = FALSE AND  purchase_order.is_active = TRUE AND purchase_order.approval_id = '$approval_id' AND DATE(purchase_order.date_created) BETWEEN '$tsd' AND '$ted'";
+                }
+                
+                $response['data']=$this->row_response($filter_value);
                     echo json_encode($response);
                     break;
 

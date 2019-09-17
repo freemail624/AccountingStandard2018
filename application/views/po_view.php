@@ -134,7 +134,19 @@
         .modal-body p {
             margin-left: 20px !important;
         }
-
+        #tbl_purchases_filter{
+            display: none;
+        }
+        div.dataTables_processing{ 
+        position: absolute!important; 
+        top: 0%!important; 
+        right: -45%!important; 
+        left: auto!important; 
+        width: 100%!important; 
+        height: 40px!important; 
+        background: none!important; 
+        background-color: transparent!important; 
+        } 
     </style>
 </head>
 
@@ -175,6 +187,38 @@
 
         <div class="panel-body table-responsive">
         <h2 class="h2-panel-heading">Purchase Order</h2><hr>
+        <div class="row">
+        <div class="col-sm-12">
+        <div class="col-sm-3"><br><button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Purchase Order" ><i class="fa fa-plus"></i> New Purchase Order</button></div>
+        <div class="col-sm-2">                            
+            From :<br />
+            <div class="input-group">
+                <input type="text" id="txt_start_date" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                 <span class="input-group-addon">
+                        <i class="fa fa-calendar"></i>
+                 </span>
+            </div></div>
+        <div class="col-sm-2">
+            To :<br />
+            <div class="input-group">
+                <input type="text" id="txt_end_date" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
+                 <span class="input-group-addon">
+                        <i class="fa fa-calendar"></i>
+                 </span>
+            </div>
+        </div>
+        <div class="col-sm-2">
+        Approval Status: <br>
+            <select id="cbo_approval">
+                <option value="0">All</option>
+                <?php foreach($approvals as $approval){ ?>
+                    <option value="<?php echo $approval->approval_id; ?>"><?php echo $approval->approval_status; ?></option>
+                <?php } ?>
+            </select>
+        </div>
+        <div class="col-sm-3">Search:<br><input type="text" class="form-control" id="searchbox_purchase_table"> </div>
+        </div>
+        </div><br>
             <table id="tbl_purchases" class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
                 <tr>
@@ -194,7 +238,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="panel-footer"></div>
+        </div>
     </div>
 </div>
 
@@ -896,7 +940,7 @@
 
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboSuppliers; var _cboTaxType;
-    var _cboDepartments; var _defCostType; var products; var _line_unit; var changetxn;
+    var _cboDepartments; var _defCostType; var products; var _line_unit; var changetxn; var _cboApproval;
 
 
     //_defCostType=1; //Luzon Area Purchase Cost is default, this will change when branch is specified
@@ -930,12 +974,42 @@ $(document).ready(function(){
 
 
     var initializeControls=function(){
+        _cboApproval=$('#cbo_approval').select2({
+            placeholder: "",
+            minimumResultsForSearch : -1,
+            allowClear: false
+        });
+
+        _cboApproval.select2('val',0);
+
+        $('.date-picker').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: true,
+            autoclose: true
+
+        });
 
         dt=$('#tbl_purchases').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "order": [[ 9, "desc" ]],
-            "ajax" : "Purchases/transaction/list",
+            "ajax" : {
+                "url":"Purchases/transaction/list",
+                "bDestroy": true,            
+                "data": function ( d ) {
+                    return $.extend( {}, d, {
+                            "approval_id":_cboApproval.val(),
+                            "tsd":$('#txt_start_date').val(),
+                            "ted":$('#txt_end_date').val()
+                        });
+                    }
+            }, 
+            oLanguage: {
+                    sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+            },
+            processing : true,
             "columns": [
                 {
                     "targets": [0],
@@ -1001,11 +1075,11 @@ $(document).ready(function(){
             ]
         });
 
-        var createToolBarButton=function(){
-            var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Purchase Order" >'+
-                '<i class="fa fa-plus"></i> New Purchase Order</button>';
-            $("div.toolbar").html(_btnNew);
-        }();
+        // var createToolBarButton=function(){
+        //     var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Purchase Order" >'+
+        //         '<i class="fa fa-plus"></i> New Purchase Order</button>';
+        //     $("div.toolbar").html(_btnNew);
+        // }();
 
         $('.numeric').autoNumeric('init');
 
@@ -1382,6 +1456,25 @@ $(document).ready(function(){
                 });
             }
 
+        });
+
+        $("#txt_start_date").on("change", function () {        
+            $('#tbl_purchases').DataTable().ajax.reload()
+        });
+
+        $("#txt_end_date").on("change", function () {        
+            $('#tbl_purchases').DataTable().ajax.reload()
+        });
+
+        _cboApproval.on("select2:select", function (e) {
+            $('#tbl_purchases').DataTable().ajax.reload()
+        });
+
+
+        $("#searchbox_purchase_table").keyup(function(){         
+            dt
+                .search(this.value)
+                .draw();
         });
 
 
