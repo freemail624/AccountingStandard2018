@@ -1312,7 +1312,7 @@ $(document).ready(function(){
                     }
 
                 },
-                {
+                { visible:false,
                     targets:[8],data: null,
                     render: function (data, type, full, meta){
                         var _attribute='';

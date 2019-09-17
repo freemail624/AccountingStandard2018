@@ -185,7 +185,7 @@
         <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Purchase Order</b></div></a> -->
 
 
-        <div class="panel-body table-responsive">
+        <div class="panel-body table-responsive" style="width: 100%;overflow-x: hidden;">
         <h2 class="h2-panel-heading">Purchase Order</h2><hr>
         <div class="row">
         <div class="col-sm-12">
