@@ -266,9 +266,9 @@
 <br><br><br><br><br>
     <table style="text-align: center;font-size: 10px;width: 100%" >
         <tr>
-            <td width="30%" class="" style="padding-right: 10px;vertical-align: bottom;">SHAIRA MANALILI</td>
-            <td width="30%" class="" style="padding-right: 10px;vertical-align: bottom;">JEROME S. ROQUE</td>
-            <td width="30%" class="" style="padding-right: 10px;vertical-align: bottom;">ABEL V. DIZON</td>
+            <td width="30%" class="" style="padding-right: 10px;vertical-align: bottom;"></td>
+            <td width="30%" class="" style="padding-right: 10px;vertical-align: bottom;"></td>
+            <td width="30%" class="" style="padding-right: 10px;vertical-align: bottom;"></td>
         </tr>
         <tr >
             <td width="30%" style="padding-right: 10px;vertical-align: middle;padding-top: 0px;">___________________________________</td>

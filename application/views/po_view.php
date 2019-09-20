@@ -864,11 +864,11 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header " style="padding: 5px !important;">
-                <h2 style="color:white; padding-left: 10px;">Purchase Order</h2>
+                <h3 style="color:white; padding-left: 10px;">Purchase Order | <small style="color: white;">Details</small></h3>
             </div>
             <div class="modal-body">
                 <div class="container-fluid" style="overflow: scroll; width: 100%;">
-                    <div id="purchase_order">
+                    <div id="purchase_order" style="font-size: 11px;">
                     </div>
                 </div>
             </div>
