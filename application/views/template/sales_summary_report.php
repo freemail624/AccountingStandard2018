@@ -46,7 +46,7 @@
         <tr>
             <td width="10%"><img src="<?php echo $company_info->logo_path; ?>" style="height: 90px; width: 120px; text-align: left;"></td>
             <td width="90%" class="align-center">
-                <h1 class="report-header"><strong><?php echo $company_info->company_name; ?></strong></h1>
+                <h3 class="report-header"><strong><?php echo $company_info->company_name; ?></strong></h3>
                 <p><?php echo $company_info->company_address; ?></p>
                 <p><?php echo $company_info->landline.'/'.$company_info->mobile_no; ?></p>
             </td>
