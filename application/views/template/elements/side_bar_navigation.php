@@ -32,6 +32,7 @@
                     <ul class="acc-menu">
                         <li class="nav-separator"><span>Explore</span></li>
                         <li><a href="Dashboard"><i class="ti ti-home"></i><span>Dashboard</span>
+                        <li class="<?php echo (in_array('18',$this->session->parent_rights)?'':'hidden'); ?>"><a href="Billing_contracts"><i class="ti ti-agenda"></i><span>Billing Contracts</span>
 
 
                         <li class="<?php echo (in_array('1',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-wallet"></i><span>Financing</span></a>

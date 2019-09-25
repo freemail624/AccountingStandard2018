@@ -2230,6 +2230,8 @@ class Templates extends CORE_Controller {
                     array(
                         array('account_titles','account_titles.account_id=journal_accounts.account_id','left')
                     )
+                    ,
+                    'journal_accounts.dr_amount DESC,journal_accounts.journal_account_id '
 
                 );
 
@@ -2240,8 +2242,7 @@ class Templates extends CORE_Controller {
                     $file_name=$journal_info[0]->txn_no;
                     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                     $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
-                    $content=$this->load->view('template/cdj_journal_entries_content_version_2',$data,TRUE); //load the template
-
+                    $content=$this->load->view('template/cdj_journal_entries_content_version_3',$data,TRUE); //load the template
                     $pdf->WriteHTML($content);
                     //download it.
                     $pdf->Output();
