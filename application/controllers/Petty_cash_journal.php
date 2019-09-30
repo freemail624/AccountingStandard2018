@@ -152,6 +152,8 @@
 					$m_journal->amount=$this->get_numeric_value($this->input->post('amount',TRUE));
 					$m_journal->created_by_user=$this->session->user_id;
 					$m_journal->remarks=$this->input->post('remarks',TRUE);
+
+
 					$m_journal->save();
 
 					$journal_id=$m_journal->last_insert_id();
@@ -358,6 +360,11 @@
 		                $m_journal->amount=$this->get_numeric_value($unreplenished_value);
 						$m_journal->set('date_txn','NOW()');
 						$m_journal->set('date_created','NOW()');
+
+		                $ref_type = 'CV';
+		                $m_journal->ref_type = 'CV';
+		                $ref_type_count = COUNT($m_journal->get_list(array('ref_type'=>$ref_type)))+1;
+		 				$m_journal->ref_no=str_pad($ref_type_count, 8, "0", STR_PAD_LEFT);
 		                $m_journal->save();
 
 		                $journal_id=$m_journal->last_insert_id();

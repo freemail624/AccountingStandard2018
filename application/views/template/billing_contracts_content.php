@@ -67,11 +67,11 @@
 
 	    <div class="container-fluid">
 		    <div class="row">
-			    <div class="col-sm-4">
+			    <div class="col-sm-5">
 			    <h5>Tenant Details</h5><hr>
 			    <table class="table table-striped " width="100%" style="border:0px!important;">
 					<tr>
-						<td>Tenant Code:</td>
+						<td width="30%">Tenant Code:</td>
 						<td><?php echo $contract_info->tenant_code; ?></td>
 					</tr>
 					<tr>
@@ -171,7 +171,7 @@
 			    </div>
 			    </div>
 			    </div>
-			    <div class="col-sm-4">
+			    <div class="col-sm-3">
 			    <h5>Amount Details</h5><hr>
 			    <div class="row">
 				 <div class="col-sm-12">
@@ -323,7 +323,10 @@
 				</div>
 			 </div>
 		</div>
-	</div>
-
+	</div><br>
+<button name="mark_as_approved" type="button" class="btn btn-success" style="text-transform: none;"><i class="fa fa-check-circle"></i> <span class=""></span> Approve </button>
+<button name="mark_as_disapproved" type="button" class="btn btn-primary" style="text-transform: none;"><i class="fa fa-times-circle"></i> <span class=""></span> Disapprove </button><br><br>
+<i>End of Contract <?php echo $contract_info->contract_no;?> for <b><?php echo $contract_info->trade_name; ?> </b></i>
+<hr>
 </body>
 </html>

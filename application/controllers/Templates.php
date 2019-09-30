@@ -103,6 +103,8 @@ class Templates extends CORE_Controller {
         $this->load->model('Bir_2551m_model'); 
         $this->load->model('Months_model'); 
 
+        $this->load->model('Projects_model'); 
+
         $this->load->library('M_pdf');
         $this->load->library('excel');
         $this->load->model('Email_settings_model');
@@ -116,6 +118,44 @@ class Templates extends CORE_Controller {
 
     function layout($layout=null,$filter_value=null,$type=null){
         switch($layout){
+
+            case 'project-details':
+
+                $type=$this->input->get('type',TRUE);
+                $data['company_info']=$this->Company_model->get_list()[0];
+                $data['project_info']=$this->Projects_model->get_list(
+                    $filter_value,'projects.*,locations.location_name,
+                    DATE_FORMAT(projects.date_start,"%m/%d/%Y") as date_start,
+                    DATE_FORMAT(projects.date_due,"%m/%d/%Y") as date_due',
+                    array(array('locations','locations.location_id = projects.location_id','left')))[0];
+                $data['items'] = $this->Jo_billing_items_model->get_list(array('jo_billing.project_id'=>$filter_value,'jo_billing.is_active'=>TRUE,'jo_billing.is_deleted'=>FALSE),
+                    'jo_billing.*,
+                    DATE_FORMAT(jo_billing.date_invoice,"%m/%d/%Y") as date_invoice,
+                    jo_billing_items.*,
+                    job_unit.job_unit_name',
+                    array(
+                        array('jo_billing','jo_billing.jo_billing_id = jo_billing_items.jo_billing_id','left'),
+                        array('job_unit','job_unit.job_unit_id = jo_billing_items.job_unit','left')
+                    )
+
+                    );
+
+                if($type=='fullview'||$type==null){
+                    echo $this->load->view('template/project_details_content_wo_header',$data,TRUE);
+                    echo $this->load->view('template/project_details_content_menus',$data,TRUE);
+                }
+                if($type=='html'){
+                    $file_name='Project Information';
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                    $pdf->SetTitle('Project Information');
+                    $content=$this->load->view('template/project_details_content',$data,TRUE);//load the template
+                    // $pdf->setFooter('{PAGENO}');
+                    $pdf->WriteHTML($content);
+                    $pdf->Output();
+                }
+
+                break;
 
             case 'job-order-billing-dropdown':
                 $m_billing=$this->Jo_billing_model;
@@ -133,20 +173,21 @@ class Templates extends CORE_Controller {
                 'jo_billing.jo_billing_no',
                 'jo_billing.address',
                 'jo_billing.remarks',
+                'jo_billing.reference_no',
                 'jo_billing.total_amount',
                 'jo_billing.total_overall_discount_amount',
                 'jo_billing.total_amount_after_discount',
-                'jo_billing.requested_by',
-                'jo_billing.total_overall_discount',
                 'jo_billing.is_journal_posted',
                 'DATE_FORMAT(jo_billing.date_invoice,"%m/%d/%Y") as date_invoice',
                 'DATE_FORMAT(jo_billing.date_due,"%m/%d/%Y") as date_due',
                 'DATE_FORMAT(jo_billing.date_start,"%m/%d/%Y") as date_start',
                 'suppliers.supplier_name',
+                'projects.project_name',
                 'departments.department_name'),
                 array(
                     array('departments','departments.department_id=jo_billing.department_id','left'),
-                    array('suppliers','suppliers.supplier_id=jo_billing.supplier_id','left')
+                    array('suppliers','suppliers.supplier_id=jo_billing.supplier_id','left'),
+                    array('projects','projects.project_id=jo_billing.project_id','left')
                     ),
                 'jo_billing.jo_billing_id DESC');
 
@@ -205,29 +246,17 @@ class Templates extends CORE_Controller {
                 $job_order_info= $m_billing->get_list(
                 $jo_billing_id,
                 array(
-                'jo_billing.jo_billing_id',
-                'jo_billing.jo_billing_no',
-                'jo_billing.department_id',
-                'jo_billing.supplier_id',
-                'jo_billing.salesperson_id',
-                'jo_billing.contact_person',
-                'jo_billing.jo_billing_no',
-                'jo_billing.address',
-                'jo_billing.remarks',
-                'jo_billing.total_amount',
-                'jo_billing.total_overall_discount_amount',
-                'jo_billing.total_amount_after_discount',
-                'jo_billing.requested_by',
-                'jo_billing.total_overall_discount',
-                'jo_billing.is_journal_posted',
+                'jo_billing.*',
                 'DATE_FORMAT(jo_billing.date_invoice,"%m/%d/%Y") as date_invoice',
                 'DATE_FORMAT(jo_billing.date_due,"%m/%d/%Y") as date_due',
                 'DATE_FORMAT(jo_billing.date_start,"%m/%d/%Y") as date_start',
                 'suppliers.supplier_name',
+                'projects.project_name',
                 'departments.department_name'),
                 array(
                     array('departments','departments.department_id=jo_billing.department_id','left'),
-                    array('suppliers','suppliers.supplier_id=jo_billing.supplier_id','left')
+                    array('suppliers','suppliers.supplier_id=jo_billing.supplier_id','left'),
+                    array('projects','projects.project_id=jo_billing.project_id','left')
                     ),
                 'jo_billing.jo_billing_id DESC');
 

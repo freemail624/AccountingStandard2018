@@ -23,17 +23,12 @@ class Jobs extends CORE_Controller
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['title'] = 'Jobs Management';
-
-
-
-
         $data['units'] = $this->Job_unit_model->get_list(array('job_unit.is_deleted'=>FALSE));
-
         $data['accounts'] = $this->Account_title_model->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE),'account_id,account_title');
 
-        // (in_array('13-5',$this->session->user_rights)?
-        $this->load->view('jobs_view', $data);
-        // :redirect(base_url('dashboard')));
+        (in_array('19-4',$this->session->user_rights)?
+        $this->load->view('jobs_view', $data)
+        :redirect(base_url('dashboard')));
     }
 
     function transaction($txn = null) {
@@ -58,7 +53,7 @@ class Jobs extends CORE_Controller
                 $m_trans->user_id=$this->session->user_id;
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=1; //CRUD
-                $m_trans->trans_type_id=78; // TRANS TYPE
+                $m_trans->trans_type_id=71; // TRANS TYPE
                 $m_trans->trans_log='Created a new Job: '.$this->input->post('job_desc', TRUE);
                 $m_trans->save();
 
@@ -84,7 +79,7 @@ class Jobs extends CORE_Controller
                 $m_trans->user_id=$this->session->user_id;
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=2; //CRUD
-                $m_trans->trans_type_id=78; // TRANS TYPE
+                $m_trans->trans_type_id=71; // TRANS TYPE
                 $m_trans->trans_log='Updated Job : '.$this->input->post('job_desc', TRUE).' ID('.$job_id.')';
                 $m_trans->save();
 
@@ -112,7 +107,7 @@ class Jobs extends CORE_Controller
                     $m_trans->user_id=$this->session->user_id;
                     $m_trans->set('trans_date','NOW()');
                     $m_trans->trans_key_id=3; //CRUD
-                    $m_trans->trans_type_id=78; // TRANS TYPE
+                    $m_trans->trans_type_id=71; // TRANS TYPE
                     $m_trans->trans_log='Deleted Job: '.$job_desc[0]->job_desc;
                     $m_trans->save();
 

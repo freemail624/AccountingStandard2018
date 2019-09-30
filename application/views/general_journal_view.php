@@ -141,7 +141,7 @@
 <div class="col-md-12">
 
 <div id="div_payable_list">
- <div class="panel panel-default">
+ <div class="panel panel-default hidden">
 <!--                 <div class="panel-heading">
                     <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; General Journal </b>
                 </div> -->

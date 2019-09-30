@@ -111,7 +111,11 @@ class Rights_link_model extends CORE_Model{
                                           (101,'6','6-15','Purchase Order Email Settings'),
                                           (102,'9','9-22','Income Statement (Department - Costing)'),
                                           (103,'7','7-2','Purchase Order for Review'),
-                                          (104,'18','18-1','Billing Contracts for Review')
+                                          (104,'18','18-1','Billing Contracts for Review'),
+                                          (105,'19','19-1','Project Management'),
+                                          (106,'19','19-2','Job Service Posting'),
+                                          (107,'19','19-3','Job Unit'),
+                                          (108,'19','19-4','Jobs Management')
 
 
 

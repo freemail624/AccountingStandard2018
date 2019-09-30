@@ -54,11 +54,12 @@
                                 <li class="<?php echo (in_array('13-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Services">Service Management</a></li>
                             </ul>
                         </li>
-                        <li class="<?php //echo (in_array('16',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-view-list-alt"></i><span>Job Order</span></a>
+                        <li class="<?php echo (in_array('19',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-view-list-alt"></i><span>Job Order</span></a>
                             <ul class="acc-menu">
-                                <li class="<?php //echo (in_array('16-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Jo_billing">Job Order Invoice</a></li>
-                                <li class="<?php //echo (in_array('16-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Job_unit">Job Unit</a></li>
-                                <li class="<?php //echo (in_array('16-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Jobs">Jobs Management</a></li>
+                                <li class="<?php echo (in_array('19-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Projects">Project Management</a></li>
+                                <li class="<?php echo (in_array('19-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Jo_billing">Job Service Posting</a></li>
+                                <li class="<?php echo (in_array('19-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Job_unit">Job Unit</a></li>
+                                <li class="<?php echo (in_array('19-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Jobs">Jobs Management</a></li>
                             </ul>
                         </li>
 <!--                         <li class="<?php echo (in_array('16',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-view-list-alt"></i><span>Other Income</span></a>

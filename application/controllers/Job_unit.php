@@ -18,9 +18,9 @@ class Job_unit extends CORE_Controller {
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['title'] = 'Jobs Unit Management';
-        // (in_array('13-4',$this->session->user_rights)?
-        $this->load->view('job_unit_view', $data);
-        // :redirect(base_url('dashboard')));
+        (in_array('19-3',$this->session->user_rights)?
+        $this->load->view('job_unit_view', $data)
+        :redirect(base_url('dashboard')));
     }
 
     function transaction($txn = null) {
@@ -45,7 +45,7 @@ class Job_unit extends CORE_Controller {
                 $m_trans->user_id=$this->session->user_id;
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=1; //CRUD
-                $m_trans->trans_type_id=77; // TRANS TYPE
+                $m_trans->trans_type_id=72; // TRANS TYPE
                 $m_trans->trans_log='Created Job Unit: '. $this->input->post('job_unit_name', TRUE);;
                 $m_trans->save();
 
@@ -71,7 +71,7 @@ class Job_unit extends CORE_Controller {
                     $m_trans->user_id=$this->session->user_id;
                     $m_trans->set('trans_date','NOW()');
                     $m_trans->trans_key_id=3; //CRUD
-                    $m_trans->trans_type_id=77; // TRANS TYPE
+                    $m_trans->trans_type_id=72; // TRANS TYPE
                     $m_trans->trans_log='Deleted Job Unit: '.$job_unit_name[0]->job_unit_name;
                     $m_trans->save();
 
@@ -99,7 +99,7 @@ class Job_unit extends CORE_Controller {
                 $m_trans->user_id=$this->session->user_id;
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=2; //CRUD
-                $m_trans->trans_type_id=77; // TRANS TYPE
+                $m_trans->trans_type_id=72; // TRANS TYPE
                 $m_trans->trans_log='Updated Job Unit: '.$this->input->post('job_unit_name',TRUE).' ID('.$job_unit_id.')';
                 $m_trans->save();
 

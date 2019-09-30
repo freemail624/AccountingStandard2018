@@ -101,10 +101,11 @@
                                     <thead>
                                     <tr style="border-bottom:solid gray;">
                                         <th style="width: 30%;">Account</th>
-                                        <th style="width: 30%;">Memo</th>
+                                        <th style="width: 15%;">Memo</th>
                                         <th style="width: 15%;text-align: right;">Dr</th>
                                         <th style="width: 15%;text-align: right;">Cr</th>
-                                        <th>Action</th>
+                                        <th style="width: 15%;">Department</th>
+                                        <th style="width: 10%">Action</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -123,6 +124,12 @@
                                             <td><input type="text" name="memo[]" class="form-control"  value="<?php echo $entry->memo; ?>"></td>
                                             <td><input type="text" name="dr_amount[]" class="form-control numeric" value="<?php echo number_format($entry->dr_amount,2); ?>"></td>
                                             <td><input type="text" name="cr_amount[]" class="form-control numeric"  value="<?php echo number_format($entry->cr_amount,2);?>"></td>
+                                            <td><select  name="department_id_line[]" class="dept show-tick form-control selectpicker" data-live-search="true" > 
+                                                <option value="0">[ None ]</option> 
+                                                <?php foreach($departments as $department){ ?> 
+                                                    <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option> 
+                                                <?php } ?> 
+                                            </select></td> 
                                             <td>
                                                 <button type="button" class="btn btn-default add_account"><i class="fa fa-plus-circle" style="color: green;"></i></button>
                                                 <button type="button" class="btn btn-default remove_account"><i class="fa fa-times-circle" style="color: red;"></i></button>
@@ -146,7 +153,7 @@
                                 <hr />
                                 <label class="col-lg-2"> Remarks :</label><br />
                                 <div class="col-lg-12">
-                                    <textarea name="remarks" class="form-control" style="width: 100%;"></textarea>
+                                    <textarea name="remarks" class="form-control" style="width: 100%;">Job Service <?php echo $job_order_info->jo_billing_no ?> for <?php echo $job_order_info->project_name; ?><?php echo $job_order_info->remarks; ?></textarea>
                                 </div>
                                 <br /><hr />
                             </form>
@@ -158,19 +165,18 @@
                             </div>
                         </div>
                         <div class="tab-pane" id="purchase_review_<?php echo $job_order_info->jo_billing_id; ?>" >
-                                <h4><span style="margin-left: 1%"><strong><i class="fa fa-bars"></i> Job Order Invoice</strong></span></h4>
+                                <h4><span style="margin-left: 1%"><strong><i class="fa fa-bars"></i> Job Service Invoice</strong></span></h4>
                                 <div style="margin-left: 2%;margin-right: 20px;">
                                     <div class="row">
                                     <div class="col-sm-6">
-                                        <i class="fa fa-code"></i>  Job Order Billing No : <?php echo $job_order_info->jo_billing_no; ?><br>
+                                        <i class="fa fa-code"></i>  Job Service No : <?php echo $job_order_info->jo_billing_no; ?><br>
                                         <i class="fa fa-users"></i> Supplier : <?php echo $job_order_info->supplier_name?><br>
-                                        <i class="fa fa-users"></i> Requested By : <?php echo $job_order_info->requested_by ?><br>
-                                        <i class="fa fa-file-o"></i> Remarks : <?php echo $job_order_info->remarks; ?><br>
+                                        <i class="fa fa-users"></i> Project : <?php echo $job_order_info->project_name?><br>
+                                        
                                     </div>
                                     <div class="col-sm-6">
                                         <i class="fa fa-calendar-o"></i> Date : <?php echo  date_format(new DateTime($job_order_info->date_invoice ),"m/d/Y"); ?><br>
-                                        <i class="fa fa-calendar-o"></i> Start Date : <?php echo  date_format(new DateTime($job_order_info->date_start ),"m/d/Y"); ?><br>
-                                        <i class="fa fa-calendar-o"></i> End Date : <?php echo  date_format(new DateTime($job_order_info->date_due),"m/d/Y"); ?><br>
+                                        <i class="fa fa-file-o"></i> Remarks : <?php echo $job_order_info->remarks; ?><br>
                                     </div>
                                     </div>
                                 </div>

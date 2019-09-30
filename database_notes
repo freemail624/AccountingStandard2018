@@ -1,0 +1,28 @@
+
+09/26/2019
+	JO BILLING REFERENCE NO
+		ALTER TABLE jo_billing
+		ADD COLUMN `reference_no` VARCHAR(445) NULL DEFAULT '' AFTER `contact_person`;
+
+	CREATE TABLE projects
+
+	ADDED project_id ON JO BILLING
+
+
+09/27/2019
+	B_CONTRACT_INFO
+	status int(2) '0'
+	is_active TINYINY(1) '1'
+
+	TRANS_TYPE_ID
+	67	Order Source
+	68	Job Service
+	69	Temporary Journal Billing
+	70	Project Management
+	71	Jobs Management
+	72	Job Units
+	73  Billing Contracts
+
+	TRANS_KEY_DESC
+	11	Approve
+	12	Disapprove

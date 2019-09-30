@@ -317,7 +317,7 @@ $(document).ready(function(){
                                                 <div class="col-sm-2">
                                                     From :
                                                     <div class="input-group">
-                                                        <input type="text" name="start_date" id="start_date" class="date-picker form-control" value="01/01/<?php echo date("Y"); ?>" placeholder="Date" data-error-msg="Please set the date." required>
+                                                        <input type="text" name="start_date" id="start_date" class="date-picker form-control" value="<?php echo date("m"); ?>/01/<?php echo date("Y"); ?>" placeholder="Date" data-error-msg="Please set the date." required>
                                                          <span class="input-group-addon">
                                                              <i class="fa fa-calendar"></i>
                                                         </span>

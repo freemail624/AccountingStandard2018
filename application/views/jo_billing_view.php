@@ -104,7 +104,7 @@
 <div class="page-content"><!-- #page-content -->
 <ol class="breadcrumb"  style="margin-bottom: 0;">
     <li><a href="Dashboard">Dashboard</a></li>
-    <li><a href="Jo_billing">Job Order Billing</a></li>
+    <li><a href="Jo_billing">Job Service Posting</a></li>
 </ol>
 <div class="container-fluid"">
 <div data-widget-group="group1">
@@ -118,20 +118,19 @@
  -->
         <div class="panel-body table-responsive">
             <div class="row panel-row">
-             <h2 class="h2-panel-heading">Job Order Billing</h2><hr>           
+             <h2 class="h2-panel-heading">Job Service Posting</h2><hr>           
                 <table id="tbl_jo_billing" class="table table-striped"  cellspacing="0" width="100%" style="">
                 <thead class="">
                 <tr>
                     <th></th>
-                    <th>Job Order Billing #</th>
-                    <th>Supplier</th>
-                    <th>Rquested By</th>
+                    <th>Job Service #</th>
+                    <th width="20%">Supplier</th>
+                    <th width="20%">Project</th>
                     <th>Invoice Date</th>
-                    <th>End Date</th>
                     <th>Department</th>
                     <th width="20%">Remarks</th>
                     <th><center>Action</center></th>
-                    <th><center>Action</center></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -153,7 +152,7 @@
         <div class="panel-body">
         <div class="row panel-row" >
             <form id="frm_jo_invoice" role="form" class="form-horizontal">
-                <h2 class="h2-panel-heading">Invoice # : <span id="span_invoice_no">INV-XXXX</span></h2>
+                <h2 class="h2-panel-heading">JOB SERVICE # : <span id="span_invoice_no">JS-YYYYMMDD-XX</span></h2>
                 <div>
                 <hr>
                     <div class="row">
@@ -176,8 +175,12 @@
                                 </span>
                             </div>
                         </div>
-
                         <div class="col-sm-4">
+                            <b class="required">*</b><label> Reference No: :</label><br/>
+                            <input type="text" name="reference_no" class="form-control" >
+
+                        </div>
+                        <div class="col-sm-4 hidden">
                             <b class="required">* </b><label>Start Date :</label> <br />
                             <div class="input-group">
                                 <input type="text" name="date_start" id="invoice_start" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Start Date" data-error-msg="Please set the start date!" required>
@@ -191,15 +194,22 @@
                         <div class="col-sm-4">
                             <b class="required">*</b> <label>Supplier </label>:<br />
                             <select name="supplier" id="cbo_suppliers" data-error-msg="Supplier is required." required>
-                                <option value="0">[ Create New Supplier ]</option>
                                 <?php foreach($suppliers as $supplier){ ?>
                                     <option value="<?php echo $supplier->supplier_id; ?>" data-tax-type="<?php echo $supplier->tax_type_id; ?>" data-contact-person="<?php echo $supplier->contact_name; ?>"><?php echo $supplier->supplier_name; ?></option>
                                 <?php } ?>
                             </select>
                         </div>
-                        <div class="col-sm-4 ">
+                        <div class="col-sm-4">
+                            <b class="required">*</b> <label>Project </label>:<br />
+                            <select name="project_id" id="cbo_projects" data-error-msg="Project is required." required>
+                                <?php foreach($projects as $project){ ?>
+                                    <option value="<?php echo $project->project_id; ?>" ><?php echo $project->project_code; ?> - <?php echo $project->project_name; ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div class="col-sm-4 hidden">
                             <b class="required">*</b><label> Requested By: :</label><br/>
-                            <input type="text" name="requested_by" class="form-control" required data-error-msg="Requested By is required.">
+                            <input type="text" name="requested_by" class="form-control" >
 
                         </div>
                         <div class="hidden">
@@ -210,7 +220,7 @@
                                 <?php } ?>
                             </select>
                         </div>
-                        <div class="col-sm-4 ">
+                        <div class="col-sm-4 hidden">
                             <b class="required">* </b><label> End Date : </label><br />
                             <div class="input-group">
                                 <input type="text" name="date_due" id="due_default" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date Due" data-error-msg="Please set the date this items are issued!" required>
@@ -703,7 +713,7 @@
 <script src="assets/plugins/formatter/accounting.js" type="text/javascript"></script>
 <script>
 $(document).ready(function(){
-    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboDepartments; var dt_so; var _cboSuppliers;
+    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboDepartments; var dt_so; var _cboSuppliers; var _cboProjects;
     var oTableItems={
         qty : 'td:eq(0)',
         unit_price : 'td:eq(4)',
@@ -720,7 +730,7 @@ $(document).ready(function(){
         dt=$('#tbl_jo_billing').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 9, "desc" ]],
+            "order": [[ 8, "desc" ]],
             "ajax" : "Jo_billing/transaction/list-invoice",
             "language": {
                 "searchPlaceholder":"Search Invoice"
@@ -735,20 +745,19 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "jo_billing_no" },
                 { targets:[2],data: "supplier_name" },
-                { targets:[3],data: "requested_by" },
+                { targets:[3],data: "project_name" },
                 { targets:[4],data: "date_invoice" },
-                { targets:[5],data: "date_due" },
-                { targets:[6],data: "department_name" },
-                { targets:[7],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(60)},
+                { targets:[5],data: "department_name", visible:false },
+                { targets:[6],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(60)},
                 {
-                    targets:[8],
+                    targets:[7],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
                         return '<center>'+btn_edit+"&nbsp;"+btn_trash+'</center>';
                     }
                 },
-                { targets:[9],data: "jo_billing_id",visible:false }
+                { targets:[8],data: "jo_billing_id",visible:false }
 
             ]
         });
@@ -756,8 +765,8 @@ $(document).ready(function(){
         $('.numeric').autoNumeric('init');
         $('#contact_no').keypress(validateNumber);
         var createToolBarButton=function(){
-            var _btnNew='<button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Record Job Order Billing" >'+
-                '<i class="fa fa-plus"></i> Record Job Order Billing</button>';
+            var _btnNew='<button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Record New Job Service" >'+
+                '<i class="fa fa-plus"></i> Record New Job Service</button>';
             $("div.toolbar").html(_btnNew);
         }();
         _cboDepartments=$("#cbo_departments").select2({
@@ -775,7 +784,12 @@ $(document).ready(function(){
         });
 
         _cboSuppliers=$("#cbo_suppliers").select2({
-            placeholder: "Please select supplier.",
+            placeholder: "Please Select Supplier.",
+            allowClear: true
+        });
+
+        _cboProjects=$("#cbo_projects").select2({
+            placeholder: "Please select a Project.",
             allowClear: true
         });
 
@@ -1074,13 +1088,14 @@ $(document).ready(function(){
         $('#btn_new').click(function(){
             _txnMode="new";
             clearFields($('#div_jo_invoice_fields'));
-            $('#span_invoice_no').html('INV-XXXX');
+            $('#span_invoice_no').html('JS-YYYYMMDD-XX');
             showList(false);
 
             $('#tbl_items > tbody').html('');
             $('#cbo_departments').select2('val', null);
             $('#cbo_department').select2('val', null);
             $('#cbo_suppliers').select2('val', null);
+            $('#cbo_projects').select2('val', null);
             $('#cbo_salesperson').select2('val', null);
             $('#img_user').attr('src','assets/img/anonymous-icon.png');
 
@@ -1104,7 +1119,7 @@ $(document).ready(function(){
             _is_journal_posted=data.is_journal_posted;
 
             if(_is_journal_posted > 0){
-                showNotification({title:"Error!",stat:"error",msg:"Cannot Edit: Invoice is already Posted in Job Order Journal."});
+                showNotification({title:"Error!",stat:"error",msg:"Cannot Edit: Invoice is already Posted in Accounts Payable Journal."});
             }
             else{
 
@@ -1123,6 +1138,7 @@ $(document).ready(function(){
             $('#cbo_department').select2('val',data.department_id);
             $('#cbo_suppliers').select2('val',data.supplier_id);
             $('#cbo_salesperson').select2('val',data.salesperson_id);
+            $('#cbo_projects').select2('val',data.project_id);
             $('#txt_address').html('val',data.address);
 
             $.ajax({
@@ -1168,7 +1184,7 @@ $(document).ready(function(){
             //alert(_selectedID);
             _is_journal_posted=data.is_journal_posted;
         if(_is_journal_posted > 0){
-                showNotification({title:" Error!",stat:"error",msg:"Cannot Delete: Invoice is already Posted in Job Order Journal."});
+                showNotification({title:" Error!",stat:"error",msg:"Cannot Delete: Invoice is already Posted in Accounts Payable Journal."});
             } else{
             $('#modal_confirmation').modal('show');
         }

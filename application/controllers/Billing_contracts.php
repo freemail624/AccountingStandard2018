@@ -13,6 +13,7 @@ class Billing_contracts extends CORE_Controller
         $this->load->model('Billing_contract_other_model');
         $this->load->model('Billing_contract_other_fees_model');
         $this->load->model('Users_model');
+        $this->load->model('Trans_model');
         $this->load->library('M_pdf');
     }
 
@@ -33,7 +34,15 @@ class Billing_contracts extends CORE_Controller
     function transaction($txn = null,$id_filter=null) {
         switch ($txn){
             case 'list':  //this returns JSON of Purchase Order to be rendered on Datatable
-                $response['data']=$this->Billing_contracts_model->get_list(null,'b_tenants.*,b_contract_info.*,b_reflocations.location_desc,
+
+                $approval_id=$this->input->get('approval_id',TRUE);
+                if($approval_id == '0' || $approval_id == '2'){
+                    $filter =  "b_contract_info.is_active = TRUE AND b_contract_info.status = $approval_id";
+                }else{
+                    $filter = "b_contract_info.is_active = TRUE AND (b_contract_info.status=1 OR b_contract_info.status=3 OR b_contract_info.status=4)";
+                }
+                $response['filter'] = $filter;
+                $response['data']=$this->Billing_contracts_model->get_list($filter,'b_tenants.*,b_contract_info.*,b_reflocations.location_desc,
                     DATE_FORMAT(b_contract_info.commencement_date,"%m/%d/%Y") as commencement_date,
                     DATE_FORMAT(b_contract_info.termination_date,"%m/%d/%Y") as termination_date',
                     array(
@@ -85,6 +94,59 @@ class Billing_contracts extends CORE_Controller
                                 ))[0];
                         echo $this->load->view('template/billing_contracts_content',$data,TRUE);
 
+            break;
+
+
+            case 'mark-approved': //called on DASHBOARD when approved button is clicked
+                $m_contract=$this->Billing_contracts_model;
+                $contract_id=$this->input->post('contract_id',TRUE);
+
+
+                // $m_contract->set('date_approved','NOW()'); //treat NOW() as function and not string, set date of approval
+                // $m_contract->approved_by_user=$this->session->user_id; //deleted by user
+                // $m_contract->approval_remarks=$this->input->post('approval_remarks',TRUE);
+                $m_contract->status=1; //1 means approved
+                if($m_contract->modify($contract_id)){
+                    $contract_info = $m_contract->get_list($contract_id,'contract_no')[0];
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=11; //CRUD
+                    $m_trans->trans_type_id=73; // TRANS TYPE
+                    $m_trans->trans_log='Approved Contract '.$contract_info->contract_no.' ID('.$contract_id.'): with remarks '.$this->input->post('approval_remarks',TRUE);
+                    $m_trans->save();
+
+                    $response['title']='Success!';
+                    $response['stat']='success';
+                    $response['msg']='Contract successfully Approved.';
+                    echo json_encode($response);
+                }
+            break;
+
+            case 'mark-disapproved': //called on DASHBOARD when approved button is clicked
+                $m_contract=$this->Billing_contracts_model;
+                $contract_id=$this->input->post('contract_id',TRUE);
+
+
+                // $m_contract->set('date_approved','NOW()'); //treat NOW() as function and not string, set date of approval
+                // $m_contract->approved_by_user=$this->session->user_id; //deleted by user
+                // $m_contract->disapproval_remarks=$this->input->post('disapproval_remarks',TRUE);
+                $m_contract->status=2; //1 means approved
+                if($m_contract->modify($contract_id)){
+                    $contract_info = $m_contract->get_list($contract_id,'contract_no')[0];
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=12; //CRUD
+                    $m_trans->trans_type_id=73; // TRANS TYPE
+                    $m_trans->trans_log='Disapproved Contract '.$contract_info->contract_no.' ID('.$contract_id.'): with remarks '.$this->input->post('disapproval_remarks',TRUE);
+                    $m_trans->save();
+
+                    $response['title']='Success!';
+                    $response['stat']='success';
+                    $response['msg']='Contract successfully Disapproved.';
+                    echo json_encode($response);
+                }
             break;
         }
     }

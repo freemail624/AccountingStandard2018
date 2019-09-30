@@ -20,6 +20,7 @@ class Jo_billing extends CORE_Controller
         $this->load->model('Suppliers_model');
         $this->load->model('Trans_model');
         $this->load->model('Tax_types_model');
+        $this->load->model('Projects_model');
     }
 
     public function index() {
@@ -36,6 +37,11 @@ class Jo_billing extends CORE_Controller
         $data['departments']=$this->Departments_model->get_list(
             array('departments.is_active'=>TRUE,'departments.is_deleted'=>FALSE)
         );
+
+        $data['projects']=$this->Projects_model->get_list(
+            array('projects.is_active'=>TRUE,'projects.is_deleted'=>FALSE)
+        );
+
 
         $data['salespersons']=$this->Salesperson_model->get_list(
             array('salesperson.is_active'=>TRUE,'salesperson.is_deleted'=>FALSE),
@@ -55,10 +61,10 @@ class Jo_billing extends CORE_Controller
             array('jobs.is_active'=>TRUE,'jobs.is_deleted'=>FALSE), 
             array('jobs.*','job_unit.*'),
             array(array('job_unit','job_unit.job_unit_id=jobs.job_unit','left')));
-        $data['title'] = 'Job Order Billing';
-        // (in_array('13-2',$this->session->user_rights)? 
-            $this->load->view('jo_billing_view', $data);
-        // :redirect(base_url('dashboard')));
+        $data['title'] = 'Job Service Posting';
+        (in_array('19-2',$this->session->user_rights)? 
+            $this->load->view('jo_billing_view', $data)
+        :redirect(base_url('dashboard')));
 
         
     }
@@ -124,6 +130,8 @@ class Jo_billing extends CORE_Controller
                 // $m_invoice->contact_person=$this->input->post('contact_person',TRUE);
                 // $m_invoice->address=$this->input->post('address',TRUE);
                 $m_invoice->requested_by=$this->input->post('requested_by',TRUE);
+                $m_invoice->reference_no=$this->input->post('reference_no',TRUE);
+                $m_invoice->project_id=$this->input->post('project_id',TRUE);
                 $m_invoice->remarks=$this->input->post('remarks',TRUE);
                 $m_invoice->date_due=date('Y-m-d',strtotime($this->input->post('date_due',TRUE)));
                 $m_invoice->date_start=date('Y-m-d',strtotime($this->input->post('date_start',TRUE)));
@@ -168,7 +176,7 @@ class Jo_billing extends CORE_Controller
 
                 $m_invoice_items->save();
                 }
-                $m_invoice->jo_billing_no='JO-BILL-'.date('Ymd').'-'.$jo_billing_id;
+                $m_invoice->jo_billing_no='JS-'.date('Ymd').'-'.$jo_billing_id;
                 $m_invoice->modify($jo_billing_id);
 
                 if($m_invoice->status()===TRUE){
@@ -177,8 +185,8 @@ class Jo_billing extends CORE_Controller
                     $m_trans->user_id=$this->session->user_id;
                     $m_trans->set('trans_date','NOW()');
                     $m_trans->trans_key_id=1; //CRUD
-                    $m_trans->trans_type_id=75; // TRANS TYPE
-                    $m_trans->trans_log='Created Job Order Billing No: JO-BILL-'.date('Ymd').'-'.$jo_billing_id;
+                    $m_trans->trans_type_id=68; // TRANS TYPE
+                    $m_trans->trans_log='Created Job Order Billing No: JS-'.date('Ymd').'-'.$jo_billing_id;
                     $m_trans->save();
                     $response['title'] = 'Success!';
                     $response['stat'] = 'success';
@@ -206,6 +214,8 @@ class Jo_billing extends CORE_Controller
                 $m_invoice->department_id=$this->input->post('department',TRUE);
                 // $m_invoice->address=$this->input->post('address',TRUE);
                 $m_invoice->remarks=$this->input->post('remarks',TRUE);
+                $m_invoice->project_id=$this->input->post('project_id',TRUE);
+                $m_invoice->reference_no=$this->input->post('reference_no',TRUE);
                 $m_invoice->date_start=date('Y-m-d',strtotime($this->input->post('date_start',TRUE)));
                 $m_invoice->date_due=date('Y-m-d',strtotime($this->input->post('date_due',TRUE)));
                 $m_invoice->date_invoice=date('Y-m-d',strtotime($this->input->post('date_invoice',TRUE)));
@@ -257,7 +267,7 @@ class Jo_billing extends CORE_Controller
                     $m_trans->user_id=$this->session->user_id;
                     $m_trans->set('trans_date','NOW()');
                     $m_trans->trans_key_id=2; //CRUD
-                    $m_trans->trans_type_id=75; // TRANS TYPE
+                    $m_trans->trans_type_id=68; // TRANS TYPE
                     $m_trans->trans_log='Updated Job Order Billing No: '.$jo_info[0]->jo_billing_no;
                     $m_trans->save();
 
@@ -295,7 +305,7 @@ class Jo_billing extends CORE_Controller
                 $m_trans->user_id=$this->session->user_id;
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=3; //CRUD
-                $m_trans->trans_type_id=75; // TRANS TYPE
+                $m_trans->trans_type_id=68; // TRANS TYPE
                 $m_trans->trans_log='Deleted Job Order Billing No: '.$jo_info[0]->jo_billing_no;
                 $m_trans->save();
 
@@ -332,16 +342,20 @@ function response_rows_jo_billing($filter_value){
                 'jo_billing.address',
                 'jo_billing.remarks',
                 'jo_billing.requested_by',
+                'jo_billing.reference_no',
                 'jo_billing.total_overall_discount',
+                'jo_billing.project_id',
                 'jo_billing.is_journal_posted',
                 'DATE_FORMAT(jo_billing.date_invoice,"%m/%d/%Y") as date_invoice',
                 'DATE_FORMAT(jo_billing.date_due,"%m/%d/%Y") as date_due',
                 'DATE_FORMAT(jo_billing.date_start,"%m/%d/%Y") as date_start',
                 'suppliers.supplier_name',
+                'projects.project_name',
                 'departments.department_name'),
                 array(
                     array('departments','departments.department_id=jo_billing.department_id','left'),
-                    array('suppliers','suppliers.supplier_id=jo_billing.supplier_id','left')
+                    array('suppliers','suppliers.supplier_id=jo_billing.supplier_id','left'),
+                    array('projects','projects.project_id=jo_billing.project_id','left')
                     ),
                 'jo_billing.jo_billing_id DESC');
 }

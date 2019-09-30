@@ -211,16 +211,16 @@
                             <div id="" class="">
                                 <div class="panel-body">
                              <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo" style="text-decoration: none;">
-                            <h2 class="h2-panel-responsive">Job Order (Pending)</h2><hr>
+                            <h2 class="h2-panel-responsive">Job Service (Pending)</h2><hr>
                             </a>
                                     <div>
                                     <table id="tbl_job_order_review" class="table table-striped" cellspacing="0" width="100%">
                                         <thead class="">
                                         <tr>
                                             <th></th>
-                                            <th>Job Order Billing #</th>
+                                            <th>Job Service #</th>
                                             <th>Supplier</th>
-                                            <th>Rquested By</th>
+                                            <th>Project</th>
                                             <th>Invoice Date</th>
                                             <th>End Date</th>
                                             <th>Department</th>
@@ -934,9 +934,9 @@
                     },
                 { targets:[1],data: "jo_billing_no" },
                 { targets:[2],data: "supplier_name" },
-                { targets:[3],data: "requested_by" },
+                { targets:[3],data: "project_name" },
                 { targets:[4],data: "date_invoice" },
-                { targets:[5],data: "date_due" },
+                { targets:[5],data: "date_due", visible:false },
                 { targets:[6],data: "department_name" },
                 { targets:[7],data: "remarks",render: $.fn.dataTable.render.ellipsis(60) },
                 ]

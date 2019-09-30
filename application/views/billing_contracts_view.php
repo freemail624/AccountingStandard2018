@@ -99,7 +99,7 @@
         .modal-body p {
             margin-left: 20px !important;
         }
-        #tbl_purchases_filter{
+        #tbl_contracts_filter{
             display: none;
         }
         div.dataTables_processing{ 
@@ -112,6 +112,16 @@
         background: none!important; 
         background-color: transparent!important; 
         } 
+        body.modal-open {
+            overflow: visible;
+        }
+        .btn {
+            padding: 0px 6px!important;
+            
+        }
+        .btn-sm {
+            font-size: 9px!important;
+        }
     </style>
 </head>
 <body class="animated-content"  style="font-family: tahoma;">
@@ -125,7 +135,7 @@
 <div class="page-content"><!-- #page-content -->
 <ol class="breadcrumb"  style="margin-bottom: 10px;">
     <li><a href="Dashboard">Dashboard</a> </li>
-    <li><a href="Purchases">Purchase Order</a></li>
+    <li><a href="Billing_contracts">Billing Contracts</a></li>
 </ol>
 
 <div class="container-fluid">
@@ -138,19 +148,18 @@
         <h2 class="h2-panel-heading">Billing Contracts</h2><hr>
         <div class="row">
         <div class="col-sm-12">
-        <div class="col-sm-3"><br><button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Purchase Order" ><i class="fa fa-plus"></i> New Purchase Order</button></div>
         <div class="col-sm-2">
         Approval Status: <br>
             <select id="cbo_approval">
-                <option value="0">Approved</option>
+                <option value="1">Approved</option>
                 <option value="0">Pending</option>
-                <option value="0">Disapproved</option>
+                <option value="2">Disapproved</option>
             </select>
         </div>
-        <div class="col-sm-3">Search:<br><input type="text" class="form-control" id="searchbox_purchase_table"> </div>
+        <div class="col-sm-3">Search:<br><input type="text" class="form-control" id="searchbox_contracts_table"> </div>
         </div>
         </div><br>
-            <table id="tbl_purchases" class="table table-striped" cellspacing="0" width="100%">
+            <table id="tbl_contracts" class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
                 <tr>
                     <th></th>
@@ -160,6 +169,7 @@
                     <th>Termination</th>
                     <th>Terms</th>
                     <th>Location</th>
+                    <th><center>Action</center></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -170,7 +180,82 @@
     </div>
 </div>
 
+      <div id="modal_confirmation_approval" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+          <div class="modal-dialog modal-md">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                      <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Approval Confirmation</h4>
 
+                  </div>
+
+                  <div class="modal-body">
+                  <table width="100%" class="table table-striped" style="font-size: 12px;margin-bottom: 0px;">
+                      <tbody>
+                          <tr>
+                              <td style="width: 30%;"><b>Contract No: </b></td>
+                              <td id="contract_no"></td>
+                          </tr>
+                          <tr>
+                              <td style="width: 30%;"><b>Lessee / Tenant: </b></td>
+                              <td id="lessee_or_tenant"></td>
+                          </tr>
+                          <tr>
+                              <td><b>Approved By: </b></td>
+                              <td id=""><?php echo $this->session->user_fullname; ?></td>
+                          </tr>
+                          <tr>
+                              <td><b>Approval Remarks:</b></td>
+                              <td id=""><textarea id="approval_remarks" class="form-control" placeholder="Optional Remarks"></textarea></td>
+                          </tr>
+                      </tbody>
+                  </table>
+                  </div>
+            <div class="modal-footer">
+                <button id="btn_yes_approval" type="button" class="btn btn-success" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Approve</button>
+
+            </div>
+              </div>
+          </div>
+      </div>
+      <div id="modal_confirmation_disapproval" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+          <div class="modal-dialog modal-md">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                      <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Disapproval Confirmation</h4>
+
+                  </div>
+
+                  <div class="modal-body">
+                  <table width="100%" class="table table-striped" style="font-size: 12px;margin-bottom: 0px;">
+                      <tbody>
+                          <tr>
+                              <td style="width: 30%;"><b>Contract No: </b></td>
+                              <td id="contract_no_dis"></td>
+                          </tr>
+                          <tr>
+                              <td style="width: 30%;"><b>Lessee / Tenant: </b></td>
+                              <td id="lessee_or_tenant_dis"></td>
+                          </tr>
+                          <tr>
+                              <td><b>Disapproved By: </b></td>
+                              <td id=""><?php echo $this->session->user_fullname; ?></td>
+                          </tr>
+                          <tr>
+                              <td><b>Disapproval Remarks:</b></td>
+                              <td id=""><textarea id="disapproval_remarks" class="form-control" placeholder="Optional Remarks"></textarea></td>
+                          </tr>
+                      </tbody>
+                  </table>
+                  </div>
+            <div class="modal-footer">
+                <button id="btn_yes_disapproval" type="button" class="btn btn-warning" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Disapprove</button>
+
+            </div>
+              </div>
+          </div>
+      </div>
 </div>
 </div>
 </div>
@@ -227,7 +312,7 @@ $(document).ready(function(){
 
         _cboApproval.select2('val',0);
 
-        dt=$('#tbl_purchases').DataTable({
+        dt=$('#tbl_contracts').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "ajax" : {
@@ -256,7 +341,25 @@ $(document).ready(function(){
                 { targets:[3],data: "commencement_date" },
                 { targets:[4],data: "termination_date" },
                 { targets:[5],data: "contract_terms" },
-                { targets:[6],data: "location_desc" }
+                { targets:[6],data: "location_desc" },
+                {
+                    targets:[7],
+                    render: function (data, type, full, meta){
+                        //alert(full.purchase_order_id);
+
+                        var btn_approved='<button class="btn btn-success btn-sm" name="mark_approved" title="Approve"><i class="fa fa-check" style="color: white;font-size:9px;"></i> <span class=""></span></button>';
+                        var btn_disapproved='<button class="btn btn-primary btn-sm" name="mark_disapproved" title="Disapprove"><i class="fa fa-times" style="color: white;"></i> <span class=""></span></button>';
+
+                        if(_cboApproval.val() == 1) { // APPROVED
+                            return '<center>'+btn_disapproved+'</center>';
+                        }else if(_cboApproval.val() == 2){ // DISAPPROVED
+                            return '<center>'+btn_approved+'</center>';
+                        }else {
+                            return '<center>'+btn_approved+'&nbsp;'+btn_disapproved+'</center>';
+                        }
+
+                    }
+                }
             ]
         });
 
@@ -270,7 +373,7 @@ $(document).ready(function(){
     var bindEventHandlers=(function(){
         var detailRows = [];
 
-        $('#tbl_purchases tbody').on( 'click', 'tr td.details-control', function () {
+        $('#tbl_contracts tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
             var row = dt.row( tr );
             var idx = $.inArray( tr.attr('id'), detailRows );
@@ -307,39 +410,91 @@ $(document).ready(function(){
 
 
         _cboApproval.on("select2:select", function (e) {
-            $('#tbl_purchases').DataTable().ajax.reload()
+            $('#tbl_contracts').DataTable().ajax.reload()
         });
 
 
-        $("#searchbox_purchase_table").keyup(function(){         
+        $("#searchbox_contracts_table").keyup(function(){         
             dt
                 .search(this.value)
                 .draw();
         });
+        //APPROVAL
+        $('#tbl_contracts > tbody').on('click','button[name="mark_approved"]',function(){ // MAIN TABLE
+            _selectRowObj=$(this).closest('tr'); //hold dom of tr which is selected
+            var data=dt.row(_selectRowObj).data();
+            _selectedID=data.contract_id;
+            $('#lessee_or_tenant').text(data.trade_name);
+            $('#contract_no').text(data.contract_no);
+            $('#approval_remarks').val('');
+            $('#modal_confirmation_approval').modal('show');
 
-    })();
+
+        });
+
+        $('#tbl_contracts > tbody').on('click','button[name="mark_as_approved"]',function(){ // DROPDOWN
+            _selectRowObj=$(this).parents('tr').prev();
+            _selectRowObj.find('button[name="mark_approved"]').click();
+        });
+
+        $('#btn_yes_approval').click(function(){
+            approveContract().done(function(response){
+            showNotification(response);
+                if(response.stat=="success"){
+                    dt.row(_selectRowObj).remove().draw();
+                    $('#modal_confirmation_approval').modal('hide');
+                }
+            });
+        });
+         // DISAPPROVAL 
+        $('#tbl_contracts > tbody').on('click','button[name="mark_disapproved"]',function(){ // MAIN TABLE
+            _selectRowObj=$(this).closest('tr'); //hold dom of tr which is selected
+            var data=dt.row(_selectRowObj).data();
+            _selectedID=data.contract_id;
+            $('#lessee_or_tenant_dis').text(data.trade_name);
+            $('#contract_no_dis').text(data.contract_no);
+            $('#disapproval_remarks').val('');
+            $('#modal_confirmation_disapproval').modal('show');
+        });
+
+        $('#tbl_contracts > tbody').on('click','button[name="mark_as_disapproved"]',function(){ // DROPDOWN
+            _selectRowObj=$(this).parents('tr').prev();
+            _selectRowObj.find('button[name="mark_disapproved"]').click();
+        });
+
+        $('#btn_yes_disapproval').click(function(){
+         disapproveContract().done(function(response){
+            showNotification(response);
+            if(response.stat=="success"){
+                dt.row(_selectRowObj).remove().draw();
+                $('#modal_confirmation_disapproval').modal('hide');
+            }
+
+        });
+      });
+
+    })(); // END OF BIND EVENTS
 
 
-    var createPurchaseOrder=function(){
-        var _data=$('#frm_purchases,#frm_items').serializeArray();
-
-        var tbl_summary=$('#tbl_purchase_summary');
-        _data.push({name : "total_after_discount", value: $('#td_total_after_discount').text() });
-        _data.push({name : "summary_discount", value : tbl_summary.find(oTableDetails.discount).text()});
-        _data.push({name : "summary_before_discount", value :tbl_summary.find(oTableDetails.before_tax).text()});
-        _data.push({name : "summary_tax_amount", value : tbl_summary.find(oTableDetails.tax_amount).text()});
-        _data.push({name : "summary_after_tax", value : tbl_summary.find(oTableDetails.after_tax).text()});
-        _data.push({name : "remarks", value : $('textarea[name="remarks"]').val() });
-        
+    var approveContract=function(){
         return $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"Purchases/transaction/create",
-            "data":_data,
-            "beforeSend": showSpinningProgress($('#btn_save'))
+            "url":"Billing_contracts/transaction/mark-approved",
+            "data":{contract_id : _selectedID, approval_remarks : $('#approval_remarks').val()}
+
         });
     };
 
+    var disapproveContract=function(){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Billing_contracts/transaction/mark-disapproved",
+            "data":{contract_id : _selectedID, disapproval_remarks : $('#disapproval_remarks').val()}
+
+        });
+    };
 
     var showNotification=function(obj){
         PNotify.removeAll(); //remove all notifications

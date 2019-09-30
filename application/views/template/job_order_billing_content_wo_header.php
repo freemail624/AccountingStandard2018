@@ -37,22 +37,15 @@
                 <td class="bottom right top"><?php echo  date_format(new DateTime($billing->date_invoice ),"m/d/Y"); ?></td>
         </tr>
         <tr>
-                <td class="left bottom fifteen" ><span>Start Date:</span></td>
-                <td class="bottom "><?php echo  date_format(new DateTime($billing->date_start ),"m/d/Y"); ?></td>
-            <td class="left bottom "><span>End Date</span></td>
-            <td class="bottom right"><?php echo  date_format(new DateTime($billing->date_due),"m/d/Y"); ?></td>
-        </tr>
-
-        <tr>
                 <td class="left bottom fifteen" ><span>Supplier:</span></td>
                 <td class="bottom "><?php echo $billing->supplier_name?></td>
-                <td class="left bottom "></td>
-                <td  class="bottom right "></td>
+                <td class="left bottom ">Reference No:</td>
+                <td  class="bottom right "><?php echo $billing->reference_no ?></td>
         </tr>
         <tr>
 
-                <td class="left bottom ">Requested By:</td>
-                <td  class="bottom  "><?php echo $billing->requested_by ?></td>
+                <td class="left bottom ">Project:</td>
+                <td  class="bottom  "><?php echo $billing->project_name ?></td>
                 <td class="left bottom ">Department:</td>
                 <td  class="bottom right "><?php echo $billing->department_name ?></td>
         </tr>
