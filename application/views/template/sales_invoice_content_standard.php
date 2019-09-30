@@ -49,7 +49,7 @@
         <tr>
             <td width="10%"  class="bottom"><img src="<?php echo base_url($company_info->logo_path); ?>" style="height: 90px; width: 120px; text-align: left;"></td>
             <td width="60%"  class="bottom" >
-                <h1 class="report-header" style="margin-bottom: 0"><strong><?php echo $company_info->company_name; ?></strong></h1>
+                <h3 class="report-header" style="margin-bottom: 0"><strong><?php echo $company_info->company_name; ?></strong></h3>
                 <span><?php echo $company_info->company_address; ?></span><br>
                 <span><?php echo $company_info->landline.'/'.$company_info->mobile_no; ?></span><br>
                 <span><?php echo $company_info->email_address; ?></span><br>

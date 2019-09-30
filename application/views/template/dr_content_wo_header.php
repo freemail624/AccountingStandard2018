@@ -1,10 +1,10 @@
 <head>  <title>Purchase Invoice</title></head>
 <body>
 <style>
-        body {
+/*        .child {
             font-family: 'Calibri',sans-serif;
             font-size: 12px;
-        }
+        }*/
               .bottom-only{
       border:none!important;
       }
@@ -33,12 +33,12 @@
  /*       border: none!important;*/
     }
 
-        table{
+       .child table{
         border:none!important;
     }
 </style>
 
-<div>
+<div class="child">
     <center><table width="95%" cellpadding="5" style="font-family: tahoma;font-size: 11;" border="0">
             <tr>
                 <td width="45%" valign="top" style="border: none;">

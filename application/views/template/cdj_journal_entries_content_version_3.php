@@ -42,7 +42,7 @@
             text-align: center;
         }
         #table-details td {
-            padding:2px 5px 2px 5px;
+            padding:2px 5px 2px 5px;font-size: 10px;
         }
         .table-wrap {
           height:1650px;

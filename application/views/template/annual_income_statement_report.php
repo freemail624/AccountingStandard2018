@@ -57,7 +57,7 @@
         <tr>
             <td width="10%" style="object-fit: cover;"><img src="<?php echo base_url().$company_info->logo_path; ?>" style="height: 90px; width: 90px; text-align: left;"></td>
             <td width="90%" class="">
-                <span style="font-size: 20px;" class="report-header"><strong><?php echo $company_info->company_name; ?></strong></span><br>
+                <span style="font-size: 18px;" class="report-header"><strong><?php echo $company_info->company_name; ?></strong></span><br>
                 <span><?php echo $company_info->company_address; ?></span><br>
                 <span><?php echo $company_info->landline.'/'.$company_info->mobile_no; ?></span><br>
                 <span><?php echo $company_info->email_address; ?></span>
@@ -65,7 +65,7 @@
         </tr>
     </table><hr>
     <div>
-        <h1 class="report-header" style="text-align: center;"><strong>ANNUAL INCOME STATEMENT</strong></h1>
+        <h3 class="report-header" style="text-align: center;"><strong>ANNUAL INCOME STATEMENT</strong></h3>
     </div>
 	<table width="100%" border="1" cellspacing="0">
         <thead>

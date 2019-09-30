@@ -57,7 +57,7 @@
         </tr>
     </table><hr>
     <div>
-        <h1 class="report-header" style="text-align: center;"><strong>PURCHASE INVOICE REPORT <br> (DETAILED)</strong></h1>
+        <h3 class="report-header" style="text-align: center;"><strong>PURCHASE INVOICE REPORT <br> (DETAILED)</strong></h3>
         <p style="text-align: center;">Period <?php echo $_GET['startDate']; ?> to <?php echo $_GET['endDate']; ?></p>
     </div>
     <?php foreach ($invoice_numbers as $invoice_number) { ?>
