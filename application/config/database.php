@@ -75,12 +75,12 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	// 'hostname' => 'localhost',
-	'hostname' => '192.168.100.4',
+	'hostname' => 'localhost',
+	// 'hostname' => '192.168.100.4',
 	'username' => 'root',
 	'password' => 'jdev',
-	'database' => 'web_jenra_billing',
-	// 'database' => 'web_billing_jenra', // LOCAL
+	// 'database' => 'web_jenra_billing',
+	'database' => 'web_jenra_billing_latest', // LOCAL
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
