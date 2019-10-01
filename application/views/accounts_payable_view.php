@@ -54,11 +54,11 @@
             float: left;
         }
 
-        td.details-control {
+        td.details-control, td.items-details-control  {
             background: url('assets/img/Folder_Closed.png') no-repeat center center;
             cursor: pointer;
         }
-        tr.details td.details-control {
+        tr.details td.details-control,  tr.items-details td.items-details-control{
             background: url('assets/img/Folder_Opened.png') no-repeat center center;
         }
 
@@ -1002,6 +1002,54 @@
 
         }();
 
+        var get_dr_tbl_items=function(dr_invoice_id){
+
+            var dt_name = 'dt_'+dr_invoice_id;
+            dt_name=$('#tbl_items_'+dr_invoice_id).DataTable({
+                "bLengthChange":false,
+                "ajax" : "Deliveries/transaction/fixed_asset_items/"+dr_invoice_id,
+                "columns": [
+                    {
+                        "target":[0],
+                        "class":          "items-details-control",
+                        "orderable":      false,
+                        "data":           null,
+                        "defaultContent": ""
+                    },
+                    { targets:[1],data: "product_code" },
+                    { targets:[2],data: "product_desc" },
+                    { targets:[3],data: "dr_qty", render: $.fn.dataTable.render.number( ',', '.', 2 ) },
+                    { targets:[4],data: "unit_name" },
+                    { targets:[5],data: "dr_price", render: $.fn.dataTable.render.number( ',', '.', 2 ) },
+                    { targets:[6],data: null,
+                        render: function (data, type, full, meta){
+                            var _status='';
+
+                            if(data.fixed_asset_status=="1"){
+                                _status='<i class="fa fa-check-circle" style="color:green;"></i>';
+                            }else{
+                                _status='';
+                            }
+
+                            return '<center>'+_status+'</center>';
+                        }
+                    }
+                ],
+                "rowCallback":function( row, data, index ){
+
+                    $("td:eq(3)", row).css("text-align", "right");
+                    $("td:eq(5)", row).css("text-align", "right");
+
+                    if (data.fixed_asset_status > 0){
+                        $(row).find('td').eq(0).removeClass('items-details-control');
+                    }else{
+                        $(row).find('td').eq(0).addClass('items-details-control');
+                    }
+
+                }
+            });
+
+        };
         var bindEventHandlers=function(){
             $("#txt_start_date_ap").on("change", function () {        
                 $('#tbl_account_payables').DataTable().ajax.reload()
@@ -1054,8 +1102,6 @@
                 }
             } );
 
-
-
             $('#tbl_purchase_review tbody').on( 'click', 'tr td.details-control', function () {
                 var tr = $(this).closest('tr');
                 var row = dtReview.row( tr );
@@ -1091,9 +1137,10 @@
                         var tbl=$('#tbl_entries_for_review_'+ d.dr_invoice_id);
                         var parent_tab_pane=$('#journal_review_'+ d.dr_invoice_id);
 
-                        reInitializeDropDownAccounts(tbl,false);
+                        reInitializeDropDownAccounts(tbl);
                         reInitializeChildEntriesTable(tbl);
                         reInitializeChildElements(parent_tab_pane);
+                        reInitializeTbl(d.dr_invoice_id);
 
                         // Add to the 'open' array
                         if ( idx === -1 ) {
@@ -1108,6 +1155,106 @@
 
                 }
             } );
+
+
+            $('#tbl_purchase_review tbody').on( 'click', 'tr td.items-details-control', function () {
+                
+                var parentRow = $(this).parents('tr').prev();
+                var rowData = dtReview.row( parentRow ).data();
+                var dr_invoice_id = rowData.dr_invoice_id;
+
+                var tr = $(this).closest('tr');
+                var row = $('#tbl_items_'+dr_invoice_id).DataTable().row( tr );
+                var idx = $.inArray( tr.attr('id'), detailRows );
+
+                if ( row.child.isShown() ) {
+                    tr.removeClass( 'items-details' );
+                    row.child.hide();
+
+                    // Remove from the 'open' array
+                    detailRows.splice( idx, 1 );
+                }
+                else {
+                    tr.addClass( 'items-details' );
+                    //console.log(row.data());
+                    var d=row.data();
+
+                    $.ajax({
+                        "dataType":"html",
+                        "type":"POST",
+                        "url":"Templates/layout/fixed_asset_item_entry?id="+d.dr_invoice_item_id,
+                        "beforeSend" : function(){
+                            row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                        }
+                    }).done(function(response){
+                        row.child( response,'no-padding' ).show();
+
+                        _cboitemdepartments=$('.cbo_item_departments').select2({
+                            placeholder: "Please select a department.",
+                            allowClear: true
+                        });
+
+                        $('#cbo_item_departments_'+d.dr_invoice_item_id).select2('val',rowData.department_id);
+
+                        _cboitemcategory=$('.cbo_item_category').select2({
+                            placeholder: "Please select a category.",
+                            allowClear: true
+                        });
+
+                        $('#cbo_item_category_'+d.dr_invoice_item_id).select2('val',d.category_id);
+
+                        _cboitemlocation=$('.cbo_item_location').select2({
+                            placeholder: "Please select a location.",
+                            allowClear: true
+                        });
+
+                        reInitializeNumeric();
+                        $('.date-picker').datepicker({
+                            todayBtn: "linked",
+                            keyboardNavigation: false,
+                            forceParse: false,
+                            calendarWeeks: true,
+                            autoclose: true
+
+                        });
+
+                        // Add to the 'open' array
+                        if ( idx === -1 ) {
+                            detailRows.push( tr.attr('id') );
+                        }
+                    });
+                }
+            });
+
+            $('#tbl_purchase_review tbody').on( 'click', 'button[name="save_fixed_asset"]', function () {
+
+                var parentRow = $(this).parents('tr').prev();
+                var rowData = dtReview.row( parentRow ).data();
+                var dr_invoice_id = rowData.dr_invoice_id;
+
+                var prevRow = $(this).parents('tr').prev();
+                var pRow = $('#tbl_items_'+dr_invoice_id).DataTable().row( prevRow );
+                var row = $('#tbl_items_'+dr_invoice_id).DataTable().row( prevRow ).data();
+                var dr_invoice_item_id = row.dr_invoice_item_id;
+
+                var currentRow = $(this).closest('tr');
+                var form = currentRow.find('form').attr('id');
+                
+                if(validateRequiredFields($('#'+form))){
+                    save_fixed_asset(form,dr_invoice_item_id,pRow).done(function(response){
+                        showNotification(response);
+                        $('#tbl_items_'+dr_invoice_id).DataTable().row(prevRow).data(response.row_updated[0]).draw();
+
+                        // Close Child Row
+                        var idx = $.inArray( prevRow.attr('id'), detailRows );
+                        prevRow.removeClass( 'items-details' );
+                        pRow.child.hide();
+                        // Remove from the 'open' array
+                        detailRows.splice( idx, 1 );
+                    });
+                }
+            });
+
 
             $('#tbl_job_order_review tbody').on( 'click', 'tr td.details-control', function () {
                 var tr = $(this).closest('tr');
@@ -1480,6 +1627,10 @@
         //*********************************************************************8
         //              user defines
 
+        var reInitializeTbl=function(dr_invoice_id){
+            // $('#tbl_items_'+dr_invoice_id).DataTable().ajax.reload();
+            get_dr_tbl_items(dr_invoice_id);
+        };
         var createSupplier=function() {
             var _data=$('#frm_suppliers_new').serializeArray();
 
@@ -1490,6 +1641,21 @@
                 "url":"Suppliers/transaction/create",
                 "data":_data,
                 "beforeSend": showSpinningProgress($('#btn_create_new_supplier'))
+            });
+        };
+        
+        var save_fixed_asset=function(form,dr_invoice_item_id,row){
+            var _data=$('#'+form).serializeArray();
+            _data.push({name : "dr_invoice_item_id" ,value : dr_invoice_item_id});
+
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Fixed_asset_management/transaction/createFixedAsset",
+                "data":_data,
+                beforeSend : function(){
+                    row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                },
             });
         };
 

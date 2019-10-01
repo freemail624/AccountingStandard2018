@@ -48,6 +48,7 @@
                     <ul class="nav nav-tabs">
                         <li class="active"><a href="#journal_review_<?php echo $purchase_info->dr_invoice_id; ?>" data-toggle="tab"><i class="fa fa-gavel"></i> Review Journal</a></li>
                         <li class=""><a href="#purchase_review_<?php echo $purchase_info->dr_invoice_id; ?>" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Transaction</a></li>
+                        <li style="<?php if($fixed_asset_count <= 0){ echo 'display: none;'; }?>"><a href="#fixed_asset_<?php echo $purchase_info->dr_invoice_id; ?>" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Fixed Asset</a></li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="journal_review_<?php echo $purchase_info->dr_invoice_id; ?>" data-parent-id="<?php echo $purchase_info->dr_invoice_id; ?>" style="min-height: 300px;">
@@ -147,20 +148,31 @@
                                         <td align="right"><strong><?php echo number_format($dr_total,2); ?></strong></td>
                                         <td align="right"><strong><?php echo number_format($cr_total,2); ?></strong></td>
                                         <td></td>
+                                        <td></td>
                                     </tr>
                                     </tfoot>
                                 </table>
                                 <hr />
                                 <label class="col-lg-2"> Remarks :</label><br />
                                 <div class="col-lg-12">
-                                    <textarea name="remarks" class="form-control" style="width: 100%;">To Record Purchase No <?php echo $purchase_info->dr_invoice_no; ?></textarea>
+                                    <textarea name="remarks" class="form-control" style="width: 100%;"></textarea>
                                 </div>
                                 <br /><hr />
                             </form>
                             <br /><br /><hr />
                             <div class="row">
                                 <div class="col-lg-12">
+                                <div class="col-sm-6">  
                                     <button name="btn_finalize_journal_review" class="btn btn-primary <?php if(!$valid_particular){ echo "disabled"; }?>"><i class="fa fa-check-circle"></i> <span class=""></span> Finalize and Post this Journal</button>
+                                </div>
+                                <div class="col-sm-6">  
+                                    <div class="input-group" style="float: right;">
+                                        <input type="text" name="closing_reason" class="form-control" placeholder="Close Notes/Remarks" >
+                                         <span class="input-group-addon " style="padding: 0px;background-color: #ff0039!important;">
+                                            <button name="btn_close_journal_review" class="btn btn-danger " title="Click this if you don't want to post this in Accounting, and it will be removed from the list of Pending for Review" style="">Close</button>    
+                                        </span>
+                                    </div>
+                                </div>
                                 </div>
                             </div>
                         </div>
@@ -260,6 +272,29 @@
                                             </tr>                                        </tfoot>
                                     </table>
                                     <br /><br />
+                                </div>
+                        </div>
+                        <div class="tab-pane" id="fixed_asset_<?php echo $purchase_info->dr_invoice_id; ?>" >
+                                <h4><span style="margin-left: 1%"><strong><i class="fa fa-bars"></i> Fixed Asset</strong></span></h4>
+                                <hr />
+                                <div style="margin-left: 2%;margin-right: 20px;">
+                                    <div class="row">
+                                        <table class="tbl_items table-striped table" cellspacing="0" width="100%" id="tbl_items_<?php echo $purchase_info->dr_invoice_id; ?>">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Code</th>
+                                                    <th>Item</th>
+                                                    <th align="right" style="text-align: right;">Qty</th>
+                                                    <th>UM</th>
+                                                    <th align="right" style="text-align: right;">Price</th>
+                                                    <th><center>Status</center></th>
+                                                </tr> 
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                         </div>
                     </div>

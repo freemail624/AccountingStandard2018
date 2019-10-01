@@ -136,6 +136,7 @@
                         <li class="<?php echo (in_array('10',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-bag"></i><span>Assets Management</span></a>
                             <ul class="acc-menu">
                                 <li class="<?php echo (in_array('10-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Fixed_asset_management">Fixed Asset Management</a></li>
+                                <li class="<?php echo (in_array('10-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Asset_movement">Asset Movement</a></li>
                                 <li class="<?php echo (in_array('10-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Depreciation_expense">Depreciation Expense Report</a></li>
                             </ul>
                         </li>
@@ -152,6 +153,8 @@
                                 <li class="<?php echo (in_array('6-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Account_titles">Setup Chart of Accounts</a></li>
                                 <li class="<?php echo (in_array('6-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Account_integration">General Configuration</a></li>
                                 <li class="<?php echo (in_array('6-14',$this->session->user_rights)?'':'hidden'); ?>"><a href="Soa_settings">SOA Settings</a></li>
+                                <li class="<?php echo (in_array('6-16',$this->session->user_rights)?'':'hidden'); ?>"><a href="Asset_settings">Fixed Asset Settings</a></li>
+
                                 <!-- <li class="<?php echo (in_array('6-12',$this->session->user_rights)?'':'hidden'); ?>"><a href="Purchasing_integration">Purchasing Configuration</a></li> -->
                                 <li class="<?php echo (in_array('6-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="User_groups">Setup User Rights</a></li>
                                 <li class="<?php echo (in_array('6-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="users">Create User Account</a></li>

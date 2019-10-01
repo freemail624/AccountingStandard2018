@@ -26,3 +26,15 @@
 	TRANS_KEY_DESC
 	11	Approve
 	12	Disapprove
+
+09/30/2019
+	ASSET SETTTINGS
+	ASSET MOVEMENT
+
+10/01/2019
+
+	Fixed Asset
+		product_id
+
+	delivery_invoice
+		fixed_asset_status

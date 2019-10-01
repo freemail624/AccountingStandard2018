@@ -104,6 +104,10 @@ class Templates extends CORE_Controller {
         $this->load->model('Months_model'); 
 
         $this->load->model('Projects_model'); 
+        $this->load->model('Asset_settings_model'); 
+        $this->load->model('Locations_model'); 
+        $this->load->model('Categories_model'); 
+
 
         $this->load->library('M_pdf');
         $this->load->library('excel');
@@ -2681,6 +2685,15 @@ class Templates extends CORE_Controller {
                 );
                 $data['purchase_info']=$purchase_info[0];
 
+                // Count Fixed Asset Items in DR
+                $accounts=$this->Asset_settings_model->get_list(null,'asset_account_id');
+                $acc = [];
+                foreach ($accounts as $account) { $acc[]=$account->asset_account_id; }
+                $fixed_asset_account_id =  implode(",", $acc);
+
+                $count = $m_purchases_items->get_fixed_asset_items($purchase_invoice_id,$fixed_asset_account_id);
+                $data['fixed_asset_count'] = count($count);
+
                 $data['departments']=$m_departments->get_list('is_active=TRUE AND is_deleted=FALSE');
 
                 $data['suppliers']=$m_suppliers->get_list(
@@ -2847,6 +2860,20 @@ class Templates extends CORE_Controller {
 
                 echo $this->load->view('template/ar_journal_for_review',$data,TRUE); //details of the journal
 
+
+                break;
+
+            case 'fixed_asset_item_entry':
+                $dr_invoice_item_id=$this->input->get('id',TRUE);
+
+                $m_dr_items = $this->Delivery_invoice_item_model;
+                $data = $m_dr_items->get_fixed_asset_items(null,null,$dr_invoice_item_id);
+                $data['items'] = $data[0];
+                $data['location'] = $this->Locations_model->get_list(array("is_deleted"=>FALSE,"is_active"=>TRUE));
+                $data['categories'] = $this->Categories_model->get_list(array("is_deleted"=>FALSE,"is_active"=>TRUE));
+                $data['departments'] = $this->Departments_model->get_list(array("is_deleted"=>FALSE,"is_active"=>TRUE));
+
+                echo $this->load->view('template/fixed_asset_item_entry',$data,TRUE);
 
                 break;
 

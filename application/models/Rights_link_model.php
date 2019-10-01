@@ -115,7 +115,9 @@ class Rights_link_model extends CORE_Model{
                                           (105,'19','19-1','Project Management'),
                                           (106,'19','19-2','Job Service Posting'),
                                           (107,'19','19-3','Job Unit'),
-                                          (108,'19','19-4','Jobs Management')
+                                          (108,'19','19-4','Jobs Management'),
+                                          (109,'6','6-16','Fixed Asset Settings'),
+                                          (110,'10','10-3','Fixed Asset Movement')
 
 
 

@@ -14,9 +14,16 @@
 					'Asset_property_status_model',
 					'Fixed_asset_management_model',
 					'Users_model',
-					'Departments_model'
+					'Departments_model',
+					'Delivery_invoice_item_model',
+					'Company_model',
+					'Asset_movement_model'
 				)
 			);
+		    
+
+        	$this->load->library('excel');
+		    $this->load->library('M_pdf');
 		}
 
 		public function index()
@@ -76,6 +83,188 @@
 
 					echo json_encode($response);
 				break;
+
+				case 'print':
+	                $m_company_info=$this->Company_model;
+	                $company_info=$m_company_info->get_list();
+
+	                $m_movement = $this->Asset_movement_model;
+	                $data['data'] = $m_movement->get_list_with_status();
+
+	                $data['company_info']=$company_info[0];
+	                $data['user'] = $this->session->user_fullname;
+
+	                $this->load->view('template/fixed_asset_management_content',$data);
+
+                break;
+
+	            case 'export':
+
+	                $excel = $this->excel;
+
+	                $m_company_info=$this->Company_model;
+	                $m_movement = $this->Asset_movement_model;
+
+	                $company_info=$m_company_info->get_list();
+	                $data = $m_movement->get_list_with_status();
+
+	                $excel->setActiveSheetIndex(0);
+
+	                $excel->getActiveSheet()->getColumnDimensionByColumn('A1:B1')->setWidth('30');
+	                $excel->getActiveSheet()->getColumnDimensionByColumn('A2:C2')->setWidth('50');
+	                $excel->getActiveSheet()->getColumnDimensionByColumn('A3')->setWidth('30');
+	                $excel->getActiveSheet()->getColumnDimensionByColumn('A4')->setWidth('40');
+
+	                //name the worksheet
+	                $excel->getActiveSheet()->setTitle("Fixed Asset Management");
+	                $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
+	                $excel->getActiveSheet()->mergeCells('A1:D1');
+	                $excel->getActiveSheet()->mergeCells('A2:D2');
+	                $excel->getActiveSheet()->mergeCells('A3:D3');
+	                $excel->getActiveSheet()->mergeCells('A4:D4');
+
+	                $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
+	                                        ->setCellValue('A2',$company_info[0]->company_address)
+	                                        ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no)
+	                                        ->setCellValue('A4',$company_info[0]->email_address);
+
+	                $excel->getActiveSheet()->setCellValue('A6','Fixed Asset Management')
+	                                        ->getStyle('A6')->getFont()->setBold(TRUE);
+	                $excel->getActiveSheet()->setCellValue('A7','')
+	                                        ->getStyle('A7')->getFont()->setItalic(TRUE);
+	                $excel->getActiveSheet()->setCellValue('A8','')
+	                                        ->getStyle('A8')->getFont()->setItalic(TRUE);
+
+	                $excel->getActiveSheet()->getColumnDimension('A')->setWidth('10');
+	                $excel->getActiveSheet()->getColumnDimension('B')->setWidth('40');
+	                $excel->getActiveSheet()->getColumnDimension('C')->setWidth('20');
+	                $excel->getActiveSheet()->getColumnDimension('D')->setWidth('20');
+	                $excel->getActiveSheet()->getColumnDimension('E')->setWidth('20');
+	                $excel->getActiveSheet()->getColumnDimension('F')->setWidth('20');
+
+	                 $style_header = array(
+
+	                    'fill' => array(
+	                        'type' => PHPExcel_Style_Fill::FILL_SOLID,
+	                        'color' => array('rgb'=>'CCFF99'),
+	                    ),
+	                    'font' => array(
+	                        'bold' => true,
+	                    )
+	                );
+
+	                $excel->getActiveSheet()->getStyle('A8:O8')->applyFromArray( $style_header );
+
+	                $excel->getActiveSheet()->setCellValue('A8','Asset Code')
+	                                        ->getStyle('A8')->getFont()->setBold(TRUE);
+	                $excel->getActiveSheet()->setCellValue('B8','Asset Description')
+	                                        ->getStyle('B8')->getFont()->setBold(TRUE);
+	                $excel->getActiveSheet()->setCellValue('C8','Present Location')
+	                                        ->getStyle('C8')->getFont()->setBold(TRUE);
+	                $excel->getActiveSheet()->setCellValue('D8','Present Status')
+	                                        ->getStyle('D8')->getFont()->setBold(TRUE);
+	                $excel->getActiveSheet()->setCellValue('E8','Date')
+	                                        ->getStyle('E8')->getFont()->setBold(TRUE);
+	                $excel->getActiveSheet()->setCellValue('F8','Record')
+	                                        ->getStyle('F8')->getFont()->setBold(TRUE);
+
+	                $a=1;
+	                $i=9;
+
+	                foreach ($data as $row) {
+
+	                $record = "";
+	                if($row->is_acquired == 1){  $record = 'Acquired'; }else{ $record = 'Moved'; }
+
+	                $excel->getActiveSheet()->setCellValue('A'.$i,$row->asset_code)
+	                                        ->setCellValue('B'.$i,$row->asset_description)
+	                                        ->setCellValue('C'.$i,$row->location_name)
+	                                        ->setCellValue('D'.$i,$row->asset_property_status)
+	                                        ->setCellValue('E'.$i,$row->date_movement)
+	                                        ->setCellValue('F'.$i,$record);
+	                $i++;
+	                $a++;
+
+	                }
+
+	                $i++; $i++;
+	                $excel->getActiveSheet()->setCellValue('A'.$i,'Date Printed: '.date('Y-m-d h:i:s'));
+	                $i++;
+	                $excel->getActiveSheet()->setCellValue('A'.$i,'Printed by: '.$this->session->user_fullname);
+
+
+	                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+	                header('Content-Disposition: attachment;filename="Fixed Asset Managment '.date('M-d-Y',NOW()).'.xlsx"');
+	                header('Cache-Control: max-age=0');
+	                // If you're serving to IE 9, then the following may be needed
+	                header('Cache-Control: max-age=1');
+
+	                // If you're serving to IE over SSL, then the following may be needed
+	                header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+	                header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+	                header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+	                header ('Pragma: public'); // HTTP/1.0
+
+	                $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+	                $objWriter->save('php://output');            
+	                     
+	            break;                
+
+				case 'createFixedAsset':
+					$m_fixed_asset=$this->Fixed_asset_management_model;
+					$m_dr_item=$this->Delivery_invoice_item_model;
+
+					$m_fixed_asset->begin();
+
+					$dr_invoice_item_id = $this->input->post('dr_invoice_item_id',TRUE);
+					$dr_item_info = $m_dr_item->get_list(
+						array("dr_invoice_item_id"=>$dr_invoice_item_id),
+						array(
+							'delivery_invoice_items.product_id',
+							'delivery_invoice_items.dr_qty'
+							)
+						);
+
+					$product_id = $dr_item_info[0]->product_id;
+					$dr_qty = $dr_item_info[0]->dr_qty;
+
+					$code = $this->input->post('asset_code',TRUE);
+
+					$fixed_asset_count = $m_fixed_asset->get_list(array('product_id'=>$product_id));
+					$product_count = count($fixed_asset_count);
+
+					for ($i=0; $i < $dr_qty; $i++) { 
+							$count = $product_count + ($i+1);
+							$asset_code = $code.'-'.$count;
+							$m_fixed_asset->asset_code = $asset_code;
+							$m_fixed_asset->asset_description = $this->input->post('asset_description',TRUE);
+							$m_fixed_asset->location_id = $this->input->post('location_id',TRUE);
+							$m_fixed_asset->department_id = $this->input->post('department_id',TRUE);
+							$m_fixed_asset->category_id = $this->input->post('category_id',TRUE);
+							$m_fixed_asset->acquisition_cost = $this->get_numeric_value($this->input->post('acquisition_cost',TRUE));
+							$m_fixed_asset->salvage_value = $this->get_numeric_value($this->input->post('salvage_value',TRUE));
+							$m_fixed_asset->life_years = $this->get_numeric_value($this->input->post('life_years',TRUE));
+							$m_fixed_asset->date_acquired = date('Y-m-d',strtotime($this->input->post('date_acquired',TRUE)));
+							$m_fixed_asset->asset_status_id = 1;
+							$m_fixed_asset->product_id = $product_id;
+							$m_fixed_asset->posted_by_user=$this->session->user_id;
+							$m_fixed_asset->set('date_posted','NOW()');
+							$m_fixed_asset->save();
+					}
+
+					// Update DR Item Fixed Asset Status
+					$m_dr_item->fixed_asset_status = 1;
+					$m_dr_item->modify($dr_invoice_item_id);
+
+					$m_fixed_asset->commit();
+
+					$response['title'] = 'Success!';
+                    $response['stat'] = 'success';
+                    $response['msg'] = 'Asset successfully created.';
+                    $response['row_updated']=$m_dr_item->get_fixed_asset_items(null,null,$dr_invoice_item_id);
+
+                    echo json_encode($response);
+					break;
 
 				case 'create':
 					$m_fixed_asset=$this->Fixed_asset_management_model;
@@ -166,6 +355,68 @@
 
 	                    echo json_encode($response);
 	                }
+				break;
+
+				case 'asset-history':
+
+	                $m_company=$this->Company_model;
+	                $company_info = $m_company->get_list();
+	                $data['company_info']=$company_info[0];
+					$m_fixed_asset=$this->Fixed_asset_management_model;
+	                $fixed_asset_id=$this->input->get('id',TRUE);
+	                $type=$this->input->get('type',TRUE);
+	                $info=$m_fixed_asset->get_list($fixed_asset_id,
+						array(
+							'fixed_assets.fixed_asset_id',
+							'fixed_assets.asset_code',
+							'fixed_assets.asset_description',
+							'fixed_assets.serial_no',
+							'fixed_assets.location_id',
+							'fixed_assets.department_id',
+							'fixed_assets.category_id',
+							'fixed_assets.life_years',
+							'fixed_assets.asset_status_id',
+							'DATE_FORMAT(fixed_assets.date_acquired,"%m/%d/%Y")as date_acquired',
+							'fixed_assets.remarks',
+							'FORMAT(fixed_assets.acquisition_cost, 2) AS acquisition_cost',
+							'FORMAT(fixed_assets.salvage_value, 2) AS salvage_value',
+							'locations.*',
+							'departments.*',
+							'categories.*',
+							'asset_property_status.*'
+						),
+						array(
+							array('locations','locations.location_id=fixed_assets.location_id','left'),
+							array('departments','departments.department_id=fixed_assets.department_id','left'),
+							array('categories','categories.category_id=fixed_assets.category_id','left'),
+							array('asset_property_status','asset_property_status.asset_status_id=fixed_assets.asset_status_id','left')
+						),
+						'fixed_assets.fixed_asset_id DESC'
+					);
+
+	                $data['info']=$info[0];
+	                $data['items'] = $m_fixed_asset->get_history_asset($fixed_asset_id);
+
+	                if($type=='preview'){
+                    echo $this->load->view('template/fixed_asset_history_content',$data,TRUE);
+                    echo $this->load->view('template/fixed_asset_history_content_menus',$data,TRUE);
+
+	                }else if($type=='print'){
+
+
+                    $file_name=$info[0]->asset_description;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                    $content=$this->load->view('template/fixed_asset_history_content',$data,TRUE); //load the template
+                    $pdf->setFooter('{PAGENO}');
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output();
+
+	                }
+
+                
+
 				break;
 			}
 		}
