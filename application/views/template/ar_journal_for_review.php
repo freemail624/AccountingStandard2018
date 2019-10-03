@@ -151,7 +151,7 @@
         <hr />
         <label class="col-lg-2"> Remarks :</label><br />
         <div class="col-lg-12">
-            <textarea name="remarks" class="form-control" style="width: 100%;"></textarea>
+            <textarea name="remarks" class="form-control" style="width: 100%;"><?php echo $sales_info->remarks; ?></textarea>
         </div>
         <br /><hr />
     </form>

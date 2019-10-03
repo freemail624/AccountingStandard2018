@@ -264,7 +264,7 @@
 
 
             <div id="modal_create_service" class="modal fade" role="dialog"><!--modal-->
-                <div class="modal-dialog" style="width: 75%;">
+                <div class="modal-dialog" style="width: 50%;">
                     <div class="modal-content">
                         <div class="modal-header" style="background-color:#2ecc71;">
                             <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
@@ -275,7 +275,7 @@
                             <form id="frm_service">
                                 <div class="row">
 
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-6">
 
                                         <div class="form-group" style="margin-bottom:0px;">
                                             <label class=""><b class="required">*</b>PLU / Service Code :</label>
@@ -310,7 +310,7 @@
 
 
 
-                                    <div class="col-lg-4" style="margin:0px;">
+                                    <div class="col-lg-6" style="margin:0px;">
 
                                         <div class="form-group" style="margin-bottom:0px;">
                                                     <label class="">Link to Credit Account :</label>
@@ -324,7 +324,7 @@
                                                     </select>
 
                                         </div>
-                                        <div class="form-group" style="margin-bottom:0px;">
+                                        <div class="form-group hidden" style="margin-bottom:0px;">
                                                     <label class="">Link to Debit Account :</label>
 
                                                     <select name="expense_account_id" id="expense_account_id" data-error-msg="Link to Account is required." required>
