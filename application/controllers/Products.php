@@ -410,6 +410,58 @@ class Products extends CORE_Controller
 
                 break;
 
+            case 'set_active_state':
+                $m_products=$this->Products_model;
+                $product_id=$this->input->post('product_id',TRUE);
+                $m_products->is_active=1;
+                if($m_products->modify($product_id)){
+                    $response['title']='Success!';
+                    $response['stat']='success';
+                    $response['msg']='Product Information set as Active.';
+                    $response['row_updated']=$m_products->product_list(1,null,$product_id,null,null,null,null,null,1);
+                $m_sync=$this->Sync_references_model;
+                $m_sync->reference_id=$product_id;
+                $m_sync->reference_type = 0;
+                $m_sync->save();
+                $product_desc= $m_products->get_list($product_id,'product_desc');
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=50; // TRANS TYPE
+                $m_trans->trans_log='Set Active Product: '.$product_desc[0]->product_desc;
+                $m_trans->save();
+
+                    echo json_encode($response);
+                }
+                break;
+
+            case 'set_inactive_state':
+                $m_products=$this->Products_model;
+                $product_id=$this->input->post('product_id',TRUE);
+                $m_products->is_active=0;
+                if($m_products->modify($product_id)){
+                    $response['title']='Success!';
+                    $response['stat']='success';
+                    $response['msg']='Product Information set as Inactive.';
+                    $response['row_updated']=$m_products->product_list(1,null,$product_id,null,null,null,null,null,1);
+                $m_sync=$this->Sync_references_model;
+                $m_sync->reference_id=$product_id;
+                $m_sync->reference_type = 0;
+                $m_sync->save();
+                $product_desc= $m_products->get_list($product_id,'product_desc');
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=50; // TRANS TYPE
+                $m_trans->trans_log='Set InActive Product: '.$product_desc[0]->product_desc;
+                $m_trans->save();
+
+                    echo json_encode($response);
+                }
+                break;
+
             case 'product-history':
                 $account_integration =$this->Account_integration_model;
                 $a_i=$account_integration->get_list();

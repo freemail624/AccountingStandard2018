@@ -197,7 +197,7 @@
                                                         <th>Product Description</th>
                                                         <th>Category</th>
                                                         <th style="width: 10%;">UOM</th>
-                                                        <th style="text-align: right;width: 10%;">SRP</th>
+                                                        <th style="text-align: right;width: 10%;">CurrentQTY</th>
                                                         <th><center>Action</center></th>
                                                     </tr>
                                                     </thead>
@@ -1080,16 +1080,19 @@ $(document).ready(function(){
                 { targets:[2],data: "product_desc" },
                 { targets:[3],data: "category_name" },
                 { targets:[4],data: "parent_unit_name" },
-                { targets:[5],data: "sale_price" , render: $.fn.dataTable.render.number( ',', '.', 2)
-
-},
+                { targets:[5],data: "CurrentQty" , render: $.fn.dataTable.render.number( ',', '.', 2)},
                 {
-                    targets:[6],
+                    targets:[6],data: null,
                     render: function (data, type, full, meta){
-                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"   data-toggle="tooltip" data-placement="top" title="Edit" style="margin-left:-5px;"><i class="fa fa-pencil"></i> </button>';
-                        var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info"  data-toggle="tooltip" data-placement="top" title="Move to trash" style="margin-right:-5px;"><i class="fa fa-trash-o"></i> </button>';
-
-                        return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
+                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"   data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
+                        var btn_set_active='<button class="btn btn-success btn-sm" name="btn_set_active" data-toggle="tooltip" data-placement="top" title="Set as Active"><i class="fa fa-check"></i> </button>';
+                        var btn_set_inactive='<button class="btn btn-danger btn-sm" name="btn_set_inactive" data-toggle="tooltip" data-placement="top" title="Set as Inactive"><i class="fa fa-times"></i> </button>';
+                        var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info"  data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
+                        if(data.is_active == "1"){
+                            return '<center>'+btn_edit+'&nbsp;'+btn_set_inactive+'&nbsp;'+btn_trash+'</center>';
+                        }else{
+                           return '<center>'+btn_edit+'&nbsp;'+btn_set_active+'&nbsp;'+btn_trash+'</center>';
+                        }
                     }
                 }
             ],
@@ -1783,6 +1786,29 @@ $(document).ready(function(){
             });
         });
 
+        $('#tbl_products tbody').on('click','button[name="btn_set_active"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dt.row(_selectRowObj).data();
+            _selectedID=data.product_id;
+            setActiveState().done(function(response){
+                showNotification(response);
+                if(response.stat == 'success') {
+                    dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
+                }
+            });
+        });
+
+        $('#tbl_products tbody').on('click','button[name="btn_set_inactive"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dt.row(_selectRowObj).data();
+            _selectedID=data.product_id;
+            setInActiveState().done(function(response){
+                showNotification(response);
+                if(response.stat == 'success') {
+                    dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
+                }
+            });
+        });
 
         $('#btn_cancel').click(function(){
             showList(true);
@@ -1920,6 +1946,22 @@ $('#is_manual_price').prop("checked") ?  _data.push({name : "is_manual_price" , 
         });
     };
 
+    var setActiveState=function(){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Products/transaction/set_active_state",
+            "data":{product_id : _selectedID}
+        });
+    };
+    var setInActiveState=function(){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Products/transaction/set_inactive_state",
+            "data":{product_id : _selectedID}
+        });
+    };
     var showList=function(b){
         if(b){
             $('#div_product_list').show();
