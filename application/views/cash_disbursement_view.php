@@ -238,7 +238,7 @@
                     &nbsp;<br>
                         <button class="btn btn-primary" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Journal" ><i class="fa fa-plus"></i> New Disbursement Journal</button>
                     </div>
-                    <div class="col-lg-3">
+                    <div class="col-lg-2">
                             From :<br />
                             <div class="input-group">
                                 <input type="text" id="txt_start_date_cdj" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
@@ -247,7 +247,7 @@
                                  </span>
                             </div>
                     </div>
-                    <div class="col-lg-3">
+                    <div class="col-lg-2">
                             To :<br />
                             <div class="input-group">
                                 <input type="text" id="txt_end_date_cdj" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
@@ -257,6 +257,17 @@
                             </div>
                     </div>
                     <div class="col-lg-3">
+                            Check Voucher Print Format :<br />
+                            <select id="cbo_voucher_format" class="form-control">
+                                <option value="1">Default</option>
+                                <option value="2">RCBC/CHINA BANK</option>
+                                <option value="3">RCBC/CHINA BANK WITH CHECK</option>
+                                <option value="4">BPI</option>
+                                <option value="5">BPI CHECK</option>
+                            </select>
+                             
+                    </div>
+                    <div class="col-lg-2">
                             Search :<br />
                              <input type="text" id="searchbox_cdj" class="form-control">
                     </div>
@@ -1221,7 +1232,7 @@
 <script>
 $(document).ready(function(){
     var _txnMode; var _cboSuppliers; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode, _cboBranches, _cboPaymentMethod, _cboBanks, _cboAccountType;
-    var dtReview; var cbo_refType; var _cboLayouts; var dtRecurring; var dtCheckList; var _attribute; var _cboTax; var dtReviewOther; var dtCashReceipt;
+    var dtReview; var cbo_refType; var _cboLayouts; var dtRecurring; var dtCheckList; var _attribute; var _cboTax; var dtReviewOther; var dtCashReceipt; var _cboVouchers;
 
 
     var oTBJournal={
@@ -1262,6 +1273,10 @@ $(document).ready(function(){
     };
 
     var initializeControls=function(){
+        _cboVouchers=$('#cbo_voucher_format').select2({
+            placeholder: "Please select Voucher Format.",
+            minimumResultsForSearch: -1
+        });
         initializeRecurringTable();
 
         dt=$('#tbl_cash_disbursement_list').DataTable({
@@ -1334,14 +1349,15 @@ $(document).ready(function(){
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_cancel='<button class="btn btn-red btn-sm" name="cancel_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Cancel Journal"><i class="fa fa-times"></i> </button>';
-                        var btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Check Print"><i class="fa fa-print"></i> Print Check</button>';
+                        var btn_voucher_print='<button class="btn btn-success btn-sm" name="print_voucher" style="margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Voucher"><i class="fa fa-print"></i></button>';
+                        var btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Cheque"><img src="assets/img/facheque.png"></button>';
 
                         if(data.payment_method_id == 2){
-                        	return ''+btn_check_print+"&nbsp;"+btn_cancel+'';
+                        	return ''+btn_check_print+"&nbsp;"+btn_voucher_print+"&nbsp;"+btn_cancel+'';
 
                         }else{
 
-                        	return ''+btn_cancel+'';
+                        	return ''+btn_voucher_print+"&nbsp;"+btn_cancel+'';
                         }
 
                         
@@ -2103,6 +2119,16 @@ $(document).ready(function(){
             $('#modal_confirmation').modal('show');
         });
 
+        $('#tbl_cash_disbursement_list').on('click','button[name="print_voucher"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dt.row(_selectRowObj).data();
+            _selectedID=data.journal_id;
+                if(data.payment_method_id != '2' && $('#cbo_voucher_format').val() != '1'){
+                    showNotification({"title":"Error!","stat":"error","msg":"Journal Transaction has No Check Details.<br>You can only use the default."});
+                }else{
+                    window.open('Print_Voucher/transaction/print-voucher?format='+$('#cbo_voucher_format').val()+'&type=CDJ&id='+_selectedID);
+                }
+        });
         $('#btn_print_list').click(function(){
             window.open('Cash_disbursement/transaction/print-check-list?bank='+$('#cbo_banks').val()+'&start='+$('#txt_start').val()+"&end="+$('#txt_end').val());
         });

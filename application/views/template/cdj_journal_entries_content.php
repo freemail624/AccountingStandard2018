@@ -82,7 +82,7 @@
     <table width="100%" border="0" cellspacing="-1">
         <tr>
             <td style="padding: 4px;" width="50%"><strong>DATE :</strong> <?php echo date_format(new DateTime($journal_info->date_txn),"m/d/Y"); ?></td>
-            <td style="padding: 4px;" width="50%"><strong>REF # :</strong> <?php echo $journal_info->ref_no; ?></td>
+            <td style="padding: 4px;" width="50%"><strong>REF # :</strong>  <?php echo $journal_info->ref_type; ?>-<?php echo $journal_info->ref_no; ?></td>
         </tr>
         <?php if ($journal_info->payment_method_id == 2) { ?>
             <tr> 
