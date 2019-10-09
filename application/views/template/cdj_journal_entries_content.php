@@ -63,13 +63,13 @@
     <table width="100%" border="0">
         <tr>
             <td width="10%" style="object-fit: cover;"><img src="<?php echo $company_info->logo_path; ?>" style="height: 90px; width: 90px; text-align: left;"></td>
-            <td width="60%" class="">
+            <td width="70%" class="">
                 <h3 class="report-header"><strong><?php echo $company_info->company_name; ?></strong></h3>
                 <p><?php echo $company_info->company_address; ?></p>
                 <p><?php echo $company_info->landline.'/'.$company_info->mobile_no; ?></p>
                 <p><?php echo $company_info->email_address; ?></p>
             </td>
-            <td width="30%">
+            <td width="20%">
             <?php if($journal_info->cancelled == 0){ ?>
                 <img src="assets/img/cancelled.png" style="height: 100px;">
                 <?php } ?>
