@@ -13,6 +13,7 @@
 				    FORMAT(form_2307.gross_amount, 2) as gross_amount,
 				    FORMAT(form_2307.deducted_amount, 2) as deducted_amount,
 				    ji.date_txn,
+				    m.month_name,
 				    m.quarter
 				FROM
 				    form_2307 
