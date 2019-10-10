@@ -142,6 +142,7 @@
                                                 <div class="col-lg-3">
                                                     <b>Month:</b><br>
                                                     <select class="form-control" name="month" id="month" width="100%">
+                                                    <option value="0">ALL MONTHS
                                                         <?php 
                                                         $active_month = date("m");
                                                             foreach($months as $month){?>
@@ -164,7 +165,10 @@
                                                         <?php $minyear++; }?>
                                                     </select>
                                                 </div>
-                                                <div class="col-lg-3 col-lg-offset-3">
+                                                <div class="col-lg-2"><br>
+                                                    <button class="btn btn-primary" id="btn_print" data-toggle="modal" title="Print" ><i class="fa fa-print"></i> Print Report</button>
+                                                </div>
+                                                <div class="col-lg-4">
                                                     <b>Search:</b><br />
                                                     <input type="text" id="searchbox_2307" placeholder="Search" class="form-control">
                                                 </div>
@@ -299,6 +303,10 @@ $(document).ready(function(){
                 .search(this.value)
                 .draw();
         });
+
+        $('#btn_print').on('click', function() {
+            window.open('Certificate_of_creditable_tax/transaction/print-list?month='+ $('#month').val() +'&year='+ $('#year').val());
+        });   
 
         $('#tbl_2307 tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
