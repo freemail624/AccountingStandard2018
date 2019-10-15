@@ -117,7 +117,8 @@ class Rights_link_model extends CORE_Model{
                                           (107,'19','19-3','Job Unit'),
                                           (108,'19','19-4','Jobs Management'),
                                           (109,'6','6-16','Fixed Asset Settings'),
-                                          (110,'10','10-3','Fixed Asset Movement')
+                                          (110,'10','10-3','Fixed Asset Movement'),
+                                          (111,'20','20-1','Billing Adjustments for Review')
 
 
 

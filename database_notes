@@ -28,7 +28,7 @@
 	12	Disapprove
 
 09/30/2019
-	ASSET SETTTINGS
+	ASSET SETTINGS
 	ASSET MOVEMENT
 
 10/01/2019
@@ -38,3 +38,8 @@
 
 	delivery_invoice
 		fixed_asset_status
+
+
+10/15/2019
+	TRANS_TYPE_ID
+	74  Billing Adjustments
