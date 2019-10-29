@@ -2126,7 +2126,7 @@ $(document).ready(function(){
                 if(data.payment_method_id != '2' && $('#cbo_voucher_format').val() != '1'){
                     showNotification({"title":"Error!","stat":"error","msg":"Journal Transaction has No Check Details.<br>You can only use the default."});
                 }else{
-                    window.open('Print_Voucher/transaction/print-voucher?format='+$('#cbo_voucher_format').val()+'&type=CDJ&id='+_selectedID);
+                    window.open('Print_voucher/transaction/print-voucher?format='+$('#cbo_voucher_format').val()+'&type=CDJ&id='+_selectedID);
                 }
         });
         $('#btn_print_list').click(function(){
