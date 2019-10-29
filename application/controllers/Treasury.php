@@ -65,7 +65,7 @@ class Treasury extends CORE_Controller
             case 'get-check-list':
                 $m_journal=$this->Journal_info_model;
                 $response['data']=$m_journal->get_list(
-                    "journal_info.is_active=1 AND journal_info.is_deleted=0 AND journal_info.is_for_assignment=0  AND journal_info.book_type='CDJ' AND journal_info.payment_method_id=2 AND journal_info.check_status=0",
+                    "journal_info.is_active=1 AND journal_info.is_deleted=0  AND journal_info.book_type='CDJ' AND journal_info.payment_method_id=2 AND journal_info.check_status=0",
                     array(
                         'journal_info.*',
                         's.supplier_name',
@@ -82,7 +82,7 @@ class Treasury extends CORE_Controller
             case 'check-for-release':
                 $m_journal=$this->Journal_info_model;
                 $response['data']=$m_journal->get_list(
-                    "journal_info.is_active=1 AND journal_info.is_check_delivered=FALSE AND journal_info.is_for_assignment=0 AND journal_info.is_deleted=0 AND journal_info.book_type='CDJ' AND journal_info.payment_method_id=2 AND journal_info.check_status=1",
+                    "journal_info.is_active=1 AND journal_info.is_check_delivered=FALSE AND journal_info.is_deleted=0 AND journal_info.book_type='CDJ' AND journal_info.payment_method_id=2 AND journal_info.check_status=1",
                     array(
                         'journal_info.*',
                         's.supplier_name',
@@ -99,7 +99,7 @@ class Treasury extends CORE_Controller
             case 'check-delivered':
                 $m_journal=$this->Journal_info_model;
                 $response['data']=$m_journal->get_list(
-                    "journal_info.is_active=1 AND journal_info.is_check_delivered=TRUE AND journal_info.is_for_assignment=0 AND journal_info.is_deleted=0 AND journal_info.book_type='CDJ' AND journal_info.payment_method_id=2 AND journal_info.check_status=1",
+                    "journal_info.is_active=1 AND journal_info.is_check_delivered=TRUE AND journal_info.is_deleted=0 AND journal_info.book_type='CDJ' AND journal_info.payment_method_id=2 AND journal_info.check_status=1",
                     array(
                         'journal_info.*',
                         's.supplier_name',
@@ -201,6 +201,18 @@ class Treasury extends CORE_Controller
                 $response['stat']='success';
                 $response['title']='Success!';
                 $response['msg']='Check successfully marked as delivered.';
+                echo json_encode($response);
+            break;
+
+            case 'mark-issued':
+                $journal_id=$this->input->post('journal_id');
+                $m_journal=$this->Journal_info_model;
+                $m_journal->check_status=TRUE;
+                $m_journal->modify($journal_id);
+
+                $response['stat']='success';
+                $response['title']='Success!';
+                $response['msg']='Check successfully marked as issued.';
                 echo json_encode($response);
             break;
         };

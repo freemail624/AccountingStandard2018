@@ -150,7 +150,7 @@ button[name="print_check"]{
     padding-bottom: 0px!important;
 }
 
-button[name="mark_delivered"]{
+button[name="mark_delivered"],button[name="mark_issued"] {
     padding-top: 0px!important;
     padding-bottom: 0px!important;
     font-size: 12px!important;
@@ -1064,9 +1064,9 @@ $(document).ready(function(){
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Print Check"><i class="fa fa-print"></i> Print Check</button>';
+                        var btn_mark_issued='<button class="btn btn-success btn-sm" name="mark_issued" style="margin-left:10px;margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Mark as Issued"><i class="fa fa-check"></i> </button>';
 
-
-                        return '<center>'+btn_check_print+'</center>';
+                        return '<center>'+btn_check_print+''+btn_mark_issued+'</center>';
                     } 
                 },
                 { targets:[9],data: "journal_id", visible:false },
@@ -1100,7 +1100,7 @@ $(document).ready(function(){
                 },                
                 {  targets:[6],
                     render: function (data, type, full, meta){
-                        var btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Reprint"><i class="fa fa-print"></i> RePrint Check</button>';
+                        var btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Reprint"><i class="fa fa-print"></i> Reprint Check</button>';
                         var btn_mark_delivered='<button class="btn btn-success btn-sm" name="mark_delivered" style="margin-left:10px;margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Mark as Delivered"><i class="fa fa-check"></i> </button>';
 
                         return '<center>'+btn_check_print+''+btn_mark_delivered+'</center>';
@@ -1466,6 +1466,17 @@ $(document).ready(function(){
             });
         });
 
+        $('#tbl_check_list').on('click','button[name="mark_issued"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dtCheckList.row(_selectRowObj).data();
+            _selectedID=data.journal_id;
+            markIssuedCheck().done(function(response){
+                showNotification(response);
+                dtCheckList.row(_selectRowObj).remove().draw();   
+                dtCheckRelease.ajax.reload();         
+            });
+        });
+
         $('#tbl_check_list').on('click','button[name="edit_info"]',function(){
             _txnMode="edit";
 
@@ -1817,6 +1828,17 @@ $(document).ready(function(){
             "data":{journal_id : _selectedID}
         });
     };
+
+    var markIssuedCheck=function(){
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Treasury/transaction/mark-issued",
+            "data":{journal_id : _selectedID}
+        });
+    };
+
     var createTemplate=function(){
         var _data=$('#frm_journal').serializeArray();
         _data.push({ name:'template_code', value:$("#cbo_suppliers option:selected").text() });
