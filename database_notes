@@ -43,3 +43,9 @@
 10/15/2019
 	TRANS_TYPE_ID
 	74  Billing Adjustments
+
+10/29/2019
+	PURCHASES
+	date_delivery
+	date_invoice
+	contact_no

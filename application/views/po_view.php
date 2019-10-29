@@ -261,9 +261,28 @@
                             <?php } ?>
                         </select>
                     </div>
+                    <div class="col-sm-2 col-sm-offset-3">
+                        Invoice Date :<br />
+                        <div class="input-group">
 
+                            <input type="text" name="date_invoice"  class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Invoice Date" data-error-msg="Invoice Date is required!" required>
+                             <span class="input-group-addon">
+                                 <i class="fa fa-calendar"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 ">
+                        Delivery Date :<br />
+                        <div class="input-group">
 
-                    <div class="col-sm-3 col-sm-offset-3">
+                            <input type="text" name="date_delivery" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Delivery Date" data-error-msg="Delivery Date is required!" required>
+                             <span class="input-group-addon">
+                                 <i class="fa fa-calendar"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2 hidden">
                         PO # : <br />
                         <div class="input-group">
                             <span class="input-group-addon">
@@ -282,7 +301,7 @@
                         <select name="supplier" id="cbo_suppliers" data-error-msg="Supplier is required." required>
                             <option value="0">[ Create New Supplier ]</option>
                             <?php foreach($suppliers as $supplier){ ?>
-                                <option value="<?php echo $supplier->supplier_id; ?>" data-tax-type="<?php echo $supplier->tax_type_id; ?>" data-contact-person="<?php echo $supplier->contact_name; ?>"><?php echo $supplier->supplier_name; ?></option>
+                                <option value="<?php echo $supplier->supplier_id; ?>" data-tax-type="<?php echo $supplier->tax_type_id; ?>" data-contact-person="<?php echo $supplier->contact_name; ?>" data-contact-no="<?php echo $supplier->contact_no; ?>"><?php echo $supplier->supplier_name; ?></option>
                             <?php } ?>
                         </select>
                     </div>
@@ -291,9 +310,9 @@
 
                         Contact Person : <br />
                         <div class="input-group">
-                                                                <span class="input-group-addon">
-                                                                    <i class="fa fa-users"></i>
-                                                                </span>
+                            <span class="input-group-addon">
+                                <i class="fa fa-users"></i>
+                            </span>
                             <input type="text" name="contact_person" class="form-control" placeholder="Contact Person">
                         </div>
 
@@ -314,9 +333,13 @@
 
                     </div>
 
-                    <div class="col-sm-4 col-sm-offset-3">
+                    <div class="col-sm-2 col-sm-offset-3">
+                        Contact No : <br />
+                        <input type="text" name="contact_no" class="form-control" placeholder="Contact Number">
+                    </div>
+                    <div class="col-sm-2 ">
                         Terms : <br />
-                        <input type="text" name="terms" class="form-control">
+                        <input type="text" name="terms" class="form-control" placeholder="Terms">
                     </div>
                 </div>
 
@@ -1386,6 +1409,7 @@ $(document).ready(function(){
 
             //$('.toggle-fullscreen').click();
             clearFields($('#frm_purchases'));
+            $('.date-picker').datepicker('setDate','today');
             $('#cbo_tax_type').select2('val',null);
             $('#cbo_suppliers').select2('val',null);
             $('#cbo_departments').select2('val',null);
@@ -1993,7 +2017,7 @@ $(document).ready(function(){
 
     var clearFields=function(f){
         $('input,textarea',f).val('');
-        $(f).find('input:first').focus();
+        // $(f).find('input:first').focus();
         $('#txt_overall_discount').val('0.00');
 
         $('#tbl_items > tbody').html('');
@@ -2126,6 +2150,8 @@ $(document).ready(function(){
             clearFields($('#modal_new_supplier').find('form'));
         }else{
             var obj_supplier=$('#cbo_suppliers').find('option[value="'+i+'"]');
+            $('input[name="contact_person"]').val($(this).find('option:selected').data('contact-person'));
+            $('input[name="contact_no"]').val($(this).find('option:selected').data('contact-no'));
             _cboTaxType.select2('val',obj_supplier.data('tax-type')); //set tax type base on selected Supplier
         }
 

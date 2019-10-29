@@ -105,9 +105,9 @@ class Purchases extends CORE_Controller
                 $ted = date('Y-m-d',strtotime($this->input->get('ted')));
                 $approval_id = $this->input->get('approval_id');
                 if($approval_id == 0){
-                    $filter_value = "purchase_order.is_deleted = FALSE AND  purchase_order.is_active = TRUE AND DATE(purchase_order.date_created) BETWEEN '$tsd' AND '$ted'";
+                    $filter_value = "purchase_order.is_deleted = FALSE AND  purchase_order.is_active = TRUE AND purchase_order.date_invoice BETWEEN '$tsd' AND '$ted'";
                 }else{
-                    $filter_value = "purchase_order.is_deleted = FALSE AND  purchase_order.is_active = TRUE AND purchase_order.approval_id = '$approval_id' AND DATE(purchase_order.date_created) BETWEEN '$tsd' AND '$ted'";
+                    $filter_value = "purchase_order.is_deleted = FALSE AND  purchase_order.is_active = TRUE AND purchase_order.approval_id = '$approval_id' AND purchase_order.date_invoice BETWEEN '$tsd' AND '$ted'";
                 }
                 
                 $response['data']=$this->row_response($filter_value);
@@ -287,6 +287,9 @@ class Purchases extends CORE_Controller
                     //$m_purchases->po_no=$this->input->post('po_no',TRUE);
                     $m_purchases->terms=$this->input->post('terms',TRUE);
                     $m_purchases->duration=$this->input->post('duration',TRUE);
+                    $m_purchases->date_delivery = date('Y-m-d',strtotime($this->input->post('date_delivery',TRUE)));
+                    $m_purchases->date_invoice = date('Y-m-d',strtotime($this->input->post('date_invoice',TRUE)));
+                    $m_purchases->contact_no=$this->input->post('contact_no',TRUE);
                     $m_purchases->deliver_to_address=$this->input->post('deliver_to_address',TRUE);
                     $m_purchases->contact_person=$this->input->post('contact_person',TRUE);
                     $m_purchases->supplier_id=$this->input->post('supplier',TRUE);
@@ -381,6 +384,9 @@ class Purchases extends CORE_Controller
                     //$m_purchases->po_no=$this->input->post('po_no',TRUE);
                     $m_purchases->terms=$this->input->post('terms',TRUE);
                     $m_purchases->duration=$this->input->post('duration',TRUE);
+                    $m_purchases->date_delivery = date('Y-m-d',strtotime($this->input->post('date_delivery',TRUE)));
+                    $m_purchases->date_invoice = date('Y-m-d',strtotime($this->input->post('date_invoice',TRUE)));
+                    $m_purchases->contact_no=$this->input->post('contact_no',TRUE);
                     $m_purchases->deliver_to_address=$this->input->post('deliver_to_address',TRUE);
                     $m_purchases->contact_person=$this->input->post('contact_person',TRUE);
                     $m_purchases->supplier_id=$this->input->post('supplier',TRUE);
@@ -811,6 +817,8 @@ class Purchases extends CORE_Controller
             $filter_value,
             array(
                 'purchase_order.*',
+                'DATE_FORMAT(purchase_order.date_delivery,"%m/%d/%Y") as date_delivery',
+                'DATE_FORMAT(purchase_order.date_invoice,"%m/%d/%Y") as date_invoice',
                 'CONCAT_WS(" ",CAST(purchase_order.terms AS CHAR),purchase_order.duration)as term_description',
                 'suppliers.supplier_name',
                 'tax_types.tax_type',
