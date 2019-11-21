@@ -23,7 +23,7 @@ class Purchase_history extends CORE_Controller {
         $data['_switcher_settings'] = $this->load->view('template/elements/switcher', '', TRUE);
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
-        $data['title'] = 'Bar Sales Report';
+        $data['title'] = 'Purchase History Report';
         // $data['cashiers'] = $this->Pos_integration_items_model->cashier_list();
         $data['suppliers']=$this->Suppliers_model->get_list(
             array('suppliers.is_active'=>TRUE,'suppliers.is_deleted'=>FALSE),

@@ -60,7 +60,7 @@
     <?php } ?>
     <form id="frm_journal_review" role="form" class="form-horizontal row-border">
     <span class="hidden"><input type="text" name="ref_no" value="<?php echo $info->ref_no; ?>"></span>
-        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Sales Journal</strong></span></h4>
+        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Accounts Receivable Journal</strong></span></h4>
         <hr />
         <div style="width: 90%;">
             <input type="hidden" name="temp_journal_id" value="<?php echo $info->temp_journal_id; ?>">
