@@ -781,8 +781,22 @@ class Journal_info_model extends CORE_Model{
 
 
     function get_account_balance($type_id,$depid=null,$start=null,$end=null){
-        $sql="SELECT main.*,att.account_title FROM(SELECT ji.journal_id,
+        $sql="SELECT main.*,att.account_title,
+
+        (main.account_balance - main.prev_account_balance) as change_amount,
+        
+        ((((main.account_balance - main.prev_account_balance) / main.account_balance) * 100) ) as percentage_change
+        
+        FROM(SELECT ji.journal_id,
             at.account_no,at.grand_parent_id,ac.account_type_id,ac.account_class_id,
+            IF(
+                ac.account_type_id=1 OR ac.account_type_id=5,
+                SUM(ja.dr_amount)-SUM(ja.cr_amount),
+                SUM(ja.cr_amount)-SUM(ja.dr_amount)
+
+            )as account_balance,
+
+            COALESCE((SELECT 
             IF(
                 ac.account_type_id=1 OR ac.account_type_id=5,
                 SUM(ja.dr_amount)-SUM(ja.cr_amount),
@@ -790,6 +804,20 @@ class Journal_info_model extends CORE_Model{
 
             )as account_balance
 
+            FROM journal_info as ji
+
+            INNER JOIN (journal_accounts as ja INNER JOIN
+            (account_titles as att
+            INNER JOIN account_classes as ac ON att.account_class_id=ac.account_class_id)
+            ON ja.account_id=att.account_id)
+            ON ji.journal_id=ja.journal_id
+
+            WHERE ji.is_active=TRUE AND ji.is_deleted=FALSE
+            AND ac.account_type_id=$type_id
+            AND ji.date_txn BETWEEN DATE_ADD('$start', INTERVAL -1 YEAR) AND DATE_ADD('$end', INTERVAL -1 YEAR)
+            AND att.account_id = at.account_id
+
+            GROUP BY att.grand_parent_id),0) as prev_account_balance
 
             FROM journal_info as ji
 

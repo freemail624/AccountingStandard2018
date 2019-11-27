@@ -191,6 +191,12 @@
                                     </ul>
                                 </li>
                                 <li class="hasChild secondChild">
+                                    <a href="#/"><span>Comparative Reports</span></a>
+                                    <ul class="acc-menu">
+                                        <li class="<?php echo (in_array('9-23',$this->session->user_rights)?'':'hidden'); ?>"><a href="Comparative_Income_statement">Income Statement</a></li>
+                                    </ul>
+                                </li>   
+                                <li class="hasChild secondChild">
                                     <a href="#/"><span>Financial Reports</span></a>
                                     <ul class="acc-menu">
                                         <li class="<?php echo (in_array('9-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Income_statement">Income Statement</a></li>

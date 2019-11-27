@@ -3053,6 +3053,41 @@ class Templates extends CORE_Controller {
 
                 break;
 
+            case 'comparative-income-statement':
+                $type=$this->input->get('type',TRUE);
+                $start=$this->input->get('start',TRUE);
+                $end=$this->input->get('end',TRUE);
+                $depid=$this->input->get('depid',TRUE);
+
+                if($depid==1){$depid=null;}
+
+                $data['selected_year'] = date("Y",strtotime($start));
+                $data['previous_year'] = date("Y",strtotime($start.' -1 year'));
+
+                $data['income_accounts']=$this->Journal_info_model->get_account_balance(4,$depid,date("Y-m-d",strtotime($start)),date("Y-m-d",strtotime($end)));
+                $data['expense_accounts']=$this->Journal_info_model->get_account_balance(5,$depid,date("Y-m-d",strtotime($start)),date("Y-m-d",strtotime($end)));
+
+                $m_company=$this->Company_model;
+                $company=$m_company->get_list();
+
+                $data['company_info']=$company[0];
+
+                $m_departments=$this->Departments_model;
+                $departments=$m_departments->get_list($depid);
+
+                $data['departments']=$departments[0]->department_name;
+
+
+                $data['start']=date("m/d/Y",strtotime($start));
+                $data['end']=date("m/d/Y",strtotime($end));
+
+                if($type==null|$type=='preview'){
+                    $this->load->view('template/comparative_income_statement',$data);
+                }
+
+
+                break;  
+
             case 'sr':
                 $m_sales_report=$this->Sales_invoice_model;
                 $m_customers=$this->Customers_model;
