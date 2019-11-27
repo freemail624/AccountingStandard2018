@@ -119,7 +119,8 @@ class Rights_link_model extends CORE_Model{
                                           (109,'6','6-16','Fixed Asset Settings'),
                                           (110,'10','10-3','Fixed Asset Movement'),
                                           (111,'20','20-1','Billing Adjustments for Review'),
-                                          (112,'9','9-23','Comparative Income Statement')
+                                          (112,'9','9-23','Comparative Income Statement'),
+                                          (113,'9','9-24','Supplier Subsidiary Detailed')
 
 
                                           ON DUPLICATE KEY UPDATE

@@ -18,9 +18,12 @@
 					'Account_type_model',
 					'Users_model',
 					'Customer_subsidiary_model',
+					'Company_model',
                     'Account_integration_model'
 				)
 			);
+
+        $this->load->library('M_pdf');
 		}
 
 		public function index() {
@@ -56,6 +59,30 @@
 
 					$response['data']=$m_journal->get_supplier_subsidiary($supplier_Id,$account_Id,$start_Date,$end_Date);
 					echo json_encode($response);
+
+				break;
+
+				case 'get-supplier-subsidiary-all':
+					$account_Id=$this->input->get('accountId',TRUE);
+					$start_Date=date('Y-m-d',strtotime($this->input->get('startDate',TRUE)));
+					$end_Date=date('Y-m-d',strtotime($this->input->get('endDate',TRUE)));
+					$m_journal=$this->Journal_info_model;
+	                $m_company_info=$this->Company_model;	
+	               	$data['account'] = $this->Account_title_model->get_list($account_Id)[0];
+	                $company_info=$m_company_info->get_list();
+	                $data['company_info']=$company_info[0];
+					$suppliers = $this->Suppliers_model->get_list(array('is_active'=>true,'is_deleted'=>false));
+					foreach ($suppliers as $supplier) {
+						$responses[$supplier->supplier_id]=$m_journal->get_supplier_subsidiary($supplier->supplier_id,$account_Id,$start_Date,$end_Date);
+
+					}
+
+				$data['suppliers'] = $suppliers;
+				$data['responses'] = $responses;
+                $pdf = $this->m_pdf->load("A4-L");
+                $content=$this->load->view('template/supplier_all_subsidiary_report',$data,TRUE);
+                $pdf->WriteHTML($content);
+                $pdf->Output();
 
 				break;
 			}

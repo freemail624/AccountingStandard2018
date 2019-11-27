@@ -50,3 +50,16 @@
 	date_invoice
 	contact_no
 	
+11/19/2019
+
+CREATE TABLE `web_jenra_billing_05112019`.`cash_flow_ref` (
+  `cash_flow_ref_id` INT(11) NOT NULL AUTO_INCREMENT,
+  `cash_flow_desc` VARCHAR(145) NULL DEFAULT '',
+  PRIMARY KEY (`cash_flow_ref_id`));
+
+
+CREATE TABLE `web_jenra_billing_05112019`.`cash_flow_items` (
+  `cash_flow_items_id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `cash_flow_ref_id` BIGINT(20) NULL DEFAULT '0',
+  `account_id` BIGINT(20) NULL DEFAULT '0',
+  PRIMARY KEY (`cash_flow_items_id`));

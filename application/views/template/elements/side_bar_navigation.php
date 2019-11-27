@@ -186,6 +186,7 @@
                                     <a href="#/"><span>Vendor</span></a>
                                     <ul class="acc-menu">
                                         <li class="<?php echo (in_array('9-7',$this->session->user_rights)?'':'hidden'); ?>"><a href="Supplier_Subsidiary">Supplier Subsidiary</a></li>
+                                        <li class="<?php echo (in_array('9-24',$this->session->user_rights)?'':'hidden'); ?>"><a href="Supplier_subsidiary_detailed">Supplier Subsidiary Detailed</a></li>
                                         <li class="<?php echo (in_array('9-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Account_payable_schedule">AP Schedule</a></li>
                                         <li class="<?php echo (in_array('9-18',$this->session->user_rights)?'':'hidden'); ?>"><a href="Aging_payables">Aging of Payables</a></li>
                                     </ul>
