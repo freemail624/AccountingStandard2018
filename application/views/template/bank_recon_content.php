@@ -5,7 +5,8 @@
 </head>
 <style type="text/css">
     .right-align {text-align: right;}
-    .bottom{border-bottom: 1px solid black;}
+    .bottom{border-bottom: 1px solid black; }
+    .bottom-double{border-width:4px;  border-bottom-style:double;}
 table#outs tr:first-child td:nth-child(3)::before{
     content: "P"
 }
@@ -36,9 +37,8 @@ table#outs tr:last-child td:nth-child(3){
         </tr>
     </table><hr>
     <div class="">
-        <span class="heads"><strong>Bank Reconciliation</strong></span>       
+        <span class="heads"><strong>Bank Reconciliation - <font style="text-transform: uppercase;"><?php echo $data->account_title ?></font></strong></span>       
         <br><?php echo $data->date_reconciled ?><br><br>
-
 <table width="100%" class="table table-striped">
 <tbody>
     <tr>
@@ -49,16 +49,28 @@ table#outs tr:last-child td:nth-child(3){
     </tr>
 
     <tr>
-        <td>Add: Deposit in Transit</td>
+        <td>Add:</td>
         <td></td>
         <td></td>
-        <td  class="right-align bottom"><?php echo number_format($data->deposit_in_transit,2); ?></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>Deposit in Transit</td>
+        <td></td>
+        <td></td>
+        <td class="right-align"><?php echo number_format($data->deposit_in_transit,2); ?></td>
+    </tr>
+    <tr>
+        <td>Other Additions</td>
+        <td></td>
+        <td></td>
+        <td  class="right-align bottom"><?php echo number_format($data->bank_other_additions,2); ?></td>
     </tr>
     <tr>
         <td></td>
         <td></td>
         <td></td>
-        <td class="right-align"><?php echo number_format(($data->deposit_in_transit + $data->actual_balance),2) ?></td>
+        <td class="right-align"><?php echo number_format(($data->deposit_in_transit + $data->actual_balance + $data->bank_other_additions),2) ?></td>
     </tr>
     <tr >
         <td>Less Outstanding Checks:</td>
@@ -85,13 +97,19 @@ table#outs tr:last-child td:nth-child(3){
         <td width="40%"></td>
         <td width="20%"></td>
         <td width="20%" class="right-align"></td>
-        <td width="20%" class="right-align bottom"><?php echo number_format($totalout,2) ?></td>
+        <td width="20%" class="right-align"><?php echo number_format($totalout,2) ?></td>
+    </tr>
+    <tr >
+        <td width="40%">Other Deductions</td>
+        <td width="20%"></td>
+        <td width="20%" class="right-align"></td>
+        <td width="20%" class="right-align bottom"><?php echo number_format($data->bank_other_deductions,2) ?></td>
     </tr>
     <tr >
         <td width="40%">Adjusted Bank Balance</td>
         <td width="20%"></td>
         <td width="20%" class="right-align"></td>
-        <td width="20%" class="right-align bottom">P<?php echo number_format((($data->deposit_in_transit + $data->actual_balance)-$totalout),2) ?></td>
+        <td width="20%" class="right-align bottom-double">P<?php echo number_format((($data->deposit_in_transit + $data->actual_balance + $data->bank_other_additions)-$totalout - $data->bank_other_deductions),2) ?></td>
     </tr>
 </tbody>
 </table><br>
@@ -119,16 +137,22 @@ table#outs tr:last-child td:nth-child(3){
     <tr >
         <td>Note Receivable Collection from Bank</td>
         <td></td>
-        <td class="right-align bottom"><?php echo number_format($data->notes_receivable,2) ?></td>
+        <td class="right-align"><?php echo number_format($data->notes_receivable,2) ?></td>
+        <td></td>
+    </tr>
+    <tr >
+        <td>Other Additions</td>
+        <td></td>
+        <td class="right-align bottom"><?php echo number_format($data->journal_other_additions,2) ?></td>
         <td></td>
     </tr>
     <tr >
         <td></td>
         <td></td>
         <td ></td>
-        <td class="right-align bottom"><?php echo number_format(($data->notes_receivable+$data->interest_earned),2) ?></td>
+        <td class="right-align bottom"><?php echo number_format(($data->notes_receivable+$data->interest_earned + $data->journal_other_additions),2) ?></td>
     </tr>
-    <?php $total_after_add_in_books = $data->notes_receivable+$data->interest_earned+$data->account_balance; ?>
+    <?php $total_after_add_in_books = $data->notes_receivable+$data->interest_earned+$data->account_balance + $data->journal_other_additions; ?>
     <tr >
         <td></td>
         <td></td>
@@ -156,10 +180,16 @@ table#outs tr:last-child td:nth-child(3){
     <tr >
         <td>Check Printing Charge</td>
         <td></td>
-        <td class="right-align bottom"><?php echo number_format($data->check_printing_charge,2) ?></td>
+        <td class="right-align "><?php echo number_format($data->check_printing_charge,2) ?></td>
         <td></td>
     </tr>
-    <?php $total_of_books_less=$data->bank_service_charge+$data->check_printing_charge+$data->nsf_check; ?>
+    <tr>
+        <td>Other Deductions</td>
+        <td></td>
+        <td class="right-align bottom"><?php echo number_format($data->journal_other_deductions,2) ?></td>
+        <td ></td>
+    </tr>
+    <?php $total_of_books_less=$data->bank_service_charge+$data->check_printing_charge+$data->nsf_check +$data->journal_other_deductions ; ?>
     <tr >
         <td></td>
         <td></td>
@@ -170,7 +200,7 @@ table#outs tr:last-child td:nth-child(3){
         <td>Adjusted Book Balance</td>
         <td></td>
         <td></td>
-        <td class="right-align bottom">P<?php echo number_format($total_after_add_in_books-$total_of_books_less,2) ?></td>
+        <td class="right-align bottom-double" style="">P<?php echo number_format($total_after_add_in_books-$total_of_books_less,2) ?></td>
     </tr>
 
 </tbody>

@@ -27,7 +27,7 @@ class Cash_disbursement extends CORE_Controller
                 'Journal_template_entry_model',
                 'Company_model',
                 'Users_model',
-                'Bank_model',
+                'Check_types_model',
                 'Trans_model',
                 'Bir_2307_model',
                 'Account_integration_model'
@@ -45,7 +45,7 @@ class Cash_disbursement extends CORE_Controller
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
 
-        $data['bank_refs']=$this->Bank_model->get_list('is_deleted=FALSE AND is_active=TRUE');
+        $data['check_types']=$this->Check_types_model->get_list('is_deleted=FALSE');
         $data['suppliers']=$this->Suppliers_model->get_list('is_deleted = FALSE');
         $data['departments']=$this->Departments_model->get_list('is_deleted = FALSE');
         $data['accounts']=$this->Account_title_model->get_list('is_deleted = FALSE');
@@ -53,7 +53,6 @@ class Cash_disbursement extends CORE_Controller
         $data['tax_types']=$this->Tax_types_model->get_list('is_deleted=0');
         $data['payment_methods']=$this->Payment_method_model->get_list('is_deleted=0');
         $data['layouts']=$this->Check_layout_model->get_list('is_deleted=0');
-        $data['banks']=$this->Journal_info_model->get_list('is_active=1 AND is_deleted=0 AND payment_method_id=2',null,null,null,'bank');
 
         $data['title'] = 'Disbursement Journal';
         (in_array('1-2',$this->session->user_rights)? 
@@ -71,58 +70,6 @@ class Cash_disbursement extends CORE_Controller
                 $ted = date('Y-m-d',strtotime($this->input->get('ted')));
                 $additional = " AND DATE(journal_info.date_txn) BETWEEN '$tsd' AND '$ted'";
                 $response['data']=$this->get_response_rows(null,$additional);
-                echo json_encode($response);
-                break;
-            case 'print-check-list':
-                $m_journal=$data['banks']=$this->Journal_info_model;
-
-                $bank=$this->input->get('bank');
-                $start=date('Y-m-d',strtotime($this->input->get('start')));
-                $end=date('Y-m-d',strtotime($this->input->get('end')));
-
-                $data['checks']=$m_journal->get_list(
-                    "journal_info.is_active=1 AND journal_info.is_deleted=0 AND journal_info.payment_method_id=2 AND journal_info.date_txn BETWEEN '".$start."' AND '".$end."'".($bank=="0"?"":" AND b.bank_id='".$bank."'"),
-
-                    array(
-                        'journal_info.*',
-                        's.supplier_name',
-                        'b.*'
-                    ),
-
-                    array(
-                        array('suppliers as s','s.supplier_id=journal_info.supplier_id','left'),
-                        array('bank as b','b.bank_id=journal_info.bank_id','left')
-                    ),
-
-                    'b.bank_name,check_no'
-
-                );
-
-                $company_info=$this->Company_model->get_list();
-                $params['company_info']=$company_info[0];
-
-                $data['bank']=($bank==0?"All Bank":$bank);
-                $data['start']=date('m/d/Y',strtotime($this->input->get('start')));
-                $data['end']=date('m/d/Y',strtotime($this->input->get('end')));
-                $data['company_header']=$this->load->view('template/company_header',$params,TRUE);
-                $this->load->view('template/check_list_report',$data);
-                break;
-
-            case 'get-check-list':
-                $m_journal=$this->Journal_info_model;
-                $response['data']=$m_journal->get_list(
-                    "journal_info.is_active=1 AND journal_info.is_deleted=0 AND journal_info.book_type='CDJ' AND journal_info.payment_method_id=2",
-                    array(
-                        'journal_info.*',
-                        'IF(journal_info.check_status=1,"Yes","No") as check_status',
-                        's.supplier_name',
-                        'UPPER(journal_info.bank)as bank',
-                        'DATE_FORMAT(journal_info.check_date,"%m/%d/%Y")as check_date'
-                    ),
-                    array(
-                        array('suppliers as s','s.supplier_id=journal_info.supplier_id','left')
-                    )
-                );
                 echo json_encode($response);
                 break;
 
@@ -200,8 +147,7 @@ class Cash_disbursement extends CORE_Controller
                 $m_journal->book_type='CDJ';
                 $m_journal->department_id=$this->input->post('department_id');
                 $m_journal->payment_method_id=$this->input->post('payment_method');
-                // $m_journal->bank=$this->input->post('bank');
-                $m_journal->bank_id=$this->input->post('bank_id');
+                $m_journal->check_type_id=$this->input->post('check_type_id');
                 if($this->input->post('check_date',TRUE) != '' || $this->input->post('check_date',TRUE) != null){
                     $m_journal->check_no=$this->input->post('check_no');
                     $m_journal->check_date=date('Y-m-d',strtotime($this->input->post('check_date',TRUE)));
@@ -338,8 +284,7 @@ class Cash_disbursement extends CORE_Controller
                 $m_journal->book_type='CDJ';
                 $m_journal->department_id=$this->input->post('department_id');
                 $m_journal->payment_method_id=$this->input->post('payment_method');
-                // $m_journal->bank=$this->input->post('bank');
-                $m_journal->bank_id=$this->input->post('bank_id');
+                $m_journal->check_type_id=$this->input->post('check_type_id');
                 $m_journal->check_no=$this->input->post('check_no');
                 $m_journal->check_date=date('Y-m-d',strtotime($this->input->post('check_date',TRUE)));
                 $m_journal->ref_type=$this->input->post('ref_type');
@@ -440,12 +385,11 @@ class Cash_disbursement extends CORE_Controller
                 'journal_info.is_active',
                 'journal_info.remarks',
                 'journal_info.department_id',
-                'journal_info.bank_id',
+                'journal_info.check_type_id',
                 'journal_info.supplier_id',
                 'journal_info.customer_id',
                 'journal_info.payment_method_id',
                 'payment_methods.payment_method',
-                'journal_info.bank',
                 'journal_info.check_no',
                 'DATE_FORMAT(journal_info.check_date,"%m/%d/%Y") as check_date',
                 'journal_info.ref_type',

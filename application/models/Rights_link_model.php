@@ -61,7 +61,7 @@ class Rights_link_model extends CORE_Model{
                                           (50,'6','6-9','Backup Database'),
                                           (51,'9','9-14','Book of Accounts'),
                                           (52,'9','9-16','Comparative Income'),
-                                          (53,'4','4-6','Bank Reference Management'),
+                                          (53,'4','4-6','Check Types Reference Management'),
                                           (54,'10','10-2','Depreciation Expense Report'),
                                           (55,'11','11-1','Bank Reconciliation'),
                                           (57,'12','12-1','Voucher Registry Report'),

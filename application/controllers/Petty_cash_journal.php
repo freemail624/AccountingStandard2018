@@ -19,7 +19,7 @@
 					'Users_model',
 					'Payment_method_model',
 					'Tax_model',
-					'Bank_model',
+					'Check_types_model',
 					'Trans_model'
 				)
 			);
@@ -54,7 +54,7 @@
 	        		array('account_classes as ac','ac.account_class_id=account_titles.account_class_id','left')
 	        	)
 	        );
-	        $data['bank_refs']=$this->Bank_model->get_list('is_deleted=FALSE AND is_active=TRUE');
+        $data['check_types']=$this->Check_types_model->get_list('is_deleted=FALSE');
         (in_array('1-6',$this->session->user_rights)? 
         $this->load->view('petty_cash_journal_view',$data)
         :redirect(base_url('dashboard')));
@@ -348,6 +348,7 @@
 						$m_journal->modify('book_type="PCV" AND date_txn <= "'.$AsOfDate.'" AND department_id='.$depid.' AND is_replenished=FALSE');
 
 						$m_journal->department_id=$depid;
+						$m_journal->check_type_id=$this->input->post('check_type_id',TRUE);
 						$m_journal->supplier_id=1;
 						$m_journal->remarks= 'To Replenish Petty Cash on or before '. $AsOfDate;
 						$m_journal->book_type='CDJ';

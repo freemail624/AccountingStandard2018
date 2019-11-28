@@ -63,3 +63,12 @@ CREATE TABLE `web_jenra_billing_05112019`.`cash_flow_items` (
   `cash_flow_ref_id` BIGINT(20) NULL DEFAULT '0',
   `account_id` BIGINT(20) NULL DEFAULT '0',
   PRIMARY KEY (`cash_flow_items_id`));
+
+
+JOUNAL INFO 
+delete bank_id
+add check_type_id
+
+additionals in bank reconciliation
+4 columns
+change into decimal (20,2) '0.00'

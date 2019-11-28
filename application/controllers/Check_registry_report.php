@@ -13,7 +13,7 @@
 					'Receivable_payment_model',
 					'Company_model',
 					'Users_model',
-					'Bank_model'
+					'Check_types_model'
 				)
 			);
             $this->load->library('excel');
@@ -29,7 +29,7 @@
 	        $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
 	        $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
 	        $data['title'] = 'Check Registry Report';
-	        $data['banks'] = $this->Bank_model->get_list('bank.is_active=TRUE AND bank.is_deleted=FALSE');
+        	$data['check_types']=$this->Check_types_model->get_list('is_deleted=FALSE');
         (in_array('12-2',$this->session->user_rights)? 
         $this->load->view('check_registry_report_view',$data)
         :redirect(base_url('dashboard')));
@@ -43,8 +43,8 @@
 
 					$startDate=date("Y-m-d",strtotime($this->input->get('start',TRUE)));
 					$endDate=date("Y-m-d",strtotime($this->input->get('end',TRUE)));
-					$bank=$this->input->get('bank', TRUE);
-					$response['data']=$m_journal_info->get_check_registry($startDate,$endDate,$bank);
+					$check_type_id=$this->input->get('check_type_id', TRUE);
+					$response['data']=$m_journal_info->get_check_registry($startDate,$endDate,$check_type_id);
 					echo json_encode($response);
 				break;
 
@@ -55,11 +55,11 @@
 
 					$startDate=date("Y-m-d",strtotime($this->input->get('start',TRUE)));
 					$endDate=date("Y-m-d",strtotime($this->input->get('end',TRUE)));
-					$bank=$this->input->get('bank', TRUE);
+					$check_type_id=$this->input->get('check_type_id', TRUE);
 					$company_info=$m_company->get_list();
 					$data['company_info']=$company_info[0];
 
-					$data['report_info']=$m_journal_info->get_check_registry($startDate,$endDate,$bank);
+					$data['report_info']=$m_journal_info->get_check_registry($startDate,$endDate,$check_type_id);
 					$data['start']=$startDate;
 					$data['end']=$endDate;
 					
@@ -75,11 +75,11 @@
 
 					$startDate=date("Y-m-d",strtotime($this->input->get('start',TRUE)));
 					$endDate=date("Y-m-d",strtotime($this->input->get('end',TRUE)));
-					$bank=$this->input->get('bank', TRUE);
+					$check_type_id=$this->input->get('check_type_id', TRUE);
 					$company_info=$m_company->get_list();
 					$company_info=$company_info[0];
 
-					$report_info=$m_journal_info->get_check_registry($startDate,$endDate,$bank);
+					$report_info=$m_journal_info->get_check_registry($startDate,$endDate,$check_type_id);
 					$start=$startDate;
 					$end=$endDate;
 				
@@ -133,7 +133,7 @@
 					$excel->getActiveSheet()->setCellValue('A8','Bank:')
 											->getStyle('A8')->getFont()->setBold(True);
 
-					$excel->getActiveSheet()->setCellValue('B8',isset($report_info[0]->bank_name) ? $report_info[0]->bank_name : '')
+					$excel->getActiveSheet()->setCellValue('B8',isset($report_info[0]->check_type_desc) ? $report_info[0]->check_type_desc : '')
                                             ->getStyle('A8:D8')->applyFromArray($border_bottom);
 
 
@@ -245,11 +245,11 @@
 
 					$startDate=date("Y-m-d",strtotime($this->input->get('start',TRUE)));
 					$endDate=date("Y-m-d",strtotime($this->input->get('end',TRUE)));
-					$bank=$this->input->get('bank', TRUE);
+					$check_type_id=$this->input->get('check_type_id', TRUE);
 					$company_info=$m_company->get_list();
 					$company_info=$company_info[0];
 
-					$report_info=$m_journal_info->get_check_registry($startDate,$endDate,$bank);
+					$report_info=$m_journal_info->get_check_registry($startDate,$endDate,$check_type_id);
 					$start=$startDate;
 					$end=$endDate;
 					
@@ -304,7 +304,7 @@
 					$excel->getActiveSheet()->setCellValue('A8','Bank:')
 											->getStyle('A8')->getFont()->setBold(True);
 
-					$excel->getActiveSheet()->setCellValue('B8',isset($report_info[0]->bank_name) ? $report_info[0]->bank_name : '')
+					$excel->getActiveSheet()->setCellValue('B8',isset($report_info[0]->check_type_desc) ? $report_info[0]->check_type_desc : '')
                                             ->getStyle('A8:D8')->applyFromArray($border_bottom);
 
 

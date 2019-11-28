@@ -79,7 +79,7 @@
 
                     <ol class="breadcrumb" style="margin:0;">
                         <li><a href="dashboard">Dashboard</a></li>
-                        <li><a href="Bank">Bank</a></li>
+                        <li><a href="Check_types">Check Types</a></li>
                     </ol>
 
                     <div class="container-fluid">
@@ -87,21 +87,17 @@
                             <div class="row">
                                 <div class="col-md-12">
 
-                                    <div id="div_bank_list">
+                                    <div id="div_check_types_list">
                                         <div class="panel panel-default">
-<!--                                             <div class="panel-heading">
-                                                <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Bank</b>
-                                            </div> -->
                                             <div class="panel-body table-responsive">
-                                            <h2 class="h2-panel-heading">Bank</h2><hr>
-                                                <table id="tbl_bank" class="table table-striped" cellspacing="0" width="100%">
+                                            <h2 class="h2-panel-heading">Check Types</h2><hr>
+                                                <table id="tbl_check_type" class="table table-striped" cellspacing="0" width="100%">
 
                                                     <thead class="">
                                                     <tr>
-                                                        <th>Bank Code</th>
-                                                        <th>Bank</th>
-                                                        <th>Bank Account</th>
-                                                        <th>Type of Account</th>
+                                                        <th>Check Type Code</th>
+                                                        <th>Check Type Description</th>
+                                                        <th>Account Title</th>
                                                         <th><center>Action</center></th>
                                                     </tr>
                                                     </thead>
@@ -113,49 +109,6 @@
                                             <div class="panel-footer"></div>
                                         </div>
                                     </div>
-
-                                    <!-- <div id="div_bank_fields" style="display: none;">
-                                        <div class="panel panel-default" style="border-top: 3px solid #2196f3;"> -->
-                                            <!-- <div class="panel-heading">
-                                                <h2>Unit Information</h2>
-                                                <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body"}'></div>
-                                            </div>
- -->
-                                    <!--         <div class="panel-body">
-                                                <h2>Unit Information</h2>
-                                                <form id="frm_bank" role="form" class="form-horizontal row-border">
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 col-md-offset-2 control-label"><strong>* Unit Name :</strong></label>
-                                                        <div class="col-md-4">
-                                                            <div class="input-group">
-                                                                                    <span class="input-group-addon">
-                                                                                        <i class="fa fa-users"></i>
-                                                                                    </span>
-                                                                <input type="text" name="unit_name" class="form-control" placeholder="Unit Name" data-error-msg="Unit name is required!" required>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 col-md-offset-2 control-label"><strong>* Unit Description :</strong></label>
-                                                        <div class="col-md-4">
-                                                            <textarea name="unit_desc" class="form-control" data-error-msg="Unit Description is required!" placeholder="Description" required></textarea>
-                                                        </div>
-                                                    </div><br/>
-                                                </form>
-                                            </div>
-
-                                            <div class="panel-footer">
-                                                <div class="row">
-                                                    <div class="col-sm-6 col-sm-offset-4">
-                                                        <button id="btn_save" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;""><span class=""></span>  Save Changes</button>
-                                                        <button id="btn_cancel" class="btn-default btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"">Cancel</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div> -->
-
                                 </div>
                             </div>
                         </div>
@@ -184,51 +137,42 @@
                 </div>
             </div><!---modal-->
 
-            <div id="modal_bank" class="modal fade" tabindex="-1" role="dialog">
+            <div id="modal_check_types" class="modal fade" tabindex="-1" role="dialog">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h4 id="bank_title" class="modal-title" style="color: white;"></h4>
+                            <h4 id="check_types_title" class="modal-title" style="color: white;"></h4>
                         </div>
                         <div class="modal-body">
-                            <form id="frm_bank" role="form" class="form-horizontal row-border">
+                            <form id="frm_check_types" role="form" class="form-horizontal row-border">
                                 <div class="form-group">
-                                    <label class="col-md-4 control-label"><strong><B> * </B> Bank Code :</strong></label>
+                                    <label class="col-md-4 control-label"><strong><B> * </B> Code :</strong></label>
                                     <div class="col-md-8">
                                         <div class="input-group">
                                             <span class="input-group-addon">
                                                 <i class="fa fa-code"></i>
                                             </span>
-                                            <input type="text" name="bank_code" class="form-control" placeholder="Bank Code" data-error-msg="Bank Code is required!" required>
+                                            <input type="text" name="check_type_code" class="form-control" placeholder="Code" data-error-msg="Check Type Code is required!" required>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-md-4 control-label"><strong><B> * </B> Bank :</strong></label>
+                                    <label class="col-md-4 control-label"><strong><B> * </B> Description :</strong></label>
                                     <div class="col-md-8">
                                         <div class="input-group col-md-12">
-                                            <input type="text" name="bank_name" class="form-control" placeholder="Bank" data-error-msg="Bank is required!" required>
+                                            <input type="text" name="check_type_desc" class="form-control" placeholder="Description" data-error-msg="Check Type Desc is required!" required>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-md-4 control-label"><strong><B> * </B> Account Number :</strong></label>
+                                    <label class="col-md-4 control-label"><strong><B> * </B> Account Title :</strong></label>
                                     <div class="col-md-8">
-                                        <div class="input-group col-md-12">
-                                            <input type="text" name="account_number" class="form-control" placeholder="Account Number" data-error-msg="Account Number is required!" required>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label"><strong><B> * </B> Account Type :</strong></label>
-                                    <div class="col-md-8">
-                                        <select name="account_type" class="form-control" id="account_type" data-error-msg="Account Type is required!" placeholder="Account Type" required>
-                                            <option value="" disabled selected>Select Account Type</option>
-                                            <option value="1">Current Account</option>
-                                            <option value="2">Savings Account</option>
+                                        <select name="account_id" class="form-control" id="account_id" data-error-msg="Account Type is required!" placeholder="Account Type" required>
+                                            <?php foreach($accounts as $account){ ?>
+                                                <option value='<?php echo $account->account_id; ?>'><?php echo $account->account_title; ?></option>
+                                                <?php } ?>
                                         </select>
                                     </div>
                                 </div><br/>
@@ -272,29 +216,19 @@ $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboAccountType;
 
     var initializeControls=function(){
-        dt=$('#tbl_bank').DataTable({
+        dt=$('#tbl_check_type').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "ajax" : "Bank/transaction/list",
+            "ajax" : "Check_types/transaction/list",
             "language": {
-                "searchPlaceholder":"Search Bank"
+                "searchPlaceholder":"Search Check Type"
             },
             "columns": [
-                { targets:[0],data: "bank_code" },
-                { targets:[1],data: "bank_name" },
-                { targets:[2],data: "account_number" },
-                { targets:[3],data: "account_type",
-                    render: function (data, type, full, meta) {
-                        if (data=="1") {
-                            return "Current Account";
-                        }else if (data=="2") {
-                            return "Savings Account";
-                        }
-
-                    }
-                },
+                { targets:[0],data: "check_type_code" },
+                { targets:[1],data: "check_type_desc" },
+                { targets:[2],data: "account_title" },
                 {
-                    targets:[4],
+                    targets:[3],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
@@ -306,12 +240,12 @@ $(document).ready(function(){
         });
 
         var createToolBarButton=function(){
-            var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Bank" >'+
-                '<i class="fa fa-plus"></i> New Bank</button>';
+            var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Check Type" >'+
+                '<i class="fa fa-plus"></i> New Check Type</button>';
             $("div.toolbar").html(_btnNew);
         }();
 
-        _cboAccountType = $('#account_type').select2({
+        _cboAccountType = $('#account_id').select2({
             placeholder: "Please select account type.",
             allowClear: false
         });
@@ -320,7 +254,7 @@ $(document).ready(function(){
     var bindEventHandlers=(function(){
         var detailRows = [];
 
-        $('#tbl_bank tbody').on( 'click', 'tr td.details-control', function () {
+        $('#tbl_check_type tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
             var row = dt.row( tr );
             var idx = $.inArray( tr.attr('id'), detailRows );
@@ -346,16 +280,16 @@ $(document).ready(function(){
             _txnMode="new";
             clearFields();
             _cboAccountType.select2('val','');
-            $('#bank_title').text('New Bank');
-            $('#modal_bank').modal('show');
+            $('#check_types_title').text('New Check Type');
+            $('#modal_check_types').modal('show');
             //showList(false);
         });
 
-        $('#tbl_bank tbody').on('click','button[name="edit_info"]',function(){
+        $('#tbl_check_type tbody').on('click','button[name="edit_info"]',function(){
             _txnMode="edit";
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
-            _selectedID=data.bank_id;
+            _selectedID=data.check_type_id;
 
             $('input,textarea').each(function(){
                 var _elem=$(this);
@@ -365,22 +299,22 @@ $(document).ready(function(){
                     }
                 });
             });
-            $('#bank_title').text('Edit Unit');
-            $('#modal_bank').modal('show');
-            _cboAccountType.select2('val',data.account_type);
+            $('#check_types_title').text('Edit Unit');
+            $('#modal_check_types').modal('show');
+            _cboAccountType.select2('val',data.account_id);
             //showList(false);
         });
 
-        $('#tbl_bank tbody').on('click','button[name="remove_info"]',function(){
+        $('#tbl_check_type tbody').on('click','button[name="remove_info"]',function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
-            _selectedID=data.bank_id;
+            _selectedID=data.check_type_id;
 
             $('#modal_confirmation').modal('show');
         });
 
         $('#btn_yes').click(function(){
-            removeBank().done(function(response){
+            removeCheckType().done(function(response){
                 showNotification(response);
                 dt.row(_selectRowObj).remove().draw();
             });
@@ -389,7 +323,7 @@ $(document).ready(function(){
         $('input[name="file_upload[]"]').change(function(event){
             var _files=event.target.files;
 
-            $('#div_img_bank').hide();
+            $('#div_img_checktypes').hide();
             $('#div_img_loader').show();
 
             var data=new FormData();
@@ -400,7 +334,7 @@ $(document).ready(function(){
             console.log(_files);
 
             $.ajax({
-                url : 'Bank/transaction/upload',
+                url : 'Check_types/transaction/upload',
                 type : "POST",
                 data : data,
                 cache : false,
@@ -409,20 +343,20 @@ $(document).ready(function(){
                 contentType : false,
                 success : function(response){
                     $('#div_img_loader').hide();
-                    $('#div_img_bank').show();
+                    $('#div_img_checktypes').show();
                 }
             });
         });
 
         $('#btn_cancel').click(function(){
-            $('#modal_bank').modal('hide');
+            $('#modal_check_types').modal('hide');
             //showList(true);
         });
 
         $('#btn_save').click(function(){
             if(validateRequiredFields()){
                 if(_txnMode=="new"){
-                    createBank().done(function(response){
+                    createCheckType().done(function(response){
                         showNotification(response);
                         dt.row.add(response.row_added[0]).draw();
                         clearFields();
@@ -430,7 +364,7 @@ $(document).ready(function(){
                         showSpinningProgress($('#btn_save'));
                     });
                 }else{
-                    updateBank().done(function(response){
+                    updateCheckType().done(function(response){
                         showNotification(response);
                         dt.row(_selectRowObj).data(response.row_updated[0]).draw();
                         clearFields();
@@ -439,7 +373,7 @@ $(document).ready(function(){
                         showSpinningProgress($('#btn_save'));
                     });
                 }
-                $('#modal_bank').modal('hide');
+                $('#modal_check_types').modal('hide');
             }
         });
     })();
@@ -468,47 +402,47 @@ $(document).ready(function(){
         });
         return stat;
         };
-    var createBank=function(){
-        var _data=$('#frm_bank').serializeArray();
+    var createCheckType=function(){
+        var _data=$('#frm_check_types').serializeArray();
 
         return $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"Bank/transaction/create",
+            "url":"Check_types/transaction/create",
             "data":_data,
             "beforeSend": showSpinningProgress($('#btn_save'))
         });
     };
 
-    var updateBank=function(){
-        var _data=$('#frm_bank').serializeArray();
-        _data.push({name : "bank_id" ,value : _selectedID});
+    var updateCheckType=function(){
+        var _data=$('#frm_check_types').serializeArray();
+        _data.push({name : "check_type_id" ,value : _selectedID});
 
         return $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"Bank/transaction/update",
+            "url":"Check_types/transaction/update",
             "data":_data,
             "beforeSend": showSpinningProgress($('#btn_save'))
         });
     };
 
-    var removeBank=function(){
+    var removeCheckType=function(){
         return $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"Bank/transaction/delete",
-            "data":{bank_id : _selectedID}
+            "url":"Check_types/transaction/delete",
+            "data":{check_type_id : _selectedID}
         });
     };
 
     var showList=function(b){
         if(b){
-            $('#div_bank_list').show();
-            $('#div_bank_fields').hide();
+            $('#div_check_types_list').show();
+            $('#div_check_type_fields').hide();
         }else{
-            $('#div_bank_list').hide();
-            $('#div_bank_fields').show();
+            $('#div_check_types_list').hide();
+            $('#div_check_type_fields').show();
         }
     };
 
@@ -526,7 +460,7 @@ $(document).ready(function(){
     };
 
     var clearFields=function(){
-        $('input[required],textarea','#frm_bank').val('');
+        $('input[required],textarea','#frm_check_types').val('');
         $('form').find('input:first').focus();
     };
 

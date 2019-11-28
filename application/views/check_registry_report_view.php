@@ -109,12 +109,11 @@ tr:nth-child(even){background-color:none !important;}*/
 		                    					</div>
 		                    				</div>
                                             <div class="col-xs-12 col-md-4">
-                                                <strong>Bank* : </strong><br>
+                                                <strong>Check Type* : </strong><br>
                                                 
-                                                <select name="bank" class="select" id="select">
-
-                                                <?php foreach ($banks as $bank) { ?>
-                                                    <option value="<?php echo $bank->bank_id; ?>"> <?php echo $bank->bank_name; ?></option>
+                                                <select name="check_type_id" class="select" id="select">
+                                                    <?php foreach($check_types as $check_type){ ?>
+                                                        <option value='<?php echo $check_type->check_type_id; ?>'><?php echo $check_type->check_type_desc; ?></option>
                                                     <?php } ?>
                                                 </select>
                                               
@@ -267,11 +266,11 @@ tr:nth-child(even){background-color:none !important;}*/
             });
 
         	$('#btn_print').on('click', function() {
-        		window.open('Check_registry_report/transaction/report?start='+ $('#startDate').val() +'&end='+ $('#endDate').val() + '&bank=' + $('#select').val() );
+        		window.open('Check_registry_report/transaction/report?start='+ $('#startDate').val() +'&end='+ $('#endDate').val() + '&check_type_id=' + $('#select').val() );
         	});
 
             $('#btn_export').on('click', function() {
-                window.open('Check_registry_report/transaction/export?start='+ $('#startDate').val() +'&end='+ $('#endDate').val() + '&bank=' + $('#select').val(),"_self");
+                window.open('Check_registry_report/transaction/export?start='+ $('#startDate').val() +'&end='+ $('#endDate').val() + '&check_type_id=' + $('#select').val(),"_self");
             });
 
             $('#btn_email').on('click', function() {
@@ -282,7 +281,7 @@ tr:nth-child(even){background-color:none !important;}*/
                 $.ajax({
                     "dataType":"json",
                     "type":"POST",
-                    "url":'Check_registry_report/transaction/email?start='+ $('#startDate').val() +'&end='+ $('#endDate').val() + '&bank=' + $('#select').val(),
+                    "url":'Check_registry_report/transaction/email?start='+ $('#startDate').val() +'&end='+ $('#endDate').val() + '&check_type_id=' + $('#select').val(),
                     "beforeSend": showSpinningProgress(btn)
                 }).done(function(response){
                     showNotification(response);
@@ -327,7 +326,7 @@ tr:nth-child(even){background-color:none !important;}*/
                         return $.extend( {}, d, {
                             "start":$('#startDate').val(),
                             "end":$('#endDate').val(),
-                            "bank":$('#select').val()
+                            "check_type_id":$('#select').val()
                         });
                     }
                 },

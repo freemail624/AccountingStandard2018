@@ -249,10 +249,10 @@
                                     </select>
                                 </div>
                                 <div class="col-lg-6 " id="check_info_2">
-                                    <label>Bank :</label><br />
-                                    <select id="cbo_bank" class="form-control" name="bank_id">
-                                        <?php foreach($bank_refs as $bank) { ?>
-                                            <option value="<?php echo $bank->bank_id; ?>"><?php echo $bank->bank_name; ?></option>
+                                    <label>Check type :</label><br />
+                                    <select id="cbo_check_types" class="form-control" name="check_type_id">
+                                        <?php foreach($check_types as $check_type){ ?>
+                                            <option value='<?php echo $check_type->check_type_id; ?>'><?php echo $check_type->check_type_desc; ?></option>
                                         <?php } ?>
                                     </select>
                                 </div>
@@ -647,8 +647,8 @@
                 minimumResultsForSearch: -1
             });
 
-            _cboBanks=$('#cbo_bank').select2({
-                placeholder: "Please Select Bank"
+            _cboCheckTypes=$('#cbo_check_types').select2({
+                placeholder: "Please Select Check Type"
             });
             $('.numeric').autoNumeric('init',{mDec:2});
             InitializeDataTable();
@@ -821,12 +821,12 @@
 
         _cboPaymentMethod.on("select2:select", function (e) {
 
-            var selectbank = $('#cbo_bank');
+            var selectchecktype = $('#cbo_check_types');
             var checkno = $('#check_no');
             var checkdate = $('#check_date');
             var i=$(this).select2('val');
             if(i==2){ 
-                selectbank.attr('required', true);
+                selectchecktype.attr('required', true);
                 checkno.attr('required', true);
                 checkdate.attr('required', true);
                 checkno.attr('disabled', false);
@@ -837,7 +837,7 @@
             }else{
                 $('#check_info').hide();
                 $('#check_info_2').hide();
-                selectbank.attr('required', false);
+                selectchecktype.attr('required', false);
                 checkno.attr('required', false);
                 checkdate.attr('required', false);
                 checkno.attr('disabled', true);

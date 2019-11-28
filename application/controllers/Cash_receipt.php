@@ -19,7 +19,7 @@ class Cash_receipt extends CORE_Controller
                 'Journal_account_model',
                 'Departments_model',
                 'Receivable_payment_model',
-                'Bank_model',
+                'Check_types_model',
                 'Users_model',
                 'Account_integration_model',
                 'Accounting_period_model',
@@ -49,7 +49,7 @@ class Cash_receipt extends CORE_Controller
         $data['accounts']=$this->Account_title_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['methods']=$this->Payment_method_model->get_list('is_deleted=0');
         $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE');
-        $data['banks']=$this->Bank_model->get_list('is_active=TRUE AND is_deleted=FALSE');
+        $data['check_types']=$this->Check_types_model->get_list('is_deleted=FALSE');
         $data['customer_type']=$this->Customer_type_model->get_list('is_deleted=FALSE');
 
         $data['ar_trans']=$this->Ar_trans_model->get_list(
@@ -147,7 +147,7 @@ class Cash_receipt extends CORE_Controller
                 $m_journal->amount=$this->get_numeric_value($this->input->post('amount'));
                 $m_journal->or_no=$this->input->post('or_no');
                 $m_journal->check_no=$this->input->post('check_no');
-                $m_journal->bank_id=$this->input->post('bank');
+                $m_journal->check_type_id=$this->input->post('check_type_id');
                 $m_journal->ref_no=$this->input->post('ref_no');
 
 
@@ -338,7 +338,7 @@ class Cash_receipt extends CORE_Controller
                 $m_journal->amount=$this->get_numeric_value($this->input->post('amount'));
                 $m_journal->or_no=$this->input->post('or_no');
                 $m_journal->check_no=$this->input->post('check_no');
-                $m_journal->bank_id=$this->input->post('bank');
+                $m_journal->check_type_id=$this->input->post('check_type_id');
                 $m_journal->ref_no=$this->input->post('ref_no');
 
 
@@ -446,7 +446,7 @@ class Cash_receipt extends CORE_Controller
                 $m_journal->amount=$this->get_numeric_value($this->input->post('amount'));
                 $m_journal->or_no=$this->input->post('or_no');
                 $m_journal->check_no=$this->input->post('check_no');
-                $m_journal->bank_id=$this->input->post('bank');
+                $m_journal->check_type_id=$this->input->post('check_type_id');
 
                 //for audit details
                 $m_journal->set('date_modified','NOW()');
@@ -547,7 +547,7 @@ class Cash_receipt extends CORE_Controller
                 'journal_info.department_id',
                 'DATE_FORMAT(journal_info.check_date,"%m/%d/%Y")as check_date',
                 'journal_info.amount',
-                'journal_info.bank_id',
+                'journal_info.check_type_id',
                 'CONCAT(IF(NOT ISNULL(customers.customer_id),CONCAT("C-",customers.customer_id),""),IF(NOT ISNULL(suppliers.supplier_id),CONCAT("S-",suppliers.supplier_id),"")) as particular_id',
                 'CONCAT_WS(" ",IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,"")) as particular',
                 'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by'
@@ -583,7 +583,7 @@ class Cash_receipt extends CORE_Controller
                 'journal_info.department_id',
                 'DATE_FORMAT(journal_info.check_date,"%m/%d/%Y")as check_date',
                 'journal_info.amount',
-                'journal_info.bank_id',
+                'journal_info.check_type_id',
                 'CONCAT(IF(NOT ISNULL(customers.customer_id),CONCAT("C-",customers.customer_id),""),IF(NOT ISNULL(suppliers.supplier_id),CONCAT("S-",suppliers.supplier_id),"")) as particular_id',
                 'CONCAT_WS(" ",IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,"")) as particular',
                 'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by'

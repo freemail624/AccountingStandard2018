@@ -956,7 +956,7 @@ class Journal_info_model extends CORE_Model{
             return $this->db->query($sql)->result();
     }
 
-        function get_check_registry($startDate,$endDate,$bank) {
+        function get_check_registry($startDate,$endDate,$check_type_id) {
         $sql="SELECT
 
 
@@ -964,15 +964,14 @@ class Journal_info_model extends CORE_Model{
             SUM(ji.amount) AS summmary,
             ji.*,
             s.*,
-            bank.bank_id,
-            bank.bank_name
+            b_refchecktype.check_type_desc
 
             FROM
             `journal_info` AS ji
             LEFT JOIN suppliers AS s ON s.`supplier_id`=ji.`supplier_id`
-            LEFT JOIN bank ON bank.bank_id = ji.bank_id 
+            LEFT JOIN b_refchecktype ON b_refchecktype.check_type_id = ji.check_type_id 
             WHERE ji.is_deleted=FALSE AND ji.is_active=TRUE
-            AND ji.bank_id = '$bank'
+            AND ji.check_type_id = '$check_type_id'
             AND ji.date_txn BETWEEN '$startDate' AND '$endDate' AND payment_method_id = 2
             AND ji.book_type = 'CDJ' GROUP BY ji.journal_id
           ";

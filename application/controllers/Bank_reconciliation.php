@@ -10,7 +10,7 @@
 			$this->validate_session();
 			$this->load->model(
 				array(
-					'Bank_model',
+					'Check_types_model',
 					'Journal_info_model',
 					'Account_title_model',
 					'Bank_reconciliation_model',
@@ -29,7 +29,7 @@
 	        $data['_switcher_settings'] = $this->load->view('template/elements/switcher', '', true);
 	        $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', true);
 	        $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', true);
-	        $data['banks']=$this->Bank_model->get_list('is_active=TRUE AND is_deleted=FALSE');
+        	$data['check_types']=$this->Check_types_model->get_list('is_deleted=FALSE');
 	        $data['account_titles']=$this->Account_title_model->get_list('is_active=TRUE AND is_deleted=FALSE');
 	        $data['title'] = 'Bank Reconciliation';
 	        (in_array('11-1',$this->session->user_rights)? 
@@ -59,7 +59,6 @@
 
 					$m_bankr->begin();
 					$m_bankr->set('date_reconciled','NOW()');
-					$m_bankr->bank_id=$this->input->post('bank_id',TRUE);
 					$m_bankr->reconciled_by=$this->session->user_id;
 					$m_bankr->account_id=$this->input->post('account_id',TRUE);
 					$m_bankr->account_balance=$this->get_numeric_value($this->input->post('account_balance',TRUE));
@@ -73,6 +72,10 @@
 					$m_bankr->deposit_in_transit=$this->get_numeric_value($this->input->post('deposit_in_transit',TRUE));
 					$m_bankr->journal_adjusted_collection=$this->get_numeric_value($this->input->post('journal_adjusted_collection',TRUE));
 					$m_bankr->bank_adjusted_collection=$this->get_numeric_value($this->input->post('bank_adjusted_collection',TRUE));
+					$m_bankr->journal_other_additions=$this->get_numeric_value($this->input->post('journal_other_additions',TRUE));
+					$m_bankr->journal_other_deductions=$this->get_numeric_value($this->input->post('journal_other_deductions',TRUE));
+					$m_bankr->bank_other_additions=$this->get_numeric_value($this->input->post('bank_other_additions',TRUE));
+					$m_bankr->bank_other_deductions=$this->get_numeric_value($this->input->post('bank_other_deductions',TRUE));
 					$m_bankr->save();
 
 					$bank_recon_id = $m_bankr->last_insert_id();
@@ -108,11 +111,10 @@
 
 					$response['data'] = $m_bankr->get_list(
 						null,
-						'bank_reconciliation.*, CONCAT(ua.user_fname," ", ua.user_lname) AS fullname,b.*,at.account_title,DATE_FORMAT(bank_reconciliation.date_reconciled,"%m/%d/%Y") as date_reconciled',
+						'bank_reconciliation.*, CONCAT(ua.user_fname," ", ua.user_lname) AS fullname,at.account_title,DATE_FORMAT(bank_reconciliation.date_reconciled,"%m/%d/%Y") as date_reconciled',
 						array(
 							array('user_accounts as ua','ua.user_id=bank_reconciliation.reconciled_by','left'),
-							array('account_titles as at','at.account_id=bank_reconciliation.account_id','left'),
-							array('bank as b','b.bank_id=bank_reconciliation.bank_id','left')
+							array('account_titles as at','at.account_id=bank_reconciliation.account_id','left')
 						)
 					);
 
@@ -151,11 +153,10 @@
 					$id=$this->input->get('id');
 					$data['data'] = $m_bankr->get_list(
 						$id,
-						'bank_reconciliation.*, CONCAT(ua.user_fname," ", ua.user_lname) AS fullname,b.*,at.account_title,DATE_FORMAT(bank_reconciliation.date_reconciled,"%m/%d/%Y") as date_reconciled',
+						'bank_reconciliation.*, CONCAT(ua.user_fname," ", ua.user_lname) AS fullname,at.account_title,DATE_FORMAT(bank_reconciliation.date_reconciled,"%m/%d/%Y") as date_reconciled',
 						array(
 							array('user_accounts as ua','ua.user_id=bank_reconciliation.reconciled_by','left'),
-							array('account_titles as at','at.account_id=bank_reconciliation.account_id','left'),
-							array('bank as b','b.bank_id=bank_reconciliation.bank_id','left')
+							array('account_titles as at','at.account_id=bank_reconciliation.account_id','left')
 						)
 					)[0];
 					$data['outs']=$this->Bank_reconciliation_details_model->get_list('bank_reconciliation_details.check_status = 1 and bank_reconciliation_details.bank_recon_id='.$id,

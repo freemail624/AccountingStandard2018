@@ -5,7 +5,6 @@ class Online_users extends CORE_Controller {
     function __construct() {
         parent::__construct('');
         $this->validate_session();
-        $this->load->model('Bank_model');
         $this->load->model('Users_model');
     }
 

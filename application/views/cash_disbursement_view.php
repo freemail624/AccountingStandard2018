@@ -142,9 +142,6 @@
           -o-transform: scale(1.5); /* Opera */
         }
 
-        #tbl_check_list td:nth-child(6),#tbl_check_list th:nth-child(6){
-            text-align: center;
-        }
         #tbl_cash_disbursement_list_filter{
             display: none;
         }
@@ -260,8 +257,8 @@
                             Check Voucher Print Format :<br />
                             <select id="cbo_voucher_format" class="form-control">
                                 <option value="1">Default</option>
-                                <option value="2">RCBC/CHINA BANK</option>
-                                <option value="3">RCBC/CHINA BANK WITH CHECK</option>
+                                <option value="2">RCBC/CHINABANK</option>
+                                <option value="3">RCBC/CHINABANK WITH CHECK</option>
                                 <option value="4">BPI</option>
                                 <option value="5">BPI CHECK</option>
                             </select>
@@ -383,38 +380,6 @@
             </div>
         </div>
         </div>
-
-<!--         <div class="panel panel-default" style="border-radius:6px;">
-
-                    <div class="panel-body panel-responsive" style="min-height: 400px;">
-            <a data-toggle="collapse" data-parent="#accordionA" href="#collapseOne" style="text-decoration: none;">
-
-    <h2 class="h2-panel-heading"> Check Summary</h2>
-            </a>
-                <div id="collapseOne" class="collapse in">
-                        <div >
-                            <table id="tbl_check_list" class="table table-striped" cellspacing="0" width="100%">
-                                <thead style="display:none;background-color:#161616!important;">
-                                <tr>
-                                    <th>Bank</th>
-                                    <th>Check #</th>
-                                    <th>Amount</th>
-                                    <th>Check Date</th>
-                                    <th>Voucher #</th>
-                                    <th>Particular</th>
-                                    <th width="20%">Remarks</th>
-                                    <th>Issued</th>
-                                    <th><center>Action</center></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-        </div> -->
 
     </div>
 
@@ -549,12 +514,12 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <label>Bank :</label><br />
-                                        <select id="cbo_bank" class="form-control" name="bank_id">
-                                            <option value="create_bank">[Create New Bank]</option>
-                                            <?php foreach($bank_refs as $bank) { ?>
-                                                <option value="<?php echo $bank->bank_id; ?>"><?php echo $bank->bank_name; ?></option>
-                                            <?php } ?>
+                                        <label>Check Type :</label><br />
+                                        <select id="cbo_check_type" class="form-control" name="check_type_id">
+                                        <option value="0">None </option>
+                                        <?php foreach($check_types as $check_type){ ?>
+                                            <option value='<?php echo $check_type->check_type_id; ?>'><?php echo $check_type->check_type_desc; ?></option>
+                                        <?php } ?>
                                         </select>
                                     </div>
                                 </div>
@@ -843,51 +808,6 @@
             </div>
         </div>
     </div><!---modal-->
-<div id="modal_print_check_list_option" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
-    <div class="modal-dialog modal-md">
-        <div class="modal-content">
-            <div class="modal-header ">
-                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
-                <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Print Options - Check List</h4>
-            </div>
-
-            <div class="modal-body">
-                <b> * </b> Filter by Bank  :<br />
-                <select id="cbo_banks" class="form-control">
-                    <option value="0">All Banks</option>
-                    <?php foreach($bank_refs as $bank){ ?>
-                        <option value='<?php echo $bank->bank_id; ?>'><?php echo $bank->bank_name; ?></option>
-                    <?php } ?>
-                </select>
-
-                <b> * </b> Period Start :<br />
-                <div class="input-group">
-                    <span class="input-group-addon">
-                        <i class="fa fa-calendar"></i>
-                    </span>
-                    <input type="text" id="txt_start" class="date-picker form-control" value="<?php echo date('m/d/Y'); ?>">
-                </div>
-
-                <b> * </b> Period End :<br />
-                <div class="input-group">
-                    <span class="input-group-addon">
-                        <i class="fa fa-calendar"></i>
-                    </span>
-                    <input type="text" id="txt_end" class="date-picker form-control" value="<?php echo date('m/d/Y'); ?>">
-                </div>
-
-            </div>
-
-            <div class="modal-footer">
-                <button id="btn_print_list" type="button" class="btn btn-primary" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"> <i class="fa fa-print"></i> Print List </button>
-                <button id="" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
-            </div>
-        </div><!---content---->
-    </div>
-</div><!---modal-->
-
-
-
 
 <div id="modal_new_department" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog modal-md">
@@ -1144,65 +1064,6 @@
 
 
 
-<div id="modal_bank" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 id="bank_title" class="modal-title" style="color: white;">New Bank</h4>
-            </div>
-            <div class="modal-body">
-                <form id="frm_bank" role="form" class="form-horizontal row-border">
-                    <div class="form-group">
-                        <label class="col-md-4 control-label"><strong><b> * </b> Bank Code :</strong></label>
-                        <div class="col-md-8">
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                    <i class="fa fa-code"></i>
-                                </span>
-                                <input type="text" name="bank_code" class="form-control" placeholder="Bank Code" data-error-msg="Bank Code is required!" required>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-md-4 control-label"><strong><b> * </b> Bank :</strong></label>
-                        <div class="col-md-8">
-                            <div class="input-group col-md-12">
-                                <input type="text" name="bank_name" class="form-control" placeholder="Bank" data-error-msg="Bank is required!" required>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-md-4 control-label"><strong><b> * </b> Account Number :</strong></label>
-                        <div class="col-md-8">
-                            <div class="input-group col-md-12">
-                                <input type="text" name="account_number" class="form-control" placeholder="Account Number" data-error-msg="Account Number is required!" required>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-md-4 control-label"><strong><b> * </b> Account Type :</strong></label>
-                        <div class="col-md-8">
-                            <select name="account_type" class="form-control" id="cbo_account_type" data-error-msg="Account Type is required!" placeholder="Account Type" required>
-                                <option value="" disabled selected>Select Account Type</option>
-                                <option value="1">Current Account</option>
-                                <option value="2">Savings Account</option>
-                            </select>
-                        </div>
-                    </div><br/>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button id="btn_save_bank" class="btn btn-primary">Save</button>
-                <button id="btn_cancel_bank" class="btn btn-default">Cancel</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 <?php echo $_switcher_settings; ?>
 <?php echo $_def_js_files; ?>
 
@@ -1231,8 +1092,8 @@
 
 <script>
 $(document).ready(function(){
-    var _txnMode; var _cboSuppliers; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode, _cboBranches, _cboPaymentMethod, _cboBanks, _cboAccountType;
-    var dtReview; var cbo_refType; var _cboLayouts; var dtRecurring; var dtCheckList; var _attribute; var _cboTax; var dtReviewOther; var dtCashReceipt; var _cboVouchers;
+    var _txnMode; var _cboSuppliers; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode, _cboBranches, _cboPaymentMethod, _cboCheckTypes;
+    var dtReview; var cbo_refType; var _cboLayouts; var dtRecurring; var _attribute; var _cboTax; var dtReviewOther; var dtCashReceipt; var _cboVouchers;
 
 
     var oTBJournal={
@@ -1408,72 +1269,6 @@ $(document).ready(function(){
         });
 
 
-        dtCheckList=$('#tbl_check_list').DataTable({
-            "dom": '<"print">frtip',
-            "bLengthChange":false,
-            "pageLength" : 7,
-            "ajax" : "Cash_disbursement/transaction/get-check-list",
-            "columnDefs": [
-                { "visible": false, "targets": 0 }
-            ],
-            "columns": [
-
-                { targets:[0],data: "bank" },
-                { targets:[1],data: "check_no" },
-                { targets:[2],data: "amount",
-                    render: function(data, type, full, meta){
-                        return accounting.formatNumber(data,2);
-                    }
-                },
-                { targets:[3],data: "check_date" },
-                { targets:[4],data: "ref_no" },
-                { targets:[5],data: "supplier_name" },
-                { targets:[6],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(60) },
-                {  targets:[7],data: "check_status",
-                    render: function (data, type, full, meta){
-                        //alert(data.check_status);
-                        if(data=="1"){
-                            _attribute=' class="fa fa-check-circle" style="color:green;" ';
-                        }else{
-                            _attribute=' class="fa fa-times-circle" style="color:red;" ';
-                        }
-
-                        return '<center><i '+_attribute+'></i></center>';
-                    }
-                },
-                {  targets:[8],
-                    render: function (data, type, full, meta){
-                        var btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-print"></i> Print Check</button>';
-                        return '<center>'+btn_check_print+'</center>';
-                    } }
-            ],
-            "drawCallback": function ( settings ) {
-                var api = this.api();
-                var rows = api.rows( {page:'current'} ).nodes();
-                var last=null;
-
-                api.column(0, {page:'current'} ).data().each( function ( group, i ) {
-                    if ( last!== group ) {
-                        $(rows).eq( i ).before(
-                            // '<tr class="group" style="background-color:#161616!important"><td colspan="8" align="left"><b style="text-transform: capitalize;font-size: 15px;color:white;"><i class="fa fa-bars"></i> '+group+'</b></td></tr>' +
-                            '<tr class="group" >'+
-                                    '<td><b>Check #</b></td>'+
-                                    '<td><b >Amount</b></td>'+
-                                    '<td><b >Check Date</b></td>'+
-                                    '<td><b >Voucher #</b></td>'+
-                                    '<td><b >Particular</b></td>'+
-                                    '<td><b>Remarks</b></td>'+
-                                    '<td align="center"><b >Issued</b></td>'+
-                                    '<td ><center><b >Action</b></center></td>'+
-                            '</tr>'
-                        );
-
-                        last = group;
-                    }
-                } );
-            }
-        });
-
 
         dtCashReceipt=$('#tbl_accounts_receivable').DataTable({
             "dom": '<"toolbar">frtip',
@@ -1551,26 +1346,10 @@ $(document).ready(function(){
 
         });
 
-        var createToolBarButton=function() {
 
-            var _btnPrint='<button class="btn btn-primary" id="btn_print_check_list" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Print Check list" >'+
-                '<i class="fa fa-print"></i> Print Check list</button>';
-
-            var _refresh='<button class="btn btn-green" id="btn_refresh_check_list" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Refresh" >'+
-                '<i class="fa fa-refresh"></i> Refresh</button>';
-
-            $("div.print").html(_btnPrint+" "+_refresh);
-
-        }();
-
-        _cboAccountType=$('#cbo_account_type').select2({
-            placeholder: "Please Select Account Type",
-            allowClear:true
-        });
-
-        _cboBanks=$('#cbo_bank').select2({
-            placeholder: "Please Select Bank",
-            allowClear:true
+        _cboCheckTypes=$('#cbo_check_type').select2({
+            placeholder: "Please Select Check Type",
+            allowClear:false
         });
 
         _cboTax=$('#cbo_tax_group').select2({
@@ -1600,10 +1379,9 @@ $(document).ready(function(){
             placeholder: "Please select check layout.",
             allowClear: true
         });
-        _cboAccountType.select2('val',null);
         _cboLayouts.select2('val',null);
         _cboTax.select2('val',null);
-        _cboBanks.select2('val',null);
+        _cboCheckTypes.select2('val',null);
 
 
         cbo_refType=$('#cbo_refType').select2({
@@ -1637,18 +1415,6 @@ $(document).ready(function(){
         });
 
         var detailRows = [];
-
-        _cboBanks.on('select2:select',function(){
-            if (_cboBanks.select2('val') == 'create_bank'){
-                $('#modal_bank').modal('show');
-                _cboBanks.select2('val',null);
-            }
-        });
-
-        $('#btn_cancel_bank').click(function(){
-            $('#modal_bank').modal('hide');
-            clearFields($('#frm_bank'));
-        });
 
         $('#tbl_cash_disbursement_list tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
@@ -1847,16 +1613,6 @@ $(document).ready(function(){
             $('#modal_recurring').modal('hide');    
         });
 
-        $('#btn_refresh_check_list').click(function(){
-            //dtCheckList.destroy();
-            dtCheckList.ajax.reload();
-        });
-
-        $('#btn_print_check_list').on('click',function(){
-            $('#modal_print_check_list_option').modal('show');
-        });
-
-
         $('#tbl_purchase_review tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
             var row = dtReview.row( tr );
@@ -2052,6 +1808,7 @@ $(document).ready(function(){
 
             //set defaults
             _cboPaymentMethod.select2('val',1);//set cash as default
+            _cboCheckTypes.select2('val',0);//set cash as default
             $('input[name="date_txn"]').val(_currentDate);
             $('#is_for_assignment').prop('checked',true);
 
@@ -2101,16 +1858,6 @@ $(document).ready(function(){
             $('#modal_check_layout').modal('show');
         });
 
-        $('#tbl_check_list').on('click','button[name="print_check"]',function(){
-
-
-            _selectRowObj=$(this).closest('tr');
-            var data=dtCheckList.row(_selectRowObj).data();
-            _selectedID=data.journal_id;
-            //alert(_selectedID);
-            $('#modal_check_layout').modal('show');
-        });
-
 
         $('#tbl_cash_disbursement_list').on('click','button[name="cancel_info"]',function(){
             _selectRowObj=$(this).closest('tr');
@@ -2128,9 +1875,6 @@ $(document).ready(function(){
                 }else{
                     window.open('Print_voucher/transaction/print-voucher?format='+$('#cbo_voucher_format').val()+'&type=CDJ&id='+_selectedID);
                 }
-        });
-        $('#btn_print_list').click(function(){
-            window.open('Cash_disbursement/transaction/print-check-list?bank='+$('#cbo_banks').val()+'&start='+$('#txt_start').val()+"&end="+$('#txt_end').val());
         });
 
         $('#btn_yes').click(function(){
@@ -2172,7 +1916,7 @@ $(document).ready(function(){
             $('#cbo_suppliers').select2('val',data.supplier_id);
             $('#cbo_branch').select2('val',data.department_id);
             $('#cbo_refType').select2('val',data.ref_type);
-            $('#cbo_bank').select2('val',data.bank_id);
+            $('#cbo_check_type').select2('val',data.check_type_id);
 
             $.ajax({
                 url: 'Cash_disbursement/transaction/get-entries?id=' + data.journal_id,
@@ -2238,15 +1982,9 @@ $(document).ready(function(){
                     createJournal().done(function(response){
                         showNotification(response);
                         if(response.stat=="success"){
-
-
                             dt.row.add(response.row_added[0]).draw();
                             clearFields(f);
                             showList(true);
-
-                            //dtCheckList.destroy();
-                            dtCheckList.ajax.reload();
-
                         }
 
                     }).always(function(){
@@ -2259,8 +1997,6 @@ $(document).ready(function(){
                             dt.row(_selectRowObj).data(response.row_updated[0]).draw();
                             clearFields(f);
                             showList(true);
-
-                            dtCheckList.ajax.reload();
                         }
 
                     }).always(function(){
@@ -2275,23 +2011,6 @@ $(document).ready(function(){
 
         $('#btn_cancel').click(function(){
             showList(true);
-        });
-
-        $('#btn_save_bank').click(function(){
-            if(validateRequiredFields($('#frm_bank'))){
-                createBank().done(function(response){
-                    showNotification(response);
-                    var _bank = response.row_added[0];
-
-                    $('#cbo_bank').append('<option value="'+_bank.bank_id+'">'+_bank.bank_name+'</option>');
-                    _cboBanks.select2('val',_bank.bank_id);
-                    
-                    clearFields($('#frm_bank'));
-                }).always(function(){
-                    showSpinningProgress($('#btn_save_bank'));
-                });
-                $('#modal_bank').modal('hide');
-            }
         });
 
 
@@ -2369,18 +2088,6 @@ $(document).ready(function(){
 
     //*********************************************************************8
     //              user defines
-
-    var createBank=function(){
-        var _data=$('#frm_bank').serializeArray();
-
-        return $.ajax({
-            "dataType":"json",
-            "type":"POST",
-            "url":"Bank/transaction/create",
-            "data":_data,
-            "beforeSend": showSpinningProgress($('#btn_save_bank'))
-        });
-    };
 
     var createSupplier=function() {
         var _data=$('#frm_suppliers_new').serializeArray();

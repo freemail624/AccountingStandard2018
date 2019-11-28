@@ -263,6 +263,14 @@
                                                                     <div class="col-sm-4">
                                                                         <input type="text" class="form-control text-right numeric" name="check_printing_charge" value="0" >
                                                                     </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-sm-8">
+                                                                        <label>OTHER DEDUCTIONS</label>
+                                                                    </div>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" class="form-control text-right numeric" name="journal_other_deductions" value="0" >
+                                                                    </div>
                                                                 </div><hr>
                                                                 <h5><b>ADD :</b></h5>
                                                                 <div class="row">
@@ -279,6 +287,14 @@
                                                                     </div>
                                                                     <div class="col-sm-4">
                                                                         <input type="text" class="form-control text-right numeric" name="notes_receivable" value="0" >
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-sm-8">
+                                                                        <label>OTHER ADDITIONS</label>
+                                                                    </div>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" class="form-control text-right numeric" name="journal_other_additions" value="0" >
                                                                     </div>
                                                                 </div><hr>
                                                                 <div class="row">
@@ -304,7 +320,15 @@
                                                                         <label>OUTSTANDING CHECKS</label>
                                                                     </div>
                                                                     <div class="col-sm-4">
-                                                                        <input id="txtOutstandingChecks" type="text" class="form-control text-right numeric" name="outstanding_checks" value="0" disabled>
+                                                                        <input type="text" class="form-control text-right numeric" name="outstanding_checks" value="0" disabled>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-sm-8">
+                                                                        <label>OTHER DEDUCTIONS</label>
+                                                                    </div>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" class="form-control text-right numeric" name="bank_other_deductions" value="0">
                                                                     </div>
                                                                 </div>
                                                                 <hr>
@@ -315,6 +339,14 @@
                                                                     </div>
                                                                     <div class="col-sm-4">
                                                                         <input type="text" class="form-control text-right numeric" name="deposit_in_transit" value="0">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-sm-8">
+                                                                        <label>OTHER ADDITIONS</label>
+                                                                    </div>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" class="form-control text-right numeric" name="bank_other_additions" value="0">
                                                                     </div>
                                                                 </div>
                                                                 <br>
@@ -541,11 +573,6 @@ $(document).ready(function(){
     };
 
     var bindEventHandlers=function(){
-        $('#btn_cancel').click(function(){
-            $('#modal_bank').modal('hide');
-            clearFields($('#frm_bank'));
-        });
-
         _cboAccounts.on('change', function(){
             var data = _cboAccounts.select2('data');
             $('input[name="current_bank_account"]').val(data[0].text);
@@ -702,10 +729,14 @@ $(document).ready(function(){
         _data.push({name: "check_printing_charge", value: $('input[name="check_printing_charge"]').val() });
         _data.push({name: "interest_earned", value: $('input[name="interest_earned"]').val() });
         _data.push({name: "notes_receivable", value: $('input[name="notes_receivable"]').val() });
+        _data.push({name: "journal_other_additions", value: $('input[name="journal_other_additions"]').val() });
+        _data.push({name: "journal_other_deductions", value: $('input[name="journal_other_deductions"]').val() });
         _data.push({name: "adjusted_collected_balance_journal", value: $('input[name="adjusted_collected_balance_journal"]').val() });
         _data.push({name: "actual_balance", value: $('input[name="actual_balance"]').val() });
         _data.push({name: "outstanding_checks", value: $('input[name="outstanding_checks"]').val() });
         _data.push({name: "deposit_in_transit", value: $('input[name="deposit_in_transit"]').val() });
+        _data.push({name: "bank_other_additions", value: $('input[name="bank_other_additions"]').val() });
+        _data.push({name: "bank_other_deductions", value: $('input[name="bank_other_deductions"]').val() });
         _data.push({name: "adjusted_collected_balance_bank", value: $('input[name="adjusted_collected_balance_bank"]').val() });
         
         return $.ajax({
@@ -724,14 +755,20 @@ $(document).ready(function(){
         var _checkPrinting = accounting.unformat($('input[name="check_printing_charge"]').val());
         var _interestEarned = accounting.unformat($('input[name="interest_earned"]').val());
         var _notesReceivable = accounting.unformat($('input[name="notes_receivable"]').val());
+        var _journalAdditions = accounting.unformat($('input[name="journal_other_additions"]').val());
+        var _journalDeductions = accounting.unformat($('input[name="journal_other_deductions"]').val());
+
+
 
         var _actualBalance = accounting.unformat($('input[name="actual_balance"]').val());
         var _outstandingChecks = accounting.unformat($('input[name="outstanding_checks"]').val());
         var _depositInTransit = accounting.unformat($('input[name="deposit_in_transit"]').val());
+        var _bankDeductions = accounting.unformat($('input[name="bank_other_deductions"]').val());
+        var _bankAdditions = accounting.unformat($('input[name="bank_other_additions"]').val());
 
-        var totalBank = (_actualBalance - _outstandingChecks) + _depositInTransit;
+        var totalBank = (_actualBalance - _outstandingChecks -_bankDeductions) + _depositInTransit + _bankAdditions;
 
-        var totalJournal = _accountBal - (_bankService + _nsfChecks + _checkPrinting) + (_interestEarned + _notesReceivable);
+        var totalJournal = _accountBal - (_bankService + _nsfChecks + _checkPrinting + _journalDeductions) + (_interestEarned + _notesReceivable + _journalAdditions);
 
         $('input[name="adjusted_collected_balance_journal"]').val(accounting.formatNumber(totalJournal,2));
         $('input[name="adjusted_collected_balance_bank"]').val(accounting.formatNumber(totalBank,2));

@@ -63,7 +63,7 @@
             </div>
         </div><br>
         <div>
-            <strong>Bank:</strong> <?php echo (isset($report_info[0]->bank_name)) ? $report_info[0]->bank_name : ''; ?>
+            <strong>Bank:</strong> <?php echo (isset($report_info[0]->check_type_desc)) ? $report_info[0]->check_type_desc : ''; ?>
         </div>
   
     <table width="100%" style=" border: 1px solid black;"  cellspacing="0" >
