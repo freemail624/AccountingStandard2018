@@ -75,9 +75,10 @@ class Purchase_monitoring extends CORE_Controller
             case 'list':
                 $m_delivery_invoice = $this->Delivery_invoice_model;
                 $product_id = $this->input->get('product_id');
+                $supplier_id = $this->input->get('supplier_id');
                 $start_date=date('Y-m-d',strtotime($this->input->get('start_date',TRUE)));
                 $end_date=date('Y-m-d',strtotime($this->input->get('end_date',TRUE)));
-                $response['data']=$m_delivery_invoice->purchase_monitoring($product_id,$start_date,$end_date);
+                $response['data']=$m_delivery_invoice->purchase_monitoring($product_id,$start_date,$end_date,$supplier_id);
                 echo json_encode($response);
                 break;
 
@@ -88,9 +89,16 @@ class Purchase_monitoring extends CORE_Controller
 
                 $m_delivery_invoice = $this->Delivery_invoice_model;
                 $product_id = $this->input->get('product_id');
+                $supplier_id = $this->input->get('supplier_id');
                 $start_date=date('Y-m-d',strtotime($this->input->get('start_date',TRUE)));
                 $end_date=date('Y-m-d',strtotime($this->input->get('end_date',TRUE)));
-                $data['data']=$m_delivery_invoice->purchase_monitoring($product_id,$start_date,$end_date);
+                $data['data']=$m_delivery_invoice->purchase_monitoring($product_id,$start_date,$end_date,$supplier_id);
+                if ($supplier_id == 0 ){ 
+                    $data['supplier_name'] = 'ALL SUPPLIERS'; 
+                }else{
+                    $suppliers = $this->Suppliers_model->get_list($supplier_id);
+                    $data['supplier_name']=$suppliers[0]->supplier_name;
+                }
 
                 if ($product_id == null ){ 
                     $data['product_name'] = 'ALL'; 
@@ -98,6 +106,7 @@ class Purchase_monitoring extends CORE_Controller
                     $product_info = $this->Products_model->get_list($product_id);
                     $data['product_name']=$product_info[0]->product_desc;
                 }
+
                 $data['start_date'] = $start_date;
                 $data['end_date'] = $end_date;
 

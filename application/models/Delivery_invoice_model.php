@@ -304,7 +304,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
         return $this->db->query($sql)->result();
 
     }
- function purchase_monitoring($product_id,$startDate=null,$endDate=null){
+ function purchase_monitoring($product_id,$startDate=null,$endDate=null,$supplier_id){
         $sql="
         SELECT 
         dii.product_id,
@@ -330,11 +330,11 @@ GROUP BY n.supplier_id HAVING total_balance > 0
         ".($product_id==null?"
 
             ".($startDate==null?"":" WHERE di.date_delivered BETWEEN '$startDate' AND '$endDate'")."
-
+            ".($supplier_id==0?"":" AND di.supplier_id=$supplier_id")."
         ":" WHERE p.product_id=$product_id 
         
             ".($startDate==null?"":" AND di.date_delivered BETWEEN '$startDate' AND '$endDate'")."
-
+            ".($supplier_id==0?"":" AND di.supplier_id=$supplier_id")."
 
         ")."
 

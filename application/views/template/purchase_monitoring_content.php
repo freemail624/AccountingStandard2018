@@ -42,6 +42,7 @@
     <div>
         <h3><strong>Purchase Monitoring</strong></h3>
     </div>
+        <span style="font-weight: bolder;">Supplier: </span>   <?php echo $supplier_name;?> <br>
         <span style="font-weight: bolder;">Product: </span>   <?php echo $product_name;?> <br>
         <span style="font-weight: bolder;">Date Range: </span>   <?php echo date( "F d, Y", strtotime($start_date) );?> - <?php echo date( "F d, Y", strtotime($end_date) );?>
      <table width="100%" cellpadding="3" cellspacing="0" border="1">

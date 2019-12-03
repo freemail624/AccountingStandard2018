@@ -75,7 +75,7 @@
 
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboItemTypes; var _selectedProductType; var _isTaxExempt=0;
-    var _cboSupplier; var _cboCategory; var _cboTax; var _cboInventory; var _cboMeasurement; var _cboCredit; var _cboDebit;
+    var _cboSupplier; var _cboProducts; var _cboTax; var _cboInventory; var _cboMeasurement; var _cboCredit; var _cboDebit;
     var _cboTaxGroup;
     var _section_id; var _menu_id;
     /*$(document).ready(function(){
@@ -105,6 +105,7 @@ $(document).ready(function(){
               "data":function (d) {
                 return $.extend( {}, d, {
                     "product_id": $('#product_id').val(),
+                    "supplier_id": $('#supplier_id').val(),
                     "start_date": $('#start_date').val(),
                     "end_date": $('#end_date').val()
                 });
@@ -148,11 +149,13 @@ $(document).ready(function(){
             autoclose: true
         });
 
-        _cboCategory=$('#product_id').select2({
+        _cboProducts=$('#product_id').select2({
             allowClear: false
         });
 
-
+        _cboSupplier=$('#supplier_id').select2({
+            allowClear: false
+        });
       
     }();
     
@@ -160,6 +163,9 @@ $(document).ready(function(){
 
     var bindEventHandlers=(function(){
         $("#product_id").on("change", function () {        
+            $('#tbl_products').DataTable().ajax.reload()
+        });
+        $("#supplier_id").on("change", function () {        
             $('#tbl_products').DataTable().ajax.reload()
         });
         $("#end_date").on("change", function () {        
@@ -170,7 +176,7 @@ $(document).ready(function(){
         });
 
         $('#btn_print').click(function(){
-            window.open('Purchase_monitoring/transaction/report?product_id='+$('#product_id').val()+'&start_date='+$('#start_date').val()+'&end_date='+$('#end_date').val());
+            window.open('Purchase_monitoring/transaction/report?product_id='+$('#product_id').val()+'&supplier_id='+$('#supplier_id').val()+'&start_date='+$('#start_date').val()+'&end_date='+$('#end_date').val());
         });
 
         // $('#btn_excel').click(function(){
@@ -307,9 +313,19 @@ $(document).ready(function(){
                                             <div class="panel-body table-responsive" id="product_list_panel">
                                             <h2 class="h2-panel-heading">Purchase Monitoring</h2><hr>
                                                 <div class="row">
-                                                <div class="col-sm-8" >
+                                                <div class="col-sm-4" >
+                                                    Supplier :
+                                                    <select id="supplier_id">
+                                                        <option value="0">All Suppliers</option>
+                                                        <?php foreach($suppliers as $supplier){ ?>
+                                                            <option value="<?php echo $supplier->supplier_id; ?>" data-tax-type="<?php echo $supplier->tax_type_id; ?>" data-contact-person="<?php echo $supplier->contact_name; ?>" data-contact-no="<?php echo $supplier->contact_no; ?>"><?php echo $supplier->supplier_name; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+
+                                                </div>
+                                                <div class="col-sm-4" >
                                                     Product :
-                                                    <select name="category_id" id="product_id" data-error-msg="Product is required." required>
+                                                    <select id="product_id">
                                                         <option value="">All Products</option>
                                                         <?php foreach($products as $row) { echo '<option value="'.$row->product_id.'">'.$row->product_code.' - '.$row->product_desc.'</option>'; } ?>
                                                     </select>
