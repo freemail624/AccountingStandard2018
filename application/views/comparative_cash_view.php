@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <title>JCORE - <?php echo $title; ?></title>
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="description" content="Avenxo Admin Theme">
+    <meta name="author" content="">
+
+    <?php echo $_def_css_files; ?>
+
+    <link rel="stylesheet" href="assets/plugins/spinner/dist/ladda-themeless.min.css">
+    <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
+    <link type="text/css" href="assets/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet">
+    <link type="text/css" href="assets/plugins/datatables/dataTables.themify.css" rel="stylesheet">
+
+    <style>
+        .select2-container{
+            min-width: 100%;
+        }
+
+
+        .select2-dropdown{
+            z-index: 9999999999;
+        }
+
+        .datepicker-dropdown{
+            z-index: 9999999999;
+        }
+
+        .dropdown-menu{
+            z-index: 9999999999;
+        }
+
+        .glyphicon.spinning {
+            animation: spin 1s infinite linear;
+            -webkit-animation: spin2 1s infinite linear;
+        }
+
+        @keyframes spin {
+            from { transform: scale(1) rotate(0deg); }
+            to { transform: scale(1) rotate(360deg); }
+        }
+
+        @-webkit-keyframes spin2 {
+            from { -webkit-transform: rotate(0deg); }
+            to { -webkit-transform: rotate(360deg); }
+        }
+
+    </style>
+
+</head>
+
+<body class="animated-content">
+
+<?php echo $_top_navigation; ?>
+
+<div id="wrapper">
+    <div id="layout-static">
+
+        <?php echo $_side_bar_navigation;?>
+
+        <div class="static-content-wrapper white-bg">
+            <div class="static-content"  >
+                <div class="page-content"><!-- #page-content -->
+                    <ol class="breadcrumb" style="margin:0%;">
+                        <li><a href="dashboard">Dashboard</a></li>
+                        <li><a href="Comparative_cash_flow">Comparative Cash Flow Statement</a></li>
+                    </ol>
+                    <div class="container-fluid">
+                        <div data-widget-group="group1">
+
+                            <div id="modal_bsheet" class="modal fade" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog modal-md">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title" style="color: white;">Comparative Cash Flow Statement</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                <b class="required">*</b> Previous year of the selected Year will be the default for comparative report .<br>
+                                                    Year : <br />
+                                                    <select name="year" id="cbo_year" data-error-msg="Year is required." required>
+                                                        <?php $minyear=1990; $maxyear=2500;
+                                                            while($minyear!=$maxyear){?>
+                                                                <option value="<?php echo $minyear; ?>">
+                                                                    <?php echo $minyear; ?>
+                                                                </option>';
+                                                        <?php $minyear++;
+                                                            }
+                                                        ?>
+                                                    </select>
+                                                </div>
+                                            </div><br />
+                                        </div>
+                                        <div class="modal-footer">
+                                            <div class="col-xs-12">
+                                                <button id="btn_export" class="btn btn-primary" title="All departments"><i class="fa fa-file-excel-o"></i> Export to Excel</button>
+                                                <button class="btn btn-red" data-dismiss="modal" style="text-transform: capitalize;">Close</button>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div> <!-- .container-fluid -->
+                </div> <!-- #page-content -->
+            </div>
+            <footer role="contentinfo">
+                <div class="clearfix">
+                    <ul class="list-unstyled list-inline pull-left">
+                        <li><h6 style="margin: 0;">&copy; 2018 - JDEV OFFICE SOLUTION</h6></li>
+                    </ul>
+                    <button class="pull-right btn btn-link btn-xs hidden-print" id="back-to-top"><i class="ti ti-arrow-up"></i></button>
+                </div>
+            </footer>
+        </div>
+    </div>
+</div>
+
+
+<?php echo $_switcher_settings; ?>
+<?php echo $_def_js_files; ?>
+
+
+<!-- Select2 -->
+<script src="assets/plugins/select2/select2.full.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+         var _cboYears;
+        var _modal_filter = $('#modal_bsheet');
+        var year = new Date().getFullYear();
+        _cboYears=$('#cbo_year').select2({
+            placeholder: "Please select year.",
+            allowClear: false
+        });
+        _cboYears.select2('val',year);
+
+        var showSpinningProgress=function(e){
+            $(e).toggleClass('disabled');
+            $(e).find('span').toggleClass('glyphicon glyphicon-refresh spinning');
+        };
+
+
+        var showNotification=function(obj){
+            PNotify.removeAll(); //remove all notifications
+            new PNotify({
+                title:  obj.title,
+                text:  obj.msg,
+                type:  obj.stat
+            });
+        };
+        $('#btn_export').click(function(){
+            window.open('Comparative_cash_flow/transaction/export-cash-flow-statement?year='+_cboYears.select2('val'));
+        });
+
+        _modal_filter.modal('show');
+    });
+</script>
+<script src="assets/plugins/spinner/dist/spin.min.js"></script>
+<script src="assets/plugins/spinner/dist/ladda.min.js"></script>
+<script src="assets/plugins/select2/select2.full.min.js"></script>
+<script src="assets/plugins/datapicker/bootstrap-datepicker.js"></script>
+<script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
+<script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
+</body>
+</html>

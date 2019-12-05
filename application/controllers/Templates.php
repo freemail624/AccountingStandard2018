@@ -591,6 +591,17 @@ class Templates extends CORE_Controller {
 
                         }
 
+                        if($type=='tsb'){
+                            $file_name=$info[0]->po_no;
+                            $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                            $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                            $content=$this->load->view('template/po_content_new_tsb',$data,TRUE); //load the template
+                            $pdf->setFooter('{PAGENO}');
+                            $pdf->WriteHTML($content);
+                            //download it.
+                            $pdf->Output();
+
+                        }
 
                     
 

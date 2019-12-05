@@ -28,6 +28,7 @@
 
     <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
     <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
+    <script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 
 
     <style>
@@ -196,8 +197,8 @@
                                                         <th>PLU</th>
                                                         <th>Product Description</th>
                                                         <th>Category</th>
-                                                        <th style="text-align: right;">Bulk</th>
-                                                        <th style="text-align: right;">Retail</th>
+                                                        <th style="text-align: right;">Purchase Cost</th>
+                                                        <th style="text-align: right;">Current QTY</th>
                                                         <th style="text-align: right;"><center>Bulk and Retail ?</th></th>
                                                         <th><center>Action</center></th>
                                                     </tr>
@@ -1083,10 +1084,10 @@ $(document).ready(function(){
                     "defaultContent": ""
                 },
                 { targets:[1],data: "product_code" },
-                { targets:[2],data: "product_desc" },
+                { targets:[2],data: "product_desc" ,render: $.fn.dataTable.render.ellipsis(80)},
                 { targets:[3],data: "category_name" },
                 {
-                    targets:[4],data: "CurrentQty",
+                    targets:[4],data: "purchase_cost",
                     render: function (data, type, full, meta) {
                         if(isNaN(data)){
                             return 0.00;
@@ -1096,8 +1097,8 @@ $(document).ready(function(){
 
                     }
                 },
-                {
-                    targets:[5],data: "CurrentQtyChild",
+                {visible:false,
+                    targets:[5],data: "CurrentQty",
                     render: function (data, type, full, meta) {
                         if(isNaN(data)){
                             return 0.00;
@@ -1107,7 +1108,7 @@ $(document).ready(function(){
 
                     }
                 },
-                {
+                { visible:false,
                     targets:[6],data: null,
                     render: function (data, type, full, meta){
                         var _attribute='';
