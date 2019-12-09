@@ -72,3 +72,8 @@ add check_type_id
 additionals in bank reconciliation
 4 columns
 change into decimal (20,2) '0.00'
+
+
+ALTER TABLE `web_jenra_billing_05112019`.`account_integration` 
+ADD COLUMN `cv_start_no` BIGINT(20) NULL DEFAULT '0' AFTER `customer_wtax_account_id`,
+ADD COLUMN `jv_start_no` BIGINT(20) NULL DEFAULT '0' AFTER `cv_start_no`;

@@ -450,6 +450,24 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                 <div class="tab-pane" id="accounts_integration_setting" style="min-height: 300px;">
                     <form id="frm_account_integration" role="form" class="form-horizontal row-border">
                         <br >
+                        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> CHECK VOUCHER</strong></span></h4>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> * CV No Start :</label>
+                            <div class="col-md-7">
+                            <input type="text" name="cv_start_no" class="form-control" value="<?php echo $current_accounts->cv_start_no ?>">
+                                <span class="help-block m-b-none">Please select the Starting Incremental number for Check Vouchers.</span>
+                            </div>
+                        </div>
+                        <br >
+                        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> JOURNAL VOUCHER</strong></span></h4>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> * JV No Start :</label>
+                            <div class="col-md-7">
+                            <input type="text" name="jv_start_no" class="form-control" value="<?php echo $current_accounts->jv_start_no ?>">
+                                <span class="help-block m-b-none">Please select the Starting Incremental number for Journal Vouchers.</span>
+                            </div>
+                        </div>
+                        <br >
                         <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Retained Earnings Account</strong></span></h4>
                         <div class="form-group">
                             <label class="col-md-3 control-label"> * Retained Earnings :</label>
