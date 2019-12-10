@@ -36,8 +36,11 @@ class Billing_review extends CORE_Controller
             case 'list-billing-payment-for-review':
                 $response['data']=$this->Temp_journal_info_model->get_list(array('is_sales'=>0,'book_type_id'=>1,'is_journal_posted'=>FALSE),
                     'temp_journal_info.*,
-                    customers.customer_name',
-                    array(array('customers','customers.customer_id = temp_journal_info.customer_id','left'))
+                    customers.customer_name,
+                    b_payment_info.transaction_no,
+                    IF(b_payment_info.payment_type = 1, DATEDIFF(b_payment_info.check_date,NOW()),0) as rem_day_for_due,',
+                    array(array('customers','customers.customer_id = temp_journal_info.customer_id','left'),
+                        array('b_payment_info','b_payment_info.payment_id = temp_journal_info.payment_id','left'))
                     );
                 echo json_encode($response);
                 break;
