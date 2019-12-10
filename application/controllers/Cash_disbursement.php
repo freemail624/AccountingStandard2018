@@ -126,7 +126,7 @@ class Cash_disbursement extends CORE_Controller
                 $m_journal_accounts=$this->Journal_account_model;
                 $m_company=$this->Company_model;
                 $m_accounts=$this->Account_integration_model;
-
+                $account_integration=$m_accounts->get_list();
                 //validate if still in valid range
                 $valid_range=$this->Accounting_period_model->get_list("'".date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)))."'<=period_end");
                 if(count($valid_range)>0){
@@ -136,7 +136,13 @@ class Cash_disbursement extends CORE_Controller
                     die(json_encode($response));
                 }
                 $ref_type = $this->input->post('ref_type');
-                $ref_type_count = COUNT($m_journal->get_list(array('ref_type'=>$ref_type)))+1;
+                if($ref_type == 'CV'){
+                    $ref_type_count = COUNT($m_journal->get_list(array('ref_type'=>$ref_type)))+1+ $account_integration[0]->cv_start_no;
+                }else{
+                    $ref_type_count = COUNT($m_journal->get_list(array('ref_type'=>$ref_type)))+1 + $account_integration[0]->jv_start_no;
+                }
+
+                
 
                 $m_journal->ref_type=$ref_type;
                 $m_journal->ref_no=str_pad($ref_type_count, 8, "0", STR_PAD_LEFT);
@@ -169,7 +175,7 @@ class Cash_disbursement extends CORE_Controller
                     
                 $total_amount=0;
                 $total_wtax=0;
-                $account_integration=$m_accounts->get_list();
+                
 
                 for($i=0;$i<=count($accounts)-1;$i++){
                     $total_amount+=$this->get_numeric_value($dr_amounts[$i]);

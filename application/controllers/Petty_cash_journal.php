@@ -308,7 +308,7 @@
 				case 'replenish':
 
 					$m_journal=$this->Journal_info_model;
-
+					$m_account_integration=$this->Account_integration_model;
 					$AsOfDate=date('Y-m-d',strtotime($this->input->post('aod',TRUE)));
 					$depid=$this->input->post('depid',TRUE);
 
@@ -364,7 +364,12 @@
 
 		                $ref_type = 'CV';
 		                $m_journal->ref_type = 'CV';
-		                $ref_type_count = COUNT($m_journal->get_list(array('ref_type'=>$ref_type)))+1;
+		                $account_integration=$m_account_integration->get_list();
+		                if($ref_type == 'CV'){
+		                    $ref_type_count = COUNT($m_journal->get_list(array('ref_type'=>$ref_type)))+1+ $account_integration[0]->cv_start_no;
+		                }else{
+		                    $ref_type_count = COUNT($m_journal->get_list(array('ref_type'=>$ref_type)))+1 + $account_integration[0]->jv_start_no;
+		                }
 		 				$m_journal->ref_no=str_pad($ref_type_count, 8, "0", STR_PAD_LEFT);
 		                $m_journal->save();
 
@@ -377,7 +382,7 @@
 		                $m_accounts=$this->Journal_account_model;
 
 		                $m_accounts->journal_id=$journal_id;
-						$m_account_integration=$this->Account_integration_model;
+						
 						$petty_cash_id=$m_account_integration->get_list(null,'petty_cash_account_id');
 						$m_accounts->account_id=$petty_cash_id[0]->petty_cash_account_id;
 

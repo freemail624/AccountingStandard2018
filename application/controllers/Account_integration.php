@@ -116,6 +116,8 @@ class Account_integration extends CORE_Controller
                 $m_integration->depreciation_expense_debit_id=$this->input->post('depreciation_expense_debit_id',TRUE);
                 $m_integration->supplier_inventory_debit_account_id=$this->input->post('supplier_inventory_debit_account_id',TRUE);
                 $m_integration->depreciation_expense_credit_id=$this->input->post('depreciation_expense_credit_id',TRUE);        
+                $m_integration->cv_start_no=$this->get_numeric_value($this->input->post('cv_start_no',TRUE));        
+                $m_integration->jv_start_no=$this->get_numeric_value($this->input->post('jv_start_no',TRUE));        
                 $m_integration->modify(1);
 
                 $response['stat']="success";

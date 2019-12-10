@@ -99,7 +99,7 @@ class Customers extends CORE_Controller {
                 $m_customers->payment_term_desc=$this->input->post('payment_term_desc',TRUE);
                 $m_customers->set('date_created','NOW()');
                 $m_customers->posted_by_user=$this->session->user_id;
-
+                $m_customers->photo_path=$this->input->post('photo_path',TRUE);
                 $m_customers->save();
 
                 $customer_id=$m_customers->last_insert_id();//get last insert id
@@ -148,7 +148,7 @@ class Customers extends CORE_Controller {
 
                 $m_customers->set('date_created','NOW()');
                 $m_customers->posted_by_user=$this->session->user_id;
-
+                $m_customers->photo_path=$this->input->post('photo_path',TRUE);
                 $m_customers->save();
 
                 $customer_id=$m_customers->last_insert_id();//get last insert id
@@ -270,7 +270,7 @@ class Customers extends CORE_Controller {
                 $m_customers->ar_trans_id=$this->input->post('ar_trans_id',TRUE);
                 $m_customers->payment_term_desc=$this->input->post('payment_term_desc',TRUE);
                 $m_customers->modified_by_user=$this->session->user_id;
-
+                $m_customers->photo_path=$this->input->post('photo_path',TRUE);
                 $m_customers->modify($customer_id);
 
                 $m_photos->delete_via_fk($customer_id);

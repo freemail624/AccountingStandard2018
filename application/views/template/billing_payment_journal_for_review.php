@@ -23,6 +23,16 @@
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="journal_review_<?php echo $info->temp_journal_id; ?>" data-parent-id="<?php echo $info->temp_journal_id; ?>" style="min-height: 300px;">
+                            <?php
+                            $is_check_not_due=$info->payment_method_id==2 && $info->rem_day_for_due>0;
+                            if($is_check_not_due){
+                                ?>
+                                <div class="alert alert-dismissable alert-danger" style="color:white!important;background-color: red!important; ">
+                                    <i class="ti ti-close"></i>&nbsp; <strong>Ooopss!</strong> Looks like the check on this transaction is not yet <b>Due</b>. Please see details below. 
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                </div>
+                            <?php } ?>
+
                             <?php if(!$valid_particular){ ?>
                                 <div class="alert alert-dismissable alert-danger">
                                     <i class="fa fa-exclamation-circle"></i>&nbsp; <strong>Sorry!</strong> We could not find the record of <b><?php echo $info->customer_name; ?></b>.<br />
