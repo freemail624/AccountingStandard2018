@@ -67,7 +67,11 @@
             $balance=str_replace("-","",$balance);
             return "(".number_format($balance,2)."%)";
         }else{
-            return number_format($balance,2).'%';
+            if ($balance == 0){
+                return number_format(100,2)."%";
+            }else{
+                return number_format($balance,2)."%";
+            }
         }
     }    
 
@@ -113,7 +117,13 @@
                     $total_income+=$income->account_balance; 
                     $total_prev_income+=$income->prev_account_balance; 
                     $total_change_amount+=$income->change_amount; 
-                    $total_percentage_change =  ($total_change_amount / $total_income) * 100;
+
+                    if ($total_prev_income == 0){
+                        $total_percentage_change = 100;
+                    }else{
+                        $total_percentage_change =  (($total_income - $total_prev_income) / $total_prev_income) * 100;
+                    }
+
 
                     } ?>
                     <tr>
@@ -133,6 +143,10 @@
                     $total_prev_expense=0; 
                     $total_change_amount_expense=0; 
                     $total_percentage_change_expense=0; 
+
+                    $total_curr_net_income=0;
+                    $total_prev_net_income=0;
+                    $total_net_change_amount=0;
                     $total_net_percentage_change=0;
 
                     foreach($expense_accounts as $expense){ ?>
@@ -149,9 +163,18 @@
                         $total_expense+=$expense->account_balance; 
                         $total_prev_expense+=$expense->prev_account_balance; 
                         $total_change_amount_expense+=$expense->change_amount; 
-                        $total_percentage_change_expense =  ($total_change_amount_expense / $total_expense) * 100;
 
-                        $total_net_percentage_change = (($total_change_amount-$total_change_amount_expense) / ($total_income-$total_expense)) * 100;
+                        if ($total_prev_expense == 0){
+                            $total_percentage_change_expense = 100;
+                        }else{
+                            $total_percentage_change_expense =  (($total_expense - $total_prev_expense) / $total_prev_expense) * 100;
+                        }
+
+
+                        $total_curr_net_income=$total_income-$total_expense;
+                        $total_prev_net_income=$total_prev_income-$total_prev_expense;
+                        $total_net_change_amount=$total_change_amount-$total_change_amount_expense;
+                        $total_net_percentage_change = (($total_curr_net_income-$total_prev_net_income) / ($total_prev_net_income)) * 100;
 
                         } ?>
                     <tr>
@@ -165,9 +188,9 @@
                     <tr>
                         
                         <td width="25%"><b>Net Income</b></td>
-                        <td class="top" width="15%" align="right"><b><?php echo format_display($total_income-$total_expense); ?></b></td>
-                        <td class="top" width="15%" align="right"><b><?php echo format_display($total_prev_income-$total_prev_expense); ?></b></td>
-                        <td class="top" width="15%" align="right"><b><?php echo format_display($total_change_amount-$total_change_amount_expense); ?></b></td>
+                        <td class="top" width="15%" align="right"><b><?php echo format_display($total_curr_net_income); ?></b></td>
+                        <td class="top" width="15%" align="right"><b><?php echo format_display($total_prev_net_income); ?></b></td>
+                        <td class="top" width="15%" align="right"><b><?php echo format_display($total_net_change_amount); ?></b></td>
                         <td class="top" width="15%" align="right"><b><?php echo format_display_percentage($total_net_percentage_change); ?></b></td>
                         <td class="top" width="15%"></td>
                     </tr>      

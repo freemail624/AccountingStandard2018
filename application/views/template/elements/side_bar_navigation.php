@@ -195,6 +195,7 @@
                                     <a href="#/"><span>Comparative Reports</span></a>
                                     <ul class="acc-menu">
                                         <li class="<?php echo (in_array('9-23',$this->session->user_rights)?'':'hidden'); ?>"><a href="Comparative_Income_statement">Income Statement</a></li>
+                                        <li class="<?php echo (in_array('9-25',$this->session->user_rights)?'':'hidden'); ?>"><a href="Comparative_Balance_sheet">Balance Sheet</a></li>
                                     </ul>
                                 </li>   
                                 <li class="hasChild secondChild">

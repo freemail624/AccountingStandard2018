@@ -541,6 +541,7 @@ function export_excel() {
                 $type=$this->input->get('type',TRUE);
 
                 $net_income_period=$this->get_period_on_closed_txn($as_of_date);
+                
                 if(count($net_income_period)>0){ //if specified date is between the closed period
                     $net_income_start=date("Y-m-d",strtotime($net_income_period[0]->period_start));
                     $net_income_end=date("Y-m-d",strtotime($as_of_date));

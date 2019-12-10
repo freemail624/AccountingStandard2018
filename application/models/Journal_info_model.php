@@ -785,7 +785,7 @@ class Journal_info_model extends CORE_Model{
 
         (main.account_balance - main.prev_account_balance) as change_amount,
         
-        ((((main.account_balance - main.prev_account_balance) / main.account_balance) * 100) ) as percentage_change
+        COALESCE(((((main.account_balance - main.prev_account_balance) / main.prev_account_balance) * 100)),0) as percentage_change
         
         FROM(SELECT ji.journal_id,
             at.account_no,at.grand_parent_id,ac.account_type_id,ac.account_class_id,
@@ -802,7 +802,7 @@ class Journal_info_model extends CORE_Model{
                 SUM(ja.dr_amount)-SUM(ja.cr_amount),
                 SUM(ja.cr_amount)-SUM(ja.dr_amount)
 
-            )as account_balance
+            )as prev_account_balance
 
             FROM journal_info as ji
 

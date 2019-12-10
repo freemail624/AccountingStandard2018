@@ -104,6 +104,61 @@ class Journal_account_model extends CORE_Model{
     }
 
 
+    // ASH
+    function comparative_get_bs_parent_account_balances($current_start,$current_end,$previous_start,$previous_end,$department_id=null){
+        $sql="SELECT
+            main.*,
+            (main.current_balance - main.previous_balance) as change_amount,
+            COALESCE(((((main.current_balance - main.previous_balance) / main.previous_balance) * 100)),0) as percentage_change
+            FROM
+            (SELECT 
+            at_main.grand_parent_id,
+            at_main.account_class_id,
+            ac.account_type_id,
+            COALESCE(current_balance,0) as current_balance,
+            COALESCE(previous_balance,0) as previous_balance,
+            at_main.account_title
+        FROM
+            account_titles at_main
+            LEFT JOIN account_classes ac ON ac.account_class_id = at_main.account_class_id
+            LEFT JOIN ((SELECT
+                        (IF(ac.account_type_id=1,
+                            SUM(ja.dr_amount)-SUM(ja.cr_amount),
+                            SUM(ja.cr_amount)-SUM(ja.dr_amount))
+                        ) as current_balance,
+                        ja.account_id
+                        FROM (journal_accounts as ja
+                        INNER JOIN journal_info as ji ON ji.journal_id=ja.journal_id)
+                        INNER JOIN (account_titles as at
+                        INNER JOIN account_classes as ac ON ac.account_class_id=at.account_class_id)
+                        ON at.account_id=ja.account_id
+                        WHERE ac.account_type_id IN(1,2,3) AND ji.is_active=TRUE AND ji.is_deleted=FALSE
+                        AND ji.date_txn BETWEEN '$current_start' AND '$current_end'
+                        ".($department_id==null?"":" AND ji.department_id=$department_id")."
+                        GROUP BY at.grand_parent_id) as current ) ON current.account_id = at_main.account_id
+
+            LEFT JOIN ((SELECT
+                        (IF(ac.account_type_id=1,
+                            SUM(ja.dr_amount)-SUM(ja.cr_amount),
+                            SUM(ja.cr_amount)-SUM(ja.dr_amount))
+                        ) as previous_balance,
+                        ja.account_id
+                        FROM (journal_accounts as ja
+                        INNER JOIN journal_info as ji ON ji.journal_id=ja.journal_id)
+                        INNER JOIN (account_titles as at
+                        INNER JOIN account_classes as ac ON ac.account_class_id=at.account_class_id)
+                        ON at.account_id=ja.account_id
+                        WHERE ac.account_type_id IN(1,2,3) AND ji.is_active=TRUE AND ji.is_deleted=FALSE
+                        AND ji.date_txn BETWEEN '$previous_start' AND '$previous_end'
+                        ".($department_id==null?"":" AND ji.department_id=$department_id")."
+                        GROUP BY at.grand_parent_id) as previous ) ON previous.account_id = at_main.account_id                
+                        
+            WHERE ac.account_type_id IN (1,2,3)
+            AND (current_balance > 0 OR previous_balance > 0)) as main";
+            return $this->db->query($sql)->result();
+    }    
+
+
     function get_net_income($date_filter,$department_id=null){
         $sql="SELECT (SUM(m.income_balance)-SUM(m.expense_balance)) as net_income
 

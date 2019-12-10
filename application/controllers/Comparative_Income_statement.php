@@ -11,8 +11,9 @@ class Comparative_Income_statement extends CORE_Controller
                 'Account_class_model',
                 'Journal_info_model',
                 'Journal_account_model',
-                'Users_model',
                 'Departments_model',
+                'Accounting_period_model',
+                'Users_model',
                 'Company_model'
             )
         );
@@ -50,11 +51,34 @@ class Comparative_Income_statement extends CORE_Controller
 
     }
 
+    function format_display_percentage($balance){
+        $balance=(float)$balance;
+        if($balance<0){
+            $balance=str_replace("-","",$balance);
+            return "(".number_format($balance,2)."%)";
+        }else{
+            if ($balance == 0){
+                return number_format(100,2).'%';
+            }else{
+                return number_format($balance,2).'%';
+            }
+        }
+    }  
+
     function transaction($txn)
     {
         switch($txn)
         {
             case 'export-excel':
+
+                $single_underline = array(
+                  'borders' => array(
+                    'top' => array(
+                      'style' => PHPExcel_Style_Border::BORDER_THIN
+                    )
+                  )
+                );                
+
                 $m_journal = $this->Journal_info_model;
                 $m_company=$this->Company_model;
 
@@ -84,7 +108,7 @@ class Comparative_Income_statement extends CORE_Controller
                                         ->setAutoSize(false)
                                         ->setWidth('20');
 
-                $excel->getActiveSheet()->setTitle('Comparative Income Statement'.$dep_id);
+                $excel->getActiveSheet()->setTitle('Comparative Income Statement');
 
                 $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
                                         ->setCellValue('A2',$company_info[0]->company_address)
@@ -93,19 +117,11 @@ class Comparative_Income_statement extends CORE_Controller
 
                 $excel->getActiveSheet()
                         ->mergeCells('A9:F9')
-                        ->setCellValue('A9', 'INCOME')
-                        ->getStyle('A9:F9')->applyFromArray(
-                            array(
-                                'fill' => array(
-                                    'type' => PHPExcel_Style_Fill::FILL_SOLID,
-                                    'color' => array('rgb' => '53C1F0')
-                                )
-                            )
-                        )->getFont()
-                        ->setItalic(TRUE)
+                        ->setCellValue('A9', 'Income')
+                        ->getStyle('A9:F9')
+                        ->getFont()
                         ->setBold(TRUE);
 
-                
 
                 $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
 
@@ -180,7 +196,7 @@ class Comparative_Income_statement extends CORE_Controller
                             ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                    $excel->getActiveSheet()->setCellValue('E'.$i,$this->format_display($income_account->percentage_change))
+                    $excel->getActiveSheet()->setCellValue('E'.$i,$this->format_display_percentage($income_account->percentage_change))
                             ->getStyle('E'.$i)
                             ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);                            
@@ -189,22 +205,28 @@ class Comparative_Income_statement extends CORE_Controller
                     $income_total+=$income_account->account_balance;
                     $total_prev_income+=$income_account->prev_account_balance; 
                     $total_change_amount+=$income_account->change_amount; 
-                    $total_percentage_change = ($total_change_amount / $income_total) * 100;
+
+                    if ($total_prev_income == 0){
+                        $total_percentage_change = 100;
+                    }else{
+                        $total_percentage_change = (($income_total - $total_prev_income ) / $total_prev_income) * 100;
+                    }
 
                 }
 
                 $i++;
 
                 $excel->getActiveSheet()->getStyle('B'.$i.':F'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)'); 
+                $excel->getActiveSheet()->getStyle('B'.$i.':F'.$i)->applyFromArray($single_underline);
 
-                $excel->getActiveSheet()->setCellValue('A'.$i,'Total Income:')
+                $excel->getActiveSheet()->setCellValue('A'.$i,'Total Income')
                                         ->getStyle('A'.$i)
                                         ->getFont()
                                         ->setBold(TRUE)
                                         ->getActiveSheet()
                                         ->getStyle('A'.$i)
                                         ->getAlignment()
-                                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 
                 $excel->getActiveSheet()->setCellValue('B'.$i,$this->format_display($income_total))
                                         ->getStyle('B'.$i)
@@ -233,7 +255,7 @@ class Comparative_Income_statement extends CORE_Controller
                                         ->getAlignment()
                                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);     
 
-                $excel->getActiveSheet()->setCellValue('E'.$i,$this->format_display($total_percentage_change))
+                $excel->getActiveSheet()->setCellValue('E'.$i,$this->format_display_percentage($total_percentage_change))
                                         ->getStyle('E'.$i)
                                         ->getFont()
                                         ->setBold(TRUE)
@@ -243,23 +265,16 @@ class Comparative_Income_statement extends CORE_Controller
                                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);                                                                       
 
 
-                $i+=2;
+                $i+=1;
 
 
                 $excel->getActiveSheet()->getStyle('B'.$i.':F'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)'); 
 
                 $excel->getActiveSheet()
                         ->mergeCells('A'.$i.':'.'F'.$i)
-                        ->setCellValue('A'.$i, 'EXPENSE')
-                        ->getStyle('A'.$i.':'.'F'.$i)->applyFromArray(
-                            array(
-                                'fill' => array(
-                                    'type' => PHPExcel_Style_Fill::FILL_SOLID,
-                                    'color' => array('rgb' => '53C1F0')
-                                )
-                            )
-                        )->getFont()
-                        ->setItalic(TRUE)
+                        ->setCellValue('A'.$i, 'Expenses')
+                        ->getStyle('A'.$i.':'.'F'.$i)
+                        ->getFont()
                         ->setBold(TRUE);
 
                 $expense_total = 0;
@@ -295,20 +310,30 @@ class Comparative_Income_statement extends CORE_Controller
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
                     $excel->getActiveSheet()
-                            ->setCellValue('E'.$i,$this->format_display($expense_account->percentage_change))
+                            ->setCellValue('E'.$i,$this->format_display_percentage($expense_account->percentage_change))
                             ->getStyle('E'.$i)
                             ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);                  
 
                     $expense_total+=$expense_account->account_balance;
                     $total_prev_expense+=$expense_account->prev_account_balance; 
-                    $total_change_amount_expense+=$expense_account->change_amount; 
-                    $total_percentage_change_expense =  ($total_change_amount_expense / $expense_total) * 100; 
+                    $total_change_amount_expense+=$expense_account->change_amount;
+
+                    if ($total_prev_expense == 0){
+                        $total_percentage_change_expense = 100;
+                    }else{
+                        $total_percentage_change_expense =  (($expense_total - $total_prev_expense) / $total_prev_expense) * 100;
+                    }
 
                     $total_net = $income_total - $expense_total;
                     $total_prev = $total_prev_income-$total_prev_expense;
                     $total_change = $total_change_amount-$total_change_amount_expense;
-                    $total_percentage = ($total_change / $total_net) * 100;
+
+                    if($total_prev==0){
+                        $total_percentage = 100;
+                    }else{
+                        $total_percentage = (($total_net - $total_prev) / $total_prev) * 100;
+                    }
 
                 }
 
@@ -316,15 +341,16 @@ class Comparative_Income_statement extends CORE_Controller
 
 
                 $excel->getActiveSheet()->getStyle('B'.$i.':F'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)'); 
+                $excel->getActiveSheet()->getStyle('B'.$i.':F'.$i)->applyFromArray($single_underline);
 
-                $excel->getActiveSheet()->setCellValue('A'.$i,'Total Expense:')
+                $excel->getActiveSheet()->setCellValue('A'.$i,'Total Expense')
                                         ->getStyle('A'.$i)
                                         ->getFont()
                                         ->setBold(TRUE)
                                         ->getActiveSheet()
                                         ->getStyle('A'.$i)
                                         ->getAlignment()
-                                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 
                 $excel->getActiveSheet()->setCellValue('B'.$i,$this->format_display($expense_total))
                                         ->getStyle('B'.$i)
@@ -353,7 +379,7 @@ class Comparative_Income_statement extends CORE_Controller
                                         ->getAlignment()
                                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);      
 
-                $excel->getActiveSheet()->setCellValue('E'.$i,$this->format_display($total_percentage_change_expense))
+                $excel->getActiveSheet()->setCellValue('E'.$i,$this->format_display_percentage($total_percentage_change_expense))
                                         ->getStyle('E'.$i)
                                         ->getFont()
                                         ->setBold(TRUE)
@@ -365,15 +391,16 @@ class Comparative_Income_statement extends CORE_Controller
                 $i++;
 
                 $excel->getActiveSheet()->getStyle('B'.$i.':F'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)'); 
+                $excel->getActiveSheet()->getStyle('B'.$i.':F'.$i)->applyFromArray($single_underline);
 
-                $excel->getActiveSheet()->setCellValue('A'.$i, 'NET INCOME:')
+                $excel->getActiveSheet()->setCellValue('A'.$i, 'Net Income')
                                         ->getStyle('A'.$i)
                                         ->getFont()
                                         ->setBold(TRUE)
                                         ->getActiveSheet()
                                         ->getStyle('A'.$i)
                                         ->getAlignment()
-                                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 
                 $excel->getActiveSheet()->setCellValue('B'.$i, $this->format_display($total_net))
                                         ->getStyle('B'.$i)
@@ -405,7 +432,7 @@ class Comparative_Income_statement extends CORE_Controller
                                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
 
-                $excel->getActiveSheet()->setCellValue('E'.$i, $this->format_display($total_percentage))
+                $excel->getActiveSheet()->setCellValue('E'.$i, $this->format_display_percentage($total_percentage))
                                         ->getStyle('E'.$i)
                                         ->getFont()
                                         ->setBold(TRUE)

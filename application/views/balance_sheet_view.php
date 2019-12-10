@@ -205,23 +205,23 @@
         });
 
         $('#btn_email').on('click', function() {
-
-        var btn=$(this);
+            var btn=$(this);
+            
             if (_cboDepartments.select2('val') == null){
-            showNotification({ title: 'Error', msg: 'Please select a department!', stat: 'error' });
-        } else{
-        showNotification({title:"Sending!",stat:"info",msg:"Please wait for a few seconds."});
-        $.ajax({
-            "dataType":"json",
-            "type":"POST",
-            "url":"Balance_sheet/transaction/email-excel?date="+$('#dt_as_of_date').val()+"&depid="+_cboDepartments.select2('val'),
-            "beforeSend": showSpinningProgress(btn)
-        }).done(function(response){
-            showNotification(response);
-            showSpinningProgress(btn);
+                showNotification({ title: 'Error', msg: 'Please select a department!', stat: 'error' });
+            } else{
+                showNotification({title:"Sending!",stat:"info",msg:"Please wait for a few seconds."});
+                $.ajax({
+                    "dataType":"json",
+                    "type":"POST",
+                    "url":"Balance_sheet/transaction/email-excel?date="+$('#dt_as_of_date').val()+"&depid="+_cboDepartments.select2('val'),
+                    "beforeSend": showSpinningProgress(btn)
+                }).done(function(response){
+                    showNotification(response);
+                    showSpinningProgress(btn);
 
-        });
-        }
+                });
+            }
         });
         
         var showNotification=function(obj){
