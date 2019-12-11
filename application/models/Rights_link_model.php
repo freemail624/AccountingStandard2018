@@ -121,7 +121,9 @@ class Rights_link_model extends CORE_Model{
                                           (111,'20','20-1','Billing Adjustments for Review'),
                                           (112,'9','9-23','Comparative Income Statement'),
                                           (113,'9','9-24','Supplier Subsidiary Detailed'),
-                                          (114,'9','9-25','Comparative Balance Sheet')
+                                          (114,'9','9-25','Comparative Balance Sheet'),
+                                          (115,'9','9-26','Comparative Cash Flow'),
+                                          (116,'6','6-17','Cash Flow Settings')
 
 
                                           ON DUPLICATE KEY UPDATE

@@ -29,7 +29,7 @@ class Comparative_cash_flow extends CORE_Controller
         $data['_switcher_settings'] = $this->load->view('template/elements/switcher', '', true);
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', true);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', true);
-        $data['title'] = 'Income Statement';
+        $data['title'] = 'Comparative Cash Flow Report';
 
         (in_array('9-2',$this->session->user_rights)? 
         $this->load->view('comparative_cash_view', $data)

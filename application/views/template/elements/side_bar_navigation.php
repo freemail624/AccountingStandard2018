@@ -155,6 +155,7 @@
                                 <li class="<?php echo (in_array('6-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Account_integration">General Configuration</a></li>
                                 <li class="<?php echo (in_array('6-14',$this->session->user_rights)?'':'hidden'); ?>"><a href="Soa_settings">SOA Settings</a></li>
                                 <li class="<?php echo (in_array('6-16',$this->session->user_rights)?'':'hidden'); ?>"><a href="Asset_settings">Fixed Asset Settings</a></li>
+                                <li class="<?php echo (in_array('6-17',$this->session->user_rights)?'':'hidden'); ?>"><a href="Cash_flow_settings">Cash Flow Settings</a></li>
 
                                 <!-- <li class="<?php echo (in_array('6-12',$this->session->user_rights)?'':'hidden'); ?>"><a href="Purchasing_integration">Purchasing Configuration</a></li> -->
                                 <li class="<?php echo (in_array('6-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="User_groups">Setup User Rights</a></li>
@@ -196,6 +197,7 @@
                                     <ul class="acc-menu">
                                         <li class="<?php echo (in_array('9-23',$this->session->user_rights)?'':'hidden'); ?>"><a href="Comparative_Income_statement">Income Statement</a></li>
                                         <li class="<?php echo (in_array('9-25',$this->session->user_rights)?'':'hidden'); ?>"><a href="Comparative_Balance_sheet">Balance Sheet</a></li>
+                                        <li class="<?php echo (in_array('9-26',$this->session->user_rights)?'':'hidden'); ?>"><a href="Comparative_cash_flow">Cash Flow</a></li>
                                     </ul>
                                 </li>   
                                 <li class="hasChild secondChild">
