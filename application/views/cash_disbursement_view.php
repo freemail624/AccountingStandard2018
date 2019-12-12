@@ -209,6 +209,7 @@
                                 <th>Supplier</th>
                                 <th width="25%">Remarks</th>
                                 <th>Payment</th>
+                                <th>Notice</th>
                                 <th>Amount</th>
                             </tr>
                             </thead>
@@ -1245,7 +1246,17 @@ $(document).ready(function(){
                 { targets:[2],data: "supplier_name" },
                 { targets:[3],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(80)},
                 { targets:[4],data: "date_paid" },
-                { targets:[5],data: "total_paid_amount" ,sClass: "right_align_items"}
+                { targets:[5],
+                    data: "rem_day_for_due",
+                    render: function (data, type, full, meta){
+                        if(full.payment_method_id==2&&data>0){ //if check and remaining day before due is greater than 0
+                            return "<span style='color: red'><b><i class='fa fa-times-circle'></i> "+data+"</b> day(s) before Check is due.</span>";
+                        }else{
+                            return "";
+                        }
+                    }
+                },
+                { targets:[6],data: "total_paid_amount" ,sClass: "right_align_items"}
             ]
         });
 

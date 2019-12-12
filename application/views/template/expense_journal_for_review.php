@@ -33,10 +33,10 @@
                             $is_check_not_due=$payment_info->payment_method_id==2 && $payment_info->rem_day_for_due>0;
                             if($is_check_not_due){
                                 ?>
-                                <div class="alert alert-dismissable alert-danger">
+                                <div class="alert alert-dismissable alert-danger" style="background-color: red!important; ">
                                     <i class="ti ti-close"></i>&nbsp; <strong>Ooopss!</strong> Looks like the check on this transaction is not yet <b>Due</b>. Please see details below. <br />
                                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                                </div> <br /> <br />
+                                </div>
                             <?php } ?>
                             <?php if(!$valid_particular){ ?>
                                 <div class="alert alert-dismissable alert-danger">
@@ -48,7 +48,6 @@
                                 </div>
                             <?php } ?>
                             <form id="frm_journal_review" role="form" class="form-horizontal row-border">
-                                <br />
                                 <input type="hidden" name="payment_id" value="<?php echo $payment_info->payment_id; ?>">
                                 <div class="row">
                                     <div class="col-lg-8">
@@ -165,12 +164,7 @@
                                                 <div class="col-lg-6">
                                                     Check Date :<br />
                                                     <div class="input-group">
-                                                        <input type="text" name="check_date" class="date-picker form-control" value="
-                                                        <?php if($payment_info->payment_method_id==2){
-                                                            if($payment_info->date_check != '0000-00-00'){
-                                                                    echo $payment_info->date_check;
-                                                                }
-                                                            } ?>">
+                                                        <input type="text" name="check_date" class="date-picker form-control" value="<?php if($payment_info->payment_method_id==2){if($payment_info->date_check != '0000-00-00'){echo $payment_info->date_check;}}?>">
                                                             <span class="input-group-addon">
                                                                 <i class="fa fa-calendar"></i>
                                                             </span>

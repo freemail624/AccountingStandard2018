@@ -55,7 +55,7 @@
                                 $is_check_not_due=$payment_info->payment_method_id==2 && $payment_info->rem_day_for_due>0;
                                 if($is_check_not_due){
                             ?>
-                            <div class="alert alert-dismissable alert-danger">
+                            <div class="alert alert-dismissable alert-danger" style="background-color: red;">
                                 <i class="fa fa-exclamation-circle"></i>&nbsp; <strong>Ooopss!</strong> Looks like the check on this transaction is not yet <b>Due</b>. Please see details below. <br />
                                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                             </div>
