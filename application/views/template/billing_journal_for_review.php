@@ -145,6 +145,7 @@
                 <td align="right"><strong><?php echo number_format($dr_total,2); ?></strong></td>
                 <td align="right"><strong><?php echo number_format($cr_total,2); ?></strong></td>
                 <td></td>
+                <td></td>
             </tr>
             </tfoot>
         </table>

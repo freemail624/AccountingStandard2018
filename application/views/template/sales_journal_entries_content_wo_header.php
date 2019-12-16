@@ -92,7 +92,7 @@
                         <td style="border: 1px solid black;text-align: right;padding: 6px;" align="right"><strong>Total : </strong></td>
                         <td style="border: 1px solid black;text-align: right;padding: 6px;" align="right"><strong><?php echo number_format($dr_amount,2); ?></strong></td>
                         <td style="border: 1px solid black;text-align: right;padding: 6px;" align="right"><strong><?php echo number_format($cr_amount,2); ?></strong></td>
-                        <td></td>
+                        <td  style="border: 1px solid black;text-align: right;padding: 6px;"></td>
                     </tr>
                     <tr style="border: 1px solid black;">
                         <td colspan="6" style="border: 1px solid black;text-align: left;padding: 6px;"><?php echo $journal_info->remarks; ?> &nbsp;</td>
