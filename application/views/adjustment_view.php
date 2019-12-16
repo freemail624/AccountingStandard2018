@@ -295,8 +295,8 @@
                         <table id="tbl_items" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
                             <thead class="">
                             <tr>
+                                <th width="10%">QTY</th>
                                 <th width="10%">Barcode</th>
-                                <th width="10%">Qty</th>
                                 <th width="10%">UM</th>
                                 <th width="30%">Item</th>
                                 <th width="20%" style="text-align: right">Unit Price</th>
