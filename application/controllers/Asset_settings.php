@@ -23,7 +23,7 @@ class Asset_settings extends CORE_Controller
         $data['_switcher_settings'] = $this->load->view('template/elements/switcher', '', TRUE);
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
-        $data['title'] = 'Fxied Asset Accounts Settings';
+        $data['title'] = 'Fixed Asset Accounts Settings';
 
         $data['accounts'] = $this->Account_title_model->get_list(array('account_titles.is_active'=>TRUE,'account_titles.is_deleted'=>FALSE,'account_classes.account_type_id'=>1),
             'account_titles.account_id,account_titles.account_title,
