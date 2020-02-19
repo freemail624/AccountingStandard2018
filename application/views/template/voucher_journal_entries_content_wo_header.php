@@ -65,7 +65,7 @@
     <table width="100%" border="0" cellspacing="-1">
         <tr>
             <td style="padding: 4px;" width="50%"><strong>DATE :</strong> <?php echo date_format(new DateTime($voucher_info->date_txn),"m/d/Y"); ?></td>
-            <td style="padding: 4px;" width="50%"><strong>REFERENCE TYPE :</strong> <?php echo $voucher_info->ref_type; ?></td>
+            <td style="padding: 4px;" width="50%"><strong>REFERENCE TYPE :</strong> <?php echo $voucher_info->ref_type; ?> -  <?php echo $voucher_info->ref_no; ?></td>
         </tr>
         <tr>
             <td style="padding: 4px;" width="50%"><strong>DEPARTMENT :</strong> <?php echo $voucher_info->department_name; ?></td>

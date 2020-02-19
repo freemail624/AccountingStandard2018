@@ -103,6 +103,7 @@ class Cash_vouchers extends CORE_Controller
                 }
 
                 $m_info->ref_type=$this->input->post('ref_type');
+                $m_info->ref_no=$this->input->post('ref_no');
                 $m_info->supplier_id=$this->input->post('supplier_id',TRUE);
                 $m_info->remarks=$this->input->post('remarks',TRUE);
                 $m_info->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
@@ -171,6 +172,7 @@ class Cash_vouchers extends CORE_Controller
                 }
 
                 $m_info->ref_type=$this->input->post('ref_type');
+                $m_info->ref_no=$this->input->post('ref_no');
                 $m_info->supplier_id=$this->input->post('supplier_id',TRUE);
                 $m_info->remarks=$this->input->post('remarks',TRUE);
                 $m_info->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
