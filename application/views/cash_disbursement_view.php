@@ -433,12 +433,12 @@
                                         </select>
                                     </div>
                                     <div class="col-sm-6">
-                                         <label>Reference # (AUTO):</label><br />
+                                         <label>Reference #:</label><br />
                                         <div class="input-group">
                                             <span class="input-group-addon">
                                                 <i class="fa fa-code"></i>
                                             </span>
-                                            <input type="text" maxlength="15" class="form-control"  readonly placeholder="XXXXXXXX">
+                                            <input type="text" maxlength="15" class="form-control" name="ref_no">
                                         </div>
                                     </div>
                                 </div>

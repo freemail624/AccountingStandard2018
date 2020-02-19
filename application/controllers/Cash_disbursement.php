@@ -145,8 +145,8 @@ class Cash_disbursement extends CORE_Controller
                 
 
                 $m_journal->ref_type=$ref_type;
-                $m_journal->ref_no=str_pad($ref_type_count, 8, "0", STR_PAD_LEFT);
-
+                // $m_journal->ref_no=str_pad($ref_type_count, 8, "0", STR_PAD_LEFT); // Commented for a while 
+                $m_journal->ref_no=$this->input->post('ref_no');
                 $m_journal->supplier_id=$this->input->post('supplier_id',TRUE);
                 $m_journal->remarks=$this->input->post('remarks',TRUE);
                 $m_journal->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
