@@ -108,6 +108,8 @@ class Templates extends CORE_Controller {
         $this->load->model('Locations_model'); 
         $this->load->model('Categories_model'); 
 
+        $this->load->model('Cash_vouchers_model');
+        $this->load->model('Cash_vouchers_accounts_model');
 
         $this->load->library('M_pdf');
         $this->load->library('excel');
@@ -2046,6 +2048,66 @@ class Templates extends CORE_Controller {
                 } 
  
                 break;                  
+
+            case 'journal-cdj-voucher':
+
+                $m_company=$this->Company_model;
+                $cv_id=$this->input->get('id',TRUE);
+                $type=$this->input->get('type',TRUE);
+
+                $voucher_info= $this->Cash_vouchers_model->get_list($cv_id,
+                array(
+                    'cv_info.*',
+                    'DATE_FORMAT(cv_info.date_txn,"%m/%d/%Y")as date_txn',
+                    'DATE_FORMAT(cv_info.check_date,"%m/%d/%Y") as check_date',
+                    'payment_methods.payment_method',
+                    'suppliers.supplier_name as particular',
+                    'departments.department_name',
+                    'b_refchecktype.check_type_desc',
+                    'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by'
+                ),
+                array(
+                    array('suppliers','suppliers.supplier_id=cv_info.supplier_id','left'),
+                    array('departments','departments.department_id=cv_info.department_id','left'),
+                    array('user_accounts','user_accounts.user_id=cv_info.created_by_user','left'),
+                    array('payment_methods','payment_methods.payment_method_id=cv_info.payment_method_id','left'),
+                    array('b_refchecktype','b_refchecktype.check_type_id=cv_info.check_type_id','left')
+                ),
+                'cv_info.cv_id DESC'
+            );
+
+                $company=$m_company->get_list();
+                $data['company_info']=$company[0];
+
+                $data['voucher_info']=$voucher_info[0];
+                $data['journal_accounts']=$this->Cash_vouchers_accounts_model->get_list(
+
+                    array(
+                        'cv_accounts.cv_id'=>$cv_id
+                    ),
+
+                    array(
+                        'cv_accounts.*',
+                        'account_titles.account_no',
+                        'account_titles.account_title',
+                        'departments.department_name'
+                    ),
+
+                    array(
+                        array('account_titles','account_titles.account_id=cv_accounts.account_id','left'),
+                        array('departments','departments.department_id=cv_accounts.department_id','left') 
+                    )
+
+                );
+
+
+                //show only inside grid with menu button
+                if($type=='fullview'||$type==null){
+                    echo $this->load->view('template/voucher_journal_entries_content_wo_header',$data,TRUE);
+                }
+
+                break;
+
 
             case 'journal-cdj':
                 $m_journal_info=$this->Journal_info_model;

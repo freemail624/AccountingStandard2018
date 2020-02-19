@@ -140,10 +140,6 @@
                                                         <?php } ?>
                                                     </select>
                                                 </div>
-                                                <div class="col-lg-6 hidden">
-                                                    <label for="is_for_assignment">For Check Assignment?  :</label><br />
-                                                    <input type="checkbox" name="is_for_assignment" id="is_for_assignment" checked>
-                                                </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-lg-6">

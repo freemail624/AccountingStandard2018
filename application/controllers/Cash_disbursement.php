@@ -158,7 +158,6 @@ class Cash_disbursement extends CORE_Controller
                     $m_journal->check_no=$this->input->post('check_no');
                     $m_journal->check_date=date('Y-m-d',strtotime($this->input->post('check_date',TRUE)));
                 }
-                $m_journal->is_for_assignment=$this->input->post('is_for_assignment');
                 $m_journal->amount=$this->get_numeric_value($this->input->post('amount'));
 
                 //for audit details
@@ -401,7 +400,6 @@ class Cash_disbursement extends CORE_Controller
                 'journal_info.ref_type',
                 'CONCAT(journal_info.ref_type,"-",journal_info.ref_no) as ref_no',
                 'journal_info.amount',
-                'journal_info.is_for_assignment',
                 'CONCAT(IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,""))as particular',
                 'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by'
             ),

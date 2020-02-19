@@ -508,10 +508,6 @@
                                             <?php } ?>
                                         </select>    
                                     </div>
-                                    <div class="col-sm-6 hidden">
-                                    <label for="is_for_assignment">For Check Assignment?  :</label><br />
-                                    <input type="checkbox" name="is_for_assignment" id="is_for_assignment">
-                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
@@ -1144,7 +1140,7 @@ $(document).ready(function(){
         dt=$('#tbl_cash_disbursement_list').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 10, "desc" ]],
+            "order": [[ 9, "desc" ]],
             oLanguage: {
                     sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
             },
@@ -1189,25 +1185,9 @@ $(document).ready(function(){
                     }
 
                 },
-                { visible:false,
-                    targets:[8],data: null,
-                    render: function (data, type, full, meta){
-                        var _attribute='';
-                        //console.log(data.is_email_sent);
-                        if(data.payment_method_id == "2" && data.is_for_assignment == 0){
-                            _attribute=' class="fa fa-check-circle" style="color:green;" ';
-                        }else if(data.payment_method_id=="2" && data.is_for_assignment == 1){
-                            _attribute=' class="fa fa-times-circle" style="color:red;" ';
-                        }else{
-                            _attribute=''
-                        }
 
-                        return '<center><i '+_attribute+'></i></center>';
-                    }
-
-                },
                 {sClass: "right_align_items",
-                    targets:[9],data:null,
+                    targets:[8],data:null,
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_cancel='<button class="btn btn-red btn-sm" name="cancel_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Cancel Journal"><i class="fa fa-times"></i> </button>';
@@ -1225,7 +1205,7 @@ $(document).ready(function(){
                         
                     }
                 },
-                { targets:[10],data: "journal_id",visible:false },
+                { targets:[9],data: "journal_id",visible:false },
 
 
             ]
@@ -1821,7 +1801,7 @@ $(document).ready(function(){
             _cboPaymentMethod.select2('val',1);//set cash as default
             _cboCheckTypes.select2('val',0);//set cash as default
             $('input[name="date_txn"]').val(_currentDate);
-            $('#is_for_assignment').prop('checked',true);
+
 
             showList(false);
 
@@ -2117,10 +2097,6 @@ $(document).ready(function(){
         if($('#2307_apply').is(':checked')==true){
         _data.push({name : "2307_apply" ,value : 1}); }else{ 
         _data.push({name : "2307_apply" ,value : 0}); }
-
-        if($('#is_for_assignment').is(':checked')==true){
-        _data.push({name : "is_for_assignment" ,value : 1}); }else{ 
-        _data.push({name : "is_for_assignment" ,value : 0}); }
 
         return $.ajax({
             "dataType":"json",
@@ -2421,10 +2397,6 @@ $(document).ready(function(){
             }else{
                 _data_review.push({name : "2307_apply" ,value : 0});
             }
-
-            if($('#is_for_assignment').is(':checked')==true){
-            _data_review.push({name : "is_for_assignment" ,value : 1}); }else{ 
-            _data_review.push({name : "is_for_assignment" ,value : 0}); }
 
             return $.ajax({
                 "dataType":"json",
