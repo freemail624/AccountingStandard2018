@@ -8,6 +8,7 @@ class Print_voucher extends CORE_Controller {
         $this->load->model('Journal_info_model');
         $this->load->model('Journal_account_model');
         $this->load->model('Company_model');
+        $this->load->model('Cash_vouchers_model');
         $this->load->library('M_pdf');
     }
 
@@ -47,6 +48,29 @@ class Print_voucher extends CORE_Controller {
                         array('payment_methods','payment_methods.payment_method_id=journal_info.payment_method_id','left')
                     )
                 );
+                $data['voucher_info']=$this->Cash_vouchers_model->get_list(
+                    "cv_info.journal_id= ".$journal_id,
+                    array(
+                        'cv_info.*',
+                        'DATE_FORMAT(cv_info.date_txn,"%m/%d/%Y")as date_txn',
+                        'DATE_FORMAT(cv_info.check_date,"%m/%d/%Y") as check_date',
+                        'payment_methods.payment_method',
+                        'suppliers.supplier_name as particular',
+                        'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by',
+                        'CONCAT_WS(" ",vbu.user_fname,vbu.user_lname)as verified_by',
+                        'CONCAT_WS(" ",abu.user_fname,abu.user_lname)as approved_by'
+                    ),
+                    array(
+                        array('suppliers','suppliers.supplier_id=cv_info.supplier_id','left'),
+                        array('departments','departments.department_id=cv_info.department_id','left'),
+                        array('user_accounts','user_accounts.user_id=cv_info.created_by_user','left'),
+                        array('user_accounts vbu','vbu.user_id=cv_info.verified_by_user','left'),
+                        array('user_accounts abu','abu.user_id=cv_info.approved_by_user','left'),
+                        array('payment_methods','payment_methods.payment_method_id=cv_info.payment_method_id','left')
+                    ),
+                    'cv_info.cv_id DESC'
+                )[0];
+
                 $company=$m_company->get_list();
                 $data['company_info']=$company[0];
                 $data['journal_info']=$journal_info[0];

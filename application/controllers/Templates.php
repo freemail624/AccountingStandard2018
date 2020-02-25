@@ -2064,12 +2064,18 @@ class Templates extends CORE_Controller {
                     'suppliers.supplier_name as particular',
                     'departments.department_name',
                     'b_refchecktype.check_type_desc',
-                    'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by'
+                    'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by',
+                    'CONCAT_WS(" ",vbu.user_fname,vbu.user_lname)as verified_by',
+                    'CONCAT_WS(" ",abu.user_fname,abu.user_lname)as approved_by',
+                    'CONCAT_WS(" ",cbu.user_fname,cbu.user_lname)as cancelled_by'
                 ),
                 array(
                     array('suppliers','suppliers.supplier_id=cv_info.supplier_id','left'),
                     array('departments','departments.department_id=cv_info.department_id','left'),
                     array('user_accounts','user_accounts.user_id=cv_info.created_by_user','left'),
+                    array('user_accounts vbu','vbu.user_id=cv_info.verified_by_user','left'),
+                    array('user_accounts abu','abu.user_id=cv_info.approved_by_user','left'),
+                    array('user_accounts cbu','cbu.user_id=cv_info.cancelled_by_user','left'),
                     array('payment_methods','payment_methods.payment_method_id=cv_info.payment_method_id','left'),
                     array('b_refchecktype','b_refchecktype.check_type_id=cv_info.check_type_id','left')
                 ),
@@ -2104,6 +2110,9 @@ class Templates extends CORE_Controller {
                 //show only inside grid with menu button
                 if($type=='fullview'||$type==null){
                     echo $this->load->view('template/voucher_journal_entries_content_wo_header',$data,TRUE);
+                }else if($type== 'review'){
+                    echo $this->load->view('template/voucher_journal_entries_content_wo_header',$data,TRUE);
+                    echo $this->load->view('template/voucher_journal_entries_approval_menus',$data,TRUE);
                 }
 
                 break;

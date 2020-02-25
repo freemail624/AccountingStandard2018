@@ -88,16 +88,6 @@
         <td><b>Total</b></td>
         <td style="border-top: 1px solid black;text-align: right;"><b><?php echo number_format($total_info->summary,2); ?></b></td>
     </tr>
-
-
     </table>
-    			
-
-
-
-  
-
-
-
 </body>
 </html>

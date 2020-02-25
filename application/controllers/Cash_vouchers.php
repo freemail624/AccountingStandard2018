@@ -67,12 +67,19 @@ class Cash_vouchers extends CORE_Controller
                 $ted = date('Y-m-d',strtotime($this->input->get('ted')));
                 $fil = $this->input->get('fil');
                 if($fil == 1){ // PENDING OR VERIFIED
-                    $additional = " AND DATE(cv_info.date_txn) BETWEEN '$tsd' AND '$ted' AND cv_info.approved_by_user = 0";
-                }else { // APPROVED AND POSTED
-                    $additional = " AND DATE(cv_info.date_txn) BETWEEN '$tsd' AND '$ted' AND cv_info.approved_by_user > 0";
+                    $additional = " AND DATE(cv_info.date_txn) BETWEEN '$tsd' AND '$ted' AND cv_info.approved_by_user = 0 AND cv_info.cancelled_by_user = 0";
+                }else if($fil == 2) { // APPROVED AND POSTED
+                    $additional = " AND DATE(cv_info.date_txn) BETWEEN '$tsd' AND '$ted' AND cv_info.approved_by_user > 0 AND cv_info.cancelled_by_user = 0";
+                }else if($fil == 3) { // DISAPPROVED AND CANCELLED
+                    $additional = " AND DATE(cv_info.date_txn) BETWEEN '$tsd' AND '$ted' AND cv_info.approved_by_user = 0 AND cv_info.cancelled_by_user > 0";
                 }
                 
                 $response['data']=$this->get_response_rows(null,$additional);
+                echo json_encode($response);
+                break;
+
+            case 'list-for-approval':               
+                $response['data']=$this->get_response_rows(null,'AND cv_info.approved_by_user = 0 AND cv_info.cancelled_by_user = 0 AND cv_info.verified_by_user > 0');
                 echo json_encode($response);
                 break;
 
@@ -87,6 +94,7 @@ class Cash_vouchers extends CORE_Controller
 
                 $this->load->view('template/cv_journal_entries', $data);
 
+                break;
 
             case 'create' :
                 $m_info=$this->Cash_vouchers_model;
@@ -145,6 +153,15 @@ class Cash_vouchers extends CORE_Controller
 
                 $m_info->txn_no='TMP-'.date('Ymd').'-'.$cv_id;
                 $m_info->modify($cv_id);
+
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=1; //CRUD
+                $m_trans->trans_type_id=75; // TRANS TYPE
+                $m_trans->trans_log='Created Temporary Voucher TMP-'.date('Ymd').'-'.$cv_id;
+                $m_trans->save();
 
                 $response['stat']='success';
                 $response['title']='Success!';
@@ -213,6 +230,14 @@ class Cash_vouchers extends CORE_Controller
                     $m_cv_accounts->save();
                 }
 
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=75; // TRANS TYPE
+                $m_trans->trans_log='Updated Temporary Voucher ('.$cv_id.')';
+                $m_trans->save();
+
                 $response['stat']='success';
                 $response['title']='Success!';
                 $response['msg']='Temporary Voucher successfully posted';
@@ -230,10 +255,18 @@ class Cash_vouchers extends CORE_Controller
                 $m_info->is_deleted = 1;
                 $m_info->modify($cv_id);
 
-                $response['title']='Cancelled!';
+                $response['title']='Deleted!';
                 $response['stat']='success';
                 $response['msg']='Temporary Voucher Successfully deleted.';
                 $response['row_updated']=$this->get_response_rows($cv_id);
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=3; //CRUD
+                $m_trans->trans_type_id=75; // TRANS TYPE
+                $m_trans->trans_log='Deleted Temporary Voucher ('.$cv_id.')';
+                $m_trans->save();
 
                 echo json_encode($response);
 
@@ -247,6 +280,16 @@ class Cash_vouchers extends CORE_Controller
                 $m_info->set('date_verified','NOW()'); //treat NOW() as function and not string
                 $m_info->verified_by_user=$this->session->user_id;//user that cancelled the record
                 $m_info->modify($cv_id);
+
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=8; //CRUD
+                $m_trans->trans_type_id=75; // TRANS TYPE
+                $m_trans->trans_log='Marked as Final Temporary Voucher ('.$cv_id.')';
+                $m_trans->save();
+
 
                 $response['title']='Cancelled!';
                 $response['stat']='success';
@@ -271,12 +314,16 @@ class Cash_vouchers extends CORE_Controller
                 'DATE_FORMAT(cv_info.check_date,"%m/%d/%Y") as check_date',
                 'payment_methods.payment_method',
                 'suppliers.supplier_name as particular',
-                'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by'
+                'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by',
+                'CONCAT_WS(" ",vbu.user_fname,vbu.user_lname)as verified_by',
+                'CONCAT_WS(" ",abu.user_fname,abu.user_lname)as approved_by'
             ),
             array(
                 array('suppliers','suppliers.supplier_id=cv_info.supplier_id','left'),
                 array('departments','departments.department_id=cv_info.department_id','left'),
                 array('user_accounts','user_accounts.user_id=cv_info.created_by_user','left'),
+                array('user_accounts vbu','vbu.user_id=cv_info.verified_by_user','left'),
+                array('user_accounts abu','abu.user_id=cv_info.approved_by_user','left'),
                 array('payment_methods','payment_methods.payment_method_id=cv_info.payment_method_id','left')
             ),
             'cv_info.cv_id DESC'

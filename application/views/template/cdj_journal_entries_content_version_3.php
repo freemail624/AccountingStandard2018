@@ -164,15 +164,15 @@
     <br>
 <table width="100%">
     <tr>
-        <td width="15%">Prepared By:</td>
+        <td width="25%">Prepared By:</td>
         <td width="25%">Certified Correct:</td>
         <td width="25%">Approved:</td>
-        <td width="35%">Payment Received:</td>
+        <td width="25%">Payment Received:</td>
     </tr>
     <tr>
-        <td>&nbsp;<br>&nbsp;</td>
-        <td></td>
-        <td></td>
+        <td><?php echo $voucher_info->posted_by ?></td>
+        <td><?php echo $voucher_info->verified_by ?></td>
+        <td><?php echo $voucher_info->approved_by ?></td>
         <td></td>
     </tr>
     <tr>

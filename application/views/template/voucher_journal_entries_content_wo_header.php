@@ -62,7 +62,7 @@
 <body>
     <div class="">
     </div>
-    <table width="100%" border="0" cellspacing="-1">
+    <table width="100%" border="0" cellspacing="-1" style="font-size: 11px;">
         <tr>
             <td style="padding: 4px;" width="50%"><strong>DATE :</strong> <?php echo date_format(new DateTime($voucher_info->date_txn),"m/d/Y"); ?></td>
             <td style="padding: 4px;" width="50%"><strong>REFERENCE TYPE :</strong> <?php echo $voucher_info->ref_type; ?> -  <?php echo $voucher_info->ref_no; ?></td>
@@ -85,6 +85,22 @@
             <td style="padding: 4px;"><strong>PARTICULAR :</strong> <?php echo $voucher_info->particular; ?></td>
             <td style="padding: 4px;"><strong>PAYMENT METHOD :</strong> <?php echo $voucher_info->payment_method; ?></td>
         </tr>
+        <tr>
+            <td style="padding: 4px;" width="50%"><strong>PREPARED BY:</strong> <?php echo $voucher_info->posted_by; ?></td>
+            <td style="padding: 4px;" width="50%"> <?php if($voucher_info->verified_by != ''){ ?>  <strong>CERTIFIED CORRECT:</strong> <?php echo $voucher_info->verified_by; ?><?php } ?></td>
+        </tr>
+         <?php if($voucher_info->approved_by != ''){ ?> 
+        <tr>
+            <td style="padding: 4px;" width="50%"> <strong>APPROVED BY:</strong> <?php echo $voucher_info->approved_by; ?></td>
+            <td style="padding: 4px;" width="50%"></td>
+        </tr>
+        <?php } ?>
+        <?php if($voucher_info->cancelled_by != ''){ ?>
+        <tr>
+            <td style="padding: 4px;" width="50%">   <strong>DISAPPROVED BY:</strong> <?php echo $voucher_info->cancelled_by; ?></td>
+            <td style="padding: 4px;" width="50%"></td>
+        </tr>
+        <?php } ?>
     </table><br>
     <table width="100%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11" border="0">
             <thead>

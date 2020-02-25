@@ -299,8 +299,11 @@
         -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
         background-color: #555;
       }
-      #tbl_po_list_filter, #tbl_po_list_review_filter{
+      #tbl_po_list_filter, #tbl_po_list_review_filter, #tbl_vouchers_list_filter{
         display:none;
+      }
+      #tbl_vouchers_list{
+        font-size: 12px;
       }
     </style>
 
@@ -402,6 +405,35 @@
                                                             <canvas id="SalesInvoiceChart"></canvas>
                                                             <span style="font-weight: bolder;">Month</span>
                                                         </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row" style="margin-top: 20px;">
+                                                    <div class="col-xs-12 col-sm-12 <?php echo (in_array('7-1',$this->session->user_rights)?'':'hidden'); ?>">
+                                                      <div class="data-container table-responsive" style="min-height: 300px; max-height: 700px;overflow-x: hidden;">
+                                                      <div class="row">
+                                                        <div class="col-sm-9"><h3 class="po_title" style=""><i class="fa fa-file-text-o"  style="color: #067cb2;"></i> <span >VOUCHERS FOR APPROVAL</span></h3>
+                                                        </div>
+                                                        <div class="col-sm-3">
+                                                        <input type="text" id="search_tbl_vouchers_list" class="form-control">
+                                                        </div>
+                                                      <div class="col-sm-12">
+                                                            <table id="tbl_vouchers_list" class="table table-striped" cellspacing="0" width="100%">
+                                                                <thead>
+                                                                    <th width="5%"></th>
+                                                                    <th width="15%">TXN #</th>
+                                                                    <th width="15%">TYPE</th>
+                                                                    <th>Particular</th>
+                                                                    <th width="7%">Method</th>
+                                                                    <th width="40%">Remarks </th>
+                                                                    <th style="width: 15%!important;"><center>Action</center></th>
+                                                                </thead>
+                                                                <tbody>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                      </div>
+
+                                                      </div>
                                                     </div>
                                                 </div>
                                                 <div class="row" style="margin-top: 20px;">
@@ -878,7 +910,7 @@ Chart.defaults.global.defaultFontColor = "#000000";
 <script>
 
     $(document).ready(function(){
-        var dt; var _selectedID; var _selectRowObj;
+        var dt; var _selectedID; var _selectRowObj; var _selectedIDvoucher;
 
         var initializeControls=(function(){
             dt=$('#tbl_po_list').DataTable({
@@ -959,6 +991,39 @@ Chart.defaults.global.defaultFontColor = "#000000";
                             var btn_conversation='<a id="link_conversation" href="Po_messages?id='+full.purchase_order_id+'" target="_blank" class="btn btn-info btn-sm"  style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Open Conversation"><i class="fa fa-envelope"></i> </a>';
 
                             return '<center>'+btn_approved+'&nbsp;'+btn_conversation+'</center>';
+                        }
+                    }
+                ]
+            });
+
+            dtvoucher=$('#tbl_vouchers_list').DataTable({
+                "dom": '<"toolbar">frtip',
+                "bLengthChange":false,
+                "ajax" : "Cash_vouchers/transaction/list-for-approval",
+                "language": {
+                  "searchPlaceholder":"Search "
+                },
+                "columns": [
+                    {
+                        "targets": [0],
+                        "class":          "details-control",
+                        "orderable":      false,
+                        "data":           null,
+                        "defaultContent": ""
+                    },
+                    { targets:[1],data: "txn_no" },
+                    { targets:[2],data: "ref_type" },
+                    { targets:[3],data: "particular" },
+                    { targets:[4],data: "payment_method" },
+                    { targets:[5],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(60)},
+
+                    { visible:false,
+                        targets:[6],
+                        render: function (data, type, full, meta){
+                            //alert(full.purchase_order_id);
+
+                            var btn_approved='<button class="btn btn-primary btn-sm" name="approve_voucher"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Approve and Post in Cash Disbursement"><i class="fa fa-check" style="color: white;"></i> <span class=""></span></button>';
+                            return '<center>'+btn_approved;
                         }
                     }
                 ]
@@ -1049,6 +1114,40 @@ Chart.defaults.global.defaultFontColor = "#000000";
                 }
             } );
 
+
+            $('#tbl_vouchers_list tbody').on( 'click', 'tr td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = dtvoucher.row( tr );
+                var idx = $.inArray( tr.attr('id'), detailRows );
+
+                if ( row.child.isShown() ) {
+                    tr.removeClass( 'details' );
+                    row.child.hide();
+
+                    // Remove from the 'open' array
+                    detailRows.splice( idx, 1 );
+                }
+                else {
+                    tr.addClass( 'details' );
+                    //console.log(row.data());
+                    var d=row.data();
+
+                    $.ajax({
+                        "dataType":"html",
+                        "type":"POST",
+                        "url":"Templates/layout/journal-cdj-voucher?id="+ d.cv_id+"&type=review",
+                        "beforeSend" : function(){
+                            row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                        }
+                    }).done(function(response){
+                        row.child( response,'no-padding' ).show();
+                        // Add to the 'open' array
+                        if ( idx === -1 ) {
+                            detailRows.push( tr.attr('id') );
+                        }
+                    });
+                }
+            } );
             //*****************************************************************************************
             $('#tbl_po_list > tbody').on('click','button[name="approve_po"]',function(){
             // showNotification({title:"Approving PO and Sending Email!",stat:"info",msg:"Please wait for a few seconds."});
@@ -1129,6 +1228,58 @@ Chart.defaults.global.defaultFontColor = "#000000";
                 showSpinningProgress($(this));
             });
 
+            $('#tbl_vouchers_list > tbody').on('click','button[name="mark_as_approved_voucher"]',function(){
+                _selectRowObj=$(this).parents('tr').prev();
+                var data=dtvoucher.row(_selectRowObj).data();
+                _selectedIDvoucher = data.cv_id;
+                // alert(_selectedIDvoucher);
+                console.log(data);
+                btn = $(this);
+                showSpinningProgress($(this));
+                $('button[name="mark_as_cancelled_voucher"]').addClass('disabled');
+                $('button[name="mark_as_approved_voucher"]').addClass('disabled');
+
+                 approveVoucher().done(function(response){
+                    showNotification(response);
+                    if(response.stat=="success"){
+                      setTimeout(function(){  showSpinningProgress(btn); 
+                        btn.closest('div').find('.closing_title').removeClass('hidden');
+                        btn.closest('div').find('button[name="mark_as_approved_voucher"]').addClass('hidden');
+                        btn.closest('div').find('button[name="mark_as_cancelled_voucher"]').addClass('hidden');
+                      }, 1000);
+                      setTimeout(function(){ dtvoucher.row(_selectRowObj).remove().draw(); }, 4000);
+                    }
+
+                });
+
+            });
+
+            $('#tbl_vouchers_list > tbody').on('click','button[name="mark_as_cancelled_voucher"]',function(){
+                _selectRowObj=$(this).parents('tr').prev();
+                var data=dtvoucher.row(_selectRowObj).data();
+                _selectedIDvoucher = data.cv_id;
+                // alert(_selectedIDvoucher);
+                console.log(data);
+                btn = $(this);
+                showSpinningProgress($(this));
+                $('button[name="mark_as_cancelled_voucher"]').addClass('disabled');
+                $('button[name="mark_as_approved_voucher"]').addClass('disabled');
+
+                 disapproveVoucher().done(function(response){
+                    showNotification(response);
+                    if(response.stat=="success"){
+                      setTimeout(function(){  showSpinningProgress(btn); 
+                        btn.closest('div').find('.closing_title').removeClass('hidden');
+                        btn.closest('div').find('button[name="mark_as_approved_voucher"]').addClass('hidden');
+                        btn.closest('div').find('button[name="mark_as_cancelled_voucher"]').addClass('hidden');
+                      }, 1000);
+                      setTimeout(function(){ dtvoucher.row(_selectRowObj).remove().draw(); }, 4000);
+                    }
+
+                });
+
+            });
+
 
             //****************************************************************************************
             $('#tbl_po_list > tbody').on('click','button[name="external_link_conversation"]',function(){
@@ -1145,6 +1296,12 @@ Chart.defaults.global.defaultFontColor = "#000000";
 
             $("#search_tbl_po_list").keyup(function(){         
                 dt
+                    .search(this.value)
+                    .draw();
+            });
+
+            $("#search_tbl_vouchers_list").keyup(function(){         
+                dtvoucher
                     .search(this.value)
                     .draw();
             });
@@ -1184,6 +1341,26 @@ Chart.defaults.global.defaultFontColor = "#000000";
                 "type":"POST",
                 "url":"Purchases/transaction/mark-reviewed",
                 "data":{purchase_order_id : _selectedIDreviewed, review_remarks : $('#review_remarks').val()}
+
+            });
+        };
+
+        var approveVoucher=function(){
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Cash_Disbursement/transaction/post-voucher",
+                "data":{cv_id : _selectedIDvoucher}
+
+            });
+        };
+
+        var disapproveVoucher=function(){
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Cash_Disbursement/transaction/cancel-voucher",
+                "data":{cv_id : _selectedIDvoucher}
 
             });
         };

@@ -33,7 +33,8 @@ class Cash_disbursement extends CORE_Controller
                 'Account_integration_model'
             )
         );
-
+        $this->load->model('Cash_vouchers_model');
+        $this->load->model('Cash_vouchers_accounts_model');
     }
 
     public function index() {
@@ -118,7 +119,163 @@ class Cash_disbursement extends CORE_Controller
                 $response['row_added']=$this->get_response_rows($journal_template_id);
                 echo json_encode($response);
                 break;
+            case 'post-voucher' :
+                $cv_id = $this->input->post('cv_id',TRUE);
+                $voucher_info= $this->Cash_vouchers_model->get_list($cv_id)[0];
 
+                $m_journal=$this->Journal_info_model;
+                $m_supplier=$this->Suppliers_model;
+                $m_form_2307=$this->Bir_2307_model;
+                $m_journal_accounts=$this->Journal_account_model;
+                $m_company=$this->Company_model;
+                $m_accounts=$this->Account_integration_model;
+                $account_integration=$m_accounts->get_list();
+                //validate if still in valid range
+                $valid_range=$this->Accounting_period_model->get_list("'".date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)))."'<=period_end");
+                if(count($valid_range)>0){
+                    $response['stat']='error';
+                    $response['title']='<b>Accounting Period is Closed!</b>';
+                    $response['msg']='Please make sure transaction date is valid!<br />';
+                    die(json_encode($response));
+                }
+
+                $ref_type = $voucher_info->ref_type;
+                if($ref_type == 'CV'){
+                    $ref_type_count = COUNT($m_journal->get_list(array('ref_type'=>$ref_type)))+1+ $account_integration[0]->cv_start_no;
+                }else{
+                    $ref_type_count = COUNT($m_journal->get_list(array('ref_type'=>$ref_type)))+1 + $account_integration[0]->jv_start_no;
+                }
+
+                
+
+                $m_journal->ref_type=$ref_type;
+                // $m_journal->ref_no=str_pad($ref_type_count, 8, "0", STR_PAD_LEFT); // Commented for a while 
+                $m_journal->ref_no = $voucher_info->ref_no;
+                $m_journal->supplier_id=$voucher_info->supplier_id;
+                $m_journal->remarks=$voucher_info->remarks;
+                $m_journal->date_txn=date('Y-m-d',strtotime($voucher_info->date_txn));
+                $m_journal->book_type='CDJ';
+                $m_journal->department_id=$voucher_info->department_id;
+                $m_journal->payment_method_id=$voucher_info->payment_method_id;
+                $m_journal->check_type_id=$voucher_info->check_type_id;
+                $m_journal->check_no=$voucher_info->check_no;
+                $m_journal->check_date=date('Y-m-d',strtotime($voucher_info->check_date));
+                $m_journal->amount=$this->get_numeric_value($voucher_info->amount);
+
+                //for audit details
+                $m_journal->set('date_created','NOW()');
+                $m_journal->created_by_user=$this->session->user_id;
+                $m_journal->save();
+
+                $journal_id=$m_journal->last_insert_id();                   
+                $total_amount=0;
+                $total_wtax=0;
+                
+                $j_accounts=$this->Cash_vouchers_accounts_model->get_list(array('cv_accounts.cv_id'=>$cv_id));
+                foreach($j_accounts as $j_account){
+                    $total_amount+=$this->get_numeric_value($j_account->dr_amount);
+                    if ($account_integration[0]->supplier_wtax_account_id == $j_account->account_id){
+                        $total_wtax+=$this->get_numeric_value($j_account->cr_amount);
+                    }
+                    $m_journal_accounts->journal_id=$journal_id;
+                    $m_journal_accounts->account_id=$j_account->account_id;
+                    $m_journal_accounts->memo=$j_account->memo;
+                    $m_journal_accounts->dr_amount=$this->get_numeric_value($j_account->dr_amount);
+                    $m_journal_accounts->cr_amount=$this->get_numeric_value($j_account->cr_amount);
+                    $m_journal_accounts->department_id=$this->get_numeric_value($j_account->department_id); 
+                    $m_journal_accounts->save();
+                }
+
+                //update transaction number base on formatted last insert id
+                $m_journal->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
+                $m_journal->modify($journal_id);
+
+
+                $m_modify_voucher = $this->Cash_vouchers_model;
+                $m_modify_voucher->approved_by_user = $this->session->user_id;
+                $m_modify_voucher->journal_id = $journal_id;
+                $m_modify_voucher->set('date_approved','NOW()');
+                $m_modify_voucher->modify($cv_id);
+
+
+
+                $form_2307_apply=$voucher_info->is_2307;
+                $supplier=$m_supplier->get_list($voucher_info->supplier_id);
+                $company=$m_company->get_list();
+
+                if ($form_2307_apply == 1){
+                    $m_form_2307->journal_id=$journal_id;
+                    $m_form_2307->supplier_id=$voucher_info->supplier_id;
+                    $m_form_2307->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
+                    $m_form_2307->date=date('Y-m-d',strtotime($voucher_info->date_txn));
+                    $m_form_2307->payee_tin=$supplier[0]->tin_no;
+                    $m_form_2307->payee_name=$supplier[0]->supplier_name;
+                    $m_form_2307->payee_address=$supplier[0]->address;
+                    $m_form_2307->payor_name=$company[0]->registered_to;
+                    $m_form_2307->payor_tin=$company[0]->tin_no;
+                    $m_form_2307->payor_address=$company[0]->registered_address;
+                    $m_form_2307->zip_code = $company[0]->zip_code; 
+                    $m_form_2307->gross_amount=$this->get_numeric_value($total_amount);
+                    $m_form_2307->deducted_amount=$this->get_numeric_value($total_wtax);
+                    $m_form_2307->atc=$voucher_info->atc_2307;
+                    $m_form_2307->remarks=$voucher_info->remarks_2307;
+                    $m_form_2307->set('date_created','NOW()');
+                    $m_form_2307->created_by_user=$this->session->user_id;
+                    $m_form_2307->save();
+                }
+
+
+                // AUDIT TRAIL START
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=11; //CRUD
+                $m_trans->trans_type_id=75; // TRANS TYPE
+                $m_trans->trans_log='Approved and Posted  '.$voucher_info->txn_no;
+                $m_trans->save();
+                //AUDIT TRAIL END
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=1; //CRUD
+                $m_trans->trans_type_id=2; // TRANS TYPE
+                $m_trans->trans_log='Created Cash Disbursement Entry TXN-'.date('Ymd').'-'.$journal_id;
+                $m_trans->save();
+                //AUDIT TRAIL END
+
+                $response['stat']='success';
+                $response['title']='Success!';
+                $response['msg']='Journal successfully posted';
+                echo json_encode($response);
+                break;
+
+            case 'cancel-voucher' :
+                $cv_id = $this->input->post('cv_id',TRUE);
+                $voucher_info= $this->Cash_vouchers_model->get_list($cv_id)[0];
+
+                $m_modify_voucher = $this->Cash_vouchers_model;
+                $m_modify_voucher->cancelled_by_user = $this->session->user_id;
+                $m_modify_voucher->set('date_cancelled','NOW()');
+                $m_modify_voucher->modify($cv_id);
+
+                // AUDIT TRAIL START
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=12; //CRUD
+                $m_trans->trans_type_id=75; // TRANS TYPE
+                $m_trans->trans_log='Disapproved and Cancelled  '.$voucher_info->txn_no;
+                $m_trans->save();
+                //AUDIT TRAIL END
+
+                $response['stat']='success';
+                $response['title']='Success!';
+                $response['msg']='Voucher successfully Disapproved !';
+                echo json_encode($response);
+                break;
             case 'create' :
                 $m_journal=$this->Journal_info_model;
                 $m_supplier=$this->Suppliers_model;

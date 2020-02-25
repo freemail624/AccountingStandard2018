@@ -223,6 +223,7 @@
                             <select id="cbo_table_filter" class="form-control">
                                 <option value="1">Pending / For Verification</option>
                                 <option value="2">Approved</option>
+                                <option value="3">Disapproved</option>
                             </select> 
                     </div>
                     <div class="col-lg-2">
@@ -777,17 +778,17 @@ $(document).ready(function(){
                         var btn_cancel='<button class="btn btn-red btn-sm" name="delete_info" title="Delete Temporary Voucher"><i class="fa fa-trash"></i> </button>';
                         var btn_for_approval='<button class="btn btn-info btn-sm" disabled>For Approval</button>';
                         var btn_approved='<button class="btn btn-light btn-sm" disabled>Approved</button>';
+                        var btn_disapproved='<button class="btn btn-light btn-sm" disabled>Disapproved</button>';
 
-                        if(data.verified_by_user == "0") {
+                        if(data.verified_by_user == "0"  && data.verified_by_user == "0" && data.approved_by_user == "0") {
                             return btn_verified+"&nbsp;"+btn_edit+"&nbsp;"+btn_cancel+'';
-                        }else if(data.verified_by_user > "0" && data.approved_by_user == "0"){
+                        }else if(data.verified_by_user > "0" && data.approved_by_user == "0" && data.cancelled_by_user == "0"){
                             return btn_for_approval ;
-                        }else if (data.verified_by_user > "0" && data.approved_by_user > "0"){
+                        }else if (data.verified_by_user > "0" && data.approved_by_user > "0" && data.cancelled_by_user == "0"){
                             return btn_approved ;
+                        }else if (data.verified_by_user > "0" && data.approved_by_user == "0" && data.cancelled_by_user > "0"){
+                            return btn_disapproved ;
                         }
-
-
-
                         	
                     }
                 },
@@ -1060,6 +1061,9 @@ $(document).ready(function(){
             $('#cbo_refType').select2('val',data.ref_type);
             $('#cbo_check_type').select2('val',data.check_type_id);
 
+            if(data.check_date == '00/00/0000'){
+                $('input[name="check_date"]').val('');
+            }
             if(data.is_2307 == true){
                 $('#is_2307').prop('checked', true);
             }else{

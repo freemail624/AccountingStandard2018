@@ -20,7 +20,7 @@ class Monthly_percentage_tax_return extends CORE_Controller {
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['months']=$this->Months_model->get_list();
         $data['title'] = 'Monthly Percentage Tax Return';
-        (in_array('16-1',$this->session->user_rights)? 
+        (in_array('17-2',$this->session->user_rights)? 
         $this->load->view('monthly_percentage_tax_return_view', $data)
         :redirect(base_url('dashboard')));
         

@@ -19,7 +19,7 @@ class Quarterly_percentage_tax_return extends CORE_Controller {
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['title'] = 'Quarterly Percentage Tax Return';
-        (in_array('16-2',$this->session->user_rights)? 
+        (in_array('17-3',$this->session->user_rights)? 
         $this->load->view('quarterly_percentage_tax_return_view', $data)
         :redirect(base_url('dashboard')));
         

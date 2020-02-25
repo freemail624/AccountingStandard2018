@@ -21,7 +21,7 @@ class Certificate_of_creditable_tax extends CORE_Controller {
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['months']=$this->Months_model->get_list();
         $data['title'] = 'Certificate of Creditable Tax';
-        (in_array('16-3',$this->session->user_rights)? 
+        (in_array('17-1',$this->session->user_rights)? 
         $this->load->view('certificate_of_creditable_tax_view', $data)
         :redirect(base_url('dashboard')));
         
