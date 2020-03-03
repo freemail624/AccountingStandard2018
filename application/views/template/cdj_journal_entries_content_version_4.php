@@ -157,19 +157,22 @@
     <br>
 <table width="100%">
     <tr>
-        <td>&nbsp;<br>&nbsp;</td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td width="25%">Prepared By:</td>
+        <td width="25%">Certified Correct:</td>
+        <td width="25%">Approved:</td>
+        <td width="25%">Payment Received:</td>
+    </tr>
+    <tr>
+        <td><?php echo $voucher_info->posted_by ?></td>
+        <td><?php echo $voucher_info->verified_by ?></td>
+        <td><?php echo $voucher_info->approved_by ?></td>
         <td></td>
     </tr>
     <tr>
-        <td class=" align-center"><span style="border-top: 1px solid black;">&nbsp;&nbsp;&nbsp;Elaiza B. Flores&nbsp;&nbsp;&nbsp;</span></td>
-        <td class=" align-center"><span style="border-top: 1px solid black;">&nbsp;&nbsp;&nbsp;Ria Joy Yusi&nbsp;&nbsp;&nbsp;</span></td>
-        <td class=" align-center"><span style="border-top: 1px solid black;">&nbsp;&nbsp;&nbsp;Byron John T. Siy&nbsp;&nbsp;&nbsp;</span></td>
-        <td class=" align-center"><span style="border-top: 1px solid black;">&nbsp;&nbsp;&nbsp;Dr. Nenita Canlas&nbsp;&nbsp;&nbsp;</span></td>
-        <td class=" align-center"><span style="border-top: 1px solid black;">&nbsp;&nbsp;&nbsp;Sign. Over Printed Name&nbsp;&nbsp;&nbsp;</span></td>
-
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="top align-center">Signature Over Printed Name/Date</td>
     </tr>
 </table>
     </div>

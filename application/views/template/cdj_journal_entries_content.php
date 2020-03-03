@@ -4,8 +4,8 @@
     <title>Cash Disbursement</title>
     <style type="text/css">
         body {
-            font-family: 'Calibri',sans-serif;
-            font-size: 12px;
+            font-family: 'Arial',sans-serif;
+            font-size: 11px;
         }
 
         .align-right {
@@ -57,6 +57,24 @@
             table{
         border:none;
     }
+
+
+        .right{
+            border-right: 1px solid black;
+        }
+        .left{
+            border-left: 1px solid black;
+        }
+        .bottom{
+            border-bottom: 1px solid black;
+        }
+        .top{
+            border-top: 1px solid black;
+        }
+        .all-caps{
+            text-transform: uppercase;
+        }
+        .bold { font-weight: bold; }
     </style>
 </head>
 <body>
@@ -154,28 +172,26 @@
         </table><br><br>
         <center>
         <br>
-            <table style="text-align: center;border: none!important; ">
-                <tr>
-                    <td width="25%" style="padding-right: 10px;line-height: 5px;">
-                    <?php echo $this->session->journal_prepared_by; ?><br style="">
-                    _____________________________</td>
-                    <td width="25%" style="padding-right: 10px;line-height: 5px;">
-                    <?php echo $this->session->journal_approved_by; ?><br style="line-height:5px;">
-                    _____________________________</td>
-                    <td width="25%" style="padding-right: 10px;line-height: 5px;">
-                    &nbsp;<br style="line-height:5px;">
-                    _____________________________</td>
-                    <td width="25%" style="padding-right: 10px;line-height: 5px;">
-                    &nbsp;<br style="line-height:5px;">
-                    _____________________________</td>
-                </tr>
-                <tr>
-                    <td width="25%" style=""><strong>Prepared by</strong></td>
-                    <td width="25%" style=""><strong>Approved by</strong></td>
-                    <td width="25%" style=""><strong>Received by<br><small>(Signature Over Printed Name)</small></strong></td>
-                    <td width="25%" style=""><strong>Date Received</strong></td>
-                </tr>
-            </table>
+<table width="100%">
+    <tr>
+        <td width="25%">Prepared By:</td>
+        <td width="25%">Certified Correct:</td>
+        <td width="25%">Approved:</td>
+        <td width="25%">Payment Received:</td>
+    </tr>
+    <tr>
+        <td><?php echo $voucher_info->posted_by ?></td>
+        <td><?php echo $voucher_info->verified_by ?></td>
+        <td><?php echo $voucher_info->approved_by ?></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="top align-center">Signature Over Printed Name/Date</td>
+    </tr>
+</table>
         </center>
 </body>
 </html>
