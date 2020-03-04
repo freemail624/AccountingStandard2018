@@ -53,7 +53,7 @@ class Cash_vouchers extends CORE_Controller
         $data['layouts']=$this->Check_layout_model->get_list('is_deleted=0');
 
         $data['title'] = 'Temporary Cash Voucher Journal';
-        (in_array('1-2',$this->session->user_rights)? 
+        (in_array('1-8',$this->session->user_rights)? 
         $this->load->view('cash_vouchers_view', $data)
         :redirect(base_url('dashboard')));
         

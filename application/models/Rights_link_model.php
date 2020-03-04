@@ -123,7 +123,9 @@ class Rights_link_model extends CORE_Model{
                                           (113,'9','9-24','Supplier Subsidiary Detailed'),
                                           (114,'9','9-25','Comparative Balance Sheet'),
                                           (115,'9','9-26','Comparative Cash Flow'),
-                                          (116,'6','6-17','Cash Flow Settings')
+                                          (116,'6','6-17','Cash Flow Settings'),
+                                          (117,'1','1-8','Temporary Vouchers'),
+                                          (118,'7','7-3','Temporary Vouchers for Approval')
 
 
                                           ON DUPLICATE KEY UPDATE
