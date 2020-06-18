@@ -37,7 +37,7 @@ class Pos_item_sales_model extends CORE_Model {
     function get_sales_from_date($start,$end) {
         $sql="SELECT *,
                 IF(m.CurrentQty < m.product_quantity, 'Yes','') as critical
-                 FROM (SELECT  core.product_id,core.product_desc,core.product_code,core.purchase_cost,core.sale_price,
+                 FROM (SELECT  core.product_id,core.product_desc,core.product_code,core.purchase_cost,core.sale_price, core.supplier_name,
                 core.product_quantity,
                 core.item_total,
                 ROUND((ReceiveQtyP+AdjustInQtyP-SalesOUtQtyP-POSInvOutP+POSInvInP-CInvOutP-AdjustOutP-IssueFromInvOutP+IssueToInvInP),2) as CurrentQty
@@ -51,6 +51,7 @@ class Pos_item_sales_model extends CORE_Model {
                 p.product_code,
                 p.purchase_cost,
                 p.sale_price,
+                sup.supplier_name,
                 IFNULL(aiin.parent_in_qty,0) as AdjustInQtyP,
                 IFNULL(di.parent_in_qty,0) as ReceiveQtyP,
                 IFNULL(si.parent_out_qty,0) as SalesOUtQtyP,
@@ -70,6 +71,7 @@ class Pos_item_sales_model extends CORE_Model {
                         GROUP BY pos_item_sales.product_id) as core
 
                 LEFT JOIN products p On p.product_id = core.product_id
+                LEFT JOIN suppliers sup ON sup.supplier_id = p.supplier_id
                         
                 LEFT JOIN 
 
