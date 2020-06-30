@@ -36,7 +36,8 @@ class Pos_item_sales_model extends CORE_Model {
 
     function get_sales_from_date($start,$end) {
         $sql="SELECT *,
-                IF(m.CurrentQty < m.product_quantity, 'Yes','') as critical
+                IF(m.CurrentQty < m.product_quantity, 'Yes','') as critical,
+                m.supplier_name
                  FROM (SELECT  core.product_id,core.product_desc,core.product_code,core.purchase_cost,core.sale_price, core.supplier_name,
                 core.product_quantity,
                 core.item_total,
@@ -166,6 +167,8 @@ class Pos_item_sales_model extends CORE_Model {
                 GROUP BY cii.product_id) as ciout ON ciout.product_id = p.product_id
                 
                 ) as core ) as m
+
+                ORDER BY ISNULL(m.supplier_name) ASC, m.supplier_name ASC
 
         ";
         return $this->db->query($sql)->result();

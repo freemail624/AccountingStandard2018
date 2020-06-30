@@ -114,13 +114,17 @@
                                                                 </div>
                                                                 <div class="col-lg-2"><br>
                                                                     <button class="btn btn-success pull-left" id="btn_export_sales" title="Export to Excel" style="padding: 7px 7px!important;">
-                                                                    <i class="fa fa-file-excel-o"></i> Export to Excel</button>
+                                                                    <i class="fa fa-file-excel-o"></i> Product W/ Sales</button>
                                                                 </div>
                                                                 <div class="col-lg-2"><br>
                                                                     <button class="btn btn-success pull-left" id="btn_export_sales_all" title="Export All Products to Excel" style="padding: 7px 7px!important;">
-                                                                    <i class="fa fa-file-excel-o"></i> Export All to Excel </button>
+                                                                    <i class="fa fa-file-excel-o"></i> All Products </button>
                                                                 </div>
-                                                                <div class="col-lg-4"><br>
+                                                                <div class="col-lg-2"><br>
+                                                                    <button class="btn btn-success pull-left" id="btn_export_sales_suppliers" title="Export All Products to Excel" style="padding: 7px 7px!important;">
+                                                                    <i class="fa fa-file-excel-o"></i> Sales By Supplier </button>
+                                                                </div>
+                                                                <div class="col-lg-2"><br>
                                                                    <input type="text" id="tbl_pi_summary_search" class="form-control">
                                                                 </div>
                                                             </div>
@@ -355,6 +359,10 @@
 
             $('#btn_export_sales').on('click', function(){
                 window.open('Report_sales/transaction/export?startDate='+_date_from.val()+'&endDate='+_date_to.val());
+            });
+
+            $('#btn_export_sales_suppliers').on('click', function(){
+                window.open('Report_sales/transaction/export-with-supplier?startDate='+_date_from.val()+'&endDate='+_date_to.val());
             });
 
             $('#btn_export_sales_all').on('click', function(){

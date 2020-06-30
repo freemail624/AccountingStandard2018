@@ -332,9 +332,9 @@
 
                 $excel->setActiveSheetIndex(0);
                 $excel->getActiveSheet()->setTitle('Sales Report');
-                $excel->getActiveSheet()->getColumnDimension('A')->setWidth(15);
-                $excel->getActiveSheet()->getColumnDimension('B')->setWidth(50);
-                $excel->getActiveSheet()->getColumnDimension('C')->setWidth(15);
+                $excel->getActiveSheet()->getColumnDimension('A')->setWidth(30);
+                $excel->getActiveSheet()->getColumnDimension('B')->setWidth(15);
+                $excel->getActiveSheet()->getColumnDimension('C')->setWidth(50);
                 $excel->getActiveSheet()->getColumnDimension('D')->setWidth(15);
                 $excel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
                 $excel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
@@ -378,58 +378,47 @@
 
                 $i=6;
                 $excel->getActiveSheet()->setCellValue('A'.$i,'Period : '.$start.' - '.$end); $i++;
-
-                $excel->getActiveSheet()->setCellValue('A'.$i,'Item Code')
+                $excel->getActiveSheet()->setCellValue('A'.$i,'Supplier')
                                         ->getStyle('A'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('B'.$i,'Description')
+                $excel->getActiveSheet()->setCellValue('B'.$i,'Item Code')
                                         ->getStyle('B'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('C'.$i,'Qty Sold')
+                $excel->getActiveSheet()->setCellValue('C'.$i,'Description')
                                         ->getStyle('C'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('D'.$i,'Purchase Cost')
+                $excel->getActiveSheet()->setCellValue('D'.$i,'Qty Sold')
                                         ->getStyle('D'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('E'.$i,'Sale Price')
+                $excel->getActiveSheet()->setCellValue('E'.$i,'On Hand Stocks')
                                         ->getStyle('E'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('F'.$i,'Invoice Total')
+                $excel->getActiveSheet()->setCellValue('F'.$i,'Critical')
                                         ->getStyle('F'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('G'.$i,'On Hand Stocks')
-                                        ->getStyle('G'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('H'.$i,'Critical')
-                                        ->getStyle('H'.$i)->getFont()->setBold(TRUE);
                             $excel->getActiveSheet()
-                            ->getStyle('C'.$i.':'.'H'.$i)
+                            ->getStyle('D'.$i.':'.'E'.$i)
                             ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                 $i++;
 
                 $total_sales = 0;
                 foreach ($report_info  as $value) {
-                            $excel->getActiveSheet()
-                            ->getStyle('C'.$i.':'.'H'.$i)
-                            ->getAlignment()
-                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                $excel->getActiveSheet()->setCellValue('A'.$i,$value->product_code);
-                $excel->getActiveSheet()->setCellValue('B'.$i,$value->product_desc);
-                $excel->getActiveSheet()->setCellValue('C'.$i,number_format($value->product_quantity,0))->getStyle('C'.$i);
-                $excel->getActiveSheet()->setCellValue('D'.$i,number_format($value->purchase_cost,2))->getStyle('D'.$i)->getNumberFormat()->setFormatCode('0.00');
-                $excel->getActiveSheet()->setCellValue('E'.$i,number_format($value->sale_price,2))->getStyle('E'.$i)->getNumberFormat()->setFormatCode('0.00');
-                $excel->getActiveSheet()->setCellValue('F'.$i,number_format($value->item_total,2))->getStyle('F'.$i)->getNumberFormat()->setFormatCode('0.00');
-                $excel->getActiveSheet()->setCellValue('G'.$i,number_format($value->CurrentQty,2))->getStyle('G'.$i)->getNumberFormat()->setFormatCode('0.00');
-                $excel->getActiveSheet()->setCellValue('H'.$i,$value->critical,2);
+                $excel->getActiveSheet()->setCellValue('A'.$i,$value->supplier_name);
+                $excel->getActiveSheet()->setCellValue('B'.$i,$value->product_code);
+                $excel->getActiveSheet()->setCellValue('C'.$i,$value->product_desc);
+                $excel->getActiveSheet()->setCellValue('D'.$i,number_format($value->product_quantity,0))->getStyle('C'.$i);
+                $excel->getActiveSheet()->setCellValue('E'.$i,number_format($value->CurrentQty,2))->getStyle('G'.$i)->getNumberFormat()->setFormatCode('0.00');
+                $excel->getActiveSheet()->setCellValue('F'.$i,$value->critical,2);
                 $total_sales += $value->item_total;
                 $i++;
                 }
 
                 $excel->getActiveSheet()
-                ->getStyle('D'.$i.':'.'H'.$i)
+                ->getStyle('D'.$i.':'.'E'.$i)
                 ->getAlignment()
                 ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                $excel->getActiveSheet()
-                ->getStyle('A'.$i.':'.'H'.$i)
-                ->getFont()->setBold(TRUE);
+                // $excel->getActiveSheet()
+                // ->getStyle('A'.$i.':'.'H'.$i)
+                // ->getFont()->setBold(TRUE);
 
-                $excel->getActiveSheet()->setCellValue('A'.$i,'TOTAL');
-                $excel->getActiveSheet()->setCellValue('F'.$i,number_format($total_sales,2))->getStyle('D'.$i)->getNumberFormat()->setFormatCode('0.00');
+                // $excel->getActiveSheet()->setCellValue('A'.$i,'TOTAL');
+                // $excel->getActiveSheet()->setCellValue('F'.$i,number_format($total_sales,2))->getStyle('D'.$i)->getNumberFormat()->setFormatCode('0.00');
 
 
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
