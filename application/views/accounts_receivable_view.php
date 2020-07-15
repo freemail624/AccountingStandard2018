@@ -261,10 +261,10 @@
             </a>
 
                 <div class="row">
-                    <div class="col-lg-3">&nbsp;<br>
+                    <div class="col-lg-2">&nbsp;<br>
                         <button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Sales Journal" ><i class="fa fa-plus"></i> New Sales Journal</button>
                     </div>
-                    <div class="col-lg-3">
+                    <div class="col-lg-2">
                             From :<br />
                             <div class="input-group">
                                 <input type="text" id="txt_start_date_ar" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
@@ -273,7 +273,7 @@
                                  </span>
                             </div>
                     </div>
-                    <div class="col-lg-3">
+                    <div class="col-lg-2">
                             To :<br />
                             <div class="input-group">
                                 <input type="text" id="txt_end_date_ar" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
@@ -281,6 +281,15 @@
                                         <i class="fa fa-calendar"></i>
                                  </span>
                             </div>
+                    </div>
+                    <div class="col-lg-3">
+                            Department :<br />
+                            <select id="cbo_departments_filter" class="selectpicker show-tick form-control" data-live-search="true">
+                                    <option value="0"> All Departments</option>
+                                <?php foreach($departments as $department){ ?>
+                                    <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
+                                <?php } ?>
+                            </select>
                     </div>
                     <div class="col-lg-3">
                             Search :<br />
@@ -298,8 +307,9 @@
                             <th width="20%">Remarks</th>
                             <th>Txn Date</th>
                             <th>Posted</th>
-                            <th>Status</th>
-                            <th><center>Action</center></th>
+                            <th>Department</th>
+                            <th width="5%">Status</th>
+                            <th width="5%"><center>Action</center></th>
                             <th></th>
 
                         </tr>
@@ -929,7 +939,7 @@
 <script>
 $(document).ready(function(){
     var _txnMode; var _cboCustomers; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode;
-    var dtReview; var _cboDepartments; var _selectedDepartment = 0; 
+    var dtReview; var _cboDepartments; var _selectedDepartment = 0; var _cboDepartmentFilter;
     var _cboCustomerType;
     var _cboArTrans;
 
@@ -949,7 +959,10 @@ $(document).ready(function(){
 
 
     var initializeControls=function(){
-
+        _cboDepartmentFilter=$("#cbo_departments_filter").select2({
+            placeholder: "Please Select Default Department.",
+            allowClear: false
+        });
 
         dt=$('#tbl_accounts_receivable').DataTable({
             "dom": '<"toolbar">frtip',
@@ -958,14 +971,15 @@ $(document).ready(function(){
             },
             processing : true,
             "bLengthChange":false,
-            "order": [[ 8, "desc" ]],
+            "order": [[ 9, "desc" ]],
             "ajax" : {
                 "url" :  "Accounts_receivable/transaction/list",
                 "bDestroy": true,            
                 "data": function ( d ) {
                         return $.extend( {}, d, {
                             "tsd":$('#txt_start_date_ar').val(),
-                            "ted":$('#txt_end_date_ar').val()
+                            "ted":$('#txt_end_date_ar').val(),
+                            "dfilter": _cboDepartmentFilter.val()
 
                         });
                     }
@@ -980,11 +994,13 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "txn_no" },
                 { targets:[2],data: "particular" },
-                { targets:[3],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(60)},
+                { targets:[3],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(40)},
                 { targets:[4],data: "date_txn" },
                 { targets:[5],data: "posted_by" },
+                { targets:[6],data: "department_name" },
                 {
-                    targets:[6],data: null,
+                    targets:[7],data: null,
+                    "orderable":      false,
                     render: function (data, type, full, meta){
                         var _attribute='';
                         //console.log(data.is_email_sent);
@@ -1000,7 +1016,8 @@ $(document).ready(function(){
 
                 },
                 {
-                    targets:[7],
+                    targets:[8],
+                    "orderable":      false,
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_cancel='<button class="btn btn-red btn-sm" name="cancel_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Cancel Journal"><i class="fa fa-times"></i> </button>';
@@ -1008,7 +1025,7 @@ $(document).ready(function(){
                         return '<center>'+btn_cancel+'</center>';
                     }
                 },
-                 { targets:[8],data: "journal_id" ,visible:false},
+                 { targets:[9],data: "journal_id" ,visible:false},
             ]
         });
 
@@ -1127,6 +1144,11 @@ $(document).ready(function(){
         $("#txt_end_date_ar").on("change", function () {        
             $('#tbl_accounts_receivable').DataTable().ajax.reload()
         });
+
+        _cboDepartmentFilter.on("select2:select", function (e) {
+            $('#tbl_accounts_receivable').DataTable().ajax.reload()
+       });
+
         $("#searchbox_ar").keyup(function(){         
             dt
                 .search(this.value)

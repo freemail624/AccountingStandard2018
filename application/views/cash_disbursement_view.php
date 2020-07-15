@@ -232,9 +232,9 @@
               </a>
                 <div id="collapseOne" class="collapse in">
                 <div class="row">
-                    <div class="col-lg-3">
+                    <div class="col-lg-2">
                     &nbsp;<br>
-                        <button class="btn btn-primary" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Journal" ><i class="fa fa-plus"></i> New Disbursement Journal</button>
+                        <button class="btn btn-primary" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Journal" ><i class="fa fa-plus"></i> New Journal</button>
                     </div>
                     <div class="col-lg-2">
                             From :<br />
@@ -254,7 +254,16 @@
                                  </span>
                             </div>
                     </div>
-                    <div class="col-lg-3">
+                    <div class="col-lg-2">
+                            Department :<br />
+                            <select id="cbo_departments_filter" class="selectpicker show-tick form-control" data-live-search="true">
+                                    <option value="0"> All Departments</option>
+                                <?php foreach($departments as $department){ ?>
+                                    <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
+                                <?php } ?>
+                            </select>
+                    </div>
+                    <div class="col-lg-2">
                             Check Voucher Print Format :<br />
                             <select id="cbo_voucher_format" class="form-control">
                                 <option value="1">Default</option>
@@ -281,7 +290,8 @@
                                     <th>Method</th>
                                     <th>Txn Date</th>
                                     <th>Posted</th>
-                                    <th>Status</th>
+                                    <th>Department</th>
+                                    <th width="5%">Status</th>
                                     <th style="width: 15%;"><center>Action</center></th>
                                     <th></th>
 
@@ -1090,7 +1100,7 @@
 $(document).ready(function(){
     var _txnMode; var _cboSuppliers; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode, _cboBranches, _cboPaymentMethod, _cboCheckTypes;
     var dtReview; var cbo_refType; var _cboLayouts; var dtRecurring; var _attribute; var _cboTax; var dtReviewOther; var dtCashReceipt; var _cboVouchers;
-     var _selectedDepartment = 0;
+     var _selectedDepartment = 0; var _cboDepartmentFilter;
 
 
     var oTBJournal={
@@ -1131,6 +1141,11 @@ $(document).ready(function(){
     };
 
     var initializeControls=function(){
+        _cboDepartmentFilter=$("#cbo_departments_filter").select2({
+            placeholder: "Please Select Default Department.",
+            allowClear: false
+        });
+
         _cboVouchers=$('#cbo_voucher_format').select2({
             placeholder: "Please select Voucher Format.",
             minimumResultsForSearch: -1
@@ -1140,7 +1155,7 @@ $(document).ready(function(){
         dt=$('#tbl_cash_disbursement_list').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 9, "desc" ]],
+            "order": [[ 10, "desc" ]],
             oLanguage: {
                     sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
             },
@@ -1151,8 +1166,8 @@ $(document).ready(function(){
                 "data": function ( d ) {
                         return $.extend( {}, d, {
                             "tsd":$('#txt_start_date_cdj').val(),
-                            "ted":$('#txt_end_date_cdj').val()
-
+                            "ted":$('#txt_end_date_cdj').val(),
+                            "dfilter": _cboDepartmentFilter.val()
                         });
                     }
             }, 
@@ -1170,8 +1185,9 @@ $(document).ready(function(){
                 { targets:[4],data: "payment_method" },
                 { targets:[5],data: "date_txn" },
                 { targets:[6],data: "posted_by" },
+                { targets:[6],data: "department_name" },
                 {
-                    targets:[7],data: null,
+                    targets:[7],data: null,"orderable":      false,
                     render: function (data, type, full, meta){
                         var _attribute='';
                         //console.log(data.is_email_sent);
@@ -1186,7 +1202,7 @@ $(document).ready(function(){
 
                 },
 
-                {sClass: "right_align_items",
+                {sClass: "right_align_items","orderable":      false,
                     targets:[8],data:null,
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
@@ -1399,6 +1415,11 @@ $(document).ready(function(){
         $("#txt_end_date_cdj").on("change", function () {        
             $('#tbl_cash_disbursement_list').DataTable().ajax.reload()
         });
+
+        _cboDepartmentFilter.on("select2:select", function (e) {
+            $('#tbl_cash_disbursement_list').DataTable().ajax.reload()
+       });
+
         $("#searchbox_cdj").keyup(function(){         
             dt
                 .search(this.value)

@@ -45,7 +45,7 @@ class General_journal extends CORE_Controller
         $data['tax_types']=$this->Tax_model->get_list(array('tax_types.is_deleted'=>FALSE));
         $data['customers']=$this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['suppliers']=$this->Suppliers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
-        $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE');
+        $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'department_name ASC');
         $data['accounts']=$this->Account_title_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['methods']=$this->Payment_method_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['customer_type']=$this->Customer_type_model->get_list('is_deleted=FALSE');
@@ -68,7 +68,12 @@ class General_journal extends CORE_Controller
                 $m_journal=$this->Journal_info_model;
                 $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
                 $ted = date('Y-m-d',strtotime($this->input->get('ted')));
-                $additional = " AND DATE(journal_info.date_txn) BETWEEN '$tsd' AND '$ted'";
+                $department_id = $this->input->get('dfilter');
+                if($department_id == 0){
+                    $additional = " AND DATE(journal_info.date_txn) BETWEEN '$tsd' AND '$ted' ";
+                }else {
+                    $additional = " AND DATE(journal_info.date_txn) BETWEEN '$tsd' AND '$ted' AND journal_info.department_id = '$department_id' ";  
+                }
                 $response['data']=$this->get_response_rows(null,$additional);
                 echo json_encode($response);
                 break;
@@ -423,6 +428,7 @@ class General_journal extends CORE_Controller
                 'journal_info.journal_id',
                 'journal_info.txn_no',
                 'journal_info.department_id',
+                'departments.department_name',
                 'DATE_FORMAT(journal_info.date_txn,"%m/%d/%Y")as date_txn',
                 'journal_info.is_active',
                 'journal_info.remarks',
@@ -432,6 +438,7 @@ class General_journal extends CORE_Controller
             ),
             array(
                 array('customers','customers.customer_id=journal_info.customer_id','left'),
+                array('departments','departments.department_id=journal_info.department_id','left'),
                 array('suppliers','suppliers.supplier_id=journal_info.supplier_id','left'),
                 array('user_accounts','user_accounts.user_id=journal_info.created_by_user','left')
             ),

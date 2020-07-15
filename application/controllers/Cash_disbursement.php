@@ -48,7 +48,7 @@ class Cash_disbursement extends CORE_Controller
 
         $data['check_types']=$this->Check_types_model->get_list('is_deleted=FALSE');
         $data['suppliers']=$this->Suppliers_model->get_list('is_deleted = FALSE');
-        $data['departments']=$this->Departments_model->get_list('is_deleted = FALSE');
+        $data['departments']=$this->Departments_model->get_list('is_deleted = FALSE',null, null,'department_name ASC');
         $data['accounts']=$this->Account_title_model->get_list('is_deleted = FALSE');
         $data['methods']=$this->Payment_method_model->get_list();
         $data['tax_types']=$this->Tax_types_model->get_list('is_deleted=0');
@@ -69,7 +69,12 @@ class Cash_disbursement extends CORE_Controller
                 $m_journal=$this->Journal_info_model;
                 $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
                 $ted = date('Y-m-d',strtotime($this->input->get('ted')));
-                $additional = " AND DATE(journal_info.date_txn) BETWEEN '$tsd' AND '$ted'";
+                $department_id = $this->input->get('dfilter');
+                if($department_id == 0){
+                    $additional = " AND DATE(journal_info.date_txn) BETWEEN '$tsd' AND '$ted' ";
+                }else {
+                    $additional = " AND DATE(journal_info.date_txn) BETWEEN '$tsd' AND '$ted' AND journal_info.department_id = '$department_id' ";  
+                }
                 $response['data']=$this->get_response_rows(null,$additional);
                 echo json_encode($response);
                 break;
@@ -557,6 +562,7 @@ class Cash_disbursement extends CORE_Controller
                 'journal_info.ref_type',
                 'CONCAT(journal_info.ref_type,"-",journal_info.ref_no) as ref_no',
                 'journal_info.amount',
+                'departments.department_name',
                 'CONCAT(IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,""))as particular',
                 'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by'
             ),

@@ -48,7 +48,7 @@ class Cash_receipt extends CORE_Controller
         $data['suppliers']=$this->Suppliers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['accounts']=$this->Account_title_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['methods']=$this->Payment_method_model->get_list('is_deleted=0');
-        $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE');
+        $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'department_name ASC');
         $data['check_types']=$this->Check_types_model->get_list('is_deleted=FALSE');
         $data['customer_type']=$this->Customer_type_model->get_list('is_deleted=FALSE');
 
@@ -68,7 +68,13 @@ class Cash_receipt extends CORE_Controller
                 $m_journal=$this->Journal_info_model;
                 $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
                 $ted = date('Y-m-d',strtotime($this->input->get('ted')));
-                $additional = " AND DATE(journal_info.date_txn) BETWEEN '$tsd' AND '$ted'";
+                $department_id = $this->input->get('dfilter');
+                if($department_id == 0){
+                    $additional = " AND DATE(journal_info.date_txn) BETWEEN '$tsd' AND '$ted' ";
+                }else {
+                    $additional = " AND DATE(journal_info.date_txn) BETWEEN '$tsd' AND '$ted' AND journal_info.department_id = '$department_id' ";  
+                }
+                
                 $response['data']=$this->get_response_rows(null,$additional);
                 echo json_encode($response);
                 break;
@@ -548,6 +554,7 @@ class Cash_receipt extends CORE_Controller
                 'DATE_FORMAT(journal_info.check_date,"%m/%d/%Y")as check_date',
                 'journal_info.amount',
                 'journal_info.check_type_id',
+                'departments.department_name',
                 'CONCAT(IF(NOT ISNULL(customers.customer_id),CONCAT("C-",customers.customer_id),""),IF(NOT ISNULL(suppliers.supplier_id),CONCAT("S-",suppliers.supplier_id),"")) as particular_id',
                 'CONCAT_WS(" ",IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,"")) as particular',
                 'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by'
