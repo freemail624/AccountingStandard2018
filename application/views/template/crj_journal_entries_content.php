@@ -78,7 +78,7 @@
             <td style="padding: 4px;" colspan="3"><strong>TXN # :</strong> <?php echo $journal_info->txn_no; ?></td>
         </tr>
         <tr>
-            <td style="padding: 4px;"><strong>REFERENCE # :</strong> <?php echo $journal_info->ref_no; ?></td>
+            <td style="padding: 4px;"><strong>RECEIPT # :</strong> <?php echo $journal_info->or_no; ?></td>
             <td style="padding: 4px;" colspan="2"><strong>TXN DATE :</strong> <?php echo date_format(new DateTime($journal_info->date_txn),"m/d/Y"); ?></td>
         </tr>
         <tr>

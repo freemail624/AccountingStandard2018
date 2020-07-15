@@ -716,7 +716,7 @@
 <script>
 $(document).ready(function(){
     var _txnMode; var _cboSuppliers; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode, _cboBranches, _cboPaymentMethod, _cboCheckTypes;
-     var cbo_refType; var _cboLayouts; var dtRecurring; var _attribute; var _TableFilter;
+     var cbo_refType; var _cboLayouts; var dtRecurring; var _attribute; var _TableFilter; var _selectedDepartment = 0;
 
 
     var oTBJournal={
@@ -958,6 +958,7 @@ $(document).ready(function(){
 
             reInitializeNumeric();
             reInitializeDropDownAccounts($('#tbl_entries'),false);
+            $('#tbl_entries > tbody > tr:last select.dept').each(function(){ $(this).select2('val',_selectedDepartment)});
 
         });
 
@@ -1150,6 +1151,10 @@ $(document).ready(function(){
             $('#tbl_temp_vouchers_list').DataTable().ajax.reload()
         });
 
+        _cboBranches.on("select2:select", function (e) {
+            _selectedDepartment = $(this).select2('val'); 
+            $('#tbl_entries select.dept').each(function(){ $(this).select2('val',_selectedDepartment)}); 
+        });
     }();
 
 

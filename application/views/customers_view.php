@@ -29,7 +29,7 @@
 
     <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
     <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
-
+    <script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 
     <!-- Date range use moment.js same as full calendar plugin -->
     <script src="assets/plugins/fullcalendar/moment.min.js"></script>
@@ -62,7 +62,7 @@
 
     $(document).ready(function(){
         var dt; var _txnMode; var _selectedID; var _selectRowObj; var _selectedBranch; var _cboCustomerType; 
-        var _cboArTrans;
+        var _cboArTrans; var _cboLinkDepartment;
 
         /*$(document).ready(function(){
             $('#modal_filter').modal('show');
@@ -76,6 +76,7 @@
                 "dom": '<"toolbar">frtip',
                 "bLengthChange": false,
                 "pageLength": 15,
+                "order": [[ 1, "asc" ]],
                 "ajax" : "Customers/transaction/list",
                 "language": {
                     searchPlaceholder: "Search Customer Name"
@@ -90,10 +91,11 @@
                     },
                     { targets:[1],data: "customer_name" },
                     { targets:[2],data: "contact_name" },
-                    { targets:[3],data: "address" },
+                    { targets:[3],data: "address" ,render: $.fn.dataTable.render.ellipsis(60)},
                     { targets:[4],data: "contact_no" },
+                    { targets:[5],data: "link_department_name" },
                     {
-                        targets:[5],
+                        targets:[6],
                         render: function (data, type, full, meta){
                             var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"   data-toggle="tooltip" data-placement="top" title="Edit" style="margin-left:-5px;"><i class="fa fa-pencil"></i> </button>';
                             var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info"  data-toggle="tooltip" data-placement="top" title="Move to trash" style="margin-right:-5px;"><i class="fa fa-trash-o"></i> </button>';
@@ -117,6 +119,11 @@
 
             _cboArTrans=$("#cbo_ar_trans").select2({
                 placeholder: "Please select AR Transaction.",
+                allowClear: false
+            });
+
+            _cboLinkDepartment=$("#cbo_link_department_id").select2({
+                placeholder: "Please Select Default Department.",
                 allowClear: false
             });
             //$('#contact_no').keypress(validateNumber);
@@ -173,6 +180,7 @@
                 $('#modal_create_customer').modal('show');
                 clearFields($('#frm_customer'));
                 $('#cbo_customer_type').select2('val', 0);
+                $('#cbo_link_department_id').select2('val', 0);
                 $('#cbo_ar_trans').select2('val',null);
             });
 
@@ -199,6 +207,7 @@
                     $('#refcustomertype_id').val(data.refcustomertype_id);
                     _cboCustomerType.select2('val',data.customer_type_id);
                     _cboArTrans.select2('val',data.ar_trans_id);
+                    _cboLinkDepartment.select2('val',data.link_department_id);
                     $('#term').val(data.term);
 
                     //alert(data.term);
@@ -666,9 +675,10 @@
                                                         <th>&nbsp;&nbsp;</th>
                                                         <th>Customer Name</th>
                                                         <th>Contact Person</th>
-                                                        <th style="width: 30%;">Address</th>
-                                                        <th>Contact No</th>
-                                                        <th style="width: 15%;"><center>Action</center></th>
+                                                        <th style="width: 20%;">Address</th>
+                                                        <th style="width: 10%">Contact No</th>
+                                                        <th style="width: 15%">Department</th>
+                                                        <th style="width: 10%;"><center>Action</center></th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
@@ -999,7 +1009,21 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-12">
+                                        <div class="col-md-12"><br>
+                                            <div class="col-md-4" id="label">
+                                                 <label class="control-label boldlabel" style="text-align:right;margin-bottom:0px;">Department:</label><br>
+                                                 <small><i>Used in Journal Entries</i> </small>
+                                            </div>
+                                            <div class="col-md-8" style="padding: 0px;">
+                                            <select name="link_department_id" id="cbo_link_department_id" style="width: 100%">
+                                                <option value="0">None</option>
+                                                <?php foreach($departments as $department){ ?>
+                                                    <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name?></option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 hidden">
                                             <div class="col-md-4" id="label">
                                                  <label class="control-label boldlabel" style="text-align:right;">Business Organization :</label>
                                             </div>
@@ -1008,11 +1032,11 @@
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-users"></i>
                                                     </span>
-                                                    <input type="text" name="business_organization" id="business_organization" class="form-control" placeholder="Business Organization" data-error-msg="Business Organization is required." required>
+                                                    <input type="text" name="business_organization" id="business_organization" class="form-control" placeholder="Business Organization" data-error-msg="Business Organization is required.">
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-12">
+                                        <div class="col-md-12 hidden">
                                             <div class="col-md-4" id="label">
                                                  <label class="control-label boldlabel" style="text-align:right;">Office Fax Number :</label>
                                             </div>
@@ -1021,31 +1045,31 @@
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-users"></i>
                                                     </span>
-                                                    <input type="text" name="office_fax_number" id="office_fax_number" class="form-control" placeholder="Office Fax Number" data-error-msg="Office Fax Number is required." required>
+                                                    <input type="text" name="office_fax_number" id="office_fax_number" class="form-control" placeholder="Office Fax Number" data-error-msg="Office Fax Number is required." >
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-12">
+                                        <div class="col-md-12 hidden">
                                             <div class="col-md-4" id="label">
                                                  <label class="control-label boldlabel" style="text-align:right;">AR Transaction :</label>
                                             </div>
                                             <div class="col-md-8" style="padding: 0px;">
-                                            <select name="ar_trans_id" id="cbo_ar_trans" style="width: 100%" data-error-msg="Type of Accounts Receivable Transaction is required." required>
+                                            <select name="ar_trans_id" id="cbo_ar_trans" style="width: 100%" data-error-msg="Type of Accounts Receivable Transaction is required." >
                                                 <?php foreach($ar_trans as $ar_tran){ ?>
                                                     <option value="<?php echo $ar_tran->ar_trans_id; ?>"><?php echo $ar_tran->ar_trans_name?></option>
                                                 <?php } ?>
                                             </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-12"><br>
+                                        <div class="col-md-12 hidden"><br>
                                             <div class="col-md-4" id="label">
                                                  <label class="control-label boldlabel" style="text-align:right;" >Terms and Conditions :</label>
                                             </div>
                                             <div class="col-md-8" style="padding: 0px;">
-                                            <input type="text" name="payment_term_desc" class="form-control" data-error-msg="Payment Terms and Condition is required." required>
+                                            <input type="text" name="payment_term_desc" class="form-control" data-error-msg="Payment Terms and Condition is required." >
                                             </div>
                                         </div>
-                                        <div class="col-md-12"><br>
+                                        <div class="col-md-12 hidden"><br>
                                             <div class="col-md-4" id="label">
                                                  <label class="control-label boldlabel" style="text-align:right;">Customer Type :</label>
                                             </div>

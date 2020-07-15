@@ -399,14 +399,14 @@
                                 <optgroup label="Customers">
                                     <option value="create_customer">[Create New Customer]</option>
                                     <?php foreach($customers as $customer){ ?>
-                                        <option value='C-<?php echo $customer->customer_id; ?>'><?php echo $customer->customer_name; ?></option>
+                                        <option value='C-<?php echo $customer->customer_id; ?>' data-link_department='<?php echo $customer->link_department_id; ?>'><?php echo $customer->customer_name; ?></option>
                                     <?php } ?>
                                 </optgroup>
 
                                 <optgroup label="Suppliers">
                                     <option value="create_supplier">[Create New Supplier]</option>
                                     <?php foreach($suppliers as $supplier){ ?>
-                                        <option value='S-<?php echo $supplier->supplier_id; ?>'><?php echo $supplier->supplier_name; ?></option>
+                                        <option value='S-<?php echo $supplier->supplier_id; ?>' data-link_department='0'><?php echo $supplier->supplier_name; ?></option>
                                     <?php } ?>
                                 </optgroup>
 
@@ -957,7 +957,21 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-12">
+                                        <div class="col-md-12"><br>
+                                            <div class="col-md-4" id="label">
+                                                 <label class="control-label boldlabel" style="text-align:right;margin-bottom:0px;">Department:</label><br>
+                                                 <small><i>Used in Journal Entries</i> </small>
+                                            </div>
+                                            <div class="col-md-8" style="padding: 0px;">
+                                            <select name="link_department_id" id="cbo_link_department_id" style="width: 100%">
+                                                <option value="0">None</option>
+                                                <?php foreach($departments as $department){ ?>
+                                                    <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name?></option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 hidden">
                                             <div class="col-md-4" id="label">
                                                  <label class="control-label boldlabel" style="text-align:right;">Business Organization :</label>
                                             </div>
@@ -966,11 +980,11 @@
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-users"></i>
                                                     </span>
-                                                    <input type="text" name="business_organization" id="business_organization" class="form-control" placeholder="Business Organization" data-error-msg="Business Organization is required." required>
+                                                    <input type="text" name="business_organization" id="business_organization" class="form-control" placeholder="Business Organization" data-error-msg="Business Organization is required.">
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-12">
+                                        <div class="col-md-12 hidden">
                                             <div class="col-md-4" id="label">
                                                  <label class="control-label boldlabel" style="text-align:right;">Office Fax Number :</label>
                                             </div>
@@ -979,31 +993,31 @@
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-users"></i>
                                                     </span>
-                                                    <input type="text" name="office_fax_number" id="office_fax_number" class="form-control" placeholder="Office Fax Number" data-error-msg="Office Fax Number is required." required>
+                                                    <input type="text" name="office_fax_number" id="office_fax_number" class="form-control" placeholder="Office Fax Number" data-error-msg="Office Fax Number is required." >
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-12">
+                                        <div class="col-md-12 hidden">
                                             <div class="col-md-4" id="label">
                                                  <label class="control-label boldlabel" style="text-align:right;">AR Transaction :</label>
                                             </div>
                                             <div class="col-md-8" style="padding: 0px;">
-                                            <select name="ar_trans_id" id="cbo_ar_trans" style="width: 100%" data-error-msg="Type of Accounts Receivable Transaction is required." required>
+                                            <select name="ar_trans_id" id="cbo_ar_trans" style="width: 100%" data-error-msg="Type of Accounts Receivable Transaction is required." >
                                                 <?php foreach($ar_trans as $ar_tran){ ?>
                                                     <option value="<?php echo $ar_tran->ar_trans_id; ?>"><?php echo $ar_tran->ar_trans_name?></option>
                                                 <?php } ?>
                                             </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-12"><br>
+                                        <div class="col-md-12 hidden"><br>
                                             <div class="col-md-4" id="label">
                                                  <label class="control-label boldlabel" style="text-align:right;" >Terms and Conditions :</label>
                                             </div>
                                             <div class="col-md-8" style="padding: 0px;">
-                                            <input type="text" name="payment_term_desc" class="form-control" data-error-msg="Payment Terms and Condition is required." required>
+                                            <input type="text" name="payment_term_desc" class="form-control" data-error-msg="Payment Terms and Condition is required." >
                                             </div>
                                         </div>
-                                        <div class="col-md-12"><br>
+                                        <div class="col-md-12 hidden"><br>
                                             <div class="col-md-4" id="label">
                                                  <label class="control-label boldlabel" style="text-align:right;">Customer Type :</label>
                                             </div>
@@ -1085,7 +1099,7 @@
 $(document).ready(function(){
     var _txnMode; var _cboParticulars; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode;
     var dtReview; var _cbo_paymentMethod; var _cbo_departments; var dt; var _cbo_check_types; var _cbo_accounttype;
-    var _cboCustomerType;  var _cboTaxGroup;
+    var _cboCustomerType;  var _cboTaxGroup; var _selectedDepartment = 0;
     var _cboArTrans;
 
     var oTBJournal={
@@ -1319,6 +1333,10 @@ $(document).ready(function(){
             allowClear: false
         });
 
+        _cboLinkDepartment=$("#cbo_link_department_id").select2({
+            placeholder: "Please Select Default Department.",
+            allowClear: false
+        });
     }();
 
 
@@ -1565,6 +1583,7 @@ $(document).ready(function(){
 
             reInitializeNumeric();
             reInitializeDropDownAccounts($('#tbl_entries'),false);
+            $('#tbl_entries > tbody > tr:last select.dept').each(function(){ $(this).select2('val',_selectedDepartment)});
 
         });
 
@@ -1665,6 +1684,7 @@ $(document).ready(function(){
 
 
         _cboParticulars.on('select2:select',function(){
+            var i=$(this).select2('val');
             if (_cboParticulars.val() == 'create_customer') {
                 $('input,textarea,select',$('#frm_customer')).val('');
                 $('img').attr('src','assets/img/anonymous-icon.png');
@@ -1675,10 +1695,24 @@ $(document).ready(function(){
                 clearFields($('#frm_supplier'));
                 $('img').attr('src','assets/img/anonymous-icon.png');
                 $('#modal_create_suppliers').modal('show');
+            }else {
+                var obj_customers=$('#cbo_particulars').find('option[value="' + i + '"]');
+                _selectedDepartment = obj_customers.data('link_department');
+                $('#tbl_entries select.dept').each(function(){ $(this).select2('val',_selectedDepartment)});
+                if(_selectedDepartment == '0'){
+                    _cbo_departments.select2('val',null);
+                }else{
+                    _cbo_departments.select2('val',_selectedDepartment);
+                }
+
             }
 
         });
 
+        _cbo_departments.on("select2:select", function (e) {
+            _selectedDepartment = $(this).select2('val');
+            $('#tbl_entries select.dept').each(function(){ $(this).select2('val',_selectedDepartment)});
+       });
        
         _cbo_paymentMethod.on("select2:select", function (e) {
             var selectchecktype = $('#cbo_check_types');
@@ -1764,8 +1798,11 @@ $(document).ready(function(){
                 createCustomer().done(function(response){
                     showNotification(response);
                     var _customer = response.row_added[0];
-                    _cboParticulars.select2().find('optgroup[label="Customers"]').append('<option value="'+ 'C-'+_customer.customer_id +'">'+ _customer.customer_name +'</option>');
+                    _cboParticulars.select2().find('optgroup[label="Customers"]').append('<option value="'+ 'C-'+_customer.customer_id +'" data-link_department = "'+_customer.link_department_id+'">'+ _customer.customer_name +'</option>');
                     _cboParticulars.select2('val','C-'+_customer.customer_id);
+                      _selectedDepartment = _customer.link_department_id;
+                    $('#tbl_entries select.dept').each(function(){ $(this).select2('val',_selectedDepartment)});
+                    _cbo_departments.select2('val',_selectedDepartment);
                     $('input,textarea,select',$('#frm_customer')).val('');
                 }).always(function(){
                     $('#modal_create_customer').modal('toggle');

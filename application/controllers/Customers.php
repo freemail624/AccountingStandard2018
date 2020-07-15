@@ -56,7 +56,7 @@ class Customers extends CORE_Controller {
             case 'list':
                 $m_customers=$this->Customers_model;
 
-                $response['data']=$m_customers->get_list('is_active=TRUE AND is_deleted=FALSE');
+                $response['data']=$this->response_rows('customers.is_active=TRUE AND customers.is_deleted=FALSE');
 
                 echo json_encode($response);
 
@@ -89,7 +89,7 @@ class Customers extends CORE_Controller {
                 $m_customers->contact_no=$this->input->post('contact_no',TRUE);
                 $m_customers->tin_no=$this->input->post('tin_no',TRUE);
                 $m_customers->refcustomertype_id=$this->input->post('refcustomertype_id',TRUE);
-                $m_customers->department_id=$this->input->post('department_id',TRUE);
+                $m_customers->link_department_id=$this->input->post('link_department_id',TRUE);
                 $m_customers->photo_path=$this->input->post('photo_path',TRUE);
                 $m_customers->term=$this->input->post('term',TRUE);
                 $m_customers->credit_limit=$this->input->post('credit_limit',TRUE);
@@ -137,7 +137,7 @@ class Customers extends CORE_Controller {
                 $m_customers->contact_no=$this->input->post('contact_no',TRUE);
                 $m_customers->tin_no=$this->input->post('tin_no',TRUE);
                 $m_customers->refcustomertype_id=$this->input->post('refcustomertype_id',TRUE);
-                $m_customers->department_id=$this->input->post('department_id',TRUE);
+                $m_customers->link_department_id=$this->input->post('link_department_id',TRUE);
                 $m_customers->photo_path=$this->input->post('photo_path',TRUE);
                 $m_customers->term=$this->input->post('term',TRUE);
                 $m_customers->business_organization=$this->input->post('business_organization',TRUE);
@@ -259,7 +259,7 @@ class Customers extends CORE_Controller {
                 $m_customers->contact_no=$this->input->post('contact_no',TRUE);
                 $m_customers->tin_no=$this->input->post('tin_no',TRUE);
                 $m_customers->refcustomertype_id=$this->input->post('refcustomertype_id',TRUE);
-                $m_customers->department_id=$this->input->post('department_id',TRUE);
+                $m_customers->link_department_id=$this->input->post('link_department_id',TRUE);
                 $m_customers->photo_path=$this->input->post('photo_path',TRUE);
                 $m_customers->term=$this->input->post('term',TRUE);
                 $m_customers->credit_limit=$this->input->post('credit_limit',TRUE);
@@ -380,10 +380,11 @@ class Customers extends CORE_Controller {
         return $this->Customers_model->get_list(
             $filter,
 
-            'customers.*,departments.department_name,refcustomertype.customer_type',
+            'customers.*,departments.department_name,refcustomertype.customer_type,dep_link.department_name as link_department_name',
 
             array(
                 array('departments','departments.department_id=customers.department_id','left'),
+                array('departments as dep_link','dep_link.department_id=customers.link_department_id','left'),
                 array('refcustomertype','refcustomertype.refcustomertype_id=customers.refcustomertype_id','left')
             )
         );

@@ -282,7 +282,6 @@
                                     <th>Txn Date</th>
                                     <th>Posted</th>
                                     <th>Status</th>
-                                    <th>Assigned</th>
                                     <th style="width: 15%;"><center>Action</center></th>
                                     <th></th>
 
@@ -457,7 +456,7 @@
                                     <div class="col-sm-12">
                                        <b class="required"> * </b> <label>Department  :</label><br />
                                         <select id="cbo_branch" name="department_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Department is required." required>
-                                            <option value="0">[ Create New Department ]</option>
+                                            <!-- <option value="0">[ Create New Department ]</option> -->
                                             <?php foreach($departments as $department){ ?>
                                                 <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
                                             <?php } ?>
@@ -1091,6 +1090,7 @@
 $(document).ready(function(){
     var _txnMode; var _cboSuppliers; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode, _cboBranches, _cboPaymentMethod, _cboCheckTypes;
     var dtReview; var cbo_refType; var _cboLayouts; var dtRecurring; var _attribute; var _cboTax; var dtReviewOther; var dtCashReceipt; var _cboVouchers;
+     var _selectedDepartment = 0;
 
 
     var oTBJournal={
@@ -1726,6 +1726,9 @@ $(document).ready(function(){
             if(i==0){ //new department
                 _cboBranches.select2('val',null);
                 $('#modal_new_department').modal('show');
+            }else{
+                _selectedDepartment = $(this).select2('val'); 
+                $('#tbl_entries select.dept').each(function(){ $(this).select2('val',_selectedDepartment)});
             }
         });
 
@@ -1817,6 +1820,7 @@ $(document).ready(function(){
 
             reInitializeNumeric();
             reInitializeDropDownAccounts($('#tbl_entries'),false);
+            $('#tbl_entries > tbody > tr:last select.dept').each(function(){ $(this).select2('val',_selectedDepartment)});
 
         });
 

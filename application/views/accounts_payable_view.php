@@ -344,7 +344,7 @@
                                             <label class="col-lg-2"><b class="required">*</b> Department :</label>
                                             <div class="col-lg-10">
                                                 <select id="cbo_departments" name="department_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Department is required." required>
-                                                    <option value="0">[ Create New Department ]</option>
+                                                    <!-- <option value="0">[ Create New Department ]</option> -->
                                                     <?php foreach($departments as $department){ ?>
                                                         <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
                                                     <?php } ?>
@@ -816,7 +816,7 @@
 <script>
     $(document).ready(function(){
         var _txnMode; var _cboSuppliers; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode;
-        var dtReview; var _cboDepartments;
+        var dtReview; var _cboDepartments; var _selectedDepartment = 0;
 
 
         var oTBJournal={
@@ -1327,6 +1327,9 @@
                     _cboDepartments.select2('val',null);
 
                     $('#modal_new_department').modal('show');
+                }else{
+                    _selectedDepartment = $(this).select2('val'); 
+                    $('#tbl_entries select.dept').each(function(){ $(this).select2('val',_selectedDepartment)}); 
                 }
             });
 
@@ -1376,6 +1379,7 @@
 
                 reInitializeNumeric();
                 reInitializeDropDownAccounts($('#tbl_entries'),false);
+                $('#tbl_entries > tbody > tr:last select.dept').each(function(){ $(this).select2('val',_selectedDepartment)});
 
             });
 

@@ -387,7 +387,7 @@
                                         <select id="cbo_customers" name="customer_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Customer is required." required>
                                             <option value="0">[ Create New Customer ]</option>
                                             <?php foreach($customers as $customer){ ?>
-                                                <option value='<?php echo $customer->customer_id; ?>'><?php echo $customer->customer_name; ?></option>
+                                                <option value='<?php echo $customer->customer_id; ?>' data-link_department='<?php echo $customer->link_department_id; ?>'><?php echo $customer->customer_name; ?></option>
                                             <?php } ?>
                                         </select>
                                     </div>
@@ -728,7 +728,21 @@
                                         </div>
                                     </div>
                                 </div>
-                            <div class="col-md-12">
+                            <div class="col-md-12"><br>
+                                <div class="col-md-4" id="label">
+                                     <label class="control-label boldlabel" style="text-align:right;margin-bottom:0px;">Department:</label><br>
+                                     <small><i>Used in Journal Entries</i> </small>
+                                </div>
+                                <div class="col-md-8" style="padding: 0px;">
+                                <select name="link_department_id" id="cbo_link_department_id" style="width: 100%">
+                                    <option value="0">None</option>
+                                    <?php foreach($departments as $department){ ?>
+                                        <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name?></option>
+                                    <?php } ?>
+                                </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12 hidden">
                                 <div class="col-md-4" id="label">
                                      <label class="control-label boldlabel" style="text-align:right;">Business Organization :</label>
                                 </div>
@@ -737,11 +751,11 @@
                                         <span class="input-group-addon">
                                             <i class="fa fa-users"></i>
                                         </span>
-                                        <input type="text" name="business_organization" id="business_organization" class="form-control" placeholder="Business Organization" data-error-msg="Business Organization is required." required>
+                                        <input type="text" name="business_organization" id="business_organization" class="form-control" placeholder="Business Organization" data-error-msg="Business Organization is required.">
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-12 hidden">
                                 <div class="col-md-4" id="label">
                                      <label class="control-label boldlabel" style="text-align:right;">Office Fax Number :</label>
                                 </div>
@@ -750,31 +764,31 @@
                                         <span class="input-group-addon">
                                             <i class="fa fa-users"></i>
                                         </span>
-                                        <input type="text" name="office_fax_number" id="office_fax_number" class="form-control" placeholder="Office Fax Number" data-error-msg="Office Fax Number is required." required>
+                                        <input type="text" name="office_fax_number" id="office_fax_number" class="form-control" placeholder="Office Fax Number" data-error-msg="Office Fax Number is required." >
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-12 hidden">
                                 <div class="col-md-4" id="label">
                                      <label class="control-label boldlabel" style="text-align:right;">AR Transaction :</label>
                                 </div>
                                 <div class="col-md-8" style="padding: 0px;">
-                                <select name="ar_trans_id" id="cbo_ar_trans" style="width: 100%" data-error-msg="Type of Accounts Receivable Transaction is required." required>
+                                <select name="ar_trans_id" id="cbo_ar_trans" style="width: 100%" data-error-msg="Type of Accounts Receivable Transaction is required." >
                                     <?php foreach($ar_trans as $ar_tran){ ?>
                                         <option value="<?php echo $ar_tran->ar_trans_id; ?>"><?php echo $ar_tran->ar_trans_name?></option>
                                     <?php } ?>
                                 </select>
                                 </div>
                             </div>
-                            <div class="col-md-12"><br>
+                            <div class="col-md-12 hidden"><br>
                                 <div class="col-md-4" id="label">
                                      <label class="control-label boldlabel" style="text-align:right;" >Terms and Conditions :</label>
                                 </div>
                                 <div class="col-md-8" style="padding: 0px;">
-                                <input type="text" name="payment_term_desc" class="form-control" data-error-msg="Payment Terms and Condition is required." required><br>
+                                <input type="text" name="payment_term_desc" class="form-control" data-error-msg="Payment Terms and Condition is required." >
                                 </div>
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-12 hidden"><br>
                                 <div class="col-md-4" id="label">
                                      <label class="control-label boldlabel" style="text-align:right;">Customer Type :</label>
                                 </div>
@@ -915,7 +929,7 @@
 <script>
 $(document).ready(function(){
     var _txnMode; var _cboCustomers; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode;
-    var dtReview; var _cboDepartments;
+    var dtReview; var _cboDepartments; var _selectedDepartment = 0; 
     var _cboCustomerType;
     var _cboArTrans;
 
@@ -1092,7 +1106,10 @@ $(document).ready(function(){
 
         //_cboMethods.select2('val',null);
 
-
+        _cboLinkDepartment=$("#cbo_link_department_id").select2({ 
+            placeholder: "Please Select Default Department.", 
+            allowClear: false 
+        }); 
 
 
 
@@ -1273,14 +1290,14 @@ $(document).ready(function(){
 
 
         //loads modal to create new department
-        _cboDepartments.on("select2:select", function (e) {
+        // _cboDepartments.on("select2:select", function (e) {
 
-            var i=$(this).select2('val');
-            if(i==0){ //new department
-                _cboDepartments.select2('val',null);
-                $('#modal_new_department').modal('show');
-            }
-        });
+        //     var i=$(this).select2('val');
+        //     if(i==0){ //new department
+        //         _cboDepartments.select2('val',null);
+        //         $('#modal_new_department').modal('show');
+        //     }
+        // });
 
 
 
@@ -1330,6 +1347,7 @@ $(document).ready(function(){
 
             reInitializeNumeric();
             reInitializeDropDownAccounts($('#tbl_entries'),false);
+            $('#tbl_entries > tbody > tr:last select.dept').each(function(){ $(this).select2('val',_selectedDepartment)});
 
         });
 
@@ -1432,7 +1450,11 @@ $(document).ready(function(){
                 //clearFields($('#modal_new_department'));
                 _cboDepartments.select2('val',null);
                 $('#modal_new_department').modal('show');
+            }else{
+                _selectedDepartment = $(this).select2('val'); 
+                $('#tbl_entries select.dept').each(function(){ $(this).select2('val',_selectedDepartment)}); 
             }
+            
         });
 
         _cboCustomers.on("select2:select", function (e) {
@@ -1444,6 +1466,15 @@ $(document).ready(function(){
 
                 $('#cbo_ar_trans').select2('val',null);
 
+            }else{
+                var obj_customers=$('#cbo_customers').find('option[value="' + i + '"]'); 
+                _selectedDepartment = obj_customers.data('link_department'); 
+                $('#tbl_entries select.dept').each(function(){ $(this).select2('val',_selectedDepartment)}); 
+                if(_selectedDepartment == '0'){ 
+                    _cboDepartments.select2('val',null); 
+                }else{ 
+                    _cboDepartments.select2('val',_selectedDepartment); 
+                } 
             }
 
         });
@@ -1518,10 +1549,13 @@ $(document).ready(function(){
                     if(response.stat=="success"){
                         $('#modal_new_customer').modal('hide');
                         var _customers=response.row_added[0];
-                        $('#cbo_customers').append('<option value="'+_customers.customer_id+'" selected>'+_customers.customer_name+'</option>');
+                        $('#cbo_customers').append('<option value="'+_customers.customer_id+'"  data-link_department = "'+_customers.link_department_id+'" selected>'+_customers.customer_name+'</option>');
 
                         _cboCustomers.select2('val',_customers.customer_id);
                         clearFields($('#modal_new_customer'));
+                        _selectedDepartment = _customers.link_department_id; 
+                        $('#tbl_entries select.dept').each(function(){ $(this).select2('val',_selectedDepartment)}); 
+                        _cboDepartments.select2('val',_selectedDepartment); 
                         //showList(true);
                         //$('#btn_create_customer').attr('disabled',false);
                     }
