@@ -353,7 +353,7 @@ class Journal_account_model extends CORE_Model{
     }
 
 
-    function get_t_account($book,$start,$end){
+    function get_t_account($book,$start,$end,$dep_id){
         $sql="SELECT 
             DATE_FORMAT(ji.date_txn,'%m/%d/%Y')as date_txn,
             ji.txn_no,
@@ -375,12 +375,13 @@ class Journal_account_model extends CORE_Model{
             INNER JOIN (`journal_accounts` as ja
             INNER JOIN account_titles as at ON at.account_id=ja.account_id)
             ON ja.journal_id=ji.journal_id WHERE ji.book_type='$book' AND ji.date_txn BETWEEN '$start' AND '$end' AND ji.is_active = TRUE AND ji.is_deleted = FALSE
+            ".($dep_id==0?"":" AND ji.department_id=$dep_id")."
             ORDER BY ji.journal_id ASC";
 
         return $this->db->query($sql)->result();
     }
 
-        function get_t_account_summary_cdj($book,$start,$end){
+        function get_t_account_summary_cdj($book,$start,$end,$dep_id){
         $sql="SELECT 
         journal_data.account_id,
         SUM(journal_data.dr_amount) as dr_amount,
@@ -410,6 +411,7 @@ class Journal_account_model extends CORE_Model{
             ON ja.journal_id=ji.journal_id WHERE ji.book_type='$book'
             AND ji.is_active = TRUE AND ji.is_deleted = FALSE
             AND ji.date_txn BETWEEN '$start' AND '$end'
+            ".($dep_id==0?"":" AND ji.department_id=$dep_id")."
             ORDER BY ja.account_id ASC) as journal_data
         GROUP BY journal_data.account_id";
         return $this->db->query($sql)->result();

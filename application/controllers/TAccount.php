@@ -47,8 +47,9 @@ class TAccount extends CORE_Controller
                 $start =date('Y-m-d', strtotime($this->input->post('start',TRUE)));
                 $end = date('Y-m-d', strtotime($this->input->post('end',TRUE)));
                 $book = $this->input->post('book',TRUE);
+                $dep_id = $this->input->post('dep_id',TRUE);
 
-                $response['data'] = $m_journal->get_t_account($book,$start,$end);
+                $response['data'] = $m_journal->get_t_account($book,$start,$end,$dep_id);
                 echo json_encode($response);
                 break;
 
@@ -59,6 +60,7 @@ class TAccount extends CORE_Controller
                 $start=date('Y-m-d', strtotime($this->input->get('s',TRUE)));
                 $end=date('Y-m-d', strtotime($this->input->get('e',TRUE)));
                 $book=$this->input->get('b',TRUE);
+                $dep_id=$this->input->get('d',TRUE);
                 $company_info=$m_company->get_list();
                 $data['company_info']=$company_info[0];
 
@@ -92,7 +94,8 @@ class TAccount extends CORE_Controller
                         break;
                 }
 
-                $data['journal_list'] = $m_journal->get_t_account($book,$start,$end);
+                $data['journal_list'] = $m_journal->get_t_account($book,$start,$end,$dep_id);
+                $data['department'] = $this->Departments_model->get_list($dep_id);
                 $this->load->view('template/book_of_accounts_report',$data);
                 break;
 
@@ -107,6 +110,9 @@ class TAccount extends CORE_Controller
 
 
                 $book=$this->input->get('b',TRUE);
+
+                $dep_id=$this->input->get('d',TRUE);
+                $data['department'] = $this->Departments_model->get_list($dep_id);
 
                 switch ($book) {
                     case 'GJE':
@@ -138,7 +144,7 @@ class TAccount extends CORE_Controller
                         break;
                 }
 
-                $data['journal_list'] = $m_journal->get_t_account_summary_cdj($book,$start,$end);
+                $data['journal_list'] = $m_journal->get_t_account_summary_cdj($book,$start,$end,$dep_id);
                 $this->load->view('template/book_of_accounts_report_summary',$data);
 
                 break;
@@ -151,6 +157,8 @@ class TAccount extends CORE_Controller
                 $start=date('Y-m-d', strtotime($this->input->get('s',TRUE)));
                 $end=date('Y-m-d', strtotime($this->input->get('e',TRUE)));
                 $book=$this->input->get('b',TRUE);
+                $dep_id=$this->input->get('d',TRUE);
+                $department= $this->Departments_model->get_list($dep_id);
                 $company_info=$m_company->get_list();
                 $data['company_info']=$company_info[0];
 
@@ -184,7 +192,7 @@ class TAccount extends CORE_Controller
                         break;
                 }
 
-                $journal_list = $m_journal->get_t_account($book,$start,$end);
+                $journal_list = $m_journal->get_t_account($book,$start,$end,$dep_id);
 
                 $excel->setActiveSheetIndex(0);
                 $excel->getActiveSheet()->getColumnDimensionByColumn('A1')->setWidth('50');
@@ -204,6 +212,11 @@ class TAccount extends CORE_Controller
                 $excel->getActiveSheet()->setCellValue('A6','T-ACCOUNT'.' '.'('.$title.')')
                                         ->setCellValue('A7','Date: '.$_GET['s'].' to '.$_GET['e']);
 
+                if($dep_id == 0){
+                    $excel->getActiveSheet()->setCellValue('A8','All Departments');
+                }else {
+                     $excel->getActiveSheet()->setCellValue('A8','Departments: '.$department[0]->department_name);
+                }
 
                 $excel->getActiveSheet()->getColumnDimension('A')->setWidth('35');
                 $excel->getActiveSheet()->getColumnDimension('B')->setWidth('20');
@@ -319,6 +332,10 @@ class TAccount extends CORE_Controller
                 $start=date('Y-m-d', strtotime($this->input->get('s',TRUE)));
                 $end=date('Y-m-d', strtotime($this->input->get('e',TRUE)));
                 $book=$this->input->get('b',TRUE);
+                $dep_id=$this->input->get('d',TRUE);
+                $department= $this->Departments_model->get_list($dep_id);
+
+
                 $company_info=$m_company->get_list();
                 $data['company_info']=$company_info[0];
 
@@ -352,7 +369,7 @@ class TAccount extends CORE_Controller
                         break;
                 }
 
-                $journal_list = $m_journal->get_t_account($book,$start,$end);
+                $journal_list = $m_journal->get_t_account($book,$start,$end,$dep_id);
 
                 ob_start();
 
@@ -373,7 +390,11 @@ class TAccount extends CORE_Controller
                 $excel->getActiveSheet()->getStyle('A')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('A6','T-ACCOUNT'.' '.'('.$title.')')
                                         ->setCellValue('A7','Date: '.$_GET['s'].' to '.$_GET['e']);
-
+                if($dep_id == 0){
+                    $excel->getActiveSheet()->setCellValue('A8','All Departments');
+                }else {
+                     $excel->getActiveSheet()->setCellValue('A8','Departments: '.$department[0]->department_name);
+                }
 
                 $excel->getActiveSheet()->getColumnDimension('A')->setWidth('35');
                 $excel->getActiveSheet()->getColumnDimension('B')->setWidth('20');
@@ -542,6 +563,8 @@ class TAccount extends CORE_Controller
                 $end=date('Y-m-d', strtotime($this->input->get('e',TRUE)));
                 $company_info=$m_company->get_list();
                 $data['company_info']=$company_info[0];
+                $dep_id=$this->input->get('d',TRUE);
+                $department= $this->Departments_model->get_list($dep_id);
 
 
                 $book=$this->input->get('b',TRUE);
@@ -576,7 +599,7 @@ class TAccount extends CORE_Controller
                         break;
                 }
 
-                $journal_list = $m_journal->get_t_account_summary_cdj($book,$start,$end);
+                $journal_list = $m_journal->get_t_account_summary_cdj($book,$start,$end,$dep_id);
 
                 $excel->setActiveSheetIndex(0);
                 $excel->getActiveSheet()->getColumnDimensionByColumn('A1')->setWidth('50');
@@ -595,7 +618,11 @@ class TAccount extends CORE_Controller
                 $excel->getActiveSheet()->getStyle('A')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('A6','T-ACCOUNT'.' '.'('.$title.')')
                                         ->setCellValue('A7','Date: '.$_GET['s'].' to '.$_GET['e']);
-
+                if($dep_id == 0){
+                    $excel->getActiveSheet()->setCellValue('A8','All Departments');
+                }else {
+                     $excel->getActiveSheet()->setCellValue('A8','Departments: '.$department[0]->department_name);
+                }
                 $excel->getActiveSheet()->getColumnDimension('A')->setWidth('35');
                 $excel->getActiveSheet()->getColumnDimension('B')->setWidth('50');
                 $excel->getActiveSheet()->getColumnDimension('C')->setWidth('35');
@@ -698,7 +725,8 @@ class TAccount extends CORE_Controller
                 $end=date('Y-m-d', strtotime($this->input->get('e',TRUE)));
                 $company_info=$m_company->get_list();
                 $data['company_info']=$company_info[0];
-
+                $dep_id=$this->input->get('d',TRUE);
+                $department= $this->Departments_model->get_list($dep_id);
 
                 $book=$this->input->get('b',TRUE);
 
@@ -732,7 +760,7 @@ class TAccount extends CORE_Controller
                         break;
                 }
 
-                $journal_list = $m_journal->get_t_account_summary_cdj($book,$start,$end);
+                $journal_list = $m_journal->get_t_account_summary_cdj($book,$start,$end,$dep_id);
 
                 ob_start();
                 $excel->setActiveSheetIndex(0);
@@ -752,7 +780,11 @@ class TAccount extends CORE_Controller
                 $excel->getActiveSheet()->getStyle('A')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('A6','T-ACCOUNT'.' '.'('.$title.')')
                                         ->setCellValue('A7','Date: '.$_GET['s'].' to '.$_GET['e']);
-
+                if($dep_id == 0){
+                    $excel->getActiveSheet()->setCellValue('A8','All Departments');
+                }else {
+                     $excel->getActiveSheet()->setCellValue('A8','Departments: '.$department[0]->department_name);
+                }
                 $excel->getActiveSheet()->getColumnDimension('A')->setWidth('35');
                 $excel->getActiveSheet()->getColumnDimension('B')->setWidth('50');
                 $excel->getActiveSheet()->getColumnDimension('C')->setWidth('35');

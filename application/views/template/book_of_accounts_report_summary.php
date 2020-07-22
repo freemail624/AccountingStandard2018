@@ -39,7 +39,14 @@
         </tr>
     </table><hr>
     <div>
-        <h3><strong>T-ACCOUNT (<?php echo $title; ?>)<br> Date: <u><?php echo $_GET['s']; ?></u> to <u><?php echo $_GET['e']; ?></u></strong></h3>
+        <h3><strong>T-ACCOUNT (<?php echo $title; ?>)<br> Date: <u><?php echo $_GET['s']; ?></u> to <u><?php echo $_GET['e']; ?></u><br>
+        <?php if($_GET['d'] == 0){?> 
+        All Departments
+        <?php } else {?>
+        Department: <?php echo $department[0]->department_name; ?>
+        <?php } ?>
+
+        </strong></h3>
     </div>
     <table width="100%" border="1" cellspacing="0">
 	    <thead>

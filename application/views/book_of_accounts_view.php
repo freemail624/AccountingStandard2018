@@ -42,7 +42,10 @@
             text-align: left!important;
         }
 
-        td:nth-child(7),td:nth-child(8){
+        td:nth-child(6),td:nth-child(7){
+            text-align: right;
+        }
+        th:nth-child(6),th:nth-child(7){
             text-align: right;
         }
 
@@ -97,7 +100,7 @@
         <div class="col-xs-12 col-lg-3">
             Period Start * :<br />
             <div class="input-group">
-                <input type="text" id="txt_start" name="date_from" class="date-picker form-control" value="01/01/<?php echo date("Y"); ?>">
+                <input type="text" id="txt_start" name="date_from" class="date-picker form-control" value="<?php echo date("m"); ?>/01/<?php echo date("Y"); ?>">
                 <span class="input-group-addon">
                     <i class="fa fa-calendar"></i>
                 </span>
@@ -112,6 +115,15 @@
                     <i class="fa fa-calendar"></i>
                 </span>
             </div>
+        </div>
+        <div class="col-xs-12 col-lg-3">
+            Department * :<br />
+            <select id="dep_id" style="width: 100%">
+                <option value="0">ALL</option>
+                <?php foreach($departments as $department){ ?>
+                    <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name?></option>
+                <?php } ?>
+            </select>
         </div>
 
     </div>
@@ -138,13 +150,13 @@
                         <thead class="">
                         <tr>
                             <th></th>
-                            <th>Date</th>
-                            <th>Txn #</th>
-                            <th>Description</th>
-                            <th>Remarks</th>
-                            <th>Account</th>
-                            <th>Dr</th>
-                            <th>Cr</th>
+                            <th width="10%">Date</th>
+                            <th width="15%">Txn #</th>
+                            <th width="15%">Description</th>
+                            <th width="25%">Remarks</th>
+                            <th width="15%">Account</th>
+                            <th width="10%">Dr</th>
+                            <th width="10%">Cr</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -166,17 +178,17 @@
                 <button class="btn btn-success pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_email_cdj" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#" data-placement="left" title="Email" ><i class="fa fa-share"></i> Email (DETAILED)</button>                                                        
                 <button class="btn btn-success pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_excel_cdj_summary" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#" data-placement="left" title="Excel" ><i class="fa fa-file-excel-o"></i> Export (SUMMARY)</button>                    
                 <button class="btn btn-success pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_email_cdj_summary" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#" data-placement="left" title="Email" ><i class="fa fa-share"></i> Email (SUMMARY)</button>                    
-                <table id="tbl_cdj" style="margin-top: 10px;" class="table table-striped" cellspacing="0" width="100%">
+                <table id="tbl_cdj" style="width:100%;table-layout:fixed;margin-top: 10px; " class="table table-striped" cellspacing="0" width="100%">
                     <thead class="">
                     <tr>
                         <th></th>
-                        <th>Date</th>
-                        <th>Txn #</th>
-                        <th>Description</th>
-                        <th>Remarks</th>
-                        <th>Account</th>
-                        <th>Dr</th>
-                        <th>Cr</th>
+                        <th width="10%">Date</th>
+                        <th width="15%">Txn #</th>
+                        <th width="15%">Description</th>
+                        <th width="25%">Remarks</th>
+                        <th width="15%">Account</th>
+                        <th width="10%">Dr</th>
+                        <th width="10%">Cr</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -205,13 +217,13 @@
                     <thead class="">
                     <tr>
                         <th></th>
-                        <th>Date</th>
-                        <th>Txn #</th>
-                        <th>Description</th>
-                        <th>Remarks</th>
-                        <th>Account</th>
-                        <th>Dr</th>
-                        <th>Cr</th>
+                        <th width="10%">Date</th>
+                        <th width="15%">Txn #</th>
+                        <th width="15%">Description</th>
+                        <th width="25%">Remarks</th>
+                        <th width="15%">Account</th>
+                        <th width="10%">Dr</th>
+                        <th width="10%">Cr</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -240,13 +252,13 @@
                     <thead class="">
                     <tr>
                         <th></th>
-                        <th>Date</th>
-                        <th>Txn #</th>
-                        <th>Description</th>
-                        <th>Remarks</th>
-                        <th>Account</th>
-                        <th>Dr</th>
-                        <th>Cr</th>
+                        <th width="10%">Date</th>
+                        <th width="15%">Txn #</th>
+                        <th width="15%">Description</th>
+                        <th width="25%">Remarks</th>
+                        <th width="15%">Account</th>
+                        <th width="10%">Dr</th>
+                        <th width="10%">Cr</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -275,13 +287,13 @@
                     <thead class="">
                     <tr>
                         <th></th>
-                        <th>Date</th>
-                        <th>Txn #</th>
-                        <th>Description</th>
-                        <th>Remarks</th>
-                        <th>Account</th>
-                        <th>Dr</th>
-                        <th>Cr</th>
+                        <th width="10%">Date</th>
+                        <th width="15%">Txn #</th>
+                        <th width="15%">Description</th>
+                        <th width="25%">Remarks</th>
+                        <th width="15%">Account</th>
+                        <th width="10%">Dr</th>
+                        <th width="10%">Cr</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -310,13 +322,13 @@
                     <thead class="">
                     <tr>
                         <th></th>
-                        <th>Date</th>
-                        <th>Txn #</th>
-                        <th>Description</th>
-                        <th>Remarks</th>
-                        <th>Account</th>
-                        <th>Dr</th>
-                        <th>Cr</th>
+                        <th width="10%">Date</th>
+                        <th width="15%">Txn #</th>
+                        <th width="15%">Description</th>
+                        <th width="25%">Remarks</th>
+                        <th width="15%">Account</th>
+                        <th width="10%">Dr</th>
+                        <th width="10%">Cr</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -376,6 +388,8 @@
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
 
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
+
 <!-- Select2-->
 <script src="assets/plugins/select2/select2.full.min.js"></script>
 <!---<script src="assets/plugins/dropdown-enhance/dist/js/bootstrap-select.min.js"></script>-->
@@ -394,7 +408,7 @@ $(document).ready(function(){
    var dtGJE; var dtCDJ;
     var _date_from = $('input[name="date_from"]');
     var _date_to = $('input[name="date_to"]');
-
+    var _cboDepartmentID;
 
     var initializeControls=function(){
         $('.date-picker').datepicker({
@@ -404,6 +418,11 @@ $(document).ready(function(){
             calendarWeeks: true,
             autoclose: true
         });
+
+        _cboDepartmentID=$("#dep_id").select2({ 
+            placeholder: "Please Select Department.", 
+            allowClear: false 
+        }); 
 
         reloadGJE();
     }();
@@ -420,71 +439,82 @@ $(document).ready(function(){
             reloadGJE();
         });
 
+        _cboDepartmentID.on("select2:select", function (e) {
+            dtGJE.destroy();
+            dtCDJ.destroy();
+            dtPJE.destroy();
+            dtSJE.destroy();
+            dtPCF.destroy();
+            dtCRJ.destroy();
+
+            reloadGJE();
+       });
+
         $('#btn_print_crj').click(function(){
-            window.open('TAccount/transaction/journal-report?b=CRJ&s='+$('#txt_start').val()+'&e='+$('#txt_end').val());
+            window.open('TAccount/transaction/journal-report?b=CRJ&s='+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val());
         });
 
         $('#btn_print_pcf').click(function(){
-            window.open('TAccount/transaction/journal-report?b=PCF&s='+$('#txt_start').val()+'&e='+$('#txt_end').val());
+            window.open('TAccount/transaction/journal-report?b=PCF&s='+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val());
         });
 
         $('#btn_print_sje').click(function(){
-            window.open('TAccount/transaction/journal-report?b=SJE&s='+$('#txt_start').val()+'&e='+$('#txt_end').val());
+            window.open('TAccount/transaction/journal-report?b=SJE&s='+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val());
         });
 
         $('#btn_print_pje').click(function(){
-            window.open('TAccount/transaction/journal-report?b=PJE&s='+$('#txt_start').val()+'&e='+$('#txt_end').val());
+            window.open('TAccount/transaction/journal-report?b=PJE&s='+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val());
         });
 
         $('#btn_print_cdj').click(function(){
-            window.open('TAccount/transaction/journal-report?b=CDJ&s='+$('#txt_start').val()+'&e='+$('#txt_end').val());
+            window.open('TAccount/transaction/journal-report?b=CDJ&s='+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val());
         });
 
         $('#btn_print_gje').click(function(){
-            window.open('TAccount/transaction/journal-report?b=GJE&s='+$('#txt_start').val()+'&e='+$('#txt_end').val());
+            window.open('TAccount/transaction/journal-report?b=GJE&s='+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val());
         });
 
 // SUMMARY PRINT
         $('#btn_print_cdj_summary').click(function(){
-            window.open('TAccount/transaction/journal_report_summary?b=CDJ&s='+$('#txt_start').val()+'&e='+$('#txt_end').val());
+            window.open('TAccount/transaction/journal_report_summary?b=CDJ&s='+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val());
         });
 
         $('#btn_print_gje_summary').click(function(){
-            window.open('TAccount/transaction/journal_report_summary?b=GJE&s='+$('#txt_start').val()+'&e='+$('#txt_end').val());
+            window.open('TAccount/transaction/journal_report_summary?b=GJE&s='+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val());
         });
 
         $('#btn_print_pje_summary').click(function(){
-            window.open('TAccount/transaction/journal_report_summary?b=PJE&s='+$('#txt_start').val()+'&e='+$('#txt_end').val());
+            window.open('TAccount/transaction/journal_report_summary?b=PJE&s='+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val());
         });
         $('#btn_print_sje_summary').click(function(){
-            window.open('TAccount/transaction/journal_report_summary?b=SJE&s='+$('#txt_start').val()+'&e='+$('#txt_end').val());
+            window.open('TAccount/transaction/journal_report_summary?b=SJE&s='+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val());
         });
 
         $('#btn_print_pcf_summary').click(function(){
-            window.open('TAccount/transaction/journal_report_summary?b=PCF&s='+$('#txt_start').val()+'&e='+$('#txt_end').val());
+            window.open('TAccount/transaction/journal_report_summary?b=PCF&s='+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val());
         });
         $('#btn_print_crj_summary').click(function(){
-            window.open('TAccount/transaction/journal_report_summary?b=CRJ&s='+$('#txt_start').val()+'&e='+$('#txt_end').val());
+            window.open('TAccount/transaction/journal_report_summary?b=CRJ&s='+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val());
         });
 
 // EXPORT TO EXCEL
         $('#btn_excel_gje').click(function(){
-                window.open('TAccount/transaction/journal-report-export?b=GJE&s='+$('#txt_start').val()+'&e='+$('#txt_end').val());
+                window.open('TAccount/transaction/journal-report-export?b=GJE&s='+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val());
         });
         $('#btn_excel_cdj').click(function(){
-                window.open('TAccount/transaction/journal-report-export?b=CDJ&s='+$('#txt_start').val()+'&e='+$('#txt_end').val());
+                window.open('TAccount/transaction/journal-report-export?b=CDJ&s='+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val());
         });
         $('#btn_excel_pje').click(function(){
-                window.open('TAccount/transaction/journal-report-export?b=PJE&s='+$('#txt_start').val()+'&e='+$('#txt_end').val());
+                window.open('TAccount/transaction/journal-report-export?b=PJE&s='+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val());
         });
         $('#btn_excel_sje').click(function(){
-                window.open('TAccount/transaction/journal-report-export?b=SJE&s='+$('#txt_start').val()+'&e='+$('#txt_end').val());
+                window.open('TAccount/transaction/journal-report-export?b=SJE&s='+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val());
         });
         $('#btn_excel_pcf').click(function(){
-                window.open('TAccount/transaction/journal-report-export?b=PCF&s='+$('#txt_start').val()+'&e='+$('#txt_end').val());
+                window.open('TAccount/transaction/journal-report-export?b=PCF&s='+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val());
         });
         $('#btn_excel_crj').click(function(){
-                window.open('TAccount/transaction/journal-report-export?b=CRJ&s='+$('#txt_start').val()+'&e='+$('#txt_end').val());
+                window.open('TAccount/transaction/journal-report-export?b=CRJ&s='+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val());
         });
 
 //EMAIL ATTACHMENT
@@ -593,25 +623,25 @@ $(document).ready(function(){
 //SUMMARY EXCEL
 
         $('#btn_excel_cdj_summary').click(function(){
-            window.open('TAccount/transaction/journal_report_export_summary?b=CDJ&s='+$('#txt_start').val()+'&e='+$('#txt_end').val());
+            window.open('TAccount/transaction/journal_report_export_summary?b=CDJ&s='+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val());
         });
 
         $('#btn_excel_gje_summary').click(function(){
-            window.open('TAccount/transaction/journal_report_export_summary?b=GJE&s='+$('#txt_start').val()+'&e='+$('#txt_end').val());
+            window.open('TAccount/transaction/journal_report_export_summary?b=GJE&s='+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val());
         });
 
         $('#btn_excel_pje_summary').click(function(){
-            window.open('TAccount/transaction/journal_report_export_summary?b=PJE&s='+$('#txt_start').val()+'&e='+$('#txt_end').val());
+            window.open('TAccount/transaction/journal_report_export_summary?b=PJE&s='+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val());
         });
         $('#btn_excel_sje_summary').click(function(){
-            window.open('TAccount/transaction/journal_report_export_summary?b=SJE&s='+$('#txt_start').val()+'&e='+$('#txt_end').val());
+            window.open('TAccount/transaction/journal_report_export_summary?b=SJE&s='+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val());
         });
 
         $('#btn_excel_pcf_summary').click(function(){
-            window.open('TAccount/transaction/journal_report_export_summary?b=PCF&s='+$('#txt_start').val()+'&e='+$('#txt_end').val());
+            window.open('TAccount/transaction/journal_report_export_summary?b=PCF&s='+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val());
         });
         $('#btn_excel_crj_summary').click(function(){
-            window.open('TAccount/transaction/journal_report_export_summary?b=CRJ&s='+$('#txt_start').val()+'&e='+$('#txt_end').val());
+            window.open('TAccount/transaction/journal_report_export_summary?b=CRJ&s='+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val());
         });
 
 //EMAIL SUMMARY
@@ -624,7 +654,7 @@ $(document).ready(function(){
         $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"TAccount/transaction/journal-report-email-summary?b=GJE&s="+$('#txt_start').val()+'&e='+$('#txt_end').val(),
+            "url":"TAccount/transaction/journal-report-email-summary?b=GJE&s="+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val(),
             "beforeSend": showSpinningProgress(btn)
         }).done(function(response){
             showNotification(response);
@@ -641,7 +671,7 @@ $(document).ready(function(){
         $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"TAccount/transaction/journal-report-email-summary?b=CDJ&s="+$('#txt_start').val()+'&e='+$('#txt_end').val(),
+            "url":"TAccount/transaction/journal-report-email-summary?b=CDJ&s="+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val(),
             "beforeSend": showSpinningProgress(btn)
         }).done(function(response){
             showNotification(response);
@@ -658,7 +688,7 @@ $(document).ready(function(){
         $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"TAccount/transaction/journal-report-email-summary?b=PJE&s="+$('#txt_start').val()+'&e='+$('#txt_end').val(),
+            "url":"TAccount/transaction/journal-report-email-summary?b=PJE&s="+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val(),
             "beforeSend": showSpinningProgress(btn)
         }).done(function(response){
             showNotification(response);
@@ -675,7 +705,7 @@ $(document).ready(function(){
         $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"TAccount/transaction/journal-report-email-summary?b=SJE&s="+$('#txt_start').val()+'&e='+$('#txt_end').val(),
+            "url":"TAccount/transaction/journal-report-email-summary?b=SJE&s="+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val(),
             "beforeSend": showSpinningProgress(btn)
         }).done(function(response){
             showNotification(response);
@@ -692,7 +722,7 @@ $(document).ready(function(){
         $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"TAccount/transaction/journal-report-email-summary?b=PCF&s="+$('#txt_start').val()+'&e='+$('#txt_end').val(),
+            "url":"TAccount/transaction/journal-report-email-summary?b=PCF&s="+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val(),
             "beforeSend": showSpinningProgress(btn)
         }).done(function(response){
             showNotification(response);
@@ -709,7 +739,7 @@ $(document).ready(function(){
         $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"TAccount/transaction/journal-report-email-summary?b=CRJ&s="+$('#txt_start').val()+'&e='+$('#txt_end').val(),
+            "url":"TAccount/transaction/journal-report-email-summary?b=CRJ&s="+$('#txt_start').val()+'&e='+$('#txt_end').val()+'&d='+_cboDepartmentID.val(),
             "beforeSend": showSpinningProgress(btn)
         }).done(function(response){
             showNotification(response);
@@ -759,6 +789,7 @@ $(document).ready(function(){
                     return $.extend( {}, d, {
                         "start": $('#txt_start').val(),
                         "end" : $('#txt_end').val(),
+                        "dep_id" : _cboDepartmentID.val(),
                         "book" : "GJE"
                     });
                 }
@@ -769,12 +800,13 @@ $(document).ready(function(){
                     "class":          "details-control",
                     "orderable":      false,
                     "data":           null,
-                    "defaultContent": ""
+                    "defaultContent": "",
+                    visible:false,
                 },
                 { targets:[1],data: "date_txn" },
                 { targets:[2],data: "txn_no" },
                 { targets:[3],data: "description" },
-                { targets:[4],data: "remarks" },
+                { targets:[4],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(30)},
                 { targets:[5],data: "account_title" },
                 {
                     targets:[6],
@@ -836,6 +868,7 @@ $(document).ready(function(){
                     return $.extend( {}, d, {
                         "start": $('#txt_start').val(),
                         "end" : $('#txt_end').val(),
+                        "dep_id" : _cboDepartmentID.val(),
                         "book" : "CDJ"
                     });
                 }
@@ -846,12 +879,13 @@ $(document).ready(function(){
                     "class":          "details-control",
                     "orderable":      false,
                     "data":           null,
-                    "defaultContent": ""
+                    "defaultContent": "",
+                    visible:false,
                 },
                 { targets:[1],data: "date_txn" },
                 { targets:[2],data: "txn_no" },
                 { targets:[3],data: "description" },
-                { targets:[4],data: "remarks" },
+                { targets:[4],data: "remarks",render: $.fn.dataTable.render.ellipsis(30) },
                 { targets:[5],data: "account_title" },
                 {
                     targets:[6],
@@ -914,6 +948,7 @@ $(document).ready(function(){
                     return $.extend( {}, d, {
                         "start": $('#txt_start').val(),
                         "end" : $('#txt_end').val(),
+                        "dep_id" : _cboDepartmentID.val(),
                         "book" : "PJE"
                     });
                 }
@@ -924,12 +959,13 @@ $(document).ready(function(){
                     "class":          "details-control",
                     "orderable":      false,
                     "data":           null,
-                    "defaultContent": ""
+                    "defaultContent": "",
+                    visible:false,
                 },
                 { targets:[1],data: "date_txn" },
                 { targets:[2],data: "txn_no" },
                 { targets:[3],data: "description" },
-                { targets:[4],data: "remarks" },
+                { targets:[4],data: "remarks",render: $.fn.dataTable.render.ellipsis(30) },
                 { targets:[5],data: "account_title" },
                 {
                     targets:[6],
@@ -992,6 +1028,7 @@ $(document).ready(function(){
                     return $.extend( {}, d, {
                         "start": $('#txt_start').val(),
                         "end" : $('#txt_end').val(),
+                        "dep_id" : _cboDepartmentID.val(),
                         "book" : "SJE"
                     });
                 }
@@ -1002,12 +1039,13 @@ $(document).ready(function(){
                     "class":          "details-control",
                     "orderable":      false,
                     "data":           null,
-                    "defaultContent": ""
+                    "defaultContent": "",
+                    visible:false,
                 },
                 { targets:[1],data: "date_txn" },
                 { targets:[2],data: "txn_no" },
                 { targets:[3],data: "description" },
-                { targets:[4],data: "remarks" },
+                { targets:[4],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(30)},
                 { targets:[5],data: "account_title" },
                 {
                     targets:[6],
@@ -1070,6 +1108,7 @@ $(document).ready(function(){
                     return $.extend( {}, d, {
                         "start": $('#txt_start').val(),
                         "end" : $('#txt_end').val(),
+                        "dep_id" : _cboDepartmentID.val(),
                         "book" : "PCF"
                     });
                 }
@@ -1080,12 +1119,13 @@ $(document).ready(function(){
                     "class":          "details-control",
                     "orderable":      false,
                     "data":           null,
-                    "defaultContent": ""
+                    "defaultContent": "",
+                    visible:false,
                 },
                 { targets:[1],data: "date_txn" },
                 { targets:[2],data: "txn_no" },
                 { targets:[3],data: "description" },
-                { targets:[4],data: "remarks" },
+                { targets:[4],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(30)},
                 { targets:[5],data: "account_title" },
                 {
                     targets:[6],
@@ -1148,6 +1188,7 @@ $(document).ready(function(){
                     return $.extend( {}, d, {
                         "start": $('#txt_start').val(),
                         "end" : $('#txt_end').val(),
+                        "dep_id" : _cboDepartmentID.val(),
                         "book" : "CRJ"
                     });
                 }
@@ -1158,12 +1199,13 @@ $(document).ready(function(){
                     "class":          "details-control",
                     "orderable":      false,
                     "data":           null,
-                    "defaultContent": ""
+                    "defaultContent": "",
+                    visible:false,
                 },
                 { targets:[1],data: "date_txn" },
                 { targets:[2],data: "txn_no" },
                 { targets:[3],data: "description" },
-                { targets:[4],data: "remarks" },
+                { targets:[4],data: "remarks",render: $.fn.dataTable.render.ellipsis(30) },
                 { targets:[5],data: "account_title" },
                 {
                     targets:[6],
