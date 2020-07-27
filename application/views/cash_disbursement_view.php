@@ -2297,6 +2297,10 @@ $(document).ready(function(){
 
         });
 
+        if(!isZero()){
+            showNotification({title:"Error!",stat:"error",msg:'Please make sure Debit and Credit does not amount to zero.'});
+            stat=false;
+        }
 
         if(!isBalance()){
             showNotification({title:"Error!",stat:"error",msg:'Please make sure Debit and Credit is balance.'});
@@ -2306,8 +2310,24 @@ $(document).ready(function(){
         return stat;
     };
 
+    var isZero=function(opTable=null){
+        reComputeTotals($('#tbl_entries'));
+        var oRow; var dr; var cr;
 
+        if(opTable==null){
+            oRow=$('#tbl_entries > tfoot tr');
+        }else{
+            oRow=$(opTable+' > tfoot tr');
+        }
+
+        dr=getFloat(oRow.find(oTFSummary.dr).text());
+        cr=getFloat(oRow.find(oTFSummary.cr).text());
+
+        return (dr!=0 || cr!=0);
+    };
+    
     var isBalance=function(opTable=null){
+        reComputeTotals($('#tbl_entries'));
         var oRow; var dr; var cr;
 
         if(opTable==null){

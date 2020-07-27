@@ -593,6 +593,7 @@ $(document).ready(function(){
     }();
 
     var isBalance=function(){
+        reComputeTotals($('#tbl_entries'));
         var oRow=$('#tbl_entries > tfoot tr');
         var dr=getFloat(oRow.find(oTFSummary.dr).text());
         var cr=getFloat(oRow.find(oTFSummary.cr).text());
@@ -673,6 +674,21 @@ $(document).ready(function(){
     var getFloat=function(f){
         return parseFloat(accounting.unformat(f));
     };
+    var isZero=function(opTable=null){
+        reComputeTotals($('#tbl_entries'));
+        var oRow; var dr; var cr;
+
+        if(opTable==null){
+            oRow=$('#tbl_entries > tfoot tr');
+        }else{
+            oRow=$(opTable+' > tfoot tr');
+        }
+
+        dr=getFloat(oRow.find(oTFSummary.dr).text());
+        cr=getFloat(oRow.find(oTFSummary.cr).text());
+
+        return (dr!=0 || cr!=0);
+    };
 
     var reComputeTotals=function(tbl){
         var oRows=tbl.find('tbody tr');
@@ -748,6 +764,10 @@ $(document).ready(function(){
             }
         });
 
+        if(!isZero()){
+            showNotification({title:"Error!",stat:"error",msg:'Please make sure Debit and Credit does not amount to zero.'});
+            stat=false;
+        }
 
         if(!isBalance()){
             showNotification({title:"Error!",stat:"error",msg:'Please make sure Debit and Credit amount are equal.'});

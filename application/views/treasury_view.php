@@ -857,6 +857,7 @@ $(document).ready(function(){
 
 
     var isBalance=function(opTable=null){
+        reComputeTotals($('#tbl_entries'));
         var oRow; var dr; var cr;
 
         if(opTable==null){
