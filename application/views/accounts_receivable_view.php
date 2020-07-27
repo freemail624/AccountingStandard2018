@@ -391,6 +391,29 @@
 
 
                                     <br /><br />
+                                    <label class="col-lg-2"> <b class="required">*</b> Department :</label>
+                                    <div class="col-lg-4">
+                                        <select id="cbo_departments" name="department_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Department is required." required>
+                                            <option value="0">[ Create New Department ]</option>
+                                            <?php foreach($departments as $department){ ?>
+                                                <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>                                    
+
+
+                                    <label class="col-lg-2"> Reference # / Billing # :</label>
+                                    <div class="col-lg-4 ">
+                                        <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-code"></i>
+                                    </span>
+                                            <input type="text" name="ref_no" class="form-control" >
+                                        </div>
+
+                                    </div>
+
+                                    <br /><br />
 
                                     <label class="col-lg-2"> <b class="required">*</b> Customer :</label>
                                     <div class="col-lg-10">
@@ -398,19 +421,6 @@
                                             <option value="0">[ Create New Customer ]</option>
                                             <?php foreach($customers as $customer){ ?>
                                                 <option value='<?php echo $customer->customer_id; ?>' data-link_department='<?php echo $customer->link_department_id; ?>'><?php echo $customer->customer_name; ?></option>
-                                            <?php } ?>
-                                        </select>
-                                    </div>
-
-
-                                    <br /><br />
-
-                                    <label class="col-lg-2"> <b class="required">*</b> Department :</label>
-                                    <div class="col-lg-10">
-                                        <select id="cbo_departments" name="department_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Department is required." required>
-                                            <option value="0">[ Create New Department ]</option>
-                                            <?php foreach($departments as $department){ ?>
-                                                <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
                                             <?php } ?>
                                         </select>
                                     </div>
