@@ -194,7 +194,7 @@
 
     <div class="panel-group panel-default" id="accordionA">
 
-        <div class="panel panel-default" style="border-radius:6px;">
+        <div class="panel panel-default hidden" style="border-radius:6px;margin-top: 10px;" id="panel_tbl_collection_for_review">
 
             <div id="collapseTwo" class="collapse in">
                 <div class="panel-body">    
@@ -222,8 +222,7 @@
                 </div>
             </div>
         </div>
-<br>
-        <div class="panel panel-default" style="border-radius:6px;">
+        <div class="panel panel-default hidden" style="border-radius:6px;margin-top: 10px;" id="panel_tbl_cash_invoice_for_review">
             <div id="collapseOne" class="collapse in">
                 <div class="panel-body" style="">
                 <h2 class="h2-panel-heading">Cash Invoice (Pending)</h2><hr>
@@ -246,8 +245,7 @@
                 </div>
             </div>
         </div>
-        <br>
-        <div class="panel panel-default" style="border-radius:6px;">
+        <div class="panel panel-default hidden" style="border-radius:6px;margin-top: 10px;" id="panel_tbl_billing_payment_for_review">
             <div id="collapseOne" class="collapse in">
                 <div class="panel-body" style="">
                 <h2 class="h2-panel-heading">Billing Payment (Pending)</h2><hr>
@@ -271,14 +269,9 @@
                 </div>
             </div>
         </div>
-
-        <br>
-
-
-        <br>
         <div class="panel panel-default" style="border-radius:6px;">
             <div id="collapseOne" class="collapse in">
-                <div class="panel-body" style="min-height: 400px;">
+                <div class="panel-body" style="">
                 <h2 class="h2-panel-heading">Cash Receipt Journal (History)</h2><hr>
 
                 <div class="row">
@@ -322,14 +315,14 @@
                             <thead class="">
                             <tr>
                                 <th></th>
-                                <th>Transaction #</th>
+                                <th width="15%">Transaction #</th>
                                 <th>Particular</th>
-                                <th width="20%">Remarks</th>
+                                <th width="15%">Remarks</th>
                                 <th>Txn Date</th>
                                 <th>Posted</th>
                                 <th>Department</th>
                                 <th width="5%">Status</th>
-                                <th width="5%"><center>Action</center></th>
+                                <th width="10%"><center>Action</center></th>
                                 <th></th>
 
                             </tr>
@@ -485,7 +478,7 @@
                                         <?php } ?>
                                     </select>
                             </div>
-                            <div class="col-sm-4 col-sm-offset-4">BIR 2307
+                            <div class="col-sm-4 col-sm-offset-4 hidden">BIR 2307
                                 <br>
                                 <span id="file_2307_value">No File.</span><br>
                                  <button type="button" id="btn_browse_bir2307" style="width:150px;" class="btn btn-primary">Browse File</button>
@@ -762,7 +755,7 @@
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-mobile"></i>
                                                     </span>
-                                                    <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Contact No">
+                                                    <input type="text" name="contact_no" class="form-control" placeholder="Contact No">
                                                 </div>
                                             </div>
                                         </div>
@@ -949,7 +942,7 @@
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-phone"></i>
                                                     </span>
-                                                    <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Contact No" data-error-msg="Contact No  is required." required>
+                                                    <input type="text" name="contact_no" class="form-control" placeholder="Contact No" data-error-msg="Contact No  is required." required>
                                                 </div>
                                             </div>
                                         </div>
@@ -1189,8 +1182,8 @@ $(document).ready(function(){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="cancel_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Cancel Journal"><i class="fa fa-times"></i> </button>';
 
-                        /*return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';*/
-                        return '<center>'+btn_trash+'</center>';
+                        return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
+                        // return '<center>'+btn_trash+'</center>';
                     }
                 },
                 { targets:[9],data: "journal_id", visible:false },
@@ -1227,7 +1220,12 @@ $(document).ready(function(){
                     }
                 },
                 { targets:[6],data: "total_paid_amount" }
-            ]
+            ],
+              "initComplete": function(settings, json) {
+                 if(this.api().data().length != 0){
+                    $('#panel_tbl_collection_for_review').removeClass('hidden')
+                 }
+              } 
         });
 
 
@@ -1249,7 +1247,12 @@ $(document).ready(function(){
                 { targets:[2],data: "customer_name" },
                 { targets:[4],data: "date_invoice" },
                 { targets:[3],data: "remarks",render: $.fn.dataTable.render.ellipsis(80) }
-            ]
+            ],
+              "initComplete": function(settings, json) {
+                 if(this.api().data().length != 0){
+                    $('#panel_tbl_cash_invoice_for_review').removeClass('hidden')
+                 }
+              }            
         });
 
         dtReviewBilling=$('#tbl_billing_payment_for_review').DataTable({
@@ -1275,7 +1278,12 @@ $(document).ready(function(){
                         }
                     } },
                 { targets:[5],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(80)}
-            ]
+            ],
+              "initComplete": function(settings, json) {
+                 if(this.api().data().length != 0){
+                    $('#panel_tbl_billing_payment_for_review').removeClass('hidden')
+                 }
+              } 
         });
 
         $('#mobile_no').keypress(validateNumber);
@@ -1589,6 +1597,17 @@ $(document).ready(function(){
             $('input[name="file_2307"]').removeAttr('val');
             $('#file_2307_value').text('No File.');
             clearFields($('#frm_journal'));
+
+            var selectchecktype = $('#cbo_check_types');
+            var checkno = $('#check_no');
+            var checkdate = $('#check_date');
+            selectchecktype.attr('required', false);
+            checkno.attr('required', false);
+            checkdate.attr('required', false);
+            checkno.attr('disabled', true);
+            checkdate.attr('disabled', true);
+            checkdate.val('');
+
             showList(false);
 
         });
@@ -1675,7 +1694,31 @@ $(document).ready(function(){
                     }
                 });
             });
-            $('#cbo_particulars').select2('val',data.customer_id);
+
+            if(data.payment_method_id != 2){
+                $('input[name="check_no"]').val('');
+                $('input[name="check_date"]').val('');
+            }
+
+            var selectchecktype = $('#cbo_check_types');
+            var checkno = $('#check_no');
+            var checkdate = $('#check_date');
+
+            if(data.payment_method_id==2){
+                selectchecktype.attr('required', true);
+                checkno.attr('required', true);
+                checkdate.attr('required', true);
+                checkno.attr('disabled', false);
+                checkdate.attr('disabled', false);
+            }else{
+                selectchecktype.attr('required', false);
+                checkno.attr('required', false);
+                checkdate.attr('required', false);
+                checkno.attr('disabled', true);
+                checkdate.attr('disabled', true);
+            }
+
+            $('#cbo_particulars').select2('val',data.particular_id);
             $('#cbo_departments').select2('val',data.department_id);
             $('#cbo_payment_method').select2('val',data.payment_method_id);
             $('#cbo_check_types').select2('val',data.check_type_id);
@@ -1688,7 +1731,7 @@ $(document).ready(function(){
                 processData: false,
                 contentType: false,
                 beforeSend: function () {
-                    $('#tbl_entries > tbody').html('<tr><td align="center" colspan="4"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                    $('#tbl_entries > tbody').html('<tr><td align="center" colspan="6"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
                 }
             }).done(function(response){
                 $('#tbl_entries > tbody').html(response);
@@ -1731,7 +1774,7 @@ $(document).ready(function(){
 
         _cbo_departments.on("select2:select", function (e) {
             _selectedDepartment = $(this).select2('val');
-            $('#tbl_entries select.dept').each(function(){ $(this).select2('val',_selectedDepartment)});
+            $('#tbl_entries select.dept').each(function(){ $(this).select2('val',_selectedDepartment); });
        });
        
         _cbo_paymentMethod.on("select2:select", function (e) {

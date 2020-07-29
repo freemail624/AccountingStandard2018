@@ -95,31 +95,32 @@ class Cash_receipt extends CORE_Controller
 
                 $data['accounts']=$m_accounts->get_list('is_deleted=0');
                 $data['entries']=$m_journal_accounts->get_list('journal_accounts.journal_id='.$journal_id);
-
+                $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'department_name ASC');
                 $this->load->view('template/journal_entries', $data);
                 break;
             case 'create' :
                 $m_journal=$this->Journal_info_model;
                 $m_journal_accounts=$this->Journal_account_model;
 
-                $account_tax=$this->Account_integration_model->get_list(1);
-                $tax_account = $account_tax[0]->customer_wtax_account_id;
-                $check_account=$this->input->post('accounts',TRUE);
-                $check_dr_amounts=$this->input->post('dr_amount',TRUE);
+                 // REMOVED 2020-07-29 // FOR UPLOADING FOR 2307
+                // $account_tax=$this->Account_integration_model->get_list(1);
+                // $tax_account = $account_tax[0]->customer_wtax_account_id;
+                // $check_account=$this->input->post('accounts',TRUE);
+                // $check_dr_amounts=$this->input->post('dr_amount',TRUE);
 
-                $file_2307=$this->input->post('file_2307',TRUE);
-                $stat = 'false';
-                for($i=0;$i<=count($check_account)-1;$i++){
-                    if($check_account[$i] == $tax_account && $check_dr_amounts[$i] > 0){ // CHECK IF THERE IS A FILE
-                        $stat='true';
-                        if($file_2307==null){
-                            $response['stat']='error';
-                            $response['title']='<b>Error!</b>';
-                            $response['msg']='Please upload a BIR Form 2307 Before Proceeding!!<br />';
-                            die(json_encode($response));
-                        }
-                    }
-                }
+                // $file_2307=$this->input->post('file_2307',TRUE);
+                // $stat = 'false';
+                // for($i=0;$i<=count($check_account)-1;$i++){
+                //     if($check_account[$i] == $tax_account && $check_dr_amounts[$i] > 0){ // CHECK IF THERE IS A FILE
+                //         $stat='true';
+                //         if($file_2307==null){
+                //             $response['stat']='error';
+                //             $response['title']='<b>Error!</b>';
+                //             $response['msg']='Please upload a BIR Form 2307 Before Proceeding!!<br />';
+                //             die(json_encode($response));
+                //         }
+                //     }
+                // }
 
                 //validate if still in valid range
                 $valid_range=$this->Accounting_period_model->get_list("'".date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)))."'<=period_end");
@@ -142,9 +143,9 @@ class Cash_receipt extends CORE_Controller
 
 
                 $m_journal->remarks=$this->input->post('remarks',TRUE);
-                if($stat =='true' ){
-                    $m_journal->path_2307=$this->input->post('file_2307',TRUE);
-                }
+                // if($stat =='true' ){
+                //     $m_journal->path_2307=$this->input->post('file_2307',TRUE);
+                // }
                 $m_journal->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
                 $m_journal->book_type='CRJ';
                 $m_journal->department_id=$this->input->post('department_id');
@@ -464,6 +465,7 @@ class Cash_receipt extends CORE_Controller
                 $memos=$this->input->post('memo',TRUE);
                 $dr_amounts=$this->input->post('dr_amount',TRUE);
                 $cr_amounts=$this->input->post('cr_amount',TRUE);
+                $department_id_line=$this->input->post('department_id_line',TRUE);
 
                 $m_journal_accounts->delete_via_fk($journal_id);
 
@@ -473,6 +475,7 @@ class Cash_receipt extends CORE_Controller
                     $m_journal_accounts->memo=$memos[$i];
                     $m_journal_accounts->dr_amount=$this->get_numeric_value($dr_amounts[$i]);
                     $m_journal_accounts->cr_amount=$this->get_numeric_value($cr_amounts[$i]);
+                    $m_journal_accounts->department_id=$this->get_numeric_value($department_id_line[$i]); 
                     $m_journal_accounts->save();
                 }
 
