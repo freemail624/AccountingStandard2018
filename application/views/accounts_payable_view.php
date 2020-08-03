@@ -230,12 +230,12 @@
                         </div>
                         <div class="panel panel-default" style="border-radius:6px;margin-top: 20px">
                             <div class="panel-body" style="">
-                            <a data-toggle="collapse" data-parent="#accordionA" href="#collapseOne" style="text-decoration: none;">
+                            <!-- <a data-toggle="collapse" data-parent="#accordionA" href="#collapseOne" style="text-decoration: none;"> -->
 <!--                                 <div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;">
                                     <b style="font-size: 12pt;color:white;"><i class="fa fa-bars"></i> Accounts Payable Journal</b>
                                 </div> -->
-                                <h2 class="h2-panel-responsive">Purchase Journal</h2><hr>
-                            </a>   
+                                <h2 class="h2-panel-heading">Purchase Journal</h2><hr>
+                            <!-- </a>    -->
 
                 <div class="row">
                     <div class="col-lg-2">&nbsp;<br>
@@ -286,7 +286,7 @@
                                                 <th>Posted</th>
                                                 <th>Department</th>
                                                 <th width="5%">Status</th>
-                                                <th width="5%"><center>Action</center></th>
+                                                <th width="10%"><center>Action</center></th>
                                                 <th></th>
 
                                             </tr>
@@ -304,58 +304,53 @@
                             <div class="row">
                             <div class="col-lg-12">
 
-                                <div class="panel panel-default">
+                                <div class="panel panel-default" style="margin-top:20px;">
                                 <div class="panel-body panel-responsive">
                                     <h2 class="h2-panel-heading">Purchase Journal</h2><hr />
                                         <form id="frm_journal" role="form" class="form-horizontal">
-                                            <div>
-                                            <span style="color: white;"><strong><i class="fa fa-bars"></i> Info</strong></span>
 
-                                            <label class="col-lg-2"> <b class="required">*</b> Txn # :</label>
-                                            <div class="col-lg-4">
-
-                                                <div class="input-group">
-                                                <span class="input-group-addon">
-                                                    <i class="fa fa-code"></i>
-                                                </span>
-                                                    <input type="text" name="txn_no" class="form-control" placeholder="TXN-YYYYMMDD-XXX" readonly>
-
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <label><b class="required">*</b> Supplier :</label>
+                                                    <select id="cbo_suppliers" name="supplier_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Supplier name is required." required>
+                                                        <option value="0">[ Create New Supplier ]</option>
+                                                        <?php foreach($suppliers as $supplier){ ?>
+                                                            <option value='<?php echo $supplier->supplier_id; ?>'><?php echo $supplier->supplier_name; ?></option>
+                                                        <?php } ?>
+                                                    </select>
                                                 </div>
-
-
-                                            </div>
-
-                                            <label class="col-lg-2"><b class="required">*</b> Date :</label>
-                                            <div class="col-lg-4">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-calendar"></i>
-                                                    </span>
-                                                    <input type="text" name="date_txn" id="date_txn" class="date-picker form-control" data-error-msg="Date is required." required>
+                                                <div class="col-sm-offset-2 col-sm-4">
+                                                    <label> Txn # :</label><br>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon">
+                                                            <i class="fa fa-code"></i>
+                                                        </span>
+                                                        <input type="text" name="txn_no" class="form-control" placeholder="TXN-YYYYMMDD-XXX" readonly>
+                                                    </div>
                                                 </div>
-                                            </div>                                                    <label class="col-lg-2"><b class="required">*</b> Supplier :</label>
-                                            <div class="col-lg-10">
-                                                <select id="cbo_suppliers" name="supplier_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Supplier name is required." required>
-                                                    <option value="0">[ Create New Supplier ]</option>
-                                                    <?php foreach($suppliers as $supplier){ ?>
-                                                        <option value='<?php echo $supplier->supplier_id; ?>'><?php echo $supplier->supplier_name; ?></option>
-                                                    <?php } ?>
-                                                </select>
                                             </div>
 
-                                            <br /><br />
-                                            <label class="col-lg-2"><b class="required">*</b> Department :</label>
-                                            <div class="col-lg-10">
-                                                <select id="cbo_departments" name="department_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Department is required." required>
-                                                    <!-- <option value="0">[ Create New Department ]</option> -->
-                                                    <?php foreach($departments as $department){ ?>
-                                                        <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
-                                                    <?php } ?>
-                                                </select>
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                <label><b class="required">*</b> Department :</label>
+                                                    <select id="cbo_departments" name="department_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Department is required." required>
+                                                        <!-- <option value="0">[ Create New Department ]</option> -->
+                                                        <?php foreach($departments as $department){ ?>
+                                                            <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-offset-2 col-sm-4">
+                                                    <label><b class="required">*</b> Date :</label><br>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </span>
+                                                        <input type="text" name="date_txn" id="date_txn" class="date-picker form-control" data-error-msg="Date is required." required>
+                                                    </div>
+                                                </div>
                                             </div>
 
-                                            
-                                            </div>
                                             <div >
                                             <hr>
                                             <span ><strong><i class="fa fa-bars"></i> Journal Entries</strong></span>
@@ -899,9 +894,9 @@
                             var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info" id="edit_purchase_journal" style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                             var btn_cancel='<button class="btn btn-red btn-sm" name="cancel_info" id="cancel_purchase_journal" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Cancel and Open Journal"><i class="fa fa-times"></i> </button>';
 
-                            /*return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';*/
+                            return '<center>'+btn_edit+'&nbsp;'+btn_cancel+'</center>';
 
-                            return '<center>'+btn_cancel+'</center>';
+                            // return '<center>'+btn_cancel+'</center>';
                         }
                     },
                     { targets:[9],data: "journal_id", visible:false }

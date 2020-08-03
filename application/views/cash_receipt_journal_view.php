@@ -350,7 +350,7 @@
 
 <div class="row">
 <div class="col-sm-12">
-    <div class="panel panel-default" >
+    <div class="panel panel-default" style="margin-top:20px;">
 
 
             <div class="panel-body" style="min-height: 400px;">
@@ -362,7 +362,7 @@
 
                         <div class="row">
                             <div class="col-lg-3">
-                                <b class="required">*</b> Txn #  :<br />
+                                <label> Txn #  :</label><br />
                                 <div class="input-group">
                                     <span class="input-group-addon">
                                         <i class="fa fa-code"></i>
@@ -371,7 +371,7 @@
                                 </div>
                             </div>
                             <div class="col-lg-3">
-                                <b class="required">*</b> Date  :<br />
+                                <b class="required">*</b><label> Date  :</label><br />
                                 <div class="input-group">
                                             <span class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
@@ -380,7 +380,7 @@
                                 </div>
                             </div>
                             <div class="col-lg-4 col-lg-offset-2">
-                                <b class="required">*</b> Method of Payment  :<br />
+                                <b class="required">*</b> <label>Method of Payment  :</label><br />
                                 <select id="cbo_payment_method" name="payment_method" class="form-control" data-error-msg="Payment method is required." required>
                                     <?php foreach($methods as $payment_method){ ?>
                                         <option value='<?php echo $payment_method->payment_method_id; ?>'><?php echo $payment_method->payment_method; ?></option>
@@ -391,7 +391,7 @@
 
                         <div class="row">
                         <div class="col-lg-6">
-                        <b class="required">*</b> Particular  :<br />
+                        <b class="required">*</b> <label>Particular  :</label><br />
                             <select id="cbo_particulars" name="particular_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Particular is required." required>
 
                                 <optgroup label="Customers">
@@ -412,7 +412,7 @@
                         </div>
 
                             <div class="col-lg-2 col-lg-offset-2">
-                                OR # :<br />
+                               <label> OR # :</label><br />
                                 <div class="input-group">
                                     <span class="input-group-addon">
                                         <i class="fa fa-code"></i>
@@ -421,7 +421,7 @@
                                 </div>
                             </div>
                             <div class="col-lg-2">
-                                Check # :<br />
+                                <label>Check # :</label><br />
                                 <div class="input-group">
                                     <span class="input-group-addon">
                                         <i class="fa fa-code"></i>
@@ -434,7 +434,7 @@
 
                         <div class="row">
                             <div class="col-lg-6">
-                                <b class="required">*</b>  Department :<br />
+                                <b class="required">*</b> <label> Department :</label><br />
 
                                 <select id="cbo_departments" name="department_id" class="selectpicker show-tick form-control" data-live-search="true" required="" data-error-msg="Department is required">
                                     <?php foreach($departments as $department){ ?>
@@ -444,7 +444,7 @@
                             </div>
 
                             <div class="col-lg-2 col-lg-offset-2">
-                                Check Date :<br />
+                                <label>Check Date :</label><br />
                                 <div class="input-group">
                                     <span class="input-group-addon">
                                         <i class="fa fa-calendar"></i>
@@ -454,7 +454,7 @@
                             </div>
 
                             <div class="col-lg-2">
-                                <b class="required">*</b> Amount :<br />
+                                <b class="required">*</b> <label>Amount :</label><br />
                                 <div class="input-group">
                                     <span class="input-group-addon">
                                         <i class="fa fa-code"></i>
@@ -465,7 +465,7 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-4">
-                                <b class="required">*</b> Check Type : <br />
+                                <b class="required">*</b> <label>Check Type : </label><br />
                                     <select name="check_type_id"  id="cbo_check_types"  data-error-msg="Check Type is required.">
                                         <option value="0">None </option>
                                         <?php foreach($check_types as $check_type){ ?>

@@ -74,7 +74,7 @@ class Account_payables extends CORE_Controller
 
                 $data['accounts']=$m_accounts->get_list();
                 $data['entries']=$m_journal_accounts->get_list('journal_accounts.journal_id='.$journal_id);
-
+                $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'department_name ASC');
                 $this->load->view('template/journal_entries', $data);
                 break;
             case 'create' :
@@ -219,6 +219,7 @@ class Account_payables extends CORE_Controller
                 $memos=$this->input->post('memo',TRUE);
                 $dr_amounts=$this->input->post('dr_amount',TRUE);
                 $cr_amounts=$this->input->post('cr_amount',TRUE);
+                $department_id_line=$this->input->post('department_id_line',TRUE);
 
                 $m_journal_accounts->delete_via_fk($journal_id);
 
@@ -228,6 +229,7 @@ class Account_payables extends CORE_Controller
                     $m_journal_accounts->memo=$memos[$i];
                     $m_journal_accounts->dr_amount=$this->get_numeric_value($dr_amounts[$i]);
                     $m_journal_accounts->cr_amount=$this->get_numeric_value($cr_amounts[$i]);
+                    $m_journal_accounts->department_id=$this->get_numeric_value($department_id_line[$i]); 
                     $m_journal_accounts->save();
                 }
 

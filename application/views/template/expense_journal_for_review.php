@@ -71,7 +71,7 @@
                                                         </span>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-5"> 
+                                                <div class="col-lg-5 hidden"> 
                                                     <div style="margin-top: 10px;">
                                                         <input type="checkbox" class="2307_apply" id="2307_apply_<?php echo $payment_info->payment_id; ?>" value="1">
                                                         &nbsp;<label for="2307_apply_<?php echo $payment_info->payment_id; ?>">Apply 2307 Form</label>
@@ -88,7 +88,7 @@
                                                         <?php } ?>
                                                     </select>
                                                 </div>
-                                                <div class="col-lg-5"> 
+                                                <div class="col-lg-5 hidden"> 
                                                     ATC :
                                                     <div class="input-group">
                                                         <span class="input-group-addon">
@@ -107,7 +107,7 @@
                                                         <?php } ?>
                                                     </select>
                                                 </div>
-                                                <div class="col-lg-5">
+                                                <div class="col-lg-5 hidden">
                                                     Remarks :<br />
                                                     <textarea class="2307_remarks form-control" name="2307_remarks" data-error-msg="Remarks is required." rows="5" style="width: 90%;"></textarea>
                                                 </div>
@@ -180,9 +180,10 @@
                                     <thead>
                                     <tr style="border-bottom:solid gray;">
                                         <th style="width: 30%;">Account</th>
-                                        <th style="width: 30%;">Memo</th>
+                                        <th style="width: 15%;">Memo</th>
                                         <th style="width: 15%;text-align: right;">Dr</th>
                                         <th style="width: 15%;text-align: right;">Cr</th>
+                                        <th style="width: 15%;text-align: left;">Department</th>
                                         <th>Action</th>
                                     </tr>
                                     </thead>
@@ -202,6 +203,13 @@
                                             <td><input type="text" name="memo[]" class="form-control"  value="<?php echo $entry->memo; ?>"></td>
                                             <td><input type="text" name="dr_amount[]" class="form-control numeric" value="<?php echo number_format($entry->dr_amount,2); ?>"></td>
                                             <td><input type="text" name="cr_amount[]" class="form-control numeric"  value="<?php echo number_format($entry->cr_amount,2);?>"></td>
+                                            <td><select  name="department_id_line[]" class="selectpicker show-tick form-control dept" data-live-search="true" > 
+
+                                                <option value="0">[ None ]</option> 
+                                                <?php foreach($departments as $department){ ?> 
+                                                    <option value='<?php echo $department->department_id; ?>' <?php echo ($payment_info->department_id==$department->department_id?'selected':''); ?> ><?php echo $department->department_name; ?></option> 
+                                                <?php } ?> 
+                                            </select></td> 
                                             <td>
                                         <button type="button" class="btn btn-default add_account"><i class="fa fa-plus-circle" style="color: green;"></i></button>
                                         <button type="button" class="btn btn-default remove_account"><i class="fa fa-times-circle" style="color: red;"></i></button>
@@ -221,6 +229,7 @@
                                         <td colspan="2" align="right"><strong>Total</strong></td>
                                         <td align="right"><strong><?php echo number_format($dr_total,2); ?></strong></td>
                                         <td align="right"><strong><?php echo number_format($cr_total,2); ?></strong></td>
+                                        <td></td>
                                         <td></td>
                                     </tr>
                                     </tfoot>

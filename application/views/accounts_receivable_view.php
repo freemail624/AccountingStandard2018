@@ -302,7 +302,7 @@
                             <th>Posted</th>
                             <th>Department</th>
                             <th width="5%">Status</th>
-                            <th width="5%"><center>Action</center></th>
+                            <th width="10%"><center>Action</center></th>
                             <th></th>
 
                         </tr>
@@ -329,7 +329,7 @@
 
     <div class="row">
         <div class="col-sm-12">
-            <div class="panel panel-default" style="border-top: 3px solid #2196f3;">
+            <div class="panel panel-default" style="border-top: 3px solid #2196f3; margin-top: 20px;">
                 <!-- <div class="panel-heading">
                     <h2>Sales Journal</h2>
                     <div class="panel-ctrls" data-actions-container=""></div>
@@ -338,78 +338,14 @@
 
                 <div class="panel-body">
 <!--                 <b><i class="fa fa-bars"></i> Sales Journal</b><hr /> -->
-                <h2 class="h2-panel-heading">Sales Journal</h2> <hr>
-
-                    <div class="tab-container tab-top tab-primary">
-                        <ul class="nav nav-tabs">
-                            <li class="active"><a href="#supplier_info" data-toggle="tab" style="border-top: 1px solid #e6e6e6;"><i class="fa fa-bars"></i> Transaction</a></li>
-
-                        </ul>
-                        <div class="tab-content">
-                            <div class="tab-pane active" id="supplier_info" style="min-height: 300px;">
+                <h2 class="h2-panel-heading">Sales / AR Journal</h2> <hr>
 
 
                                 <form id="frm_journal" role="form" class="form-horizontal">
 
-                                    <span><strong><i class="fa fa-bars"></i>  Info</strong></span>
-                                    <hr />
-
-                                    <label class="col-lg-2"> <b class="required">*</b> Txn # :</label>
-                                    <div class="col-lg-4">
-
-                                        <div class="input-group">
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-code"></i>
-                                    </span>
-                                            <input type="text" name="txn_no" class="form-control" placeholder="TXN-YYYYMMDD-XXX" readonly>
-
-                                        </div>
-
-
-                                    </div>
-
-                                    <label class="col-lg-2"> <b class="required">*</b> Date :</label>
-                                    <div class="col-lg-4">
-                                        <div class="input-group">
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-calendar"></i>
-                                    </span>
-                                            <input type="text" name="date_txn" id="date_txn" class="date-picker form-control" data-error-msg="Date is required." required>
-                                        </div>
-
-                                    </div>
-
-
-
-
-
-                                    <br /><br />
-                                    <label class="col-lg-2"> <b class="required">*</b> Department :</label>
-                                    <div class="col-lg-4">
-                                        <select id="cbo_departments" name="department_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Department is required." required>
-                                            <option value="0">[ Create New Department ]</option>
-                                            <?php foreach($departments as $department){ ?>
-                                                <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
-                                            <?php } ?>
-                                        </select>
-                                    </div>                                    
-
-
-                                    <label class="col-lg-2"> Reference # / Billing # :</label>
-                                    <div class="col-lg-4 ">
-                                        <div class="input-group">
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-code"></i>
-                                    </span>
-                                            <input type="text" name="ref_no" class="form-control" >
-                                        </div>
-
-                                    </div>
-
-                                    <br /><br />
-
-                                    <label class="col-lg-2"> <b class="required">*</b> Customer :</label>
-                                    <div class="col-lg-10">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <label> <b class="required">*</b> Customer :</label>
                                         <select id="cbo_customers" name="customer_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Customer is required." required>
                                             <option value="0">[ Create New Customer ]</option>
                                             <?php foreach($customers as $customer){ ?>
@@ -417,9 +353,48 @@
                                             <?php } ?>
                                         </select>
                                     </div>
+                                    <div class="col-sm-offset-2 col-sm-4">
+                                    <label>Txn #</label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-code"></i>
+                                            </span>
+                                            <input type="text" name="txn_no" class="form-control" placeholder="TXN-YYYYMMDD-XXX" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <label> <b class="required">*</b> Department :</label>
+                                        <select id="cbo_departments" name="department_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Department is required." required>
+                                            <option value="0">[ Create New Department ]</option>
+                                            <?php foreach($departments as $department){ ?>
+                                                <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-offset-2 col-sm-4">
+                                    <label> <b class="required">*</b> Date :</label> <br>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                            <input type="text" name="date_txn" id="date_txn" class="date-picker form-control" data-error-msg="Date is required." required>
+                                        </div>
+                                    </div>                                
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-offset-8 col-sm-4">
+                                        <label> Reference # / Billing # :</label> <br>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-code"></i>
+                                            </span>
+                                            <input type="text" name="ref_no" class="form-control" >
+                                        </div>
+                                    </div>                              
+                                </div>
 
-
-                                    <br /><br />
                                     <span><strong><i class="fa fa-bars"></i> Journal Entries</strong></span>
                                     <hr />
 
@@ -514,10 +489,6 @@
                                         <button id="btn_cancel" class="btn-default btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"">Cancel</button>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
 
 
 
@@ -1025,7 +996,7 @@ $(document).ready(function(){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_cancel='<button class="btn btn-red btn-sm" name="cancel_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Cancel Journal"><i class="fa fa-times"></i> </button>';
 
-                        return '<center>'+btn_cancel+'</center>';
+                        return '<center>'+btn_edit+'&nbsp;'+btn_cancel+'</center>';
                     }
                 },
                  { targets:[9],data: "journal_id" ,visible:false},

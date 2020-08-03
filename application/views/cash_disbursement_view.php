@@ -238,7 +238,7 @@
                     <div class="col-lg-2">
                             From :<br />
                             <div class="input-group">
-                                <input type="text" id="txt_start_date_cdj" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                                <input type="text" id="txt_start_date_cdj" name="" class="date-picker form-control" value="<?php echo date("m") ?>/01/2019">
                                  <span class="input-group-addon">
                                         <i class="fa fa-calendar"></i>
                                  </span>
@@ -284,14 +284,14 @@
                                 <tr>    
                                     <th></th>
                                     <th style="width: 15%;">Txn #</th>
-                                    <th>Voucher #</th>
+                                    <th style="width: 10%">Voucher #</th>
                                     <th>Particular</th>
                                     <th>Method</th>
                                     <th>Txn Date</th>
                                     <th>Posted</th>
                                     <th>Department</th>
                                     <th width="5%">Status</th>
-                                    <th style="width: 15%;"><center>Action</center></th>
+                                    <th style="width: 20%;"><center>Action</center></th>
                                     <th></th>
 
                                 </tr>
@@ -396,12 +396,12 @@
 </div>
 
 <div id="div_payable_fields" style="display: none;">
-<div class="row">
+<div class="">
 <div class="col-lg-12">
 
-    <div class="panel panel-default" style="margin: 1%;">
+    <div class="panel panel-default" style="margin-top: 20px;">
     <div class="panel-body panel-responsive">
-    <h2 class="h2-panel-heading"> Cash Disbursement Journal</h2>
+    <h2 class="h2-panel-heading"> Cash Disbursement Journal</h2><hr>
      <!--    <b><i class="fa fa-bars"></i> Cash Disbursement Journal</b><hr /> -->
         <button id="btn_browse_recurring" class="btn btn-primary" style="margin-bottom: 15px; text-transform: capitalize;"><i class="fa fa-folder-open-o"></i> Browse Recurring Template</button>
         <form id="frm_journal" role="form" class="form-horizontal">
@@ -478,7 +478,7 @@
                     <div class="col-lg-6">
                         <div class="row">
                             <div class="col-md-4">
-                                <div class="row">
+                                <div class="row hidden">
                                     <div class="col-sm-12">
                                         <div style="margin-top: 25px;">
                                             <input type="checkbox" id="2307_apply" value="1">
@@ -486,7 +486,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row hidden">
                                     <div class="col-sm-12">
                                         <div style="margin-top: 5px;">
                                             <label>ATC :</label><br />
@@ -499,7 +499,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row hidden">
                                     <div class="col-sm-12">
                                             <label>Remarks :</label><br />
                                             <textarea class="form-control" name="2307_remarks" id="2307_remarks" data-error-msg="Remarks is required." rows="5"></textarea>
@@ -1179,7 +1179,7 @@ $(document).ready(function(){
                     "defaultContent": ""
                 },
                 { targets:[1],data: "txn_no" },
-                { targets:[2],data: "ref_no" },
+                { targets:[2],data: "reference_no" },
                 { targets:[3],data: "particular" },
                 { targets:[4],data: "payment_method" },
                 { targets:[5],data: "date_txn" },
@@ -1204,17 +1204,17 @@ $(document).ready(function(){
                 {sClass: "right_align_items","orderable":      false,
                     targets:[8],data:null,
                     render: function (data, type, full, meta){
-                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
-                        var btn_cancel='<button class="btn btn-red btn-sm" name="cancel_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Cancel Journal"><i class="fa fa-times"></i> </button>';
-                        var btn_voucher_print='<button class="btn btn-success btn-sm" name="print_voucher" style="margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Voucher"><i class="fa fa-print"></i></button>';
-                        var btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Cheque"><img src="assets/img/facheque.png"></button>';
+                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
+                        var btn_cancel='<button class="btn btn-red btn-sm" name="cancel_info" data-toggle="tooltip" data-placement="top" title="Cancel Journal"><i class="fa fa-times"></i> </button>';
+                        var btn_voucher_print='<button class="btn btn-success btn-sm" name="print_voucher" style="text-transform: none;" data-toggle="tooltip" data-placement="top" title="Voucher"><i class="fa fa-print"></i></button>';
+                        var btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="text-transform: none;" data-toggle="tooltip" data-placement="top" title="Cheque"><img src="assets/img/facheque.png"></button>';
 
                         if(data.payment_method_id == 2){
-                        	return ''+btn_check_print+"&nbsp;"+btn_voucher_print+"&nbsp;"+btn_cancel+'';
+                        	return ''+btn_check_print+"&nbsp;"+btn_voucher_print+"&nbsp;"+btn_edit+"&nbsp;"+btn_cancel;
 
                         }else{
 
-                        	return ''+btn_voucher_print+"&nbsp;"+btn_cancel+'';
+                        	return ''+btn_voucher_print+"&nbsp;"+btn_edit+"&nbsp;"+btn_cancel;
                         }
 
                         
@@ -1938,6 +1938,9 @@ $(document).ready(function(){
             $('#cbo_refType').select2('val',data.ref_type);
             $('#cbo_check_type').select2('val',data.check_type_id);
 
+            if(data.check_date == '00/00/0000'){
+                $('input[name="check_date"]').val('');
+            }
             $.ajax({
                 url: 'Cash_disbursement/transaction/get-entries?id=' + data.journal_id,
                 type: "GET",
@@ -2140,6 +2143,9 @@ $(document).ready(function(){
 
     var updateJournal=function(){
         var _data=$('#frm_journal').serializeArray();
+        if($('#2307_apply').is(':checked')==true){
+        _data.push({name : "2307_apply" ,value : 1}); }else{ 
+        _data.push({name : "2307_apply" ,value : 0}); }
         return $.ajax({
             "dataType":"json",
             "type":"POST",

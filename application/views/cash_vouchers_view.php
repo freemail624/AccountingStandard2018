@@ -179,11 +179,6 @@
 
 <div class="page-content"><!-- #page-content -->
 
-<ol class="breadcrumb" style="margin-bottom: 0px;">
-    <li><a href="dashboard">Dashboard</a></li>
-    <li><a href="Cash_vouchers">Temporary Voucher</a></li>
-</ol>
-
 <div class="container-fluid">
 <div data-widget-group="group1">
 <div class="row">
@@ -191,7 +186,7 @@
 
 <div id="div_payable_list">
     <div class="panel-group panel-default" id="accordionA">
-        <div class="panel panel-default" style="border-radius:6px;">
+        <div class="panel panel-default" style="border-radius:6px;margin-top:20px;">
             <div class="panel-body panel-responsive">
             <h2 class="h2-panel-heading">Temporary Vouchers Journal</h2><hr>
                 <div id="collapseOne" class="collapse in">
@@ -258,9 +253,9 @@
     </div>
 
 <div id="div_payable_fields" style="display: none;">
-    <div class="panel panel-default" style="border-radius:6px;" >
+    <div class="panel panel-default" style="border-radius:6px;margin-top:20px;"  >
     <div class="panel-body panel-responsive">
-    <h2 class="h2-panel-heading"> Temporary Journal</h2>
+    <h2 class="h2-panel-heading"> Temporary Vouchers Journal</h2><hr>
         <form id="frm_journal" role="form" class="form-horizontal">
             <div>
                 <div class="row">
@@ -331,7 +326,7 @@
                     <div class="col-lg-6">
                         <div class="row">
                             <div class="col-md-4">
-                                <div class="row">
+                                <div class="row hidden">
                                     <div class="col-sm-12">
                                         <div style="margin-top: 25px;">
                                             <input type="checkbox" id="is_2307" value="1">
@@ -339,7 +334,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row hidden">
                                     <div class="col-sm-12">
                                         <div style="margin-top: 5px;">
                                             <label>ATC :</label><br />
@@ -352,7 +347,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row hidden">
                                     <div class="col-sm-12">
                                             <label>Remarks :</label><br />
                                             <textarea class="form-control" name="remarks_2307" id="remarks_2307" data-error-msg="Remarks is required." rows="5"></textarea>

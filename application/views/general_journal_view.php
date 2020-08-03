@@ -130,11 +130,6 @@
 
 <div class="page-content"><!-- #page-content -->
 
-<ol class="breadcrumb" style="margin-bottom: 0px;">
-    <li><a href="dashboard">Dashboard</a></li>
-    <li><a href="Cash_receipt">General Journal</a></li>
-</ol>
-
 <div class="container-fluid">
 <div data-widget-group="group1">
 <div class="row">
@@ -169,7 +164,7 @@
                 </div>
             </div>
 
-        <div class="panel panel-default">
+        <div class="panel panel-default hidden" id="panel_tbl_adjustment_review" style="margin-top: 20px;">
                 <div class="panel-body table-responsive">
                     <h2 class="h2-panel-heading">Review General Journal (Adjustments)</h2><hr>
                     <div class="row-panel">
@@ -193,7 +188,7 @@
                 </div>
             </div>
 
-        <div class="panel panel-default">
+        <div class="panel panel-default hidden" id="panel_tbl_billing_review" style="margin-top: 20px;">
                 <div class="panel-body table-responsive">
                     <h2 class="h2-panel-heading">Review Customer Advances (Billing)</h2><hr>
                     <div class="row-panel">
@@ -216,7 +211,7 @@
                 </div>
             </div>
 
-        <div class="panel panel-default">
+        <div class="panel panel-default" style="margin-top:20px;">
 <!--                 <div class="panel-heading">
                     <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; General Journal </b>
                 </div> -->
@@ -272,7 +267,7 @@
                                 <th>Posted</th>
                                 <th>Department</th>
                                 <th width="5%">Status</th>
-                                <th width="5%"><center>Action</center></th>
+                                <th width="10%"><center>Action</center></th>
                                 <th></th>
 
                             </tr>
@@ -298,7 +293,7 @@
 <div id="div_payable_fields" style="display: none;">
     <div class="row">
         <div class="col-lg-12">
-        <div class="panel panel-default">
+        <div class="panel panel-default" style="margin-top:20px;">
             <div class="panel-body table-responsive" >
                 <!-- <div class="panel-heading">
                     <h2>General Journal</h2>
@@ -309,39 +304,11 @@
                             <button id="btn_browse_recurring" class="btn btn-primary" style="margin-bottom: 10px; text-transform: capitalize;"><i class="fa fa-folder-open-o"></i> Browse Recurring Template</button>
                             
                                 <form id="frm_journal" role="form" class="form-horizontal">
-                                    <div >
-                                        <span style="color: white;"><strong><i class="fa fa-bars"></i> Info</strong></span>
-                                        <hr />
-
-                                        <label class="col-lg-2"> <b class="required">*</b> Txn # :</label>
-                                        <div class="col-lg-4">
-
-                                            <div class="input-group">
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-code"></i>
-                                        </span>
-                                                <input type="text" name="txn_no" class="form-control" placeholder="TXN-YYYYMMDD-XXX" readonly>
-
-                                            </div>
 
 
-                                        </div>
-
-                                        <label class="col-lg-2"> <b class="required">*</b> Date :</label>
-                                        <div class="col-lg-4">
-                                            <div class="input-group">
-                                                <span class="input-group-addon">
-                                                    <i class="fa fa-calendar"></i>
-                                                </span>
-                                                <input type="text" name="date_txn" id="date_txn" class="date-picker form-control" data-error-msg="Date is required." required>
-                                            </div>
-
-                                        </div>
-
-                                        <br /><br />
-
-                                        <label class="col-lg-2"> <b class="required">*</b> Particular :</label>
-                                        <div class="col-lg-10">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                         <b class="required"> * </b> <label>Particular  :</label><br />
                                             <select id="cbo_particulars" name="particular_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Particular is required." required>
 
                                                 <optgroup label="Customers">
@@ -360,21 +327,37 @@
 
                                             </select>
                                         </div>
+                                        <div class="col-sm-offset-2 col-sm-4">
+                                        <label>Txn #  :</label><br />
+                                            <div class="input-group">
+                                                <span class="input-group-addon">
+                                                    <i class="fa fa-code"></i>
+                                                </span>
+                                            <input type="text" name="txn_no" class="form-control" placeholder="TXN-YYYYMMDD-XXX" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                        <br /><br />
-
-                                        <label class="col-lg-2"> <b class="required">*</b> Department :</label>
-                                        <div class="col-lg-10">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                         <b class="required"> * </b> <label>Department  :</label><br />
                                             <select id="cbo_departments" name="department_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Department is required." required>
                                                 <option value="0">[ Create New Department ]</option>
                                                     <?php foreach($departments as $department){ ?>
                                                         <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
                                                     <?php } ?>
                                             </select>
-                                        </div><br /><br />
-
-                                    </div><br />
-
+                                        </div>
+                                        <div class="col-sm-offset-2 col-sm-4">
+                                        <b class="required"> * </b> <label>Date  :</label><br />
+                                            <div class="input-group">
+                                                <span class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                                </span>
+                                                <input type="text" name="date_txn" id="date_txn" class="date-picker form-control" data-error-msg="Date is required." required>
+                                            </div>
+                                        </div>
+                                    </div>
                                 <div ><hr>
                                     <span ><strong><i class="fa fa-bars"></i> Journal Entries</strong></span>
                                     <div style="width: 100%;table-layout:fixed;">
@@ -1159,7 +1142,7 @@ $(document).ready(function(){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_cancel='<button class="btn btn-red btn-sm" name="cancel_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Cancel Journal"><i class="fa fa-times"></i> </button>';
 
-                        return '<center>'+btn_cancel+'</center>';
+                        return '<center>'+btn_edit+'&nbsp;'+btn_cancel+'</center>';
                     }
                 },
                 { targets:[9],data: "journal_id", visible:false},
@@ -1184,7 +1167,7 @@ $(document).ready(function(){
                 { targets:[4],data: "date_issued" },
                 { targets:[5],data: "terms" },
                 { targets:[6],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(60)}
-            ]
+            ],
         });
 
         dtReviewAdjustment=$('#tbl_adjustment_review').DataTable({
@@ -1204,7 +1187,12 @@ $(document).ready(function(){
                 { targets:[3],data: "date_adjusted" },
                 { targets:[4],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(60)},
                 { targets:[5],data: "department_name" }
-            ]
+            ],
+            "initComplete": function(settings, json) {
+                 if(this.api().data().length != 0){
+                    $('#panel_tbl_adjustment_review').removeClass('hidden')
+                 }
+              } 
         });
 
 
@@ -1223,7 +1211,12 @@ $(document).ready(function(){
                 { targets:[2],data: "customer_name" },
                 { targets:[3],data: "date_txn" },
                 { targets:[4],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(80)}
-            ]
+            ],
+            "initComplete": function(settings, json) {
+                 if(this.api().data().length != 0){
+                    $('#panel_tbl_billing_review').removeClass('hidden')
+                 }
+              } 
         });
         $('#cbo_particular').select2();
 

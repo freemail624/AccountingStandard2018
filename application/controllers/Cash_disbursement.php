@@ -85,6 +85,7 @@ class Cash_disbursement extends CORE_Controller
                 $m_journal_accounts=$this->Journal_account_model;
 
                 $data['accounts']=$m_accounts->get_list(array('is_deleted'=>FALSE));
+                $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'department_name ASC');
                 $data['entries']=$m_journal_accounts->get_list('journal_accounts.journal_id='.$journal_id);
 
                 $this->load->view('template/journal_entries', $data);
@@ -361,26 +362,26 @@ class Cash_disbursement extends CORE_Controller
                 $supplier=$m_supplier->get_list($supplier_id);
                 $company=$m_company->get_list();
 
-                if ($form_2307_apply == 1){
-                    $m_form_2307->journal_id=$journal_id;
-                    $m_form_2307->supplier_id=$supplier_id;
-                    $m_form_2307->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
-                    $m_form_2307->date=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
-                    $m_form_2307->payee_tin=$supplier[0]->tin_no;
-                    $m_form_2307->payee_name=$supplier[0]->supplier_name;
-                    $m_form_2307->payee_address=$supplier[0]->address;
-                    $m_form_2307->payor_name=$company[0]->registered_to;
-                    $m_form_2307->payor_tin=$company[0]->tin_no;
-                    $m_form_2307->payor_address=$company[0]->registered_address;
-                    $m_form_2307->zip_code = $company[0]->zip_code; 
-                    $m_form_2307->gross_amount=$this->get_numeric_value($total_amount);
-                    $m_form_2307->deducted_amount=$this->get_numeric_value($total_wtax);
-                    $m_form_2307->atc=$this->input->post('2307_atc',TRUE);
-                    $m_form_2307->remarks=$this->input->post('2307_remarks',TRUE);
-                    $m_form_2307->set('date_created','NOW()');
-                    $m_form_2307->created_by_user=$this->session->user_id;
-                    $m_form_2307->save();
-                }
+                // if ($form_2307_apply == 1){
+                //     $m_form_2307->journal_id=$journal_id;
+                //     $m_form_2307->supplier_id=$supplier_id;
+                //     $m_form_2307->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
+                //     $m_form_2307->date=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
+                //     $m_form_2307->payee_tin=$supplier[0]->tin_no;
+                //     $m_form_2307->payee_name=$supplier[0]->supplier_name;
+                //     $m_form_2307->payee_address=$supplier[0]->address;
+                //     $m_form_2307->payor_name=$company[0]->registered_to;
+                //     $m_form_2307->payor_tin=$company[0]->tin_no;
+                //     $m_form_2307->payor_address=$company[0]->registered_address;
+                //     $m_form_2307->zip_code = $company[0]->zip_code; 
+                //     $m_form_2307->gross_amount=$this->get_numeric_value($total_amount);
+                //     $m_form_2307->deducted_amount=$this->get_numeric_value($total_wtax);
+                //     $m_form_2307->atc=$this->input->post('2307_atc',TRUE);
+                //     $m_form_2307->remarks=$this->input->post('2307_remarks',TRUE);
+                //     $m_form_2307->set('date_created','NOW()');
+                //     $m_form_2307->created_by_user=$this->session->user_id;
+                //     $m_form_2307->save();
+                // }
 
 
                 //if dr invoice is available, purchase invoice is recorded as journal
@@ -468,6 +469,7 @@ class Cash_disbursement extends CORE_Controller
                 $memos=$this->input->post('memo',TRUE);
                 $dr_amounts=$this->input->post('dr_amount',TRUE);
                 $cr_amounts=$this->input->post('cr_amount',TRUE);
+                $department_id_line=$this->input->post('department_id_line',TRUE);
 
                 $m_journal_accounts->delete_via_fk($journal_id);
 
@@ -477,6 +479,7 @@ class Cash_disbursement extends CORE_Controller
                     $m_journal_accounts->memo=$memos[$i];
                     $m_journal_accounts->dr_amount=$this->get_numeric_value($dr_amounts[$i]);
                     $m_journal_accounts->cr_amount=$this->get_numeric_value($cr_amounts[$i]);
+                    $m_journal_accounts->department_id=$this->get_numeric_value($department_id_line[$i]); 
                     $m_journal_accounts->save();
                 }
 
@@ -560,7 +563,8 @@ class Cash_disbursement extends CORE_Controller
                 'journal_info.check_no',
                 'DATE_FORMAT(journal_info.check_date,"%m/%d/%Y") as check_date',
                 'journal_info.ref_type',
-                'CONCAT(journal_info.ref_type,"-",journal_info.ref_no) as ref_no',
+                'journal_info.ref_no',
+                'CONCAT(IFNULL(journal_info.ref_type,""),"-",IFNULL(journal_info.ref_no,"")) as reference_no',
                 'journal_info.amount',
                 'departments.department_name',
                 'CONCAT(IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,""))as particular',

@@ -80,7 +80,7 @@ class Accounts_receivable extends CORE_Controller
 
                 $data['accounts']=$m_accounts->get_list(array('is_deleted'=>FALSE));
                 $data['entries']=$m_journal_accounts->get_list('journal_accounts.journal_id='.$journal_id);
-
+                $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'department_name ASC');
                 $this->load->view('template/journal_entries', $data);
                 break;
             case 'create' :
@@ -217,6 +217,7 @@ class Accounts_receivable extends CORE_Controller
                 $m_journal->department_id=$this->input->post('department_id',TRUE);
                 $m_journal->remarks=$this->input->post('remarks',TRUE);
                 $m_journal->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
+                $m_journal->ref_no=$this->input->post('ref_no',TRUE);
                 $m_journal->book_type='SJE';
 
                 //for audit details
@@ -229,6 +230,7 @@ class Accounts_receivable extends CORE_Controller
                 $memos=$this->input->post('memo',TRUE);
                 $dr_amounts=$this->input->post('dr_amount',TRUE);
                 $cr_amounts=$this->input->post('cr_amount',TRUE);
+                $department_id_line=$this->input->post('department_id_line',TRUE);
 
                 $m_journal_accounts->delete_via_fk($journal_id);
 
@@ -238,6 +240,7 @@ class Accounts_receivable extends CORE_Controller
                     $m_journal_accounts->memo=$memos[$i];
                     $m_journal_accounts->dr_amount=$this->get_numeric_value($dr_amounts[$i]);
                     $m_journal_accounts->cr_amount=$this->get_numeric_value($cr_amounts[$i]);
+                    $m_journal_accounts->department_id=$this->get_numeric_value($department_id_line[$i]);
                     $m_journal_accounts->save();
                 }
 
@@ -315,6 +318,7 @@ class Accounts_receivable extends CORE_Controller
                 'journal_info.remarks',
                 'journal_info.customer_id',
                 'journal_info.department_id',
+                'journal_info.ref_no',
                 'departments.department_name',
                 'customers.customer_name as particular',
                 'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by'
