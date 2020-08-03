@@ -43,7 +43,10 @@ class Cash_vouchers extends CORE_Controller
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
 
-        $data['check_types']=$this->Check_types_model->get_list('is_deleted=FALSE');
+        $data['check_types']=$this->Check_types_model->get_list('b_refchecktype.is_deleted=FALSE',
+            'b_refchecktype.*,account_titles.account_title',
+            array(array( 'account_titles' , 'account_titles.account_id = b_refchecktype. account_id', 'left'))
+            );
         $data['suppliers']=$this->Suppliers_model->get_list('is_deleted = FALSE');
         $data['departments']=$this->Departments_model->get_list('is_deleted = FALSE');
         $data['accounts']=$this->Account_title_model->get_list('is_deleted = FALSE');

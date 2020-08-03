@@ -49,7 +49,10 @@ class Cash_receipt extends CORE_Controller
         $data['accounts']=$this->Account_title_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['methods']=$this->Payment_method_model->get_list('is_deleted=0');
         $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'department_name ASC');
-        $data['check_types']=$this->Check_types_model->get_list('is_deleted=FALSE');
+        $data['check_types']=$this->Check_types_model->get_list('b_refchecktype.is_deleted=FALSE',
+            'b_refchecktype.*,account_titles.account_title',
+            array(array( 'account_titles' , 'account_titles.account_id = b_refchecktype. account_id', 'left'))
+            );
         $data['customer_type']=$this->Customer_type_model->get_list('is_deleted=FALSE');
 
         $data['ar_trans']=$this->Ar_trans_model->get_list(

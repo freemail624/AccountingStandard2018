@@ -371,7 +371,7 @@
                                         <select id="cbo_check_type" class="form-control" name="check_type_id">
                                         <option value="0">None </option>
                                         <?php foreach($check_types as $check_type){ ?>
-                                            <option value='<?php echo $check_type->check_type_id; ?>'><?php echo $check_type->check_type_desc; ?></option>
+                                             <option value='<?php echo $check_type->check_type_id; ?>'><?php echo $check_type->check_type_desc; ?> (<?php echo $check_type->account_title; ?>) </option>
                                         <?php } ?>
                                         </select>
                                     </div>
