@@ -181,11 +181,6 @@
 
 <div class="page-content"><!-- #page-content -->
 
-<ol class="breadcrumb" style="margin-bottom: 0px;">
-    <li><a href="dashboard">Dashboard</a></li>
-    <li><a href="Accounts_receivable">Accounts Receivable</a></li>
-</ol>
-
 <div class="container-fluid">
 <div data-widget-group="group1">
 <div class="row">
@@ -195,16 +190,16 @@
 
     <div class="panel-group panel-default" id="accordionA">
 
-        <div class="panel panel-default">
+        <div class="panel panel-default hidden" id="panel_tbl_sales_review" style="margin-top: 20px;">
 
             <div id="" class="">
                 <div class="panel-body">
-            <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo" style="text-decoration: none;">
+            <!-- <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo" style="text-decoration: none;"> -->
 <!--                 <div class="panel-heading">
                     <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Review Sales Journal (Pending)</b>
                 </div> -->
             <h2 class="h2-panel-heading">Review Sales Journal (Pending)</h2><hr>
-            </a>
+            <!-- </a> -->
                     <div >
                     <table id="tbl_sales_review" class="table table-striped" cellspacing="0" width="100%">
                         <thead class="">
@@ -224,13 +219,12 @@
                 </div>
             </div>
         </div>
-        <br>
-        <div class="panel panel-default">
+        <div class="panel panel-default hidden" id="panel_tbl_billing_review" style="margin-top: 20px;">
             <div id="" class="">
                 <div class="panel-body">
-                    <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo" style="text-decoration: none;">
+                    <!-- <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo" style="text-decoration: none;"> -->
                     <h2 class="h2-panel-heading">Review Billing (Pending)</h2><hr>
-                    </a>
+                    <!-- </a> -->
                     <div >
                     <table id="tbl_billing_review" class="table table-striped" cellspacing="0" width="100%">
                         <thead class="">
@@ -250,15 +244,14 @@
                 </div>
             </div>
         </div>
-        <br>
-        <div class="panel panel-default" style="border-radius:6px;">
-                <div class="panel-body" style="min-height: 400px;">
-                            <a data-toggle="collapse" data-parent="#accordionA" href="#collapseOne" style="text-decoration: none;">
+        <div class="panel panel-default" style="border-radius:6px;margin-top: 20px">
+                <div class="panel-body" style="">
+                            <!-- <a data-toggle="collapse" data-parent="#accordionA" href="#collapseOne" style="text-decoration: none;"> -->
 <!--                 <div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;">
                     <b style="font-size: 11pt;color:white;"><i class="fa fa-bars"></i> Sales / AR Journal</b>
                 </div> -->
                 <h2 class="h2-panel-heading"> Sales / AR Journal</h2>
-            </a>
+            <!-- </a> -->
 
                 <div class="row">
                     <div class="col-lg-2">&nbsp;<br>
@@ -1055,7 +1048,12 @@ $(document).ready(function(){
                 { targets:[2],data: "customer_name" },
                 { targets:[3],data: "date_invoice" },
                 { targets:[4],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(80)}
-            ]
+            ],
+              "initComplete": function(settings, json) {
+                 if(this.api().data().length != 0){
+                    $('#panel_tbl_sales_review').removeClass('hidden')
+                 }
+              } 
         });
 
         dtReviewBilling=$('#tbl_billing_review').DataTable({
@@ -1073,7 +1071,12 @@ $(document).ready(function(){
                 { targets:[2],data: "customer_name" },
                 { targets:[3],data: "date_txn" },
                 { targets:[4],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(80)}
-            ]
+            ],
+              "initComplete": function(settings, json) {
+                 if(this.api().data().length != 0){
+                    $('#panel_tbl_billing_review').removeClass('hidden')
+                 }
+              } 
         });
 
         $('.numeric').autoNumeric('init');

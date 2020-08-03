@@ -176,11 +176,11 @@
 
 <div class="page-content"><!-- #page-content -->
 
-<ol class="breadcrumb" style="margin-bottom: 0px;">
+<!-- <ol class="breadcrumb" style="margin-bottom: 0px;">
     <li><a href="dashboard">Dashboard</a></li>
     <li><a href="Cash_disbursement">Disbursement</a></li>
 </ol>
-
+ -->
 <div class="container-fluid">
 <div data-widget-group="group1">
 <div class="row">
@@ -191,14 +191,14 @@
     <div class="panel-group panel-default" id="accordionA">
 
 
-        <div class="panel panel-default">
+        <div class="panel panel-default hidden" style="margin-top: 20px;" id="panel_tbl_expense_for_review">
             <div class="panel-body panel-responsive" >
-            <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo" style="text-decoration: none;">
+            <!-- <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo" style="text-decoration: none;"> -->
 <!--             <div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Review Expense (Pending)</b></div> -->
             <h2 class="h2-panel-heading"> Review Expense (Pending)</h2><hr>
-            </a>
+            <!-- </a> -->
 
-            <div id="collapseTwo" class="collapse in">
+            <!-- <div id="collapseTwo" class="collapse in"> -->
 
                     <div style="padding: 1%;border-radius: 5px;padding-bottom: 2%;">
                         <table id="tbl_expense_for_review" class="table table-striped" cellspacing="0" width="100%">
@@ -218,19 +218,18 @@
                             </tbody>
                         </table>
                     </div>
-            </div>
+            <!-- </div> -->
             </div>
         </div>
 
-<br>
-        <div class="panel panel-default" style="border-radius:6px;">
+        <div class="panel panel-default" style="border-radius:6px;margin-top: 20px;">
             <div class="panel-body panel-responsive">
-              <a data-toggle="collapse" data-parent="#accordionA" href="#collapseOne" style="text-decoration: none;">
+              <!-- <a data-toggle="collapse" data-parent="#accordionA" href="#collapseOne" style="text-decoration: none;"> -->
 <!--               <div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Cash Disbursement Journal</b></div> -->
             <h2 class="h2-panel-heading">Cash Disbursement Journal</h2><hr>
 
-              </a>
-                <div id="collapseOne" class="collapse in">
+              <!-- </a> -->
+                <!-- <div id="collapseOne" class="collapse in"> -->
                 <div class="row">
                     <div class="col-lg-2">
                     &nbsp;<br>
@@ -302,7 +301,7 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>                </div>
+                    <!-- </div>                 --></div>
                 </div>
 
 <br>
@@ -1253,7 +1252,12 @@ $(document).ready(function(){
                     }
                 },
                 { targets:[6],data: "total_paid_amount" ,sClass: "right_align_items"}
-            ]
+            ],
+            "initComplete": function(settings, json) {
+                 if(this.api().data().length != 0){
+                    $('#panel_tbl_expense_for_review').removeClass('hidden')
+                 }
+            }
         });
 
         dtReviewOther=$('#tbl_other_income_for_review').DataTable({

@@ -180,11 +180,6 @@
 
 <div class="page-content"><!-- #page-content -->
 
-<ol class="breadcrumb" style="margin-bottom: 0px;">
-    <li><a href="dashboard">Dashboard</a></li>
-    <li><a href="Cash_receipt">Cash Receipt Journal</a></li>
-</ol>
-
 <div class="container-fluid">
 <div data-widget-group="group1">
 <div class="row">
@@ -194,7 +189,7 @@
 
     <div class="panel-group panel-default" id="accordionA">
 
-        <div class="panel panel-default hidden" style="border-radius:6px;margin-top: 10px;" id="panel_tbl_collection_for_review">
+        <div class="panel panel-default hidden" style="border-radius:6px;margin-top: 20px;" id="panel_tbl_collection_for_review">
 
             <div id="collapseTwo" class="collapse in">
                 <div class="panel-body">    
@@ -222,7 +217,7 @@
                 </div>
             </div>
         </div>
-        <div class="panel panel-default hidden" style="border-radius:6px;margin-top: 10px;" id="panel_tbl_cash_invoice_for_review">
+        <div class="panel panel-default hidden" style="border-radius:6px;margin-top: 20px;" id="panel_tbl_cash_invoice_for_review">
             <div id="collapseOne" class="collapse in">
                 <div class="panel-body" style="">
                 <h2 class="h2-panel-heading">Cash Invoice (Pending)</h2><hr>
@@ -245,7 +240,7 @@
                 </div>
             </div>
         </div>
-        <div class="panel panel-default hidden" style="border-radius:6px;margin-top: 10px;" id="panel_tbl_billing_payment_for_review">
+        <div class="panel panel-default hidden" style="border-radius:6px;margin-top: 20px;" id="panel_tbl_billing_payment_for_review">
             <div id="collapseOne" class="collapse in">
                 <div class="panel-body" style="">
                 <h2 class="h2-panel-heading">Billing Payment (Pending)</h2><hr>
@@ -269,7 +264,7 @@
                 </div>
             </div>
         </div>
-        <div class="panel panel-default" style="border-radius:6px;">
+        <div class="panel panel-default" style="border-radius:6px;margin-top: 20px;">
             <div id="collapseOne" class="collapse in">
                 <div class="panel-body" style="">
                 <h2 class="h2-panel-heading">Cash Receipt Journal (History)</h2><hr>

@@ -163,11 +163,6 @@
 
 <div class="page-content"><!-- #page-content -->
 
-    <ol class="breadcrumb" style="margin-bottom: 0px;">
-        <li><a href="dashboard">Dashboard</a></li>
-        <li><a href="Account_payables">Accounts Payable</a></li>
-    </ol>
-
     <div class="container-fluid">
         <div data-widget-group="group1">
             <div class="row">
@@ -177,15 +172,15 @@
 
                     <div class="panel-group panel-default" id="accordionA">
 
-                        <div class="panel panel-default">
+                        <div class="panel panel-default hidden" id="panel_tbl_purchase_review" style="margin-top:20px;">
                             <div id="" class="">
                                 <div class="panel-body">
-                             <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo" style="text-decoration: none;">
+                             <!-- <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo" style="text-decoration: none;"> -->
      <!--                            <div class="panel-heading">
                                     <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Accounts Payable (Pending)</b>
                                 </div> -->
                             <h2 class="h2-panel-responsive">Purchase Journal (Pending)</h2><hr>
-                            </a>
+                            <!-- </a> -->
                                     <div>
                                     <table id="tbl_purchase_review" class="table table-striped" cellspacing="0" width="100%">
                                         <thead class="">
@@ -206,13 +201,12 @@
                                 </div>
                             </div>
                         </div>
-                        <br>
-                        <div class="panel panel-default">
+                        <div class="panel panel-default hidden" style="margin-top:20px;" id="panel_tbl_job_order_review">
                             <div id="" class="">
                                 <div class="panel-body">
-                             <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo" style="text-decoration: none;">
+                             <!-- <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo" style="text-decoration: none;"> -->
                             <h2 class="h2-panel-responsive">Job Service (Pending)</h2><hr>
-                            </a>
+                            <!-- </a> -->
                                     <div>
                                     <table id="tbl_job_order_review" class="table table-striped" cellspacing="0" width="100%">
                                         <thead class="">
@@ -234,9 +228,8 @@
                                 </div>
                             </div>
                         </div>
-                        <br>
-                        <div class="panel panel-default" style="border-radius:6px;">
-                            <div class="panel-body" style="min-height: 400px;">
+                        <div class="panel panel-default" style="border-radius:6px;margin-top: 20px">
+                            <div class="panel-body" style="">
                             <a data-toggle="collapse" data-parent="#accordionA" href="#collapseOne" style="text-decoration: none;">
 <!--                                 <div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;">
                                     <b style="font-size: 12pt;color:white;"><i class="fa fa-bars"></i> Accounts Payable Journal</b>
@@ -933,7 +926,12 @@
                     { targets:[4],data: "term_description" },
                     { targets:[5],data: "date_delivered" },
                     { targets:[6],data: "remarks",render: $.fn.dataTable.render.ellipsis(60) }
-                ]
+                ],
+              "initComplete": function(settings, json) {
+                 if(this.api().data().length != 0){
+                    $('#panel_tbl_purchase_review').removeClass('hidden')
+                 }
+              } 
             });
 
             dtJobOrderReview=$('#tbl_job_order_review').DataTable({
@@ -954,7 +952,12 @@
                 { targets:[5],data: "date_due", visible:false },
                 { targets:[6],data: "department_name" },
                 { targets:[7],data: "remarks",render: $.fn.dataTable.render.ellipsis(60) },
-                ]
+                ],
+              "initComplete": function(settings, json) {
+                 if(this.api().data().length != 0){
+                    $('#panel_tbl_job_order_review').removeClass('hidden')
+                 }
+              } 
             });
 
 
