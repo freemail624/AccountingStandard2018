@@ -1992,7 +1992,8 @@ $(document).ready(function(){
         $('#btn_save').click(function(){
             var btn=$(this);
             var f=$('#frm_journal');
-
+            if(isZero()){
+            if(isBalance()){
             if(validateRequiredFields(f)){
                 if(_txnMode=="new"){
 
@@ -2029,6 +2030,14 @@ $(document).ready(function(){
 
             }
 
+            }else{
+                showNotification({title:"Not Balance!",stat:"error",msg:'Please make sure Debit and Credit amount are equal.'});
+                stat=false;
+            }
+            }else{
+                    showNotification({title:"No Amount!",stat:"error",msg:'Please make sure Debit and Credit does not amount to zero.'});
+                    stat=false;
+            }// END of ISZERO
         });
 
 
@@ -2307,16 +2316,6 @@ $(document).ready(function(){
 
         });
 
-        if(!isZero()){
-            showNotification({title:"Error!",stat:"error",msg:'Please make sure Debit and Credit does not amount to zero.'});
-            stat=false;
-        }
-
-        if(!isBalance()){
-            showNotification({title:"Error!",stat:"error",msg:'Please make sure Debit and Credit is balance.'});
-            stat=false;
-        }
-
         return stat;
     };
 
@@ -2337,12 +2336,13 @@ $(document).ready(function(){
     };
     
     var isBalance=function(opTable=null){
-        reComputeTotals($('#tbl_entries'));
         var oRow; var dr; var cr;
 
         if(opTable==null){
+            reComputeTotals($('#tbl_entries'));
             oRow=$('#tbl_entries > tfoot tr');
         }else{
+            reComputeTotals($(opTable));
             oRow=$(opTable+' > tfoot tr');
         }
 
@@ -2423,6 +2423,7 @@ $(document).ready(function(){
         parent.on('click','button[name="btn_finalize_journal_review"]',function(){
 
             var _curBtn=$(this);
+            if(isZero('#tbl_entries_for_review_'+_dataParentID)){
             if(isBalance('#tbl_entries_for_review_'+_dataParentID)){
                 finalizeJournalReview().done(function(response){
                     showNotification(response);
@@ -2440,7 +2441,10 @@ $(document).ready(function(){
                 showNotification({title:"Not Balance!",stat:"error",msg:'Please make sure Debit and Credit amount are equal.'});
                 stat=false;
             }
-
+            }else{
+                    showNotification({title:"No Amount!",stat:"error",msg:'Please make sure Debit and Credit does not amount to zero.'});
+                    stat=false;
+            }// END of ISZERO
 
         });
 
@@ -2486,6 +2490,7 @@ $(document).ready(function(){
         parent.on('click','button[name="btn_finalize_journal_review"]',function(){
 
             var _curBtn=$(this);
+            if(isZero('#tbl_entries_for_review_'+_dataParentID)){
             if(isBalance('#tbl_entries_for_review_'+_dataParentID)){
                 finalizeJournalReview().done(function(response){
                     showNotification(response);
@@ -2502,7 +2507,10 @@ $(document).ready(function(){
                 showNotification({title:"Not Balance!",stat:"error",msg:'Please make sure Debit and Credit amount are equal.'});
                 stat=false;
             }
-
+            }else{
+                    showNotification({title:"No Amount!",stat:"error",msg:'Please make sure Debit and Credit does not amount to zero.'});
+                    stat=false;
+            }// END of ISZERO
 
 
         });
