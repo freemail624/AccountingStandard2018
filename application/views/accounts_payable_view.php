@@ -1726,7 +1726,7 @@
         var clearFields=function(f){
             $('input,textarea',f).val('');
             // $(f).find('select').select2('val',null);
-            $(f).find('input:first').focus();
+            // $(f).find('input:first').focus();
             $('#tbl_entries > tbody tr').slice(2).remove();
             $('#img_user').attr('src','assets/img/anonymous-icon.png');
             //$('#cbo_tax_group').select2('val',null);

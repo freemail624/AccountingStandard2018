@@ -1682,7 +1682,7 @@ $(document).ready(function(){
         //$(f).find('select').select2('val',null);
 
 
-        $(f).find('input:first').focus();
+        // $(f).find('input:first').focus();
         $('#tbl_entries > tbody tr').slice(2).remove();
         $('#tbl_entries > tfoot tr').find(oTFSummary.dr).html('<b>0.00</b>');
         $('#tbl_entries > tfoot tr').find(oTFSummary.cr).html('<b>0.00</b>');

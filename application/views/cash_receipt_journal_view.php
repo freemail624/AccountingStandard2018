@@ -2130,7 +2130,7 @@ $(document).ready(function(){
         $('input:not(.date-picker),textarea',f).val('');
 
 
-        $(f).find('input:first').focus();
+        // $(f).find('input:first').focus();
 
         $('#tbl_entries > tbody tr').slice(2).remove();
 

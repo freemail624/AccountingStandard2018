@@ -2367,7 +2367,7 @@ $(document).ready(function(){
         $('input,textarea',f).val('');
         // $(f).find('select').select2('val',null); 
         //_cboDepartments.select2('val',null);
-        $(f).find('input:first').focus();
+        // $(f).find('input:first').focus();
 
     };
 
