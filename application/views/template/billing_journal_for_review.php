@@ -62,38 +62,49 @@
     <span class="hidden"><input type="text" name="ref_no" value="<?php echo $info->ref_no; ?>"></span>
         <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Accounts Receivable Journal</strong></span></h4>
         <hr />
-        <div style="width: 90%;">
+        <div style="width: 100%;" class="row">
             <input type="hidden" name="temp_journal_id" value="<?php echo $info->temp_journal_id; ?>">
-            <label class="col-lg-2"> * Txn # :</label>
-            <div class="col-lg-10">
-                <input type="text" name="txn_no" class="form-control" style="font-weight: bold;" placeholder="TXN-MMDDYYY-XXX" readonly>
+            <div class="col-sm-12">
+                <div class="col-sm-6">
+                    <label> <b class="required">*</b> Customer :</label>
+                    <select name="customer_id" class="cbo_customer_list" data-error-msg="Customer is required." required>
+                        <?php foreach($customers as $customer){ ?>
+                            <option value="<?php echo $customer->customer_id; ?>" <?php echo ($info->customer_id===$customer->customer_id?'selected':''); ?>><?php echo $customer->customer_name; ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="col-sm-offset-2 col-sm-4">
+                    <label> Txn # :</label><br>
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <i class="fa fa-code"></i>
+                        </span>
+                    <input type="text" name="txn_no" class="form-control" style="font-weight: bold;" placeholder="TXN-MMDDYYY-XXX" readonly>
+                    </div>
+                </div>
             </div>
-            <br /><br />
-            <label class="col-lg-2"> * Date :</label>
-            <div class="col-lg-10">
-                <input type="text" name="date_txn" class="date-picker  form-control" value="<?php echo $info->date_txn; ?>">
-            </div>
-            <br /><br />
-            <label class="col-lg-2"> * Customer :</label>
-            <div class="col-lg-10">
-                <select name="customer_id" class="cbo_customer_list" data-error-msg="Customer is required." required>
-                    <?php foreach($customers as $customer){ ?>
-                        <option value="<?php echo $customer->customer_id; ?>" <?php echo ($info->customer_id===$customer->customer_id?'selected':''); ?>><?php echo $customer->customer_name; ?></option>
-                    <?php } ?>
-                </select>
-            </div>
-            <br /><br />
-            <label class="col-lg-2"> * Department :</label>
-            <div class="col-lg-10">
-                <select name="department_id" class="cbo_department_list" data-error-msg="Branch is required." required>
-                    <?php foreach($departments as $department){ ?>
-                        <option value="<?php echo $department->department_id; ?>" <?php echo ($info->department_id===$department->department_id?'selected':''); ?>><?php echo $department->department_name; ?></option>
-                    <?php } ?>
-                </select>
+
+            <div class="col-sm-12">
+                <div class="col-sm-6">
+                    <label> <b class="required">*</b> Department :</label>
+                    <select name="department_id" class="cbo_department_list" data-error-msg="Branch is required." required>
+                        <?php foreach($departments as $department){ ?>
+                            <option value="<?php echo $department->department_id; ?>" <?php echo ($info->department_id===$department->department_id?'selected':''); ?>><?php echo $department->department_name; ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="col-sm-offset-2 col-sm-4">
+                    <label > <b class="required">*</b> Date :</label><br>
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </span>
+                    <input type="text" name="date_txn" class="date-picker  form-control" value="<?php echo $info->date_txn; ?>">
+                    </div>
+                </div>
             </div>
         </div>
-        <br /><br /><br />
-        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Journal Entries</strong></span></h4>
+        <h6 ><span><strong><i class="fa fa-gear"></i> Journal Entries</strong></span></h6>
         <hr />
         <table id="tbl_entries_for_review_billing_<?php echo $info->temp_journal_id; ?>" class="table table-striped" style="width: 100% !important;">
             <thead>

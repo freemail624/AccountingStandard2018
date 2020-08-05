@@ -162,6 +162,11 @@
                 background: none!important; 
                 background-color: transparent!important; 
         } 
+        #tbl_billing_payment_for_review_filter{display: none;}
+        #tbl_cash_invoice_for_review_filter{display: none;}
+        #tbl_collection_for_review_filter{display: none;}
+
+
     </style>
 
 </head>
@@ -195,6 +200,9 @@
                 <div class="panel-body">    
                     <h2 class="h2-panel-heading">Review Collection (Pending)</h2><hr>
                     <div >
+                        <div style="margin-bottom: 10px;">
+                        <input type="text" class="form-control" id="tbl_collection_for_review_searchbox" placeholder="Search Collections">
+                        </div>
                         <table id="tbl_collection_for_review" class="table table-striped" cellspacing="0" width="100%">
                             <thead class="">
                             <tr>
@@ -222,6 +230,9 @@
                 <div class="panel-body" style="">
                 <h2 class="h2-panel-heading">Cash Invoice (Pending)</h2><hr>
                     <div >
+                        <div style="margin-bottom: 10px;">
+                        <input type="text" class="form-control" id="tbl_cash_invoice_for_review_searchbox" placeholder="Search Cash Invoices">
+                        </div>
                         <table id="tbl_cash_invoice_for_review" class="table table-striped" cellspacing="0" width="100%">
                             <thead class="">
                             <tr>
@@ -245,12 +256,15 @@
                 <div class="panel-body" style="">
                 <h2 class="h2-panel-heading">Billing Payment (Pending)</h2><hr>
                     <div >
+                        <div style="margin-bottom: 10px;">
+                        <input type="text" class="form-control" id="tbl_billing_payment_for_review_searchbox" placeholder="Search Billing Payments">
+                        </div>
                         <table id="tbl_billing_payment_for_review" class="table table-striped" cellspacing="0" width="100%">
                             <thead class="">
                             <tr>
-                                <th>&nbsp;</th>
+                                <th width="5%">&nbsp;</th>
                                 <th width="15%">Billing Ref No</th>
-                                <th>Customer</th>
+                                <th width="25%">Customer</th>
                                 <th>Transaction Date</th>
                                 <th>Notice</th>
                                 <th width="25%">Remarks</th>
@@ -1219,6 +1233,7 @@ $(document).ready(function(){
               "initComplete": function(settings, json) {
                  if(this.api().data().length != 0){
                     $('#panel_tbl_collection_for_review').removeClass('hidden')
+                    dtReview.columns.adjust().draw();
                  }
               } 
         });
@@ -1246,6 +1261,7 @@ $(document).ready(function(){
               "initComplete": function(settings, json) {
                  if(this.api().data().length != 0){
                     $('#panel_tbl_cash_invoice_for_review').removeClass('hidden')
+                    dtReviewCash.columns.adjust().draw();
                  }
               }            
         });
@@ -1277,6 +1293,7 @@ $(document).ready(function(){
               "initComplete": function(settings, json) {
                  if(this.api().data().length != 0){
                     $('#panel_tbl_billing_payment_for_review').removeClass('hidden')
+                    dtReviewBilling.columns.adjust().draw();
                  }
               } 
         });
@@ -1379,6 +1396,24 @@ $(document).ready(function(){
                 .search(this.value)
                 .draw();
         });
+
+        $("#tbl_billing_payment_for_review_searchbox").keyup(function(){         
+            dtReviewBilling
+                .search(this.value)
+                .draw();
+        });
+
+        $("#tbl_cash_invoice_for_review_searchbox").keyup(function(){         
+            dtReviewCash
+                .search(this.value)
+                .draw();
+        });  
+
+        $("#tbl_collection_for_review_searchbox").keyup(function(){         
+            dtReview
+                .search(this.value)
+                .draw();
+        });      
 
         $('#tbl_accounts_receivable tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');

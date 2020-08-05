@@ -44,9 +44,9 @@ class Cash_receipt extends CORE_Controller
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['tax_types']=$this->Tax_model->get_list(array('tax_types.is_deleted'=>FALSE));
-        $data['customers']=$this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
-        $data['suppliers']=$this->Suppliers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
-        $data['accounts']=$this->Account_title_model->get_list('is_active=TRUE AND is_deleted=FALSE');
+        $data['customers']=$this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'customer_name ASC');
+        $data['suppliers']=$this->Suppliers_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'supplier_name ASC');
+        $data['accounts']=$this->Account_title_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'trim(account_title) ASC');
         $data['methods']=$this->Payment_method_model->get_list('is_deleted=0');
         $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'department_name ASC');
         $data['check_types']=$this->Check_types_model->get_list('b_refchecktype.is_deleted=FALSE',
@@ -96,7 +96,7 @@ class Cash_receipt extends CORE_Controller
                 $m_accounts=$this->Account_title_model;
                 $m_journal_accounts=$this->Journal_account_model;
 
-                $data['accounts']=$m_accounts->get_list('is_deleted=0');
+                $data['accounts']=$m_accounts->get_list('is_deleted=0',null, null,'trim(account_title) ASC');
                 $data['entries']=$m_journal_accounts->get_list('journal_accounts.journal_id='.$journal_id);
                 $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'department_name ASC');
                 $this->load->view('template/journal_entries', $data);

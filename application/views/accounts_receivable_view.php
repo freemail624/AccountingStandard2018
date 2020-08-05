@@ -353,7 +353,16 @@
                                             <?php } ?>
                                         </select>
                                     </div>
-                                    <div class="col-sm-offset-2 col-sm-4">
+                                    <div class="col-sm-offset-1  col-sm-2">
+                                    <label> <b class="required">*</b> Date :</label> <br>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                            <input type="text" name="date_txn" id="date_txn" class="date-picker form-control" data-error-msg="Date is required." required>
+                                        </div>
+                                    </div> 
+                                    <div class="col-sm-3">
                                     <label>Txn #</label>
                                         <div class="input-group">
                                             <span class="input-group-addon">
@@ -362,6 +371,7 @@
                                             <input type="text" name="txn_no" class="form-control" placeholder="TXN-YYYYMMDD-XXX" readonly>
                                         </div>
                                     </div>
+  
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-6">
@@ -373,18 +383,7 @@
                                             <?php } ?>
                                         </select>
                                     </div>
-                                    <div class="col-sm-offset-2 col-sm-4">
-                                    <label> <b class="required">*</b> Date :</label> <br>
-                                        <div class="input-group">
-                                            <span class="input-group-addon">
-                                                <i class="fa fa-calendar"></i>
-                                            </span>
-                                            <input type="text" name="date_txn" id="date_txn" class="date-picker form-control" data-error-msg="Date is required." required>
-                                        </div>
-                                    </div>                                
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-offset-8 col-sm-4">
+                                    <div class="col-sm-offset-1 col-sm-5">
                                         <label> Reference # / Billing # :</label> <br>
                                         <div class="input-group">
                                             <span class="input-group-addon">
@@ -392,9 +391,8 @@
                                             </span>
                                             <input type="text" name="ref_no" class="form-control" >
                                         </div>
-                                    </div>                              
+                                    </div>  
                                 </div>
-
                                     <span><strong><i class="fa fa-bars"></i> Journal Entries</strong></span>
                                     <hr />
 

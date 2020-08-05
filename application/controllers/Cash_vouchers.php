@@ -47,9 +47,9 @@ class Cash_vouchers extends CORE_Controller
             'b_refchecktype.*,account_titles.account_title',
             array(array( 'account_titles' , 'account_titles.account_id = b_refchecktype. account_id', 'left'))
             );
-        $data['suppliers']=$this->Suppliers_model->get_list('is_deleted = FALSE');
-        $data['departments']=$this->Departments_model->get_list('is_deleted = FALSE');
-        $data['accounts']=$this->Account_title_model->get_list('is_deleted = FALSE');
+        $data['suppliers']=$this->Suppliers_model->get_list('is_deleted = FALSE',null, null,'supplier_name ASC');
+        $data['departments']=$this->Departments_model->get_list('is_deleted = FALSE',null, null,'department_name ASC');
+        $data['accounts']=$this->Account_title_model->get_list('is_deleted = FALSE',null, null,'trim(account_title) ASC');
         $data['methods']=$this->Payment_method_model->get_list();
         $data['tax_types']=$this->Tax_types_model->get_list('is_deleted=0');
         $data['payment_methods']=$this->Payment_method_model->get_list('is_deleted=0');
@@ -91,9 +91,9 @@ class Cash_vouchers extends CORE_Controller
                 $m_accounts=$this->Account_title_model;
                 $m_cv_accounts=$this->Cash_vouchers_accounts_model;
 
-                $data['accounts']=$m_accounts->get_list(array('is_deleted'=>FALSE));
+                $data['accounts']=$m_accounts->get_list(array('is_deleted'=>FALSE),null, null,'trim(account_title) ASC');
                 $data['entries']=$m_cv_accounts->get_list('cv_accounts.cv_id='.$cv_id);
-                $data['departments']=$this->Departments_model->get_list('is_deleted = FALSE');
+                $data['departments']=$this->Departments_model->get_list('is_deleted = FALSE',null, null,'department_name ASC');
 
                 $this->load->view('template/cv_journal_entries', $data);
 

@@ -3271,7 +3271,7 @@ class Templates extends CORE_Controller {
                     array(
                         'departments.is_active'=>TRUE,
                         'departments.is_deleted'=>FALSE
-                    ));
+                    ),null, null,'department_name ASC');
 
                 $data['customers']=$m_customers->get_list(
                     array(
@@ -3282,7 +3282,7 @@ class Templates extends CORE_Controller {
                     array(
                         'customers.customer_id',
                         'customers.customer_name'
-                    )
+                    ), null,'customer_name ASC'
                 );
                 $data['entries']=$m_payments->get_journal_entries($payment_id);
 
@@ -3290,7 +3290,7 @@ class Templates extends CORE_Controller {
                     array(
                         'account_titles.is_active'=>TRUE,
                         'account_titles.is_deleted'=>FALSE
-                    )
+                    ),null, null,'trim(account_title) ASC'
                 );
 
 
@@ -3364,7 +3364,7 @@ class Templates extends CORE_Controller {
 
 
                 $data['methods']=$m_methods->get_list();
-                $data['departments']=$m_departments->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
+                $data['departments']=$m_departments->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE),null, null,'department_name ASC');
 
                 $data['customers']=$m_customers->get_list(
                     array(
@@ -3375,7 +3375,7 @@ class Templates extends CORE_Controller {
                     array(
                         'customers.customer_id',
                         'customers.customer_name'
-                    )
+                    ), null,'customer_name ASC'
                 );
                 $data['entries']=$m_cash_invoice->get_journal_entries($cash_invoice_id);
 
@@ -3383,7 +3383,7 @@ class Templates extends CORE_Controller {
                     array(
                         'account_titles.is_active'=>TRUE,
                         'account_titles.is_deleted'=>FALSE
-                    )
+                    ),null, null,'trim(account_title) ASC'
                 );
 
                 $data['items'] = $m_cash_invoice_items->get_list(
@@ -6006,15 +6006,18 @@ class Templates extends CORE_Controller {
                         DATE_FORMAT(b_payment_info.created_datetime,"%m/%d/%Y") as date_txn,
                         IF(b_payment_info.payment_type = 1, 2, 1) as payment_method_id,
                         DATE_FORMAT(b_payment_info.check_date,"%m/%d/%Y") as check_date,
-                        DATEDIFF(b_payment_info.check_date,NOW()) as rem_day_for_due',
-                        array(array('b_payment_info','b_payment_info.payment_id = temp_journal_info.payment_id','left'))
+                        DATEDIFF(b_payment_info.check_date,NOW()) as rem_day_for_due,
+                        customers.link_department_id
+                        ',
+                        array(array('b_payment_info','b_payment_info.payment_id = temp_journal_info.payment_id','left'),
+                            array('customers','customers.customer_id = temp_journal_info.customer_id','left'))
                     );
                 $data['info']=$info[0];
 
 
 
                 $data['methods']=$m_methods->get_list();
-                $data['departments']=$m_departments->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
+                $data['departments']=$m_departments->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE),null, null,'department_name ASC');
 
                 $data['customers']=$m_customers->get_list(
                     array(
@@ -6025,7 +6028,7 @@ class Templates extends CORE_Controller {
                     array(
                         'customers.customer_id',
                         'customers.customer_name'
-                    )
+                    ),null,'customer_name ASC'
                 );
                 $data['entries']=$m_temp_items->get_list(array('temp_journal_id'=>$temp_journal_id),null,null,'dr_amount DESC');
 
@@ -6033,7 +6036,7 @@ class Templates extends CORE_Controller {
                     array(
                         'account_titles.is_active'=>TRUE,
                         'account_titles.is_deleted'=>FALSE
-                    )
+                    ),null, null,'trim(account_title) ASC'
                 );
 
                 //validate if customer is not deleted

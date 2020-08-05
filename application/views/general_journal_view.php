@@ -1835,8 +1835,9 @@ $(document).ready(function(){
                 reInitializeNumeric();
                 reInitializeDropDownAccounts($('#tbl_entries'),false);
                 reComputeTotals($('#tbl_entries'));
+                showList(false);
             });
-            showList(false);
+
         });
 
         $('#tbl_entries').on('click','button.remove_account',function(){

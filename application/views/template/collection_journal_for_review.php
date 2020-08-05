@@ -121,7 +121,7 @@
                                                         <?php } ?>
                                                     </select>
                                                 </div>
-                                                <div class="col-lg-5">BIR 2307
+                                                <div class="col-lg-5 hidden">BIR 2307
                                                     <br>
                                                     <span class="file_2307_value_<?php echo $payment_info->payment_id ?>">No File.</span><br>
                                                     <button type="button" style="width:100px;" class="btn btn-primary btn_browse_bir2307_<?php echo $payment_info->payment_id ?>">Browse File</button>

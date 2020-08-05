@@ -50,9 +50,9 @@ class Cash_disbursement extends CORE_Controller
             'b_refchecktype.*,account_titles.account_title',
             array(array( 'account_titles' , 'account_titles.account_id = b_refchecktype. account_id', 'left'))
             );
-        $data['suppliers']=$this->Suppliers_model->get_list('is_deleted = FALSE');
+        $data['suppliers']=$this->Suppliers_model->get_list('is_deleted = FALSE',null, null,'supplier_name ASC');
         $data['departments']=$this->Departments_model->get_list('is_deleted = FALSE',null, null,'department_name ASC');
-        $data['accounts']=$this->Account_title_model->get_list('is_deleted = FALSE');
+        $data['accounts']=$this->Account_title_model->get_list('is_deleted = FALSE',null, null,'trim(account_title) ASC');
         $data['methods']=$this->Payment_method_model->get_list();
         $data['tax_types']=$this->Tax_types_model->get_list('is_deleted=0');
         $data['payment_methods']=$this->Payment_method_model->get_list('is_deleted=0');
@@ -87,7 +87,7 @@ class Cash_disbursement extends CORE_Controller
                 $m_accounts=$this->Account_title_model;
                 $m_journal_accounts=$this->Journal_account_model;
 
-                $data['accounts']=$m_accounts->get_list(array('is_deleted'=>FALSE));
+                $data['accounts']=$m_accounts->get_list(array('is_deleted'=>FALSE),null, null,'trim(account_title) ASC');
                 $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'department_name ASC');
                 $data['entries']=$m_journal_accounts->get_list('journal_accounts.journal_id='.$journal_id);
 

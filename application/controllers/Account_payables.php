@@ -37,9 +37,9 @@ class Account_payables extends CORE_Controller
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
 
-        $data['suppliers']=$this->Suppliers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
+        $data['suppliers']=$this->Suppliers_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'supplier_name ASC');
         $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'department_name ASC');
-        $data['accounts']=$this->Account_title_model->get_list('is_active=TRUE AND is_deleted=FALSE');
+        $data['accounts']=$this->Account_title_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'trim(account_title) ASC');
         $data['methods']=$this->Payment_method_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['tax_types']=$this->Tax_types_model->get_list('is_deleted=FALSE');
 
@@ -72,7 +72,7 @@ class Account_payables extends CORE_Controller
                 $m_accounts=$this->Account_title_model;
                 $m_journal_accounts=$this->Journal_account_model;
 
-                $data['accounts']=$m_accounts->get_list();
+                $data['accounts']=$m_accounts->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'trim(account_title) ASC');
                 $data['entries']=$m_journal_accounts->get_list('journal_accounts.journal_id='.$journal_id);
                 $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'department_name ASC');
                 $this->load->view('template/journal_entries', $data);
