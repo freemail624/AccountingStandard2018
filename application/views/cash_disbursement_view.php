@@ -2320,12 +2320,14 @@ $(document).ready(function(){
     };
 
     var isZero=function(opTable=null){
-        reComputeTotals($('#tbl_entries'));
+        
         var oRow; var dr; var cr;
 
         if(opTable==null){
+            reComputeTotals($('#tbl_entries'));
             oRow=$('#tbl_entries > tfoot tr');
         }else{
+            reComputeTotals($(opTable));
             oRow=$(opTable+' > tfoot tr');
         }
 
