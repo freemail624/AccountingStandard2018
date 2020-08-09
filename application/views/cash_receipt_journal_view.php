@@ -1541,7 +1541,7 @@ $(document).ready(function(){
 
                     reInitializeNumeric();
 
-                    var tbl=$('#tbl_entries_for_review_'+ d.cash_invoice_id);
+                    var tbl=$('#tbl_entries_for_review_cash_'+ d.cash_invoice_id);
                     var parent_tab_pane=$('#journal_review_'+ d.cash_invoice_id);
 
                     reInitializeDropDownAccounts(tbl,false);
@@ -1593,7 +1593,7 @@ $(document).ready(function(){
 
                     reInitializeNumeric();
 
-                    var tbl=$('#tbl_entries_for_review_'+ d.temp_journal_id);
+                    var tbl=$('#tbl_entries_for_review_billing_'+ d.temp_journal_id);
                     var parent_tab_pane=$('#journal_review_'+ d.temp_journal_id);
 
                     reInitializeDropDownAccounts(tbl,false);
@@ -2471,8 +2471,8 @@ $(document).ready(function(){
         parent.on('click','button[name="btn_finalize_journal_review"]',function(){
 
             var _curBtn=$(this);
-            if(isZero('#tbl_entries_for_review_'+_dataParentID)){
-            if(isBalance('#tbl_entries_for_review_'+_dataParentID)){
+            if(isZero('#tbl_entries_for_review_cash_'+_dataParentID)){
+            if(isBalance('#tbl_entries_for_review_cash_'+_dataParentID)){
                 finalizeJournalReview().done(function(response){
                     showNotification(response);
                     if(response.stat=="success"){
@@ -2532,8 +2532,8 @@ $(document).ready(function(){
         parent.on('click','button[name="btn_finalize_journal_review"]',function(){
 
             var _curBtn=$(this);
-            if(isZero('#tbl_entries_for_review_'+_dataParentID)){
-            if(isBalance('#tbl_entries_for_review_'+_dataParentID)){
+            if(isZero('#tbl_entries_for_review_billing_'+_dataParentID)){
+            if(isBalance('#tbl_entries_for_review_billing_'+_dataParentID)){
                 finalizeJournalReview().done(function(response){
                     showNotification(response);
                     if(response.stat=="success"){

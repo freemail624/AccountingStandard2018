@@ -837,7 +837,7 @@ $(document).ready(function(){
                 };
 
                 total_dr = api
-                    .column( 7 )
+                    .column( 6 )
                     .data()
                     .reduce( function (a, b) {
                         return intVal(a) + intVal(b);
@@ -916,7 +916,7 @@ $(document).ready(function(){
                 };
 
                 total_dr = api
-                    .column( 7 )
+                    .column( 6 )
                     .data()
                     .reduce( function (a, b) {
                         return intVal(a) + intVal(b);
@@ -996,7 +996,7 @@ $(document).ready(function(){
                 };
 
                 total_dr = api
-                    .column( 7 )
+                    .column( 6 )
                     .data()
                     .reduce( function (a, b) {
                         return intVal(a) + intVal(b);
@@ -1076,7 +1076,7 @@ $(document).ready(function(){
                 };
 
                 total_dr = api
-                    .column( 7 )
+                    .column( 6 )
                     .data()
                     .reduce( function (a, b) {
                         return intVal(a) + intVal(b);
@@ -1156,7 +1156,7 @@ $(document).ready(function(){
                 };
 
                 total_dr = api
-                    .column( 7 )
+                    .column( 6 )
                     .data()
                     .reduce( function (a, b) {
                         return intVal(a) + intVal(b);
@@ -1236,7 +1236,7 @@ $(document).ready(function(){
                 };
 
                 total_dr = api
-                    .column( 7 )
+                    .column( 6 )
                     .data()
                     .reduce( function (a, b) {
                         return intVal(a) + intVal(b);

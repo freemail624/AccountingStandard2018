@@ -126,7 +126,7 @@
                                 </div>
                                 <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Journal Entries</strong></span></h4>
                                 <hr />
-                                <table id="tbl_entries_for_review_<?php echo $info->temp_journal_id; ?>" class="table table-striped" style="width: 100% !important;">
+                                <table id="tbl_entries_for_review_billing_<?php echo $info->temp_journal_id; ?>" class="table table-striped" style="width: 100% !important;">
                                     <thead>
                                     <tr style="border-bottom:solid gray;">
                                         <th style="width: 30%;">Account</th>
