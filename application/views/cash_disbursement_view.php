@@ -1994,6 +1994,7 @@ $(document).ready(function(){
             var f=$('#frm_journal');
             if(isZero()){
             if(isBalance()){
+            if(validateAccounts(f)){
             if(validateRequiredFields(f)){
                 if(_txnMode=="new"){
 
@@ -2029,7 +2030,10 @@ $(document).ready(function(){
                 }
 
             }
-
+            } else {
+                showNotification({title:"Journal Entries Etries!",stat:"error",msg:'Incomplete assignment of Account Titles in the table.'});
+                stat=false;
+            } // ELSE OF VALIDATE ACCOUNTS
             }else{
                 showNotification({title:"Not Balance!",stat:"error",msg:'Please make sure Debit and Credit amount are equal.'});
                 stat=false;
@@ -2287,6 +2291,17 @@ $(document).ready(function(){
         });
     };
 
+    var validateAccounts=function(f){
+        var stat=true;
+
+        $('#tbl_entries > tbody tr select.selectpicker_accounts').each(function(){ 
+            if($(this).select2('val') == null || $(this).select2('val') == 0){
+                stat=false;
+                return false;
+            }
+        });
+        return stat;
+    };
 
     var validateRequiredFields=function(f){
         var stat=true;

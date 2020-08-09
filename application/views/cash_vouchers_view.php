@@ -1101,6 +1101,7 @@ $(document).ready(function(){
         $('#btn_save').click(function(){
             var btn=$(this);
             var f=$('#frm_journal');
+            if(validateAccounts(f)){
             if(validateRequiredFields(f)){
                 if(_txnMode=="new"){
                     createJournal().done(function(response){
@@ -1126,6 +1127,10 @@ $(document).ready(function(){
                     });
                 }
             }
+            } else {
+                showNotification({title:"Journal Entries Etries!",stat:"error",msg:'Incomplete assignment of Account Titles in the table.'});
+                stat=false;
+            } // ELSE OF VALIDATE ACCOUNTS
         });
 
         $('#btn_cancel').click(function(){
@@ -1295,7 +1300,18 @@ $(document).ready(function(){
         });
     };
 
+    var validateAccounts=function(f){
+        var stat=true;
 
+        $('#tbl_entries > tbody tr select.selectpicker_accounts').each(function(){ 
+            if($(this).select2('val') == null || $(this).select2('val') == 0){
+                stat=false;
+                return false;
+            }
+        });
+        return stat;
+    };
+    
     var validateRequiredFields=function(f){
         var stat=true;
 
