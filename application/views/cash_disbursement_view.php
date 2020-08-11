@@ -1204,7 +1204,7 @@ $(document).ready(function(){
                 {sClass: "right_align_items","orderable":      false,
                     targets:[8],data:null,
                     render: function (data, type, full, meta){
-                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
+                        var btn_edit='<button class="btn btn-primary btn-sm <?php echo ($this->session->user_group_id != 1 ? 'hidden' : '')?>" name="edit_info" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_cancel='<button class="btn btn-red btn-sm" name="cancel_info" data-toggle="tooltip" data-placement="top" title="Cancel Journal"><i class="fa fa-times"></i> </button>';
                         var btn_voucher_print='<button class="btn btn-success btn-sm" name="print_voucher" style="text-transform: none;" data-toggle="tooltip" data-placement="top" title="Voucher"><i class="fa fa-print"></i></button>';
                         var btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="text-transform: none;" data-toggle="tooltip" data-placement="top" title="Cheque"><img src="assets/img/facheque.png"></button>';
