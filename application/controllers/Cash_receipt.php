@@ -529,18 +529,22 @@ class Cash_receipt extends CORE_Controller
                 $m_trans->trans_key_id=9; //CRUD
                 $m_trans->trans_type_id=6; // TRANS TYPE
                 $m_trans->trans_log='Uncancelled Cash Receipt Journal Entry : '.$journal_txn_no[0]->txn_no;
-        
+                $response['title']='Opened!';
+                $response['msg']='Journal successfully opened.';
 
                 }else if($journal_txn_no[0]->is_active ==FALSE){
                 $m_trans->trans_key_id=4; //CRUD
                 $m_trans->trans_type_id=6; // TRANS TYPE
                 $m_trans->trans_log='Cancelled Cash Receipt Journal Entry : '.$journal_txn_no[0]->txn_no;
+
+                $response['title']='Cancelled!';
+                $response['msg']='Journal successfully cancelled.';
                 }
                 $m_trans->save();
 
-                $response['title']='Cancelled!';
+
                 $response['stat']='success';
-                $response['msg']='Journal successfully cancelled.';
+
                 $response['row_updated']=$this->get_response_rows($journal_id);
 
                 echo json_encode($response);

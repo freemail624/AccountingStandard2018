@@ -238,7 +238,7 @@
                     <div class="col-lg-2">
                             From :<br />
                             <div class="input-group">
-                                <input type="text" id="txt_start_date_cdj" name="" class="date-picker form-control" value="<?php echo date("m") ?>/01/2019">
+                                <input type="text" id="txt_start_date_cdj" name="" class="date-picker form-control" value="<?php echo date("m") ?>/01/<?php echo date("Y") ?>">
                                  <span class="input-group-addon">
                                         <i class="fa fa-calendar"></i>
                                  </span>

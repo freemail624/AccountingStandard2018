@@ -328,10 +328,30 @@ class General_journal extends CORE_Controller
                 $m_journal->modify($journal_id);
 
 
+                $journal_txn_no =$m_journal->get_list($journal_id,'txn_no,is_active');
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                if($journal_txn_no[0]->is_active ==TRUE){
 
+                $m_trans->trans_key_id=9; //CRUD
+                $m_trans->trans_type_id=1; // TRANS TYPE
+                $m_trans->trans_log='Uncancelled General Journal Entry : '.$journal_txn_no[0]->txn_no;
+                $response['title']='Uncancelled!';
+                $response['msg']='Journal successfully opened.';
+
+                }else if($journal_txn_no[0]->is_active ==FALSE){
+                $m_trans->trans_key_id=4; //CRUD
+                $m_trans->trans_type_id=1; // TRANS TYPE
+                $m_trans->trans_log='Cancelled General Journal Entry : '.$journal_txn_no[0]->txn_no;
                 $response['title']='Cancelled!';
-                $response['stat']='success';
                 $response['msg']='Journal successfully cancelled.';
+                }
+                $m_trans->save();
+
+
+                $response['stat']='success';
+
                 $response['row_updated']=$this->get_response_rows($journal_id);
 
                 echo json_encode($response);
