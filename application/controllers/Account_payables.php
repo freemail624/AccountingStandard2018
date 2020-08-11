@@ -234,6 +234,15 @@ class Account_payables extends CORE_Controller
                 }
 
 
+                $ji_info = $m_journal->get_list($journal_id,'txn_no');
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->trans_key_id=2;
+                $m_trans->trans_type_id=3;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_log='Updated Accounts Payable Journal '.$ji_info[0]->txn_no;
+                $m_trans->save();
+
                 $response['stat']='success';
                 $response['title']='Success!';
                 $response['msg']='Journal successfully updated';

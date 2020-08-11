@@ -291,6 +291,14 @@ class General_journal extends CORE_Controller
                     $m_journal_accounts->save();
                 }
 
+                $ji_info = $m_journal->get_list($journal_id,'txn_no');
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->trans_key_id=2;
+                $m_trans->trans_type_id=1;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_log='Updated General Journal '.$ji_info[0]->txn_no;
+                $m_trans->save();
 
                 $response['stat']='success';
                 $response['title']='Success!';
