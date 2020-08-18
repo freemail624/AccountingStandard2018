@@ -188,7 +188,7 @@ class Customers extends CORE_Controller {
                 if(count($m_journal->get_list('is_active=1 AND customer_id='.$customer_id))>0){
                     $response['title'] = 'Cannot delete!';
                     $response['stat'] = 'error';
-                    $response['msg'] = 'This customer still has an active transaction in General Journal.';
+                    $response['msg'] = 'This customer still has an active transaction in Journal Entries.';
 
                     echo json_encode($response);
                     exit;
