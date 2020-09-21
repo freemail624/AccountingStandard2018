@@ -17,7 +17,8 @@
 					'Departments_model',
 					'Delivery_invoice_item_model',
 					'Company_model',
-					'Asset_movement_model'
+					'Asset_movement_model',
+					'Trans_model'
 				)
 			);
 		    
@@ -250,6 +251,15 @@
 							$m_fixed_asset->posted_by_user=$this->session->user_id;
 							$m_fixed_asset->set('date_posted','NOW()');
 							$m_fixed_asset->save();
+
+							// Audit Trail Create 
+		                    $m_trans=$this->Trans_model;
+		                    $m_trans->user_id=$this->session->user_id;
+		                    $m_trans->set('trans_date','NOW()');
+		                    $m_trans->trans_key_id=1; //CRUD
+		                    $m_trans->trans_type_id=54; // TRANS TYPE
+		                    $m_trans->trans_log='Created Fixed Asset Code: '.$asset_code;
+		                    $m_trans->save();
 					}
 
 					// Update DR Item Fixed Asset Status
@@ -301,6 +311,15 @@
 
 					$m_fixed_asset->commit();
 
+					// Audit Trail Create 
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=1; //CRUD
+                    $m_trans->trans_type_id=54; // TRANS TYPE
+                    $m_trans->trans_log='Created Fixed Asset Code: '.$this->input->post('asset_code',TRUE);
+                    $m_trans->save();							
+
 					$response['title'] = 'Success!';
                     $response['stat'] = 'success';
                     $response['msg'] = 'Asset successfully created.';
@@ -332,6 +351,15 @@
 
 					$m_fixed_asset->modify($fixed_asset_id);
 
+					// Audit Trail Updated 
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=2; //CRUD
+                    $m_trans->trans_type_id=54; // TRANS TYPE
+                    $m_trans->trans_log='Updated Fixed Asset Code: '.$this->input->post('asset_code',TRUE);
+                    $m_trans->save();					
+
 					$response['title'] = 'Success!';
                     $response['stat'] = 'success';
                     $response['msg'] = 'Asset successfully updated.';
@@ -349,6 +377,18 @@
 	                $m_fixed_asset->deleted_by_user = $this->session->user_id;
 	                $m_fixed_asset->is_deleted=1;
 	                if($m_fixed_asset->modify($fixed_asset_id)){
+
+	                	$asset_info=$m_fixed_asset->get_list($fixed_asset_id,'asset_code');
+
+						// Audit Trail Deleted 
+	                    $m_trans=$this->Trans_model;
+	                    $m_trans->user_id=$this->session->user_id;
+	                    $m_trans->set('trans_date','NOW()');
+	                    $m_trans->trans_key_id=3; //CRUD
+	                    $m_trans->trans_type_id=54; // TRANS TYPE
+	                    $m_trans->trans_log='Deleted Fixed Asset Code: '.$asset_info[0]->asset_code;
+	                    $m_trans->save();
+	                	
 	                    $response['title']='Success!';
 	                    $response['stat']='success';
 	                    $response['msg']='Asset successfully deleted.';
