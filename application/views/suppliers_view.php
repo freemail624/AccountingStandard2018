@@ -649,6 +649,20 @@ $(document).ready(function(){
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div class="col-md-12">
+                                            <div class="col-md-4" id="label">
+                                                 <label class="control-label boldlabel" style="text-align:right;"> Zip Code :</label>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-home"></i>
+                                                    </span>
+                                                    <input type="text" name="zip_code" class="form-control" placeholder="Zip Code">
+                                                </div>
+                                            </div>
+                                        </div>                                        
                                     
                                         <div class="col-md-12">
                                             <div class="col-md-4" id="label">
@@ -680,7 +694,7 @@ $(document).ready(function(){
 
                                         <div class="col-md-12">
                                             <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;">TIN # :</label>
+                                                 <label class="control-label boldlabel" style="text-align:right;">TIN :</label>
                                             </div>
                                             <div class="form-group">
                                                 <div class="input-group">

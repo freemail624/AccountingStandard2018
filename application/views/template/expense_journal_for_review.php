@@ -71,7 +71,7 @@
                                                         </span>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-5 hidden"> 
+                                                <div class="col-lg-5"> 
                                                     <div style="margin-top: 10px;">
                                                         <input type="checkbox" class="2307_apply" id="2307_apply_<?php echo $payment_info->payment_id; ?>" value="1">
                                                         &nbsp;<label for="2307_apply_<?php echo $payment_info->payment_id; ?>">Apply 2307 Form</label>
@@ -88,7 +88,7 @@
                                                         <?php } ?>
                                                     </select>
                                                 </div>
-                                                <div class="col-lg-5 hidden"> 
+                                                <div class="col-lg-5"> 
                                                     ATC :
                                                     <div class="input-group">
                                                         <span class="input-group-addon">
@@ -107,7 +107,7 @@
                                                         <?php } ?>
                                                     </select>
                                                 </div>
-                                                <div class="col-lg-5 hidden">
+                                                <div class="col-lg-5">
                                                     Remarks :<br />
                                                     <textarea class="2307_remarks form-control" name="2307_remarks" data-error-msg="Remarks is required." rows="5" style="width: 90%;"></textarea>
                                                 </div>

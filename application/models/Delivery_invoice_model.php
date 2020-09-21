@@ -279,6 +279,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
         departments.department_name,
         tax_types.tax_type,
         purchase_order.po_no,
+        purchase_order.order_status_id,
         DATE_FORMAT(di.date_due,'%m/%d/%Y')as date_due,
         DATE_FORMAT(di.date_delivered,'%m/%d/%Y')as date_delivered,
 

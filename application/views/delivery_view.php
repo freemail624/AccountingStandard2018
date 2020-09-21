@@ -1523,6 +1523,11 @@ $(document).ready(function(){
             if(_is_journal_posted > 0){
                 showNotification({title:"Error!",stat:"error",msg:"Cannot Edit: Invoice is already Posted in Purchase Journal."});
             } else {
+
+                if(data.order_status_id == 4){
+                    showNotification({title:"Purchase Order Already Marked As Closed",stat:"warning",msg:"Editing this invoice will reopen the Purchase Order."});
+                }
+                    
                 getproduct().done(function(data){
                     products.clear();
                     products.local = data.data;

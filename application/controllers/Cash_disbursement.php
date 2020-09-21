@@ -206,8 +206,6 @@ class Cash_disbursement extends CORE_Controller
                 $m_modify_voucher->set('date_approved','NOW()');
                 $m_modify_voucher->modify($cv_id);
 
-
-
                 $form_2307_apply=$voucher_info->is_2307;
                 $supplier=$m_supplier->get_list($voucher_info->supplier_id);
                 $company=$m_company->get_list();
@@ -217,13 +215,13 @@ class Cash_disbursement extends CORE_Controller
                     $m_form_2307->supplier_id=$voucher_info->supplier_id;
                     $m_form_2307->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
                     $m_form_2307->date=date('Y-m-d',strtotime($voucher_info->date_txn));
-                    $m_form_2307->payee_tin=$supplier[0]->tin_no;
-                    $m_form_2307->payee_name=$supplier[0]->supplier_name;
-                    $m_form_2307->payee_address=$supplier[0]->address;
-                    $m_form_2307->payor_name=$company[0]->registered_to;
-                    $m_form_2307->payor_tin=$company[0]->tin_no;
-                    $m_form_2307->payor_address=$company[0]->registered_address;
-                    $m_form_2307->zip_code = $company[0]->zip_code; 
+                    // $m_form_2307->payee_tin=$supplier[0]->tin_no;
+                    // $m_form_2307->payee_name=$supplier[0]->supplier_name;
+                    // $m_form_2307->payee_address=$supplier[0]->address;
+                    // $m_form_2307->payor_name=$company[0]->registered_to;
+                    // $m_form_2307->payor_tin=$company[0]->tin_no;
+                    // $m_form_2307->payor_address=$company[0]->registered_address;
+                    // $m_form_2307->zip_code = $company[0]->zip_code; 
                     $m_form_2307->gross_amount=$this->get_numeric_value($total_amount);
                     $m_form_2307->deducted_amount=$this->get_numeric_value($total_wtax);
                     $m_form_2307->atc=$voucher_info->atc_2307;
@@ -365,26 +363,26 @@ class Cash_disbursement extends CORE_Controller
                 $supplier=$m_supplier->get_list($supplier_id);
                 $company=$m_company->get_list();
 
-                // if ($form_2307_apply == 1){
-                //     $m_form_2307->journal_id=$journal_id;
-                //     $m_form_2307->supplier_id=$supplier_id;
-                //     $m_form_2307->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
-                //     $m_form_2307->date=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
-                //     $m_form_2307->payee_tin=$supplier[0]->tin_no;
-                //     $m_form_2307->payee_name=$supplier[0]->supplier_name;
-                //     $m_form_2307->payee_address=$supplier[0]->address;
-                //     $m_form_2307->payor_name=$company[0]->registered_to;
-                //     $m_form_2307->payor_tin=$company[0]->tin_no;
-                //     $m_form_2307->payor_address=$company[0]->registered_address;
-                //     $m_form_2307->zip_code = $company[0]->zip_code; 
-                //     $m_form_2307->gross_amount=$this->get_numeric_value($total_amount);
-                //     $m_form_2307->deducted_amount=$this->get_numeric_value($total_wtax);
-                //     $m_form_2307->atc=$this->input->post('2307_atc',TRUE);
-                //     $m_form_2307->remarks=$this->input->post('2307_remarks',TRUE);
-                //     $m_form_2307->set('date_created','NOW()');
-                //     $m_form_2307->created_by_user=$this->session->user_id;
-                //     $m_form_2307->save();
-                // }
+                if ($form_2307_apply == 1){
+                    $m_form_2307->journal_id=$journal_id;
+                    $m_form_2307->supplier_id=$supplier_id;
+                    $m_form_2307->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
+                    $m_form_2307->date=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
+                    // $m_form_2307->payee_tin=$supplier[0]->tin_no;
+                    // $m_form_2307->payee_name=$supplier[0]->supplier_name;
+                    // $m_form_2307->payee_address=$supplier[0]->address;
+                    // $m_form_2307->payor_name=$company[0]->registered_to;
+                    // $m_form_2307->payor_tin=$company[0]->tin_no;
+                    // $m_form_2307->payor_address=$company[0]->registered_address;
+                    // $m_form_2307->zip_code = $company[0]->zip_code; 
+                    $m_form_2307->gross_amount=$this->get_numeric_value($total_amount);
+                    $m_form_2307->deducted_amount=$this->get_numeric_value($total_wtax);
+                    $m_form_2307->atc=$this->input->post('2307_atc',TRUE);
+                    $m_form_2307->remarks=$this->input->post('2307_remarks',TRUE);
+                    $m_form_2307->set('date_created','NOW()');
+                    $m_form_2307->created_by_user=$this->session->user_id;
+                    $m_form_2307->save();
+                }
 
 
                 //if dr invoice is available, purchase invoice is recorded as journal
@@ -426,10 +424,13 @@ class Cash_disbursement extends CORE_Controller
                 $response['row_added']=$this->get_response_rows($journal_id);
                 echo json_encode($response);
                 break;
+
             case 'update':
                 $journal_id=$this->input->get('id');
                 $m_journal=$this->Journal_info_model;
                 $m_journal_accounts=$this->Journal_account_model;
+                $m_accounts=$this->Account_integration_model;
+                $account_integration=$m_accounts->get_list();
 
                 //validate if this transaction is not yet closed
                 $not_closed=$m_journal->get_list('accounting_period_id>0 AND journal_id='.$journal_id);
@@ -476,7 +477,14 @@ class Cash_disbursement extends CORE_Controller
 
                 $m_journal_accounts->delete_via_fk($journal_id);
 
+                $total_amount=0;
+                $total_wtax=0;
+
                 for($i=0;$i<=count($accounts)-1;$i++){
+                    $total_amount+=$this->get_numeric_value($dr_amounts[$i]);
+                    if ($account_integration[0]->supplier_wtax_account_id == $accounts[$i]){
+                        $total_wtax+=$this->get_numeric_value($cr_amounts[$i]);
+                    }
                     $m_journal_accounts->journal_id=$journal_id;
                     $m_journal_accounts->account_id=$accounts[$i];
                     $m_journal_accounts->memo=$memos[$i];
@@ -484,6 +492,62 @@ class Cash_disbursement extends CORE_Controller
                     $m_journal_accounts->cr_amount=$this->get_numeric_value($cr_amounts[$i]);
                     $m_journal_accounts->department_id=$this->get_numeric_value($department_id_line[$i]); 
                     $m_journal_accounts->save();
+                }
+
+                $m_form_2307=$this->Bir_2307_model;
+                $m_supplier=$this->Suppliers_model;
+                $m_company=$this->Company_model;
+
+                $chck_form = $m_form_2307->get_list('journal_id='.$journal_id);
+                $form_2307_apply=$this->input->post('2307_apply',TRUE);
+                $supplier_id=$this->input->post('supplier_id',TRUE);
+                $supplier=$m_supplier->get_list($supplier_id);
+                $company=$m_company->get_list();
+
+                if ($form_2307_apply == 1){
+
+                    $m_form_2307->journal_id=$journal_id;
+                    $m_form_2307->supplier_id=$supplier_id;
+                    $m_form_2307->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
+                    $m_form_2307->date=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
+                    // $m_form_2307->payee_tin=$supplier[0]->tin_no;
+                    // $m_form_2307->payee_name=$supplier[0]->supplier_name;
+                    // $m_form_2307->payee_address=$supplier[0]->address;
+                    // $m_form_2307->payor_name=$company[0]->registered_to;
+                    // $m_form_2307->payor_tin=$company[0]->tin_no;
+                    // $m_form_2307->payor_address=$company[0]->registered_address;
+                    // $m_form_2307->zip_code = $company[0]->zip_code; 
+                    $m_form_2307->gross_amount=$this->get_numeric_value($total_amount);
+                    $m_form_2307->deducted_amount=$this->get_numeric_value($total_wtax);
+                    $m_form_2307->atc=$this->input->post('2307_atc',TRUE);
+                    $m_form_2307->remarks=$this->input->post('2307_remarks',TRUE);
+                    $m_form_2307->set('date_created','NOW()');
+                    $m_form_2307->created_by_user=$this->session->user_id;
+                    $m_form_2307->is_applied=1;
+
+                    $journal=$m_journal->get_list($journal_id);
+
+                    if($journal[0]->is_active == true){
+                        $m_form_2307->is_deleted = 0;
+                    }else{
+                        $m_form_2307->is_deleted = 1;
+                    }
+
+                    //2307 is created for journal
+                    if(count($chck_form) > 0){      
+                        $m_form_2307->modify($chck_form[0]->form_2307_id);
+                    }//no 2307 associated with the journal
+                    else{                          
+                        $m_form_2307->save();
+                    } 
+                
+                }else{
+
+                    if(count($chck_form) > 0){//2307 is created for journal
+                        $m_form_2307->is_applied=0;
+                        $m_form_2307->is_deleted = 1;
+                        $m_form_2307->modify($chck_form[0]->form_2307_id);
+                    }
                 }
 
 
@@ -527,23 +591,33 @@ class Cash_disbursement extends CORE_Controller
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
                 $m_trans->set('trans_date','NOW()');
+
                 if($journal_txn_no[0]->is_active ==TRUE){
 
-                $m_trans->trans_key_id=9; //CRUD
-                $m_trans->trans_type_id=2; // TRANS TYPE
-                $m_trans->trans_log='Uncancelled Cash Disbursement Entry : '.$journal_txn_no[0]->txn_no;
-                $response['title']='Uncancelled!';
-                $response['msg']='Journal successfully opened.';
+                    $m_trans->trans_key_id=9; //CRUD
+                    $m_trans->trans_type_id=2; // TRANS TYPE
+                    $m_trans->trans_log='Uncancelled Cash Disbursement Entry : '.$journal_txn_no[0]->txn_no;
+                    $response['title']='Uncancelled!';
+                    $response['msg']='Journal successfully opened.';
+                    $is_deleted = FALSE;
 
                 }else if($journal_txn_no[0]->is_active ==FALSE){
-                $m_trans->trans_key_id=4; //CRUD
-                $m_trans->trans_type_id=2; // TRANS TYPE
-                $m_trans->trans_log='Cancelled Cash Disbursement Entry : '.$journal_txn_no[0]->txn_no;
-                $response['title']='Cancelled!';
-                $response['msg']='Journal successfully cancelled.';
+                    $m_trans->trans_key_id=4; //CRUD
+                    $m_trans->trans_type_id=2; // TRANS TYPE
+                    $m_trans->trans_log='Cancelled Cash Disbursement Entry : '.$journal_txn_no[0]->txn_no;
+                    $response['title']='Cancelled!';
+                    $response['msg']='Journal successfully cancelled.';
+                    $is_deleted = TRUE;
                 }
                 $m_trans->save();
 
+                $m_form_2307=$this->Bir_2307_model;
+                $chck_form = $m_form_2307->get_list('journal_id='.$journal_id);
+                if(count($chck_form) > 0){//2307 is created for journal
+                    $m_form_2307->is_deleted = $is_deleted;
+                    $m_form_2307->modify($chck_form[0]->form_2307_id);
+                }
+                    
 
                 $response['stat']='success';
 
@@ -551,6 +625,14 @@ class Cash_disbursement extends CORE_Controller
 
                 echo json_encode($response);
 
+                break;
+
+            case 'get_2307_journal':
+
+                $m_form_2307=$this->Bir_2307_model;
+                $journal_id = $this->input->post('journal_id',TRUE);
+                $response['data'] = $m_form_2307->get_list('journal_id='.$journal_id);
+                echo json_encode($response);
                 break;
 
         };

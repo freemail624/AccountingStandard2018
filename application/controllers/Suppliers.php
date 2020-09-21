@@ -61,11 +61,11 @@ class Suppliers extends CORE_Controller {
                 $m_suppliers->supplier_name=$this->input->post('supplier_name',TRUE);
                 $m_suppliers->contact_name=$this->input->post('contact_name',TRUE);
                 $m_suppliers->address=$this->input->post('address',TRUE);
+                $m_suppliers->zip_code=$this->input->post('zip_code',TRUE);
                 $m_suppliers->email_address=$this->input->post('email_address',TRUE);
                 $m_suppliers->contact_no=$this->input->post('contact_no',TRUE);
                 $m_suppliers->tin_no=$this->input->post('tin_no',TRUE);
-                $m_suppliers->photo_path=$this->input->post('photo_path',TRUE);
-
+                $m_suppliers->photo_path=$this->input->post('photo_path',TRUE); 
                 $m_suppliers->tax_type_id=$this->input->post('tax_type_id',TRUE);
                 $m_suppliers->tax_output=$this->input->post('tax_output',TRUE);
                 $m_suppliers->posted_by_user=$this->session->user_id;
@@ -172,6 +172,7 @@ class Suppliers extends CORE_Controller {
                 $m_suppliers->supplier_name=$this->input->post('supplier_name',TRUE);
                 $m_suppliers->contact_name=$this->input->post('contact_name',TRUE);
                 $m_suppliers->address=$this->input->post('address',TRUE);
+                $m_suppliers->zip_code=$this->input->post('zip_code',TRUE);
                 $m_suppliers->email_address=$this->input->post('email_address',TRUE);
                 $m_suppliers->contact_no=$this->input->post('contact_no',TRUE);
                 $m_suppliers->tin_no=$this->input->post('tin_no',TRUE);

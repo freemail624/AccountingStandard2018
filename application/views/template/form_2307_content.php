@@ -25,10 +25,10 @@
 <span style="top: 120px; left: 248px;letter-spacing: 6px;"><?php echo $payee_tin_3;?></span>
 <span style="top: 120px; left: 310px;letter-spacing: 6px;"><?php echo $payee_tin_4;?></span>
 
-<span style="top: 143px; left: 130px;letter-spacing: 1px; width: 570px;max-width:570px;"><?php echo $info->payee_name; ?></span>
+<span style="top: 143px; left: 130px;letter-spacing: 1px; width: 570px;max-width:570px;"><?php echo $supplier->supplier_name; ?></span>
 
-<span style="top: 173px; left: 130px;letter-spacing: 1px; width: 420px;max-width:420px;"><?php echo $info->payee_address; ?></span>
-<span style="top: 173px; left: 635px;letter-spacing: 9px;"></span>
+<span style="top: 173px; left: 130px;letter-spacing: 1px; width: 420px;max-width:420px;"><?php echo $supplier->address; ?></span>
+<span style="top: 173px; left: 635px;letter-spacing: 9px;"><?php echo $supplier->zip_code; ?></span>
 
 <span style="top: 195px; left: 130px;letter-spacing: 1px; width: 420px;max-width:420px;"></span>
 <span style="top: 195px; left: 635px;letter-spacing: 9px;"></span>
@@ -38,10 +38,10 @@
 <span style="top: 233px; left: 248px;letter-spacing: 6px;"><?php echo $payor_tin_3; ?></span>
 <span style="top: 233px; left: 310px;letter-spacing: 6px;"><?php echo $payor_tin_4; ?></span>
 
-<span style="top: 255px; left: 130px;letter-spacing: 1px; width: 570px;max-width:570px;"><?php echo $info->payor_name; ?></span>
+<span style="top: 255px; left: 130px;letter-spacing: 1px; width: 570px;max-width:570px;"><?php echo $company->registered_to; ?></span>
 
-<span style="top: 287px; left: 130px;letter-spacing: 1px; width: 420px;max-width:420px;display: inline;font-size: 9pt;"><?php echo $info->payor_address; ?></span>
-<span style="top: 287px; left: 635px;letter-spacing: 9px;"><?php echo $info->zip_code; ?></span>
+<span style="top: 287px; left: 130px;letter-spacing: 1px; width: 420px;max-width:420px;display: inline;font-size: 9pt;"><?php echo $company->registered_address; ?></span>
+<span style="top: 287px; left: 635px;letter-spacing: 9px;"><?php echo $company->zip_code; ?></span>
 
 <span style="top: 366px; left: 20px;width: 160px;max-width: 160px;height: 190px; max-height: 190px;font-size: 9pt;">
     <?php echo $info->remarks; ?>

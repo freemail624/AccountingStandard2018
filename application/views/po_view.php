@@ -704,6 +704,27 @@
     </div>
 </div><!---modal-->
 
+<div id="modal_confirmation_close" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title"><span id="modal_mode"> </span>Confirm Closing of Purchase Order</h4>
+
+            </div>
+
+            <div class="modal-body">
+                <p id="modal-body-message">Are you sure ?</p>
+            </div>
+
+            <div class="modal-footer">
+                <button id="btn_yes_close" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Yes</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="modal_new_supplier" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -1081,17 +1102,27 @@ $(document).ready(function(){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
                         var btn_message='<a href="Po_messages?id='+full.purchase_order_id+'" target="_blank" class="btn btn-green btn-sm" name="message_po" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Message"><i class="fa fa-envelope-o"></i> </a>';
+                        var po_btn_mark_as_closed="";
+
+
+
                         if(data.approval_id  == 4 || data.approval_id  == 3 || data.approval_id  == 1 ){
                             favicon = '<i class="fa fa-info-circle"></i>';
                             btncolor = 'btn-info';
-                        }else{
+                        }else{  
                             favicon = '<i class="fa fa-times"></i>';
                             btncolor = 'btn-danger';
                         }
+
+                        if(data.order_status_id == 1  || data.order_status_id == 3){
+                            if(data.approval_id  == 1 ){
+                                po_btn_mark_as_closed = '<button class="btn btn-warning btn-sm" name="mark_as_closed" title="Mark as Closed"><i class="fa fa-times"></i> </button>'; 
+                            }
+                        }
+
                         var btn_cancel='<button class="btn '+btncolor+' btn-sm" name="cancel_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title=""> '+favicon+'</button>';
                  
-
-                        return '<center>'+btn_edit+'&nbsp;'+btn_message+'&nbsp;'+btn_cancel+'</center>';
+                        return '<center>'+btn_edit+'&nbsp;'+btn_message+'&nbsp;'+btn_trash+'&nbsp;'+btn_cancel+'&nbsp'+po_btn_mark_as_closed+'</center>';
                     }
                 },
                 { targets:[9],data: "purchase_order_id",visible:false }
@@ -1409,11 +1440,14 @@ $(document).ready(function(){
 
             //$('.toggle-fullscreen').click();
             clearFields($('#frm_purchases'));
-            $('.date-picker').datepicker('setDate','today');
             $('#cbo_tax_type').select2('val',null);
             $('#cbo_suppliers').select2('val',null);
             $('#cbo_departments').select2('val',null);
             $('textarea[name="remarks"]').val('');
+
+            $('input[name="date_invoice"]').datepicker('setDate','today');
+            $('input[name="date_delivery"]').datepicker('setDate','today');
+            
             //$('#cbo_prodType').select2('val',3);
             $('#typeaheadsearch').val('');
             getproduct().done(function(data){
@@ -1631,6 +1665,14 @@ $(document).ready(function(){
             $('#modal_confirmation').modal('show');
         });
 
+        $('#tbl_purchases tbody').on('click','button[name="mark_as_closed"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dt.row(_selectRowObj).data();
+            _selectedID=data.purchase_order_id;
+
+            $('#modal_confirmation_close').modal('show');
+        });
+
         $('#tbl_purchases tbody').on('click','button[name="cancel_info"]',function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
@@ -1747,6 +1789,15 @@ $(document).ready(function(){
             });
         });
 
+        $('#btn_yes_close').click(function(){
+            MarkRecordAsClosed().done(function(response){
+                showNotification(response);
+                if(response.stat=="success"){
+                    dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
+                }
+
+            });
+        });        
 
         $('#btn_cancel').click(function(){
             showList(true);
@@ -1975,6 +2026,15 @@ $(document).ready(function(){
             "data":{purchase_order_id : _selectedID}
         });
     };
+
+    var MarkRecordAsClosed=function(){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Purchases/transaction/close",
+            "data":{purchase_order_id : _selectedID}
+        });
+    };    
 
     var cancelPurchaseOrder=function(){
         _data = [];

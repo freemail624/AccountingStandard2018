@@ -1870,15 +1870,20 @@ class Templates extends CORE_Controller {
                 $type=$this->input->get('type',TRUE);
 
                 $info = $m_form_2307->get_2307_list(null,null,$journal_id);
-                $data['info'] = $info[0];
+                $supplier = $this->Suppliers_model->get_list($info[0]->supplier_id);
+                $company = $this->Company_model->get_list()[0];
 
-                $payee_tin = $info[0]->payee_tin;
+                $data['supplier'] = $supplier[0];
+                $data['info'] = $info[0];
+                $data['company'] = $company;
+
+                $payee_tin = $supplier[0]->tin_no;
                 $data['payee_tin_1'] = substr($payee_tin,0, 3);
                 $data['payee_tin_2'] = substr($payee_tin,3, 3);
                 $data['payee_tin_3'] = substr($payee_tin,6, 3);
                 $data['payee_tin_4'] = substr($payee_tin,9, 3);
 
-                $payor_tin = $info[0]->payor_tin;
+                $payor_tin = $company->tin_no;
                 $data['payor_tin_1'] = substr($payor_tin,0, 3);
                 $data['payor_tin_2'] = substr($payor_tin,3, 3);
                 $data['payor_tin_3'] = substr($payor_tin,6, 3);

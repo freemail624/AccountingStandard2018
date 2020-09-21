@@ -478,7 +478,7 @@
                     <div class="col-lg-6">
                         <div class="row">
                             <div class="col-md-4">
-                                <div class="row hidden">
+                                <div class="row">
                                     <div class="col-sm-12">
                                         <div style="margin-top: 25px;">
                                             <input type="checkbox" id="2307_apply" value="1">
@@ -486,7 +486,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row hidden">
+                                <div class="row">
                                     <div class="col-sm-12">
                                         <div style="margin-top: 5px;">
                                             <label>ATC :</label><br />
@@ -499,7 +499,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row hidden">
+                                <div class="row">
                                     <div class="col-sm-12">
                                             <label>Remarks :</label><br />
                                             <textarea class="form-control" name="2307_remarks" id="2307_remarks" data-error-msg="Remarks is required." rows="5"></textarea>
@@ -1938,6 +1938,23 @@ $(document).ready(function(){
             $('#cbo_refType').select2('val',data.ref_type);
             $('#cbo_check_type').select2('val',data.check_type_id);
 
+            get2307Journal().done(function(response){
+
+                $('#2307_apply').prop('checked', false);
+                $('#2307_atc').val("");
+                $('#2307_remarks').val("");
+
+                if(response.data.length > 0){
+                    var row = response.data[0];
+                    if(row.is_applied == 1){
+                        $('#2307_apply').prop('checked', true);
+                        $('#2307_atc').val(row.atc);
+                        $('#2307_remarks').val(row.remarks);
+                    }
+
+                }
+            });
+
             if(data.check_date == '00/00/0000'){
                 $('input[name="check_date"]').val('');
             }
@@ -2153,6 +2170,17 @@ $(document).ready(function(){
         });
     };
 
+    var get2307Journal=function(journal_id){
+        var _data=$('#').serializeArray();
+        _data.push({name : "journal_id", value : _selectedID});
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Cash_disbursement/transaction/get_2307_journal",
+            "data":_data
+        });
+    };
 
     var updateJournal=function(){
         var _data=$('#frm_journal').serializeArray();
@@ -2195,7 +2223,7 @@ $(document).ready(function(){
         $('input,textarea',f).val('');
         // $(f).find('select').select2('val',null);
 
-
+        $('#2307_apply').prop('checked', false);
 
         // $(f).find('input:first').focus();
         $('#tbl_entries > tbody tr').slice(2).remove();
