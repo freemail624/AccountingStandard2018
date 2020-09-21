@@ -161,10 +161,12 @@
                                                     <tr>
                                                         <th></th>
                                                         <th>Asset Code</th>
-                                                        <th>Description</th>
+                                                        <th width="25%">Description</th>
+                                                        <th>Acquisition Cost</th>
+                                                        <th>Posted by</th>
                                                         <th>Location</th>
                                                         <th>Category</th>
-                                                        <th><center>Action</center></th>
+                                                        <th width="10%"><center>Action</center></th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
@@ -466,6 +468,7 @@
 
 <script src="assets/plugins/select2/select2.full.min.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
 <script src="assets/plugins/datapicker/bootstrap-datepicker.js"></script>
 
@@ -488,11 +491,19 @@ $(document).ready(function(){
                     "defaultContent": ""
                 },
                 { targets:[1],data: "asset_code" },
-                { targets:[2],data: "asset_description" },
-                { targets:[3],data: "location_name" },
-                { targets:[4],data: "category_name" },
+                { targets:[2],data: "asset_description" ,render: $.fn.dataTable.render.ellipsis(60) },
                 {
-                    targets:[5],
+                    className: "text-right",
+                    targets:[3],data: "acquisition_cost",
+                    render: function(data){
+                        return accounting.formatNumber(data,2);
+                    }
+                },
+                { targets:[4],data: "posted_by" },
+                { targets:[5],data: "location_name" },
+                { targets:[6],data: "category_name" },
+                {
+                    targets:[7],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';

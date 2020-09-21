@@ -18,7 +18,10 @@
 		@media print {
       @page { margin: 0; }
       body { margin: 1.0cm; }
+
 }
+
+@media print{@page {size: landscape}}
 	</style>
 	<script>
 		(function(){
@@ -50,10 +53,11 @@
     </div>
     <table width="100%" border="1" cellspacing="0">
 	    <thead>
-		    <th align="left">Txn #</th>
+		    <th align="left" width="15%">Txn #</th>
 		    <th align="left">Date</th>
 		    <th align="left">Particular</th>
-		    <th align="left">Remarks</th>
+		    <th align="left">Reference</th>
+		    <th align="left" width="25%">Remarks</th>
 		    <th align="left">Account</th>
 		    <th align="right">Dr</th>
 		    <th align="right">Cr</th>
@@ -66,6 +70,7 @@
 	    		<td style="padding: 5px;"><?php echo $journal->txn_no; ?></td>
 	    		<td style="padding: 5px;"><?php echo $journal->date_txn; ?></td>
 	    		<td style="padding: 5px;"><?php echo $journal->description; ?></td>
+	    		<td style="padding: 5px;"><?php echo $journal->reference_desc; ?></td>
 	    		<td style="padding: 5px;"><?php echo $journal->remarks; ?></td>
 	    		<td style="padding: 5px;"><?php echo $journal->account_title; ?></td>
 	    		<td style="padding: 5px; text-align: right;"><?php echo number_format($journal->dr_amount,2); ?></td>
@@ -75,7 +80,7 @@
 	    	</tr>
 		<?php } ?>
 			<tr>
-				<td colspan="5" align="right">Total:</td>
+				<td colspan="6" align="right">Total:</td>
 				<td style="padding: 5px;" align="right"><strong><?php echo number_format($sum_dr,2); ?></strong></td>
 				<td style="padding: 5px;" align="right"><strong><?php echo number_format($sum_cr,2); ?></strong></td>
 			</tr>

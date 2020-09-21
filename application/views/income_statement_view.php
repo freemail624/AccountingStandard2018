@@ -142,7 +142,8 @@
                                         <div class="modal-footer">
                                             <div class="col-xs-12">
                                                 <a id="btn_print" href="#" target="_blank" class="btn btn-green" style="text-transform:none;font-family: tahoma;" title=" Print" ><i class="fa fa-print"></i> Print </a>
-                                                <button id="btn_export" class="btn btn-primary" title="All departments"><i class="fa fa-file-excel-o"></i> Export to Excel</button>
+                                                <button id="btn_export" class="btn btn-primary" title="All departments"><i class="fa fa-file-excel-o"></i> Export</button>
+                                                <button id="btn_export_all" class="btn btn-primary" title="All departments"><i class="fa fa-file-excel-o"></i> Export All </button>
 <!--                                                 <a href="Templates/layout/income-statement?type=&type=pdf" class="btn btn-primary" style="text-transform:none;font-family: tahoma;" ><i class="fa fa-file-pdf-o"></i> Download as PDF </a> -->
                                                 <button class="btn btn-primary" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_email" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Send to Email (All departments)" >
                                                 <i class="fa fa-share"></i> Email </button>
@@ -207,6 +208,10 @@
         $('#btn_export').click(function(){
             window.open('Income_statement/transaction/export-excel?start='+$('#dt_start_date').val()+'&end='+$('#dt_end_date').val()+"&depid="+_cboDepartments.select2('val'));
         });
+
+        $('#btn_export_all').click(function(){
+            window.open('Income_statement/transaction/export-all?start='+$('#dt_start_date').val()+'&end='+$('#dt_end_date').val()+"&depid="+_cboDepartments.select2('val'));
+        });        
 
         $('#btn_email').on('click', function() {
         showNotification({title:"Sending!",stat:"info",msg:"Please wait for a few seconds."});

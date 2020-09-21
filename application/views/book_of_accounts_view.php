@@ -41,11 +41,12 @@
         .text-left {
             text-align: left!important;
         }
-
-        td:nth-child(6),td:nth-child(7){
+     
+        td:nth-child(7),td:nth-child(8){
             text-align: right;
         }
-        th:nth-child(6),th:nth-child(7){
+
+        th:nth-child(7),th:nth-child(8){
             text-align: right;
         }
 
@@ -153,6 +154,7 @@
                             <th width="10%">Date</th>
                             <th width="15%">Txn #</th>
                             <th width="15%">Description</th>
+                            <th width="">Reference</th>
                             <th width="25%">Remarks</th>
                             <th width="15%">Account</th>
                             <th width="10%">Dr</th>
@@ -163,7 +165,7 @@
                         </tbody>
                         <tfoot>
                         <tr>
-                            <td align="right" colspan="6">Total : </td>
+                            <td align="right" colspan="7">Total : </td>
                             <td id="td_dr_total" align="right"></td>
                             <td id="td_cr_total" align="right"></td>
                         </tr>
@@ -185,6 +187,7 @@
                         <th width="10%">Date</th>
                         <th width="15%">Txn #</th>
                         <th width="15%">Description</th>
+                        <th width="10%">Reference</th>
                         <th width="25%">Remarks</th>
                         <th width="15%">Account</th>
                         <th width="10%">Dr</th>
@@ -196,7 +199,7 @@
 
                     <tfoot>
                     <tr>
-                        <td align="right" colspan="6">Total : </td>
+                        <td align="right" colspan="7">Total : </td>
                         <td id="td_dr_total" align="right"></td>
                         <td id="td_cr_total" align="right"></td>
                     </tr>
@@ -220,6 +223,7 @@
                         <th width="10%">Date</th>
                         <th width="15%">Txn #</th>
                         <th width="15%">Description</th>
+                        <th width="10%">Reference</th>
                         <th width="25%">Remarks</th>
                         <th width="15%">Account</th>
                         <th width="10%">Dr</th>
@@ -231,7 +235,7 @@
 
                     <tfoot>
                     <tr>
-                        <td align="right" colspan="6">Total : </td>
+                        <td align="right" colspan="7">Total : </td>
                         <td id="td_dr_total" align="right"></td>
                         <td id="td_cr_total" align="right"></td>
                     </tr>
@@ -255,6 +259,7 @@
                         <th width="10%">Date</th>
                         <th width="15%">Txn #</th>
                         <th width="15%">Description</th>
+                        <th width="10%">Reference</th>
                         <th width="25%">Remarks</th>
                         <th width="15%">Account</th>
                         <th width="10%">Dr</th>
@@ -266,7 +271,7 @@
 
                     <tfoot>
                     <tr>
-                        <td align="right" colspan="6">Total : </td>
+                        <td align="right" colspan="7">Total : </td>
                         <td id="td_dr_total" align="right"></td>
                         <td id="td_cr_total" align="right"></td>
                     </tr>
@@ -290,6 +295,7 @@
                         <th width="10%">Date</th>
                         <th width="15%">Txn #</th>
                         <th width="15%">Description</th>
+                        <th width="10%">Reference</th>
                         <th width="25%">Remarks</th>
                         <th width="15%">Account</th>
                         <th width="10%">Dr</th>
@@ -301,7 +307,7 @@
 
                     <tfoot>
                     <tr>
-                        <td align="right" colspan="6">Total : </td>
+                        <td align="right" colspan="7">Total : </td>
                         <td id="td_dr_total" align="right"></td>
                         <td id="td_cr_total" align="right"></td>
                     </tr>
@@ -325,6 +331,7 @@
                         <th width="10%">Date</th>
                         <th width="15%">Txn #</th>
                         <th width="15%">Description</th>
+                        <th width="10%">Reference</th>
                         <th width="25%">Remarks</th>
                         <th width="15%">Account</th>
                         <th width="10%">Dr</th>
@@ -336,7 +343,7 @@
 
                     <tfoot>
                     <tr>
-                        <td align="right" colspan="6">Total : </td>
+                        <td align="right" colspan="7">Total : </td>
                         <td id="td_dr_total" align="right"></td>
                         <td id="td_cr_total" align="right"></td>
                     </tr>
@@ -780,7 +787,7 @@ $(document).ready(function(){
         dtGJE=$('#tbl_gje').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "bPaginate":false,
+            // "bPaginate":false,
             "ajax": {
                 "url": "TAccount/transaction/get-journal-list",
                 "type": "POST",
@@ -806,10 +813,11 @@ $(document).ready(function(){
                 { targets:[1],data: "date_txn" },
                 { targets:[2],data: "txn_no" },
                 { targets:[3],data: "description" },
-                { targets:[4],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(30)},
-                { targets:[5],data: "account_title" },
+                { targets:[4],data: "reference_desc" },
+                { targets:[5],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(30)},
+                { targets:[6],data: "account_title" },
                 {
-                    targets:[6],
+                    targets:[7],
                     data: "dr_amount",
                     render: function(data, type, full, meta){
                         return '<b>'+accounting.formatNumber(data,2)+'</b>';
@@ -817,7 +825,7 @@ $(document).ready(function(){
 
                 },
                 {
-                    targets:[7],
+                    targets:[8],
                     data: "cr_amount",
                     render: function(data, type, full, meta){
                         return '<b>'+accounting.formatNumber(data,2)+'</b>';
@@ -837,14 +845,14 @@ $(document).ready(function(){
                 };
 
                 total_dr = api
-                    .column( 6 )
+                    .column( 7 )
                     .data()
                     .reduce( function (a, b) {
                         return intVal(a) + intVal(b);
                     }, 0 );
 
                 total_cr = api
-                    .column( 7 )
+                    .column( 8 )
                     .data()
                     .reduce( function (a, b) {
                         return intVal(a) + intVal(b);
@@ -859,7 +867,7 @@ $(document).ready(function(){
         dtCDJ=$('#tbl_cdj').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "bPaginate":false,
+            // "bPaginate":false,
             "ajax": {
                 "url": "TAccount/transaction/get-journal-list",
                 "type": "POST",
@@ -885,10 +893,11 @@ $(document).ready(function(){
                 { targets:[1],data: "date_txn" },
                 { targets:[2],data: "txn_no" },
                 { targets:[3],data: "description" },
-                { targets:[4],data: "remarks",render: $.fn.dataTable.render.ellipsis(30) },
-                { targets:[5],data: "account_title" },
+                { targets:[4],data: "reference_desc" },
+                { targets:[5],data: "remarks",render: $.fn.dataTable.render.ellipsis(30) },
+                { targets:[6],data: "account_title" },
                 {
-                    targets:[6],
+                    targets:[7],
                     data: "dr_amount",
                     render: function(data, type, full, meta){
                         return '<b>'+accounting.formatNumber(data,2)+'</b>';
@@ -896,7 +905,7 @@ $(document).ready(function(){
 
                 },
                 {
-                    targets:[7],
+                    targets:[8],
                     data: "cr_amount",
                     render: function(data, type, full, meta){
                         return '<b>'+accounting.formatNumber(data,2)+'</b>';
@@ -916,14 +925,14 @@ $(document).ready(function(){
                 };
 
                 total_dr = api
-                    .column( 6 )
+                    .column( 7 )
                     .data()
                     .reduce( function (a, b) {
                         return intVal(a) + intVal(b);
                     }, 0 );
 
                 total_cr = api
-                    .column( 7 )
+                    .column( 8 )
                     .data()
                     .reduce( function (a, b) {
                         return intVal(a) + intVal(b);
@@ -939,7 +948,7 @@ $(document).ready(function(){
         dtPJE=$('#tbl_pje').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "bPaginate":false,
+            // "bPaginate":false,
             "ajax": {
                 "url": "TAccount/transaction/get-journal-list",
                 "type": "POST",
@@ -965,10 +974,11 @@ $(document).ready(function(){
                 { targets:[1],data: "date_txn" },
                 { targets:[2],data: "txn_no" },
                 { targets:[3],data: "description" },
-                { targets:[4],data: "remarks",render: $.fn.dataTable.render.ellipsis(30) },
-                { targets:[5],data: "account_title" },
+                { targets:[4],data: "reference_desc" },
+                { targets:[5],data: "remarks",render: $.fn.dataTable.render.ellipsis(30) },
+                { targets:[6],data: "account_title" },
                 {
-                    targets:[6],
+                    targets:[7],
                     data: "dr_amount",
                     render: function(data, type, full, meta){
                         return '<b>'+accounting.formatNumber(data,2)+'</b>';
@@ -976,7 +986,7 @@ $(document).ready(function(){
 
                 },
                 {
-                    targets:[7],
+                    targets:[8],
                     data: "cr_amount",
                     render: function(data, type, full, meta){
                         return '<b>'+accounting.formatNumber(data,2)+'</b>';
@@ -996,14 +1006,14 @@ $(document).ready(function(){
                 };
 
                 total_dr = api
-                    .column( 6 )
+                    .column( 7 )
                     .data()
                     .reduce( function (a, b) {
                         return intVal(a) + intVal(b);
                     }, 0 );
 
                 total_cr = api
-                    .column( 7 )
+                    .column( 8 )
                     .data()
                     .reduce( function (a, b) {
                         return intVal(a) + intVal(b);
@@ -1019,7 +1029,7 @@ $(document).ready(function(){
         dtSJE=$('#tbl_sje').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "bPaginate":false,
+            // "bPaginate":false,
             "ajax": {
                 "url": "TAccount/transaction/get-journal-list",
                 "type": "POST",
@@ -1045,10 +1055,11 @@ $(document).ready(function(){
                 { targets:[1],data: "date_txn" },
                 { targets:[2],data: "txn_no" },
                 { targets:[3],data: "description" },
-                { targets:[4],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(30)},
-                { targets:[5],data: "account_title" },
+                { targets:[4],data: "reference_desc" },
+                { targets:[5],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(30)},
+                { targets:[6],data: "account_title" },
                 {
-                    targets:[6],
+                    targets:[7],
                     data: "dr_amount",
                     render: function(data, type, full, meta){
                         return '<b>'+accounting.formatNumber(data,2)+'</b>';
@@ -1056,7 +1067,7 @@ $(document).ready(function(){
 
                 },
                 {
-                    targets:[7],
+                    targets:[8],
                     data: "cr_amount",
                     render: function(data, type, full, meta){
                         return '<b>'+accounting.formatNumber(data,2)+'</b>';
@@ -1076,14 +1087,14 @@ $(document).ready(function(){
                 };
 
                 total_dr = api
-                    .column( 6 )
+                    .column( 7 )
                     .data()
                     .reduce( function (a, b) {
                         return intVal(a) + intVal(b);
                     }, 0 );
 
                 total_cr = api
-                    .column( 7 )
+                    .column( 8 )
                     .data()
                     .reduce( function (a, b) {
                         return intVal(a) + intVal(b);
@@ -1099,7 +1110,7 @@ $(document).ready(function(){
         dtPCF=$('#tbl_pcf').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "bPaginate":false,
+            // "bPaginate":false,
             "ajax": {
                 "url": "TAccount/transaction/get-journal-list",
                 "type": "POST",
@@ -1125,10 +1136,11 @@ $(document).ready(function(){
                 { targets:[1],data: "date_txn" },
                 { targets:[2],data: "txn_no" },
                 { targets:[3],data: "description" },
-                { targets:[4],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(30)},
-                { targets:[5],data: "account_title" },
+                { targets:[4],data: "reference_desc" },
+                { targets:[5],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(30)},
+                { targets:[6],data: "account_title" },
                 {
-                    targets:[6],
+                    targets:[7],
                     data: "dr_amount",
                     render: function(data, type, full, meta){
                         return '<b>'+accounting.formatNumber(data,2)+'</b>';
@@ -1136,7 +1148,7 @@ $(document).ready(function(){
 
                 },
                 {
-                    targets:[7],
+                    targets:[8],
                     data: "cr_amount",
                     render: function(data, type, full, meta){
                         return '<b>'+accounting.formatNumber(data,2)+'</b>';
@@ -1156,14 +1168,14 @@ $(document).ready(function(){
                 };
 
                 total_dr = api
-                    .column( 6 )
+                    .column( 7 )
                     .data()
                     .reduce( function (a, b) {
                         return intVal(a) + intVal(b);
                     }, 0 );
 
                 total_cr = api
-                    .column( 7 )
+                    .column( 8 )
                     .data()
                     .reduce( function (a, b) {
                         return intVal(a) + intVal(b);
@@ -1179,7 +1191,7 @@ $(document).ready(function(){
         dtCRJ=$('#tbl_crj').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "bPaginate":false,
+            // "bPaginate":false,
             "ajax": {
                 "url": "TAccount/transaction/get-journal-list",
                 "type": "POST",
@@ -1205,10 +1217,11 @@ $(document).ready(function(){
                 { targets:[1],data: "date_txn" },
                 { targets:[2],data: "txn_no" },
                 { targets:[3],data: "description" },
-                { targets:[4],data: "remarks",render: $.fn.dataTable.render.ellipsis(30) },
-                { targets:[5],data: "account_title" },
+                { targets:[4],data: "reference_desc" },
+                { targets:[5],data: "remarks",render: $.fn.dataTable.render.ellipsis(30) },
+                { targets:[6],data: "account_title" },
                 {
-                    targets:[6],
+                    targets:[7],
                     data: "dr_amount",
                     render: function(data, type, full, meta){
                         return '<b>'+accounting.formatNumber(data,2)+'</b>';
@@ -1216,7 +1229,7 @@ $(document).ready(function(){
 
                 },
                 {
-                    targets:[7],
+                    targets:[8],
                     data: "cr_amount",
                     render: function(data, type, full, meta){
                         return '<b>'+accounting.formatNumber(data,2)+'</b>';
@@ -1236,14 +1249,14 @@ $(document).ready(function(){
                 };
 
                 total_dr = api
-                    .column( 6 )
+                    .column( 7 )
                     .data()
                     .reduce( function (a, b) {
                         return intVal(a) + intVal(b);
                     }, 0 );
 
                 total_cr = api
-                    .column( 7 )
+                    .column( 8 )
                     .data()
                     .reduce( function (a, b) {
                         return intVal(a) + intVal(b);

@@ -34,6 +34,10 @@
     #tbl_supplier thead tr th {
         border-bottom: 2px solid gray;text-align: left;height: 30px;padding: 6px;
     }
+
+        td:nth-child(3){
+            text-align: right;
+        }    
 </style>
 </head>
 <body>
@@ -51,11 +55,13 @@
     </table>
     <br>
     <h2>Fixed Asset Management</h2>
-	<table width="100%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11" id="tbl_supplier">
+	<table width="100%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11" id="tbl_supplier" cellspacing="5" cellpadding="5">
 		<thead>
 			<tr>
 				<th>Asset Code</th>
-				<th>Asset Description</th>
+                <th width="25%">Asset Description</th>
+                <th>Acquisition Cost</th>
+				<th>Posted By</th>
 				<th>Present Location</th>
 				<th>Present Status</th>
 				<th>Date</th>
@@ -68,7 +74,9 @@
 				<tr>
 					<td><?php echo $row->asset_code; ?></td>
 					<td><?php echo $row->asset_description; ?></td>
-					<td><?php echo $row->location_name; ?></td>
+                    <td><?php echo number_format($row->acquisition_cost,2); ?></td>
+					<td><?php echo $row->posted_by; ?></td>
+                    <td><?php echo $row->location_name; ?></td>
 					<td><?php echo $row->asset_property_status; ?></td>
 					<td><?php echo $row->date_movement; ?></td>
 					<td><?php if($row->is_acquired == 1){ echo 'Acquired'; }else{ echo 'Moved'; }?></td>

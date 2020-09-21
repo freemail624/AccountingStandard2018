@@ -71,13 +71,15 @@
 							'locations.*',
 							'departments.*',
 							'categories.*',
-							'asset_property_status.*'
+							'asset_property_status.*',
+							'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by'
 						),
 						array(
 							array('locations','locations.location_id=fixed_assets.location_id','left'),
 							array('departments','departments.department_id=fixed_assets.department_id','left'),
 							array('categories','categories.category_id=fixed_assets.category_id','left'),
-							array('asset_property_status','asset_property_status.asset_status_id=fixed_assets.asset_status_id','left')
+							array('asset_property_status','asset_property_status.asset_status_id=fixed_assets.asset_status_id','left'),
+							array('user_accounts','user_accounts.user_id=fixed_assets.posted_by_user','left')
 						),
 						'fixed_assets.fixed_asset_id DESC'
 					);
@@ -142,6 +144,8 @@
 	                $excel->getActiveSheet()->getColumnDimension('D')->setWidth('20');
 	                $excel->getActiveSheet()->getColumnDimension('E')->setWidth('20');
 	                $excel->getActiveSheet()->getColumnDimension('F')->setWidth('20');
+	                $excel->getActiveSheet()->getColumnDimension('G')->setWidth('20');
+	                $excel->getActiveSheet()->getColumnDimension('H')->setWidth('20');
 
 	                 $style_header = array(
 
@@ -160,14 +164,18 @@
 	                                        ->getStyle('A8')->getFont()->setBold(TRUE);
 	                $excel->getActiveSheet()->setCellValue('B8','Asset Description')
 	                                        ->getStyle('B8')->getFont()->setBold(TRUE);
-	                $excel->getActiveSheet()->setCellValue('C8','Present Location')
+	                $excel->getActiveSheet()->setCellValue('C8','Acquisition Cost')
 	                                        ->getStyle('C8')->getFont()->setBold(TRUE);
-	                $excel->getActiveSheet()->setCellValue('D8','Present Status')
-	                                        ->getStyle('D8')->getFont()->setBold(TRUE);
-	                $excel->getActiveSheet()->setCellValue('E8','Date')
+	                $excel->getActiveSheet()->setCellValue('D8','Posted By')	                
+	                                        ->getStyle('D8')->getFont()->setBold(TRUE);	                                        
+	                $excel->getActiveSheet()->setCellValue('E8','Present Location')
 	                                        ->getStyle('E8')->getFont()->setBold(TRUE);
-	                $excel->getActiveSheet()->setCellValue('F8','Record')
+	                $excel->getActiveSheet()->setCellValue('F8','Present Status')
 	                                        ->getStyle('F8')->getFont()->setBold(TRUE);
+	                $excel->getActiveSheet()->setCellValue('G8','Date')
+	                                        ->getStyle('G8')->getFont()->setBold(TRUE);
+	                $excel->getActiveSheet()->setCellValue('H8','Record')
+	                                        ->getStyle('H8')->getFont()->setBold(TRUE);
 
 	                $a=1;
 	                $i=9;
@@ -176,13 +184,20 @@
 
 	                $record = "";
 	                if($row->is_acquired == 1){  $record = 'Acquired'; }else{ $record = 'Moved'; }
-
+	                
 	                $excel->getActiveSheet()->setCellValue('A'.$i,$row->asset_code)
 	                                        ->setCellValue('B'.$i,$row->asset_description)
-	                                        ->setCellValue('C'.$i,$row->location_name)
-	                                        ->setCellValue('D'.$i,$row->asset_property_status)
-	                                        ->setCellValue('E'.$i,$row->date_movement)
-	                                        ->setCellValue('F'.$i,$record);
+	                                        ->setCellValue('C'.$i,number_format($row->acquisition_cost,2))
+	                                        ->setCellValue('D'.$i,$row->posted_by)
+	                                        ->setCellValue('E'.$i,$row->location_name)
+	                                        ->setCellValue('F'.$i,$row->asset_property_status)
+	                                        ->setCellValue('G'.$i,$row->date_movement)
+	                                        ->setCellValue('H'.$i,$record);       
+					$excel->getActiveSheet()->getStyle('C'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');	
+					$excel->getActiveSheet()
+							->getStyle('C'.$i)
+							->getAlignment()
+							->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);                                                                      
 	                $i++;
 	                $a++;
 
@@ -482,13 +497,15 @@
 					'locations.*',
 					'departments.*',
 					'categories.*',
-					'asset_property_status.*'
+					'asset_property_status.*',
+					'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by'
 				),
 				array(
 					array('locations','locations.location_id=fixed_assets.location_id','left'),
 					array('departments','departments.department_id=fixed_assets.department_id','left'),
 					array('categories','categories.category_id=fixed_assets.category_id','left'),
-					array('asset_property_status','asset_property_status.asset_status_id=fixed_assets.asset_status_id','left')
+					array('asset_property_status','asset_property_status.asset_status_id=fixed_assets.asset_status_id','left'),
+					array('user_accounts','user_accounts.user_id=fixed_assets.posted_by_user','left')
 				)
 			);
 		}

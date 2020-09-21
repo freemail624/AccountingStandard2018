@@ -211,6 +211,7 @@
 
 
                                             <div class="panel-body table-responsive" id="product_entry_panel" style="display: none;">
+                                            <h2 class="h2-panel-heading">Products</h2><hr>
                                                 <form id="frm_product">
                                                     <div class="row">
                                                         <div class="col-lg-4">
@@ -291,10 +292,10 @@
                                                         </div>
 
                                                         <div class="col-lg-8">
-                                                            <div class="form-group" style="margin-bottom:0px;text-align: left;margin-left: 5px;">
+                                                            <div class="form-group hidden" style="margin-bottom:0px;text-align: left;margin-left: 5px;">
                                                                     <label class="" for="is_bulk" style="text-align: left;"><input type="checkbox" id="is_bulk" style="transform: scale(2.0);">  &nbsp;&nbsp;For Bulk and Retail ?</label>
                                                             </div>
-                                                            <div class="form-group col-sm-4" style="margin-bottom:0px;">
+                                                            <div class="form-group col-sm-4 hidden" style="margin-bottom:0px;">
                                                                 <label class=""><b class="required">*</b>Primary Unit</label>
                                                                 <select name="primary_unit" id="primary_unit" data-error-msg="Primary Unit is required." required>
                                                                     <option value="1">Bulk</option>
@@ -302,7 +303,7 @@
                                                                 </select> 
                                                             </div> 
                                                                 <div class="col-lg-12 container-fluid" style="padding: 0px;">
-                                                       <div class="form-group col-sm-4" style="margin-bottom:0px;">
+                                                       <div class="form-group col-sm-6" style="margin-bottom:0px;">
 
                                                                 <label class=""><b class="required">*</b>Unit of Measurement</label>
                                                                 <select name="parent_unit_id" id="product_unit" data-error-msg="Unit is required." required>
@@ -315,14 +316,14 @@
                                                                     ?>
                                                                 </select> 
                                                             </div> 
-                                                            <div class="col-sm-1" style="vertical-align: center;"><br><br> = </div>
-                                                            <div class="form-group col-sm-3" style="margin-bottom:0px;">
+                                                            <div class="col-sm-1 hidden" style="vertical-align: center;"><br><br> = </div>
+                                                            <div class="form-group col-sm-3 hidden" style="margin-bottom:0px;">
                                                                 <label class=""><b class="required"></b> &nbsp;</label>
                                                                     <div class="input-group">
                                                                         <input type="text" name="child_unit_desc" id="child_unit_desc" class="form-control" value=""  data-error-msg="Retail Unit Equivalency is required.">
                                                                     </div>
                                                             </div>
-                                                             <div class="form-group col-sm-4" style="margin-bottom:0px;">
+                                                             <div class="form-group col-sm-4 hidden" style="margin-bottom:0px;">
                                                                 <label class=""><b class="required"> &nbsp;</b> &nbsp; </label>
                                                                 <select name="child_unit_id" id="child_unit_id" data-error-msg="Retail Unit is required.">
                                                                     <option value="unt">[ Create New Unit ]</option>
@@ -395,7 +396,7 @@
                                                                         <input type="text" name="distributor_price" id="distributor_price" class="form-control numeric">
                                                                     </div>
                                                                 </div>
-                                                                <div class="form-group" style="margin-bottom:0px; vertical-align: middle;text-align: left;"><br>
+                                                                <div class="form-group hidden" style="margin-bottom:0px; vertical-align: middle;text-align: left;"><br>
                                                                         <label  for="is_tax_exempt" style="text-align: left;vertical-align: middle;"><input type="checkbox" name="is_tax_exempt" class="" id="is_tax_exempt" style="transform: scale(2.0);">  &nbsp;&nbsp;Tax Exempt ?</label>
 
                                                                 </div>
@@ -466,7 +467,7 @@
 
 
 
-                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                <div class="form-group hidden" style="margin-bottom:0px;">
                                                                             <label class="">Link to Credit Account (For Sales Journal):</label>
 
                                                                             <select name="income_account_id" id="income_account_id" data-error-msg="Link to Account is required." required>
@@ -1737,6 +1738,7 @@ $(document).ready(function(){
             _cboCredit.select2('val',0);
             _cboDebit.select2('val',0);
             _cboPrimaryUnit.select2('val',1);
+            _cboDebit.select2('val',88);
             $('#child_unit_desc').prop('required',false);
            $('#child_unit_id').prop('required',false);
             $('#is_tax_exempt').attr('checked', false);
