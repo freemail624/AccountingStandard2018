@@ -91,7 +91,7 @@
                                     <div class="col-lg-10">
                                         <select name="department_id" class="cbo_department_list" data-error-msg="" required>
                                             <?php foreach($departments as $department){ ?>
-                                                <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
+                                                <option value="<?php echo $department->department_id; ?>" <?php echo ($info->link_department_id===$department->department_id?'selected':''); ?>><?php echo $department->department_name; ?></option>
                                             <?php } ?>
                                         </select>
                                     </div>
@@ -129,7 +129,7 @@
                                             <td><select  name="department_id_line[]" class="dept show-tick form-control selectpicker" data-live-search="true" > 
                                                 <option value="0">[ None ]</option> 
                                                 <?php foreach($departments as $department){ ?> 
-                                                    <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option> 
+                                                    <option value='<?php echo $department->department_id; ?>'  <?php echo ($info->link_department_id===$department->department_id?'selected':''); ?>><?php echo $department->department_name; ?></option> 
                                                 <?php } ?> 
                                             </select></td> 
                                             <td>

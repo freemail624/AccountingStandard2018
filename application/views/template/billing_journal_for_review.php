@@ -45,7 +45,7 @@
 <div class="tab-container tab-top tab-default">
 <ul class="nav nav-tabs">
     <li class="active"><a href="#journal_review_<?php echo $info->temp_journal_id; ?>" data-toggle="tab"><i class="fa fa-gavel"></i> Review Journal</a></li>
-    <li class=""><a href="#purchase_review_<?php echo $info->temp_journal_id; ?>" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Transaction</a></li>
+    <li class="hidden"><a href="#purchase_review_<?php echo $info->temp_journal_id; ?>" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Transaction</a></li>
 </ul>
 <div class="tab-content">
 <div class="tab-pane active" id="journal_review_<?php echo $info->temp_journal_id; ?>" data-parent-id="<?php echo $info->temp_journal_id; ?>" style="min-height: 300px;">
@@ -89,7 +89,7 @@
                     <label> <b class="required">*</b> Department :</label>
                     <select name="department_id" class="cbo_department_list" data-error-msg="Branch is required." required>
                         <?php foreach($departments as $department){ ?>
-                            <option value="<?php echo $department->department_id; ?>" <?php echo ($info->department_id===$department->department_id?'selected':''); ?>><?php echo $department->department_name; ?></option>
+                            <option value="<?php echo $department->department_id; ?>" <?php echo ($customer_dep_link->link_department_id===$department->department_id?'selected':''); ?>><?php echo $department->department_name; ?></option>
                         <?php } ?>
                     </select>
                 </div>
@@ -136,7 +136,7 @@
                     <td><select  name="department_id_line[]" class="dept show-tick form-control selectpicker" data-live-search="true" > 
                         <option value="0">[ None ]</option> 
                         <?php foreach($departments as $department){ ?> 
-                            <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option> 
+                            <option value='<?php echo $department->department_id; ?>' <?php echo ($customer_dep_link->link_department_id===$department->department_id?'selected':''); ?>><?php echo $department->department_name; ?></option> 
                         <?php } ?> 
                     </select></td> 
                     <td>
@@ -163,7 +163,7 @@
         <hr />
         <label class="col-lg-2"> Remarks :</label><br />
         <div class="col-lg-12">
-            <textarea name="remarks" class="form-control" style="width: 100%;"></textarea>
+            <textarea name="remarks" class="form-control" style="width: 100%;"><?php echo $info->remarks; ?></textarea>
         </div>
         <br /><hr />
     </form>

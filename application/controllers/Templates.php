@@ -5950,6 +5950,8 @@ class Templates extends CORE_Controller {
                         '*,
                         DATE_FORMAT(date_txn,"%m/%d/%Y") as date_txn'
                     );
+
+                $data['customer_dep_link'] = $this->Customers_model->get_list(array('customer_id'=>$info[0]->customer_id))[0];
                 $data['info']=$info[0];
                 $data['departments']=$m_departments->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
                 $data['customers']=$m_customers->get_list(
@@ -5963,6 +5965,7 @@ class Templates extends CORE_Controller {
                         'customers.customer_name'
                     )
                 );
+
                 $data['entries']=$m_temp_items->get_list(array('temp_journal_id'=>$temp_journal_id),null,null,'dr_amount DESC');
                 $data['accounts']=$m_accounts->get_list(
                     array(
@@ -6007,7 +6010,8 @@ class Templates extends CORE_Controller {
                         IF(b_payment_info.payment_type = 1, 2, 1) as payment_method_id,
                         DATE_FORMAT(b_payment_info.check_date,"%m/%d/%Y") as check_date,
                         DATEDIFF(b_payment_info.check_date,NOW()) as rem_day_for_due,
-                        customers.link_department_id
+                        customers.link_department_id,
+                        b_payment_info.remarks
                         ',
                         array(array('b_payment_info','b_payment_info.payment_id = temp_journal_info.payment_id','left'),
                             array('customers','customers.customer_id = temp_journal_info.customer_id','left'))
@@ -6064,7 +6068,8 @@ class Templates extends CORE_Controller {
 
                 $info = $m_temp_info->get_list($temp_journal_id,
                         '*,
-                        DATE_FORMAT(date_txn,"%m/%d/%Y") as date_txn'
+                        DATE_FORMAT(date_txn,"%m/%d/%Y") as date_txn',
+                        array( array('customers','customers.customer_id = temp_journal_info.customer_id','left'))
                     );
                 $data['info']=$info[0];
                 $data['departments']=$m_departments->get_list('is_active=TRUE AND is_deleted=FALSE');

@@ -37,9 +37,9 @@ class Billing_contracts extends CORE_Controller
 
                 $approval_id=$this->input->get('approval_id',TRUE);
                 if($approval_id == '0' || $approval_id == '2'){
-                    $filter =  "b_contract_info.is_active = TRUE AND b_contract_info.status = $approval_id";
+                    $filter =  "b_contract_info.is_active = TRUE AND b_contract_info.is_deleted = FALSE AND b_contract_info.status = $approval_id";
                 }else{
-                    $filter = "b_contract_info.is_active = TRUE AND (b_contract_info.status=1 OR b_contract_info.status=3 OR b_contract_info.status=4)";
+                    $filter = "b_contract_info.is_active = TRUE AND b_contract_info.is_deleted = FALSE AND (b_contract_info.status=1 OR b_contract_info.status=3 OR b_contract_info.status=4)";
                 }
                 $response['filter'] = $filter;
                 $response['data']=$this->Billing_contracts_model->get_list($filter,'b_tenants.*,b_contract_info.*,b_reflocations.location_desc,

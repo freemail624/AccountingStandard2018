@@ -38,6 +38,7 @@ class Billing_review extends CORE_Controller
                     'temp_journal_info.*,
                     customers.customer_name,
                     b_payment_info.transaction_no,
+                    b_payment_info.remarks,
                     IF(b_payment_info.payment_type = 1, DATEDIFF(b_payment_info.check_date,NOW()),0) as rem_day_for_due,',
                     array(array('customers','customers.customer_id = temp_journal_info.customer_id','left'),
                         array('b_payment_info','b_payment_info.payment_id = temp_journal_info.payment_id','left'))
