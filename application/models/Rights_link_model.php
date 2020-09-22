@@ -101,7 +101,9 @@ class Rights_link_model extends CORE_Model{
                                           (115,'9','9-26','Comparative Cash Flow'),
                                           (116,'6','6-17','Cash Flow Settings'),
                                           (117,'1','1-8','Temporary Vouchers'),
-                                          (118,'7','7-3','Temporary Vouchers for Approval')
+                                          (118,'7','7-3','Temporary Vouchers for Approval'),
+                                          (119,'7','7-4','Purchase Order for Accounting Approval')
+
 
 
                                           ON DUPLICATE KEY UPDATE

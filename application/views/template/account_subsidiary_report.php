@@ -76,6 +76,7 @@
                 <th style="border: 1px solid black;text-align: center;height: 30px;padding: 6px;">Txn Date</th>
                 <th style="border: 1px solid black;text-align: center;height: 30px;padding: 6px;">Txn #</th>
                 <th style="border: 1px solid black;text-align: center;height: 30px;padding: 6px;">Particular</th>
+                <th style="border: 1px solid black;text-align: center;height: 30px;padding: 6px;">TIN</th>
                 <th style="border: 1px solid black;text-align: left;height: 30px;padding: 6px;">Memo</th>
                 <th style="border: 1px solid black;text-align: left;height: 30px;padding: 6px;">Remarks</th>
                 <th style="border: 1px solid black;text-align: left;height: 30px;padding: 6px;">Posted by</th>
@@ -90,6 +91,7 @@
         		<td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->date_txn; ?></td>
         		<td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->txn_no; ?></td>
                 <td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->particular; ?></td>
+                <td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->tin_no; ?></td>
         		<td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->memo; ?></td>
         		<td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->remarks; ?></td>
         		<td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->posted_by; ?></td>

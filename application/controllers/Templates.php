@@ -562,6 +562,14 @@ class Templates extends CORE_Controller {
                             echo $this->load->view('template/po_content_approval_menus_review',$data,TRUE);
                         }
 
+                        if($type=='checking'){
+
+                            //echo '<br /><hr /><center><strong>Purchase Order for Approval</strong></center><hr />';
+                            echo '<br />';
+                            echo $this->load->view('template/po_content_new_wo_header',$data,TRUE);
+                            echo $this->load->view('template/po_content_approval_menus_checking',$data,TRUE);
+                        }
+
                         //show only inside grid
                         if($type=='contentview'){
                             echo $this->load->view('template/po_content_new',$data,TRUE);
@@ -4516,18 +4524,20 @@ class Templates extends CORE_Controller {
                                         ->getStyle('B12')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('C12','Particular')
                                         ->getStyle('C12')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('D12','Memo')
-                                        ->getStyle('D12')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('E12','Remarks')
+                $excel->getActiveSheet()->setCellValue('D12','TIN')
+                                        ->getStyle('D12')->getFont()->setBold(TRUE);                                        
+                $excel->getActiveSheet()->setCellValue('E12','Memo')
                                         ->getStyle('E12')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('F12','Posted by')
+                $excel->getActiveSheet()->setCellValue('F12','Remarks')
                                         ->getStyle('F12')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('G12','Debit')
+                $excel->getActiveSheet()->setCellValue('G12','Posted by')
                                         ->getStyle('G12')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('H12','Credit')
+                $excel->getActiveSheet()->setCellValue('H12','Debit')
                                         ->getStyle('H12')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('I12','Balance')
+                $excel->getActiveSheet()->setCellValue('I12','Credit')
                                         ->getStyle('I12')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('J12','Balance')
+                                        ->getStyle('J12')->getFont()->setBold(TRUE);
                 $i=13;
                 foreach($supplier_subsidiary as $items) {
                 $excel->getActiveSheet()
@@ -4548,16 +4558,17 @@ class Templates extends CORE_Controller {
                 $excel->getActiveSheet()->setCellValue('A'.$i,$items->date_txn);
                 $excel->getActiveSheet()->setCellValue('B'.$i,$items->txn_no);
                 $excel->getActiveSheet()->setCellValue('C'.$i,$items->particular);
-                $excel->getActiveSheet()->setCellValue('D'.$i,$items->memo);
-                $excel->getActiveSheet()->setCellValue('E'.$i,$items->remarks);
-                $excel->getActiveSheet()->setCellValue('F'.$i,$items->posted_by);
-                $excel->getActiveSheet()->setCellValue('G'.$i,number_format($items->debit,2))
-                                        ->getStyle('G'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                $excel->getActiveSheet()->setCellValue('H'.$i,number_format($items->credit,2))
+                $excel->getActiveSheet()->setCellValue('D'.$i,$items->tin_no);
+                $excel->getActiveSheet()->setCellValue('E'.$i,$items->memo);
+                $excel->getActiveSheet()->setCellValue('F'.$i,$items->remarks);
+                $excel->getActiveSheet()->setCellValue('G'.$i,$items->posted_by);
+                $excel->getActiveSheet()->setCellValue('H'.$i,number_format($items->debit,2))
                                         ->getStyle('H'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                $excel->getActiveSheet()->getStyle('I'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                $excel->getActiveSheet()->setCellValue('I'.$i,number_format($items->balance,2))
-                                        ->getStyle('I'.$i)->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('I'.$i,number_format($items->credit,2))
+                                        ->getStyle('I'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                $excel->getActiveSheet()->getStyle('J'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                $excel->getActiveSheet()->setCellValue('J'.$i,number_format($items->balance,2))
+                                        ->getStyle('J'.$i)->getFont()->setBold(TRUE);
 
                 $i++;
                 }
@@ -5488,18 +5499,20 @@ class Templates extends CORE_Controller {
                                         ->getStyle('B12')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('C12','Particular')
                                         ->getStyle('C12')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('D12','Memo')
-                                        ->getStyle('D12')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('E12','Remarks')
+                $excel->getActiveSheet()->setCellValue('D12','TIN')
+                                        ->getStyle('D12')->getFont()->setBold(TRUE);                                        
+                $excel->getActiveSheet()->setCellValue('E12','Memo')
                                         ->getStyle('E12')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('F12','Posted by')
+                $excel->getActiveSheet()->setCellValue('F12','Remarks')
                                         ->getStyle('F12')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('G12','Debit')
+                $excel->getActiveSheet()->setCellValue('G12','Posted by')
                                         ->getStyle('G12')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('H12','Credit')
+                $excel->getActiveSheet()->setCellValue('H12','Debit')
                                         ->getStyle('H12')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('I12','Balance')
+                $excel->getActiveSheet()->setCellValue('I12','Credit')
                                         ->getStyle('I12')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('J12','Balance')
+                                        ->getStyle('J12')->getFont()->setBold(TRUE);
                 $i=13;
                 foreach($supplier_subsidiary as $items) {
                 $excel->getActiveSheet()
@@ -5520,16 +5533,17 @@ class Templates extends CORE_Controller {
                 $excel->getActiveSheet()->setCellValue('A'.$i,$items->date_txn);
                 $excel->getActiveSheet()->setCellValue('B'.$i,$items->txn_no);
                 $excel->getActiveSheet()->setCellValue('C'.$i,$items->particular);
-                $excel->getActiveSheet()->setCellValue('D'.$i,$items->memo);
-                $excel->getActiveSheet()->setCellValue('E'.$i,$items->remarks);
-                $excel->getActiveSheet()->setCellValue('F'.$i,$items->posted_by);
-                $excel->getActiveSheet()->setCellValue('G'.$i,number_format($items->debit,2))
-                                        ->getStyle('G'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                $excel->getActiveSheet()->setCellValue('H'.$i,number_format($items->credit,2))
+                $excel->getActiveSheet()->setCellValue('D'.$i,$items->tin_no);
+                $excel->getActiveSheet()->setCellValue('E'.$i,$items->memo);
+                $excel->getActiveSheet()->setCellValue('F'.$i,$items->remarks);
+                $excel->getActiveSheet()->setCellValue('G'.$i,$items->posted_by);
+                $excel->getActiveSheet()->setCellValue('H'.$i,number_format($items->debit,2))
                                         ->getStyle('H'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                $excel->getActiveSheet()->getStyle('I'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                $excel->getActiveSheet()->setCellValue('I'.$i,number_format($items->balance,2))
-                                        ->getStyle('I'.$i)->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('I'.$i,number_format($items->credit,2))
+                                        ->getStyle('I'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                $excel->getActiveSheet()->getStyle('J'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                $excel->getActiveSheet()->setCellValue('J'.$i,number_format($items->balance,2))
+                                        ->getStyle('J'.$i)->getFont()->setBold(TRUE);
 
                 $i++;
                 }

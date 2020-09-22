@@ -742,6 +742,9 @@ class Journal_info_model extends CORE_Model{
             (CASE WHEN ji.`supplier_id` = 0
             THEN CONCAT(customer_name, ' (Customer)') WHEN ji.`customer_id`=0
             THEN CONCAT(supplier_name, ' (Supplier)') END) AS particular,
+            (CASE WHEN ji.`supplier_id` = 0
+            THEN c.tin_no WHEN ji.`customer_id`=0
+            THEN s.tin_no END) AS tin_no,            
             ac.account_type_id,
             ji.supplier_id,
             supplier_name,

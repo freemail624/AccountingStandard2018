@@ -31,11 +31,11 @@
             float: left;
         }
 
-        td:nth-child(7),td:nth-child(8){
+        td:nth-child(8),td:nth-child(9){
             text-align: right;
         }
 
-        td:nth-child(9){
+        td:nth-child(10){
             text-align: right;
             font-weight: bolder;
         }
@@ -131,6 +131,7 @@
                                                                     <th>Account</th>
                                                                     <th>Main</th>
                                                                     <th>Particular</th>
+                                                                    <th>TIN</th>
                                                                     <th>Memo</th>
 
                                                                     <th style="text-align: right">Debit</th>
@@ -360,23 +361,24 @@
                     { targets:[2],data: "account_title" },
                     { targets:[3],data: "parent_title" },
                     { targets:[4],data: "particular" },
-                    { targets:[5],data: "memo" },
+                    { targets:[5],data: "tin_no" },
+                    { targets:[6],data: "memo" },
 
 
                     {
-                        targets:[6],data: "debit",
+                        targets:[7],data: "debit",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }
                     },
                     {
-                        targets:[7],data: "credit",
+                        targets:[8],data: "credit",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }
                     },
                     {
-                        targets:[8],data: "balance",
+                        targets:[9],data: "balance",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }}

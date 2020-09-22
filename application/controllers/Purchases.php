@@ -162,7 +162,32 @@ class Purchases extends CORE_Controller
                     $m_purchases=$this->Purchases_model;
                     $response['data']=$m_purchases->get_list(
                         //filter
-                        'purchase_order.is_active=TRUE AND purchase_order.is_deleted=FALSE AND purchase_order.approval_id=2 AND purchase_order.is_reviewed = TRUE',
+                        'purchase_order.is_active=TRUE AND purchase_order.is_deleted=FALSE AND purchase_order.approval_id=2 AND purchase_order.is_reviewed = TRUE AND purchase_order.is_checked = TRUE',
+                        //fields
+                        'purchase_order.*,suppliers.supplier_name,COUNT(po_attachments.po_attachment_id) as attachment,
+                        CONCAT_WS(" ",purchase_order.terms,purchase_order.duration)As term_description,
+                        CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by',
+                        //joins
+                        array(
+                            array('suppliers','suppliers.supplier_id=purchase_order.supplier_id','left'),
+                            array('user_accounts','user_accounts.user_id=purchase_order.posted_by_user','left'),
+                            array('po_attachments','po_attachments.purchase_order_id=purchase_order.purchase_order_id','left')
+                        ),
+
+                        //order by
+                        'purchase_order.purchase_order_id DESC',
+                        //group by
+                        'purchase_order.purchase_order_id'
+                    );
+                    echo json_encode($response);
+                    break;
+
+                case 'po-for-checking':  //is called on DASHBOARD, returns PO list for approval
+                    //approval id 2 are those pending
+                    $m_purchases=$this->Purchases_model;
+                    $response['data']=$m_purchases->get_list(
+                        //filter
+                        'purchase_order.is_active=TRUE AND purchase_order.is_deleted=FALSE AND purchase_order.approval_id=2 AND purchase_order.is_reviewed = TRUE AND purchase_order.is_checked = FALSE',
                         //fields
                         'purchase_order.*,suppliers.supplier_name,COUNT(po_attachments.po_attachment_id) as attachment,
                         CONCAT_WS(" ",purchase_order.terms,purchase_order.duration)As term_description,
@@ -637,6 +662,35 @@ class Purchases extends CORE_Controller
                         echo json_encode($response);
                     }
                     break;
+
+                case 'mark-checked': //called on DASHBOARD when reviewed button is clicked
+                    $m_purchases=$this->Purchases_model;
+                    $purchase_order_id=$this->input->post('purchase_order_id',TRUE);
+
+                    $m_purchases->set('date_checked','NOW()'); //treat NOW() as function and not string, set date of approval
+                    $m_purchases->checked_by_user=$this->session->user_id; //deleted by user
+                    $m_purchases->checking_remarks=$this->input->post('checking_remarks',TRUE);
+                    $m_purchases->is_checked=1; //1 means approved
+                    if($m_purchases->modify($purchase_order_id)){
+                        $response['data']=$m_purchases->get_list(
+                            'purchase_order.is_active=TRUE AND purchase_order.is_deleted=FALSE AND purchase_order.purchase_order_id='.$purchase_order_id,
+                            //fields
+                            'purchase_order.*,suppliers.supplier_name,COUNT(po_attachments.po_attachment_id) as attachment,
+                            CONCAT_WS(" ",purchase_order.terms,purchase_order.duration)As term_description,
+                            CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by',
+                            //joins
+                            array(
+                                array('suppliers','suppliers.supplier_id=purchase_order.supplier_id','left'),
+                                array('user_accounts','user_accounts.user_id=purchase_order.posted_by_user','left'),
+                                array('po_attachments','po_attachments.purchase_order_id=purchase_order.purchase_order_id','left')
+                            )
+                        )[0];
+                        $response['title']='Success!';
+                        $response['stat']='success';
+                        $response['msg']='Purchase order successfully marked as checked by Accounting.';
+                        echo json_encode($response);
+                    }
+                    break;                    
 
                 case 'mark-disapproved': //called on DASHBOARD when disapproved button is clicked
                     $m_purchases=$this->Purchases_model;
