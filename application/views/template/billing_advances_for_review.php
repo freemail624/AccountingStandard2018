@@ -53,7 +53,7 @@
                         <div class="tab-pane active" id="journal_review_bill<?php echo $info->temp_journal_id; ?>" data-parent-id="<?php echo $info->temp_journal_id; ?>" style="min-height: 300px;">
                             <form id="frm_journal_review" role="form" class="form-horizontal row-border">
                             <input type="hidden" name="ref_no" value="<?php echo $info->ref_no; ?>">
-                                <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> General Journal</strong></span></h4>
+                                <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Cash Receipt Journal</strong></span></h4>
                                 <hr />
                                 <div style="width: 90%;">
                                     <input type="hidden" name="temp_journal_id" value="<?php echo $info->temp_journal_id; ?>">

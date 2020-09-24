@@ -188,28 +188,6 @@
                 </div>
             </div>
 
-        <div class="panel panel-default hidden" id="panel_tbl_billing_review" style="margin-top: 20px;">
-                <div class="panel-body table-responsive">
-                    <h2 class="h2-panel-heading">Review Customer Advances (Billing)</h2><hr>
-                    <div class="row-panel">
-                        <table id="tbl_billing_review" class="table table-striped" cellspacing="0" width="100%">
-                            <thead class="">
-                            <tr>
-                                <th></th>
-                                <th>Reference No</th>
-                                <th>Customer Name</th>
-                                <th>Transaction Date</th>
-                                <th width="20%">Remarks</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-    
-                            </tbody>
-                        </table>
-                    </div>
-
-                </div>
-            </div>
 
         <div class="panel panel-default" style="margin-top:20px;">
 <!--                 <div class="panel-heading">
@@ -1040,7 +1018,6 @@ $(document).ready(function(){
     var _txnMode; var _cboParticulars; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode;
     var dtReview; var _cboDepartments; var _option; var _optGroup; var _selectedDepartment = 0;
     var dtReviewAdjustment; var _cboDepartmentFilter;
-    var dtReviewBilling;
     var _cboCustomerType;
     var _cboArTrans;
  
@@ -1196,28 +1173,6 @@ $(document).ready(function(){
         });
 
 
-        dtReviewBilling=$('#tbl_billing_review').DataTable({
-            "bLengthChange":false,
-            "ajax" : "Billing_review/transaction/list-billing-advances-for-review",
-            "columns": [
-                {
-                    "targets": [0],
-                    "class":          "details-control",
-                    "orderable":      false,
-                    "data":           null,
-                    "defaultContent": ""
-                },
-                { targets:[1],data: "ref_no" },
-                { targets:[2],data: "customer_name" },
-                { targets:[3],data: "date_txn" },
-                { targets:[4],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(80)}
-            ],
-            "initComplete": function(settings, json) {
-                 if(this.api().data().length != 0){
-                    $('#panel_tbl_billing_review').removeClass('hidden')
-                 }
-              } 
-        });
         $('#cbo_particular').select2();
 
         reInitializeNumeric();
@@ -1509,57 +1464,7 @@ $(document).ready(function(){
                 }
             } );
 
-            $('#tbl_billing_review tbody').on( 'click', 'tr td.details-control', function () {
-                var tr = $(this).closest('tr');
-                var row = dtReviewBilling.row( tr );
-                var idx = $.inArray( tr.attr('id'), detailRows );
 
-                if ( row.child.isShown() ) {
-                    tr.removeClass( 'details' );
-                    row.child.hide();
-
-                    // Remove from the 'open' array
-                    detailRows.splice( idx, 1 );
-                }
-                else {
-                    tr.addClass( 'details' );
-                    //console.log(row.data());
-                    var d=row.data();
-
-                    $.ajax({
-                        "dataType":"html",
-                        "type":"POST",
-                        "url":"Templates/layout/billing-advances-for-review?id="+ d.temp_journal_id,
-                        "beforeSend" : function(){
-                            row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
-                        }
-                    }).done(function(response){
-                        row.child( response,'no-padding' ).show();
-
-                        reInitializeSpecificDropDown($('.cbo_supplier_list'));
-                        reInitializeSpecificDropDown($('.cbo_department_list'));
-
-                        reInitializeNumeric();
-
-                        var tbl=$('#tbl_entries_for_review_bill'+ d.temp_journal_id);
-                        var parent_tab_pane=$('#journal_review_bill'+ d.temp_journal_id);
-                        reInitializeDropDownAccounts(tbl,false);
-                        reInitializeChildEntriesTableBilling(tbl);
-                        reInitializeChildElementsBilling(parent_tab_pane);
-
-                        // Add to the 'open' array
-                        if ( idx === -1 ) {
-                            detailRows.push( tr.attr('id') );
-                        }
-
-
-                    });
-
-
-
-
-                }
-            } );
         _cboParticulars.on('select2:select',function(){
             var i=$(this).select2('val'); 
             if (_cboParticulars.val() == 'create_customer') {
@@ -2056,118 +1961,6 @@ $(document).ready(function(){
 
         };
 
-        var reInitializeChildEntriesTableBilling=function(tbl){
-
-            var _oTblEntries=tbl.find('tbody');
-            _oTblEntries.on('keyup','input.numeric',function(){
-                var _oRow=$(this).closest('tr');
-
-                if(_oTblEntries.find(oTBJournal.dr).index()===$(this).closest('td').index()){ //if true, this is Debit amount
-                    if(getFloat(_oRow.find(oTBJournal.dr).find('input.numeric').val())>0){
-                        _oRow.find(oTBJournal.cr).find('input.numeric').val('0.00');
-                    }
-                }else{
-                    if(getFloat(_oRow.find(oTBJournal.cr).find('input.numeric').val())>0) {
-                        _oRow.find(oTBJournal.dr).find('input.numeric').val('0.00');
-                    }
-                }
-                reComputeTotals(tbl);
-            });
-
-
-
-            //add account button on table
-            tbl.on('click','button.add_account',function(){
-
-                var row=$('#table_hidden').find('tr');
-                row.clone().insertAfter(tbl.find('tbody > tr:last'));
-
-                reInitializeNumeric();
-                reInitializeDropDownAccounts(tbl,false);
-
-            });
-
-
-            tbl.on('click','button.remove_account',function(){
-                var oRow=tbl.find('tbody tr');
-
-                if(oRow.length>1){
-                    $(this).closest('tr').remove();
-                }else{
-                    showNotification({"title":"Error!","stat":"error","msg":"Sorry, you cannot remove all rows."});
-                }
-
-                reComputeTotals(tbl);
-
-            });
-
-
-
-
-        };
-
-        var reInitializeChildElementsBilling=function(parent){
-            var _dataParentID=parent.data('parent-id');
-            var btn=parent.find('button[name="btn_finalize_journal_review"]');
-
-            //initialize datepicker
-            parent.find('input.date-picker').datepicker({
-                todayBtn: "linked",
-                keyboardNavigation: false,
-                forceParse: false,
-                calendarWeeks: true,
-                autoclose: true
-
-            });
-
-
-            parent.on('click','button[name="btn_finalize_journal_review"]',function(){
-
-                var _curBtn=$(this);
-
-                if(isZero('#tbl_entries_for_review_bill'+_dataParentID)){
-                if(isBalance('#tbl_entries_for_review_bill'+_dataParentID)){
-                    if(validateRequiredFields('#tbl_entries_for_review_'+_dataParentID)){
-                                           finalizeJournalReview().done(function(response){
-                        showNotification(response);
-                        if(response.stat=="success"){
-                            dt.row.add(response.row_added[0]).draw();
-                            var _parentRow=_curBtn.parents('table.table_journal_entries_review').parents('tr').prev();
-                            dtReviewBilling.row(_parentRow).remove().draw();
-                        }
-
-
-                    }).always(function(){
-                        showSpinningProgress(_curBtn);
-                    }); 
-                    }
-
-                }else{
-                    showNotification({title:"Not Balance!",stat:"error",msg:'Please make sure Debit and Credit amount are equal.'});
-                    stat=false;
-                }
-                }else{
-                        showNotification({title:"No Amount!",stat:"error",msg:'Please make sure Debit and Credit does not amount to zero.'});
-                        stat=false;
-                }// END of ISZERO
-            });
-
-            var finalizeJournalReview=function(){
-                var _data_review=parent.find('form').serializeArray();
-
-                return $.ajax({
-                    "dataType":"json",
-                    "type":"POST",
-                    "url":"General_journal/transaction/create",
-                    "data":_data_review,
-                    "beforeSend": showSpinningProgress(btn)
-
-                });
-            };
-
-
-
-        };
 
         var reInitializeChildElementsAdjustment=function(parent){
             var _dataParentID=parent.data('parent-id');
