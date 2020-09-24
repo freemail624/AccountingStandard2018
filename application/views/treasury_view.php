@@ -150,12 +150,15 @@ button[name="print_check"]{
     padding-bottom: 0px!important;
 }
 
-button[name="mark_delivered"],button[name="mark_issued"] {
+button[name="mark_delivered"],button[name="mark_issued"],button[name="mark_approved"] {
     padding-top: 0px!important;
     padding-bottom: 0px!important;
     font-size: 12px!important;
 }
 
+        #tbl_check_list_filter{
+            display: none;
+        }
 
     </style>
 
@@ -192,8 +195,21 @@ button[name="mark_delivered"],button[name="mark_issued"] {
                 <a data-toggle="collapse" data-parent="#accordionA" href="#collapseOne" style="text-decoration: none;">
                     <h2 class="h2-panel-heading"> For Release</h2>
                 </a>
-                <button class="btn btn-green" id="btn_refresh_check_list" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Refresh" ><i class="fa fa-refresh"></i> Refresh</button>
-                        <div >
+                        <div class="row">
+                                <div class="col-sm-8">
+                                <button class="btn btn-green" id="btn_refresh_check_list" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Refresh" ><i class="fa fa-refresh"></i> Refresh</button>
+                                </div>
+                                <div class="col-sm-2">
+                                    <select id="cbo_approval">
+                                        <option value="all">All</option>
+                                        <option value="1">Approved</option>
+                                        <option value="0">Pending</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-2"><input type="text" class="form-control" id="searchbox_table"> </div>
+                        </div>
+                        <br>
+                        <div>
                             <table id="tbl_check_list" class="table table-striped" cellspacing="0" width="100%">
                                 <thead>
                                 <tr>
@@ -331,6 +347,30 @@ button[name="mark_delivered"],button[name="mark_issued"] {
     </div>
 </div><!---modal-->
 
+<div id="modal_confirmation_approval" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#2ecc71;">
+                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title" style="color:#ecf0f1 !important;"><span id="modal_mode"> </span>Check Approval Confirmation</h4>
+            </div>
+            <div class="modal-body" style="padding-right: 20px;">
+                <div class="row">
+                    <div class="container-fluid">
+                        <div class="col-xs-12">
+                            Are you sure you want to approve this check for transaction# <b><span class="txn_no"></span></b>?
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn_yes_approve" type="button" class="btn btn-success" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span> Yes</button>
+                <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
+            </div>
+        </div><!---content-->
+    </div>
+</div><!---modal-->
+
 
 
 <?php echo $_switcher_settings; ?>
@@ -361,7 +401,7 @@ button[name="mark_delivered"],button[name="mark_issued"] {
 
 <script>
 $(document).ready(function(){
-    var _txnMode; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode;
+    var _txnMode; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode; var _cboApproval;
     var dtReview; var cbo_refType; var _cboLayouts; var dtRecurring; var dtCheckList; var _attribute;
     var dtCheckDelivered;
 
@@ -378,13 +418,28 @@ $(document).ready(function(){
 
     var initializeControls=function(){
 
+        _cboApproval=$('#cbo_approval').select2({
+            placeholder: "",
+            minimumResultsForSearch : -1,
+            allowClear: false
+        });
+
+        _cboApproval.select2('val','all');
 
         dtCheckList=$('#tbl_check_list').DataTable({
             "dom": '<"print">frtip',
             "bLengthChange":false,
             "pageLength" : 7,
             "order": [[ 8, "desc" ]],
-            "ajax" : "Treasury/transaction/get-check-list",
+            "ajax" : {
+                "url":"Treasury/transaction/get-check-list",
+                "bDestroy": true,            
+                "data": function ( d ) {
+                    return $.extend( {}, d, {
+                            "approval_id":_cboApproval.val()
+                        });
+                    }
+            },
             "columns": [
 
                 { targets:[0],data: "txn_no" },
@@ -406,13 +461,22 @@ $(document).ready(function(){
                         return '<center><i '+_attribute+'></i></center>';
                     }
                 },
-                {  targets:[8],
+                {  targets:[8],data: null,
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Print Check"><i class="fa fa-print"></i> Print Check</button>';
-                        var btn_mark_issued='<button class="btn btn-success btn-sm" name="mark_issued" style="margin-left:10px;margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Mark as Issued"><i class="fa fa-check"></i> </button>';
 
-                        return '<center>'+btn_check_print+''+btn_mark_issued+'</center>';
+                        var disabled;
+                        var btn_mark_approved="";
+
+                        if(data.is_check_approved == false){
+                            disabled = 'disabled';
+                            btn_mark_approved='<button class="btn btn-default btn-sm" name="mark_approved" style="margin-left:10px;margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Mark as Approved"><i class="fa fa-check"></i> </button>';
+                        }
+
+                        var btn_mark_issued='<button class="btn btn-success btn-sm" name="mark_issued" style="margin-left:10px;margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Mark as Issued" '+disabled+'><i class="fa fa-check"></i> </button>';
+
+                        return '<center>'+btn_check_print+''+btn_mark_issued+''+btn_mark_approved+'</center>';
                     } 
                 },
                 { targets:[9],data: "journal_id", visible:false },
@@ -600,6 +664,22 @@ $(document).ready(function(){
             });
         });
 
+        $('#tbl_check_list').on('click','button[name="mark_approved"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dtCheckList.row(_selectRowObj).data();
+            _selectedID=data.journal_id;
+
+            $('.txn_no').html(data.txn_no);    
+            $('#modal_confirmation_approval').modal('show');
+        });        
+
+        $('#btn_yes_approve').on('click',function(){
+            markApprovedCheck().done(function(response){
+                showNotification(response);
+                dtCheckRelease.ajax.reload();         
+            });
+        });
+
         $('#tbl_cash_disbursement_list').on('click','button[name="cancel_info"]',function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
@@ -622,6 +702,16 @@ $(document).ready(function(){
 
                 }
             });
+        });
+
+        _cboApproval.on("select2:select", function (e) {
+            dtCheckList.ajax.reload()
+        });
+
+        $("#searchbox_table").keyup(function(){         
+            dtCheckList
+                .search(this.value)
+                .draw();
         });
 
         $('#tbl_entries').on('click','button.remove_account',function(){
@@ -738,6 +828,15 @@ $(document).ready(function(){
         });
     };
 
+    var markApprovedCheck=function(){
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Treasury/transaction/mark-approved",
+            "data":{journal_id : _selectedID}
+        });
+    };
 
     var clearFields=function(f){
         $('input,textarea,select',f).val('');

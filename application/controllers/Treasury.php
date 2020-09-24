@@ -63,8 +63,16 @@ class Treasury extends CORE_Controller
         switch($txn){
             case 'get-check-list':
                 $m_journal=$this->Journal_info_model;
+
+                $approval_id = $this->input->get('approval_id');
+                $approval_filter="";
+
+                if($approval_id!="all"){
+                    $approval_filter = "AND is_check_approved=".$approval_id;
+                }
+
                 $response['data']=$m_journal->get_list(
-                    "journal_info.is_active=1 AND journal_info.is_deleted=0  AND journal_info.book_type='CDJ' AND journal_info.payment_method_id=2 AND journal_info.check_status=0",
+                    "journal_info.is_active=1 AND journal_info.is_deleted=0  AND journal_info.book_type='CDJ' AND journal_info.payment_method_id=2 AND journal_info.check_status=0 ".$approval_filter,
                     array(
                         'journal_info.*',
                         's.supplier_name',
@@ -143,6 +151,18 @@ class Treasury extends CORE_Controller
                 $response['msg']='Check successfully marked as issued.';
                 echo json_encode($response);
             break;
+
+            case 'mark-approved':
+                $journal_id=$this->input->post('journal_id');
+                $m_journal=$this->Journal_info_model;
+                $m_journal->is_check_approved=TRUE;
+                $m_journal->modify($journal_id);
+
+                $response['stat']='success';
+                $response['title']='Success!';
+                $response['msg']='Check successfully marked as approved.';
+                echo json_encode($response);
+            break;            
         };
     }
 
