@@ -37,19 +37,59 @@
 		function transaction($txn)
 		{
 			switch ($txn) {
-				case 'list':
-					$m_sales = $this->Sales_invoice_model;
-	                $accounts=$this->Soa_settings_model->get_list(null,'soa_account_id');
-	                $acc = [];
-	                foreach ($accounts as $account) { $acc[]=$account->soa_account_id; }
-	                $filter_accounts =  implode(",", $acc);
+				// ACCOUNTING VERSION
+				// case 'list':
+				// 	$m_sales = $this->Sales_invoice_model;
+	   //              $accounts=$this->Soa_settings_model->get_list(null,'soa_account_id');
+	   //              $acc = [];
+	   //              foreach ($accounts as $account) { $acc[]=$account->soa_account_id; }
+	   //              $filter_accounts =  implode(",", $acc);
 
-					$response['data'] = $m_sales->get_aging_receivables($filter_accounts);
+				// 	$response['data'] = $m_sales->get_aging_receivables($filter_accounts);
+
+				// 	echo json_encode($response);
+				// 	break;
+
+				// NEW VERSION - BILLING VERSION 
+				case 'list': 
+					$m_sales = $this->Sales_invoice_model;
+
+					$response['data'] = $m_sales->get_aging_receivables_billing();
 
 					echo json_encode($response);
-					break;
+					break;		
 
-				case 'print':
+
+				// ACCOUNTING VERSION
+				// case 'print':
+
+				// 	$m_sales = $this->Sales_invoice_model;
+				// 	$m_company = $this->Company_model;
+
+				// 	$company_info = $m_company->get_list();
+
+				// 	$data['company_info'] = $company_info[0];
+	   //              $accounts=$this->Soa_settings_model->get_list(null,'soa_account_id');
+	   //              $acc = [];
+	   //              foreach ($accounts as $account) { $acc[]=$account->soa_account_id; }
+	   //              $filter_accounts =  implode(",", $acc);
+
+				// 	$data['receivables'] = $m_sales->get_aging_receivables($filter_accounts);
+
+    //                 $file_name='Aging of Receivables';
+    //                 $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+    //                 $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+    //                 $content=$this->load->view('template/aging_receivables_report',$data,TRUE); //load the template
+    //                 $pdf->setFooter('{PAGENO}');
+    //                 $pdf->WriteHTML($content);
+    //                 //download it.
+    //                 $pdf->Output();
+
+
+				// 	// $this->load->view('template/aging_receivables_report',$data);
+				// 	break;							
+
+				case 'print': // BILLING VERSION
 
 					$m_sales = $this->Sales_invoice_model;
 					$m_company = $this->Company_model;
@@ -57,16 +97,14 @@
 					$company_info = $m_company->get_list();
 
 					$data['company_info'] = $company_info[0];
-	                $accounts=$this->Soa_settings_model->get_list(null,'soa_account_id');
-	                $acc = [];
-	                foreach ($accounts as $account) { $acc[]=$account->soa_account_id; }
-	                $filter_accounts =  implode(",", $acc);
 
-					$data['receivables'] = $m_sales->get_aging_receivables($filter_accounts);
+
+					$data['receivables'] = $m_sales->get_aging_receivables_billing();
 
                     $file_name='Aging of Receivables';
                     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                     $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                    $pdf = new mPDF('c', 'A4-L'); 
                     $content=$this->load->view('template/aging_receivables_report',$data,TRUE); //load the template
                     $pdf->setFooter('{PAGENO}');
                     $pdf->WriteHTML($content);
@@ -90,12 +128,8 @@
 					$company_info = $m_company->get_list();
 
 					$data['company_info'] = $company_info[0];
-	                $accounts=$this->Soa_settings_model->get_list(null,'soa_account_id');
-	                $acc = [];
-	                foreach ($accounts as $account) { $acc[]=$account->soa_account_id; }
-	                $filter_accounts =  implode(",", $acc);
 
-					$receivables = $m_sales->get_aging_receivables($filter_accounts);
+					$receivables = $m_sales->get_aging_receivables_billing();
 
 	                $excel->setActiveSheetIndex(0);
 
@@ -105,7 +139,7 @@
 	                $excel->getActiveSheet()->getColumnDimensionByColumn('A4')->setWidth('30');
 
 	                //name the worksheet
-	                $excel->getActiveSheet()->setTitle("Aging of Receivables Report");
+	                $excel->getActiveSheet()->setTitle("Aging of Receivables");
 	                $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
 	                $excel->getActiveSheet()->mergeCells('A1:B1');
 	                $excel->getActiveSheet()->mergeCells('A2:B2');
@@ -118,21 +152,18 @@
 
 	                $excel->getActiveSheet()->getColumnDimensionByColumn('A6:B6')->setWidth('40');	                                        
 	                $excel->getActiveSheet()->mergeCells('A6:B6');
-                	$excel->getActiveSheet()->setCellValue('A6','AGING OF RECEIVABLES REPORT')
+                	$excel->getActiveSheet()->setCellValue('A6',"TENANTS' AGING OF RECEIVABLES REPORT")
                                         	->getStyle('A6')->getFont()->setBold(TRUE)
-                                        	->setSize(16);
+                                        	->setSize(12);
 
 	                $excel->getActiveSheet()->getColumnDimension('A')->setWidth('40');
-	                $excel->getActiveSheet()->getColumnDimension('B')->setWidth('25');
+	                $excel->getActiveSheet()->getColumnDimension('B')->setWidth('40');
 	                $excel->getActiveSheet()->getColumnDimension('C')->setWidth('25');
 	                $excel->getActiveSheet()->getColumnDimension('D')->setWidth('25');
-	                $excel->getActiveSheet()->getColumnDimension('E')->setWidth('30');
+	                $excel->getActiveSheet()->getColumnDimension('E')->setWidth('25');
 	                $excel->getActiveSheet()->getColumnDimension('F')->setWidth('30');
+	                $excel->getActiveSheet()->getColumnDimension('G')->setWidth('30');
 	                	                	                
-	                $excel->getActiveSheet()
-	                        ->getStyle('B')
-	                        ->getAlignment()
-	                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 	                $excel->getActiveSheet()
 	                        ->getStyle('C')
 	                        ->getAlignment()
@@ -148,35 +179,39 @@
 	                $excel->getActiveSheet()
 	                        ->getStyle('F')
 	                        ->getAlignment()
+	                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+	                $excel->getActiveSheet()
+	                        ->getStyle('G')
+	                        ->getAlignment()
 	                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);	
 
-	                $excel->getActiveSheet()->setCellValue('A8','Customer Name')
+	                $excel->getActiveSheet()->setCellValue('A8','Tenant Code')
 	                                        ->getStyle('A8')->getFont()->setBold(TRUE);
-	                $excel->getActiveSheet()->setCellValue('B8','Current')
+	                $excel->getActiveSheet()->setCellValue('B8','Trade Name')
 	                                        ->getStyle('B8')->getFont()->setBold(TRUE);
-	                $excel->getActiveSheet()->setCellValue('C8','30 Days')
+	                $excel->getActiveSheet()->setCellValue('C8','Current')
 	                                        ->getStyle('C8')->getFont()->setBold(TRUE);
-	                $excel->getActiveSheet()->setCellValue('D8','45 Days')
+	                $excel->getActiveSheet()->setCellValue('D8','30 Days')
 	                                        ->getStyle('D8')->getFont()->setBold(TRUE);
-	                $excel->getActiveSheet()->setCellValue('E8','60 Days')
+	                $excel->getActiveSheet()->setCellValue('E8','45 Days')
 	                                        ->getStyle('E8')->getFont()->setBold(TRUE);
-	                $excel->getActiveSheet()->setCellValue('F8','Over 90 Days')
+	                $excel->getActiveSheet()->setCellValue('F8','60 Days')
 	                                        ->getStyle('F8')->getFont()->setBold(TRUE);
+	                $excel->getActiveSheet()->setCellValue('G8','Over 90 Days')
+	                                        ->getStyle('G8')->getFont()->setBold(TRUE);
 	                $i=9;
 					$sum_current = 0; $sum_thirty = 0; $sum_fortyfive = 0; $sum_sixty = 0; $sum_ninety = 0;	   
 					
 					foreach($receivables as $receivable) {		
-		                $excel->getActiveSheet()->getColumnDimension('A')->setWidth('40');
-		                $excel->getActiveSheet()->getColumnDimension('B')->setWidth('25');
-		                $excel->getActiveSheet()->getColumnDimension('C')->setWidth('25');
-		                $excel->getActiveSheet()->getColumnDimension('D')->setWidth('25');
-		                $excel->getActiveSheet()->getColumnDimension('E')->setWidth('30');
-		                $excel->getActiveSheet()->getColumnDimension('F')->setWidth('30');
+		                $excel->getActiveSheet()->getColumnDimension('A')->setWidth('20');
+		                $excel->getActiveSheet()->getColumnDimension('B')->setWidth('50');
+		                $excel->getActiveSheet()->getColumnDimension('C')->setWidth('20');
+		                $excel->getActiveSheet()->getColumnDimension('D')->setWidth('20');
+		                $excel->getActiveSheet()->getColumnDimension('E')->setWidth('20');
+		                $excel->getActiveSheet()->getColumnDimension('F')->setWidth('20');
+		                $excel->getActiveSheet()->getColumnDimension('G')->setWidth('20');
 
-		                $excel->getActiveSheet()
-		                        ->getStyle('B')
-		                        ->getAlignment()
-		                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
 		                $excel->getActiveSheet()
 		                        ->getStyle('C')
 		                        ->getAlignment()
@@ -193,36 +228,47 @@
 		                        ->getStyle('F')
 		                        ->getAlignment()
 		                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);	
+		                $excel->getActiveSheet()
+		                        ->getStyle('G')
+		                        ->getAlignment()
+		                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);		                        
 
-		                $excel->getActiveSheet()->setCellValue('A'.$i,$receivable->customer_name);
-                    	$excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		            
-		                $excel->getActiveSheet()->setCellValue('B'.$i,(number_format($receivable->current,2) == 0 ? '' : number_format($receivable->current,2)));
-                    	$excel->getActiveSheet()->getStyle('C'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                
-		                $excel->getActiveSheet()->setCellValue('C'.$i,(number_format($receivable->thirty_days,2) == 0 ? '' : number_format($receivable->thirty_days,2)));
+		                $excel->getActiveSheet()->setCellValue('A'.$i,$receivable->tenant_code);
+		                $excel->getActiveSheet()->setCellValue('B'.$i,$receivable->trade_name);
+                    	$excel->getActiveSheet()->getStyle('C'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		            
+		                $excel->getActiveSheet()->setCellValue('C'.$i,(number_format($receivable->balance_current,2) == 0 ? '' : number_format($receivable->balance_current,2)));
                     	$excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                
-		                $excel->getActiveSheet()->setCellValue('D'.$i,(number_format($receivable->fortyfive_days,2) == 0 ? '' : number_format($receivable->fortyfive_days,2)));
-                   		$excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                
-		                $excel->getActiveSheet()->setCellValue('E'.$i,(number_format($receivable->sixty_days,2) == 0 ? '' : number_format($receivable->sixty_days,2)));
-                    	$excel->getActiveSheet()->getStyle('F'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                
-		                $excel->getActiveSheet()->setCellValue('F'.$i,(number_format($receivable->over_ninetydays,2) == 0 ? '' : number_format($receivable->over_ninetydays,2)));
+		                $excel->getActiveSheet()->setCellValue('D'.$i,(number_format($receivable->balance_thirty_days,2) == 0 ? '' : number_format($receivable->balance_thirty_days,2)));
+                    	$excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                
+		                $excel->getActiveSheet()->setCellValue('E'.$i,(number_format($receivable->balance_fortyfive_days,2) == 0 ? '' : number_format($receivable->balance_fortyfive_days,2)));
+                   		$excel->getActiveSheet()->getStyle('F'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                
+		                $excel->getActiveSheet()->setCellValue('F'.$i,(number_format($receivable->balance_sixty_days,2) == 0 ? '' : number_format($receivable->balance_sixty_days,2)));
+                    	$excel->getActiveSheet()->getStyle('G'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                
+		                $excel->getActiveSheet()->setCellValue('G'.$i,(number_format($receivable->balance_over_ninetydays,2) == 0 ? '' : number_format($receivable->balance_over_ninetydays,2)));
 						
 						$i++;
-	 					$sum_current += $receivable->current; 
-	                    $sum_thirty += $receivable->thirty_days;
-	                    $sum_fortyfive += $receivable->fortyfive_days;
-	                    $sum_sixty += $receivable->sixty_days;
-	                    $sum_ninety += $receivable->over_ninetydays;											
+	 					$sum_current += $receivable->balance_current; 
+	                    $sum_thirty += $receivable->balance_thirty_days;
+	                    $sum_fortyfive += $receivable->balance_fortyfive_days;
+	                    $sum_sixty += $receivable->balance_sixty_days;
+	                    $sum_ninety += $receivable->balance_over_ninetydays;											
 					}			         
-                    	$excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		            
-		                $excel->getActiveSheet()->setCellValue('B'.$i,number_format($sum_current,2));
-                    	$excel->getActiveSheet()->getStyle('C'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                		                
-		                $excel->getActiveSheet()->setCellValue('C'.$i,number_format($sum_thirty,2));
+                    	$excel->getActiveSheet()->getStyle('C'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		            
+		                $excel->getActiveSheet()->setCellValue('C'.$i,number_format($sum_current,2));
                     	$excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                		                
-		                $excel->getActiveSheet()->setCellValue('D'.$i,number_format($sum_fortyfive,2));
-                   		$excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                		                
-		                $excel->getActiveSheet()->setCellValue('E'.$i,number_format($sum_sixty,2));
-                    	$excel->getActiveSheet()->getStyle('F'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                		                
-		                $excel->getActiveSheet()->setCellValue('F'.$i,number_format($sum_ninety,2));
+		                $excel->getActiveSheet()->setCellValue('D'.$i,number_format($sum_thirty,2));
+                    	$excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                		                
+		                $excel->getActiveSheet()->setCellValue('E'.$i,number_format($sum_fortyfive,2));
+                   		$excel->getActiveSheet()->getStyle('F'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                		                
+		                $excel->getActiveSheet()->setCellValue('F'.$i,number_format($sum_sixty,2));
+                    	$excel->getActiveSheet()->getStyle('G'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                		                
+		                $excel->getActiveSheet()->setCellValue('G'.$i,number_format($sum_ninety,2));
+
+		                $excel->getActiveSheet()->getStyle('C'.$i)->getFont()->setBold(TRUE);
+		                $excel->getActiveSheet()->getStyle('D'.$i)->getFont()->setBold(TRUE);
+		                $excel->getActiveSheet()->getStyle('E'.$i)->getFont()->setBold(TRUE);
+		                $excel->getActiveSheet()->getStyle('F'.$i)->getFont()->setBold(TRUE);
+		                $excel->getActiveSheet()->getStyle('G'.$i)->getFont()->setBold(TRUE);
 
 		                $i++;
 

@@ -479,6 +479,92 @@ GROUP BY n.customer_id HAVING total_balance > 0";
         return $this->db->query($sql)->result();
     }
 
+    function get_aging_receivables_billing()
+    {
+        $sql = "SELECT 
+        p.tenant_id,
+        bt.tenant_code,
+        bt.trade_name,
+        p.total_payment,
+        p.total_balance,
+        p.balance_current,
+        p.balance_thirty_days,
+        p.balance_fortyfive_days,
+        p.balance_sixty_days,
+        p.balance_over_ninetydays
+
+            FROM (SELECT 
+                @balance:=  IFNULL(bp.total_payment,0) as total_payment,
+                CONVERT( IF(@balance < (o.over_ninetydays ) , (o.over_ninetydays - @balance ), (o.over_ninetydays - o.over_ninetydays  ) )  , DECIMAL (20 , 2 ))as  balance_over_ninetydays,
+                CONVERT( IF(@balance < o.over_ninetydays , @balance := @balance-@balance , @balance:= @balance-o.over_ninetydays ), DECIMAL (20 , 2 )) as rem_after_ninety,
+                
+                CONVERT( IF(@balance < (o.sixty_days ) , (o.sixty_days - @balance ), (o.sixty_days - o.sixty_days  ) )  , DECIMAL (20 , 2 ))as  balance_sixty_days,
+                CONVERT( IF(@balance < o.sixty_days , @balance := @balance-@balance , @balance:= @balance-o.sixty_days ), DECIMAL (20 , 2 )) as rem_after_sixty,
+                
+                CONVERT( IF(@balance < (o.fortyfive_days ) , (o.fortyfive_days - @balance ), (o.fortyfive_days - o.fortyfive_days  ) )  , DECIMAL (20 , 2 ))as  balance_fortyfive_days,
+                CONVERT( IF(@balance < o.fortyfive_days , @balance := @balance-@balance , @balance:= @balance-o.fortyfive_days ), DECIMAL (20 , 2 )) as rem_after_fortyfive,
+                
+                CONVERT( IF(@balance < (o.thirty_days ) , (o.thirty_days - @balance ), (o.thirty_days - o.thirty_days  ) )  , DECIMAL (20 , 2 ))as  balance_thirty_days,
+                CONVERT( IF(@balance < o.thirty_days , @balance := @balance-@balance , @balance:= @balance-o.thirty_days ), DECIMAL (20 , 2 )) as rem_after_thirty,
+                
+                CONVERT( IF(@balance < (o.current ) , (o.current - @balance ), (o.current - o.current  ) )  , DECIMAL (20 , 2 ))as  balance_current,
+                CONVERT( IF(@balance < o.current , @balance := @balance-@balance , @balance:= @balance-o.current ), DECIMAL (20 , 2 )) as rem_after_current,
+                
+                o.*
+                
+                FROM 
+                    (SELECT
+                    n.tenant_id, 
+                    SUM(n.over_90days) over_ninetydays,
+                    SUM(n.60days) sixty_days,
+                    SUM(n.45days) fortyfive_days,
+                    SUM(n.30days) thirty_days,
+                    SUM(n.current) current,
+                    SUM(n.days) days,
+                    (IFNULL(SUM(n.current),0)+
+                    IFNULL(SUM(n.30days),0)+
+                    IFNULL(SUM(n.45days),0)+
+                    IFNULL(SUM(n.60days),0)+
+                    IFNULL(SUM(n.over_90days),0)) as total_balance
+                    FROM
+                        (SELECT
+                        m.tenant_id,
+                        m.days,
+                        IF(m.days >= 0 AND m.days < 30, m.total_amount_due,'') AS current,
+                        IF(m.days >= 30 AND m.days <= 44, m.total_amount_due,'') AS 30days,
+                        IF(m.days >= 45 AND m.days <= 59, m.total_amount_due,'') AS 45days,
+                        IF(m.days >= 60 AND m.days <= 89, m.total_amount_due,'') AS 60days,
+                        IF(m.days >= 90, m.total_amount_due,'') AS over_90days
+                        FROM 
+                            (SELECT main.*,
+                            ABS(DATEDIFF(NOW(),main.billing_date)) AS days
+                            FROM 
+                                (SELECT 
+                                bi.tenant_id,
+                                CONVERT(CONCAT(bi.app_year,'-',LPAD(bi.month_id, 2, 0),'-01'), DATE) as billing_date,
+                                bi.total_amount_due
+                                FROM b_billing_info bi 
+
+                                WHERE bi.is_deleted = FALSE
+                                ) as main 
+                        ) as m
+                    )as n GROUP BY n.tenant_id
+                ) as o
+
+                LEFT JOIN
+                (SELECT 
+                bp.tenant_id,
+                IFNULL(SUM(bp.amount_paid),0) as total_payment 
+                FROM b_payment_info bp 
+                WHERE bp.is_canceled = FALSE
+                GROUP BY bp.tenant_id) as bp ON bp.tenant_id = o.tenant_id
+            
+            ) as p
+            LEFT JOIN b_tenants as bt ON bt.tenant_id = p.tenant_id";
+
+        return $this->db->query($sql)->result();
+    }
+
     function get_report_summary($startDate,$endDate){
         $sql="SELECT
             si.sales_inv_no,

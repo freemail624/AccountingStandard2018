@@ -97,7 +97,8 @@
                                                 <table id="tbl_aging" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead class="">
                                                     <tr>
-                                                        <th>Customer Name</th>
+                                                        <th>Tenant Code</th>
+                                                        <th>Trade Name</th>
                                                         <th>Current</th>
                                                         <th>30 Days</th>
                                                         <th>45 Days</th>
@@ -109,7 +110,7 @@
 
                                                     </tbody>
                                                     <tfoot>
-                                                        <td align="right">TOTAL :</td>
+                                                        <td colspan="2" align="right">TOTAL :</td>
                                                         <td id="td_current" align="right">0.00</td>
                                                         <td id="td_thirty" align="right">0.00</td>
                                                         <td id="td_forty_five" align="right">0.00</td>
@@ -169,38 +170,39 @@
                 "bLengthChange":false,
                 "ajax" : "Aging_receivables/transaction/list",
                 "columns": [
-                    { targets:[0],data: "customer_name" },
+                    { targets:[0],data: "tenant_code" },
+                    { targets:[1],data: "trade_name" },                    
                     {
                         class: 'text-right',
-                        targets:[1],data: "current",
+                        targets:[2],data: "balance_current",
                         render:function(data,type,full,meta){
                             return (data == 0 ? '' : accounting.formatNumber(data,2));
                         }
                     },
                     { 
                         class: 'text-right',
-                        targets:[2],data: "thirty_days",
+                        targets:[3],data: "balance_thirty_days",
                         render:function(data,type,full,meta){
                             return (data == 0 ? '' : accounting.formatNumber(data,2));
                         } 
                     },
                     { 
                         class: 'text-right',
-                        targets:[3],data: "fortyfive_days",
+                        targets:[4],data: "balance_fortyfive_days",
                         render:function(data,type,full,meta){
                             return (data == 0 ? '' : accounting.formatNumber(data,2));
                         }
                     },
                     { 
                         class: 'text-right',
-                        targets:[4],data: "sixty_days",
+                        targets:[5],data: "balance_sixty_days",
                         render:function(data,type,full,meta){
                             return (data == 0 ? '' : accounting.formatNumber(data,2));
                         }
                     },
                     { 
                         class: 'text-right',
-                        targets:[5],data: "over_ninetydays",
+                        targets:[6],data: "balance_over_ninetydays",
                         render:function(data,type,full,meta){
                             return (data == 0 ? '' : accounting.formatNumber(data,2));
                         }
@@ -238,35 +240,35 @@
                     };
 
                     total_current = api
-                        .column( 1 )
-                        .data()
-                        .reduce( function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0 );
-
-                    total_thirty = api
                         .column( 2 )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0 );
 
-                    total_forty_five = api
+                    total_thirty = api
                         .column( 3 )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0 );
 
-                    total_sixty = api
+                    total_forty_five = api
                         .column( 4 )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0 );
 
-                    total_ninety = api
+                    total_sixty = api
                         .column( 5 )
+                        .data()
+                        .reduce( function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0 );
+
+                    total_ninety = api
+                        .column( 6 )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
@@ -290,7 +292,7 @@
                 var _btnEmail='<button class="btn btn-success" id="btn_email" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Email Aging Receivables" >'+
                     '<i class="fa fa-share"></i> Email</button>';
 
-                $("div.toolbar").html(_btnPrint+"&nbsp;"+_btnExport+"&nbsp;"+_btnEmail);
+                $("div.toolbar").html(_btnPrint+"&nbsp;"+_btnExport);
             }();
         }();
 
