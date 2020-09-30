@@ -339,39 +339,39 @@ tr:nth-child(even){background-color:none !important;}*/
                     }
                 ],
 
-        "footerCallback": function ( row, data, start, end, display ) {
-            var api = this.api(), data;
-           // console.log(data);
- 
-            // Remove the formatting to get integer data for summation
-            var intVal = function ( i ) {
-                return typeof i === 'string' ?
-                    i.replace(/[\$,]/g, '')*1 :
-                    typeof i === 'number' ?
-                        i : 0;
-            };
- 
-            // Total over this page
-            pageTotalAmount = api
-                .column( 3, { page: 'current'} )
-                .data()
-                .reduce( function (a, b) {
-                    console.log(intVal(a) + intVal(b));
-                    return intVal(a) + intVal(b);
-                }, 0 );
+                "footerCallback": function ( row, data, start, end, display ) {
+                    var api = this.api(), data;
+                   // console.log(data);
+         
+                    // Remove the formatting to get integer data for summation
+                    var intVal = function ( i ) {
+                        return typeof i === 'string' ?
+                            i.replace(/[\$,]/g, '')*1 :
+                            typeof i === 'number' ?
+                                i : 0;
+                    };
+         
+                    // Total over this page
+                    pageTotalAmount = api
+                        .column( 3, { page: 'current'} )
+                        .data()
+                        .reduce( function (a, b) {
+                            console.log(intVal(a) + intVal(b));
+                            return intVal(a) + intVal(b);
+                        }, 0 );
 
-            // Total over all pages
-            totalAmount = api
-                .column(3)
-                .data()
-                .reduce( function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0 );
+                    // Total over all pages
+                    totalAmount = api
+                        .column(3)
+                        .data()
+                        .reduce( function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0 );
 
-             $('#Sum').html('<b>'+accounting.formatNumber(pageTotalAmount,2)+'</b>');
-             $('#Sumofallpages').html('<b>'+accounting.formatNumber(totalAmount,2)+'</b>');
+                     $('#Sum').html('<b>'+accounting.formatNumber(pageTotalAmount,2)+'</b>');
+                     $('#Sumofallpages').html('<b>'+accounting.formatNumber(totalAmount,2)+'</b>');
 
-        }
+                }
         	});
 
     };

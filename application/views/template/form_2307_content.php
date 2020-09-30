@@ -49,26 +49,26 @@
 <span style="top: 367px; left: 185px;font-size: 9pt;text-align: center;width: 60px;max-width: 60px; "><?php echo $info->atc; ?></span>
 
 <?php if ($info->quarter == 1){?>
-<span style="top: 367px; left: 250px;font-size: 9pt;text-align: center;width: 80px;max-width: 80px; "><?php echo $info->gross_amount;?></span>
+<span style="top: 367px; left: 250px;font-size: 9pt;text-align: center;width: 80px;max-width: 80px; "><?php echo number_format($info->gross_amount,2);?></span>
 <?php }else if ($info->quarter == 2){?>
-<span style="top: 367px; left: 333px;font-size: 9pt;text-align: center;width: 80px;max-width: 80px; "><?php echo $info->gross_amount;?></span>
+<span style="top: 367px; left: 333px;font-size: 9pt;text-align: center;width: 80px;max-width: 80px; "><?php echo number_format($info->gross_amount,2);?></span>
 <?php }else if($info->quarter == 3){?>
-<span style="top: 367px; left: 413px;font-size: 9pt;text-align: center;width: 80px;max-width: 80px; "><?php echo $info->gross_amount;?></span>
+<span style="top: 367px; left: 413px;font-size: 9pt;text-align: center;width: 80px;max-width: 80px; "><?php echo number_format($info->gross_amount,2);?></span>
 <?php }?>
 
-<span style="top: 367px; left: 496px;font-size: 9pt;text-align: center;width: 80px;max-width: 80px; "><?php echo $info->gross_amount;?></span>
-<span style="top: 367px; left: 580px;font-size: 9pt;text-align: center;width: 120px;max-width: 120px; "><?php echo $info->deducted_amount; ?></span>
+<span style="top: 367px; left: 496px;font-size: 9pt;text-align: center;width: 80px;max-width: 80px; "><?php echo number_format($info->gross_amount,2);?></span>
+<span style="top: 367px; left: 580px;font-size: 9pt;text-align: center;width: 120px;max-width: 120px; "><?php echo number_format($info->deducted_amount,2); ?></span>
 
 <?php if ($info->quarter == 1){?>
-<span style="top: 558px; left: 250px;font-size: 9pt;text-align: center;width: 80px;max-width: 80px; "><?php echo $info->gross_amount;?></span>
+<span style="top: 558px; left: 250px;font-size: 9pt;text-align: center;width: 80px;max-width: 80px; "><?php echo number_format($info->gross_amount,2);?></span>
 <?php }else if ($info->quarter == 2){?>
-<span style="top: 558px; left: 333px;font-size: 9pt;text-align: center;width: 80px;max-width: 80px; "><?php echo $info->gross_amount;?></span>
+<span style="top: 558px; left: 333px;font-size: 9pt;text-align: center;width: 80px;max-width: 80px; "><?php echo number_format($info->gross_amount,2);?></span>
 <?php }else if($info->quarter == 3){?>
-<span style="top: 558px; left: 413px;font-size: 9pt;text-align: center;width: 80px;max-width: 80px; "><?php echo $info->gross_amount;?></span>
+<span style="top: 558px; left: 413px;font-size: 9pt;text-align: center;width: 80px;max-width: 80px; "><?php echo number_format($info->gross_amount,2);?></span>
 <?php }?>
 
-<span style="top: 558px; left: 496px;font-size: 9pt;text-align: center;width: 80px;max-width: 80px; "><?php echo $info->gross_amount;?></span>
-<span style="top: 558px; left: 580px;font-size: 9pt;text-align: center;width: 120px;max-width: 120px; "><?php echo $info->deducted_amount; ?></span>
+<span style="top: 558px; left: 496px;font-size: 9pt;text-align: center;width: 80px;max-width: 80px; "><?php echo number_format($info->gross_amount,2);?></span>
+<span style="top: 558px; left: 580px;font-size: 9pt;text-align: center;width: 120px;max-width: 120px; "><?php echo number_format($info->deducted_amount,2); ?></span>
 
 
 <!-- <img src="../../assets/img/bir_forms/form_2307_2nd_page.png" style="top: 1050px; left: 0px; width: 100%;position: absolute;z-index: 100;"> -->

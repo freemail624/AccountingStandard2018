@@ -52,8 +52,15 @@
 				case 'list':
 					$m_fixed_asset=$this->Fixed_asset_management_model;
 
+					$filter = "";
+                	$category_id = $this->input->get('category_id');
+
+                	if($category_id!=0){
+                		$filter = 'AND fixed_assets.category_id = '.$category_id;
+                	}
+
 					$response['data']=$m_fixed_asset->get_list(
-						'fixed_assets.is_deleted=FALSE AND fixed_assets.is_active=TRUE',
+						'fixed_assets.is_deleted=FALSE AND fixed_assets.is_active=TRUE '.$filter,
 						array(
 							'fixed_assets.fixed_asset_id',
 							'fixed_assets.asset_code',
@@ -91,8 +98,17 @@
 	                $m_company_info=$this->Company_model;
 	                $company_info=$m_company_info->get_list();
 
+                	$category_id = $this->input->get('category_id');
+
+                	if($category_id==0){
+                		$category_id = null;
+                		$data['category_name'] = 'All';
+                	}else{
+                		$data['category_name'] = $this->Categories_model->get_list($category_id,'category_name')[0]->category_name;
+                	}
+
 	                $m_movement = $this->Asset_movement_model;
-	                $data['data'] = $m_movement->get_list_with_status();
+	                $data['data'] = $m_movement->get_list_with_status($category_id);
 
 	                $data['company_info']=$company_info[0];
 	                $data['user'] = $this->session->user_fullname;
@@ -101,6 +117,20 @@
 
                 break;
 
+				case 'print-by-location':
+	                $m_company_info=$this->Company_model;
+	                $company_info=$m_company_info->get_list();
+
+	                $m_movement = $this->Asset_movement_model;
+	                $data['data'] = $m_movement->get_list_with_status();
+
+	                $data['company_info']=$company_info[0];
+	                $data['user'] = $this->session->user_fullname;
+					$data['locations']=$m_movement->get_list_with_location_count();
+	                $this->load->view('template/fixed_asset_management_location_content',$data);
+
+                break;                
+
 	            case 'export':
 
 	                $excel = $this->excel;
@@ -108,8 +138,17 @@
 	                $m_company_info=$this->Company_model;
 	                $m_movement = $this->Asset_movement_model;
 
+                	$category_id = $this->input->get('category_id');
+
+                	if($category_id==0){
+                		$category_id = null;
+                		$category_name = 'All';
+                	}else{
+                		$category_name = $this->Categories_model->get_list($category_id,'category_name')[0]->category_name;
+                	}
+
 	                $company_info=$m_company_info->get_list();
-	                $data = $m_movement->get_list_with_status();
+	                $data = $m_movement->get_list_with_status($category_id);
 
 	                $excel->setActiveSheetIndex(0);
 
@@ -133,7 +172,7 @@
 
 	                $excel->getActiveSheet()->setCellValue('A6','Fixed Asset Management')
 	                                        ->getStyle('A6')->getFont()->setBold(TRUE);
-	                $excel->getActiveSheet()->setCellValue('A7','')
+	                $excel->getActiveSheet()->setCellValue('A7','Category : '.$category_name)
 	                                        ->getStyle('A7')->getFont()->setItalic(TRUE);
 	                $excel->getActiveSheet()->setCellValue('A8','')
 	                                        ->getStyle('A8')->getFont()->setItalic(TRUE);
@@ -179,9 +218,11 @@
 
 	                $a=1;
 	                $i=9;
+	                $total_acquisition_cost = 0;
 
 	                foreach ($data as $row) {
 
+	                $total_acquisition_cost += $row->acquisition_cost;
 	                $record = "";
 	                if($row->is_acquired == 1){  $record = 'Acquired'; }else{ $record = 'Moved'; }
 	                
@@ -202,6 +243,15 @@
 	                $a++;
 
 	                }
+
+	                $excel->getActiveSheet()->setCellValue('B'.$i,'Total: ');
+	                $excel->getActiveSheet()->setCellValue('C'.$i,number_format($total_acquisition_cost,2));
+					$excel->getActiveSheet()
+							->getStyle('B'.$i.':C'.$i)
+							->getAlignment()
+							->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+					$excel->getActiveSheet()->getStyle('B'.$i.':C'.$i)->getFont()->setBold(TRUE);
 
 	                $i++; $i++;
 	                $excel->getActiveSheet()->setCellValue('A'.$i,'Date Printed: '.date('Y-m-d h:i:s'));

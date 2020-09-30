@@ -24,19 +24,17 @@
         }
             table{
         border:none!important;
-        }
-        table-td.left{
-            border-left: 1px solid gray!important;
-        }
-        table-td.right{
-            border-left: 1px solid gray!important;
-        }
-        #tbl_supplier thead tr th {
-            border-bottom: 2px solid gray;text-align: left;height: 30px;padding: 6px;
-        }
-        .border-top{
-            border-top: 1px solid gray;
-        }
+    }
+    table-td.left{
+        border-left: 1px solid gray!important;
+    }
+    table-td.right{
+        border-left: 1px solid gray!important;
+    }
+    #tbl_supplier thead tr th {
+        border-bottom: 1px solid gray;text-align: left;;padding: 3px;
+    }
+
         td:nth-child(3){
             text-align: right;
         }    
@@ -56,54 +54,50 @@
         </tr>
     </table>
     <br>
-    <h2>
-        Fixed Asset Management<br/>
-        <span style="font-size: 12pt;font-weight: normal;">Classification : <?php echo $category_name; ?></span>
-    </h2>
+    <h2>Fixed Asset Management</h2>
+    <?php foreach($locations as $location){?>
+
 	<table width="100%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11" id="tbl_supplier" cellspacing="5" cellpadding="5">
 		<thead>
+            <tr>
+                <th colspan="8"><?php echo $location->location_name; ?></th>
+            </tr>            
 			<tr>
 				<th>Asset Code</th>
                 <th width="25%">Asset Description</th>
                 <th>Acquisition Cost</th>
 				<th>Posted By</th>
-				<th>Present Location</th>
 				<th>Present Status</th>
 				<th>Date</th>
 				<th>Record</th>
 			</tr>
 		</thead>
 		<tbody>
-			<?php 
-                $total_acquisition_cost = 0;
-                foreach($data as $row){
-                $total_acquisition_cost += $row->acquisition_cost;
-                ?>
-				<tr>
-					<td><?php echo $row->asset_code; ?></td>
-					<td><?php echo $row->asset_description; ?></td>
-                    <td><?php echo number_format($row->acquisition_cost,2); ?></td>
-					<td><?php echo $row->posted_by; ?></td>
-                    <td><?php echo $row->location_name; ?></td>
-					<td><?php echo $row->asset_property_status; ?></td>
-					<td><?php echo $row->date_movement; ?></td>
-					<td><?php if($row->is_acquired == 1){ echo 'Acquired'; }else{ echo 'Moved'; }?></td>
-				</tr>
+
+			<?php foreach($data as $row){  
+                if($row->current_location_id == $location->current_location_id){  ?>
+    				<tr>
+    					<td><?php echo $row->asset_code; ?></td>
+    					<td><?php echo $row->asset_description; ?></td>
+                        <td><?php echo number_format($row->acquisition_cost,2); ?></td>
+    					<td><?php echo $row->posted_by; ?></td>
+    					<td><?php echo $row->asset_property_status; ?></td>
+    					<td><?php echo $row->date_movement; ?></td>
+    					<td><?php if($row->is_acquired == 1){ echo 'Acquired'; }else{ echo 'Moved'; }?></td>
+    				</tr>
+                <?php }?>
 			<?php }?>
-                <tr>
-                    <td colspan="2" class="align-right border-top"><strong>Total</strong></td>
-                    <td class="align-right border-top"><b><?php echo number_format($total_acquisition_cost,2); ?></b></td>
-                    <td colspan="5" class="border-top"></td>
-                </tr>
 		</tbody>
 	</table>
-
+    <br>
+    <?php }?>
 	<br/>
-    Printed Date : <?php echo date('m/d/Y');?> Printed By : <?php echo $user; ?><br/>
+    Printed Date : <?php echo date('m/d/Y');?>
+	Printed By : <?php echo $user; ?><br/>
 </body>
 </html>
 
 
 <script type="text/javascript">
-    window.print();
+    // window.print();
 </script>

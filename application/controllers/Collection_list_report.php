@@ -12,7 +12,8 @@
 					'Journal_info_model',
 					'Receivable_payment_model',
 					'Users_model',
-					'Company_model'
+					'Company_model',
+					'Departments_model'
 				)
 			);
 			$this->load->library('excel');
@@ -27,6 +28,7 @@
 	        $data['_switcher_settings'] = $this->load->view('template/elements/switcher', '', TRUE);
 	        $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
 	        $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
+	        $data['departments'] = $this->Departments_model->get_department_list();
 	        $data['title'] = 'Collection List Report';
         (in_array('12-3',$this->session->user_rights)? 
         $this->load->view('Collection_list_report_view',$data)

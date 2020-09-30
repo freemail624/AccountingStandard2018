@@ -139,7 +139,7 @@
                                             <div class="panel-body">
                                             <h2 class="h2-panel-heading">Certificate of Creditable Tax (BIR FORM #2307)</h2><hr>
                                             <div class="row" style="margin-bottom: 20px;">
-                                                <div class="col-lg-3">
+                                                <div class="col-lg-2">
                                                     <b>Month:</b><br>
                                                     <select class="form-control" name="month" id="month" width="100%">
                                                     <option value="0">ALL MONTHS
@@ -152,7 +152,7 @@
                                                         <?php }?>
                                                     </select>
                                                 </div>
-                                                <div class="col-lg-3">
+                                                <div class="col-lg-2">
                                                     <b>Year:</b><br>
                                                     <select class="form-control" name="year" id="year" width="100%">
                                                         <?php 
@@ -165,9 +165,11 @@
                                                         <?php $minyear++; }?>
                                                     </select>
                                                 </div>
-                                                <div class="col-lg-2"><br>
+                                                <div class="col-lg-4"><br>
                                                     <button class="btn btn-primary" id="btn_print" data-toggle="modal" title="Print" ><i class="fa fa-print"></i> Print Report</button>
-                                                </div>
+
+                                                    <button class="btn btn-success" id="btn_excel" data-toggle="modal" title="Print" ><i class="fa fa-file-excel-o"></i> Export Excel</button>
+                                                </div>                                
                                                 <div class="col-lg-4">
                                                     <b>Search:</b><br />
                                                     <input type="text" id="searchbox_2307" placeholder="Search" class="form-control">
@@ -224,7 +226,10 @@
 <?php echo $_def_js_files; ?>
 
 <script src="assets/plugins/spinner/dist/spin.min.js"></script>
-<script src="assets/plugins/spinner/dist/ladda.min.js"></script>
+<script src="assets/plugins/spinner/dist/ladda.min.js"></script>    
+<!-- numeric formatter -->
+<script src="assets/plugins/formatter/autoNumeric.js" type="text/javascript"></script>
+<script src="assets/plugins/formatter/accounting.js" type="text/javascript"></script>
 
 <script src="assets/plugins/select2/select2.full.min.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
@@ -272,9 +277,21 @@ $(document).ready(function(){
                         "defaultContent": ""
                 },
                 { targets:[1],data: "txn_no" },
-                { targets:[2],data: "payee_name" },
-                { targets:[3],data: "gross_amount" },
-                { targets:[4],data: "deducted_amount" },
+                { targets:[2],data: "supplier_name" },
+                {
+                    className: "text-right",
+                    targets:[3],data: "gross_amount",
+                    render: function(data){
+                        return accounting.formatNumber(data,2);
+                    }
+                },
+                {
+                    className: "text-right",
+                    targets:[4],data: "deducted_amount",
+                    render: function(data){
+                        return accounting.formatNumber(data,2);
+                    }
+                },                
                 { targets:[5],data: "remarks" },
                 {
                     targets:[6],data: null,
@@ -307,6 +324,10 @@ $(document).ready(function(){
         $('#btn_print').on('click', function() {
             window.open('Certificate_of_creditable_tax/transaction/print-list?month='+ $('#month').val() +'&year='+ $('#year').val());
         });   
+
+        $('#btn_excel').on('click', function() {
+            window.open('Certificate_of_creditable_tax/transaction/export-list?month='+ $('#month').val() +'&year='+ $('#year').val());
+        });           
 
         $('#tbl_2307 tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');

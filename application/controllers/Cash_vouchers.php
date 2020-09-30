@@ -294,7 +294,7 @@ class Cash_vouchers extends CORE_Controller
                 $m_trans->save();
 
 
-                $response['title']='Cancelled!';
+                $response['title']='Success!';
                 $response['stat']='success';
                 $response['msg']='Temporary Voucher Successfully Marked as Verified.';
                 $response['row_updated']=$this->get_response_rows($cv_id);

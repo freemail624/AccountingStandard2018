@@ -144,10 +144,19 @@
                                                 <div class="col-lg-3"><br>
                                                         <button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New unit" ><i class="fa fa-plus"></i> New Asset</button>
                                                 </div>
-                                                <div class="col-lg-offset-3 col-lg-3" style="text-align: right;">
+                                                <div class="col-lg-3" style="text-align: right;">
                                                 &nbsp;<br>
                                                         <button class="btn btn-primary" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-placement="left" title="Print"><i class="fa fa-print"></i> Print</button> &nbsp;
                                                         <button class="btn btn-success" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-placement="left" title="Export"><i class="fa fa-file-excel-o"></i> Export</button>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    Classification : <br>
+                                                    <select id="cbo_classification" style="width: 100%;">
+                                                        <option value="0">All</option>
+                                                        <?php foreach($categories as $category) { ?>
+                                                            <option value="<?php echo $category->category_id; ?>"><?php echo $category->category_name; ?></option>
+                                                        <?php } ?>
+                                                    </select>
                                                 </div>
                                                 <div class="col-lg-3">
                                                         Search :<br />
@@ -162,16 +171,30 @@
                                                         <th></th>
                                                         <th>Asset Code</th>
                                                         <th width="25%">Description</th>
-                                                        <th>Acquisition Cost</th>
                                                         <th>Posted by</th>
                                                         <th>Location</th>
                                                         <th>Category</th>
+                                                        <th>Acquisition Cost</th>
                                                         <th width="10%"><center>Action</center></th>
                                                     </tr>
                                                     </thead>
+                                                    <tfoot>
+                                                        <tr>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="6" style="text-align:right;">Current Page Total :</td>
+                                                            <td  style="text-align:right;" id="Sum"></td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="6" style="text-align:right;">Grand Total :</td>
+                                                            <td  style="text-align:right;" id="Sumofallpages"></td>
+                                                            <td></td>
+                                                        </tr>
+                                                    </tfoot>                                                    
                                                     <tbody>
-
                                                     </tbody>
+
                                                 </table>
                                             </div>
                                             <div class="panel-footer"></div>
@@ -475,13 +498,29 @@
 <script>
 
 $(document).ready(function(){
-    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboLocation; var _cboCategory; var _cboAsset; var _cboDepartments
+    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboLocation; var _cboCategory; var _cboAsset; var _cboDepartments;  var _cboClassification;
 
     var initializeControls=function(){
+
+        _cboClassification=$('#cbo_classification').select2({
+            placeholder: "",
+            allowClear: false
+        });
+
+        _cboClassification.select2('val',0);
+
         dt=$('#tbl_fixed_management').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "ajax" : "Fixed_asset_management/transaction/list",
+            "ajax" : {
+                "url":"Fixed_asset_management/transaction/list",
+                "bDestroy": true,            
+                "data": function ( d ) {
+                    return $.extend( {}, d, {
+                            "category_id":_cboClassification.val()
+                        });
+                    }
+            }, 
             "columns": [
                 {
                     "targets": [0],
@@ -492,16 +531,16 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "asset_code" },
                 { targets:[2],data: "asset_description" ,render: $.fn.dataTable.render.ellipsis(60) },
+                { targets:[3],data: "posted_by" },
+                { targets:[4],data: "location_name" },
+                { targets:[5],data: "category_name" },
                 {
                     className: "text-right",
-                    targets:[3],data: "acquisition_cost",
+                    targets:[6],data: "acquisition_cost",
                     render: function(data){
                         return accounting.formatNumber(data,2);
                     }
-                },
-                { targets:[4],data: "posted_by" },
-                { targets:[5],data: "location_name" },
-                { targets:[6],data: "category_name" },
+                },                
                 {
                     targets:[7],
                     render: function (data, type, full, meta){
@@ -511,7 +550,41 @@ $(document).ready(function(){
                         return '<center>'+btn_edit+"&nbsp;"+btn_trash+'</center>';
                     }
                 }
-            ]
+            ],
+
+                "footerCallback": function ( row, data, start, end, display ) {
+                    var api = this.api(), data;
+                   // console.log(data);
+         
+                    // Remove the formatting to get integer data for summation
+                    var intVal = function ( i ) {
+                        return typeof i === 'string' ?
+                            i.replace(/[\$,]/g, '')*1 :
+                            typeof i === 'number' ?
+                                i : 0;
+                    };
+         
+                    // Total over this page
+                    pageTotalAmount = api
+                        .column( 6, { page: 'current'} )
+                        .data()
+                        .reduce( function (a, b) {
+                            console.log(intVal(a) + intVal(b));
+                            return intVal(a) + intVal(b);
+                        }, 0 );
+
+                    // Total over all pages
+                    totalAmount = api
+                        .column(6)
+                        .data()
+                        .reduce( function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0 );
+
+                     $('#Sum').html('<b>'+accounting.formatNumber(pageTotalAmount,2)+'</b>');
+                     $('#Sumofallpages').html('<b>'+accounting.formatNumber(totalAmount,2)+'</b>');
+
+                }
         });
 
         _cboDepartments=$('#cbo_department').select2({
@@ -643,12 +716,17 @@ $(document).ready(function(){
 
         });
 
+        _cboClassification.on("select2:select", function (e) {
+            $('#tbl_fixed_management').DataTable().ajax.reload()
+        });
+
+
         $('#btn_print').click(function(){
-           window.open('Fixed_asset_management/transaction/print');
+           window.open('Fixed_asset_management/transaction/print?category_id='+_cboClassification.val());
         });  
 
         $('#btn_export').click(function(){
-           window.open('Fixed_asset_management/transaction/export');
+           window.open('Fixed_asset_management/transaction/export?category_id='+_cboClassification.val());
         }); 
 
         $('#btn_new').click(function(){

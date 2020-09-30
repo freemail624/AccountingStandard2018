@@ -48,7 +48,7 @@
 
             <td><?php echo $item->txn_no; ?></td>
             <td><?php echo $item->month_name; ?></td>
-            <td><?php echo $item->payee_name; ?></td>
+            <td><?php echo $item->supplier_name; ?></td>
             <td class="text-right"><?php echo $item->gross_amount; ?></td>
             <td class="text-right"><?php echo $item->deducted_amount; ?></td>
             <td><?php echo $item->remarks; ?></td>

@@ -2123,10 +2123,20 @@ class Templates extends CORE_Controller {
                 //show only inside grid with menu button
                 if($type=='fullview'||$type==null){
                     echo $this->load->view('template/voucher_journal_entries_content_wo_header',$data,TRUE);
+                    echo $this->load->view('template/voucher_journal_entries_content_menus',$data,TRUE);                    
                 }else if($type== 'review'){
                     echo $this->load->view('template/voucher_journal_entries_content_wo_header',$data,TRUE);
                     echo $this->load->view('template/voucher_journal_entries_approval_menus',$data,TRUE);
-                }
+                }else if($type=='preview'){
+                    $file_name='Temporary Voucher '.$voucher_info[0]->txn_no;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                    $content=$this->load->view('template/voucher_journal_entries_content',$data,TRUE); //load the template
+                    // $pdf->setFooter('{PAGENO}');
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output();
+                }                
 
                 break;
 

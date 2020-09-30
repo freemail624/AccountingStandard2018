@@ -172,26 +172,26 @@
         </table><br><br>
         <center>
         <br>
-<table width="100%">
-    <tr>
-        <td width="25%">Prepared By:</td>
-        <td width="25%">Certified Correct:</td>
-        <td width="25%">Approved:</td>
-        <td width="25%">Payment Received:</td>
-    </tr>
-    <tr>
-        <td><?php echo $voucher_info->posted_by ?></td>
-        <td><?php echo $voucher_info->verified_by ?></td>
-        <td><?php echo $voucher_info->approved_by ?></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td class="top align-center">Signature Over Printed Name/Date</td>
-    </tr>
-</table>
+            <table width="100%">
+                <tr>
+                    <td width="25%">Prepared By:</td>
+                    <td width="25%">Certified Correct:</td>
+                    <td width="25%">Approved:</td>
+                    <td width="25%">Payment Received:</td>
+                </tr>
+                <tr>
+                    <td><?php echo $voucher_info->posted_by ?></td>
+                    <td><?php echo $voucher_info->verified_by ?></td>
+                    <td><?php echo $voucher_info->approved_by ?></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="top align-center">Signature Over Printed Name/Date</td>
+                </tr>
+            </table>
         </center>
 </body>
 </html>

@@ -326,7 +326,7 @@
                     <div class="col-lg-6">
                         <div class="row">
                             <div class="col-md-4">
-                                <div class="row hidden">
+                                <div class="row">
                                     <div class="col-sm-12">
                                         <div style="margin-top: 25px;">
                                             <input type="checkbox" id="is_2307" value="1">
@@ -334,7 +334,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row hidden">
+                                <div class="row">
                                     <div class="col-sm-12">
                                         <div style="margin-top: 5px;">
                                             <label>ATC :</label><br />
@@ -347,7 +347,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row hidden">
+                                <div class="row">
                                     <div class="col-sm-12">
                                             <label>Remarks :</label><br />
                                             <textarea class="form-control" name="remarks_2307" id="remarks_2307" data-error-msg="Remarks is required." rows="5"></textarea>

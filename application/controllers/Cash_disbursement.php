@@ -195,6 +195,7 @@ class Cash_disbursement extends CORE_Controller
                     $m_journal_accounts->save();
                 }
 
+
                 //update transaction number base on formatted last insert id
                 $m_journal->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
                 $m_journal->modify($journal_id);
@@ -209,6 +210,7 @@ class Cash_disbursement extends CORE_Controller
                 $form_2307_apply=$voucher_info->is_2307;
                 $supplier=$m_supplier->get_list($voucher_info->supplier_id);
                 $company=$m_company->get_list();
+                $tax_rate = ($total_wtax/$total_amount)*100;
 
                 if ($form_2307_apply == 1){
                     $m_form_2307->journal_id=$journal_id;
@@ -224,6 +226,7 @@ class Cash_disbursement extends CORE_Controller
                     // $m_form_2307->zip_code = $company[0]->zip_code; 
                     $m_form_2307->gross_amount=$this->get_numeric_value($total_amount);
                     $m_form_2307->deducted_amount=$this->get_numeric_value($total_wtax);
+                    $m_form_2307->tax_rate=$this->get_numeric_value($tax_rate);
                     $m_form_2307->atc=$voucher_info->atc_2307;
                     $m_form_2307->remarks=$voucher_info->remarks_2307;
                     $m_form_2307->set('date_created','NOW()');
@@ -362,6 +365,7 @@ class Cash_disbursement extends CORE_Controller
                 $supplier_id=$this->input->post('supplier_id',TRUE);
                 $supplier=$m_supplier->get_list($supplier_id);
                 $company=$m_company->get_list();
+                $tax_rate = ($total_wtax/$total_amount)*100;
 
                 if ($form_2307_apply == 1){
                     $m_form_2307->journal_id=$journal_id;
@@ -377,6 +381,7 @@ class Cash_disbursement extends CORE_Controller
                     // $m_form_2307->zip_code = $company[0]->zip_code; 
                     $m_form_2307->gross_amount=$this->get_numeric_value($total_amount);
                     $m_form_2307->deducted_amount=$this->get_numeric_value($total_wtax);
+                    $m_form_2307->tax_rate=$this->get_numeric_value($tax_rate);                    
                     $m_form_2307->atc=$this->input->post('2307_atc',TRUE);
                     $m_form_2307->remarks=$this->input->post('2307_remarks',TRUE);
                     $m_form_2307->set('date_created','NOW()');
@@ -503,6 +508,7 @@ class Cash_disbursement extends CORE_Controller
                 $supplier_id=$this->input->post('supplier_id',TRUE);
                 $supplier=$m_supplier->get_list($supplier_id);
                 $company=$m_company->get_list();
+                $tax_rate = ($total_wtax/$total_amount)*100;
 
                 if ($form_2307_apply == 1){
 
@@ -519,6 +525,7 @@ class Cash_disbursement extends CORE_Controller
                     // $m_form_2307->zip_code = $company[0]->zip_code; 
                     $m_form_2307->gross_amount=$this->get_numeric_value($total_amount);
                     $m_form_2307->deducted_amount=$this->get_numeric_value($total_wtax);
+                    $m_form_2307->tax_rate=$this->get_numeric_value($tax_rate);                      
                     $m_form_2307->atc=$this->input->post('2307_atc',TRUE);
                     $m_form_2307->remarks=$this->input->post('2307_remarks',TRUE);
                     $m_form_2307->set('date_created','NOW()');

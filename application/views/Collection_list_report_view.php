@@ -90,24 +90,35 @@
 		                    	<div class="row">
 		                    		<div class="container-fluid">
 		                    			<div class="container-fluid group-box">
-		                    				<div class="col-xs-12 col-md-6">
-		                    					<strong>Start Date * : </strong><br>
-		                    					<div class="input-group">
-			                    					<input id="startDate" type="text" class="date-picker form-control" name="date_from" value="01/01/<?php echo date("Y"); ?>">
-			                    					<div class="input-group-addon">
-			                    						<i class="fa fa-calendar"></i>
-			                    					</div>
-		                    					</div>
-		                    				</div>
-			                    			<div class="col-xs-12 col-md-6">
-		                    					<strong>End Date * : </strong><br>
-			                    				<div class="input-group">
-			                    					<input id="endDate" type="text" class="date-picker form-control" name="date_to" value="<?php echo date("m/d/Y"); ?>">
-			                    					<div class="input-group-addon">
-			                    						<i class="fa fa-calendar"></i>
-			                    					</div>
-		                    					</div>
-		                    				</div>
+                                            <div class="row">
+                                                <div class="col-xs-12 col-md-4">
+                                                    <strong>Department : </strong><br>
+                                                    <select id="cbo_department" style="width: 100%;">
+                                                        <option value="0">All</option>
+                                                        <?php foreach($departments as $department) { ?>
+                                                            <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                                <div class="col-xs-12 col-md-4">
+                                                    <strong>Start Date * : </strong><br>
+                                                    <div class="input-group">
+                                                        <input id="startDate" type="text" class="date-picker form-control" name="date_from" value="01/01/<?php echo date("Y"); ?>">
+                                                        <div class="input-group-addon">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-md-4">
+                                                    <strong>End Date * : </strong><br>
+                                                    <div class="input-group">
+                                                        <input id="endDate" type="text" class="date-picker form-control" name="date_to" value="<?php echo date("m/d/Y"); ?>">
+                                                        <div class="input-group-addon">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
 			                    		</div><br>
 			                    		<div class="container-fluid group-box">
 			                    			<button class="btn btn-primary pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_print"  data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Print" ><i class="fa fa-print"></i> Print Report
@@ -227,11 +238,19 @@
 
 <script>
     $(document).ready(function(){
-    	var dt;
+    	var dt; var _cboDepartment;
     	 $('.isNumeric').autoNumeric('init');
 
 
        var initializeControls=function(){
+
+            _cboDepartment=$('#cbo_department').select2({
+                placeholder: "",
+                allowClear: false
+            });
+
+            _cboDepartment.select2('val',0);
+
             $('.date-picker').datepicker({
                 todayBtn: "linked",
                 keyboardNavigation: false,

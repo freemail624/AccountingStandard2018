@@ -10,15 +10,15 @@
 	    function get_2307_list($month=null,$year=null,$journal_id=null){
 	    	$sql="SELECT 
 				    form_2307.*,
-				    FORMAT(form_2307.gross_amount, 2) as gross_amount,
-				    FORMAT(form_2307.deducted_amount, 2) as deducted_amount,
 				    ji.date_txn,
 				    m.month_name,
-				    m.quarter
+				    m.quarter,
+				    s.*
 				FROM
 				    form_2307 
 				    LEFT JOIN journal_info ji ON ji.journal_id = form_2307.journal_id
 				    LEFT JOIN months m ON m.month_id = MONTH(ji.date_txn)
+				    LEFT JOIN suppliers s ON s.supplier_id = form_2307.supplier_id
 				    WHERE 
 				    	form_2307.is_active = TRUE
 				        AND form_2307.is_deleted = FALSE
