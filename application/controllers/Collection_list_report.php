@@ -41,10 +41,13 @@
 				case 'list':
 					$m_journal_info=$this->Receivable_payment_model;
 
+					$department_id=$this->input->get('department_id',TRUE);
+					if($department_id==0){ $department_id=null; }
+
 					$startDate=date("Y-m-d",strtotime($this->input->get('start',TRUE)));
 					$endDate=date("Y-m-d",strtotime($this->input->get('end',TRUE)));
 
-					$response['data']=$m_journal_info->get_receivable_payment($startDate,$endDate);
+					$response['data']=$m_journal_info->get_receivable_payment($startDate,$endDate,$department_id);
 					echo json_encode($response);
 				break;
 
@@ -53,13 +56,22 @@
 					$m_journal_info=$this->Receivable_payment_model;
 					$m_company=$this->Company_model;
 
+					$department_id=$this->input->get('department_id',TRUE);
+
+					if($department_id==0){ 
+						$department_id=null; 
+						$data['department'] = 'All';
+					}else{
+						$data['department'] = $this->Departments_model->get_list($department_id,'department_name')[0]->department_name;
+					}
+
 					$startDate=date("Y-m-d",strtotime($this->input->get('start',TRUE)));
 					$endDate=date("Y-m-d",strtotime($this->input->get('end',TRUE)));
 
 					$company_info=$m_company->get_list();
 					$data['company_info']=$company_info[0];
 
-					$report_info=$m_journal_info->get_receivable_payment($startDate,$endDate);
+					$report_info=$m_journal_info->get_receivable_payment($startDate,$endDate,$department_id);
 					$data['start']=$startDate;
 					$data['end']=$endDate;
 					$data['report_info']=$report_info;
@@ -72,13 +84,22 @@
 					$m_journal_info=$this->Receivable_payment_model;
 					$m_company=$this->Company_model;
 
+					$department_id=$this->input->get('department_id',TRUE);
+
+					if($department_id==0){ 
+						$department_id=null; 
+						$department = 'All';
+					}else{
+						$department = $this->Departments_model->get_list($department_id,'department_name')[0]->department_name;
+					}
+
 					$startDate=date("Y-m-d",strtotime($this->input->get('start',TRUE)));
 					$endDate=date("Y-m-d",strtotime($this->input->get('end',TRUE)));
 
 					$company_info=$m_company->get_list();
 					$company_info=$company_info[0];
 
-					$report_info=$m_journal_info->get_receivable_payment($startDate,$endDate);
+					$report_info=$m_journal_info->get_receivable_payment($startDate,$endDate,$department_id);
 					$start=$startDate;
 					$end=$endDate;
 					$report_info=$report_info;
@@ -138,29 +159,33 @@
 											->mergeCells('C7:D7')
 											->getStyle('C7:D7')->getFont()->setBold(True);
 
+					$excel->getActiveSheet()->setCellValue('A8','Department: '.$department)
+											->mergeCells('A8:D8')
+											->getStyle('A8:D8')->getFont()->setBold(True);
+
                     $excel->getActiveSheet()
-                            ->getStyle('D8:F8')
+                            ->getStyle('D9:F9')
                             ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-					$excel->getActiveSheet()->setCellValue('A8','Reference No.')
-											->getStyle('A8')->getFont()->setBold(TRUE);
-					$excel->getActiveSheet()->setCellValue('B8','Date')
-											->getStyle('B8')->getFont()->setBold(TRUE);
-					$excel->getActiveSheet()->setCellValue('C8','Customer Name')
-											->getStyle('C8')->getFont()->setBold(TRUE);
+					$excel->getActiveSheet()->setCellValue('A9','Reference No.')
+											->getStyle('A9')->getFont()->setBold(TRUE);
+					$excel->getActiveSheet()->setCellValue('B9','Date')
+											->getStyle('B9')->getFont()->setBold(TRUE);
+					$excel->getActiveSheet()->setCellValue('C9','Customer Name')
+											->getStyle('C9')->getFont()->setBold(TRUE);
 
-					$excel->getActiveSheet()->setCellValue('D8',"Pay Type\nCash")
-											->getStyle('D8')->getFont()->setBold(TRUE);
-					$excel->getActiveSheet()->getStyle('D8')->getAlignment()->setWrapText(true);
-					$excel->getActiveSheet()->setCellValue('E8',"Check")
-											->getStyle('E8')->getFont()->setBold(TRUE);
-					$excel->getActiveSheet()->getStyle('E8')->getAlignment()->setWrapText(true);
-					$excel->getActiveSheet()->setCellValue('F8',"Credit")
-											->getStyle('F8')->getFont()->setBold(TRUE);
-					$excel->getActiveSheet()->getStyle('F8')->getAlignment()->setWrapText(true);
+					$excel->getActiveSheet()->setCellValue('D9',"Pay Type\nCash")
+											->getStyle('D9')->getFont()->setBold(TRUE);
+					$excel->getActiveSheet()->getStyle('D9')->getAlignment()->setWrapText(true);
+					$excel->getActiveSheet()->setCellValue('E9',"Check")
+											->getStyle('E9')->getFont()->setBold(TRUE);
+					$excel->getActiveSheet()->getStyle('E9')->getAlignment()->setWrapText(true);
+					$excel->getActiveSheet()->setCellValue('F9',"Credit")
+											->getStyle('F9')->getFont()->setBold(TRUE);
+					$excel->getActiveSheet()->getStyle('F9')->getAlignment()->setWrapText(true);
 
-					$i=9;
+					$i=10;
 
 					foreach ($report_info as $report) {
 
@@ -284,13 +309,22 @@
 					$m_journal_info=$this->Receivable_payment_model;
 					$m_company=$this->Company_model;
 
+					$department_id=$this->input->get('department_id',TRUE);
+
+					if($department_id==0){ 
+						$department_id=null; 
+						$department = 'All';
+					}else{
+						$department = $this->Departments_model->get_list($department_id,'department_name')[0]->department_name;
+					}
+
 					$startDate=date("Y-m-d",strtotime($this->input->get('start',TRUE)));
 					$endDate=date("Y-m-d",strtotime($this->input->get('end',TRUE)));
 
 					$company_info=$m_company->get_list();
 					$company_info=$company_info[0];
 
-					$report_info=$m_journal_info->get_receivable_payment($startDate,$endDate);
+					$report_info=$m_journal_info->get_receivable_payment($startDate,$endDate,$department_id);
 					$start=$startDate;
 					$end=$endDate;
 					$report_info=$report_info;
@@ -351,29 +385,32 @@
 											->mergeCells('C7:D7')
 											->getStyle('C7:D7')->getFont()->setBold(True);
 
+					$excel->getActiveSheet()->setCellValue('A8','Department: '.$department)
+											->mergeCells('A8:D8')
+											->getStyle('A8:D8')->getFont()->setBold(True);
+
                     $excel->getActiveSheet()
-                            ->getStyle('D8:F8')
+                            ->getStyle('D9:F9')
                             ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-					$excel->getActiveSheet()->setCellValue('A8','Reference No.')
-											->getStyle('A8')->getFont()->setBold(TRUE);
-					$excel->getActiveSheet()->setCellValue('B8','Date')
-											->getStyle('B8')->getFont()->setBold(TRUE);
-					$excel->getActiveSheet()->setCellValue('C8','Customer Name')
-											->getStyle('C8')->getFont()->setBold(TRUE);
+					$excel->getActiveSheet()->setCellValue('A9','Reference No.')
+											->getStyle('A9')->getFont()->setBold(TRUE);
+					$excel->getActiveSheet()->setCellValue('B9','Date')
+											->getStyle('B9')->getFont()->setBold(TRUE);
+					$excel->getActiveSheet()->setCellValue('C9','Customer Name')
+											->getStyle('C9')->getFont()->setBold(TRUE);
+					$excel->getActiveSheet()->setCellValue('D9',"Pay Type\nCash")
+											->getStyle('D9')->getFont()->setBold(TRUE);
+					$excel->getActiveSheet()->getStyle('D9')->getAlignment()->setWrapText(true);
+					$excel->getActiveSheet()->setCellValue('E9',"Check")
+											->getStyle('E9')->getFont()->setBold(TRUE);
+					$excel->getActiveSheet()->getStyle('E9')->getAlignment()->setWrapText(true);
+					$excel->getActiveSheet()->setCellValue('F9',"Credit")
+											->getStyle('F9')->getFont()->setBold(TRUE);
+					$excel->getActiveSheet()->getStyle('F9')->getAlignment()->setWrapText(true);
 
-					$excel->getActiveSheet()->setCellValue('D8',"Pay Type\nCash")
-											->getStyle('D8')->getFont()->setBold(TRUE);
-					$excel->getActiveSheet()->getStyle('D8')->getAlignment()->setWrapText(true);
-					$excel->getActiveSheet()->setCellValue('E8',"Check")
-											->getStyle('E8')->getFont()->setBold(TRUE);
-					$excel->getActiveSheet()->getStyle('E8')->getAlignment()->setWrapText(true);
-					$excel->getActiveSheet()->setCellValue('F8',"Credit")
-											->getStyle('F8')->getFont()->setBold(TRUE);
-					$excel->getActiveSheet()->getStyle('F8')->getAlignment()->setWrapText(true);
-
-					$i=9;
+					$i=10;
 
 					foreach ($report_info as $report) {
 

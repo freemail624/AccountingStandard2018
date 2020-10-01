@@ -367,11 +367,21 @@ class Journal_account_model extends CORE_Model{
             ja.cr_amount,
             ji.is_active,
             ji.is_deleted,
-            CONCAT(
-              IFNULL(ji.ref_type,''),
-              IFNULL(ji.ref_no,''),
-              IFNULL(ji.or_no,'')
-            )as reference_desc,
+            (CASE 
+                WHEN (ji.book_type=='CRJ')
+                THEN 
+                    CONCAT(
+                      IFNULL(ji.ref_type,''),
+                      IFNULL(ji.or_no,'')
+                    )
+                ELSE
+                    CONCAT(
+                      IFNULL(ji.ref_type,''),
+                      IFNULL(ji.ref_no,''),
+                      IFNULL(ji.or_no,'')
+                    )
+            END) as reference_desc,
+
             ji.journal_id
 
             FROM ((`journal_info` as ji

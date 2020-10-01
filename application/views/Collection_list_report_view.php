@@ -276,12 +276,17 @@
       
         	});
 
+            _cboDepartment.on("select2:select", function (e) {
+                dt.destroy();
+                initializeDataTable();
+            });          
+
         	$('#btn_print').on('click', function() {
-        		window.open('Collection_list_report/transaction/report?start='+ $('#startDate').val() +'&end='+ $('#endDate').val());
+        		window.open('Collection_list_report/transaction/report?start='+ $('#startDate').val() +'&end='+ $('#endDate').val()+'&department_id='+ _cboDepartment.val());
         	});
 
             $('#btn_export').on('click', function() {
-                window.open('Collection_list_report/transaction/export?start='+ $('#startDate').val() +'&end='+ $('#endDate').val(),'_self');
+                window.open('Collection_list_report/transaction/export?start='+ $('#startDate').val() +'&end='+ $('#endDate').val()+'&department_id='+ _cboDepartment.val(),'_self');
             });
 
             $('#btn_email').on('click', function() {
@@ -292,7 +297,7 @@
                 $.ajax({
                     "dataType":"json",
                     "type":"POST",
-                    "url":'Collection_list_report/transaction/email?start='+ $('#startDate').val() +'&end='+ $('#endDate').val(),
+                    "url":'Collection_list_report/transaction/email?start='+ $('#startDate').val() +'&end='+ $('#endDate').val()+'&department_id='+ _cboDepartment.val(),
                     "beforeSend": showSpinningProgress(btn)
                 }).done(function(response){
                     showNotification(response);
@@ -335,7 +340,8 @@
                     "data": function ( d ) {
                         return $.extend( {}, d, {
                             "start":$('#startDate').val(),
-                            "end":$('#endDate').val()
+                            "end":$('#endDate').val(),
+                            "department_id": _cboDepartment.val()
                         });
                     }
                 },

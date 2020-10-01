@@ -53,16 +53,19 @@
         <h3><strong><center>Collection List Report</center></strong></h3>
     </div>
 
-
+    <table width="100%" cellspacing="0">
+        <tr>
+            <td width="50%"><strong>Period Covered:</strong> <?php echo date("m-d-Y",strtotime($start)); ?> to <?php echo date("m-d-Y",strtotime($end)); ?></td>
+            <td width="50%" align="right"><strong>Run Date:</strong> <?php echo date("m-d-Y");?></td>
+        </tr>
+        <tr>
+            <td><strong>Department: </strong> <?php echo $department; ?></td>
+            <td></td>
+        </tr>
+    </table>
+    <br/>
     <table width="100%" style=" border: 1px solid black;"  cellspacing="0" >
-            <p>   <strong>Period Covered:</strong>
-
-            <?php echo date("m-d-Y",strtotime($start)); ?> to <?php echo date("m-d-Y",strtotime($end)); ?></p>
-       <p  style="float: right;"> <strong>Run Date:</strong> <?php echo date("m-d-Y");?> </p>
     <thead style=" border: 1px solid black;">
-    
-
- 
         <tr style="height: 20;">
             <th >Reference No.</th>
             <th >Date</th>

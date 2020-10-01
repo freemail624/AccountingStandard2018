@@ -38,7 +38,7 @@ class Receivable_payment_model extends CORE_Model
 
 
 
-        function get_receivable_payment($startDate,$endDate) {
+        function get_receivable_payment($startDate,$endDate,$department_id=null) {
         $sql="SELECT
 
 
@@ -56,6 +56,7 @@ class Receivable_payment_model extends CORE_Model
              LEFT JOIN customers AS c ON c.`customer_id`=rp.`customer_id`
             WHERE rp.is_deleted=FALSE AND rp.is_active=TRUE
             AND rp.date_paid BETWEEN '$startDate' AND '$endDate'
+            ".($department_id==null?"":" AND rp.department_id='".$department_id."'")."
           ";
 
             return $this->db->query($sql)->result();
