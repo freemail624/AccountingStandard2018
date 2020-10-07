@@ -59,7 +59,7 @@ class Account_classes extends CORE_Controller
 
                 $m_classes->account_class = $this->input->post('account_class', TRUE);
                 $m_classes->description = $this->input->post('description', TRUE);
-                $m_classes->account_type_id = $this->input->post('account_type_id', TRUE);
+                $m_classes->account_type_id = $this->input->post('account_type', TRUE);
                 $m_classes->save();
 
                 $account_class_id = $m_classes->last_insert_id();

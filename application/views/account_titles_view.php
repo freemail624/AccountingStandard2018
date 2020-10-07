@@ -247,7 +247,7 @@
 
 <div id="modal_new_account_class" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog modal-md">
-        <div class="modal-content"><!---content--->
+        <div class="modal-content"><!---content-->
             <div class="modal-header modal-erp">
                 <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
                 <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>New Classification</h4>
@@ -283,7 +283,7 @@
                 <button id="btn_create_account_class" type="button" class="btn btn-primary"  style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span> Create</button>
                 <button id="btn_close_account_class" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
             </div>
-        </div><!---content---->
+        </div><!---content-->
     </div>
 </div><!---modal-->
 
