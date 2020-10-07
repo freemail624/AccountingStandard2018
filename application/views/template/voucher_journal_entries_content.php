@@ -104,7 +104,7 @@
         </tr>
         <tr>
             <td style="padding: 4px;" width="50%"><strong>DEPARTMENT :</strong> <?php echo $voucher_info->department_name; ?></td>
-            <td style="padding: 4px;" width="50%"><strong>BANK / CHECK TYPE:</strong> <?php echo $voucher_info->check_type_desc; ?></td>
+            <td style="padding: 4px;" width="50%"><strong>RR #:</strong> <?php echo $voucher_info->dr_invoice_no; ?></td>
         </tr>
         <?php if ($voucher_info->payment_method_id == 2) { ?>
             <tr> 
@@ -114,16 +114,22 @@
         <?php } ?>
         <tr>
             <td style="padding: 4px;" width="50%"><strong>TEMPORARY # :</strong> <?php echo $voucher_info->txn_no; ?></td>
-            <td style="padding: 4px;" width="50%"><strong>AMOUNT :</strong> <?php echo number_format($voucher_info->amount,2); ?></td>
+            <td style="padding: 4px;" width="50%"><strong>BANK / CHECK TYPE:</strong> <?php echo $voucher_info->check_type_desc; ?></td>
         </tr>
         <tr>
             <td style="padding: 4px;"><strong>PARTICULAR :</strong> <?php echo $voucher_info->particular; ?></td>
-            <td style="padding: 4px;"><strong>PAYMENT METHOD :</strong> <?php echo $voucher_info->payment_method; ?></td>
+            <td style="padding: 4px;" width="50%"><strong>AMOUNT :</strong> <?php echo number_format($voucher_info->amount,2); ?></td>
         </tr>
         <tr>
             <td style="padding: 4px;" width="50%"><strong>PREPARED BY:</strong> <?php echo $voucher_info->posted_by; ?></td>
-            <td style="padding: 4px;" width="50%"> <?php if($voucher_info->verified_by != ''){ ?>  <strong>CERTIFIED CORRECT:</strong> <?php echo $voucher_info->verified_by; ?><?php } ?></td>
+            <td style="padding: 4px;"><strong>PAYMENT METHOD :</strong> <?php echo $voucher_info->payment_method; ?></td>
         </tr>
+
+        <tr>
+            <td style="padding: 4px;" width="50%"> <?php if($voucher_info->verified_by != ''){ ?>  <strong>CERTIFIED CORRECT:</strong> <?php echo $voucher_info->verified_by; ?><?php } ?></td>
+            <td style="padding: 4px;" width="50%"></td>
+        </tr>
+
          <?php if($voucher_info->approved_by != ''){ ?> 
         <tr>
             <td style="padding: 4px;" width="50%"> <strong>APPROVED BY:</strong> <?php echo $voucher_info->approved_by; ?></td>

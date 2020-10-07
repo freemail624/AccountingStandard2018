@@ -409,7 +409,7 @@
             <div>
 
                 <div class="row">
-                    <div class="col-lg-6">
+                    <div class="col-lg-5">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="row">
@@ -475,14 +475,14 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6">
+                    <div class="col-lg-7">
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div style="margin-top: 25px;">
                                             <input type="checkbox" id="2307_apply" value="1">
-                                            &nbsp;<label for="2307_apply">Apply 2307 Form</label>
+                                            &nbsp;<label for="2307_apply" style="cursor: pointer;">Apply 2307 Form</label>
                                         </div>
                                     </div>
                                 </div>
@@ -490,23 +490,25 @@
                                     <div class="col-sm-12">
                                         <div style="margin-top: 5px;">
                                             <label>ATC :</label><br />
-                                            <div class="input-group">
-                                                <span class="input-group-addon">
-                                                    <i class="fa fa-code"></i>
-                                                </span>
-                                                <input type="text" name="2307_atc" id="2307_atc" class="form-control" data-error-msg="ATC is required.">
-                                            </div>
+                                            <select id="cbo_tax_code" class="form-control" name="atc_id">
+                                                <option value=""></option>
+                                                <?php foreach($tax_codes as $tax_code){ ?>
+                                                    <option value="<?php echo $tax_code->atc_id; ?>" data-description="<?php echo $tax_code->description; ?>">
+                                                        <?php echo $tax_code->atc.' - '.$tax_code->description; ?>
+                                                    </option>
+                                                <?php } ?>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                            <label>Remarks :</label><br />
-                                            <textarea class="form-control" name="2307_remarks" id="2307_remarks" data-error-msg="Remarks is required." rows="5"></textarea>
+                                        <label>Nature Income Payment :</label><br />
+                                        <textarea class="form-control" name="2307_remarks" id="2307_remarks" data-error-msg="Remarks is required." rows="5" readonly placeholder="Nature Income Payment"></textarea>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <b class="required"> * </b> <label>Method of Payment  :</label><br />
@@ -1100,6 +1102,7 @@ $(document).ready(function(){
     var _txnMode; var _cboSuppliers; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode, _cboBranches, _cboPaymentMethod, _cboCheckTypes;
     var dtReview; var cbo_refType; var _cboLayouts; var dtRecurring; var _attribute; var _cboTax; var dtReviewOther; var dtCashReceipt; var _cboVouchers;
      var _selectedDepartment = 0; var _cboDepartmentFilter;
+     var _cboTaxCode;
 
 
     var oTBJournal={
@@ -1399,6 +1402,13 @@ $(document).ready(function(){
             placeholder: "Please select reference type.",
             allowClear: true
         });
+
+
+        _cboTaxCode=$('#cbo_tax_code').select2({
+            placeholder: "Please select atc.",
+            allowClear: false
+        });
+        _cboTaxCode.select2('val',null);
 
         // _cboMethods=$('#cbo_methods').select2({
         //placeholder: "Please select method of payment.",
@@ -1711,6 +1721,7 @@ $(document).ready(function(){
                     reInitializeSpecificDropDown($('.cbo_customer_list'));
                     reInitializeSpecificDropDown($('.cbo_department_list'));
                     reInitializeSpecificDropDown($('.cbo_payment_method'));
+                    reInitializeSpecificDropDown($('.cbo_tax_code_list'));
 
 
                     reInitializeNumeric();
@@ -1721,6 +1732,7 @@ $(document).ready(function(){
                     reInitializeDropDownAccounts(tbl,false);
                     reInitializeChildEntriesTable(tbl);
                     reInitializeChildElements(parent_tab_pane);
+                    reInitialize2307functions(d.payment_id);
 
                     // Add to the 'open' array
                     if ( idx === -1 ) {
@@ -1793,16 +1805,25 @@ $(document).ready(function(){
 
         $('#2307_apply').click(function(){
             if ($(this).is(":checked") == false){
-                $('#2307_atc').val("");
+                _cboTaxCode.select2('val',null);
                 $('#2307_remarks').val("");
             }
         });
 
-        $('#2307_atc').on('keyup',function(){
-            if($(this).val() != null || ""){
+        $('#cbo_tax_code').on("change", function (e) {
+            var i=$(this).select2('val');
+            var remarks = $("#cbo_tax_code").find(":selected").data("description");
+
+            if(i==null || i==""){
+                $('#2307_apply').prop('checked', false);
+                $('#2307_remarks').val("");
+            }else{
                 $('#2307_apply').prop('checked', true);
-            }
+                $('#2307_remarks').val(remarks);
+            } 
+
         });
+
 
         $('#2307_remarks').on('keyup',function(){
             if($(this).val() != null || ""){
@@ -1824,6 +1845,7 @@ $(document).ready(function(){
             $('#cbo_pay_type').select2('val',1);
             $('#cbo_suppliers').select2('val',null);
             $('#cbo_refType').select2('val',"CV");
+            $('#cbo_tax_code').select2('val',null);
 
             //set defaults
             _cboPaymentMethod.select2('val',1);//set cash as default
@@ -1941,15 +1963,16 @@ $(document).ready(function(){
             get2307Journal().done(function(response){
 
                 $('#2307_apply').prop('checked', false);
-                $('#2307_atc').val("");
+
+                _cboTaxCode.select2('val',null);
                 $('#2307_remarks').val("");
 
                 if(response.data.length > 0){
                     var row = response.data[0];
                     if(row.is_applied == 1){
                         $('#2307_apply').prop('checked', true);
-                        $('#2307_atc').val(row.atc);
-                        $('#2307_remarks').val(row.remarks);
+                        $('#cbo_tax_code').val(row.atc_id).trigger("change");
+
                     }
 
                 }
@@ -2576,6 +2599,32 @@ $(document).ready(function(){
 
 
     };
+
+    var reInitialize2307functions=function(id){
+
+        $('#cbo_tax_code_'+id).on("change", function (e) {
+
+            var i=$(this).select2('val');
+            var remarks = $("#cbo_tax_code_"+id).find(":selected").data("description");
+
+            if(i==null || i==""){
+                $('#2307_apply_'+id).prop('checked', false);
+                $('#2307_remarks_'+id).val("");
+            }else{
+                $('#2307_apply_'+id).prop('checked', true);
+                $('#2307_remarks_'+id).val(remarks);
+            } 
+
+        });
+
+        $('#2307_apply_'+id).click(function(){
+            if ($(this).is(":checked") == false){
+                $('#cbo_tax_code_'+id).val(null).trigger("change");
+                $('#2307_remarks_'+id).val("");
+            }
+        });
+
+    }
 
 });
 

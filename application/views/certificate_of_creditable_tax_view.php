@@ -104,9 +104,7 @@
         background: none!important; 
         background-color: transparent!important; 
         } 
-        #tbl_2307 td:nth-child(4), #tbl_2307 td:nth-child(5){
-            text-align: right;
-        }
+
 
     </style>
 
@@ -179,13 +177,19 @@
 
                                             <table id="tbl_2307" class="table table-striped" cellspacing="0" width="100%">
                                                 <thead>
-                                                    <th width="2%"></th>
+<!--                                                     <th width="2%"></th>
                                                     <th width="10%">Txn No.</th>
-                                                    <th width="15%">Supplier</th>
+                                                    <th width="10%">Date</th>
+                                                    <th width="25%">Supplier</th>
                                                     <th width="10%" style="text-align: right;">Gross Amount</th>
+                                                    <th width="5%" style="text-align: right;">Tax Rate</th>
                                                     <th width="10%" style="text-align: right;">Tax Amount</th>
-                                                    <th width="25%">Remarks</th>
-                                                    <th width="10%"><center>Action</center></th>
+                                                    <th width="5%">ATC</th>
+                                                    <th width="5%"><center>Action</center></th> -->
+                                                    <th width="10%">Period</th>
+                                                    <th width="10%">TIN</th>
+                                                    <th width="75%">Supplier</th>
+                                                    <th width="5%">Action</th>
                                                 </thead>
                                             </table>
                                             </div>
@@ -253,7 +257,7 @@ $(document).ready(function(){
         dt=$('#tbl_2307').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 2, "desc" ]],
+            "order": [[ 0, "desc" ]],
             oLanguage: {
                     sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
             },
@@ -269,32 +273,11 @@ $(document).ready(function(){
                     }
             }, 
             "columns": [
+                { targets:[0],data: "period" },
+                { targets:[1],data: "tin_no" },
+                { targets:[2],data: "supplier_name" },   
                 {
-                        "targets": [0],
-                        "class":          "details-control",
-                        "orderable":      false,
-                        "data":           null,
-                        "defaultContent": ""
-                },
-                { targets:[1],data: "txn_no" },
-                { targets:[2],data: "supplier_name" },
-                {
-                    className: "text-right",
-                    targets:[3],data: "gross_amount",
-                    render: function(data){
-                        return accounting.formatNumber(data,2);
-                    }
-                },
-                {
-                    className: "text-right",
-                    targets:[4],data: "deducted_amount",
-                    render: function(data){
-                        return accounting.formatNumber(data,2);
-                    }
-                },                
-                { targets:[5],data: "remarks" },
-                {
-                    targets:[6],data: null,
+                    targets:[3],data: null,
                     render: function (data, type, full, meta){
                         var btn_print='<button class="btn btn-primary btn-sm" name="print_form_2307" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Print Form 2307"><i class="fa fa-print"></i> </button>';
                         return '<center>'+btn_print+'</center>';
@@ -366,8 +349,8 @@ $(document).ready(function(){
         $('#tbl_2307').on('click','button[name="print_form_2307"]',function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
-            _selectedID=data.journal_id;
-            window.open("Templates/layout/print-form-2307?id="+_selectedID+"&type=print","_blank");
+            _selectedID=data.supplier_id;
+            window.open("Templates/layout/print-form-2307?supplier_id="+_selectedID+"&month_id="+data.month_id+"&year="+data.year+"&quarter="+data.quarter+"&type=print","_blank");
         });
 
     })();

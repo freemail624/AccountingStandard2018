@@ -36,7 +36,8 @@ class Certificate_of_creditable_tax extends CORE_Controller {
                 $month = $this->input->get('month', TRUE);
                 $year = $this->input->get('year', TRUE);
                 if($month == 0){$month = null;}
-                $response['data'] = $m_form_2307->get_2307_list($month,$year);
+                // $response['data'] = $m_form_2307->get_2307_list($month,$year);
+                $response['data'] = $m_form_2307->get_2307_suppliers($month,$year);
                 echo json_encode($response);
                 break;
 
@@ -316,17 +317,20 @@ class Certificate_of_creditable_tax extends CORE_Controller {
 
                 $excel->getActiveSheet()->getStyle('A'.$i.':I'.$i)->applyFromArray($styleArray);
                 unset($styleArray);
+                $tin_no="";
+                if ($row->tin_no != "" || null){
+                    $tin_no = substr($row->tin_no,0, 3).'-'.
+                              substr($row->tin_no,3, 3).'-'.
+                              substr($row->tin_no,6, 3).'-'.
+                              substr($row->tin_no,9, 3);
+                }
 
                 $excel->getActiveSheet()->setCellValue('A'.$i,$a)
-                                        ->setCellValue('B'.$i,substr($row->tin_no,0, 3).'-'.
-                                                              substr($row->tin_no,3, 3).'-'.
-                                                              substr($row->tin_no,6, 3).'-'.
-                                                              substr($row->tin_no,9, 3))
+                                        ->setCellValue('B'.$i,$tin_no)
                                         ->setCellValue('C'.$i,$row->supplier_name)
                                         ->setCellValue('D'.$i,date_format(date_create($row->date_txn),"m/y"))
                                         ->setCellValue('E'.$i,$row->atc)
-                                        // ->setCellValue('F'.$i,$row->remarks)
-                                        ->setCellValue('F'.$i,'')
+                                        ->setCellValue('F'.$i,$row->remarks)
                                         ->setCellValue('G'.$i,number_format($row->gross_amount,2))
                                         ->setCellValue('H'.$i,number_format($row->tax_rate,2))
                                         ->setCellValue('I'.$i,number_format($row->deducted_amount,2));    

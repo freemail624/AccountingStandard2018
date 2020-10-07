@@ -117,16 +117,17 @@
                 <td class="bordered"><?php echo $i; ?></td>
                 <td class="bordered"><center>
                 <?php 
-                echo 
-                    substr($item->tin_no,0, 3).'-'.
-                    substr($item->tin_no,3, 3).'-'.
-                    substr($item->tin_no,6, 3).'-'.
-                    substr($item->tin_no,9, 3);
-                ?></center></td>
+                    if($item->tin_no != "" || null){
+                        echo 
+                            substr($item->tin_no,0, 3).'-'.
+                            substr($item->tin_no,3, 3).'-'.
+                            substr($item->tin_no,6, 3).'-'.
+                            substr($item->tin_no,9, 3);
+                }?></center></td>
                 <td class="bordered"><?php echo $item->supplier_name; ?></td>
                 <td class="bordered"><center><?php echo  date_format(date_create($item->date_txn),"m/y"); ?></center></td>
                 <td class="bordered"><?php echo $item->atc; ?></td>
-                <td class="bordered"><?php //echo $item->remarks; ?></td> 
+                <td class="bordered"><?php echo $item->remarks; ?></td> 
                 <td class="bordered text-right"><?php echo number_format($item->gross_amount,2); ?></td>
                 <td class="bordered text-right"><?php echo number_format($item->tax_rate,2); ?></td>
                 <td class="bordered text-right"><?php echo number_format($item->deducted_amount,2); ?></td>

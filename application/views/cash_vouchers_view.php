@@ -161,6 +161,9 @@
         .centered{
             text-align: center;
         }
+        #link_browse_rr:hover{
+            background-color: #add8e6!important; 
+        }
     </style>
 
 </head>
@@ -234,10 +237,11 @@
                                     <th style="width: 15%;">Txn #</th>
                                     <th>Type</th>
                                     <th>Particular</th>
+                                    <th>RR #</th>
                                     <th>Method</th>
                                     <th>Txn Date</th>
                                     <th>Prepared By</th>
-                                    <th style="width: 15%;"><center>Action</center></th>
+                                    <th style="width: 20%;"><center>Action</center></th>
                                     <th></th>
                                 </tr>
                                 </thead>
@@ -259,7 +263,7 @@
         <form id="frm_journal" role="form" class="form-horizontal">
             <div>
                 <div class="row">
-                    <div class="col-lg-6">
+                    <div class="col-lg-5">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="row">
@@ -323,14 +327,25 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6">
+                    <div class="col-lg-7">
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="row">
-                                    <div class="col-sm-12">
+                                    <div class="col-sm-7">
+                                        <label>RR #: </label>
+                                        <div class="input-group">
+                                            <input type="text" name="dr_invoice_no" id="dr_invoice_no" class="form-control" placeholder="RR #" readonly>
+                                             <span class="input-group-addon" id="link_browse_rr" style="cursor: pointer;">
+                                                <a href="#" style="text-decoration: none;"><b>
+                                                    <span id="btn_rr"></span>
+                                                </b></a>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-5">
                                         <div style="margin-top: 25px;">
-                                            <input type="checkbox" id="is_2307" value="1">
-                                            &nbsp;<label for="is_2307">Apply 2307 Form</label>
+                                            <input type="checkbox" id="is_2307" value="1" style="cursor: pointer;">
+                                            &nbsp;<label for="is_2307" style="cursor: pointer;">Apply 2307</label>
                                         </div>
                                     </div>
                                 </div>
@@ -338,23 +353,25 @@
                                     <div class="col-sm-12">
                                         <div style="margin-top: 5px;">
                                             <label>ATC :</label><br />
-                                            <div class="input-group">
-                                                <span class="input-group-addon">
-                                                    <i class="fa fa-code"></i>
-                                                </span>
-                                                <input type="text" name="atc_2307" id="atc_2307" class="form-control" data-error-msg="ATC is required.">
-                                            </div>
+                                            <select id="cbo_tax_code" class="form-control" name="atc_id">
+                                                <option value=""></option>
+                                                <?php foreach($tax_codes as $tax_code){ ?>
+                                                    <option value="<?php echo $tax_code->atc_id; ?>" data-description="<?php echo $tax_code->description; ?>">
+                                                        <?php echo $tax_code->atc.' - '.$tax_code->description; ?>
+                                                    </option>
+                                                <?php } ?>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                            <label>Remarks :</label><br />
-                                            <textarea class="form-control" name="remarks_2307" id="remarks_2307" data-error-msg="Remarks is required." rows="5"></textarea>
+                                            <label>Nature Income Payment :</label><br />
+                                            <textarea class="form-control" name="remarks_2307" id="remarks_2307" data-error-msg="Remarks is required." rows="5" readonly placeholder="Nature Income Payment"></textarea>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <b class="required"> * </b> <label>Method of Payment  :</label><br />
@@ -564,14 +581,14 @@
 </div> <!-- #page-content -->
 </div>
 
-<footer role="contentinfo">
+<!-- <footer role="contentinfo">
     <div class="clearfix">
         <ul class="list-unstyled list-inline pull-left">
             <li><h6 style="margin: 0;">&copy; 2018 - JDEV OFFICE SOLUTION INC</h6></li>
         </ul>
         <button class="pull-right btn btn-link btn-xs hidden-print" id="back-to-top"><i class="ti ti-arrow-up"></i></button>
     </div>
-</footer>
+</footer> -->
 
 </div>
 </div>
@@ -679,7 +696,43 @@
     </div>
 </div><!---modal-->
 
+<div id="modal_rr_list" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+    <div class="modal-dialog" style="width: 80%;">
+        <div class="modal-content"><!---content-->
+            <div class="modal-header ">
+                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Receiving Receipt</h4>
 
+            </div>
+
+            <div class="modal-body">
+                <table id="tbl_rr_list" class="table table-striped" cellspacing="0" width="100%">
+                    <thead class="">
+                    <tr>
+                        <th></th>
+                        <th>RR#</th>
+                        <th>Vendor</th>
+                        <th>Terms</th>
+                        <th>Delivered</th>
+                        <th>Status</th>
+                        <th><center>Action</center></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Cancel</button>
+            </div>
+        </div><!---content-->
+    </div>
+</div><!---modal-->
 
 
 <?php echo $_switcher_settings; ?>
@@ -712,7 +765,7 @@
 $(document).ready(function(){
     var _txnMode; var _cboSuppliers; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode, _cboBranches, _cboPaymentMethod, _cboCheckTypes;
      var cbo_refType; var _cboLayouts; var dtRecurring; var _attribute; var _TableFilter; var _selectedDepartment = 0;
-
+     var _cboTaxCode; var dt_rr; var btn_rr_status;
 
     var oTBJournal={
         "dr" : "td:eq(2)",
@@ -734,7 +787,7 @@ $(document).ready(function(){
         dt=$('#tbl_temp_vouchers_list').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 8, "desc" ]],
+            "order": [[ 9, "desc" ]],
             oLanguage: {
                     sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
             },
@@ -762,23 +815,30 @@ $(document).ready(function(){
                 { targets:[1],data: "txn_no" },
                 { targets:[2],data: "ref_type" },
                 { targets:[3],data: "particular" },
-                { targets:[4],data: "payment_method" },
-                { targets:[5],data: "date_txn" },
-                { targets:[6],data: "posted_by" },
-                {sClass: "centered",
-                    targets:[7],data:null,
+                { targets:[4],data: "dr_invoice_no" },
+                { targets:[5],data: "payment_method" },
+                { targets:[6],data: "date_txn" },
+                { targets:[7],data: "posted_by" },
+                { sClass: "right_align_items","orderable":false,
+                    targets:[8],data:null,
                     render: function (data, type, full, meta){
                         var btn_verified='<button class="btn btn-warning btn-sm" name="mark_verified" title="Mark as Verified">Verify</button>';
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_cancel='<button class="btn btn-red btn-sm" name="delete_info" title="Delete Temporary Voucher"><i class="fa fa-trash"></i> </button>';
-                        var btn_for_approval='<button class="btn btn-info btn-sm" disabled>For Approval</button>';
+                        var btn_for_approval='<button class="btn btn-info btn-sm" style="width: 123px;" disabled>For Approval</button>';
                         var btn_approved='<button class="btn btn-light btn-sm" disabled>Approved</button>';
                         var btn_disapproved='<button class="btn btn-light btn-sm" disabled>Disapproved</button>';
+                        var btn_check_print = "";
+
+                        if(data.payment_method_id == 2){
+                            btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="text-transform: none;" data-toggle="tooltip" data-placement="top" title="Cheque"><img src="assets/img/facheque.png"></button>'
+                        }
+
 
                         if(data.verified_by_user == "0"  && data.verified_by_user == "0" && data.approved_by_user == "0") {
-                            return btn_verified+"&nbsp;"+btn_edit+"&nbsp;"+btn_cancel+'';
+                            return btn_check_print+"&nbsp;"+btn_verified+"&nbsp;"+btn_edit+"&nbsp;"+btn_cancel+'';
                         }else if(data.verified_by_user > "0" && data.approved_by_user == "0" && data.cancelled_by_user == "0"){
-                            return btn_for_approval ;
+                            return btn_check_print+"&nbsp;"+btn_for_approval ;
                         }else if (data.verified_by_user > "0" && data.approved_by_user > "0" && data.cancelled_by_user == "0"){
                             return btn_approved ;
                         }else if (data.verified_by_user > "0" && data.approved_by_user == "0" && data.cancelled_by_user > "0"){
@@ -787,7 +847,7 @@ $(document).ready(function(){
                         	
                     }
                 },
-                { targets:[8],data: "cv_id",visible:false },
+                { targets:[9],data: "cv_id",visible:false },
 
 
             ]
@@ -795,6 +855,33 @@ $(document).ready(function(){
 
         reInitializeNumeric();
         reInitializeDropDownAccounts($('#tbl_entries'),false);
+
+        dt_rr=$('#tbl_rr_list').DataTable({
+            "bLengthChange":false,
+            "ajax" : "Deliveries/transaction/open",
+            "columns": [
+                {
+                    "targets": [0],
+                    "class":          "details-control",
+                    "orderable":      false,
+                    "data":           null,
+                    "defaultContent": ""
+                },
+                { targets:[1],data: "dr_invoice_no" },
+                { targets:[2],data: "supplier_name" },
+                { targets:[3],data: "term_description" },
+                { targets:[4],data: "date_delivered" },
+                { targets:[5],data: "order_status" },
+                {
+                    targets:[6],
+                    render: function (data, type, full, meta){
+                        var btn_accept='<button class="btn btn-success btn-sm" name="accept_rr"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Receive this RR"><i class="fa fa-check"></i> Accept RR</button>';
+                        return '<center>'+btn_accept+'</center>';
+                    }
+                }
+
+            ]
+        });
 
         $('.date-picker').datepicker({
             todayBtn: "linked",
@@ -839,6 +926,12 @@ $(document).ready(function(){
             placeholder: "Please select reference type.",
             allowClear: true
         });
+
+        _cboTaxCode=$('#cbo_tax_code').select2({
+            placeholder: "Please select atc.",
+            allowClear: false
+        });
+        _cboTaxCode.select2('val',null);
 
     }();
 
@@ -895,24 +988,193 @@ $(document).ready(function(){
             }
         } );
 
+        $('#tbl_rr_list tbody').on( 'click', 'tr td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = dt_rr.row( tr );
+            var idx = $.inArray( tr.attr('id'), detailRows );
+
+            if ( row.child.isShown() ) {
+                tr.removeClass( 'details' );
+                row.child.hide();
+
+                // Remove from the 'open' array
+                detailRows.splice( idx, 1 );
+            }
+            else {
+                tr.addClass( 'details' );
+                //console.log(row.data());
+                _selectRowObj=$(this).closest('tr');
+                var d=dt_rr.row(_selectRowObj).data();
+
+                $.ajax({
+                    "dataType":"html",
+                    "type":"POST",
+                    "url":"Templates/layout/dr/"+ d.dr_invoice_id,
+                    "beforeSend" : function(){
+                        row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                    }
+                }).done(function(response){
+                    row.child( response ).show();
+                    // Add to the 'open' array
+                    if ( idx === -1 ) {
+                        detailRows.push( tr.attr('id') );
+                    }
+                });
+
+
+
+            }
+        } );
+
+        $('#tbl_rr_list > tbody').on('click','button[name="accept_rr"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dt_rr.row(_selectRowObj).data();
+
+            $('textarea[name="remarks"]').val(data.remarks);
+            $('#cbo_suppliers').select2('val',data.supplier_id);
+            $('#cbo_branch').select2('val',data.department_id);
+            get_button_rr(1);
+
+            get_dr_balance_qty(data.dr_invoice_id).done(function(response){
+                data = response.data[0];
+                $('#cash_amount').val(accounting.formatNumber(data.Balance,2));
+            });
+
+            $('input,textarea').each(function(){
+                var _elem=$(this);
+                $.each(data,function(name,value){
+                    if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
+                        _elem.val(value);
+                    }
+                });
+            });
+
+
+            $('#modal_rr_list').modal('hide');
+
+
+            $.ajax({
+                url: 'Cash_vouchers/transaction/get-rr-entries?id=' + data.dr_invoice_id,
+                type: "GET",
+                cache: false,
+                dataType: 'html',
+                processData: false,
+                contentType: false,
+                beforeSend: function () {
+                    $('#tbl_entries > tbody').html('<tr><td align="center" colspan="6"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                }
+            }).done(function(response){
+                $('#tbl_entries > tbody').html(response);
+                reInitializeNumeric();
+                reInitializeDropDownAccounts($('#tbl_entries'),false); //do not clear dropdown accounts
+                reComputeTotals($('#tbl_entries'));
+            });
+
+            // resetSummary();
+            // $.ajax({
+            //     url : 'Purchases/transaction/item-balance/'+data.purchase_order_id,
+            //     type : "GET",
+            //     cache : false,
+            //     dataType : 'json',
+            //     processData : false,
+            //     contentType : false,
+            //     beforeSend : function(){
+            //         $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+            //     },
+            //     success : function(response){
+            //         var rows=response.data;
+            //         $('#tbl_items > tbody').html('');
+                     
+            //         var total_discount=0;
+            //         var total_tax_amount=0;
+            //         var total_non_tax_amount=0;
+            //         var gross_amount=0;
+            //         var a = 0;
+            //         $.each(rows,function(i,value){
+            //             bulk_price = value.purchase_cost;
+            //             var retail_price = 0;
+            //             if(value.is_bulk == 1){
+            //                 retail_price = getFloat(value.purchase_cost) / getFloat(value.child_unit_desc);
+
+            //             }else if (value.is_bulk== 0){
+            //                 retail_price = 0;
+            //             }
+            //             changetxn ='inactive';
+            //             $('#tbl_items > tbody').append(newRowItem({
+            //                 dr_qty : value.po_qty,
+            //                 product_code : value.product_code,
+            //                 product_id: value.product_id,
+            //                 product_desc : value.product_desc,
+            //                 dr_line_total_discount : value.po_line_total_discount,
+            //                 tax_exempt : false,
+            //                 dr_tax_rate : value.po_tax_rate,
+            //                 dr_price : value.po_price,
+            //                 dr_discount : value.po_discount,
+            //                 tax_type_id : null,
+            //                 dr_line_total_price : value.po_line_total,
+            //                 dr_non_tax_amount: value.non_tax_amount,
+            //                 dr_tax_amount: value.tax_amount,
+            //                 bulk_price : bulk_price,
+            //                 retail_price : retail_price,
+            //                 is_bulk: value.is_bulk,
+            //                 is_parent : value.is_parent,
+            //                 parent_unit_name: value.parent_unit_name,
+            //                 child_unit_name:value.child_unit_name,
+            //                 parent_unit_id : value.parent_unit_id,
+            //                 child_unit_id : value.child_unit_id,
+            //                 // exp_date: exp_date,
+            //                 total_after_global : value.po_line_total_after_global,
+            //                 batch_no:"",
+            //                 a:a
+            //             }));
+            //             _line_unit=$('.line_unit'+a).select2({
+         
+            //             });
+            //             _line_unit.select2('val',value.unit_id);
+            //             a++;
+            //             //sum up all footer details
+            //             // total_discount+=getFloat(value.po_line_total_discount);
+            //             // total_tax_amount+=getFloat(value.tax_amount);
+            //             // total_non_tax_amount+=getFloat(value.non_tax_amount);
+            //             // gross_amount+=getFloat(value.po_line_total);
+
+            //         });
+            //         changetxn = 'active';
+            //         $('#txt_overall_discount').val(accounting.formatNumber($('#txt_overall_discount').val(),2));
+            //         reInitializeNumeric();
+            //         reComputeTotal();
+                   
+            //     }
+
+            // });
+        });
+
         $('#btn_preview_check').click(function(){
             if ($('#cbo_layouts').select2('val') != null || $('#cbo_layouts').select2('val') != undefined)
-                window.open('Templates/layout/print-check?id='+$('#cbo_layouts').val()+'&jid='+_selectedID);
+                window.open('Templates/layout/print-check-voucher?id='+$('#cbo_layouts').val()+'&cv_id='+_selectedID);
             else
                 showNotification({ title: 'Error', msg: 'Please select check layout!', stat: 'error' });
         });
 
         $('#is_2307').click(function(){
             if ($(this).is(":checked") == false){
-                $('#atc_2307').val("");
+                _cboTaxCode.select2('val',null);
                 $('#remarks_2307').val("");
             }
         });
 
-        $('#atc_2307').on('keyup',function(){
-            if($(this).val() != null || ""){
+        $('#cbo_tax_code').on("change", function (e) {
+            var i=$(this).select2('val');
+            var remarks = $("#cbo_tax_code").find(":selected").data("description");
+
+            if(i==null || i==""){
+                $('#is_2307').prop('checked', false);
+                $('#remarks_2307').val("");
+            }else{
                 $('#is_2307').prop('checked', true);
-            }
+                $('#remarks_2307').val(remarks);
+            } 
+
         });
 
         $('#remarks_2307').on('keyup',function(){
@@ -921,12 +1183,12 @@ $(document).ready(function(){
             }
         });
 
-
         $('#btn_new').click(function(){
             _txnMode="new";
             $('#div_check').show();
             $('#div_no_check').hide();
             var _currentDate=<?php echo json_encode(date("m/d/Y")); ?>;
+            get_button_rr(2);
 
             reInitializeDropDownAccounts($('#tbl_entries'),true);
             clearFields($('#frm_journal'));
@@ -936,11 +1198,27 @@ $(document).ready(function(){
             $('#cbo_suppliers').select2('val',null);
             $('#cbo_refType').select2('val',"CV");
             $('#is_2307').prop('checked', false);
+            $('#cbo_tax_code').select2('val',null);
+
             //set defaults
             _cboPaymentMethod.select2('val',1);//set cash as default
             _cboCheckTypes.select2('val',0);//set cash as default
             $('input[name="date_txn"]').val(_currentDate);
             showList(false);
+
+        });
+
+        $('#link_browse_rr').click(function(){
+            if(btn_rr_status==1){
+                $('#dr_invoice_no').val("");
+                get_button_rr(2);
+            }else if(btn_rr_status==2){
+                $('#tbl_rr_list tbody').html('<tr><td colspan="7"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
+                dt_rr.ajax.reload( null, false );
+                $('#modal_rr_list').modal('show');
+            }else if(btn_rr_status==3){
+                return;
+            }
 
         });
 
@@ -976,7 +1254,6 @@ $(document).ready(function(){
             reComputeTotals($('#tbl_entries'));
         });
 
-
         $('#tbl_temp_vouchers_list').on('click','button[name="print_check"]',function(){
 
             _selectRowObj=$(this).closest('tr');
@@ -985,7 +1262,6 @@ $(document).ready(function(){
 
             $('#modal_check_layout').modal('show');
         });
-
 
         $('#tbl_temp_vouchers_list').on('click','button[name="delete_info"]',function(){
             _selectRowObj=$(this).closest('tr');
@@ -1056,6 +1332,13 @@ $(document).ready(function(){
             $('#cbo_branch').select2('val',data.department_id);
             $('#cbo_refType').select2('val',data.ref_type);
             $('#cbo_check_type').select2('val',data.check_type_id);
+            $('#cbo_tax_code').val(data.atc_id).trigger("change");
+
+            if(data.dr_invoice_id > 0){
+                get_button_rr(3);
+            }else{
+                get_button_rr(2);
+            }
 
             if(data.check_date == '00/00/0000'){
                 $('input[name="check_date"]').val('');
@@ -1117,10 +1400,13 @@ $(document).ready(function(){
                 }else{
                     updateJournal().done(function(response){
                         showNotification(response);
+
                         if(response.stat=="success"){
                             dt.row(_selectRowObj).data(response.row_updated[0]).draw();
                             clearFields(f);
-                            showList(true);
+                            setTimeout(function(){
+                                showList(true);
+                            },200);
                         }
                     }).always(function(){
                         showSpinningProgress(btn);
@@ -1197,6 +1483,20 @@ $(document).ready(function(){
         });
     };
 
+    var get_dr_balance_qty=function(id){
+        var _data=$('#').serializeArray();
+        _data.push({name : "dr_invoice_id" ,value : id});
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Cash_vouchers/transaction/get_dr_balance",
+            "data":_data
+        });
+    };    
+
+    
+
     var showList=function(b){
         if(b){
             $('#div_payable_list').show();
@@ -1213,6 +1513,19 @@ $(document).ready(function(){
         $('#tbl_entries > tfoot tr').find(oTFSummary.dr).html('<b>0.00</b>');
         $('#tbl_entries > tfoot tr').find(oTFSummary.cr).html('<b>0.00</b>');
     };
+
+    function get_button_rr(b){
+        if(b == 1){
+            $('#btn_rr').html('X');
+            btn_rr_status = 1;
+        }else if(b == 2){
+            $('#btn_rr').html('...');
+            btn_rr_status = 2;
+        }else if(b == 3){
+            $('#btn_rr').html('<i class="fa fa-code"></i>');
+            btn_rr_status = 3;
+        }
+    }   
 
     //initialize numeric text
     function reInitializeNumeric(){

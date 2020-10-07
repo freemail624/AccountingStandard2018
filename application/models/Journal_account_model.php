@@ -368,7 +368,7 @@ class Journal_account_model extends CORE_Model{
             ji.is_active,
             ji.is_deleted,
             (CASE 
-                WHEN (ji.book_type=='CRJ')
+                WHEN (ji.book_type='CRJ')
                 THEN 
                     CONCAT(
                       IFNULL(ji.ref_type,''),

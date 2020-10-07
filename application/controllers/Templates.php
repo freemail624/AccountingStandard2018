@@ -111,6 +111,8 @@ class Templates extends CORE_Controller {
         $this->load->model('Cash_vouchers_model');
         $this->load->model('Cash_vouchers_accounts_model');
 
+        $this->load->model('Tax_code_model');
+
         $this->load->library('M_pdf');
         $this->load->library('excel');
         $this->load->model('Email_settings_model');
@@ -1874,16 +1876,20 @@ class Templates extends CORE_Controller {
 
             case 'print-form-2307':
                 $m_form_2307 = $this->Bir_2307_model;
-                $journal_id=$this->input->get('id',TRUE);
+                $supplier_id=$this->input->get('supplier_id',TRUE);
+                $month_id=$this->input->get('month_id',TRUE);
+                $year=$this->input->get('year',TRUE);
+                $quarter=$this->input->get('quarter',TRUE);
                 $type=$this->input->get('type',TRUE);
 
-                $info = $m_form_2307->get_2307_list(null,null,$journal_id);
-                $supplier = $this->Suppliers_model->get_list($info[0]->supplier_id);
+                $items = $m_form_2307->get_2307_items($supplier_id,$month_id,$year);
+
+                $supplier = $this->Suppliers_model->get_list($supplier_id);
                 $company = $this->Company_model->get_list()[0];
 
                 $data['supplier'] = $supplier[0];
-                $data['info'] = $info[0];
                 $data['company'] = $company;
+                $data['items'] = $items;
 
                 $payee_tin = $supplier[0]->tin_no;
                 $data['payee_tin_1'] = substr($payee_tin,0, 3);
@@ -1897,10 +1903,15 @@ class Templates extends CORE_Controller {
                 $data['payor_tin_3'] = substr($payor_tin,6, 3);
                 $data['payor_tin_4'] = substr($payor_tin,9, 3); 
 
-                $data['m'] = date("m",strtotime($info[0]->date_txn)); 
-                $data['y'] = date("y",strtotime($info[0]->date_txn));
+                $date_txn=$year.'-'.$month_id.'-01';
+
+                $data['m'] = date("m",strtotime($date_txn)); 
+                $data['y'] = date("y",strtotime($date_txn));
+
                 $data['from_period_day'] = '01';
-                $data['to_period_day'] = date("t",strtotime($info[0]->date_txn));          
+                $data['to_period_day'] = date("t",strtotime($date_txn));          
+
+                $data['quarter']=$quarter;
 
                 echo $this->load->view('template/form_2307_content',$data,TRUE); //load the template
 
@@ -2080,7 +2091,8 @@ class Templates extends CORE_Controller {
                     'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by',
                     'CONCAT_WS(" ",vbu.user_fname,vbu.user_lname)as verified_by',
                     'CONCAT_WS(" ",abu.user_fname,abu.user_lname)as approved_by',
-                    'CONCAT_WS(" ",cbu.user_fname,cbu.user_lname)as cancelled_by'
+                    'CONCAT_WS(" ",cbu.user_fname,cbu.user_lname)as cancelled_by',
+                    'dr.dr_invoice_no'
                 ),
                 array(
                     array('suppliers','suppliers.supplier_id=cv_info.supplier_id','left'),
@@ -2090,7 +2102,8 @@ class Templates extends CORE_Controller {
                     array('user_accounts abu','abu.user_id=cv_info.approved_by_user','left'),
                     array('user_accounts cbu','cbu.user_id=cv_info.cancelled_by_user','left'),
                     array('payment_methods','payment_methods.payment_method_id=cv_info.payment_method_id','left'),
-                    array('b_refchecktype','b_refchecktype.check_type_id=cv_info.check_type_id','left')
+                    array('b_refchecktype','b_refchecktype.check_type_id=cv_info.check_type_id','left'),
+                    array('delivery_invoice dr','dr.dr_invoice_id=cv_info.dr_invoice_id','left')
                 ),
                 'cv_info.cv_id DESC'
             );
@@ -3545,6 +3558,7 @@ class Templates extends CORE_Controller {
                 $m_methods=$this->Payment_method_model;
                 $m_departments=$this->Departments_model;
                 $m_pay_list=$this->Payable_payment_list_model;
+                $m_tax_codes=$this->Tax_code_model;
 
                 $payment_info=$m_payments->get_list(
                     $payment_id,
@@ -3582,6 +3596,8 @@ class Templates extends CORE_Controller {
                         'suppliers.supplier_name'
                     )
                 );
+
+                $data['tax_codes']=$m_tax_codes->get_taxcode_list();
                 $data['entries']=$m_payments->get_journal_entries($payment_id);
 
                 $data['accounts']=$m_accounts->get_list(
@@ -3729,6 +3745,60 @@ class Templates extends CORE_Controller {
 
 
                 break;
+
+            case 'print-check-voucher':
+                $check_layout_id=$this->input->get('id',TRUE);
+                $cv_id=$this->input->get('cv_id',TRUE);
+
+                $m_layout=$this->Check_layout_model;
+                $layout_info=$m_layout->get_list(array('check_layout_id'=>$check_layout_id));
+                $layouts=$layout_info[0];
+
+                $data['layouts']=$layouts;
+                $data['title']="Print Check";
+
+                $m_voucher_info=$this->Cash_vouchers_model;
+
+                $m_voucher_info->check_status=1; //mark as issued
+                $m_voucher_info->modify($cv_id);
+
+                $check_info= $this->Cash_vouchers_model->get_list($cv_id,
+                array(
+                    'cv_info.*',
+                    'DATE_FORMAT(cv_info.date_txn,"%m/%d/%Y")as date_txn',
+                    'DATE_FORMAT(cv_info.check_date,"%m/%d/%Y") as check_date',
+                    'payment_methods.payment_method',
+                    'suppliers.supplier_name',
+                    'departments.department_name',
+                    'b_refchecktype.check_type_desc',
+                    'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by',
+                    'CONCAT_WS(" ",vbu.user_fname,vbu.user_lname)as verified_by',
+                    'CONCAT_WS(" ",abu.user_fname,abu.user_lname)as approved_by',
+                    'CONCAT_WS(" ",cbu.user_fname,cbu.user_lname)as cancelled_by'
+                ),
+                array(
+                    array('suppliers','suppliers.supplier_id=cv_info.supplier_id','left'),
+                    array('departments','departments.department_id=cv_info.department_id','left'),
+                    array('user_accounts','user_accounts.user_id=cv_info.created_by_user','left'),
+                    array('user_accounts vbu','vbu.user_id=cv_info.verified_by_user','left'),
+                    array('user_accounts abu','abu.user_id=cv_info.approved_by_user','left'),
+                    array('user_accounts cbu','cbu.user_id=cv_info.cancelled_by_user','left'),
+                    array('payment_methods','payment_methods.payment_method_id=cv_info.payment_method_id','left'),
+                    array('b_refchecktype','b_refchecktype.check_type_id=cv_info.check_type_id','left')
+                ),
+                'cv_info.cv_id DESC'
+            );
+
+                $data['num_words']=$this->convertDecimalToWords($check_info[0]->amount);
+                $data['check_info']=$check_info[0];
+
+
+                $this->load->view('template/check_view',$data); //load the template
+
+
+
+
+                break;                
 
             case 'customer-subsidiary' :
                 $type=$this->input->get('type',TRUE);

@@ -30,7 +30,9 @@ class Cash_disbursement extends CORE_Controller
                 'Check_types_model',
                 'Trans_model',
                 'Bir_2307_model',
-                'Account_integration_model'
+                'Account_integration_model',
+                'Tax_code_model'
+
             )
         );
         $this->load->model('Cash_vouchers_model');
@@ -57,6 +59,7 @@ class Cash_disbursement extends CORE_Controller
         $data['tax_types']=$this->Tax_types_model->get_list('is_deleted=0');
         $data['payment_methods']=$this->Payment_method_model->get_list('is_deleted=0');
         $data['layouts']=$this->Check_layout_model->get_list('is_deleted=0');
+        $data['tax_codes']=$this->Tax_code_model->get_taxcode_list();
 
         $data['title'] = 'Disbursement Journal';
         (in_array('1-2',$this->session->user_rights)? 
@@ -227,8 +230,7 @@ class Cash_disbursement extends CORE_Controller
                     $m_form_2307->gross_amount=$this->get_numeric_value($total_amount);
                     $m_form_2307->deducted_amount=$this->get_numeric_value($total_wtax);
                     $m_form_2307->tax_rate=$this->get_numeric_value($tax_rate);
-                    $m_form_2307->atc=$voucher_info->atc_2307;
-                    $m_form_2307->remarks=$voucher_info->remarks_2307;
+                    $m_form_2307->atc_id=$voucher_info->atc_id;
                     $m_form_2307->set('date_created','NOW()');
                     $m_form_2307->created_by_user=$this->session->user_id;
                     $m_form_2307->save();
@@ -264,6 +266,7 @@ class Cash_disbursement extends CORE_Controller
             case 'cancel-voucher' :
                 $cv_id = $this->input->post('cv_id',TRUE);
                 $voucher_info= $this->Cash_vouchers_model->get_list($cv_id)[0];
+                $dr_invoice_id = $voucher_info->dr_invoice_id;
 
                 $m_modify_voucher = $this->Cash_vouchers_model;
                 $m_modify_voucher->cancelled_by_user = $this->session->user_id;
@@ -280,6 +283,11 @@ class Cash_disbursement extends CORE_Controller
                 $m_trans->trans_log='Disapproved and Cancelled  '.$voucher_info->txn_no;
                 $m_trans->save();
                 //AUDIT TRAIL END
+
+                //update status of dr
+                $m_dr=$this->Delivery_invoice_model;
+                $m_dr->order_status_id=$this->get_dr_status($dr_invoice_id);
+                $m_dr->modify($dr_invoice_id);
 
                 $response['stat']='success';
                 $response['title']='Success!';
@@ -382,8 +390,7 @@ class Cash_disbursement extends CORE_Controller
                     $m_form_2307->gross_amount=$this->get_numeric_value($total_amount);
                     $m_form_2307->deducted_amount=$this->get_numeric_value($total_wtax);
                     $m_form_2307->tax_rate=$this->get_numeric_value($tax_rate);                    
-                    $m_form_2307->atc=$this->input->post('2307_atc',TRUE);
-                    $m_form_2307->remarks=$this->input->post('2307_remarks',TRUE);
+                    $m_form_2307->atc_id=$this->input->post('atc_id',TRUE);
                     $m_form_2307->set('date_created','NOW()');
                     $m_form_2307->created_by_user=$this->session->user_id;
                     $m_form_2307->save();
@@ -526,8 +533,7 @@ class Cash_disbursement extends CORE_Controller
                     $m_form_2307->gross_amount=$this->get_numeric_value($total_amount);
                     $m_form_2307->deducted_amount=$this->get_numeric_value($total_wtax);
                     $m_form_2307->tax_rate=$this->get_numeric_value($tax_rate);                      
-                    $m_form_2307->atc=$this->input->post('2307_atc',TRUE);
-                    $m_form_2307->remarks=$this->input->post('2307_remarks',TRUE);
+                    $m_form_2307->atc_id=$this->input->post('atc_id',TRUE);
                     $m_form_2307->set('date_created','NOW()');
                     $m_form_2307->created_by_user=$this->session->user_id;
                     $m_form_2307->is_applied=1;
@@ -686,8 +692,34 @@ class Cash_disbursement extends CORE_Controller
         );
     }
 
+    public function get_dr_status($id){
+            //NOTE : 1 means open, 2 means Closed, 3 means partially invoice
+            $m_cash_voucher=$this->Cash_vouchers_model;
 
+            if(count($m_cash_voucher->get_list(
+                        array('cv_info.dr_invoice_id'=>$id,'cv_info.is_active'=>TRUE,'cv_info.is_deleted'=>FALSE,'cv_info.cancelled_by_user'>0),
+                        'cv_info.cv_id'))==0 ){ //means no rr found on cash voucher that means this rr is still open
 
+                return 1;
+
+            }else{
+
+                $m_dr=$this->Delivery_invoice_model;
+                $row=$m_dr->get_dr_balance_qty($id);
+                $order_status_id;
+                if($row[0]->Balance == $row[0]->total_dr_amount){
+                    $order_status_id = 1;
+                }else if($row[0]->Balance > 0){
+                    $order_status_id = 3;
+                }else{
+                    $order_status_id = 2;
+                }
+
+                return $order_status_id;
+
+            }
+
+    }
 
 
 

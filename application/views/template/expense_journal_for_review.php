@@ -53,69 +53,86 @@
                                     <div class="col-lg-8">
                                         <div style="border: 1px solid lightgrey;padding: 2%;border-radius: 5px;">
                                             <div class="row">
-                                                <div class="col-lg-4">
-                                                    Txn # * :<br />
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon">
-                                                            <i class="fa fa-calendar"></i>
-                                                        </span>
-                                                        <input type="text" name="txn_no" class="form-control" value="TXN-YYYYMMDD-XXX" readonly>
+                                                <div class="col-md-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-6">
+                                                            Txn # * :<br />
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">
+                                                                    <i class="fa fa-calendar"></i>
+                                                                </span>
+                                                                <input type="text" name="txn_no" class="form-control" value="TXN-YYYYMMDD-XXX" readonly>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6">
+                                                            Date * :<br />
+                                                            <div class="input-group">
+                                                                <input type="text" name="date_txn" class="date-picker  form-control" value="<?php echo $payment_info->payment_date; ?>">
+                                                                <span class="input-group-addon">
+                                                                    <i class="fa fa-calendar"></i>
+                                                                </span>
+                                                            </div>
+                                                        </div>                                                    
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            Supplier * :<br />
+                                                            <select name="supplier_id" class="cbo_customer_list">
+                                                                <?php foreach($suppliers as $supplier){ ?>
+                                                                    <option value="<?php echo $supplier->supplier_id; ?>" <?php echo ($payment_info->supplier_id===$supplier->supplier_id?'selected':''); ?>><?php echo $supplier->supplier_name; ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>                                                    
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            Branch * :<br />
+                                                            <select name="department_id" class="cbo_department_list">
+                                                                <?php foreach($departments as $department){ ?>
+                                                                    <option value="<?php echo $department->department_id; ?>" <?php echo ($payment_info->department_id===$department->department_id?'selected':''); ?>><?php echo $department->department_name; ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-3">
-                                                    Date * :<br />
-                                                    <div class="input-group">
-                                                        <input type="text" name="date_txn" class="date-picker  form-control" value="<?php echo $payment_info->payment_date; ?>">
-                                                        <span class="input-group-addon">
-                                                            <i class="fa fa-calendar"></i>
-                                                        </span>
+                                                <div class="col-md-6">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="row">
+                                                                <div style="margin-top: 10px;">
+                                                                    <input type="checkbox" class="2307_apply" id="2307_apply_<?php echo $payment_info->payment_id; ?>" value="1" style="margin-left: 20px;">
+                                                                    &nbsp;<label for="2307_apply_<?php echo $payment_info->payment_id; ?>">Apply 2307 Form</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12"> 
+                                                                    ATC :
+                                                                    <select id="cbo_tax_code_<?php echo $payment_info->payment_id; ?>" class="cbo_tax_code_list form-control" name="atc_id" style="width: 100%;" >
+                                                                        <option value=""></option>
+                                                                        <?php foreach($tax_codes as $tax_code){ ?>
+                                                                            <option value="<?php echo $tax_code->atc_id; ?>" data-description="<?php echo $tax_code->description; ?>">
+                                                                                <?php echo $tax_code->atc.' - '.$tax_code->description; ?>
+                                                                            </option>
+                                                                        <?php } ?>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12">
+                                                                    Nature Income Payment :<br />
+                                                                    <textarea id="2307_remarks_<?php echo $payment_info->payment_id; ?>" class="2307_remarks form-control" name="2307_remarks" data-error-msg="Remarks is required." rows="5" style="width: 100%;" readonly placeholder="Nature Income Payment"></textarea>
+                                                                </div>
+                                                            </div>
+                                                        </div>   
                                                     </div>
-                                                </div>
-                                                <div class="col-lg-5"> 
-                                                    <div style="margin-top: 10px;">
-                                                        <input type="checkbox" class="2307_apply" id="2307_apply_<?php echo $payment_info->payment_id; ?>" value="1">
-                                                        &nbsp;<label for="2307_apply_<?php echo $payment_info->payment_id; ?>">Apply 2307 Form</label>
-                                                    </div>
-                                                </div><br />
-                                                <br />
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-lg-7">
-                                                    Supplier * :<br />
-                                                    <select name="supplier_id" class="cbo_customer_list">
-                                                        <?php foreach($suppliers as $supplier){ ?>
-                                                            <option value="<?php echo $supplier->supplier_id; ?>" <?php echo ($payment_info->supplier_id===$supplier->supplier_id?'selected':''); ?>><?php echo $supplier->supplier_name; ?></option>
-                                                        <?php } ?>
-                                                    </select>
-                                                </div>
-                                                <div class="col-lg-5"> 
-                                                    ATC :
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon">
-                                                            <i class="fa fa-code"></i>
-                                                        </span>
-                                                        <input type="text" name="2307_atc" class="2307_atc form-control" data-error-msg="ATC is required." style="width: 100%;">
-                                                    </div>
-                                                </div><br />
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-lg-7">
-                                                    Branch * :<br />
-                                                    <select name="department_id" class="cbo_department_list">
-                                                        <?php foreach($departments as $department){ ?>
-                                                            <option value="<?php echo $department->department_id; ?>" <?php echo ($payment_info->department_id===$department->department_id?'selected':''); ?>><?php echo $department->department_name; ?></option>
-                                                        <?php } ?>
-                                                    </select>
-                                                </div>
-                                                <div class="col-lg-5">
-                                                    Remarks :<br />
-                                                    <textarea class="2307_remarks form-control" name="2307_remarks" data-error-msg="Remarks is required." rows="5" style="width: 90%;"></textarea>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-4">
-                                        <div style="border: 1px solid lightgrey;padding: 4%;border-radius: 5px;">
+                                    <div class="col-md-4">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                               <div style="border: 1px solid lightgrey;padding: 4%;border-radius: 5px;">
                                             <div class="row"> 
                                                 <div class="col-sm-6"> 
                                                     <b class="required"> * </b> <label>Reference type :</label><br /> 
@@ -170,6 +187,8 @@
                                                     Check # :<br />
                                                     <input type="text" name="check_no" class="form-control" value="<?php echo ($payment_info->payment_method_id==2?$payment_info->check_no:''); ?>">
                                                 </div>
+                                            </div>
+                                        </div>             
                                             </div>
                                         </div>
                                     </div>

@@ -272,7 +272,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
     }
 
 
-    function delivery_list_count($id_filter,$department_id=null,$supplier_id=null,$startDate=null,$endDate=null){
+    function delivery_list_count($id_filter,$department_id=null,$supplier_id=null,$startDate=null,$endDate=null,$open_filter=null){
         $sql="
         SELECT di.*,
         suppliers.supplier_name,
@@ -282,8 +282,9 @@ GROUP BY n.supplier_id HAVING total_balance > 0
         purchase_order.order_status_id,
         DATE_FORMAT(di.date_due,'%m/%d/%Y')as date_due,
         DATE_FORMAT(di.date_delivered,'%m/%d/%Y')as date_delivered,
+        CONCAT_WS(' ',CAST(di.terms as CHAR(250)) ,di.duration) as term_description,
+        order_status.order_status
 
-        CONCAT_WS(' ',CAST(di.terms as CHAR(250)) ,di.duration) as term_description
         FROM
         delivery_invoice as di
 
@@ -291,7 +292,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
         LEFT JOIN departments ON departments.department_id = di.department_id
         LEFT JOIN tax_types ON tax_types.tax_type_id=di.tax_type_id
         LEFT JOIN purchase_order ON purchase_order.purchase_order_id=di.purchase_order_id 
-
+        LEFT JOIN order_status ON order_status.order_status_id=di.order_status_id
 
         WHERE
         di.is_active = TRUE AND di.is_deleted=FALSE 
@@ -299,9 +300,10 @@ GROUP BY n.supplier_id HAVING total_balance > 0
         ".($department_id==null?"":" AND di.department_id=$department_id")."
         ".($supplier_id==null?"":" AND di.supplier_id=$supplier_id")."
         ".($id_filter==null?"":" AND di.dr_invoice_id=$id_filter")."
-
         ".($startDate==null?"":" AND di.date_delivered BETWEEN '$startDate' AND '$endDate'")."
+        ".($open_filter==null?"":" AND (di.order_status_id=1 OR di.order_status_id=3)")."
         ";
+
         return $this->db->query($sql)->result();
 
     }
@@ -377,7 +379,121 @@ GROUP BY n.supplier_id HAVING total_balance > 0
 
      }
 
+    function get_dr_balance_qty($dr_invoice_id=null,$supplier_id=null){
+        $sql="SELECT 
+                z.*
+            FROM
+                (SELECT 
+                    main.*,
+                        (main.total_dr_amount - main.total_cv_amount) AS Balance
+                FROM
+                    (SELECT 
+                    di.dr_invoice_id,
+                        di.dr_invoice_no,
+                        suppliers.supplier_name,
+                        departments.department_name,
+                        di.supplier_id,
+                        purchase_order.po_no,
+                        DATE_FORMAT(di.date_due, '%m/%d/%Y') AS date_due,
+                        DATE_FORMAT(di.date_delivered, '%m/%d/%Y') AS date_delivered,
+                        CONCAT_WS(' ', CAST(di.terms AS CHAR (250)), di.duration) AS term_description,
+                        SUM(di.total_after_discount) AS total_dr_amount,
+                        (SELECT 
+                                COALESCE(SUM(accounts.dr_amount), 0) AS total_cv_amount
+                            FROM
+                                cv_info
+                            LEFT JOIN cv_accounts accounts ON accounts.cv_id = cv_info.cv_id
+                            WHERE
+                                cv_info.dr_invoice_id = di.dr_invoice_id
+                                    AND cv_info.is_deleted = FALSE
+                                    AND cv_info.is_active = TRUE
+                                    AND cv_info.cancelled_by_user <= 0) AS total_cv_amount
+                FROM
+                    delivery_invoice AS di
+                LEFT JOIN suppliers ON suppliers.supplier_id = di.supplier_id
+                LEFT JOIN departments ON departments.department_id = di.department_id
+                LEFT JOIN purchase_order ON purchase_order.purchase_order_id = di.purchase_order_id
+                WHERE
+                    di.is_deleted = FALSE
+                        AND di.is_active = TRUE
+                        ".($dr_invoice_id==null?"":" AND di.dr_invoice_id = $dr_invoice_id")."
+                    ".($supplier_id==null?" GROUP BY di.dr_invoice_id":" GROUP BY di.supplier_id")."
+                ) main) AS z
+                ".($dr_invoice_id==null?" WHERE z.Balance > 0":"")."";
+         return $this->db->query($sql)->result();
+    } 
 
+
+    function get_balance_rr($dr_invoice_id){
+        $sql="SELECT 
+                    main.*
+                FROM
+                    (SELECT 
+                        1 AS sort_id,
+                            delivery_invoice.dr_invoice_id,
+                            COALESCE((SELECT 
+                                    payable_account_id
+                                FROM
+                                    account_integration), 0) AS account_id,
+                            '' AS memo,
+                            (SELECT 
+                                    (x.total_dr_amount - x.total_cv_amount) AS Balance
+                                FROM
+                                    (SELECT 
+                                    SUM(total_after_discount) AS total_dr_amount,
+                                        (SELECT 
+                                                COALESCE(SUM(accounts.dr_amount), 0) AS total_cv_amount
+                                            FROM
+                                                cv_info
+                                            LEFT JOIN cv_accounts accounts ON accounts.cv_id = cv_info.cv_id
+                                            WHERE
+                                                cv_info.dr_invoice_id = di.dr_invoice_id AND
+                                                cv_info.is_deleted = FALSE AND
+                                                cv_info.is_active = TRUE AND
+                                                cv_info.cancelled_by_user <= 0) AS total_cv_amount
+                                FROM
+                                    delivery_invoice AS di
+                                WHERE
+                                    di.dr_invoice_id = $dr_invoice_id) x) AS dr_amount,
+                            0 AS cr_amount,
+                            delivery_invoice.department_id
+                    FROM
+                        delivery_invoice UNION ALL SELECT 
+                        2 AS sort_id,
+                            delivery_invoice.dr_invoice_id,
+                            COALESCE((SELECT 
+                                    payment_to_supplier_id
+                                FROM
+                                    account_integration), 0) AS account_id,
+                            '' AS memo,
+                            0 AS dr_amount,
+                            (SELECT 
+                                    (x.total_dr_amount - x.total_cv_amount) AS Balance
+                                FROM
+                                    (SELECT 
+                                    SUM(total_after_discount) AS total_dr_amount,
+                                        (SELECT 
+                                                COALESCE(SUM(accounts.dr_amount), 0) AS total_cv_amount
+                                            FROM
+                                                cv_info
+                                            LEFT JOIN cv_accounts accounts ON accounts.cv_id = cv_info.cv_id
+                                            WHERE
+                                                cv_info.dr_invoice_id = di.dr_invoice_id AND
+                                                cv_info.is_deleted = FALSE AND
+                                                cv_info.is_active = TRUE AND
+                                                cv_info.cancelled_by_user <= 0) AS total_cv_amount
+                                FROM
+                                    delivery_invoice AS di
+                                WHERE
+                                    di.dr_invoice_id = $dr_invoice_id) x) AS cr_amount,
+                            delivery_invoice.department_id
+                    FROM
+                        delivery_invoice) AS main
+                WHERE
+                    main.dr_invoice_id = $dr_invoice_id
+                ORDER BY main.sort_id ASC";
+        return $this->db->query($sql)->result();
+    }
 }
 
 

@@ -28,7 +28,8 @@ class Cash_vouchers extends CORE_Controller
                 'Check_types_model',
                 'Trans_model',
                 'Bir_2307_model',
-                'Account_integration_model'
+                'Account_integration_model',
+                'Tax_code_model'
             )
         );
 
@@ -54,6 +55,7 @@ class Cash_vouchers extends CORE_Controller
         $data['tax_types']=$this->Tax_types_model->get_list('is_deleted=0');
         $data['payment_methods']=$this->Payment_method_model->get_list('is_deleted=0');
         $data['layouts']=$this->Check_layout_model->get_list('is_deleted=0');
+        $data['tax_codes']=$this->Tax_code_model->get_taxcode_list();
 
         $data['title'] = 'Temporary Cash Voucher Journal';
         (in_array('1-8',$this->session->user_rights)? 
@@ -99,6 +101,19 @@ class Cash_vouchers extends CORE_Controller
 
                 break;
 
+            case 'get-rr-entries':
+                $dr_invoice_id=$this->input->get('id');
+                $m_accounts=$this->Account_title_model;
+                $m_deliveries=$this->Delivery_invoice_model;
+
+                $data['accounts']=$m_accounts->get_list(array('is_deleted'=>FALSE),null, null,'trim(account_title) ASC');
+                $data['entries']=$m_deliveries->get_balance_rr($dr_invoice_id);
+                $data['departments']=$this->Departments_model->get_list('is_deleted = FALSE',null, null,'department_name ASC');
+
+                $this->load->view('template/rr_journal_entries', $data);
+
+                break;
+
             case 'create' :
                 $m_info=$this->Cash_vouchers_model;
                 $m_supplier=$this->Suppliers_model;
@@ -112,6 +127,14 @@ class Cash_vouchers extends CORE_Controller
                     $response['msg']='Please make sure transaction date is valid!<br />';
                     die(json_encode($response));
                 }
+
+                $m_dr=$this->Delivery_invoice_model;
+                $arr_rr_info=$m_dr->get_list(
+                    array('delivery_invoice.dr_invoice_no'=>$this->input->post('dr_invoice_no',TRUE)),
+                    'delivery_invoice.dr_invoice_id'
+                );
+                $dr_invoice_id=(count($arr_rr_info)>0?$arr_rr_info[0]->dr_invoice_id:0);
+
 
                 $m_info->ref_type=$this->input->post('ref_type');
                 $m_info->ref_no=$this->input->post('ref_no');
@@ -133,8 +156,11 @@ class Cash_vouchers extends CORE_Controller
 
 
                 $m_info->is_2307 =$this->get_numeric_value($this->input->post('is_2307',TRUE));
-                $m_info->atc_2307=$this->input->post('atc_2307',TRUE);
-                $m_info->remarks_2307=$this->input->post('remarks_2307',TRUE);
+                $m_info->atc_id=$this->input->post('atc_id',TRUE);
+                // $m_info->atc_2307=$this->input->post('atc_2307',TRUE);
+                // $m_info->remarks_2307=$this->input->post('remarks_2307',TRUE);
+
+                $m_info->dr_invoice_id=$dr_invoice_id;
                 $m_info->save();
 
                 $cv_id=$m_info->last_insert_id();
@@ -157,6 +183,9 @@ class Cash_vouchers extends CORE_Controller
                 $m_info->txn_no='TMP-'.date('Ymd').'-'.$cv_id;
                 $m_info->modify($cv_id);
 
+                //update status of dr
+                $m_dr->order_status_id=$this->get_dr_status($dr_invoice_id);
+                $m_dr->modify($dr_invoice_id);
 
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
@@ -191,6 +220,13 @@ class Cash_vouchers extends CORE_Controller
                     die(json_encode($response));
                 }
 
+                $m_dr=$this->Delivery_invoice_model;
+                $arr_rr_info=$m_dr->get_list(
+                    array('delivery_invoice.dr_invoice_no'=>$this->input->post('dr_invoice_no',TRUE)),
+                    'delivery_invoice.dr_invoice_id'
+                );
+                $dr_invoice_id=(count($arr_rr_info)>0?$arr_rr_info[0]->dr_invoice_id:0);
+
                 $m_info->ref_type=$this->input->post('ref_type');
                 $m_info->ref_no=$this->input->post('ref_no');
                 $m_info->supplier_id=$this->input->post('supplier_id',TRUE);
@@ -211,8 +247,10 @@ class Cash_vouchers extends CORE_Controller
 
 
                 $m_info->is_2307 =$this->get_numeric_value($this->input->post('is_2307',TRUE));
-                $m_info->atc_2307=$this->input->post('atc_2307',TRUE);
-                $m_info->remarks_2307=$this->input->post('remarks_2307',TRUE);
+                $m_info->atc_id=$this->input->post('atc_id',TRUE);
+                // $m_info->atc_2307=$this->input->post('atc_2307',TRUE);
+                // $m_info->remarks_2307=$this->input->post('remarks_2307',TRUE);
+                $m_info->dr_invoice_id=$dr_invoice_id;
                 $m_info->modify($cv_id);
 
 
@@ -232,6 +270,10 @@ class Cash_vouchers extends CORE_Controller
                     $m_cv_accounts->department_id=$this->get_numeric_value($department_id_line[$i]); 
                     $m_cv_accounts->save();
                 }
+
+                //update status of dr
+                $m_dr->order_status_id=$this->get_dr_status($dr_invoice_id);
+                $m_dr->modify($dr_invoice_id);
 
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
@@ -257,6 +299,15 @@ class Cash_vouchers extends CORE_Controller
                 $m_info->deleted_by_user=$this->session->user_id;//user that cancelled the record
                 $m_info->is_deleted = 1;
                 $m_info->modify($cv_id);
+
+                $dr_info=$m_info->get_list($cv_id,'cv_info.dr_invoice_id'); //get delivery invoice first
+                if(count($dr_info)>0){ //make sure dr info return resultset before executing other process
+                    $dr_invoice_id=$dr_info[0]->dr_invoice_id; //pass it to variable
+                    //update delivery invoice status
+                    $m_deliveries=$this->Delivery_invoice_model;
+                    $m_deliveries->order_status_id=$this->get_dr_status($dr_invoice_id);
+                    $m_deliveries->modify($dr_invoice_id);
+                }
 
                 $response['title']='Deleted!';
                 $response['stat']='success';
@@ -302,6 +353,13 @@ class Cash_vouchers extends CORE_Controller
                 echo json_encode($response);
 
                 break;
+
+
+            case 'get_dr_balance':
+                $dr_invoice_id = $this->input->post('dr_invoice_id', TRUE);
+                $response['data']=$this->Delivery_invoice_model->get_dr_balance_qty($dr_invoice_id);
+                echo json_encode($response);
+                break;
         };
     }
 
@@ -319,7 +377,8 @@ class Cash_vouchers extends CORE_Controller
                 'suppliers.supplier_name as particular',
                 'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by',
                 'CONCAT_WS(" ",vbu.user_fname,vbu.user_lname)as verified_by',
-                'CONCAT_WS(" ",abu.user_fname,abu.user_lname)as approved_by'
+                'CONCAT_WS(" ",abu.user_fname,abu.user_lname)as approved_by',
+                'dr.dr_invoice_no'
             ),
             array(
                 array('suppliers','suppliers.supplier_id=cv_info.supplier_id','left'),
@@ -327,12 +386,41 @@ class Cash_vouchers extends CORE_Controller
                 array('user_accounts','user_accounts.user_id=cv_info.created_by_user','left'),
                 array('user_accounts vbu','vbu.user_id=cv_info.verified_by_user','left'),
                 array('user_accounts abu','abu.user_id=cv_info.approved_by_user','left'),
-                array('payment_methods','payment_methods.payment_method_id=cv_info.payment_method_id','left')
+                array('payment_methods','payment_methods.payment_method_id=cv_info.payment_method_id','left'),
+                array('delivery_invoice dr','dr.dr_invoice_id=cv_info.dr_invoice_id','left')
             ),
             'cv_info.cv_id DESC'
         );
     }
 
+    public function get_dr_status($id){
+            //NOTE : 1 means open, 2 means Closed, 3 means partially invoice
+            $m_cash_voucher=$this->Cash_vouchers_model;
+
+            if(count($m_cash_voucher->get_list(
+                        array('cv_info.dr_invoice_id'=>$id,'cv_info.is_active'=>TRUE,'cv_info.is_deleted'=>FALSE,'cv_info.cancelled_by_user'>0),
+                        'cv_info.cv_id'))==0 ){ //means no rr found on cash voucher that means this rr is still open
+
+                return 1;
+
+            }else{
+
+                $m_dr=$this->Delivery_invoice_model;
+                $row=$m_dr->get_dr_balance_qty($id);
+                $order_status_id;
+                if($row[0]->Balance == $row[0]->total_dr_amount){
+                    $order_status_id = 1;
+                }else if($row[0]->Balance > 0){
+                    $order_status_id = 3;
+                }else{
+                    $order_status_id = 2;
+                }
+
+                return $order_status_id;
+
+            }
+
+    }
 
 
 

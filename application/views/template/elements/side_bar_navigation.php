@@ -32,7 +32,7 @@
                     <ul class="acc-menu">
                         <li class="nav-separator"><span>Explore</span></li>
                         <li><a href="Dashboard"><i class="ti ti-home"></i><span>Dashboard</span>
-                        <li class="<?php echo (in_array('18',$this->session->parent_rights)?'':'hidden'); ?>"><a href="Billing_contracts"><i class="ti ti-agenda"></i><span>Billing Contracts</span>
+                        <li class="hidden <?php echo (in_array('18',$this->session->parent_rights)?'':'hidden'); ?>"><a href="Billing_contracts"><i class="ti ti-agenda"></i><span>Billing Contracts</span>
                         <li class="<?php echo (in_array('20',$this->session->parent_rights)?'':'hidden'); ?>"><a href="Billing_adjustments"><i class="ti ti-agenda"></i><span>Billing Adjustments</span>
 
 
@@ -83,6 +83,7 @@
                                 <li  class="<?php echo (in_array('4-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Locations">Locations Management</a></li>
                                 <li  class="<?php echo (in_array('4-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Check_types">Check Types Management</a></li>
                                 <li  class="<?php echo (in_array('4-7',$this->session->user_rights)?'':'hidden'); ?>"><a href="Brands">Brands Management</a></li>
+                                <li  class="<?php echo (in_array('4-8',$this->session->user_rights)?'':'hidden'); ?>"><a href="Tax_code">Tax Code Management</a></li>
                             </ul>
                         </li>
                         <li class="<?php echo (in_array('5',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-harddrive"></i><span>Masterfiles</span></a>
@@ -209,6 +210,7 @@
                                 <li class="<?php echo (in_array('12-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Collection_list_report">Collection List Report</a></li>
                                 <li class="<?php echo (in_array('12-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Open_purchase">Open Purchases</a></li>
                                 <li class="<?php echo (in_array('12-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Open_sales">Open Sales</a></li>
+                                <li class="<?php echo (in_array('12-8',$this->session->user_rights)?'':'hidden'); ?>"><a href="Open_deliveries">Open Deliveries</a></li>
                             </ul>
                         </li>
                     </ul>

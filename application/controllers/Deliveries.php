@@ -19,6 +19,8 @@ class Deliveries extends CORE_Controller
         $this->load->model('Users_model');
         $this->load->model('Trans_model');          
         $this->load->model('Asset_settings_model');
+        $this->load->model('Cash_vouchers_model');
+
     }
 
     public function index() {
@@ -80,6 +82,16 @@ class Deliveries extends CORE_Controller
                 echo json_encode($response);
                 break;
 
+            case 'open':
+
+                $m_delivery=$this->Delivery_invoice_model;
+                $response['data']=$m_delivery->delivery_list_count(null,null,null,null,null,1);
+
+                echo json_encode($response);    
+
+                break;
+
+
             ////****************************************items/products of selected purchase invoice***********************************************
             case 'items': //items on the specific PO, loads when edit button is called
                 $m_items=$this->Delivery_invoice_item_model;
@@ -107,6 +119,7 @@ class Deliveries extends CORE_Controller
 
                 echo json_encode($response);
                 break;
+
             case 'fixed_asset_items':
                 $m_items=$this->Delivery_invoice_item_model;
                 $accounts=$this->Asset_settings_model->get_list(null,'asset_account_id');  
@@ -402,6 +415,15 @@ class Deliveries extends CORE_Controller
                 $m_delivery_items=$this->Delivery_invoice_item_model;
                 $dr_invoice_id=$this->input->post('dr_invoice_id',TRUE);
 
+                $m_cash_vouchers=$this->Cash_vouchers_model;
+                if(count($m_cash_vouchers->get_list(array('cv_info.dr_invoice_id'=>$dr_invoice_id,'cv_info.is_deleted'=>FALSE,'cv_info.is_active'=>TRUE)))>0){
+                    $response['title']='Error!';
+                    $response['stat']='error';
+                    $response['msg']='Sorry, you cannot delete delivery invoice that is already been received.';
+                    echo json_encode($response);
+                    exit;
+                }
+
                 // mark purchase invoice as deleted
                 $m_delivery_invoice->set('date_deleted','NOW()'); //treat NOW() as function and not string,set deletion date
                 $m_delivery_invoice->deleted_by_user=$this->session->user_id; //user that delete this record
@@ -430,10 +452,11 @@ class Deliveries extends CORE_Controller
                     $m_trans->trans_type_id=12; // TRANS TYPE
                     $m_trans->trans_log='Deleted Purchase Invoice No: '.$pi_info[0]->dr_invoice_no;
                     $m_trans->save();
-                $response['title']='Success!';
-                $response['stat']='success';
-                $response['msg']='Delivery invoice successfully deleted.';
-                echo json_encode($response);
+                        
+                    $response['title']='Success!';
+                    $response['stat']='success';
+                    $response['msg']='Delivery invoice successfully deleted.';
+                    echo json_encode($response);
 
                 break;
 

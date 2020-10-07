@@ -201,6 +201,7 @@
                     <th>PO #</th>
                     <th>Terms</th>
                     <th>Delivered</th>
+                    <th>Status</th>
                     <th><center>Action</center></th>
                     <th></th>
                 </tr>
@@ -928,7 +929,7 @@ $(document).ready(function(){
         dt=$('#tbl_delivery_invoice').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 8, "desc" ]],
+            "order": [[ 9, "desc" ]],
             "language": {
                 "searchPlaceholder":"Search Purchase Invoice"
             },
@@ -947,8 +948,9 @@ $(document).ready(function(){
                 { targets:[4],data: "po_no" },
                 { targets:[5],data: "term_description" },
                 { targets:[6],data: "date_delivered" },
+                { targets:[7],data: "order_status" }, 
                 {
-                    targets:[7],
+                    targets:[8],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
@@ -956,7 +958,7 @@ $(document).ready(function(){
                         return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                     }
                 },
-                { targets:[8],data: "dr_invoice_id", visible:false }
+                { targets:[9],data: "dr_invoice_id", visible:false }
             ]
         });
 
@@ -1666,6 +1668,8 @@ $(document).ready(function(){
                  $('#modal_confirmation').modal('show');
             }
         });
+
+
         $('#tbl_items tbody').on('change','select',function(){
         if(changetxn == 'active'){
         var row=$(this).closest('tr');
@@ -1718,7 +1722,9 @@ $(document).ready(function(){
         $('#btn_yes').click(function(){
             removePurchaseInvoice().done(function(response){
                 showNotification(response);
-                dt.row(_selectRowObj).remove().draw();            
+                if(response.stat=="success"){
+                    dt.row(_selectRowObj).remove().draw();  
+                }
             });
         });
 
