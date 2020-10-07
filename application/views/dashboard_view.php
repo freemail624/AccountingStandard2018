@@ -369,28 +369,18 @@
                                                 <div class="row" style="margin-top: 20px;">
                                                     <div class="col-xs-12 col-sm-6">
                                                         <div class="data-container text-center graph-container">
-                                                            <canvas id="salesChart"></canvas>
-                                                            <span>Income (Last Year) vs Income (Current Year)</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xs-12 col-sm-6">
-                                                        <div class="data-container text-center graph-container">
                                                             <canvas id="testChart"></canvas>
                                                             <span>Income vs Expense (Current Year)</span>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="row" style="margin-top: 20px;">
                                                     <div class="col-xs-12 col-sm-6">
                                                         <div class="data-container text-center graph-container">
-                                                        <label style="font-weight: normal;" class="pull-left"><i><b>Expense Graph</b></i></label>
-                                         
-                                                        <label style="font-weight: normal;" class="pull-right">Based on Disbursement Report</label>
-                                                            <canvas id="ExpenseChart"></canvas>
-                                                            <span>Month</span>
+                                                            <canvas id="salesChart"></canvas>
+                                                            <span>Income (Last Year) vs Income (Current Year)</span>
                                                         </div>
                                                     </div>
-
+                                                </div>
+                                                <div class="row" style="margin-top: 20px;">
                                                     <div class="col-xs-12 col-sm-6">
                                                         <div class="data-container text-center graph-container">
                                                         <label style="font-weight: normal;" class="pull-left"><i><b>Sales Report</b></i></label>
@@ -400,8 +390,15 @@
                                                             <span style="font-weight: bolder;">Month</span>
                                                         </div>
                                                     </div>
-                                                    
-
+                                                    <div class="col-xs-12 col-sm-6">
+                                                        <div class="data-container text-center graph-container">
+                                                        <label style="font-weight: normal;" class="pull-left"><i><b>Expense Graph</b></i></label>
+                                         
+                                                        <label style="font-weight: normal;" class="pull-right">Based on Disbursement Report</label>
+                                                            <canvas id="ExpenseChart"></canvas>
+                                                            <span>Month</span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <div class="row" style="margin-top: 20px;">
                                                     <div class="col-xs-12 col-sm-8 <?php echo (in_array('7-1',$this->session->user_rights)?'':'hidden'); ?>">
