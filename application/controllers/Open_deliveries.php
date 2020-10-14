@@ -51,15 +51,11 @@ class Open_deliveries extends CORE_Controller
                 $company_info=$m_company->get_list();
                 $data['company_info']=$company_info[0];
 
+                $m_deliveries=$this->Delivery_invoice_model;
+                $data['suppliers']=$m_deliveries->get_dr_balance_qty(null,1);
+                $data['items']=$m_deliveries->get_dr_balance_qty();
 
-
-                $m_sales=$this->Sales_order_item_model;
-                $data['sales']=$m_sales->get_list_open_sales();
-
-                $data['item']=$m_sales->get_so_no_of_open_sales();
-
-
-                $this->load->view('template/open_sales_report',$data);
+                $this->load->view('template/open_deliveries_report',$data);
                 break;
 
                 case'export';
@@ -68,22 +64,21 @@ class Open_deliveries extends CORE_Controller
                 $company_info=$m_company->get_list();
                 $company_info=$company_info[0];
 
-                $m_sales=$this->Sales_order_item_model;
-                $sales=$m_sales->get_list_open_sales();
-
-                $item=$m_sales->get_so_no_of_open_sales();
+                $m_deliveries=$this->Delivery_invoice_model;
+                $suppliers=$m_deliveries->get_dr_balance_qty(null,1);
+                $items=$m_deliveries->get_dr_balance_qty();
 
                 $excel->setActiveSheetIndex(0);
 
-                $excel->getActiveSheet()->setTitle('Open Sales');
+                $excel->getActiveSheet()->setTitle('Open Deliveries');
 
                 $excel->getActiveSheet()->getColumnDimension('A')->setWidth(25);
                 $excel->getActiveSheet()->getColumnDimension('B')->setWidth(25);
                 $excel->getActiveSheet()->getColumnDimension('C')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('D')->setWidth(50);
-                $excel->getActiveSheet()->getColumnDimension('E')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('F')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
+                $excel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
+                $excel->getActiveSheet()->getColumnDimension('E')->setWidth(15);
+                $excel->getActiveSheet()->getColumnDimension('F')->setWidth(15);
+                $excel->getActiveSheet()->getColumnDimension('G')->setWidth(15);
 
                 $excel->getActiveSheet()->setCellValue('A1',$company_info->company_name)
                                         ->mergeCells('A1:D1')
@@ -112,14 +107,14 @@ class Open_deliveries extends CORE_Controller
                             ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-                    $excel->getActiveSheet()->setCellValue('A6','OPEN SALES')
+                    $excel->getActiveSheet()->setCellValue('A6','OPEN DELIVERIES')
                                             ->mergeCells('A6:G6')
                                             ->getStyle('A6:G6')->getFont()->setBold(True)
                                             ->setSize(14);
 
                 $i=8;
 
-                foreach ($item as $batchNo) {
+                foreach ($suppliers as $supplier) {
 
                 $excel->getActiveSheet()
                     ->getStyle('A'.$i.':'.'G'.$i)
@@ -129,43 +124,76 @@ class Open_deliveries extends CORE_Controller
                     ->setARGB('FF9900');
 
                 $excel->getActiveSheet()->mergeCells('A'.$i.':'.'G'.$i);
-                $excel->getActiveSheet()->setCellValue('A'.$i,'PO #: '.$batchNo->so_no)
+                $excel->getActiveSheet()->setCellValue('A'.$i,'Supplier: '.$supplier->supplier_name)
                                         ->getStyle('A'.$i)->getFont()->setBold(TRUE);
                 $i++;
                                          
-                $excel->getActiveSheet()->setCellValue('A'.$i,'Sales Order No')
+                $excel->getActiveSheet()->setCellValue('A'.$i,'Purchase Invoice No')
                                         ->getStyle('A'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('B'.$i,'Date')
+                $excel->getActiveSheet()->setCellValue('B'.$i,'Department')
                                         ->getStyle('B'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('C'.$i,'Product Code')
+                $excel->getActiveSheet()->setCellValue('C'.$i,'PO #')
                                         ->getStyle('C'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('D'.$i,'Product Description')
+                $excel->getActiveSheet()->setCellValue('D'.$i,'Date Delivered')
                                         ->getStyle('D'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('E'.$i,'Order Qty')
+                $excel->getActiveSheet()->setCellValue('E'.$i,'Total Amount')
                                         ->getStyle('E'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('F'.$i,'Delivered Qty')
+                $excel->getActiveSheet()->setCellValue('F'.$i,'Paid Amount')
                                         ->getStyle('F'.$i)->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('G'.$i,'Balance')
                                         ->getStyle('G'.$i)->getFont()->setBold(TRUE);
 
+                $excel->getActiveSheet()
+                ->getStyle('E'.$i)
+                ->getAlignment()
+                ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT); 
+
+                $excel->getActiveSheet()
+                ->getStyle('F'.$i)
+                ->getAlignment()
+                ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT); 
+
+                $excel->getActiveSheet()
+                ->getStyle('G'.$i)
+                ->getAlignment()
+                ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
                 $i++;
 
-                    foreach ($sales as $so) {    
-                        if ($batchNo->so_no == $so->so_no) { 
-                            $excel->getActiveSheet()->setCellValue('A'.$i,$so->so_no);
-                            $excel->getActiveSheet()->setCellValue('B'.$i,$so->last_invoice_date);
-                            $excel->getActiveSheet()->setCellValue('C'.$i,$so->product_code);
-                            $excel->getActiveSheet()->setCellValue('D'.$i,$so->product_desc);
-                            $excel->getActiveSheet()->setCellValue('E'.$i,$so->SoQtyTotal);
-                            $excel->getActiveSheet()->setCellValue('F'.$i,$so->SoQtyDelivered);
-                            $excel->getActiveSheet()->setCellValue('G'.$i,$so->SoQtyBalance);
-                            $i++;                                                                                                                                                                                                                                  
+                    foreach ($items as $item) {    
+                        if ($item->supplier_id == $supplier->supplier_id) { 
+                            $excel->getActiveSheet()->setCellValue('A'.$i,$item->dr_invoice_no);
+                            $excel->getActiveSheet()->setCellValue('B'.$i,$item->department_name);
+                            $excel->getActiveSheet()->setCellValue('C'.$i,$item->po_no);
+                            $excel->getActiveSheet()->setCellValue('D'.$i,$item->date_delivered);
+                            $excel->getActiveSheet()->setCellValue('E'.$i,number_format($item->total_dr_amount,2));
+                            $excel->getActiveSheet()->setCellValue('F'.$i,number_format($item->total_cv_amount,2));
+                            $excel->getActiveSheet()->setCellValue('G'.$i,number_format($item->Balance,2));
+                                                                                                                    
+                            $excel->getActiveSheet()->getStyle('E'.$i.':G'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+
+                            $excel->getActiveSheet()
+                            ->getStyle('E'.$i)
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT); 
+
+                            $excel->getActiveSheet()
+                            ->getStyle('F'.$i)
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT); 
+
+                            $excel->getActiveSheet()
+                            ->getStyle('G'.$i)
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);                                                         
+
+                            $i++; 
                         }
                     }         
                 }
 
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                header('Content-Disposition: attachment;filename='."Open Sales Report.xlsx".'');
+                header('Content-Disposition: attachment;filename='."Open Deliveries Report.xlsx".'');
                 header('Cache-Control: max-age=0');
                 // If you're serving to IE 9, then the following may be needed
                 header('Cache-Control: max-age=1');
@@ -190,23 +218,22 @@ class Open_deliveries extends CORE_Controller
                 $company_info=$m_company->get_list();
                 $company_info=$company_info[0];
 
-                $m_sales=$this->Sales_order_item_model;
-                $sales=$m_sales->get_list_open_sales();
-
-                $item=$m_sales->get_so_no_of_open_sales();
+                $m_deliveries=$this->Delivery_invoice_model;
+                $suppliers=$m_deliveries->get_dr_balance_qty(null,1);
+                $items=$m_deliveries->get_dr_balance_qty();
 
                 ob_start();
                 $excel->setActiveSheetIndex(0);
 
-                $excel->getActiveSheet()->setTitle('Open Sales');
+                $excel->getActiveSheet()->setTitle('Open Deliveries');
 
                 $excel->getActiveSheet()->getColumnDimension('A')->setWidth(25);
                 $excel->getActiveSheet()->getColumnDimension('B')->setWidth(25);
                 $excel->getActiveSheet()->getColumnDimension('C')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('D')->setWidth(50);
-                $excel->getActiveSheet()->getColumnDimension('E')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('F')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
+                $excel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
+                $excel->getActiveSheet()->getColumnDimension('E')->setWidth(15);
+                $excel->getActiveSheet()->getColumnDimension('F')->setWidth(15);
+                $excel->getActiveSheet()->getColumnDimension('G')->setWidth(15);
 
                 $excel->getActiveSheet()->setCellValue('A1',$company_info->company_name)
                                         ->mergeCells('A1:D1')
@@ -235,14 +262,14 @@ class Open_deliveries extends CORE_Controller
                             ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-                    $excel->getActiveSheet()->setCellValue('A6','OPEN SALES')
+                    $excel->getActiveSheet()->setCellValue('A6','OPEN DELIVERIES')
                                             ->mergeCells('A6:G6')
                                             ->getStyle('A6:G6')->getFont()->setBold(True)
                                             ->setSize(14);
 
                 $i=8;
 
-                foreach ($item as $batchNo) {
+                foreach ($suppliers as $supplier) {
 
                 $excel->getActiveSheet()
                     ->getStyle('A'.$i.':'.'G'.$i)
@@ -252,43 +279,76 @@ class Open_deliveries extends CORE_Controller
                     ->setARGB('FF9900');
 
                 $excel->getActiveSheet()->mergeCells('A'.$i.':'.'G'.$i);
-                $excel->getActiveSheet()->setCellValue('A'.$i,'PO #: '.$batchNo->so_no)
+                $excel->getActiveSheet()->setCellValue('A'.$i,'Supplier: '.$supplier->supplier_name)
                                         ->getStyle('A'.$i)->getFont()->setBold(TRUE);
                 $i++;
                                          
-                $excel->getActiveSheet()->setCellValue('A'.$i,'Sales Order No')
+                $excel->getActiveSheet()->setCellValue('A'.$i,'Purchase Invoice No')
                                         ->getStyle('A'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('B'.$i,'Date')
+                $excel->getActiveSheet()->setCellValue('B'.$i,'Department')
                                         ->getStyle('B'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('C'.$i,'Product Code')
+                $excel->getActiveSheet()->setCellValue('C'.$i,'PO #')
                                         ->getStyle('C'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('D'.$i,'Product Description')
+                $excel->getActiveSheet()->setCellValue('D'.$i,'Date Delivered')
                                         ->getStyle('D'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('E'.$i,'Order Qty')
+                $excel->getActiveSheet()->setCellValue('E'.$i,'Total Amount')
                                         ->getStyle('E'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('F'.$i,'Delivered Qty')
+                $excel->getActiveSheet()->setCellValue('F'.$i,'Paid Amount')
                                         ->getStyle('F'.$i)->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('G'.$i,'Balance')
                                         ->getStyle('G'.$i)->getFont()->setBold(TRUE);
 
+                $excel->getActiveSheet()
+                ->getStyle('E'.$i)
+                ->getAlignment()
+                ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT); 
+
+                $excel->getActiveSheet()
+                ->getStyle('F'.$i)
+                ->getAlignment()
+                ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT); 
+
+                $excel->getActiveSheet()
+                ->getStyle('G'.$i)
+                ->getAlignment()
+                ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
                 $i++;
 
-                    foreach ($sales as $so) {    
-                        if ($batchNo->so_no == $so->so_no) { 
-                            $excel->getActiveSheet()->setCellValue('A'.$i,$so->so_no);
-                            $excel->getActiveSheet()->setCellValue('B'.$i,$so->last_invoice_date);
-                            $excel->getActiveSheet()->setCellValue('C'.$i,$so->product_code);
-                            $excel->getActiveSheet()->setCellValue('D'.$i,$so->product_desc);
-                            $excel->getActiveSheet()->setCellValue('E'.$i,$so->SoQtyTotal);
-                            $excel->getActiveSheet()->setCellValue('F'.$i,$so->SoQtyDelivered);
-                            $excel->getActiveSheet()->setCellValue('G'.$i,$so->SoQtyBalance);
-                            $i++;                                                                                                                                                                                                                                  
+                    foreach ($items as $item) {    
+                        if ($item->supplier_id == $supplier->supplier_id) { 
+                            $excel->getActiveSheet()->setCellValue('A'.$i,$item->dr_invoice_no);
+                            $excel->getActiveSheet()->setCellValue('B'.$i,$item->department_name);
+                            $excel->getActiveSheet()->setCellValue('C'.$i,$item->po_no);
+                            $excel->getActiveSheet()->setCellValue('D'.$i,$item->date_delivered);
+                            $excel->getActiveSheet()->setCellValue('E'.$i,number_format($item->total_dr_amount,2));
+                            $excel->getActiveSheet()->setCellValue('F'.$i,number_format($item->total_cv_amount,2));
+                            $excel->getActiveSheet()->setCellValue('G'.$i,number_format($item->Balance,2));
+                                                                                                                    
+                            $excel->getActiveSheet()->getStyle('E'.$i.':G'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+
+                            $excel->getActiveSheet()
+                            ->getStyle('E'.$i)
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT); 
+
+                            $excel->getActiveSheet()
+                            ->getStyle('F'.$i)
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT); 
+
+                            $excel->getActiveSheet()
+                            ->getStyle('G'.$i)
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);                                                         
+
+                            $i++; 
                         }
                     }         
                 }
 
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                header('Content-Disposition: attachment;filename='."Open Sales Report.xlsx".'');
+                header('Content-Disposition: attachment;filename='."Open Deliveries Report.xlsx".'');
                 header('Cache-Control: max-age=0');
                 // If you're serving to IE 9, then the following may be needed
                 header('Cache-Control: max-age=1');
@@ -303,7 +363,7 @@ class Open_deliveries extends CORE_Controller
                 $objWriter->save('php://output');      
                 $data = ob_get_clean();
 
-                            $file_name='Open Sales Report '.date('Y-m-d h:i:A', now());
+                            $file_name='Open Deliveries Report '.date('Y-m-d h:i:A', now());
                             $excelFilePath = $file_name.".xlsx"; //generate filename base on id
                             //download it.
                             // Set SMTP Configuration

@@ -311,11 +311,11 @@ $(document).ready(function(){
        var bindEventHandlers=function(){
 
         $('#btn_print').click(function(){
-            window.open('Open_sales/transaction/report');
+            window.open('Open_deliveries/transaction/report');
         });
 
         $('#btn_export').on('click', function() {
-            window.open('Open_sales/transaction/export','_self');
+            window.open('Open_deliveries/transaction/export','_self');
         });
 
         $('#btn_email').on('click', function() {
@@ -326,7 +326,7 @@ $(document).ready(function(){
             $.ajax({
                 "dataType":"json",
                 "type":"POST",
-                "url":'Open_sales/transaction/email',
+                "url":'Open_deliveries/transaction/email',
                 "beforeSend": showSpinningProgress(btn)
             }).done(function(response){
                 showNotification(response);
