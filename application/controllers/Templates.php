@@ -112,6 +112,7 @@ class Templates extends CORE_Controller {
         $this->load->model('Cash_vouchers_accounts_model');
 
         $this->load->model('Tax_code_model');
+        $this->load->model('Book_type_model');
 
         $this->load->library('M_pdf');
         $this->load->library('excel');
@@ -3170,6 +3171,64 @@ class Templates extends CORE_Controller {
 
 
                 break;
+
+            // case 'operating-expense':
+            //     $type=$this->input->get('type',TRUE);
+            //     $start=$this->input->get('start',TRUE);
+            //     $end=$this->input->get('end',TRUE);
+            //     $book_type_id=$this->input->get('bookid',TRUE);
+
+            //     $book = $this->Book_type_model->get_list($book_type_id);
+            //     $book_type = $book[0]->book_type;
+
+            //     $sDate = date("Y-m-d",strtotime($start));
+            //     $eDate = date("Y-m-d",strtotime($end));
+            //     $operating_expense_id = 6;
+
+            //     $m_company=$this->Company_model;
+            //     $company=$m_company->get_list();
+                
+            //     $data['departments']=$this->Departments_model->get_department_orderedlist();
+            //     $data['accounts']=$this->Account_title_model->get_list(array("account_class_id"=>6,"is_deleted"=>FALSE,"is_active"=>TRUE));
+            //     $data['items']=$this->Journal_info_model->get_operating_expense($book_type,$sDate,$eDate,$operating_expense_id);
+
+            //     $data['company_info']=$company[0];
+            //     $data['book_type_name']=$book[0]->book_type_name;
+
+            //     $data['start']=date("m/d/Y",strtotime($start));
+            //     $data['end']=date("m/d/Y",strtotime($end));
+
+            //     //download pdf
+            //     /*if($type=='pdf'){
+            //         $file_name=date('Y-m-d');
+            //         $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+            //         $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+            //         $content=$this->load->view('template/income_statement_report',$data,TRUE);
+            //         $pdf->setFooter('{PAGENO}');
+            //         $pdf->WriteHTML($content);
+            //         //download it.
+            //         $pdf->Output($pdfFilePath,"D");
+            //     }
+
+            //     //preview on browser
+            //     if($type=='preview'){
+            //         $file_name=date('Y-m-d');
+            //         $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+            //         $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+            //         $content=$this->load->view('template/income_statement_report',$data,TRUE);
+            //         $pdf->setFooter('{PAGENO}');
+            //         $pdf->WriteHTML($content);
+            //         //download it.
+            //         $pdf->Output();
+            //     }*/
+
+            //     if($type==null|$type=='preview'){
+            //         $this->load->view('template/operating_expenses_report',$data);
+            //     }
+
+
+            //     break;
+
 
             case 'comparative-income-statement':
                 $type=$this->input->get('type',TRUE);

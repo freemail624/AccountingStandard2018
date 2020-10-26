@@ -20,6 +20,18 @@ class Departments_model extends CORE_Model {
         return $this->db->query($sql)->result();
     }
 
+    function get_department_orderedlist($department_id=null) {
+        $sql="  SELECT
+                  a.*
+                FROM
+                  departments as a
+                WHERE
+                    a.is_deleted=FALSE AND a.is_active=TRUE
+                ".($department_id==null?"":" AND a.department_id=$department_id")."
+                ORDER BY a.department_id ASC
+            ";
+        return $this->db->query($sql)->result();
+    }
 
     function create_default_department(){
 

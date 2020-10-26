@@ -447,7 +447,6 @@
                         <tbody>
                         <tr>
                             <td>
-
                                 <select name="accounts[]" class="selectpicker show-tick form-control selectpicker_accounts" data-live-search="true" >
                                     <?php $i=0; foreach($accounts as $account){ ?>
                                         <option value='<?php echo $account->account_id; ?>' <?php echo ($i==0?'':''); ?>><?php echo $account->account_title; ?></option>

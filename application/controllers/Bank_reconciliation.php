@@ -16,7 +16,10 @@
 					'Bank_reconciliation_model',
 					'Users_model',
 					'Company_model',
-					'Bank_reconciliation_details_model'
+					'Bank_reconciliation_details_model',
+					'Months_model',
+					'Bank_statement_model',
+					'Bank_statement_item_model'
 				)
 			);
 		}
@@ -31,6 +34,7 @@
 	        $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', true);
         	$data['check_types']=$this->Check_types_model->get_list('is_deleted=FALSE');
 	        $data['account_titles']=$this->Account_title_model->get_list('is_active=TRUE AND is_deleted=FALSE');
+	        $data['months']=$this->Months_model->get_list();
 	        $data['title'] = 'Bank Reconciliation';
 	        (in_array('11-1',$this->session->user_rights)? 
 	        $this->load->view('bank_reconciliation_view', $data)
@@ -56,8 +60,56 @@
 				case 'reconcile-check':
 					$m_bankr = $this->Bank_reconciliation_model;
 					$m_bank_details = $this->Bank_reconciliation_details_model;
+					$m_bank_statement = $this->Bank_statement_model;
+					$m_bank_statement_items = $this->Bank_statement_item_model;
+
+					$month_id = $this->input->post('month_id', TRUE);
+					$check_month = $m_bank_statement->get_list(array('month_id'=>$month_id));
+
+					if(count($check_month) > 0){
+						$response['title'] = 'Error!';
+	                    $response['stat'] = 'error';
+	                    $response['msg'] = 'Bank Statement Month is already existed!';
+	                    echo json_encode($response);
+	                    exit();
+					}
 
 					$m_bankr->begin();
+
+					// ## Saving Bank Statement Entries
+					$opening_balance = $this->input->post('opening_balance',TRUE);
+					$closing_balance = $this->input->post('closing_balance',TRUE);
+
+					$general_ledger_date = date('Y-m-d',strtotime($this->input->post('general_ledger_date',TRUE)));
+					$value_date = date('Y-m-d',strtotime($this->input->post('value_date',TRUE)));
+					$cheque_no = $this->input->post('cheque_no',TRUE);
+					$dr_amount = $this->input->post('dr_amount',TRUE);
+					$cr_amount = $this->input->post('cr_amount',TRUE);
+					$balance_amount = $this->input->post('balance_amount', TRUE);
+					$memo = $this->input->post('memo',TRUE);
+
+					$m_bank_statement->month_id = $month_id;
+					$m_bank_statement->year = date('Y');
+					$m_bank_statement->account_id=$this->input->post('account_id',TRUE);
+					$m_bank_statement->opening_balance = $this->get_numeric_value($opening_balance);
+					$m_bank_statement->closing_balance = $this->get_numeric_value($closing_balance);
+					$m_bank_statement->save();
+
+					$bank_statement_id = $m_bank_statement->last_insert_id();
+
+					for ($i=0; $i < count($balance_amount); $i++) { 
+						$m_bank_statement_items->bank_statement_id = $bank_statement_id;
+						$m_bank_statement_items->general_ledger_date = $general_ledger_date[$i];
+						$m_bank_statement_items->value_date = $value_date[$i];
+						$m_bank_statement_items->check_no = $cheque_no[$i];
+						$m_bank_statement_items->dr_amount = $this->get_numeric_value($dr_amount[$i]);
+						$m_bank_statement_items->cr_amount = $this->get_numeric_value($cr_amount[$i]);
+						$m_bank_statement_items->balance_amount = $this->get_numeric_value($balance_amount[$i]);
+						$m_bank_statement_items->remarks = $remarks[$i];
+						$m_bank_statement_items->save();
+					}
+
+
 					$m_bankr->set('date_reconciled','NOW()');
 					$m_bankr->reconciled_by=$this->session->user_id;
 					$m_bankr->account_id=$this->input->post('account_id',TRUE);
@@ -76,6 +128,7 @@
 					$m_bankr->journal_other_deductions=$this->get_numeric_value($this->input->post('journal_other_deductions',TRUE));
 					$m_bankr->bank_other_additions=$this->get_numeric_value($this->input->post('bank_other_additions',TRUE));
 					$m_bankr->bank_other_deductions=$this->get_numeric_value($this->input->post('bank_other_deductions',TRUE));
+					$m_bankr->bank_statement_id = $bank_statement_id;
 					$m_bankr->save();
 
 					$bank_recon_id = $m_bankr->last_insert_id();
@@ -104,6 +157,24 @@
 
 	                    echo json_encode($response);
 	                }
+					break;
+
+				case 'get-statement-entries':
+					$this->load->view('template/statement_entries');
+					break;
+
+				case 'get_previous_balance':
+					$m_bank_statement = $this->Bank_statement_model;
+
+					$month_id = $this->input->post('month_id',TRUE);
+					$account_id = $this->input->post('account_id',TRUE);
+
+					if($account_id == null  || ""){ $account_id=0; }
+
+					$year = date('Y');
+
+					$response['data'] = $m_bank_statement->get_prev_balance($month_id,$year,$account_id);
+					echo json_encode($response);
 					break;
 
 				case 'get-history':

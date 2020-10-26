@@ -62,7 +62,8 @@
 				    m.quarter,
 				    s.*,
 				    tc.atc as atc,
-				    tc.description as remarks
+				    tc.description as remarks,
+				    tc.tax_rate as tax_rate
 				FROM
 				    form_2307 
 				    LEFT JOIN journal_info ji ON ji.journal_id = form_2307.journal_id
@@ -120,5 +121,80 @@
           ";
             return $this->db->query($sql)->result();
     	}
+
+
+    	function get_creditable_input_tax($department_id='all',$month=null,$year,$account_id){
+    		$sql="SELECT 
+				    main.*,
+    				(main.gross_taxable - main.input_tax) as net_vat
+				FROM
+				    (SELECT 
+				        x.*, (dr_amount + cr_amount) AS input_tax
+				    FROM
+				        (SELECT 
+				        ji.journal_id,
+				            DATE_FORMAT(ji.date_txn, '%m/%d/%Y') AS date_txn,
+				            ji.txn_no,
+				            ji.department_id,
+				            ji.supplier_id,
+				            ji.remarks,
+				            ji.book_type,
+				            suppliers.tin_no,
+				            suppliers.supplier_name,
+				            suppliers.address,
+				            CONCAT(ji.ref_no, ' ', ji.or_no) AS ref_no,
+				            departments.department_name,
+				            COALESCE((SELECT 
+				                    SUM(accounts.dr_amount)
+				                FROM
+				                    journal_accounts accounts
+				                WHERE
+				                    accounts.journal_id = ji.journal_id), 0) AS gross_taxable,
+				            COALESCE((SELECT 
+				                    SUM(accounts.dr_amount)
+				                FROM
+				                    journal_accounts accounts
+				                WHERE
+				                    accounts.journal_id = ji.journal_id
+				                        AND accounts.account_id = $account_id), 0) AS dr_amount,
+				            COALESCE((SELECT 
+				                    SUM(accounts.cr_amount)
+				                FROM
+				                    journal_accounts accounts
+				                WHERE
+				                    accounts.journal_id = ji.journal_id
+				                        AND accounts.account_id = $account_id), 0) AS cr_amount,
+				            tax_code.atc,
+				            tax_code.tax_rate,
+				            tax_code.description,
+				            form_2307.deducted_amount
+				    FROM
+				        journal_info ji
+				    LEFT JOIN suppliers ON suppliers.supplier_id = ji.supplier_id
+				    LEFT JOIN departments ON departments.department_id = ji.department_id
+				    LEFT JOIN (SELECT 
+				        form_2307.atc_id,
+				            form_2307.is_applied,
+				            form_2307.journal_id,
+				            form_2307.deducted_amount
+				    FROM
+				        form_2307
+				    WHERE
+				        form_2307.is_applied = TRUE) AS form_2307 ON form_2307.journal_id = ji.journal_id
+				    LEFT JOIN tax_code ON tax_code.atc_id = form_2307.atc_id
+				    WHERE
+				        ji.is_active = TRUE
+				            AND ji.is_deleted = FALSE
+				            AND ji.book_type = 'CDJ'
+				            AND YEAR(ji.date_txn) = $year
+				        	".($month==null?"":" AND MONTH(ji.date_txn) = $month")."
+				        	".($department_id=='all'?"":" AND ji.department_id = $department_id")."
+				    GROUP BY ji.journal_id) AS x) main
+				WHERE
+				    main.input_tax > 0
+				    ORDER BY main.date_txn ASC";
+            return $this->db->query($sql)->result();
+    	}
+
 	}
 ?>

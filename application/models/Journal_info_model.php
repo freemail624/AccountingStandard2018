@@ -39,6 +39,18 @@ class Journal_info_model extends CORE_Model{
             return $this->db->query($sql)->result();
     }
 
+    function get_operating_expense($book_type=null,$sDate,$eDate,$operating_expense_id) 
+    {
+        $query = $this->db->query("CALL operating_expense_list('$book_type', '$sDate', '$eDate', '$operating_expense_id')");
+        return $query->result();        
+    }
+
+    function get_operating_summary($sDate,$eDate,$operating_expense_id) 
+    {
+        $query = $this->db->query("CALL operating_expense_summary('$sDate', '$eDate', '$operating_expense_id')");
+        return $query->result();        
+    }    
+
     function get_supplier_subsidiary($supplier_id, $account_id, $startDate, $endDate) {
         $this->db->query("SET @balance:=0.00;");
         $sql="SELECT m.*,

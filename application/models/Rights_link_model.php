@@ -104,7 +104,10 @@ class Rights_link_model extends CORE_Model{
                                           (118,'7','7-3','Temporary Vouchers for Approval'),
                                           (119,'7','7-4','Purchase Order for Accounting Approval'),
                                           (120,'4','4-8','Tax Code Management'),
-                                          (121,'12','12-8','Open Deliveries')
+                                          (121,'12','12-8','Open Deliveries'),
+                                          (122,'17','17-4','Schedule of Creditable Input Tax'),
+                                          (123,'9','9-27','Open Deliveries')
+
 
                                           ON DUPLICATE KEY UPDATE
                                           rights_links.parent_code=VALUES(rights_links.parent_code),

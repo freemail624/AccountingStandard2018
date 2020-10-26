@@ -164,6 +164,9 @@
                                         <li class="<?php echo (in_array('9-22',$this->session->user_rights)?'':'hidden'); ?>"><a href="Income_statement_field">Income Statement (Costing)</a></li>
                                         <li class="<?php echo (in_array('9-9',$this->session->user_rights)?'':'hidden'); ?>"><a href="Annual_income_statement">Annual Income Report</a></li>
                                         <li class="<?php echo (in_array('9-16',$this->session->user_rights)?'':'hidden'); ?>"><a href="Comparative_income">Comparative Income Report</a></li>
+
+                                        <li class="<?php echo (in_array('9-27',$this->session->user_rights)?'':'hidden'); ?>"><a href="Operating_expense">Operating Expense</a></li>
+                                        
                                         <li class="<?php echo (in_array('9-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Trial_balance">Trial Balance</a></li>
                                         <li class="<?php echo (in_array('9-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Balance_sheet">Balance Sheet</a></li>
                                     </ul>
@@ -195,6 +198,7 @@
                         </li>
                         <li class="<?php echo (in_array('17',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-pie-chart"></i><span>BIR Forms</span></a>
                             <ul class="acc-menu">
+                                <li class="<?php echo (in_array('17-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Schedule_creditable_input_tax">Creditable Input Tax</a></li> 
                                 <li class="<?php echo (in_array('17-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Certificate_of_creditable_tax">2307</a></li> 
                                 <li class="<?php echo (in_array('17-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Monthly_percentage_tax_return">2551M</a></li> 
                                 <li class="<?php echo (in_array('17-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Quarterly_percentage_tax_return">2551Q</a></li> 

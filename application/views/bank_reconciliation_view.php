@@ -124,6 +124,16 @@
         tr.details td.details-control {
             background: url('assets/img/Folder_Opened.png') no-repeat center center;
         }
+        .numeric{
+            text-align: right;
+        }
+        .disable-select {
+            user-select: none; /* supported by Chrome and Opera */
+           -webkit-user-select: none; /* Safari */
+           -khtml-user-select: none; /* Konqueror HTML */
+           -moz-user-select: none; /* Firefox */
+           -ms-user-select: none; /* Internet Explorer/Edge */
+        }
     </style>
     <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
 
@@ -155,8 +165,13 @@
                                 <div class="row">
                                     <div class="container-fluid">
                                         <ul class="nav nav-tabs">
-                                          <li class="active text-center"><a data-toggle="tab" href="#outstanding"><b>Step 1:</b> Outstanding Check</a></li>
-                                          <li id="btn_step_2" class="text-center"><a data-toggle="tab" href="#bank_reconciliation_tab"><b>Step 2:</b> Bank Reconciliation</a></li>
+                                          <li class="text-center active"><a data-toggle="tab" href="#outstanding"><b>Step 1:</b> Outstanding Check</a></li>
+
+                                          <li id="btn_step_2">
+                                              <a data-toggle="tab" href="#bank_statement_tab"><b>Step 2:</b> Bank Statement</a>
+                                          </li>
+
+                                          <li id="btn_step_3" class="text-center"><a data-toggle="tab" href="#bank_reconciliation_tab"><b>Step 3:</b> Bank Reconciliation</a></li>
                                         </ul>
                                         <div class="tab-content" style="background: transparent!important;">
                                           <div id="outstanding" class="tab-pane fade in active">
@@ -207,7 +222,7 @@
                                                                     <th>Ref #</th>
                                                                     <th align="right">Amount</th>
                                                                     <th width="7%">Outstanding</th>
-                                                                    <th width="7%">Good Check</th>
+                                                                    <th width="7%">Good Check / Released</th>
                                                                     <th width="7%">Default</th>
                                                                 </thead>
                                                                 <tbody></tbody>
@@ -218,6 +233,148 @@
                                                 </div>                                                                
                                                 </div>
                                           </div>
+                                          <div id="bank_statement_tab" class="tab-pane fade">
+                                            <div class="container-fluid" style="padding-top: 20px; padding-bottom: 20px;">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="col-md-4">
+                                                        <label>Month: </label><br/>
+                                                        <select class="form-control" name="month_id" id="month_id" style="width: 100%;">
+                                                            <?php 
+                                                            $active_month = date("m");
+                                                                foreach($months as $month){?>
+                                                                <option value="<?php echo $month->month_id; ?>" <?php if($month->month_id==$active_month){echo 'selected'; }?>>
+                                                                    <?php echo $month->month_name; ?>
+                                                                </option>
+                                                            <?php }?>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Opening Balance: </label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon">
+                                                                <i class="fa fa-code"></i>
+                                                            </span>
+                                                            <input type="text" name="opening_balance" id="opening_balance" class="numeric form-control text-right" data-error-msg="Opening balance is required!" >
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Closing Balance: </label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon">
+                                                                <i class="fa fa-code"></i>
+                                                            </span>
+                                                            <input type="text" name="closing_balance" id="closing_balance" class="form-control text-right" readonly>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                                <div class="row">
+                                                    <div class="container-fluid">
+                                                        <div class="col-xs-12">
+                                                        <div>
+                                                        <br/>
+                                                            <span style="float: left;"><strong><i class="fa fa-bars"></i> Bank Statement Entries</strong></span>
+
+                                                            <a id="btn_refresh" style="float: right;color: green;" class="disable-select">Refresh <i class="fa fa-refresh"></i> </a>
+
+                                                            <a id="btn_clear" style="float: right;margin-right: 20px;color: red;" class="disable-select">Clear <i class="fa fa-times-circle"></i> </a>
+                                                            <br />
+                                                            <hr />
+
+                                                            <div style="width: 100%;">
+                                                                <table id="tbl_entries" class="table-striped table">
+                                                                    <thead class="">
+                                                                    <tr>
+                                                                        <th width="10%">Date</th>
+                                                                        <th width="10%">Value Date</th>
+                                                                        <th width="10%">Cheque No.</th>
+                                                                        <th width="15%" style="text-align: right;">Withdrawal Amt. (Dr)</th>
+                                                                        <th width="15%" style="text-align: right;">Deposit (Cr)</th>
+                                                                        <th width="15%" style="text-align: right;">Balance</th>
+                                                                        <th width="15%">Narrative</th>
+                                                                        <th width="10%">Action</th>
+                                                                    </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                    <tr>
+                                                                    <td>
+                                                                        <input type="text" name="general_ledger_date[]" class="date-picker form-control" placeholder="mm/dd/yyyy">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="value_date[]" class="date-picker form-control" placeholder="mm/dd/yyyy">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="cheque_no[]" class="form-control">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="dr_amount[]" class="form-control numeric">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="cr_amount[]" class="form-control numeric">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="balance_amount[]" class="form-control numeric" readonly>
+                                                                    </td>
+
+                                                                    <td>
+                                                                        <input type="text" name="memo[]" class="form-control">
+                                                                    </td>
+                                                                        <td>
+                                                                            <button type="button" class="btn btn-default add_account"><i class="fa fa-plus-circle" style="color: green;"></i></button>
+                                                                            <button type="button" class="btn btn-default remove_account"><i class="fa fa-times-circle" style="color: red;"></i></button>
+                                                                        </td>
+                                                                    </tr>
+                                                                    </tbody>
+<!--                                                                     <tfoot>
+                                                                    <tr>
+                                                                        <td colspan="2" align="right"><strong>Total</strong></td>
+                                                                        <td align="right"><strong>0.00</strong></td>
+                                                                        <td align="right"><strong>0.00</strong></td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                    </tfoot> -->
+                                                                </table>
+
+                                                                <table id="table_hidden" class="hidden">
+                                                                <tr>
+                                                                    <td>
+                                                                        <input type="text" name="general_ledger_date[]" class="date-picker form-control" placeholder="mm/dd/yyyy">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="value_date[]" class="date-picker form-control" placeholder="mm/dd/yyyy">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="cheque_no[]" class="form-control">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="dr_amount[]" class="form-control numeric">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="cr_amount[]" class="form-control numeric">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="balance_amount[]" class="form-control numeric" readonly>
+                                                                    </td>
+
+                                                                    <td>
+                                                                        <input type="text" name="memo[]" class="form-control">
+                                                                    </td>
+                                                                        <td>
+                                                                            <button type="button" class="btn btn-default add_account"><i class="fa fa-plus-circle" style="color: green;"></i></button>
+                                                                            <button type="button" class="btn btn-default remove_account"><i class="fa fa-times-circle" style="color: red;"></i></button>
+                                                                        </td>
+                                                                    </tr>
+                                                                    </table>
+                                                            </div>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                          </div>                                          
                                           <div id="bank_reconciliation_tab" class="tab-pane fade">
                                             <div class="container-fluid" style="padding-top: 20px; padding-bottom: 20px;">
                                                 <div class="row">
@@ -312,8 +469,9 @@
                                                                 <b><span class="fa fa-bars"></span> BANK STATEMENT</b><hr>
                                                                 <strong>CURRENT BANK ACCOUNT</strong>
                                                                 <input type="text" class="form-control" name="current_bank_account" disabled>
+                                                                <br/>
                                                                 <strong>ACTUAL BALANCE</strong>
-                                                                <input type="text" class="form-control text-right numeric" name="actual_balance" value="0"><hr>
+                                                                <input type="text" class="form-control text-right numeric" name="actual_balance" value="0" readonly><hr>
                                                                 <h5><b>DEDUCT :</b></h5>
                                                                 <div class="row">
                                                                     <div class="col-sm-8">
@@ -350,7 +508,7 @@
                                                                     </div>
                                                                 </div>
                                                                 <br>
-                                                                <br>
+                                                                <br><br/>
                                                                 <hr>
                                                                 <div class="row">
                                                                     <div class="col-sm-8">
@@ -428,8 +586,14 @@
 
 $(document).ready(function(){
     var dt; var dtHistory;  var _cboAccounts;
-    var _checkNo; var dtBankReconData;
+    var _checkNo; var dtBankReconData; var _cboMonths;
+    var load_status=0;
 
+    var oTBJournal={
+        "dr" : "td:eq(3)",
+        "cr" : "td:eq(4)",
+        "bal" : "td:eq(5)"
+    };
 
     var initializeControls=function(){
         $('.date-picker').datepicker({
@@ -445,6 +609,10 @@ $(document).ready(function(){
             placeholder: 'Please Select Account'
         });
 
+        _cboMonths=$('#month_id').select2({
+            placeholder: 'Please Select Month'
+        });
+
         var data = _cboAccounts.select2('data');
         $('input[name="current_bank_account"]').val(data[0].text);
         $('input[name="current_bank_account"]').val('');
@@ -454,6 +622,7 @@ $(document).ready(function(){
         reinitializeHistory();
         reinitializeDataTable();
         reInitializeNumeric();
+
     }();
 
     function reinitializeHistory() {
@@ -591,12 +760,190 @@ $(document).ready(function(){
 
         });
 
+        var reInitializeDate = function(){
+
+            $('.date-picker').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true
+            });
+        };
+
         $('.numeric').on('keyup',function(){
             reComputeTotal();
             reInitializeNumeric();
         });
 
+        $('#tbl_entries').on('click','button.add_account',function(){
+            var row=$('#table_hidden').find('tr');
+            row.clone().insertBefore($(this).closest('tr'));
+            reInitializeNumeric();
+            reInitializeDate();
+        });
+
+        $('#tbl_entries').on('click','button.remove_account',function(){
+            var oRow=$('#tbl_entries > tbody tr');
+
+            if(oRow.length>1){
+                $(this).closest('tr').remove();
+                recomputeStatement();
+            }else{
+                showNotification({"title":"Error!","stat":"error","msg":"Sorry, you cannot remove all rows."});
+            }
+            // reComputeTotals($('#tbl_entries'));
+        });
+
+        $('#opening_balance').on("keyup", function(){
+
+            var opening_balance_amt = $(this).val();
+            $('#closing_balance').val(accounting.formatNumber(opening_balance_amt,2));
+
+        });
+
+        var recomputeStatement = function(){
+
+            var count = $('#tbl_entries > tbody').find('tr');
+            var opening_balance = accounting.unformat($('#opening_balance').val());
+
+            $(count.get().reverse()).each(function(index, value){
+                var bal = 0;
+                var cr = accounting.unformat($(this).find(oTBJournal.cr).find('input.numeric').val());
+                var dr = accounting.unformat($(this).find(oTBJournal.dr).find('input.numeric').val());
+                
+                if (index == 0){
+
+                    if(dr > cr){
+                        bal = opening_balance - dr;
+                    }else{
+                        bal = opening_balance + cr;
+                    }
+
+                }else{
+
+                var prev = $(this).next();
+                var row_bal = accounting.unformat(prev.find(oTBJournal.bal).find('input.numeric').val());
+
+                    if(dr > cr){
+                        bal = row_bal - dr;
+                    }else{
+                        bal = row_bal + cr;
+                    }
+
+                }
+
+
+                if(dr <= 0){ $(this).find(oTBJournal.dr).find('input.numeric').val(accounting.formatNumber(0,2)) }
+
+                if(cr <= 0){ $(this).find(oTBJournal.cr).find('input.numeric').val(accounting.formatNumber(0,2)) }
+
+                $(this).find(oTBJournal.bal).find('input.numeric').val(accounting.formatNumber(bal,2));
+
+            }); 
+
+            var closing_balance = $('#tbl_entries > tbody > tr:first').find(oTBJournal.bal).find('input.numeric').val();
+
+            $('#closing_balance').val(accounting.formatNumber(closing_balance,2));
+            // $('input[name="actual_balance"]').val(accounting.formatNumber(closing_balance,2));
+
+        };
+
+        var clearStatement = function(){
+            $('#opening_balance').val(accounting.formatNumber(0,2));
+            $('#tbl_entries > tbody').html("");
+            
+
+            $.ajax({
+                url: 'Bank_reconciliation/transaction/get-statement-entries',
+                type: "GET",
+                cache: false,
+                dataType: 'html',
+                processData: false,
+                contentType: false,
+                beforeSend: function () {
+                    $('#tbl_entries > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                }
+            }).done(function(response){
+                $('#tbl_entries > tbody').html(response);
+                reInitializeNumeric();
+                reInitializeDate();
+            });
+
+            recomputeStatement();
+        };
+
+
+        $('#btn_refresh').on('click', function(){
+            recomputeStatement();
+        });
+
+        $('#btn_clear').on('click', function(){
+            clearStatement();
+            get_prev_statement();
+        });        
+
+        var _oTblEntries=$('#tbl_entries > tbody');
+
+        _oTblEntries.on('change','input.numeric',function(){
+            var _oRow=$(this).closest('tr');
+            var opening_balance = accounting.unformat($('#opening_balance').val());
+
+            if(_oTblEntries.find(oTBJournal.dr).index()===$(this).closest('td').index()){ //if true, this is Debit amount
+                if(getFloat(_oRow.find(oTBJournal.dr).find('input.numeric').val())>0){
+                    _oRow.find(oTBJournal.cr).find('input.numeric').val('0.00');
+                }
+            }else{
+
+                if(getFloat(_oRow.find(oTBJournal.cr).find('input.numeric').val())>0) {
+                    _oRow.find(oTBJournal.dr).find('input.numeric').val('0.00');
+                }
+            }   
+
+            if (opening_balance == 0 || "" || null){
+                showNotification({title: 'Error!', msg: 'Opening Balance is required!', stat: 'error'});
+                
+                _oRow.find(oTBJournal.dr).find('input.numeric').val('');
+                _oRow.find(oTBJournal.cr).find('input.numeric').val('');
+
+                return false;
+
+            }else{
+                recomputeStatement();    
+            }
+
+
+        }); 
+
+        var get_prev_statement = function(){
+            prevBankStatement().done(function(response){
+                var opening_balance = 0;
+
+                if (response.data.length > 0){
+                    var data = response.data[0];
+                    opening_balance = data.closing_balance;
+                    load_status = 1;
+                }
+
+                $('#opening_balance').val(accounting.formatNumber(opening_balance,2));
+            });
+        };
+
         $('#btn_step_2').click(function(){
+
+            if (load_status == 0){
+                get_prev_statement();
+            }
+    
+        });
+
+        _cboMonths.on('change', function(){
+            get_prev_statement();
+            clearStatement();
+            recomputeStatement();
+        });        
+
+        $('#btn_step_3').click(function(){
             var total = 0;
 
             $(".outstanding:checked").each(function() {
@@ -613,6 +960,8 @@ $(document).ready(function(){
             });
 
             $('input[name="outstanding_checks"]').val(accounting.formatNumber(total,2));
+            $('input[name="actual_balance"]').val(accounting.formatNumber($('#closing_balance').val(),2));
+
             reComputeTotal();
             reInitializeNumeric();
         });
@@ -624,6 +973,7 @@ $(document).ready(function(){
 
         $('#cbo_accounts').on('change',function(){
             dt.destroy();
+            get_prev_statement();
             reinitializeDataTable();
         });
 
@@ -654,6 +1004,10 @@ $(document).ready(function(){
         } );
 
     }();
+
+    var getFloat=function(f){
+        return parseFloat(accounting.unformat(f));
+    };
 
     function reInitializeNumeric(){
         $('.numeric').autoNumeric('init', {mDec:2});
@@ -743,6 +1097,20 @@ $(document).ready(function(){
             "dataType":"json",
             "type":"POST",
             "url":"Bank_reconciliation/transaction/reconcile-check",
+            "data":_data,
+            "beforeSend": showSpinningProgress($('#btn_process'))
+        });
+    };
+
+    var prevBankStatement = function(){
+        var _data=$('#').serializeArray();
+        _data.push({name: "month_id", value: $('#month_id').val() });
+        _data.push({name: "account_id", value: $('#cbo_accounts').val() });
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Bank_reconciliation/transaction/get_previous_balance",
             "data":_data,
             "beforeSend": showSpinningProgress($('#btn_process'))
         });

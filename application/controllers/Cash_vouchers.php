@@ -398,7 +398,7 @@ class Cash_vouchers extends CORE_Controller
             $m_cash_voucher=$this->Cash_vouchers_model;
 
             if(count($m_cash_voucher->get_list(
-                        array('cv_info.dr_invoice_id'=>$id,'cv_info.is_active'=>TRUE,'cv_info.is_deleted'=>FALSE,'cv_info.cancelled_by_user'>0),
+                        array('cv_info.dr_invoice_id'=>$id,'cv_info.is_active'=>TRUE,'cv_info.is_deleted'=>FALSE),
                         'cv_info.cv_id'))==0 ){ //means no rr found on cash voucher that means this rr is still open
 
                 return 1;
@@ -417,6 +417,10 @@ class Cash_vouchers extends CORE_Controller
                 }
 
                 return $order_status_id;
+
+                // $m_dr=$this->Delivery_invoice_model;
+                // $row=$m_dr->get_dr_balance_qty($id);
+                // return ($row[0]->Balance>0?3:2);                    
 
             }
 

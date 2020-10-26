@@ -30,7 +30,7 @@ class Open_deliveries extends CORE_Controller
 
         $data['title'] = 'Open Deliveries';
         
-        (in_array('12-5',$this->session->user_rights)? 
+        (in_array('12-8',$this->session->user_rights)? 
         $this->load->view('open_deliveries_view', $data)
         :redirect(base_url('dashboard')));
 
