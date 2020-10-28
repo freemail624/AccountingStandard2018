@@ -259,11 +259,11 @@
                         <table id="tbl_billing_review" class="table table-striped" cellspacing="0" width="100%">
                             <thead class="">
                             <tr>
-                                <th></th>
-                                <th>Reference No</th>
-                                <th>Customer Name</th>
-                                <th>Transaction Date</th>
-                                <th width="20%">Remarks</th>
+                                <th width="5%"></th>
+                                <th width="10%">Reference No</th>
+                                <th width="30%">Customer Name</th>
+                                <th width="15%">Transaction Date</th>
+                                <th width="40%">Remarks</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -1118,7 +1118,7 @@
                             <button id="btn_save_customer" type="button" class="btn" style="background-color:#2ecc71;color:white;"><span class=""></span> Save</button>
                             <button id="btn_cancel_customer" type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
                         </div>
-                    </div><!---content---->
+                    </div><!---content-->
                 </div>
             </div>
 
@@ -1262,7 +1262,7 @@ $(document).ready(function(){
                 { targets:[1],data: "ref_no" },
                 { targets:[2],data: "customer_name" },
                 { targets:[3],data: "date_txn" },
-                { targets:[4],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(80)}
+                { targets:[4],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(50)}
             ],
             "initComplete": function(settings, json) {
                  if(this.api().data().length != 0){
