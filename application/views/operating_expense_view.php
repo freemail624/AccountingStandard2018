@@ -143,11 +143,17 @@
                                         </div>
                                         <div class="modal-footer">
                                             <div class="col-xs-12">
-                                                <button id="btn_export" class="btn btn-primary" title="All departments"><i class="fa fa-file-excel-o"></i> Export</button>
-                                                <button id="btn_export_all" class="btn btn-primary" title="All departments"><i class="fa fa-file-excel-o"></i> Export Summary </button>
+                                                <button id="btn_export" class="btn btn-primary" title="Export"><i class="fa fa-file-excel-o"></i> Export</button>
+                                                <button id="btn_export_all" class="btn btn-primary" title="Export Summary"><i class="fa fa-file-excel-o"></i> Export Summary </button>
 <!--                                                 <a href="Templates/layout/income-statement?type=&type=pdf" class="btn btn-primary" style="text-transform:none;font-family: tahoma;" ><i class="fa fa-file-pdf-o"></i> Download as PDF </a> -->
-                                                <button class="btn btn-primary" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_email" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Send to Email (All departments)" >
+                                                <button class="btn btn-primary" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_email" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Send to Email" >
                                                 <i class="fa fa-share"></i> Email </button>
+
+                                                <button class="btn btn-primary" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_email_summary" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Send to Email (Summary)" >
+                                                <i class="fa fa-share"></i> Email Summary</button>
+
+                                                
+
                                                 <button class="btn btn-red" data-dismiss="modal" style="text-transform: capitalize;">Close</button>
                                             </div>
 
@@ -215,21 +221,39 @@
         });        
 
         $('#btn_email').on('click', function() {
-        showNotification({title:"Sending!",stat:"info",msg:"Please wait for a few seconds."});
+            showNotification({title:"Sending!",stat:"info",msg:"Please wait for a few seconds."});
 
-        var btn=$(this);
-    
-        $.ajax({
-            "dataType":"json",
-            "type":"POST",
-            "url":"Income_statement/transaction/email-excel?start="+$('#dt_start_date').val()+'&end='+$('#dt_end_date').val(),
-            "beforeSend": showSpinningProgress(btn)
-        }).done(function(response){
-            showNotification(response);
-            showSpinningProgress(btn);
+            var btn=$(this);
+        
+            $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Operating_expense/transaction/email-excel?start="+$('#dt_start_date').val()+'&end='+$('#dt_end_date').val()+"&bookid="+_cboBookType.select2('val')+"&type=1",
+                "beforeSend": showSpinningProgress(btn)
+            }).done(function(response){
+                showNotification(response);
+                showSpinningProgress(btn);
 
+            });
         });
+
+        $('#btn_email_summary').on('click', function() {
+            showNotification({title:"Sending!",stat:"info",msg:"Please wait for a few seconds."});
+
+            var btn=$(this);
+        
+            $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Operating_expense/transaction/email-excel?start="+$('#dt_start_date').val()+'&end='+$('#dt_end_date').val()+"&bookid="+_cboBookType.select2('val')+"&type=0",
+                "beforeSend": showSpinningProgress(btn)
+            }).done(function(response){
+                showNotification(response);
+                showSpinningProgress(btn);
+
+            });
         });
+
 
     var showSpinningProgress=function(e){
         $(e).toggleClass('disabled');

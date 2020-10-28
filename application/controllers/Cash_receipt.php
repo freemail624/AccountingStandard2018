@@ -520,6 +520,20 @@ class Cash_receipt extends CORE_Controller
                 break;
 
             //***************************************************************************************
+
+            case 'cancel-review-advance':
+                $m_temp_journal=$this->Temp_journal_info_model;
+                $temp_journal_id=$this->input->post('temp_journal_id',TRUE);
+
+                $m_temp_journal->is_deleted = 1;
+                $m_temp_journal->modify($temp_journal_id);
+
+                $response['stat']='success';
+                $response['title']='Success!';
+                $response['msg']='Journal successfully cancelled';
+                echo json_encode($response);
+                break;
+
             case 'cancel':
                 $m_journal=$this->Journal_info_model;
                 $journal_id=$this->input->post('journal_id',TRUE);

@@ -47,7 +47,7 @@
                 <div class="tab-container tab-top tab-default">
                     <ul class="nav nav-tabs">
                         <li class="active"><a href="#journal_review_bill<?php echo $info->temp_journal_id; ?>" data-toggle="tab"><i class="fa fa-gavel"></i> Review Journal</a></li>
-                        <li class=""><a href="#purchase_review_<?php echo $info->temp_journal_id; ?>" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Transaction</a></li>
+<!--                         <li class=""><a href="#purchase_review_<?php //echo $info->temp_journal_id; ?>" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Transaction</a></li> -->
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="journal_review_bill<?php echo $info->temp_journal_id; ?>" data-parent-id="<?php echo $info->temp_journal_id; ?>" style="min-height: 300px;">
@@ -164,6 +164,9 @@
                             <div class="row">
                                 <div class="col-lg-12">
                                     <button name="btn_finalize_journal_review" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span class=""></span> Finalize and Post this Journal</button>
+
+                                    <button name="btn_cancel_journal_review" style="float: right;" class="btn btn-danger"><i class="fa fa-times-circle"></i> <span class=""></span> Cancel Journal</button>
+
                                 </div>
                             </div>
                         </div>

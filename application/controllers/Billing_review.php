@@ -47,7 +47,7 @@ class Billing_review extends CORE_Controller
                 break;
 
             case 'list-billing-advances-for-review':
-                $response['data']=$this->Temp_journal_info_model->get_list(array('book_type_id'=>2,'is_journal_posted'=>FALSE),
+                $response['data']=$this->Temp_journal_info_model->get_list(array('book_type_id'=>2,'is_journal_posted'=>FALSE,'temp_journal_info.is_deleted'=>FALSE),
                     'temp_journal_info.*,
                     customers.customer_name',
                     array(array('customers','customers.customer_id = temp_journal_info.customer_id','left'))

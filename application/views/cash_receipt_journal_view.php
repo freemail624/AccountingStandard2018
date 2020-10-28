@@ -694,7 +694,7 @@
 
     <div id="modal_confirmation" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
         <div class="modal-dialog modal-sm">
-            <div class="modal-content"><!---content--->
+            <div class="modal-content"><!---content-->
                 <div class="modal-header ">
                     <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
                     <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Confirm Cancellation</h4>
@@ -709,9 +709,30 @@
                     <button id="btn_yes" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Yes</button>
                     <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">No</button>
                 </div>
-            </div><!---content---->
+            </div><!---content-->
         </div>
     </div><!---modal-->
+
+    <div id="modal_confirmation_advances" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content"><!---content-->
+                <div class="modal-header ">
+                    <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                    <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Confirm Cancellation</h4>
+
+                </div>
+
+                <div class="modal-body">
+                    <p id="modal-body-message">Are you sure you want to cancel this journal?</p>
+                </div>
+
+                <div class="modal-footer">
+                    <button id="btn_yes_cancel_advance" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Yes</button>
+                    <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">No</button>
+                </div>
+            </div><!---content-->
+        </div>
+    </div><!---modal-->    
 
             <div id="modal_create_suppliers" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false"><!--modal-->
                 <div class="modal-dialog modal-lg">
@@ -1138,7 +1159,7 @@ $(document).ready(function(){
     var _txnMode; var _cboParticulars; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode;
     var dtReview; var _cbo_paymentMethod; var _cbo_departments; var dt; var _cbo_check_types; var _cbo_accounttype;
     var _cboCustomerType;  var _cboTaxGroup; var _selectedDepartment = 0; var _cboDepartmentFilter;
-    var _cboArTrans; var dtReviewAdvances;
+    var _cboArTrans; var dtReviewAdvances; var _selectedParentRow;
 
     var oTBJournal={
         "dr" : "td:eq(2)",
@@ -2745,6 +2766,7 @@ $(document).ready(function(){
         var reInitializeChildElementsAdvances=function(parent){
             var _dataParentID=parent.data('parent-id');
             var btn=parent.find('button[name="btn_finalize_journal_review"]');
+            var btncancel=parent.find('button[name="btn_cancel_journal_review"]');
 
             //initialize datepicker
             parent.find('input.date-picker').datepicker({
@@ -2764,18 +2786,19 @@ $(document).ready(function(){
                 if(isZero('#tbl_entries_for_review_bill'+_dataParentID)){
                 if(isBalance('#tbl_entries_for_review_bill'+_dataParentID)){
                     if(validateRequiredFields('#tbl_entries_for_review_'+_dataParentID)){
-                                           finalizeJournalReview().done(function(response){
-                        showNotification(response);
-                        if(response.stat=="success"){
-                            dt.row.add(response.row_added[0]).draw();
-                            var _parentRow=_curBtn.parents('table.table_journal_entries_review').parents('tr').prev();
-                            dtReviewAdvances.row(_parentRow).remove().draw();
-                        }
+                    
+                        finalizeJournalReview().done(function(response){
+                            showNotification(response);
+                            if(response.stat=="success"){
+                                dt.row.add(response.row_added[0]).draw();
+                                var _parentRow=_curBtn.parents('table.table_journal_entries_review').parents('tr').prev();
+                                dtReviewAdvances.row(_parentRow).remove().draw();
+                            }
 
 
-                    }).always(function(){
-                        showSpinningProgress(_curBtn);
-                    }); 
+                        }).always(function(){
+                            showSpinningProgress(_curBtn);
+                        }); 
                     }
 
                 }else{
@@ -2786,6 +2809,34 @@ $(document).ready(function(){
                         showNotification({title:"No Amount!",stat:"error",msg:'Please make sure Debit and Credit does not amount to zero.'});
                         stat=false;
                 }// END of ISZERO
+            });
+
+            parent.on('click','button[name="btn_cancel_journal_review"]',function(){
+
+                var _curBtn=$(this);
+            
+                var _parentRow=_curBtn.parents('table.table_journal_entries_review').parents('tr').prev();
+                var data=dtReviewAdvances.row(_parentRow).data();
+                _selectedID=data.temp_journal_id;
+                _selectedParentRow=_parentRow;
+                $('#modal_confirmation_advances').modal('show');
+            });
+
+
+            $('#btn_yes_cancel_advance').click(function(){
+                $.ajax({
+                    "dataType":"json",
+                    "type":"POST",
+                    "url":"Cash_receipt/transaction/cancel-review-advance",
+                    "data":{temp_journal_id : _selectedID},
+                    "success": function(response){
+                        showNotification(response);
+                        if(response.stat=="success"){
+                            dtReviewAdvances.row(_selectedParentRow).remove().draw();
+                        }
+
+                    }
+                });
             });
 
             var finalizeJournalReview=function(){

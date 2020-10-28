@@ -128,9 +128,9 @@
                 <tr>
                     <th></th>
                     <th>User Group</th>
-                    <th>Description</th>
+                    <th width="40%">Description</th>
                     <th>Status</th>
-                    <th><center>Action</center></th>
+                    <th width="10%"><center>Action</center></th>
                 </tr>
                 </thead>
                 <tbody>
