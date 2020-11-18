@@ -53,6 +53,11 @@
             to { -webkit-transform: rotate(360deg); }
         }
 
+        .numeric{
+            text-align: right;
+        }
+
+
     </style>
 
 </head>
@@ -93,6 +98,7 @@
                                                     <tr>
                                                         <th>Department Name</th>
                                                         <th>Department Description</th>
+                                                        <th>Sort ID</th>
                                                         <th><center>Action</center></th>
                                                     </tr>
                                                     </thead>
@@ -157,8 +163,18 @@
 
                                         </div>
                                     </div>
-                                </div><!-- 
+                                </div>
 
+                                <div class="row" style="margin: 1%;">
+                                    <div class="col-lg-12">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                                <label class="">Sort ID :</label>
+                                                <input name="sort_id" id="sort_id" class="form-control numeric" placeholder="Sort" style="width: 15%;">
+
+                                        </div>
+                                    </div>
+                                </div>                                
+                                <!-- 
                                 <div class="row" style="margin: 1%;">
                                     <div class="col-lg-12">
                                         <div class="form-group" style="margin-bottom:0px;">
@@ -219,6 +235,10 @@
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
 
+<!-- numeric formatter -->
+<script src="assets/plugins/formatter/autoNumeric.js" type="text/javascript"></script>
+<script src="assets/plugins/formatter/accounting.js" type="text/javascript"></script>
+
 <script>
 
 $(document).ready(function(){
@@ -235,8 +255,9 @@ $(document).ready(function(){
             "columns": [
                 { targets:[0],data: "department_name" },
                 { targets:[1],data: "department_desc" },
+                { targets:[2],data: "sort_id" },
                 {
-                    targets:[2],
+                    targets:[3],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
@@ -254,6 +275,10 @@ $(document).ready(function(){
                 '<i class="fa fa-plus"></i> New Department</button>';
             $("div.toolbar").html(_btnNew);
         }();
+
+
+        $('.numeric').autoNumeric('init',{mDec:0});
+
     }();
 
     var bindEventHandlers=(function(){
@@ -285,6 +310,7 @@ $(document).ready(function(){
             _txnMode="new";
             //showList(false);
             clearFields($('#frm_department'));
+            $('#sort_id').val("");
             $('#department_title').text('New Department');
             $('#modal_new_department').modal('show');
         });

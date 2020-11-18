@@ -3,6 +3,7 @@
         position: absolute;
         z-index: 200;
         font-size: 11pt;
+        text-transform: uppercase;
     }
 
     .panel{

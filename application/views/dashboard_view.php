@@ -1538,7 +1538,7 @@ Chart.defaults.global.defaultFontColor = "#000000";
             return $.ajax({
                 "dataType":"json",
                 "type":"POST",
-                "url":"Cash_Disbursement/transaction/post-voucher",
+                "url":"Cash_disbursement/transaction/post-voucher",
                 "data":{cv_id : _selectedIDvoucher}
 
             });
@@ -1548,7 +1548,7 @@ Chart.defaults.global.defaultFontColor = "#000000";
             return $.ajax({
                 "dataType":"json",
                 "type":"POST",
-                "url":"Cash_Disbursement/transaction/cancel-voucher",
+                "url":"Cash_disbursement/transaction/cancel-voucher",
                 "data":{cv_id : _selectedIDvoucher}
 
             });
