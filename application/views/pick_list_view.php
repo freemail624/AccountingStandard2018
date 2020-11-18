@@ -103,12 +103,12 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "product_code" },
                 { targets:[2],data: "product_desc" },
-                { targets:[2],data: "parent_unit_name" },
+                { targets:[2],data: "product_unit_name" },
                 { targets:[2],data: "category_name" },
                 { targets:[2],data: "supplier_name" },
-                {  sClass:'right-align', targets:[3],data: "product_warn" , render: $.fn.dataTable.render.number( ',', '.', 0 ) },
+                {  sClass:'right-align', targets:[3],data: "product_warn" , render: $.fn.dataTable.render.number( ',', '.', 2 ) },
                 { sClass:'right-align', visible:true,
-                    targets:[4],data: "CurrentQty",
+                    targets:[4],data: "total_qty_bulk",
                     render: function (data, type, full, meta) {
                         if(isNaN(data)){
                             return 0;
@@ -116,9 +116,10 @@ $(document).ready(function(){
                             return parseFloat(data);
                         }
 
-                    }
+                    },
+                    render: $.fn.dataTable.render.number( ',', '.', 2 ) 
                 },                
-                {  sClass:'right-align', targets:[4],data: "recommended_qty" , render: $.fn.dataTable.render.number( ',', '.', 0 ) }
+                {  sClass:'right-align', targets:[4],data: "recommended_qty" , render: $.fn.dataTable.render.number( ',', '.', 2 ) }
             ],
 
             language: {

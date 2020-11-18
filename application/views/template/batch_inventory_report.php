@@ -84,9 +84,10 @@
             <tr>
                 <td width="10%">PLU</td>
                 <td width="30%">Description</td>
-                <td width="10%">Category</td>
-                <td width="5%">Unit</td>
-                <td width="10%" align="right">Current Qty</td>
+                <td width="15%" align="right">Quantity In</td>
+                <td width="15%" align="right">Quantity Out</td>
+                <td width="15%" align="right">Balance</td>
+                <td width="15%" align="right">Bulk Balance</td>
             </tr>
         </thead>
         <tbody>
@@ -94,22 +95,23 @@
             <tr>
                 <td><?php echo $product->product_code; ?></td>
                 <td><?php echo $product->product_desc; ?></td>
-                <td><?php echo $product->category_name; ?></td>
-                <td><?php echo $product->parent_unit_name; ?></td>
-                <td align="right"><?php echo number_format($product->CurrentQty,2); ?></td>
+                <td align="right"><?php echo number_format($product->quantity_in,2); ?></td>
+                <td align="right"><?php echo number_format($product->quantity_out,2); ?></td>
+                <td align="right"><?php echo number_format($product->total_qty_balance,2).' '.$product->parent_unit_name; ?></td>
+                <td align="right"><?php echo number_format($product->total_qty_bulk,2).' '.$product->product_unit_name; ?></td>
             </tr>
             <?php } ?>
 
 
             <?php if(count($products)==0){ ?>
                 <tr>
-                    <td colspan="5" style="height: 40px;"><center>No records found.</center></td>
+                    <td colspan="6" style="height: 40px;"><center>No records found.</center></td>
                 </tr>
             <?php } ?>
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="5">&nbsp;</td>
+                <td colspan="6">&nbsp;</td>
 
             </tr>
         </tfoot>

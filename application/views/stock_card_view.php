@@ -110,13 +110,14 @@
                                                 <?php } ?>
                                             </select>
                                         </div>
-                                        <div class="col-xs-4 col-sm-2">
-                                            <label><b class="required">*</b> Category</label><br>
+<!--                                         <div class="col-xs-4 col-sm-2">
+                                            <label>Category</label><br>
                                             <select id="cbo_cat" class="form-control" style="width: 100%">
-                                                    <option value="bulk" id="bulk">Bulk</option>
-                                                    <option value="retail" id="retail">Retail</option>
+                                                    <option value="">All</option>
+                                                    <option value="Bulk" id="bulk">Bulk</option>
+                                                    <option value="Retail" id="retail">Retail</option>
                                             </select>
-                                        </div>
+                                        </div> -->
                                         <div class="col-xs-4 col-sm-2"><br><br>
                                             <button id="btn_print" class="btn btn-primary btn-block" style="margin-top: 5px;vertical-align: middle;"><i class="fa fa-print"></i> Print Report</button>
                                         </div>
@@ -152,12 +153,14 @@
                                 <thead>
                                     <tr>
                                         <th style="width: 10%;">Date</th>
-                                        <th style="width: 20%;">Document No.</th>
-                                        <th style="width: 10%;text-align: right;font-weight: bold;">IN</th>
-                                        <th style="width: 10%;text-align: right;font-weight: bold;">OUT</th>
-                                        <th style="width: 10%;text-align: right;font-weight: bold;">Balance</th>
-                                        <th style="text-align: left;width: 15%;">Location</th>
-                                        <th style="text-align: left;width: 25%">Remarks</th>
+                                        <th style="width: 15%;">Document No.</th>
+                                        <th style="width: 5%">Package</th>
+                                        <th style="width: 8%;text-align: right;font-weight: bold;">IN</th>
+                                        <th style="width: 8%;text-align: right;font-weight: bold;">OUT</th>
+                                        <th style="width: 12%;text-align: right;font-weight: bold;">Balance</th>
+                                        <th style="width: 12%;text-align: right;font-weight: bold;">Bulk Balance</th>
+                                        <th style="text-align: left;width: 10%;">Location</th>
+                                        <th style="text-align: left;width: 20%">Remarks</th>
                                     </tr>
                                 </thead>
                                     <tbody id="parent" style="width: 100%;">
@@ -211,9 +214,9 @@ $(document).ready(function(){
             searchPlaceholder: 'Select Product '
         });
 
-        _cboCat = $('#cbo_cat').select2({
-            minimumResultsForSearch : -1
-        });
+        // _cboCat = $('#cbo_cat').select2({
+        //     minimumResultsForSearch : -1
+        // });
 
 
         reinitializeBalances();
@@ -221,22 +224,22 @@ $(document).ready(function(){
 
     var bindEventHandlers=function(){
         _cboProduct.on('select2:select',function(){
-            _cboCat.select2('val','bulk');
+            // _cboCat.select2('val','bulk');
             reinitializeBalances();
         });
 
         $('#btn_print').click(function(){
-            window.open('products/transaction/history-product?id='+_cboProduct.val()+'&type=stockcard_print&cat='+_cboCat.val())
+            window.open('Products/transaction/history-product?id='+_cboProduct.val()+'&type=stockcard_print')
         });;
 
         $('#btn_export').click(function(){
-            window.open('products/Export_Stock?id='+_cboProduct.val()+'&type=stockcard_print&cat='+_cboCat.val())
+            window.open('Products/Export_Stock?id='+_cboProduct.val()+'&type=stockcard_print')
 
         });
 
-        _cboCat.on("select2:select", function (e) {
-            reinitializeBalances();
-        });        
+        // _cboCat.on("select2:select", function (e) {
+        //     reinitializeBalances();
+        // });        
     }();
 
     var showSpinningProgress=function(e){
@@ -257,12 +260,6 @@ $(document).ready(function(){
     function reinitializeBalances() {   
         ii =  _cboProduct.val()
         var prodbulk=$('#cbo_product').find('option[value="' + ii + '"]');
-        if(prodbulk.data('bulk') == 0 && _cboCat.val() == 'retail'){
-            showNotification({title:"Error !",stat:"error",msg:"Retail Unit is not available with the chosen Product."});
-            _cboCat.select2('val','bulk');
-            // reinitializeBalances();
-            return;
-        }
 
         $('#tbl_stock #parent').html('');
         $.ajax({
@@ -274,49 +271,26 @@ $(document).ready(function(){
             contentType : false,
             success : function(response){
 
-
-            if(_cboCat.val() == 'bulk'){
-                    $('#unit_of_measurement').html(response.product_info.parent_unit_name);
-                    $('#product_desc').html(response.product_info.product_desc);
-                    $('#purchase_cost').html(accounting.formatNumber(response.product_info.purchase_cost,2));
-                    $('#sale_price').html(accounting.formatNumber(response.product_info.sale_price,2));
-                    $('#product_code').html(response.product_info.product_code);
-                    $.each(response.products_parent, function(index,value){
-                        $('#tbl_stock #parent').append(
-                            '<tr>'+
-                                '<td>'+value.txn_date+'</td>'+
-                                '<td>'+value.ref_no+'</td>'+
-                                '<td align="right">'+accounting.formatNumber(value.parent_in_qty,2)+'</td>'+
-                                '<td align="right">'+accounting.formatNumber(value.parent_out_qty,2)+'</td>'+
-                                '<td align="right">'+accounting.formatNumber(value.parent_balance,2)+'</td>'+
-                                '<td>'+value.department_name+'</td>'+
-                                '<td>'+value.remarks+'</td>'+
-                            '</tr>'
-                        );
-                    });
-            }else if (_cboCat.val() == 'retail'){
-                $('#unit_of_measurement').html(response.product_info.child_unit_name);
+                $('#unit_of_measurement').html(response.product_info.product_unit_name);
                 $('#product_desc').html(response.product_info.product_desc);
-                $('#purchase_cost').html(accounting.formatNumber((response.product_info.purchase_cost / response.product_info.child_unit_desc),2))
-                $('#sale_price').html(accounting.formatNumber((response.product_info.sale_price / response.product_info.child_unit_desc),2));
+                $('#purchase_cost').html(accounting.formatNumber(response.product_info.purchase_cost,2));
+                $('#sale_price').html(accounting.formatNumber(response.product_info.sale_price,2));
                 $('#product_code').html(response.product_info.product_code);
-                $.each(response.products_child, function(index,value){
+                $.each(response.products_parent, function(index,value){
                     $('#tbl_stock #parent').append(
                         '<tr>'+
                             '<td>'+value.txn_date+'</td>'+
                             '<td>'+value.ref_no+'</td>'+
-                            '<td align="right">'+accounting.formatNumber(value.child_in_qty,2)+'</td>'+
-                            '<td align="right">'+accounting.formatNumber(value.child_out_qty,2)+'</td>'+
-                            '<td align="right">'+accounting.formatNumber(value.child_balance,2)+'</td>'+
+                            '<td>'+value.identifier+'</td>'+
+                            '<td align="right">'+accounting.formatNumber(value.parent_in_qty,2)+'</td>'+
+                            '<td align="right">'+accounting.formatNumber(value.parent_out_qty,2)+'</td>'+
+                            '<td align="right">'+accounting.formatNumber(value.parent_balance,2)+' '+response.product_info.parent_unit_name+'</td>'+
+                            '<td align="right">'+accounting.formatNumber(value.parent_bulk_balance,2)+' '+response.product_info.product_unit_name+'</td>'+
                             '<td>'+value.department_name+'</td>'+
                             '<td>'+value.remarks+'</td>'+
                         '</tr>'
                     );
                 });
-            }
-
-
-
 
             }
 

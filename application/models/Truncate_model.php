@@ -28,6 +28,8 @@ class Truncate_model extends CORE_Model{
                 (SELECT COUNT(*) FROM delivery_invoice_items) as delivery_invoice_items,
                 (SELECT COUNT(*) FROM issuance_department_info) as issuance_department_info,
                 (SELECT COUNT(*) FROM issuance_department_items) as issuance_department_items,
+                (SELECT COUNT(*) FROM dispatching_invoice) as dispatching_invoice,
+                (SELECT COUNT(*) FROM dispatching_invoice_items) as dispatching_invoice_items,
                 (SELECT COUNT(*) FROM proforma_invoice) as proforma_invoice,
                 (SELECT COUNT(*) FROM proforma_invoice_items) as proforma_invoice_items,
                 (SELECT COUNT(*) FROM purchase_order) as purchase_order,

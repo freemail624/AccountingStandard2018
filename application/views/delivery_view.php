@@ -201,7 +201,8 @@
                     <th>PO #</th>
                     <th>Terms</th>
                     <th>Delivered</th>
-                    <th><center>Action</center></th>
+                    <th><center>Is Finalized?</center></th>
+                    <th style="width: 100px;"><center>Action</center></th>
                     <th></th>
                 </tr>
                 </thead>
@@ -430,7 +431,7 @@
         <div class="row">
             <div class="col-md-12">
                 Remarks :<br />
-                <textarea name="remarks" id="remarks" class="form-control" placeholder="Remarks"></textarea><br />
+                <textarea name="remarks" id="remarks" class="form-control" data-default="<?php echo $company->purchase_remarks; ?>" placeholder="Remarks"></textarea><br />
             </div>
         </div>
 
@@ -495,7 +496,7 @@
 
 <div id="modal_confirmation" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog modal-sm">
-        <div class="modal-content"><!---content--->
+        <div class="modal-content"><!---content-->
             <div class="modal-header">
                 <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
                 <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Confirm Deletion</h4>
@@ -507,13 +508,31 @@
                 <button id="btn_yes" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Yes</button>
                 <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">No</button>
             </div>
-        </div><!---content---->
+        </div><!---content-->
+    </div>
+</div><!---modal-->
+
+<div id="modal_confirmation_finalize" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+    <div class="modal-dialog modal-md">
+        <div class="modal-content"><!---content-->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Confirm Finalize</h4>
+            </div>
+            <div class="modal-body">
+                <p id="modal-body-message">Finalizing Receiving Transaction. Are you sure you want to finalize this record? ?</p>
+            </div>
+            <div class="modal-footer">
+                <button id="btn_yes_finalize" type="button" class="btn btn-success" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Yes</button>
+                <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
+            </div>
+        </div><!---content-->
     </div>
 </div><!---modal-->
 
 <div id="modal_po_list" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog" style="width: 80%;">
-        <div class="modal-content"><!---content--->
+        <div class="modal-content"><!---content-->
             <div class="modal-header ">
                 <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
                 <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Purchase Order</h4>
@@ -545,7 +564,7 @@
 
                 <button type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Cancel</button>
             </div>
-        </div><!---content---->
+        </div><!---content-->
     </div>
 </div><!---modal-->
 
@@ -928,7 +947,7 @@ $(document).ready(function(){
         dt=$('#tbl_delivery_invoice').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 8, "desc" ]],
+            "order": [[ 9, "desc" ]],
             "language": {
                 "searchPlaceholder":"Search Purchase Invoice"
             },
@@ -947,16 +966,35 @@ $(document).ready(function(){
                 { targets:[4],data: "po_no" },
                 { targets:[5],data: "term_description" },
                 { targets:[6],data: "date_delivered" },
-                {
-                    targets:[7],
+                { targets:[7],data: null,
                     render: function (data, type, full, meta){
-                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
-                        var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
+                        var _attribute='';
+                        //console.log(data.is_email_sent);
+                        if(data.is_finalized=="1"){
+                            _attribute=' class="fa fa-check-circle" style="color:green;" ';
+                        }else{
+                            _attribute=' class="fa fa-times-circle" style="color:red;" ';
+                        }
 
-                        return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
+                        return '<center><i '+_attribute+'></i></center>';
                     }
                 },
-                { targets:[8],data: "dr_invoice_id", visible:false }
+                {
+                    targets:[8], data: null,
+                    render: function (data, type, full, meta){
+                        var btn_finalized="";
+
+                        if (data.is_finalized == 0){
+                         btn_finalized='<button class="btn btn-success btn-sm" name="finalize_info" style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Finalize"><i class="fa fa-check"></i> </button>';
+                        }
+                        
+                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
+                        var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
+
+                        return '<div style="text-align: right;">'+btn_finalized+'&nbsp;'+btn_edit+'&nbsp;'+btn_trash+'</div>';
+                    }
+                },
+                { targets:[9],data: "dr_invoice_id", visible:false }
             ]
         });
 
@@ -1018,7 +1056,7 @@ $(document).ready(function(){
 
 
         products = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','purchase_cost'),
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_unit_name','purchase_cost'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             local : products
         });
@@ -1051,10 +1089,10 @@ $(document).ready(function(){
                 source: products,
                 templates: {
                     header: [
-                        '<table class="tt-head"><tr><td width=20%" style="padding-left: 1%;"><b>PLU</b></td><td width="20%" align="left"><b>Description 1</b></td><td width="20%" align="left"><b>Description 2</b></td><td width="10%" align="right" style="padding-right: 2%;"><b>On hand</b><td width="10%" align="right" style="padding-right: 2%;"><b>Cost</b></td></tr></table>'
+                        '<table class="tt-head"><tr><td width=20%" style="padding-left: 1%;"><b>PLU</b></td><td width="20%" align="left"><b>Description 1</b></td><td width="20%" align="left"><b>Unit</b></td><td width="10%" align="right" style="padding-right: 2%;"><b>Cost</b></td></tr></table>'
                     ].join('\n'),
 
-                    suggestion: Handlebars.compile('<table class="tt-items"><tr><td width="20%" style="padding-left: 1%">{{product_code}}</td><td width="20%" align="left">{{product_desc}}</td><td width="20%" align="left">{{produdct_desc1}}</td><td width="10%" align="right" style="padding-right: 2%;">{{CurrentQty}}</td><td width="10%" align="right" style="padding-right: 2%;">{{purchase_cost}}</td></tr></table>')
+                    suggestion: Handlebars.compile('<table class="tt-items"><tr><td width="20%" style="padding-left: 1%">{{product_code}}</td><td width="20%" align="left">{{product_desc}}</td><td width="20%" align="left">{{product_unit_name}}</td><td width="10%" align="right" style="padding-right: 2%;">{{purchase_cost}}</td></tr></table>')
 
                 }
             }).on('keyup', this, function (event) {
@@ -1089,22 +1127,29 @@ $(document).ready(function(){
                 a = '';
                 bulk_price = suggestion.purchase_cost;
 
-                if(suggestion.is_bulk == 1){
-                    retail_price = getFloat(suggestion.purchase_cost) / getFloat(suggestion.child_unit_desc);
+                // if(suggestion.is_bulk == 1){
+                //     retail_price = getFloat(suggestion.purchase_cost) / getFloat(suggestion.child_unit_desc);
 
-                }else if (suggestion.is_bulk== 0){
-                    retail_price = 0;
-                }
-                changetxn = 'active';            
-                if(suggestion.primary_unit == 1){ 
-                    suggis_parent = 1;
-                    temp_inv_price = bulk_price;
-                }else{ 
-                    suggis_parent = 0;
-                    temp_inv_price = retail_price;
-                    net_vat = getFloat(net_vat) / getFloat(suggestion.child_unit_desc);
-                    vat_input = getFloat(vat_input) / getFloat(suggestion.child_unit_desc);
-                }
+                // }else if (suggestion.is_bulk== 0){
+                //     retail_price = 0;
+                // }
+
+                changetxn = 'active';    
+
+                retail_price = suggestion.purchase_cost;
+                suggis_parent = suggestion.is_parent;
+                temp_inv_price = bulk_price;
+
+                // if(suggestion.primary_unit == 1){ 
+                //     suggis_parent = 1;
+                //     temp_inv_price = bulk_price;
+                // }else{ 
+                //     suggis_parent = 0;
+                //     temp_inv_price = retail_price;
+                //     net_vat = getFloat(net_vat) / getFloat(suggestion.child_unit_desc);
+                //     vat_input = getFloat(vat_input) / getFloat(suggestion.child_unit_desc);
+                // }
+
                 $('#tbl_items > tbody').append(newRowItem({
                     //dr_qty : value.dr_qty,
                     dr_qty : "1",
@@ -1123,16 +1168,16 @@ $(document).ready(function(){
                     total_after_global : temp_inv_price,
                     dr_non_tax_amount: net_vat,
                     dr_tax_amount:vat_input,
-                        bulk_price: bulk_price,
-                        retail_price: retail_price,
-                        is_bulk: suggestion.is_bulk,
-                        parent_unit_id : suggestion.parent_unit_id,
-                        child_unit_id : suggestion.child_unit_id,
-                        child_unit_name : suggestion.child_unit_name,
-                        parent_unit_name : suggestion.parent_unit_name,
-                        is_parent: suggis_parent ,
-                        primary_unit:suggestion.primary_unit,
-                        a:a
+                    bulk_price: bulk_price,
+                    retail_price: retail_price,
+                    is_bulk: suggestion.is_bulk,
+                    child_unit_id : suggestion.child_unit_id,
+                    child_unit_name : suggestion.child_unit_name,
+                    parent_unit_id : suggestion.product_unit_id,
+                    parent_unit_name : suggestion.product_unit_name,
+                    is_parent: suggis_parent ,
+                    primary_unit:suggestion.primary_unit,
+                    a:a
                 }));
                 _line_unit=$('.line_unit'+a).select2({
                      minimumResultsForSearch: -1
@@ -1306,6 +1351,7 @@ $(document).ready(function(){
             $('#order_default').datepicker('setDate', 'today');
             $('#due_default').datepicker('setDate', 'today');
             $('#typeaheadsearch').val('');
+            $('textarea[name="remarks"]').val($('textarea[name="remarks"]').data('default'));
             getproduct().done(function(data){
                 products.clear();
                 products.local = data.data;
@@ -1403,10 +1449,10 @@ $(document).ready(function(){
                             retail_price : retail_price,
                             is_bulk: value.is_bulk,
                             is_parent : value.is_parent,
-                            parent_unit_name: value.parent_unit_name,
-                            child_unit_name:value.child_unit_name,
-                            parent_unit_id : value.parent_unit_id,
                             child_unit_id : value.child_unit_id,
+                            child_unit_name:value.child_unit_name,
+                            parent_unit_id : value.product_unit_id,
+                            parent_unit_name: value.product_unit_name,
                             // exp_date: exp_date,
                             total_after_global : value.po_line_total_after_global,
                             batch_no:"",
@@ -1519,10 +1565,15 @@ $(document).ready(function(){
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.dr_invoice_id;
             _is_journal_posted=data.is_journal_posted;
+            _is_finalized=data.is_finalized;
 
             if(_is_journal_posted > 0){
                 showNotification({title:"Error!",stat:"error",msg:"Cannot Edit: Invoice is already Posted in Purchase Journal."});
-            } else {
+            } 
+            else if(_is_finalized > 0){
+                showNotification({title:"Error!",stat:"error",msg:"Cannot Edit: Invoice is already finalized."});
+            }
+            else {
                 getproduct().done(function(data){
                     products.clear();
                     products.local = data.data;
@@ -1607,15 +1658,15 @@ $(document).ready(function(){
                                 exp_date : value.expiration,
                                 batch_no : value.batch_no,
                                 total_after_global : value.dr_line_total_after_global,
-                            child_unit_id : value.child_unit_id,
-                            child_unit_name : value.child_unit_name,
-                            parent_unit_name : value.parent_unit_name,
-                            parent_unit_id : getFloat(value.parent_unit_id),
-                            is_bulk: value.is_bulk,
-                            is_parent : value.is_parent,
-                            bulk_price: value.purchase_cost,
-                            retail_price: retail_price,
-                            a:a
+                                child_unit_id : value.child_unit_id,
+                                child_unit_name : value.child_unit_name,
+                                parent_unit_name : value.product_unit_name,
+                                parent_unit_id : getFloat(value.product_unit_id),
+                                is_bulk: value.is_bulk,
+                                is_parent : value.is_parent,
+                                bulk_price: value.purchase_cost,
+                                retail_price: retail_price,
+                                a:a
                             }));
                             changetxn = 'inactive';
                             reComputeTotal();
@@ -1656,13 +1707,31 @@ $(document).ready(function(){
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.dr_invoice_id;
             _is_journal_posted=data.is_journal_posted;
+            _is_finalized=data.is_finalized;
 
             if(_is_journal_posted > 0){
                 showNotification({title:"Error!",stat:"error",msg:"Cannot Delete: Invoice is already Posted in Purchase Journal."});
-            } else {
+            } 
+            else if(_is_finalized > 0){
+                showNotification({title:"Error!",stat:"error",msg:"Cannot Delete: Invoice is already finalized."});
+            }
+            else {
                 $('#modal_confirmation').modal('show');
             }
         });
+
+
+        $('#tbl_delivery_invoice tbody').on('click','button[name="finalize_info"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dt.row(_selectRowObj).data();
+            _selectedID=data.dr_invoice_id;
+            _is_journal_posted=data.is_journal_posted;
+
+            $('#modal_confirmation_finalize').modal('show');
+
+        });
+
+
         $('#tbl_items tbody').on('change','select',function(){
         if(changetxn == 'active'){
         var row=$(this).closest('tr');
@@ -1719,6 +1788,12 @@ $(document).ready(function(){
             });
         });
 
+        $('#btn_yes_finalize').click(function(){
+            finalizePurchaseInvoice().done(function(response){
+                showNotification(response);
+                dt.row(_selectRowObj).data(response.row_finalize[0]).draw();
+            });
+        });        
 
         $('input[name="file_upload[]"]').change(function(event){
             var _files=event.target.files;
@@ -1895,7 +1970,7 @@ $(document).ready(function(){
        return $.ajax({
            "dataType":"json",
            "type":"POST",
-           "url":"products/transaction/list",
+           "url":"products/transaction/parent-list",
            "beforeSend": function(){
                 countproducts = products.local.length;
                 if(countproducts > 100){
@@ -1965,6 +2040,16 @@ $(document).ready(function(){
             "dataType":"json",
             "type":"POST",
             "url":"Deliveries/transaction/delete",
+            "data":{dr_invoice_id : _selectedID}
+        });
+    };
+
+    var finalizePurchaseInvoice=function(){
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Deliveries/transaction/finalize",
             "data":{dr_invoice_id : _selectedID}
         });
     };

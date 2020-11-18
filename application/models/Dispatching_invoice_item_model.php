@@ -37,6 +37,16 @@ class Dispatching_invoice_item_model extends CORE_Model
 	p.child_unit_id,
 	p.child_unit_desc,
 	p.is_bulk,
+    (CASE
+        WHEN p.is_parent = TRUE 
+            THEN p.bulk_unit_id
+        ELSE parent_unit_id
+    END) as product_unit_id,
+    (CASE
+        WHEN p.is_parent = TRUE 
+            THEN blkunit.unit_name
+        ELSE chldunit.unit_name
+    END) as product_unit_name,	
 	(SELECT unit_name FROM units u WHERE u.unit_id = p.parent_unit_id) as parent_unit_name,
 	(SELECT unit_name FROM units u WHERE u.unit_id = p.child_unit_id) as child_unit_name
 
@@ -94,6 +104,8 @@ class Dispatching_invoice_item_model extends CORE_Model
 	GROUP BY si.sales_inv_no,dii.product_id) as m
 	GROUP BY m.sales_inv_no, m.product_id HAVING inv_qty > 0) as main
 	LEFT JOIN products p ON p.product_id = main.product_id
+    LEFT JOIN units as blkunit ON blkunit.unit_id = p.bulk_unit_id
+    LEFT JOIN units as chldunit ON chldunit.unit_id = p.parent_unit_id
 
 	GROUP BY main.sales_inv_no,main.product_id
 
@@ -128,6 +140,16 @@ class Dispatching_invoice_item_model extends CORE_Model
 	p.child_unit_id,
 	p.child_unit_desc,
 	p.is_bulk,
+	(CASE
+	    WHEN p.is_parent = TRUE 
+	        THEN p.bulk_unit_id
+	    ELSE parent_unit_id
+	END) as product_unit_id,
+	(CASE
+	    WHEN p.is_parent = TRUE 
+	        THEN blkunit.unit_name
+	    ELSE chldunit.unit_name
+	END) as product_unit_name,	
 	(SELECT unit_name FROM units u WHERE u.unit_id = p.parent_unit_id) as parent_unit_name,
 	(SELECT unit_name FROM units u WHERE u.unit_id = p.child_unit_id) as child_unit_name
 
@@ -186,6 +208,8 @@ class Dispatching_invoice_item_model extends CORE_Model
 	GROUP BY ci.cash_inv_no,dii.product_id) as m
 	GROUP BY m.cash_inv_no, m.product_id HAVING inv_qty > 0) as main
 	LEFT JOIN products p ON p.product_id = main.product_id
+    LEFT JOIN units as blkunit ON blkunit.unit_id = p.bulk_unit_id
+    LEFT JOIN units as chldunit ON chldunit.unit_id = p.parent_unit_id
 
 	GROUP BY main.cash_inv_no,main.product_id
 	) as n ) as o";

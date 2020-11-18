@@ -18,7 +18,8 @@ class Deliveries extends CORE_Controller
         $this->load->model('Refproduct_model');
         $this->load->model('Asset_settings_model');
         $this->load->model('Users_model');
-        $this->load->model('Trans_model');          
+        $this->load->model('Trans_model'); 
+        $this->load->model('Company_model');      
 
     }
 
@@ -50,7 +51,7 @@ class Deliveries extends CORE_Controller
 
 
         $data['tax_types']=$this->Tax_types_model->get_list('is_deleted=0');
-
+        $data['company']=$this->Company_model->getDefaultRemarks()[0];
         $data['title'] = 'Delivery Invoice';
         
         (in_array('2-2',$this->session->user_rights)? 
@@ -118,12 +119,24 @@ class Deliveries extends CORE_Controller
                         'products.child_unit_id',
                         'products.parent_unit_id',
                         'products.child_unit_desc',
+                        '(CASE
+                            WHEN products.is_parent = TRUE 
+                                THEN products.bulk_unit_id
+                            ELSE products.parent_unit_id
+                        END) as product_unit_id',
+                        '(CASE
+                            WHEN products.is_parent = TRUE 
+                                THEN blkunit.unit_name
+                            ELSE chldunit.unit_name
+                        END) as product_unit_name',                           
                         '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.parent_unit_id) as parent_unit_name',
                         '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name'
                     ),
                     array(
                         array('products','products.product_id=delivery_invoice_items.product_id','left'),
-                        array('units','units.unit_id=delivery_invoice_items.unit_id','left')
+                        array('units','units.unit_id=delivery_invoice_items.unit_id','left'),
+                        array('units blkunit','blkunit.unit_id=products.bulk_unit_id','left'),
+                        array('units chldunit','chldunit.unit_id=products.parent_unit_id','left'),                            
                     ),
                     'delivery_invoice_items.dr_invoice_item_id ASC'
                 );
@@ -245,10 +258,10 @@ class Deliveries extends CORE_Controller
                     $m_dr_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                     if($is_parent[$i] == '1'){
                                             $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
-                                            $m_dr_items->unit_id=$unit_id[0]->parent_unit_id;
+                                            $m_dr_items->unit_id=$unit_id[0]->bulk_unit_id;
                     }else{
                                              $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
-                                            $m_dr_items->unit_id=$unit_id[0]->child_unit_id;
+                                            $m_dr_items->unit_id=$unit_id[0]->parent_unit_id;
                     }   
                     $m_dr_items->save();
                 }
@@ -376,10 +389,10 @@ class Deliveries extends CORE_Controller
                     $m_dr_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                     if($is_parent[$i] == '1'){
                                             $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
-                                            $m_dr_items->unit_id=$unit_id[0]->parent_unit_id;
+                                            $m_dr_items->unit_id=$unit_id[0]->bulk_unit_id;
                     }else{
                                              $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
-                                            $m_dr_items->unit_id=$unit_id[0]->child_unit_id;
+                                            $m_dr_items->unit_id=$unit_id[0]->parent_unit_id;
                     }   
                     $m_dr_items->save();
 
@@ -420,6 +433,57 @@ class Deliveries extends CORE_Controller
 
                 break;
 
+            case 'finalize':
+                $m_delivery_invoice=$this->Delivery_invoice_model;
+                $m_delivery_invoice_items=$this->Delivery_invoice_item_model;
+                $m_products=$this->Products_model;
+                $dr_invoice_id=$this->input->post('dr_invoice_id',TRUE);
+
+                $pi_info=$m_delivery_invoice->get_list($dr_invoice_id,'dr_invoice_no');
+                $dr_products = $m_delivery_invoice_items->get_list(array('dr_invoice_id'=>$dr_invoice_id));
+
+                // Updating the average cost of Parent Products
+                for ($i=0; $i < count($dr_products); $i++) { 
+                    
+                    $product_id = $dr_products[$i]->product_id;
+                    $product=$m_products->product_list(1,null,$product_id,null,null,null,null,null,1,null,null,1);
+                    $on_hand_stock = $product[0]->CurrentQty;
+
+                    $cost = $m_delivery_invoice->get_ave_cost($product_id,$dr_invoice_id,$on_hand_stock);
+                    $average_cost = $cost[0]->ave_cost;
+
+                    $m_products->purchase_cost = $this->get_numeric_value($average_cost);
+                    $m_products->modify($product_id);
+
+                    // Updating the average cost of Child Products
+                    $child_products = $m_delivery_invoice->get_child_ave_cost($product_id);
+
+                    for ($a=0; $a < count($child_products); $a++) { 
+                        $m_products->purchase_cost = $this->get_numeric_value($child_products[$a]->child_ave_cost);
+                        $m_products->modify($child_products[$a]->child_product_id);
+                    }
+                }
+
+                $m_delivery_invoice->set('date_finalized','NOW()'); //treat NOW() as function and not string,set deletion date
+                $m_delivery_invoice->finalized_by_user=$this->session->user_id; //user that delete this record
+                $m_delivery_invoice->is_finalized=1;
+                $m_delivery_invoice->modify($dr_invoice_id);
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=8; //CRUD
+                $m_trans->trans_type_id=12; // TRANS TYPE
+                $m_trans->trans_log='Finalized Purchase Invoice No: '.$pi_info[0]->dr_invoice_no;
+                $m_trans->save();
+
+                $response['title'] = 'Success!';
+                $response['stat'] = 'success';
+                $response['msg'] = 'Delivery invoice successfully finalized.';
+                $response['row_finalize']=$this->response_rows($dr_invoice_id);
+                echo json_encode($response);
+
+                break;
 
             //***************************************************************************************
             case 'delete':
@@ -455,6 +519,7 @@ class Deliveries extends CORE_Controller
                     $m_trans->trans_type_id=12; // TRANS TYPE
                     $m_trans->trans_log='Deleted Purchase Invoice No: '.$pi_info[0]->dr_invoice_no;
                     $m_trans->save();
+
                 $response['title']='Success!';
                 $response['stat']='success';
                 $response['msg']='Delivery invoice successfully deleted.';

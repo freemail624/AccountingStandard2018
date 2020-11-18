@@ -146,16 +146,28 @@ class Adjustments extends CORE_Controller
                         'products.product_desc',
                         'DATE_FORMAT(adjustment_items.exp_date,"%m/%d/%Y")as expiration',                            
                         'products.purchase_cost',
-                            'products.is_bulk',
-                            'products.child_unit_id',
-                            'products.parent_unit_id',
-                            'products.child_unit_desc',
-                            '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.parent_unit_id) as parent_unit_name',
-                            '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name'),
+                        'products.is_bulk',
+                        'products.child_unit_id',
+                        'products.parent_unit_id',
+                        'products.child_unit_desc',
+                        '(CASE
+                            WHEN products.is_parent = TRUE 
+                                THEN products.bulk_unit_id
+                            ELSE products.parent_unit_id
+                        END) as product_unit_id',
+                        '(CASE
+                            WHEN products.is_parent = TRUE 
+                                THEN blkunit.unit_name
+                            ELSE chldunit.unit_name
+                        END) as product_unit_name',                         
+                        '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.parent_unit_id) as parent_unit_name',
+                        '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name'),
   
                     array(
                         array('products','products.product_id=adjustment_items.product_id','left'),
-                        array('units','units.unit_id=adjustment_items.unit_id','left')
+                        array('units','units.unit_id=adjustment_items.unit_id','left'),
+                        array('units blkunit','blkunit.unit_id=products.bulk_unit_id','left'),
+                        array('units chldunit','chldunit.unit_id=products.parent_unit_id','left'),                            
                     ),
                     'adjustment_items.adjustment_item_id DESC'
                 );
@@ -228,9 +240,9 @@ class Adjustments extends CORE_Controller
 
                         $m_adjustment_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                         if($is_parent[$i] == '1'){
-                            $m_adjustment_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
+                            $m_adjustment_items->set('unit_id','(SELECT bulk_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
                         }else{
-                             $m_adjustment_items->set('unit_id','(SELECT child_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
+                             $m_adjustment_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
                         } 
 
                     $m_adjustment_items->save();
@@ -321,9 +333,9 @@ class Adjustments extends CORE_Controller
 
                     $m_adjustment_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                     if($is_parent[$i] == '1'){
-                        $m_adjustment_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
+                        $m_adjustment_items->set('unit_id','(SELECT bulk_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
                     }else{
-                         $m_adjustment_items->set('unit_id','(SELECT child_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
+                         $m_adjustment_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
                     } 
 
                     $m_adjustment_items->save();

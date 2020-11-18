@@ -2,8 +2,8 @@
 <body>
 <style>
         body {
-            font-family: 'Calibri',sans-serif;
-            font-size: 12px;
+            /*font-family: 'Calibri',sans-serif;*/
+            /*font-size: 12px;*/
         }
               .bottom-only{
       border:none!important;
@@ -34,12 +34,12 @@
     }
 
         table{
-        border:none!important;
+        /*border:none!important;*/
     }
 </style>
 
 <div>
-    <center><table width="95%" cellpadding="5" style="font-family: tahoma;font-size: 11;" border="0">
+    <center><table width="95%" cellpadding="5" style="font-family: tahoma;font-size: 11;border:none!important;" border="0">
             <tr>
                 <td width="45%" valign="top" style="border: none;">
                     <span>Supplier :</span><br /><br />
@@ -82,7 +82,7 @@
     <br /><br />
 
     <center>
-        <table width="95%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11" >
+        <table width="95%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11;border:none!important;" >
             <thead>
             <tr>
                 <th width="50%" style="border-bottom: 2px solid gray;text-align: left;height: 30px;padding: 6px;">Item</th>

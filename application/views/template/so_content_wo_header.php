@@ -2,8 +2,8 @@
      <head>  <title>Sales Order </title></head>
 <body> <style type="text/css">
            body {
-            font-family: 'Calibri',sans-serif;
-            font-size: 12px;
+/*            font-family: 'Calibri',sans-serif;
+            font-size: 12px;*/
         }
 
         .align-right {
@@ -22,7 +22,7 @@
             font-weight: bolder;
         }
             table{
-        border:none!important;
+        /*border:none!important;*/
     }
     table-td.left{
         border-left: 1px solid gray!important;
@@ -33,7 +33,7 @@
 </style>
 <div>
     <center>
-        <table width="95%" cellpadding="5" style="font-family: tahoma;font-size: 11;">
+        <table width="95%" cellpadding="5" style="font-family: tahoma;font-size: 11;border:none!important;">
             <tr class="row_child_tbl_so_list">
                 <td width="45%" valign="top" style="border: 0px !important;"><br />
                     <span>Department :</span><br />
@@ -60,7 +60,7 @@
     <br /><br />
 
     <center>
-        <table width="95%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11">
+        <table width="95%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11;border:none!important;">
             <thead>
             <tr>
                 <th width="50%" style="border-bottom: 2px solid gray;text-align: left;height: 15px;padding: 6px;">Item</th>

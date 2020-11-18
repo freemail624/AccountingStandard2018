@@ -173,6 +173,7 @@
                     <th width="25%">Product</th>
                     <th>Price</th>
                     <th>Qty</th>
+                    <th>Unit</th>
                     <th>Gross</th>
                     <th>Invoice #</th>
                     <th width="10%">Invoice Date</th>
@@ -241,7 +242,7 @@ $(document).ready(function(){
             "dom": '<"toolbar">frtip',
             "pageLength": 50,
             "bLengthChange":false,
-                "order": [[ 2, "desc" ]],
+                "order": [[ 6, "desc" ]],
             "ajax" : {
                 "url" : "Customer_sale_history/transaction/list",
                 "bDestroy": true,            
@@ -265,10 +266,11 @@ $(document).ready(function(){
                 { targets:[1],data: "product_desc" ,render: $.fn.dataTable.render.ellipsis(100)},
                 {sClass:"right_align", targets:[2],data: "inv_price" , render: $.fn.dataTable.render.number( ',', '.', 2)},
                 {sClass:"right_align", targets:[3],data: "inv_qty" , render: $.fn.dataTable.render.number( ',', '.', 2)},
-                {sClass:"right_align", targets:[4],data: "inv_gross" , render: $.fn.dataTable.render.number( ',', '.', 2)},
-                { targets:[5],data: "inv_no" },
-                { targets:[6],data: "date_invoice" },
-                { targets:[7],data: "remarks"  ,render: $.fn.dataTable.render.ellipsis(80)},
+                { targets:[4],data: "unit_name" },
+                {sClass:"right_align", targets:[5],data: "inv_gross" , render: $.fn.dataTable.render.number( ',', '.', 2)},
+                { targets:[6],data: "inv_no" },
+                { targets:[7],data: "date_invoice" },
+                { targets:[8],data: "remarks"  ,render: $.fn.dataTable.render.ellipsis(80)},
             ]
         });
         _cboCustomers=$("#cbo_customers").select2({

@@ -377,6 +377,9 @@ $(document).ready(function(){
                     }
                 });
             });
+
+            $('#account_type_id').select2('val',data.account_type_id);
+
             $('#modal-title').text('Edit Account Class');
             $('#modal_account_class').modal('show');
         });

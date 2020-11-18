@@ -30,12 +30,12 @@
             font-weight: bolder;
         }
            table{
-        border:none!important;
+        /*border:none!important;*/
     }
 
       </style>
 <div>    
-    <center><table width="95%" cellpadding="5" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11;" border="0" class="nohover">
+    <center><table width="95%" cellpadding="5" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11;border:none!important;" border="0" class="nohover">
             <tr>
                 <td width="45%" valign="top" style="border-collapse: collapse!important;border-spacing: 0!important;font-family: tahoma;font-size: 11; border :0px solid #525252!important;">
                     <span>Department :</span><br />
@@ -66,7 +66,7 @@
     <br /><br />
 
     <center>
-        <table width="95%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11;background-color: transparent!important;" class="nohover" >
+        <table width="95%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11;background-color: transparent!important;border:none!important;" class="nohover" >
             <thead style="background-color: transparent!important ;">
             <tr style="background-color: transparent!important ;">
                 <th width="50%" style="text-align: left;height: 15px;padding: 6px;border-bottom: 1px solid gray;" >Item</th>

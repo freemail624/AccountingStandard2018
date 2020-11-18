@@ -4,8 +4,8 @@
 	<title>Purchase Order</title>
 	<style type="text/css">
 		body {
-			font-family: 'Calibri',sans-serif;
-			font-size: 12px;
+/*			font-family: 'Calibri',sans-serif;
+			font-size: 12px;*/
 		}
 
 		.align-right {
@@ -32,7 +32,7 @@
             border: none!important;
         }
     table{
-        border:none!important;
+        /*border:none!important;*/
     }
 	</style>
 </head>
@@ -41,7 +41,7 @@
 		<strong>P.O. # :</strong> <?php echo $purchase_info->po_no; ?></td> <br>
 		<strong>Date : </strong><?php echo date_format(new DateTime($purchase_info->date_created),"m/d/Y"); ?>
 	</div><br>
-	<table width="100%"  cellspacing="-1">
+	<table width="100%"  cellspacing="-1" style="border:none!important;">
 		<tr>
 			<td style="padding: 6px;" width="50%" colspan="2"><strong>Supplier / Address:</strong></td>
 			<td style="padding: 6px;" width="50%"><strong>Deliver to :</strong></td>
@@ -61,7 +61,7 @@
 		</tr>
 	</table>
 	<br>
-	<table width="100%" cellpadding="10" cellspacing="-1" class="table table-striped" style="text-align: center;">
+	<table width="100%" cellpadding="10" cellspacing="-1" class="table table-striped" style="text-align: center;border:none!important;">
 		<tr>
 			<td style="padding: 6px;border-bottom: 1px solid gray;"><strong>Description</strong></td>
 			<td style="padding: 6px;border-bottom: 1px solid gray;"><strong>UM</strong></td>

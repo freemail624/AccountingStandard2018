@@ -76,9 +76,14 @@ class Pick_list extends CORE_Controller
                 $supplier_id = $this->input->get('sup');
                 $category_id = $this->input->get('cat');
 
+                $account_integration =$this->Account_integration_model;
+                $a_i=$account_integration->get_list();
 
+                $account =$a_i[0]->sales_invoice_inventory;
+                $ci_account =$a_i[0]->cash_invoice_inventory;
+                $disaccount =$a_i[0]->dispatching_invoice_inventory;
 
-                $response['data']=$m_products->product_list(1,null,null,$supplier_id,$category_id,null,1,null,1);
+                $response['data']=$m_products->product_list($account,null,null,$supplier_id,$category_id,null,1,null,$ci_account,$disaccount,null,1);
                 echo json_encode($response);
                 break;
 
@@ -89,7 +94,17 @@ class Pick_list extends CORE_Controller
                 $m_products = $this->Products_model;
                 $supplier_id = $this->input->get('sup');
                 $category_id = $this->input->get('cat');
-                $data['data']=$m_products->product_list(1,null,null,$supplier_id,$category_id,null,1,null,1);
+
+                $account_integration =$this->Account_integration_model;
+                $a_i=$account_integration->get_list();
+
+                $account =$a_i[0]->sales_invoice_inventory;
+                $ci_account =$a_i[0]->cash_invoice_inventory;
+                $disaccount =$a_i[0]->dispatching_invoice_inventory;
+
+                $data['data']=$m_products->product_list($account,null,null,$supplier_id,$category_id,null,1,null,$ci_account,$disaccount,null,1);
+
+
                 // echo json_encode($response);
                 $suppliers = $this->Suppliers_model->get_list($supplier_id);
                 $categories = $this->Categories_model->get_list($category_id);
@@ -113,11 +128,18 @@ class Pick_list extends CORE_Controller
 
                 ($supplier_id == null ? $supplier_name = 'ALL' : $supplier_name=$suppliers[0]->supplier_name);
                 ($category_id == null ? $category_name = 'ALL' : $category_name=$categories[0]->category_name);
-                $data=$m_products->product_list(1,null,null,$supplier_id,$category_id,null,1,null,1);
+
+                $account_integration =$this->Account_integration_model;
+                $a_i=$account_integration->get_list();
+
+                $account =$a_i[0]->sales_invoice_inventory;
+                $ci_account =$a_i[0]->cash_invoice_inventory;
+                $disaccount =$a_i[0]->dispatching_invoice_inventory;
+
+                $data=$m_products->product_list($account,null,null,$supplier_id,$category_id,null,1,null,$ci_account,$disaccount,null,1);
+
                 // echo json_encode($response);
                 // $this->load->view('template/product_list_report_content',$data);
-
-
 
                 $excel=$this->excel;
 
@@ -195,12 +217,15 @@ class Pick_list extends CORE_Controller
                 foreach ($data as $data) {
                             $excel->getActiveSheet()->setCellValue('A'.$i,$data->product_code)
                                 ->setCellValue('B'.$i,$data->product_desc)
-                                ->setCellValue('C'.$i,$data->parent_unit_name)
+                                ->setCellValue('C'.$i,$data->product_unit_name)
                                 ->setCellValue('D'.$i, $data->category_name)
                                 ->setCellValue('E'.$i, $data->supplier_name)
-                                ->setCellValue('F'.$i,number_format($data->product_warn,0))
-                                ->setCellValue('G'.$i, number_format($data->CurrentQty,0))
-                                ->setCellValue('H'.$i,number_format($data->recommended_qty,0));
+                                ->setCellValue('F'.$i,number_format($data->product_warn,2))
+                                ->setCellValue('G'.$i,number_format($data->total_qty_bulk,2))
+                                ->setCellValue('H'.$i,number_format($data->recommended_qty,2));
+
+                $excel->getActiveSheet()->getStyle('F'.$i.':H'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');                        
+
                 $i++;
 
                 }
@@ -249,7 +274,16 @@ class Pick_list extends CORE_Controller
 
                 ($supplier_id == null ? $supplier_name = 'ALL' : $supplier_name=$suppliers[0]->supplier_name);
                 ($category_id == null ? $category_name = 'ALL' : $category_name=$categories[0]->category_name);
-                $data=$m_products->product_list(1,null,null,$supplier_id,$category_id,null,1,null,1);
+
+                $account_integration =$this->Account_integration_model;
+                $a_i=$account_integration->get_list();
+
+                $account =$a_i[0]->sales_invoice_inventory;
+                $ci_account =$a_i[0]->cash_invoice_inventory;
+                $disaccount =$a_i[0]->dispatching_invoice_inventory;
+
+                $data=$m_products->product_list($account,null,null,$supplier_id,$category_id,null,1,null,$ci_account,$disaccount,null,1);
+
                 // echo json_encode($response);
 
                 $excel=$this->excel;
@@ -330,12 +364,15 @@ class Pick_list extends CORE_Controller
                 foreach ($data as $data) {
                             $excel->getActiveSheet()->setCellValue('A'.$i,$data->product_code)
                                 ->setCellValue('B'.$i,$data->product_desc)
-                                ->setCellValue('C'.$i,$data->parent_unit_name)
+                                ->setCellValue('C'.$i,$data->product_unit_name)
                                 ->setCellValue('D'.$i, $data->category_name)
                                 ->setCellValue('E'.$i, $data->supplier_name)
-                                ->setCellValue('F'.$i,number_format($data->product_warn,0))
-                                ->setCellValue('G'.$i, number_format($data->CurrentQty,0))
-                                ->setCellValue('H'.$i,number_format($data->recommended_qty,0));
+                                ->setCellValue('F'.$i,number_format($data->product_warn,2))
+                                ->setCellValue('G'.$i,number_format($data->total_qty_bulk,2))
+                                ->setCellValue('H'.$i,number_format($data->recommended_qty,2));
+
+                $excel->getActiveSheet()->getStyle('F'.$i.':H'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+
                 $i++;
 
                 }

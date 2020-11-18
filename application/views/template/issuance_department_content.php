@@ -71,13 +71,13 @@
         font-weight: bolder;
     }
        table{
-        border:none!important;
+        /*border:none!important;*/
     }
           
       </style>
 
 <div style="width:100%">
-<table width="100%">
+<table width="100%" style="border:none!important;">
         <tr>
             <td width="10%" style="border:none!important; object-fit: cover;"><img src="<?php echo $company_info->logo_path; ?>" style="height: 90px; width: 90px; text-align: left;"></td>
             <td width="90%" style="border:none!important;" class="">
@@ -88,7 +88,7 @@
             </td>
         </tr>
     </table><hr>
-<table style="font-family:tahoma;width: 100%;" id="report_header">
+<table style="font-family:tahoma;width: 100%;border:none!important;" id="report_header">
     <tbody>
         <tr>
             <td style="width:75%;font-size:18px;font-weight:bold;border:none!important;">ITEM TRANSFER REPORT</td>
@@ -98,7 +98,7 @@
     </tbody>
 </table>
 
-<table width="100%" id="issuance">
+<table width="100%" id="issuance" style="border:none!important;">
     <thead>
     </thead>
     <tbody>
@@ -123,7 +123,7 @@
         </tr>
     </tbody>
 </table><br>
-<table width="100%" style="font-family:tahoma;" cellspacing="0" >
+<table width="100%" style="font-family:tahoma;" cellspacing="0" style="border:none!important;">
     <thead>
         <tr >
             <th style="width:35%;text-align:left;border-bottom: 1px solid gray;">Description</th>
@@ -155,7 +155,7 @@
     </tbody>
 </table>
 <br><br><br>
-<table id="report_footer" style="width: 100%;">
+<table id="report_footer" style="width: 100%;border:none!important;">
     <tbody>
 <!--         <tr >
             <th style="width:35%;text-align:center;"><br></th>

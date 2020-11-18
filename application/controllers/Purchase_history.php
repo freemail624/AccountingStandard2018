@@ -37,7 +37,7 @@ class Purchase_history extends CORE_Controller {
         );
 
 
-        (in_array('2-6',$this->session->user_rights)? 
+        (in_array('2-8',$this->session->user_rights)? 
         $this->load->view('purchase_history_view', $data)
         :redirect(base_url('dashboard')));
         
@@ -63,7 +63,7 @@ class Purchase_history extends CORE_Controller {
             ($supplier == '0')? $supplier = null :$supplier =$supplier ;
                 $from=date('Y-m-d',strtotime($this->input->get('frm',TRUE)));
                 $to=date('Y-m-d',strtotime($this->input->get('to',TRUE)));
-            $response['data']=$m_delivery->delivery_list_count($id_filter,$department,$supplier,$from,$to);
+            $response['data']=$m_delivery->delivery_list_count($id_filter,$department,$supplier,$from,$to,1);
 
             echo json_encode($response);    
 

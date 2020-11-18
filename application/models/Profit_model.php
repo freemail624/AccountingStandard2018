@@ -13,7 +13,11 @@ class Profit_model extends CORE_Model
                 main.product_id,
                 p.product_code,
                 p.product_desc,
-                u.unit_name,
+                (CASE
+                    WHEN p.is_parent = TRUE 
+                        THEN blkunit.unit_name
+                    ELSE chldunit.unit_name
+                END) as unit_name,
                 SUM(main.inv_qty) as qty_sold,
                 p.sale_price as srp,
                 SUM(main.inv_gross) as gross,
@@ -48,6 +52,8 @@ class Profit_model extends CORE_Model
 
                 LEFT JOIN products p ON p.product_id = main.product_id
                 LEFT JOIN units u ON u.unit_id = p.parent_unit_id
+                LEFT JOIN units as blkunit ON blkunit.unit_id = p.bulk_unit_id
+                LEFT JOIN units as chldunit ON chldunit.unit_id = p.parent_unit_id
                 GROUP BY 
                 main.product_id
 

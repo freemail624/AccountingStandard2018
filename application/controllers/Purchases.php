@@ -20,7 +20,6 @@ class Purchases extends CORE_Controller
         $this->load->model('Company_model');
         $this->load->model('Email_settings_model');
         $this->load->model('Trans_model');
-        
 
         $this->load->library('M_pdf');
 
@@ -56,7 +55,7 @@ class Purchases extends CORE_Controller
         );
 
         $data['tax_types']=$this->Tax_types_model->get_list('is_deleted=0');
-
+        $data['company']=$this->Company_model->getDefaultRemarks()[0];
         // $data['products']=$this->Products_model->get_list(
         //         null, //no id filter
         //         array(
@@ -214,11 +213,23 @@ class Purchases extends CORE_Controller
                             'products.child_unit_id',
                             'products.parent_unit_id',
                             'products.child_unit_desc',
+                            '(CASE
+                                WHEN products.is_parent = TRUE 
+                                    THEN products.bulk_unit_id
+                                ELSE products.parent_unit_id
+                            END) as product_unit_id',
+                            '(CASE
+                                WHEN products.is_parent = TRUE 
+                                    THEN blkunit.unit_name
+                                ELSE chldunit.unit_name
+                            END) as product_unit_name',                               
                             '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.parent_unit_id) as parent_unit_name',
                             '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name'
                         ),
                         array(
-                            array('products','products.product_id=purchase_order_items.product_id','left')
+                            array('products','products.product_id=purchase_order_items.product_id','left'),
+                            array('units blkunit','blkunit.unit_id=products.bulk_unit_id','left'),
+                            array('units chldunit','chldunit.unit_id=products.parent_unit_id','left'),                             
                         ),
                         'purchase_order_items.po_item_id ASC'
                     );
@@ -259,7 +270,7 @@ class Purchases extends CORE_Controller
                     $m_purchases->department_id=$this->input->post('department',TRUE);
                     $m_purchases->remarks=$this->input->post('remarks',TRUE);
                     $m_purchases->tax_type_id=$this->input->post('tax_type',TRUE);
-                    $m_purchases->approval_id=2;
+                    $m_purchases->approval_id=1;
                     $m_purchases->posted_by_user=$this->session->user_id;
                     $m_purchases->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                     $m_purchases->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
@@ -302,9 +313,9 @@ class Purchases extends CORE_Controller
                         $m_po_items->po_line_total_after_global=$this->get_numeric_value($po_line_total_after_global[$i]);
 
                         if($is_parent[$i] == '1'){
-                            $m_po_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
+                            $m_po_items->set('unit_id','(SELECT bulk_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
                         }else{
-                             $m_po_items->set('unit_id','(SELECT child_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
+                             $m_po_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
                         }                        
                         $m_po_items->save();
                     }
@@ -329,12 +340,13 @@ class Purchases extends CORE_Controller
                         $response['title'] = 'Success!';
                         $response['stat'] = 'success';
                         $response['msg'] = 'Purchase order successfully created.';
-
                         $response['row_added'] = $this->row_response($po_id);
 
                         echo json_encode($response);
                     }
 
+                    
+                    
 
                     break;
 
@@ -393,11 +405,13 @@ class Purchases extends CORE_Controller
                         $m_po_items->non_tax_amount=$this->get_numeric_value($non_tax_amount[$i]);
                         $m_po_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                         $m_po_items->po_line_total_after_global=$this->get_numeric_value($po_line_total_after_global[$i]);
+
                         if($is_parent[$i] == '1'){
-                            $m_po_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
+                            $m_po_items->set('unit_id','(SELECT bulk_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
                         }else{
-                             $m_po_items->set('unit_id','(SELECT child_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
-                        }                        
+                             $m_po_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
+                        }       
+
                         $m_po_items->save();
                     }
                     $po_info=$m_purchases->get_list($po_id,'po_no');

@@ -349,7 +349,7 @@
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <label ><strong>Remarks :</strong></label>
                         <div class="col-lg-12" style="padding: 0%;">
-                            <textarea name="remarks" id="remarks" class="form-control" placeholder="Remarks"></textarea>
+                            <textarea name="remarks" id="remarks" class="form-control" placeholder="Remarks" data-default="<?php echo $company->sales_remarks; ?>"></textarea>
                         </div>
                     </div>
                 </div>
@@ -932,7 +932,7 @@ $(document).ready(function(){
         });
 
         products = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1'),
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             local : products
         });
@@ -943,9 +943,9 @@ $(document).ready(function(){
         source: products,
         templates: {
             header: [
-                '<table class="tt-head"><tr><td width=20%" style="padding-left: 1%;"><b>PLU</b></td><td width="20%" align="left"><b>Description</b></td><td width="10%" style="padding-right: 2%;text-align:right;"><b>On Hand</b></td><td width="10%"  style="padding-right: 2%;text-align:right;"><b>SRP</b></td></tr></table>'
+                '<table class="tt-head"><tr><td width=15%" style="padding-left: 1%;"><b>PLU</b></td><td width="20%" align="left"><b>Description</b></td><td width="5%" align="left"><b>Unit</b></td><td width="10%"  style="padding-right: 2%;text-align:right;"><b>SRP</b></td></tr></table>'
             ].join('\n'),
-            suggestion: Handlebars.compile('<table class="tt-items"><tr><td width="20%" style="padding-left: 1%;">{{product_code}}</td><td width="20%" align="left">{{product_desc}}</td><td width="10%"  style="padding-right: 2%;text-align:right;">{{CurrentQty}}</td><td width="10%" align="right" style="padding-right: 2%;">{{sale_price}}</td></tr></table>')
+            suggestion: Handlebars.compile('<table class="tt-items"><tr><td width="15%" style="padding-left: 1%;">{{product_code}}</td><td width="20%" align="left">{{product_desc}}</td><td width="5%" align="left">{{product_unit_name}}</td><td width="10%" align="right" style="padding-right: 2%;">{{sale_price}}</td></tr></table>')
         }
         }).on('keyup', this, function (event) {
             if (_objTypeHead.typeahead('val') == '') {
@@ -964,11 +964,39 @@ $(document).ready(function(){
                 showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
                 return;
             }
-            if(getFloat(suggestion.CurrentQty) <= 0){
-                showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
-            }else if(getFloat(suggestion.CurrentQty) <= getFloat(suggestion.product_warn) ){
-                showNotification({title: suggestion.product_desc ,stat:"info",msg:"This item has low stock remaining.<br>It might result to negative inventory."});
+
+            var product_id = 0;
+            var conversion_rate = 0;
+
+            if(suggestion.is_parent == 1 || (suggestion.is_parent <= 0 && suggestion.parent_id <= 0)){
+                product_id = suggestion.product_id;
+            }else{
+                product_id = suggestion.parent_id;
             }
+
+            getInvetory(product_id).done(function(response){
+                data = response.data[0];
+                var CurrentQty = data.CurrentQty;
+                var CurrentQtyTotal = 0;
+
+                if(suggestion.is_parent == 1){
+                    CurrentQtyTotal = (CurrentQty / suggestion.bulk_conversion_rate);
+                }
+                else if(suggestion.is_parent <= 0 && suggestion.parent_id <= 0){
+                    CurrentQtyTotal = CurrentQty;
+                }
+                else{
+                    CurrentQtyTotal = (CurrentQty / suggestion.conversion_rate);
+                }
+
+                if(getFloat(CurrentQtyTotal) <= 0){
+                    showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
+                }else if(getFloat(CurrentQtyTotal) <= getFloat(suggestion.product_warn) ){
+                    showNotification({title: suggestion.product_desc ,stat:"info",msg:"This item has low stock remaining.<br>It might result to negative inventory."});
+                }
+
+            });
+
             var tax_rate=suggestion.tax_rate; //base on the tax rate set to current product
             //choose what purchase cost to be use
             _customer_type_ = _cboCustomerType.val();
@@ -1004,23 +1032,27 @@ $(document).ready(function(){
                 a = '';
                 bulk_price = sale_price;
 
-                if(suggestion.is_bulk == 1){
-                    retail_price = getFloat(sale_price) / getFloat(suggestion.child_unit_desc);
-                }else if (suggestion.is_bulk== 0){
-                    retail_price = 0;
-                }
+                // if(suggestion.is_bulk == 1){
+                //     retail_price = getFloat(sale_price) / getFloat(suggestion.child_unit_desc);
+                // }else if (suggestion.is_bulk== 0){
+                //     retail_price = 0;
+                // }
+
+                retail_price = sale_price;
+                suggis_parent = suggestion.is_parent;
+                temp_inv_price = sale_price;                
 
 
-                if(suggestion.primary_unit == 1){ 
-                        suggis_parent = 1; 
-                        temp_inv_price = sale_price;
+                // if(suggestion.primary_unit == 1){ 
+                //         suggis_parent = 1; 
+                //         temp_inv_price = sale_price;
 
-                }else{ 
-                    suggis_parent = 0; 
-                    temp_inv_price = retail_price;
-                    net_vat = getFloat(net_vat) / getFloat(suggestion.child_unit_desc);
-                    vat_input = getFloat(vat_input) / getFloat(suggestion.child_unit_desc);
-                }
+                // }else{ 
+                //     suggis_parent = 0; 
+                //     temp_inv_price = retail_price;
+                //     net_vat = getFloat(net_vat) / getFloat(suggestion.child_unit_desc);
+                //     vat_input = getFloat(vat_input) / getFloat(suggestion.child_unit_desc);
+                // }
             changetxn = 'active';
             $('#tbl_items > tbody').append(newRowItem({
                 inv_qty : "1",
@@ -1038,16 +1070,16 @@ $(document).ready(function(){
                 inv_non_tax_amount: net_vat,
                 inv_tax_amount:vat_input,
                 inv_line_total_after_global:0.00,
-                    bulk_price: bulk_price,
-                    retail_price: retail_price,
-                    is_bulk: suggestion.is_bulk,
-                    parent_unit_id : suggestion.parent_unit_id,
-                    child_unit_id : suggestion.child_unit_id,
-                    child_unit_name : suggestion.child_unit_name,
-                    parent_unit_name : suggestion.parent_unit_name,
-                    is_parent: suggis_parent ,// INITIALLY , UNIT USED IS THE PARENT , 1 for PARENT 0 for CHILD
-                    a:a,
-                    primary_unit:suggestion.primary_unit,
+                bulk_price: bulk_price,
+                retail_price: retail_price,
+                is_bulk: suggestion.is_bulk,
+                parent_unit_id : suggestion.product_unit_id,
+                child_unit_id : suggestion.child_unit_id,
+                child_unit_name : suggestion.child_unit_name,
+                parent_unit_name : suggestion.product_unit_name,
+                is_parent: suggis_parent ,// INITIALLY , UNIT USED IS THE PARENT , 1 for PARENT 0 for CHILD
+                a:a,
+                primary_unit:suggestion.primary_unit,
 
             }));
 
@@ -1330,6 +1362,8 @@ $(document).ready(function(){
             $('#invoice_default').datepicker('setDate', 'today');
             $('#due_default').datepicker('setDate', 'today');
             $('#typeaheadsearch').val('');
+            $('textarea[name="remarks"]').val($('textarea[name="remarks"]').data('default'));
+            
             getproduct().done(function(data){
                 products.clear();
                 products.local = data.data;
@@ -1433,14 +1467,14 @@ $(document).ready(function(){
                             orig_so_price : value.so_price,
                             inv_line_total_after_global: 0.00,
                             cost_upon_invoice : value.purchase_cost,
-                                child_unit_id : value.child_unit_id,
-                                child_unit_name : value.child_unit_name,
-                                parent_unit_name : value.parent_unit_name,
-                                parent_unit_id : getFloat(value.parent_unit_id),
-                                is_bulk: value.is_bulk,
-                                is_parent : value.is_parent,
-                                bulk_price: temp_sale_price,
-                                retail_price: retail_price,
+                            child_unit_id : value.child_unit_id,
+                            child_unit_name : value.child_unit_name,
+                            parent_unit_name : value.product_unit_name,
+                            parent_unit_id : getFloat(value.product_unit_id),
+                            is_bulk: value.is_bulk,
+                            is_parent : value.is_parent,
+                            bulk_price: temp_sale_price,
+                            retail_price: retail_price,
                             a:a
                         }));
                         _line_unit=$('.line_unit'+a).select2({
@@ -1546,14 +1580,14 @@ $(document).ready(function(){
                             orig_so_price : value.so_price,
                             inv_line_total_after_global: 0.00,
                             cost_upon_invoice : value.purchase_cost,
-                                child_unit_id : value.child_unit_id,
-                                child_unit_name : value.child_unit_name,
-                                parent_unit_name : value.parent_unit_name,
-                                parent_unit_id : getFloat(value.parent_unit_id),
-                                is_bulk: value.is_bulk,
-                                is_parent : value.is_parent,
-                                bulk_price: temp_sale_price,
-                                retail_price: retail_price,
+                            child_unit_id : value.child_unit_id,
+                            child_unit_name : value.child_unit_name,
+                            parent_unit_name : value.product_unit_name,
+                            parent_unit_id : getFloat(value.product_unit_id),
+                            is_bulk: value.is_bulk,
+                            is_parent : value.is_parent,
+                            bulk_price: temp_sale_price,
+                            retail_price: retail_price,
                             a:a
                         }));
                         _line_unit=$('.line_unit'+a).select2({
@@ -1684,8 +1718,8 @@ $(document).ready(function(){
                             inv_line_total_after_global : 0.00,
                             child_unit_id : value.child_unit_id,
                             child_unit_name : value.child_unit_name,
-                            parent_unit_name : value.parent_unit_name,
-                            parent_unit_id : getFloat(value.parent_unit_id),
+                            parent_unit_name : value.product_unit_name,
+                            parent_unit_id : getFloat(value.product_unit_id),
                             is_bulk: value.is_bulk,
                             is_parent : value.is_parent,
                             bulk_price: temp_sale_price,
@@ -1941,6 +1975,16 @@ $(document).ready(function(){
             "beforeSend": showSpinningProgress($('#btn_save'))
         });
     };
+
+    var getInvetory=function(product_id){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Products/transaction/product-inventory",
+            "data":{product_id : product_id}
+        });
+    }
+
     var removeDispatching=function(){
         return $.ajax({
             "dataType":"json",

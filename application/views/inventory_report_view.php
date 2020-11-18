@@ -43,9 +43,9 @@
         .right-align{
             text-align: right;
         }
-        #tbl_inventory td:nth-child(6){
+/*        #tbl_inventory td:nth-child(6){
             text-align: right;
-        }
+        }*/
 
         td.details-control {
             background: url('assets/img/Folder_Closed.png') no-repeat center center;
@@ -219,10 +219,11 @@
                                                                 <tr>
                                                                     <th width="5%"></th>
                                                                     <th width="15%">PLU</th>
-                                                                    <th width="40%">Product</th>
-                                                                    <th width="20%">Category</th>
-                                                                    <th width="10%">Unit</th>
-                                                                    <th width="10%" style="text-align: right">Qty</th>
+                                                                    <th width="32%">Product</th>
+                                                                    <th width="12%" style="text-align: right">Quantity In</th>
+                                                                    <th width="12%" style="text-align: right">Quantity Out</th>
+                                                                    <th width="12%" style="text-align: right">Balance</th>
+                                                                    <th width="12%" style="text-align: right">Bulk Balance</th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -471,16 +472,38 @@
                     },
                     { targets:[1],data: "product_code" },
                     { targets:[2],data: "product_desc" },
-                    { targets:[3],data: "category_name" },
-                    { targets:[4],data: "parent_unit_name" },
                     {
-                        targets:[5], sClass:'right-align',
-                        data: "CurrentQty",
+                        targets:[3], sClass:'right-align',
+                        data: "quantity_in",
                         render: function(data, type, full, meta){
-                            return '<b>'+accounting.formatNumber(data,2)+'</b>';
+                            return accounting.formatNumber(data,2);
                         }
 
-                    }
+                    },
+                    {
+                        targets:[4], sClass:'right-align',
+                        data: "quantity_out",
+                        render: function(data, type, full, meta){
+                            return accounting.formatNumber(data,2);
+                        }
+
+                    },
+                    {
+                        targets:[5], sClass:'right-align',
+                        data: null,
+                        render: function(data, type, full, meta){
+                            return accounting.formatNumber(data.total_qty_balance,2)+' '+data.parent_unit_name;
+                        }
+
+                    },
+                    {
+                        targets:[6], sClass:'right-align',
+                        data: null,
+                        render: function(data, type, full, meta){
+                            return accounting.formatNumber(data.total_qty_bulk,2)+' '+data.product_unit_name;
+                        }
+
+                    }                                                      
 
                 ]
 

@@ -97,6 +97,16 @@ parent::__construct();
 			p.parent_unit_id,
 			p.child_unit_desc,
 			p.sale_price,
+            (CASE
+                WHEN p.is_parent = TRUE 
+                    THEN p.bulk_unit_id
+                ELSE parent_unit_id
+            END) as product_unit_id,
+            (CASE
+                WHEN p.is_parent = TRUE 
+                    THEN blkunit.unit_name
+                ELSE chldunit.unit_name
+            END) as product_unit_name,
 			IF(si.is_journal_posted = TRUE, 'Note: Invoice is posted in Accounting', 'Note: Invoice is not yet posted in Accounting') as note,
 			(SELECT units.unit_name  FROM units WHERE  units.unit_id = p.parent_unit_id) as parent_unit_name,
 			(SELECT units.unit_name  FROM units WHERE  units.unit_id = p.child_unit_id) as child_unit_name,
@@ -105,6 +115,8 @@ parent::__construct();
 			LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
 			LEFT JOIN products p ON p.product_id = sii.product_id
 			LEFT JOIN units u ON u.unit_id = sii.unit_id
+            LEFT JOIN units as blkunit ON blkunit.unit_id = p.bulk_unit_id
+            LEFT JOIN units as chldunit ON chldunit.unit_id = p.parent_unit_id			
 			WHERE si.is_active = TRUE 
 			AND si.is_deleted = FALSE
 			AND si.customer_id= '$customer_id'
@@ -122,6 +134,16 @@ parent::__construct();
 			p.parent_unit_id,
 			p.child_unit_desc,
 			p.sale_price,
+            (CASE
+                WHEN p.is_parent = TRUE 
+                    THEN p.bulk_unit_id
+                ELSE parent_unit_id
+            END) as product_unit_id,
+            (CASE
+                WHEN p.is_parent = TRUE 
+                    THEN blkunit.unit_name
+                ELSE chldunit.unit_name
+            END) as product_unit_name,			
 			IF(ci.is_journal_posted = TRUE, 'Invoice is posted in Accounting', 'Invoice is not yet posted in Accounting') as note,
 			(SELECT units.unit_name  FROM units WHERE  units.unit_id = p.parent_unit_id) as parent_unit_name,
 			(SELECT units.unit_name  FROM units WHERE  units.unit_id = p.child_unit_id) as child_unit_name,
@@ -129,6 +151,8 @@ parent::__construct();
 			LEFT JOIN cash_invoice ci ON ci.cash_invoice_id = cii.cash_invoice_id
 			LEFT JOIN products p ON p.product_id = cii.product_id
 			LEFT JOIN units u ON u.unit_id = cii.unit_id
+            LEFT JOIN units as blkunit ON blkunit.unit_id = p.bulk_unit_id
+            LEFT JOIN units as chldunit ON chldunit.unit_id = p.parent_unit_id			
 			WHERE ci.is_active = TRUE 
 			AND ci.is_deleted = FALSE
 			AND ci.customer_id= '$customer_id'

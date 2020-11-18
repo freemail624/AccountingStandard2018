@@ -358,9 +358,9 @@
     <br />
     <div class="row ">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <label control-label><strong>Remarks :</strong></label>
+            <label control-label><strong>Remarks:</strong></label>
             <div class="col-lg-12" style="padding: 0%;">
-                <textarea name="remarks" class="form-control" placeholder="Remarks"></textarea>
+                <textarea name="remarks" class="form-control" placeholder="Remarks" data-default="<?php echo $company->purchase_remarks; ?>"></textarea>
             </div>
 
 
@@ -922,7 +922,7 @@ $(document).ready(function(){
 
 
         products = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1'),
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_unit_name'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             local : products
         });
@@ -955,10 +955,10 @@ $(document).ready(function(){
             source: products,
             templates: {
                 header: [
-                    '<table class="tt-head"><tr><td width=20%" style="padding-left: 1%;"><b>PLU</b></td><td width="20%" align="left"><b>Description 1</b></td><td width="20%" align="left"><b>Description 2</b></td><td width="10%" align="right" style="padding-right: 2%;"><b>On hand</b><td width="10%" align="right" style="padding-right: 2%;"><b>Cost</b></td></tr></table>'
+                    '<table class="tt-head"><tr><td width=20%" style="padding-left: 1%;"><b>PLU</b></td><td width="20%" align="left"><b>Description 1</b></td><td width="20%" align="left"><b>Unit</b></td><td width="10%" align="right" style="padding-right: 2%;"><b>Cost</b></td></tr></table>'
                 ].join('\n'),
 
-                suggestion: Handlebars.compile('<table class="tt-items"><tr><td width="20%" style="padding-left: 1%">{{product_code}}</td><td width="20%" align="left">{{product_desc}}</td><td width="20%" align="left">{{produdct_desc1}}</td><td width="10%" align="right" style="padding-right: 2%;">{{CurrentQty}}</td><td width="10%" align="right" style="padding-right: 2%;">{{purchase_cost}}</td></tr></table>')
+                suggestion: Handlebars.compile('<table class="tt-items"><tr><td width="20%" style="padding-left: 1%">{{product_code}}</td><td width="20%" align="left">{{product_desc}}</td><td width="20%" align="left">{{product_unit_name}}</td><td width="10%" align="right" style="padding-right: 2%;">{{purchase_cost}}</td></tr></table>')
 
             }
         }).on('keyup', this, function (event) {
@@ -1006,33 +1006,41 @@ $(document).ready(function(){
                 //}
 
             }
+
             bulk_price = suggestion.purchase_cost;
 
-            if(suggestion.is_bulk == 1){
+  /*          if(suggestion.is_bulk == 1){
                 retail_price = getFloat(suggestion.purchase_cost) / getFloat(suggestion.child_unit_desc);
 
             }else if (suggestion.is_bulk== 0){
                 retail_price = 0;
-            }
-            if(suggestion.primary_unit == 1){ 
-                suggis_parent = 1;
-                temp_inv_price = purchase_cost;
-            }else{ 
-                suggis_parent = 0;
-                temp_inv_price = retail_price;
-                net_vat = getFloat(net_vat) / getFloat(suggestion.child_unit_desc);
-                vat_input = getFloat(vat_input) / getFloat(suggestion.child_unit_desc);
-            }
+            }*/
+
+            retail_price = suggestion.purchase_cost;
+            suggis_parent = suggestion.is_parent;
+            temp_inv_price = purchase_cost;
+
+            // if(suggestion.primary_unit == 1){ 
+            //     suggis_parent = 1;
+            //     temp_inv_price = purchase_cost;
+            // }else{ 
+            //     suggis_parent = 0;
+            //     temp_inv_price = retail_price;
+            //     net_vat = getFloat(net_vat) / getFloat(suggestion.child_unit_desc);
+            //     vat_input = getFloat(vat_input) / getFloat(suggestion.child_unit_desc);
+            // }
+
+
             $('#tbl_items > tbody').append(newRowItem({
                 po_qty : "1",
                 bulk_price: bulk_price,
                 retail_price: retail_price,
                 product_code : suggestion.product_code,
                 is_bulk: suggestion.is_bulk,
-                parent_unit_id : suggestion.parent_unit_id,
                 child_unit_id : suggestion.child_unit_id,
                 child_unit_name : suggestion.child_unit_name,
-                parent_unit_name : suggestion.parent_unit_name,
+                parent_unit_id : suggestion.product_unit_id,
+                parent_unit_name : suggestion.product_unit_name,
                 product_id: suggestion.product_id,
                 product_desc : suggestion.product_desc,
                 po_line_total_discount : "0.00",
@@ -1171,7 +1179,8 @@ $(document).ready(function(){
             $('#cbo_tax_type').select2('val',null);
             $('#cbo_suppliers').select2('val',null);
             $('#cbo_departments').select2('val',null);
-            $('textarea[name="remarks"]').val('');
+            $('textarea[name="remarks"]').val($('textarea[name="remarks"]').data('default'));
+
             //$('#cbo_prodType').select2('val',3);
             $('#typeaheadsearch').val('');
             getproduct().done(function(data){
@@ -1317,8 +1326,8 @@ $(document).ready(function(){
                             product_code : value.product_code,
                             child_unit_id : value.child_unit_id,
                             child_unit_name : value.child_unit_name,
-                            parent_unit_name : value.parent_unit_name,
-                            parent_unit_id : getFloat(value.parent_unit_id),
+                            parent_unit_name : value.product_unit_name,
+                            parent_unit_id : getFloat(value.product_unit_id),
                             product_id: value.product_id,
                             product_desc : value.product_desc,
                             po_line_total_discount : value.po_line_total_discount,
@@ -1560,7 +1569,7 @@ $(document).ready(function(){
        return $.ajax({
            "dataType":"json",
            "type":"POST",
-           "url":"products/transaction/list",
+           "url":"products/transaction/parent-list",
            "beforeSend": function(){
                 countproducts = products.local.length;
                 if(countproducts > 100){

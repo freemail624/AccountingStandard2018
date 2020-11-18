@@ -57,6 +57,9 @@ class Products extends CORE_Controller
         $data['accounts'] = $this->Account_title_model->get_list('is_active= TRUE AND is_deleted = FALSE','account_id,account_title');
         $data['tax_types']=$this->Tax_model->get_list(array('tax_types.is_deleted'=>FALSE));
         $data['brands']= $this->Brands_model->get_brand_list();
+
+        $data['products']=$this->Products_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
+
         // (in_array('5-1',$this->session->user_rights)? 
         // $this->load->view('products_view', $data)
         // :redirect(base_url('dashboard')));
@@ -74,10 +77,25 @@ class Products extends CORE_Controller
         switch ($txn) {
                 // Products List, All Sales and Cash Invoices are included in the computation. 
                 //Inventory Report is the only report where Cash and Sales invoice inclusion is optional
+
+            case 'parent-list':
+                $m_products = $this->Products_model;
+                $response['data']=$m_products->product_list(1,null,null,null,null,null,null,null,1,null,null,1);
+                echo json_encode($response);
+                break;
+
             case 'list':
                 $m_products = $this->Products_model;
                 $response['data']=$m_products->product_list(1,null,null,null,null,null,null,null,1);
                 // $response['data']=$this->response_rows(array('products.is_deleted'=>FALSE));
+                echo json_encode($response);
+                break;
+
+            case 'product-inventory':
+                $m_products = $this->Products_model;
+                $product_id = $this->input->post('product_id', TRUE);
+
+                $response['data']=$m_products->product_list(1,null,$product_id,null,null,null,null,null,1,null,null,1);
                 echo json_encode($response);
                 break;
 
@@ -123,15 +141,13 @@ class Products extends CORE_Controller
                 $m_products->is_bulk =$this->get_numeric_value($this->input->post('is_bulk',TRUE));
                 $m_products->child_unit_desc = $this->get_numeric_value($this->input->post('child_unit_desc', TRUE));
                 $m_products->child_unit_id = $this->input->post('child_unit_id', TRUE);  
-  
-
         
                 $m_products->tax_type_id = $this->input->post('tax_type_id', TRUE);
                 //$m_products->is_inventory = $this->input->post('inventory',TRUE);
 
                  //im not sure, why posted checkbox post value of 0 when checked
-               $m_products->primary_unit =$this->get_numeric_value($this->input->post('primary_unit',TRUE));
-               $m_products->is_tax_exempt =$this->get_numeric_value($this->input->post('is_tax_exempt',TRUE));
+                $m_products->primary_unit =$this->get_numeric_value($this->input->post('primary_unit',TRUE));
+                $m_products->is_tax_exempt =$this->get_numeric_value($this->input->post('is_tax_exempt',TRUE));
 
                 $m_products->equivalent_points = $this->get_numeric_value($this->input->post('equivalent_points', TRUE));
                 $m_products->product_warn =$this->get_numeric_value( $this->input->post('product_warn', TRUE));
@@ -144,6 +160,14 @@ class Products extends CORE_Controller
                 $m_products->dealer_price =$this->get_numeric_value($this->input->post('dealer_price', TRUE));
                 $m_products->distributor_price =$this->get_numeric_value($this->input->post('distributor_price', TRUE));
                 $m_products->public_price =$this->get_numeric_value($this->input->post('public_price', TRUE));
+
+                // For Bulk Unit and Conversions
+                $m_products->is_parent = $this->get_numeric_value($this->input->post('is_parent', TRUE));
+                $m_products->bulk_unit_id = $this->get_numeric_value($this->input->post('bulk_unit_id', TRUE));
+                $m_products->bulk_conversion_rate = $this->get_numeric_value($this->input->post('bulk_conversion_rate', TRUE));
+                $m_products->parent_id = $this->get_numeric_value($this->input->post('parent_id', TRUE));
+                $m_products->conversion_rate = $this->get_numeric_value($this->input->post('conversion_rate', TRUE));
+                $m_products->primary_unit = $this->get_numeric_value($this->input->post('is_parent', TRUE));
 
                 $m_products->save();
 
@@ -217,6 +241,13 @@ class Products extends CORE_Controller
                 $m_products->distributor_price =$this->get_numeric_value($this->input->post('distributor_price', TRUE));
                 $m_products->public_price =$this->get_numeric_value($this->input->post('public_price', TRUE));
 
+                // For Bulk Unit and Conversions
+                $m_products->is_parent = $this->get_numeric_value($this->input->post('is_parent', TRUE));
+                $m_products->bulk_unit_id = $this->get_numeric_value($this->input->post('bulk_unit_id', TRUE));
+                $m_products->bulk_conversion_rate = $this->get_numeric_value($this->input->post('bulk_conversion_rate', TRUE));
+                $m_products->parent_id = $this->get_numeric_value($this->input->post('parent_id', TRUE));
+                $m_products->conversion_rate = $this->get_numeric_value($this->input->post('conversion_rate', TRUE));
+                $m_products->primary_unit = $this->get_numeric_value($this->input->post('is_parent', TRUE));
 
                 $m_products->modify($product_id);
 
@@ -409,7 +440,8 @@ class Products extends CORE_Controller
                 $a_i=$account_integration->get_list();
 
                 $account =$a_i[0]->sales_invoice_inventory;
-
+                $ci_account =$a_i[0]->cash_invoice_inventory;
+                $dis_account =$a_i[0]->dispatching_invoice_inventory;
 
                 $product_id=$this->input->get('id');
                 $department_id=($this->input->get('depid')==null||$this->input->get('depid')==0?0:$this->input->get('depid'));
@@ -421,11 +453,12 @@ class Products extends CORE_Controller
                     $date = date('Y-m-d',strtotime($as_of_date));
                 }
 
+                $cat=$this->input->get('cat');
                 $data['product_id'] = $product_id;
                 $m_products=$this->Products_model;
                 //$product_id,$depid=0,$as_of_date=null,$account,$is_parent=null,$ciaccount // OREDR OF PARAMETER
-                $data['products_parent']=$m_products->get_product_history_with_child($product_id,$department_id,$date,1,1,1);
-                $data['products_child']=$m_products->get_product_history_with_child($product_id,$department_id,$date,1,0,1);
+                $data['products_parent']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account);
+                $data['products_child']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account);
                 $data['product_id']=$product_id;
                 //$this->load->view('Template/product_history_menus',$data);
 
@@ -434,7 +467,6 @@ class Products extends CORE_Controller
 
                 $data['product_info'] = $product_info[0];
                 $type=$this->input->get('type');
-                $cat=$this->input->get('cat');
                 $inv=$this->input->get('inv');
                 $data['type'] = $type;
 
@@ -443,7 +475,8 @@ class Products extends CORE_Controller
                     array(
                         'products.*',
                             '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.parent_unit_id) as parent_unit_name',
-                            '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name'
+                            '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name',
+                            '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.bulk_unit_id) as bulk_unit_name',
                             )
                 );
 
@@ -458,16 +491,88 @@ class Products extends CORE_Controller
                 }else if($type == 'stockcard'){
                         echo json_encode($data);
                 }else if($type == 'stockcard_print'){
-                    if($cat == 'bulk'){
+                    // if($cat == 'bulk'){
                         $this->load->view('template/Stock_card_parent_content',$data);
-                    }else if ($cat == 'retail'){
-                        $this->load->view('template/Stock_card_child_content',$data);
+                    // }else if ($cat == 'retail'){
+                    //     $this->load->view('template/Stock_card_child_content',$data);
 
-                    }
+                    // }
                 }
                 break;
-                
+
+                case 'history-product-management': // USED IN PRODUCTS MANAGEMENT
+                $m_company=$this->Company_model;
+                $company_info = $m_company->get_list();
+                $data['company_info']=$company_info[0];
+
+                $account_integration =$this->Account_integration_model;
+                $a_i=$account_integration->get_list();
+
+                $account =$a_i[0]->sales_invoice_inventory;
+                $ci_account =$a_i[0]->cash_invoice_inventory;
+                $dis_account =$a_i[0]->dispatching_invoice_inventory;
+
+                $product_id=$this->input->get('id');
+                $department_id=($this->input->get('depid')==null||$this->input->get('depid')==0?0:$this->input->get('depid'));
+                $as_of_date=$this->input->get('date');
+
+                if($as_of_date==null){
+                    $date = null;
+                }else{
+                    $date = date('Y-m-d',strtotime($as_of_date));
+                }
+
+                $cat=$this->input->get('cat');
+                $data['product_id'] = $product_id;
+                $m_products=$this->Products_model;
+
+
+                //$product_id,$depid=0,$as_of_date=null,$account,$is_parent=null,$ciaccount // OREDR OF PARAMETER
+                $data['products_parent']=$m_products->get_product_history_with_child1($product_id,$department_id,$date,$account,1,$ci_account,$dis_account);
+                $data['products_child']=$m_products->get_product_history_with_child1($product_id,$department_id,$date,$account,1,$ci_account,$dis_account);
+                $data['product_id']=$product_id;
+                //$this->load->view('Template/product_history_menus',$data);
+
+
+                $product_info = $m_products->product_list(1,null,$product_id,null,null,null,null,null,null,1);
+
+                $data['product_info'] = $product_info[0];
+                $type=$this->input->get('type');
+                $inv=$this->input->get('inv');
+                $data['type'] = $type;
+
+                $data['info']=$m_products->get_list(
+                    array('product_id'=>$product_id),
+                    array(
+                        'products.*',
+                            '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.parent_unit_id) as parent_unit_name',
+                            '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name',
+                            '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.bulk_unit_id) as bulk_unit_name',
+                            )
+                );
+
+                if($type == NULL){
+                    $this->load->view('template/product_history_management',$data);
+                }else if($type == 'print'){
+                    if($inv=='parent'){
+                        $this->load->view('template/product_history_content_management',$data);
+                    }else if($inv=='child'){
+                        $this->load->view('template/product_history_content_management',$data);
+                    }
+                }else if($type == 'stockcard'){
+                        echo json_encode($data);
+                }else if($type == 'stockcard_print'){
+                    // if($cat == 'bulk'){
+                        $this->load->view('template/Stock_card_parent_content',$data);
+                    // }else if ($cat == 'retail'){
+                    //     $this->load->view('template/Stock_card_child_content',$data);
+
+                    // }
+                }
+                break;
+
         }
+
     }
 
 
@@ -478,14 +583,15 @@ class Products extends CORE_Controller
         return $this->Products_model->get_list(
             $filter,
 
-            'products.*,categories.category_name,suppliers.supplier_name,refproduct.product_type,item_types.item_type,account_titles.account_title',
+            'products.*,categories.category_name,suppliers.supplier_name,refproduct.product_type,item_types.item_type,account_titles.account_title, punit.unit_name as parent_unit_name',
 
             array(
                 array('suppliers','suppliers.supplier_id=products.supplier_id','left'),
                 array('refproduct','refproduct.refproduct_id=products.refproduct_id','left'),
                 array('categories','categories.category_id=products.category_id','left'),
                 array('item_types','item_types.item_type_id=products.item_type_id','left'),
-                array('account_titles','account_titles.account_id=products.income_account_id','left')
+                array('account_titles','account_titles.account_id=products.income_account_id','left'),
+                array('units as punit','punit.unit_id=products.parent_unit_id','left')
             )
         );
     }
@@ -512,8 +618,18 @@ function Export(){
                 $m_products=$this->Products_model;
                 // $products=$m_products->get_product_history($product_id,$department_id,$date,1);
 
-                $products=$m_products->get_product_history_with_child($product_id,$department_id,$date,1,1,1);
-                $products_child=$m_products->get_product_history_with_child($product_id,$department_id,$date,1,0,1);
+                $account_integration =$this->Account_integration_model;
+                $a_i=$account_integration->get_list();
+
+                $account =$a_i[0]->sales_invoice_inventory;
+                $ci_account =$a_i[0]->cash_invoice_inventory;
+                $dis_account =$a_i[0]->dispatching_invoice_inventory;
+
+                $products=$m_products->get_product_history_with_child1($product_id,$department_id,$date,$account,1,$ci_account,$dis_account);
+                $products_child=$m_products->get_product_history_with_child1($product_id,$department_id,$date,$account,1,$ci_account,$dis_account);
+
+                // $products=$m_products->get_product_history_with_child($product_id,$department_id,$date,1,1,1);
+                // $products_child=$m_products->get_product_history_with_child($product_id,$department_id,$date,1,0,1);
                 $data['product_id']=$product_id;
                 //$this->load->view('Template/product_history_menus',$data);
 
@@ -532,6 +648,14 @@ function Export(){
                                     ->setCellValue('A4',$company_info[0]->mobile_no)
                                     ->setCellValue('A6','Product History')
                                     ->setCellValue('A7','As of '.date("F j, Y, g:i a"));
+            $unit_name = "";
+            if($product_info[0]->is_parent == 1){
+                $unit_name = $product_info[0]->product_unit_name;
+            }else{
+                $unit_name = $product_info[0]->parent_unit_name;
+            }
+
+
 if($inv == 'parent'){
           $excel->getActiveSheet()->setCellValue('A9','Product Description')->getStyle('A9')->getFont()->setBold(TRUE)
           ->getActiveSheet()->setCellValue('B9',$product_info[0]->product_desc)
@@ -546,7 +670,7 @@ if($inv == 'parent'){
           ->getActiveSheet()->setCellValue('B12',$product_info[0]->supplier_name)
 
           ->setCellValue('A13','Unit')->getStyle('A13')->getFont()->setBold(TRUE)
-          ->getActiveSheet()->setCellValue('B13',$product_info[0]->parent_unit_name.' (Bulk Unit)')
+          ->getActiveSheet()->setCellValue('B13',$unit_name)
 
           ->setCellValue('A14','Tax')->getStyle('A14')->getFont()->setBold(TRUE)
           ->getActiveSheet()->setCellValue('B14',$product_info[0]->tax_type.'('.$product_info[0]->tax_rate.' %)')
@@ -581,8 +705,8 @@ if($inv == 'parent'){
         ->getActiveSheet()->setCellValue('D18','Description')->getStyle('D18')->getFont()->setBold(TRUE)
         ->getActiveSheet()->setCellValue('E18','Remarks')->getStyle('E18')->getFont()->setBold(TRUE)
         ->getActiveSheet()->setCellValue('F18','In')->getStyle('F18')->getFont()->setBold(TRUE)
-        ->getActiveSheet()->setCellValue('G18','Out')->getStyle('G18')->getFont()->setBold(TRUE)
-        ->getActiveSheet()->setCellValue('H18','Balance')->getStyle('H18')->getFont()->setBold(TRUE);
+        ->getActiveSheet()->setCellValue('G18','Out')->getStyle('G18')->getFont()->setBold(TRUE);
+        // ->getActiveSheet()->setCellValue('H18','Balance')->getStyle('H18')->getFont()->setBold(TRUE);
         }else if ($inv=='child'){
           $excel->getActiveSheet()->setCellValue('A9','Product Description')->getStyle('A9')->getFont()->setBold(TRUE)
           ->getActiveSheet()->setCellValue('B9',$product_info[0]->product_desc)
@@ -597,7 +721,7 @@ if($inv == 'parent'){
           ->getActiveSheet()->setCellValue('B12',$product_info[0]->supplier_name)
 
           ->setCellValue('A13','Unit')->getStyle('A13')->getFont()->setBold(TRUE)
-          ->getActiveSheet()->setCellValue('B13',$product_info[0]->child_unit_name.' (Retail Unit)')
+          ->getActiveSheet()->setCellValue('B13',$unit_name)
 
           ->setCellValue('A14','Tax')->getStyle('A14')->getFont()->setBold(TRUE)
           ->getActiveSheet()->setCellValue('B14',$product_info[0]->tax_type.'('.$product_info[0]->tax_rate.' %)')
@@ -631,8 +755,8 @@ if($inv == 'parent'){
         ->getActiveSheet()->setCellValue('D18','Description')->getStyle('D18')->getFont()->setBold(TRUE)
         ->getActiveSheet()->setCellValue('E18','Remarks')->getStyle('E18')->getFont()->setBold(TRUE)
         ->getActiveSheet()->setCellValue('F18','In')->getStyle('F18')->getFont()->setBold(TRUE)
-        ->getActiveSheet()->setCellValue('G18','Out')->getStyle('G18')->getFont()->setBold(TRUE)
-        ->getActiveSheet()->setCellValue('H18','Balance')->getStyle('H18')->getFont()->setBold(TRUE);
+        ->getActiveSheet()->setCellValue('G18','Out')->getStyle('G18')->getFont()->setBold(TRUE);
+        // ->getActiveSheet()->setCellValue('H18','Balance')->getStyle('H18')->getFont()->setBold(TRUE);
 
 
 
@@ -659,7 +783,7 @@ $i=18;
                                 $excel->getActiveSheet()->setCellValue('E'.$i,$product->remarks);
                                 $excel->getActiveSheet()->setCellValue('F'.$i,number_format($product->parent_in_qty,2));
                                 $excel->getActiveSheet()->setCellValue('G'.$i,number_format($product->parent_out_qty,2));
-                                $excel->getActiveSheet()->setCellValue('H'.$i,number_format($product->parent_balance,2));
+                                // $excel->getActiveSheet()->setCellValue('H'.$i,number_format($product->parent_balance,2));
 
                             }
 
@@ -676,7 +800,7 @@ $i=18;
                                 $excel->getActiveSheet()->setCellValue('E'.$i,$product->remarks);
                                 $excel->getActiveSheet()->setCellValue('F'.$i,number_format($product->child_in_qty,2));
                                 $excel->getActiveSheet()->setCellValue('G'.$i,number_format($product->child_out_qty,2));
-                                $excel->getActiveSheet()->setCellValue('H'.$i,number_format($product->child_balance,2));
+                                // $excel->getActiveSheet()->setCellValue('H'.$i,number_format($product->child_balance,2));
 
                             }
 
@@ -717,10 +841,12 @@ function Export_Stock(){
                 $company_info=$m_company_info->get_list();
 
 
-
                 $account_integration =$this->Account_integration_model;
                 $a_i=$account_integration->get_list();
+
                 $account =$a_i[0]->sales_invoice_inventory;
+                $ci_account =$a_i[0]->cash_invoice_inventory;
+                $dis_account =$a_i[0]->dispatching_invoice_inventory;
 
                 $product_id=$this->input->get('id');
                 $cat=$this->input->get('cat');
@@ -729,18 +855,21 @@ function Export_Stock(){
                 $as_of_date=$this->input->get('date');
                 if($as_of_date==null){ $date = null; }else{$date = date('Y-m-d',strtotime($as_of_date));}
                 $m_products=$this->Products_model;
-                $products_parent=$m_products->get_product_history_with_child($product_id,$department_id,$date,1,1,1);
-                $products_child=$m_products->get_product_history_with_child($product_id,$department_id,$date,1,0,1);
+
+                $products_parent=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account);
+                $products_child=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account);
+
                 $info=$m_products->get_list(
                     array('product_id'=>$product_id),
                     array(
                         'products.*',
                             '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.parent_unit_id) as parent_unit_name',
-                            '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name'
+                            '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name',
+                            '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.bulk_unit_id) as bulk_unit_name'
                             )
                 );
                 $product_info= $info[0];
-                if($cat == 'bulk'){$cat_name = 'Bulk'; }else if ($cat == 'retail'){$cat_name = 'Retail';}
+                // if($cat == 'bulk'){$cat_name = 'Bulk'; }else if ($cat == 'retail'){$cat_name = 'Retail';}
 
                 $excel=$this->excel;
                 $excel->setActiveSheetIndex(0);
@@ -754,7 +883,7 @@ function Export_Stock(){
                                         ->setCellValue('A2',$company_info[0]->company_address)
                                         ->setCellValue('A3',$company_info[0]->email_address)
                                         ->setCellValue('A4',$company_info[0]->mobile_no)
-                                        ->setCellValue('A6','Stock Card / Bin Card ('.$cat_name.')')
+                                        ->setCellValue('A6','Stock Card / Bin Card ')
                                         ->setCellValue('A7','As of '.date("F j, Y, g:i a"));
 
 
@@ -765,63 +894,54 @@ function Export_Stock(){
 
 
           $excel->getActiveSheet()->getStyle('A6')->getFont()->setBold(TRUE);
-          if($cat == 'bulk'){          
-                $purchase_cost = $product_info->purchase_cost;
-                $sale_price =$product_info->sale_price;
-                $excel->getActiveSheet()->setCellValue('E9','Unit of Measurement')->getStyle('E9')->getFont()->setBold(TRUE)
-                        ->getActiveSheet()->setCellValue('F9',$product_info->parent_unit_name);
-            }else if($cat == 'retail'){
-                $purchase_cost = number_format($product_info->purchase_cost,2) / number_format($product_info->child_unit_desc,2);
-                $sale_price = number_format($product_info->sale_price,2) / number_format($product_info->child_unit_desc,2);
-                $excel->getActiveSheet()->setCellValue('E9','Unit of Measurement')->getStyle('E9')->getFont()->setBold(TRUE)
-                        ->getActiveSheet()->setCellValue('F9',$product_info->child_unit_name);
-            }
+
+            $purchase_cost = $product_info->purchase_cost;
+            $sale_price =$product_info->sale_price;
+            $excel->getActiveSheet()->setCellValue('E9','Unit of Measurement')->getStyle('E9')->getFont()->setBold(TRUE)
+                    ->getActiveSheet()->setCellValue('F9',$product_info->bulk_unit_name);
+
 
             $excel->getActiveSheet()->setCellValue('C9','Purchase Cost')->getStyle('C9')->getFont()->setBold(TRUE)
-                    ->getActiveSheet()->setCellValue('D9',$purchase_cost)->getStyle('D9')->getNumberFormat()->setFormatCode('#,##0.00');
+                  ->getActiveSheet()->setCellValue('D9',$purchase_cost)->getStyle('D9')->getNumberFormat()->setFormatCode('#,##0.00');
+            
             $excel->getActiveSheet()->setCellValue('C10','Suggested Retail Price')->getStyle('C10')->getFont()->setBold(TRUE)
-                    ->getActiveSheet()->setCellValue('D10',$sale_price)->getStyle('D10')->getNumberFormat()->setFormatCode('#,##0.00');
+                  ->getActiveSheet()->setCellValue('D10',$sale_price)->getStyle('D10')->getNumberFormat()->setFormatCode('#,##0.00');
+            
             $excel->getActiveSheet()->setCellValue('A12','Transaction Date')->getStyle('A12')->getFont()->setBold(TRUE)
-                    ->getActiveSheet()->setCellValue('B12','Reference')->getStyle('B12')->getFont()->setBold(TRUE)
-                    ->getActiveSheet()->setCellValue('C12','IN')->getStyle('C12')->getFont()->setBold(TRUE)
-                    ->getActiveSheet()->setCellValue('D12','OUT')->getStyle('D12')->getFont()->setBold(TRUE)
-                    ->getActiveSheet()->setCellValue('E12','Balance')->getStyle('E12')->getFont()->setBold(TRUE)
-                    ->getActiveSheet()->setCellValue('F12','Department')->getStyle('F12')->getFont()->setBold(TRUE)
-                    ->getActiveSheet()->setCellValue('G12','Remarks')->getStyle('G12')->getFont()->setBold(TRUE);
-            $excel->getActiveSheet()->getStyle('C12')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-            $excel->getActiveSheet()->getStyle('D12')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-            $excel->getActiveSheet()->getStyle('E12')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                  ->getActiveSheet()->setCellValue('B12','Reference')->getStyle('B12')->getFont()->setBold(TRUE)
+                  ->getActiveSheet()->setCellValue('C12','Packaging')->getStyle('C12')->getFont()->setBold(TRUE)
+                  ->getActiveSheet()->setCellValue('D12','IN')->getStyle('D12')->getFont()->setBold(TRUE)
+                  ->getActiveSheet()->setCellValue('E12','OUT')->getStyle('E12')->getFont()->setBold(TRUE)
+                  ->getActiveSheet()->setCellValue('F12','Balance')->getStyle('F12')->getFont()->setBold(TRUE)
+                  ->getActiveSheet()->setCellValue('G12','Bulk Balance')->getStyle('G12')->getFont()->setBold(TRUE)
+                  ->getActiveSheet()->setCellValue('H12','Department')->getStyle('H12')->getFont()->setBold(TRUE)
+                  ->getActiveSheet()->setCellValue('I12','Remarks')->getStyle('I12')->getFont()->setBold(TRUE);
+
+            $excel->getActiveSheet()->getStyle('D12:G12')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
           $i = 12;  foreach ($products_parent as $parent) {
                                 $i++;
                                 $excel->getActiveSheet()->setCellValue('A'.$i,$parent->txn_date);
                                 $excel->getActiveSheet()->setCellValue('B'.$i,$parent->ref_no);
+                                $excel->getActiveSheet()->setCellValue('C'.$i,$parent->identifier);
 
-                                if($cat == 'bulk'){
-                                    $excel->getActiveSheet()->setCellValue('C'.$i,number_format($parent->parent_in_qty,2))->getStyle('C'.$i)->getNumberFormat()->setFormatCode('#,##0.00');
-                                    $excel->getActiveSheet()->setCellValue('D'.$i,number_format($parent->parent_out_qty,2))->getStyle('D'.$i)->getNumberFormat()->setFormatCode('#,##0.00');
-                                    $excel->getActiveSheet()->setCellValue('E'.$i,number_format($parent->parent_balance,2))->getStyle('E'.$i)->getNumberFormat()->setFormatCode('#,##0.00');
-                                }else if ($cat == 'retail'){
-                                    $excel->getActiveSheet()->setCellValue('C'.$i,number_format($parent->child_in_qty,2))->getStyle('C'.$i)->getNumberFormat()->setFormatCode('#,##0.00');
-                                    $excel->getActiveSheet()->setCellValue('D'.$i,number_format($parent->child_out_qty,2))->getStyle('D'.$i)->getNumberFormat()->setFormatCode('#,##0.00');
-                                    $excel->getActiveSheet()->setCellValue('E'.$i,number_format($parent->child_balance,2))->getStyle('E'.$i)->getNumberFormat()->setFormatCode('#,##0.00');
+                                $excel->getActiveSheet()->getStyle('D'.$i.':G'.$i)->getNumberFormat()->setFormatCode('#,##0.00');
 
-                                }
-
-                                $excel->getActiveSheet()->setCellValue('F'.$i,$parent->department_name);
-                                $excel->getActiveSheet()->setCellValue('G'.$i,$parent->remarks);
+                                $excel->getActiveSheet()->setCellValue('D'.$i,number_format($parent->parent_in_qty,2));
+                                $excel->getActiveSheet()->setCellValue('E'.$i,number_format($parent->parent_out_qty,2));
+                                $excel->getActiveSheet()->setCellValue('F'.$i,number_format($parent->parent_balance,2).' '.$product_info->parent_unit_name);
+                                $excel->getActiveSheet()->setCellValue('G'.$i,number_format($parent->parent_bulk_balance,2).' '.$product_info->bulk_unit_name);
+                                $excel->getActiveSheet()->setCellValue('H'.$i,$parent->department_name);
+                                $excel->getActiveSheet()->setCellValue('I'.$i,$parent->remarks);
 
                                 // STYLE
-                                 $excel->getActiveSheet()->getStyle('C'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                                 $excel->getActiveSheet()->getStyle('D'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                                 $excel->getActiveSheet()->getStyle('E'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                                 $excel->getActiveSheet()->getStyle('F'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                                 $excel->getActiveSheet()->getStyle('G'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+                                 $excel->getActiveSheet()->getStyle('D'.$i.':G'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                             }
 
 
 
 
-            foreach(range('A','G') as $columnID) {
+            foreach(range('A','I') as $columnID) {
                 $excel->getActiveSheet()->getColumnDimension($columnID)
                     ->setAutoSize(true);
             }

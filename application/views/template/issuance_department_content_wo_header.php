@@ -71,13 +71,13 @@
         font-weight: bolder;
     }
        table{
-        border:none!important;
+        /*border:none!important;*/
     }
           
       </style>
 
 <div style="width:100%">
-<table style="font-family:tahoma;width: 100%;" id="report_header">
+<table style="font-family:tahoma;width: 100%;border:none!important;" id="report_header">
     <tbody>
         <tr>
             <td style="width:75%;font-size:18px;font-weight:bold;border:none!important;">ITEM TRANSFER REPORT</td>
@@ -87,7 +87,7 @@
     </tbody>
 </table>
 
-<table width="100%" id="issuance">
+<table width="100%" id="issuance" style="border:none!important;">
     <thead>
     </thead>
     <tbody>
@@ -112,7 +112,7 @@
         </tr>
     </tbody>
 </table><br>
-<table width="100%" style="font-family:tahoma;" cellspacing="0" >
+<table width="100%" style="font-family:tahoma;" cellspacing="0" style="border:none!important;">
     <thead>
         <tr >
             <th style="width:35%;text-align:left;border-bottom: 1px solid gray;">Description</th>

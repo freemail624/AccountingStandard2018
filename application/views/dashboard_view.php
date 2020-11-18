@@ -403,7 +403,7 @@
                                                     
 
                                                 </div>
-                                                <div class="row" style="margin-top: 20px;">
+                                                <div class="row hidden" style="margin-top: 20px;">
                                                     <div class="col-xs-12 col-sm-8 <?php echo (in_array('7-1',$this->session->user_rights)?'':'hidden'); ?>">
                                                       <div class="data-container table-responsive" style="padding: 20px 15px 20px 15px; min-height: 700px; max-height: 700px;">
                                                             <h6 class="visible-xs hidden-sm hidden-md hidden-lg po_title" style="position: absolute; top: 5px"><i class="fa fa-file-text-o"></i> <span >PURCHASE ORDER</span></h6>

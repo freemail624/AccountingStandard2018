@@ -30,9 +30,20 @@ class Purchase_items_model extends CORE_Model {
                         p.product_desc,                        
                         p.purchase_cost,
                         p.parent_unit_id,
+                        p.bulk_unit_id,
                         p.child_unit_id,
                         p.child_unit_desc,
                         p.is_bulk,
+                        (CASE
+                            WHEN p.is_parent = TRUE 
+                                THEN p.bulk_unit_id
+                            ELSE p.parent_unit_id
+                        END) as product_unit_id,
+                        (CASE
+                            WHEN p.is_parent = TRUE 
+                                THEN blkunit.unit_name
+                            ELSE chldunit.unit_name
+                        END) as product_unit_name,
                         (SELECT unit_name FROM units u WHERE u.unit_id = p.parent_unit_id) as parent_unit_name,
                         (SELECT unit_name FROM units u WHERE u.unit_id = p.child_unit_id) as child_unit_name
                 FROM
@@ -98,6 +109,9 @@ class Purchase_items_model extends CORE_Model {
                 GROUP BY m.po_no , m.product_id
                 HAVING po_qty > 0) AS main
                 LEFT JOIN products AS p ON main.product_id = p.product_id
+                LEFT JOIN units as blkunit ON blkunit.unit_id = p.bulk_unit_id
+                LEFT JOIN units as chldunit ON chldunit.unit_id = p.parent_unit_id
+                
                 ) AS n) AS o";
 
             return $this->db->query($sql)->result();

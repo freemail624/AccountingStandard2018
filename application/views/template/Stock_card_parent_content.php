@@ -40,9 +40,9 @@
         </tr>
     </table><hr>
     <div>
-        <h3><strong>Stock Card / Bin Card (Bulk)</strong></h3>
+        <h3><strong>Stock Card / Bin Card</strong></h3>
     </div>
-<b>Unit of Measurement :</b> <?php echo $info[0]->parent_unit_name?> <br><br>
+<b>Unit of Measurement :</b> <?php echo $info[0]->bulk_unit_name?> <br><br>
 
 <table style="width: 100%" class="table table-striped">
     <tr>
@@ -59,15 +59,18 @@
         <td  style="width: 35%;" id="sale_price"><?php echo number_format($info[0]->sale_price,2)  ?></td>
     </tr>
 </table>
+<br/>
    <center>
        <table width="100%"  style="border-collapse: collapse;">
            <thead>
                 <tr class="">
                     <td style="border: 1px solid lightgrey;padding: 5px;"><b>Txn Date</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;"><b>Reference</b></td>
+                    <td style="border: 1px solid lightgrey;padding: 5px;"><b>Packaging</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>In</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>Out</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>Balance</b></td>
+                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>Bulk Balance</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;"><b>Department</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;"><b>Remarks</b></td>
 
@@ -85,9 +88,14 @@
                <tr>
                    <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo date("M d, Y",strtotime($product->txn_date)); ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo $product->ref_no; ?></td>
+                   <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo $product->identifier; ?></td>
+
+
+
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_in_qty,2); ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_out_qty,2); ?></td>
-                   <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_balance,2); ?></td>
+                   <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_balance,2).' '.$info[0]->parent_unit_name; ?></td>
+                   <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_bulk_balance,2).' '.$info[0]->bulk_unit_name; ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: left;"><?php echo $product->department_name ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: left;"><?php echo $product->remarks; ?></td>
                </tr>

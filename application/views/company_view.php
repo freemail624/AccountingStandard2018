@@ -340,7 +340,57 @@
                                                                <input type="text" name="industry_classification" class="form-control" value="<?php echo $company->industry_classification; ?>" placeholder="Industry Classification" data-error-msg="Industry Classification is required!">
                                                            </div>
                                                        </div>
-                                                   </div>                                                                                      
+                                                   </div>  
+
+
+                                                <br/>
+                                                <h2 class="h2-panel-heading">
+                                                  <i class="fa fa-file-o"></i> Sales &amp; Purchasing <small>Default Remarks Settings</small></h2><hr>
+
+                                                  <div class="form-group">
+                                                       <label class="col-md-2 col-md-offset-1 control-label" id="is_purchasing_default"> 
+                                                       <strong> 
+                                                       <input type="checkbox" name="is_purchasing_default" for="is_purchasing_default"
+                                                       <?php if($company->is_purchasing_default == 1){ echo 'checked'; } ?>>
+                                                        Purchasing :</strong></label>
+                                                       <div class="col-md-7">
+                                                           <div class="input-group">
+                                                                <span class="input-group-addon">
+                                                                    <i class="fa fa-file"></i>
+                                                                </span>
+                                                                <textarea class="form-control" rows="2" placeholder="Purchase Default Remarks" name="purchase_remarks"><?php echo $company->purchase_remarks; ?></textarea>
+                                                           </div>
+                                                       </div>
+                                                   </div>  
+
+                                                  <div class="form-group">
+                                                       <label class="col-md-2 col-md-offset-1 control-label" id="is_sales_default"> 
+                                                       <strong> 
+                                                       <input type="checkbox" name="is_sales_default" for="is_sales_default" 
+                                                       <?php if($company->is_sales_default == 1){ echo 'checked'; } ?>>
+                                                        Sales :</strong></label>
+                                                       <div class="col-md-7">
+                                                           <div class="input-group">
+                                                                <span class="input-group-addon">
+                                                                    <i class="fa fa-file"></i>
+                                                                </span>
+                                                                <textarea class="form-control" rows="2" placeholder="Sales Default Remarks" name="sales_remarks"><?php echo $company->sales_remarks; ?></textarea>
+                                                           </div>
+                                                       </div>
+                                                   </div>  
+
+                                                   <div class="form-group"> 
+                                                       <div class="col-md-7 col-md-offset-3">
+                                                         <label class="control-label" id="is_print_auto"> 
+                                                           <strong> 
+                                                           <input type="checkbox" name="is_print_auto" for="is_print_auto" 
+                                                            <?php if($company->is_print_auto == 1){ echo 'checked'; } ?>>
+                                                              Auto print after saving invoice
+                                                            </strong>
+                                                          </label>
+                                                       </div>
+                                                   </div>          
+
                                                </form>
                                                     <br /><br />
                                             </div>
@@ -717,6 +767,10 @@
             _data.push({name : "photo_path" ,value : $('img[name="img_company"]').attr('src')});
             _data.push({name : "tax_type_id" ,value : $('#tax_group').select2('val')});
             _data.push({name : "business_type" ,value : $('#business_type').select2('val')});
+
+            $('input[name="is_purchasing_default"]').prop("checked") ?  _data.push({name : "is_purchasing_default" , value : '1'   }) : _data.push({name : "is_purchasing_default" , value : '0'   });
+            $('input[name="is_sales_default"]').prop("checked") ?  _data.push({name : "is_sales_default" , value : '1'   }) : _data.push({name : "is_sales_default" , value : '0'   });
+            $('input[name="is_print_auto"]').prop("checked") ?  _data.push({name : "is_print_auto" , value : '1'   }) : _data.push({name : "is_print_auto" , value : '0'   });            
 
             return $.ajax({
                 "dataType":"json",

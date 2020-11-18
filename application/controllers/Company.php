@@ -53,7 +53,6 @@ class Company extends CORE_Controller
                 $m_company->tax_type_id=$this->input->post('tax_type_id',TRUE);
 
                 // Bir Form Settings
-
                 $m_company->registered_to=$this->input->post('registered_to',TRUE);
                 $m_company->registered_address=$this->input->post('registered_address',TRUE);
                 $m_company->zip_code=$this->input->post('zip_code',TRUE);
@@ -62,6 +61,14 @@ class Company extends CORE_Controller
                 $m_company->rdo_no=$this->input->post('rdo_no',TRUE);
                 $m_company->nature_of_business=$this->input->post('nature_of_business',TRUE);
                 $m_company->industry_classification=$this->input->post('industry_classification',TRUE);
+
+                // Sales and Purchasing Settings
+                $m_company->is_purchasing_default=$this->input->post('is_purchasing_default',TRUE);
+                $m_company->is_sales_default=$this->input->post('is_sales_default',TRUE);
+                $m_company->purchase_remarks=$this->input->post('purchase_remarks',TRUE);
+                $m_company->sales_remarks=$this->input->post('sales_remarks',TRUE);
+                $m_company->is_print_auto=$this->input->post('is_print_auto',TRUE);
+                
                 $m_company->save();
 
                 $response['title']='Success!';

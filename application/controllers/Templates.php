@@ -974,6 +974,10 @@ class Templates extends CORE_Controller {
                     echo $this->load->view('template/sales_invoice_content_dr',$data,TRUE);
                 }
 
+                if($type=='direct'){
+                    echo $this->load->view('template/sales_invoice_direct_content',$data,TRUE);
+                }                
+
                 if($type=='drview'){
                     echo $this->load->view('template/sales_invoice_content_dr_view',$data,TRUE);
                     echo $this->load->view('template/delivery_receipt_menus',$data,TRUE);
@@ -1114,6 +1118,10 @@ class Templates extends CORE_Controller {
                     $pdf->WriteHTML($content);
                     //download it.
                     $pdf->Output();
+                }
+
+                if($type=='viewport'){
+                    echo $this->load->view('template/cash_invoice_for_history',$data,TRUE);
                 }
 
                 break;

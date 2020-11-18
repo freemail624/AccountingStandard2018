@@ -195,10 +195,11 @@
                                                         <th></th>
                                                         <th>PLU</th>
                                                         <th>Product Description</th>
+                                                        <th>Unit</th>
                                                         <th>Category</th>
-                                                        <th style="text-align: right;">Bulk Qty</th>
-                                                        <th style="text-align: right;">Retail Qty</th>
-                                                        <th style="text-align: right;"><center>Bulk and Retail ?</th></th>
+                                                        <th style="text-align:right;">Cost Price</th>
+                                                        <th style="text-align:right;">Retail Price</th>
+                                                        <th style="text-align:right;"><center>Is Parent?</th></th>
                                                         <th><center>Action</center></th>
                                                     </tr>
                                                     </thead>
@@ -230,7 +231,7 @@
 
                                                             <div class="form-group" style="margin-bottom:0px;">
                                                                 <label class="">Other Description :</label>
-                                                                <textarea name="product_desc1" id="product_desc1" class="form-control"></textarea>
+                                                                <textarea name="product_desc1" id="product_desc1" rows="1" class="form-control"></textarea>
                                                             </div>
 
                                                             <div class="form-group" style="margin-bottom:0px;">
@@ -285,25 +286,9 @@
                                                                 </select>
                                                             </div>
 
+                                                            <div class="form-group" style="margin-bottom:0px;">
 
-
-                                                        </div>
-
-                                                        <div class="col-lg-8">
-                                                            <div class="form-group" style="margin-bottom:0px;text-align: left;margin-left: 5px;">
-                                                                    <label class="" for="is_bulk" style="text-align: left;"><input type="checkbox" id="is_bulk" style="transform: scale(2.0);">  &nbsp;&nbsp;For Bulk and Retail ?</label>
-                                                            </div>
-                                                            <div class="form-group col-sm-4" style="margin-bottom:0px;">
-                                                                <label class=""><b class="required">*</b>Primary Unit</label>
-                                                                <select name="primary_unit" id="primary_unit" data-error-msg="Primary Unit is required." required>
-                                                                    <option value="1">Bulk</option>
-                                                                    <option value="0">Retail</option>
-                                                                </select> 
-                                                            </div> 
-                                                                <div class="col-lg-12 container-fluid" style="padding: 0px;">
-                                                       <div class="form-group col-sm-4" style="margin-bottom:0px;">
-
-                                                                <label class=""><b class="required">*</b>Unit of Measurement</label>
+                                                                <label class=""><b class="required">*</b>Unit</label>
                                                                 <select name="parent_unit_id" id="product_unit" data-error-msg="Unit is required." required>
                                                                     <option value="unt">[ Create New Unit ]</option>
                                                                     <?php
@@ -314,30 +299,8 @@
                                                                     ?>
                                                                 </select> 
                                                             </div> 
-                                                            <div class="col-sm-1" style="vertical-align: center;"><br><br> = </div>
-                                                            <div class="form-group col-sm-3" style="margin-bottom:0px;">
-                                                                <label class=""><b class="required"></b> &nbsp;</label>
-                                                                    <div class="input-group">
-                                                                        <input type="text" name="child_unit_desc" id="child_unit_desc" class="form-control" value=""  data-error-msg="Retail Unit Equivalency is required.">
-                                                                    </div>
-                                                            </div>
-                                                             <div class="form-group col-sm-4" style="margin-bottom:0px;">
-                                                                <label class=""><b class="required"> &nbsp;</b> &nbsp; </label>
-                                                                <select name="child_unit_id" id="child_unit_id" data-error-msg="Retail Unit is required.">
-                                                                    <option value="unt">[ Create New Unit ]</option>
-                                                                    <?php
-                                                                    foreach($units as $row)
-                                                                    {
-                                                                        echo '<option value="'.$row->unit_id.'">'.$row->unit_name.'</option>';
-                                                                    }
-                                                                    ?>
-                                                                </select> 
-                                                            </div>
-                                                                </div>
-                                                        <div class="row">
-                                                            <div class="col-lg-12">
-                                                                <div class="col-lg-6" style="margin:0px;">
-                                                                <div class="form-group" style="margin-bottom:0px;">
+
+                                                            <div class="form-group" style="margin-bottom:0px;">
                                                                     <label class=""><b class="required">*</b> Inventory type :</label>
 
                                                                     <select name="item_type_id" id="cbo_item_type" data-error-msg="Inverntory type is required." required>
@@ -350,6 +313,25 @@
                                                                 </div>
 
 
+                                                        </div>
+
+                                                        <div class="col-lg-8">
+
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <div class="col-lg-6" style="margin:0px;">
+                                                            
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    <label class="">Purchase Cost :</label>
+                                                                    <div class="input-group">
+                                                                            <span class="input-group-addon">
+                                                                                <i class="fa fa-toggle-off"></i>
+                                                                            </span>
+                                                                        <input type="text" name="purchase_cost" id="purchase_cost" class="form-control numeric">
+                                                                    </div>
+
+                                                                </div>
+
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                     <label class="">Suggested Retail Price (SRP) :</label>
                                                                     <div class="input-group">
@@ -360,6 +342,15 @@
                                                                     </div>
                                                                 </div>
 
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    <label class="">Public Price :</label>
+                                                                    <div class="input-group">
+                                                                            <span class="input-group-addon">
+                                                                                <i class="fa fa-toggle-off"></i>
+                                                                            </span>
+                                                                        <input type="text" name="public_price" id="public_price" class="form-control numeric">
+                                                                    </div>
+                                                                </div>
 
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                     <label class="">Discounted Price :</label>
@@ -394,51 +385,6 @@
                                                                         <input type="text" name="distributor_price" id="distributor_price" class="form-control numeric">
                                                                     </div>
                                                                 </div>
-                                                                <div class="form-group" style="margin-bottom:0px; vertical-align: middle;text-align: left;"><br>
-                                                                        <label  for="is_tax_exempt" style="text-align: left;vertical-align: middle;"><input type="checkbox" name="is_tax_exempt" class="" id="is_tax_exempt" style="transform: scale(2.0);">  &nbsp;&nbsp;Tax Exempt ?</label>
-
-                                                                </div>
-                                                            </div>
-
-
-
-
-                                                            <div class="col-lg-6">
-
-                                                                <div class="form-group" style="margin-bottom:0px;">
-                                                                    <label class="">Public Price :</label>
-                                                                    <div class="input-group">
-                                                                            <span class="input-group-addon">
-                                                                                <i class="fa fa-toggle-off"></i>
-                                                                            </span>
-                                                                        <input type="text" name="public_price" id="public_price" class="form-control numeric">
-                                                                    </div>
-                                                                </div>
-
-
-
-                                                                <div class="form-group" style="margin-bottom:0px;">
-                                                                    <label class="">Purchase Cost :</label>
-                                                                    <div class="input-group">
-                                                                            <span class="input-group-addon">
-                                                                                <i class="fa fa-toggle-off"></i>
-                                                                            </span>
-                                                                        <input type="text" name="purchase_cost" id="purchase_cost" class="form-control numeric">
-                                                                    </div>
-
-                                                                </div>
-
-                                                                <!-- <div class="form-group" style="margin-bottom:0px;">
-                                                                    <label class="">Purchase Cost 2 (Viz-Min Area):</label>
-                                                                    <div class="input-group">
-                                                                            <span class="input-group-addon">
-                                                                                <i class="fa fa-toggle-off"></i>
-                                                                            </span>
-                                                                        <input type="text" name="purchase_cost_2" class="form-control numeric">
-                                                                    </div>
-
-                                                                </div> -->
-
 
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                     <label class="">Warning Quantity (Minimum Stock):</label>
@@ -462,7 +408,108 @@
                                                                 </div>
 
 
+                                                                <div class="form-group" style="margin-bottom:0px; vertical-align: middle;text-align: left;"><br>
+                                                                        <label  for="is_tax_exempt" style="text-align: left;vertical-align: middle;"><input type="checkbox" name="is_tax_exempt" class="" id="is_tax_exempt" style="transform: scale(2.0);">  &nbsp;&nbsp;Tax Exempt ?</label>
 
+                                                                </div>
+
+                                                            </div>
+
+
+
+
+                                                            <div class="col-lg-6">
+
+
+
+                                                                <!-- <div class="form-group" style="margin-bottom:0px;">
+                                                                    <label class="">Purchase Cost 2 (Viz-Min Area):</label>
+                                                                    <div class="input-group">
+                                                                            <span class="input-group-addon">
+                                                                                <i class="fa fa-toggle-off"></i>
+                                                                            </span>
+                                                                        <input type="text" name="purchase_cost_2" class="form-control numeric">
+                                                                    </div>
+
+                                                                </div> -->
+
+
+
+
+
+
+
+  <!--                                                           <div class="form-group" style="margin-bottom:0px;text-align: left;margin-left: 5px;">
+                                                                    <label class="" for="is_bulk" style="text-align: left;"><input type="checkbox" id="is_bulk" style="transform: scale(2.0);">  &nbsp;&nbsp;For Bulk and Retail ?</label>
+                                                            </div> -->
+<!--                                                             <div class="form-group col-sm-4" style="margin-bottom:0px;">
+                                                                <label class=""><b class="required">*</b>Primary Unit</label>
+                                                                <select name="primary_unit" id="primary_unit" data-error-msg="Primary Unit is required." required>
+                                                                    <option value="1">Bulk</option>
+                                                                    <option value="0">Retail</option>
+                                                                </select> 
+                                                            </div>  -->
+<!--                                                             <div class="form-group col-sm-3" style="margin-bottom:0px;">
+                                                                <label class=""><b class="required"></b> &nbsp;</label>
+                                                                    <div class="input-group">
+                                                                        <input type="text" name="child_unit_desc" id="child_unit_desc" class="form-control" value=""  data-error-msg="Retail Unit Equivalency is required.">
+                                                                    </div>
+                                                            </div> -->
+<!--                                                              <div class="form-group col-sm-4" style="margin-bottom:0px;">
+                                                                <label class=""><b class="required"> &nbsp;</b> &nbsp; </label>
+                                                                <select name="child_unit_id" id="child_unit_id" data-error-msg="Retail Unit is required.">
+                                                                    <option value="unt">[ Create New Unit ]</option>
+                                                                    <?php
+                                                                    //foreach($units as $row)
+                                                                    {
+                                                                    //echo '<option value="'.$row->unit_id.'">'.$row->unit_name.'</option>';
+                                                                    }
+                                                                    ?>
+                                                                </select> 
+                                                            </div> -->
+                                                                <div class="form-group" style="margin-bottom:0px; vertical-align: middle;text-align: left;"><br>
+                                                                        <label  for="is_parent" style="text-align: left;vertical-align: middle;"><input type="checkbox" name="is_parent" class="" id="is_parent" style="transform: scale(2.0);">  &nbsp;&nbsp;Is Parent ?</label>
+                                                                </div>
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    <label><b class="required elem_parent"></b> Bulk Unit :</label>
+                                                                    <select class="form-control" name="bulk_unit_id" id="bulk_unit_id" data-error-msg="Bulk Unit is required.">
+                                                                        <option value="unt">[ Create New Unit ]</option>
+                                                                        <?php foreach($units as $row) { ?>
+                                                                            <option value="<?php echo $row->unit_id; ?>">
+                                                                                <?php echo $row->unit_name; ?>
+                                                                            </option>
+                                                                        <?php }?>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    <label><b class="required elem_parent"></b> Bulk Conversion Rate: </label>
+                                                                    <div class="input-group">
+                                                                            <span class="input-group-addon">
+                                                                                <i class="fa fa-toggle-off"></i>
+                                                                            </span>
+                                                                        <input type="text" name="bulk_conversion_rate" id="bulk_conversion_rate" class="form-control numeric" data-error-msg="Bulk conversion rate is required.">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    <label><b class="required elem_child"></b> Parent :</label>
+                                                                    <select class="form-control" name="parent_id" id="parent_id" data-error-msg="Parent Product is required.">
+                                                                        <option value="0">None</option>
+                                                                        <?php foreach($products as $product){ ?>
+                                                                            <option value="<?php echo $product->product_id; ?>">
+                                                                                <?php echo $product->product_desc; ?>
+                                                                            </option>
+                                                                        <?php }?>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    <label>Conversion Rate: </label>
+                                                                    <div class="input-group">
+                                                                            <span class="input-group-addon">
+                                                                                <i class="fa fa-toggle-off"></i>
+                                                                            </span>
+                                                                        <input type="text" name="conversion_rate" id="conversion_rate" class="form-control numeric" data-error-msg="Conversion rate is required.">
+                                                                    </div>
+                                                                </div>
 
 
                                                                 <div class="form-group" style="margin-bottom:0px;">
@@ -1059,6 +1106,9 @@ $(document).ready(function(){
     var _section_id; var _menu_id; var _child_unit_id;
     var _cboPrimaryUnit;
     var _cboBrands;
+    var _cboBulkUnitId;
+    var _cboParentId;
+
     /*$(document).ready(function(){
         $('#modal_filter').modal('show');
         showList(false);
@@ -1084,35 +1134,25 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "product_code" },
                 { targets:[2],data: "product_desc" },
-                { targets:[3],data: "category_name" },
+                { targets:[3],data: "parent_unit_name" },
+                { targets:[4],data: "category_name" },
                 {
-                    targets:[4],data: "CurrentQty",
+                    targets:[5],data: "purchase_cost",
                     render: function (data, type, full, meta) {
-                        if(isNaN(data)){
-                            return 0.00;
-                        }else{
-                            return  accounting.formatNumber(parseFloat(data),2);
-                        }
-
-                    }
+                        return  accounting.formatNumber(parseFloat(data),2);
+                    }                    
                 },
                 {
-                    targets:[5],data: "CurrentQtyChild",
+                    targets:[6],data: "sale_price",
                     render: function (data, type, full, meta) {
-                        if(isNaN(data)){
-                            return 0.00;
-                        }else{
-                            return  accounting.formatNumber(parseFloat(data),2);
-                        }
-
-                    }
-                },
-                {   visible:false,
-                    targets:[6],data: null,
+                        return  accounting.formatNumber(parseFloat(data),2);
+                    }                    
+                },                
+                {   targets:[7],data: null,
                     render: function (data, type, full, meta){
                         var _attribute='';
                         //console.log(data.is_email_sent);
-                        if(data.is_bulk=="1"){
+                        if(data.is_parent=="1"){
                             _attribute=' class="fa fa-check-circle" style="color:green;" ';
                         }else{
                             _attribute=' class="fa fa-times-circle" style="color:red;" ';
@@ -1123,7 +1163,7 @@ $(document).ready(function(){
 
                 },
                 {
-                    targets:[7],
+                    targets:[8],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"   data-toggle="tooltip" data-placement="top" title="Edit" style="margin-left:-5px;"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info"  data-toggle="tooltip" data-placement="top" title="Move to trash" style="margin-right:-5px;"><i class="fa fa-trash-o"></i> </button>';
@@ -1138,12 +1178,15 @@ $(document).ready(function(){
                      },
             "rowCallback":function( row, data, index ){
 
-                $(row).find('td').eq(4).attr({
-                    "align": "right"
-                });
+
                 $(row).find('td').eq(5).attr({
                     "align": "right"
                 });
+                $(row).find('td').eq(6).attr({
+                    "align": "right"
+                });
+
+
             }
 
 
@@ -1164,7 +1207,7 @@ $(document).ready(function(){
             }
         }
         
-        showPanelActive('list');
+        showPanelActive('list');  
 
         $('.numeric').autoNumeric('init',{mDec:2});
 
@@ -1203,20 +1246,29 @@ $(document).ready(function(){
         });
 
         _cboMeasurement=$('#product_unit').select2({
-            placeholder: "Please select Bulk Unit.",
+            placeholder: "Please select Unit.",
             allowClear: false
         });
 
-
-        _cboPrimaryUnit=$('#primary_unit').select2({
-            allowClear: false,
-            minimumResultsForSearch: -1
-        });
-
-        _child_unit_id=$('#child_unit_id').select2({
-            placeholder: "Please select Retail Unit.",
+        _cboBulkUnitId=$('#bulk_unit_id').select2({
+            placeholder: "Please select Unit.",
             allowClear: false
         });
+
+        _cboParentId=$('#parent_id').select2({
+            placeholder: "Please select parent.",
+            allowClear: false
+        });       
+
+        // _cboPrimaryUnit=$('#primary_unit').select2({
+        //     allowClear: false,
+        //     minimumResultsForSearch: -1
+        // });
+
+        // _child_unit_id=$('#child_unit_id').select2({
+        //     placeholder: "Please select Retail Unit.",
+        //     allowClear: false
+        // });
 
         _cboCredit=$('#income_account_id').select2({
             allowClear: false
@@ -1262,6 +1314,15 @@ $(document).ready(function(){
             }
         });
 
+        // $('#parent_id').on("change", function () {
+
+        //     if ($(this).val() != ""){
+        //         $('#conversion_rate').prop('disabled', false);
+        //     }else{
+        //         $('#conversion_rate').prop('disabled', true);
+        //     }
+        // });
+
          $("#is_bulk").on("change", function () {        
          if($('#is_bulk').prop("checked") == true){
             $('#child_unit_desc').prop('required',true);
@@ -1269,20 +1330,21 @@ $(document).ready(function(){
             } else{
             $('#child_unit_desc').prop('required',false);
            $('#child_unit_id').prop('required',false);
-            if(_cboPrimaryUnit.val() == 0 ) {
-                _cboPrimaryUnit.select2('val',1);
-                        showNotification({title:"Error!",stat:"error",msg:'Retail not available. "Check" For Bulk and Retail if you wish to use retail as primary unit'});
-            }
-
+            // if(_cboPrimaryUnit.val() == 0 ) {
+            //     _cboPrimaryUnit.select2('val',1);
+            //             showNotification({title:"Error!",stat:"error",msg:'Retail not available. "Check" For Bulk and Retail if you wish to use retail as primary unit'});
+            // }
          }
-        });       
-        _cboPrimaryUnit.on('select2:select',function(e){
-            var i=$(this).select2('val');
-            if(i == 0 && $('#is_bulk').prop("checked") == false) {
-                $(this).select2('val',1);
-                        showNotification({title:"Error!",stat:"error",msg:'Retail not available. "Check" For Bulk and Retail if you wish to use retail as primary unit'});
-            }
-        });
+        });    
+
+
+        // _cboPrimaryUnit.on('select2:select',function(e){
+        //     var i=$(this).select2('val');
+        //     if(i == 0 && $('#is_bulk').prop("checked") == false) {
+        //         $(this).select2('val',1);
+        //                 showNotification({title:"Error!",stat:"error",msg:'Retail not available. "Check" For Bulk and Retail if you wish to use retail as primary unit'});
+        //     }
+        // });
         $('#btn_close_category_group').click(function(){
             $('#modal_category_group').modal('toggle');
             // $('#modal_create_product').modal('show');
@@ -1304,16 +1366,28 @@ $(document).ready(function(){
             }
         });
 
-        $("#child_unit_id").on("change", function () {        
+        $("#bulk_unit_id").on("change", function () {
             $modal = $('#modal_unit_group_child');
+        
             if($(this).val() === 'unt'){
-                _child_unit_id.select2('val',null);
+                _cboBulkUnitId.select2('val',null);
                 $modal.modal('show');
                 // $('#modal_create_product').modal('toggle');
                 //clearFieldsModal($('#frm_unit_group'));
                 clearFieldsUnit($('#frm_unit_group_child'));
             }
         });
+
+        // $("#child_unit_id").on("change", function () {        
+        //     $modal = $('#modal_unit_group_child');
+        //     if($(this).val() === 'unt'){
+        //         _child_unit_id.select2('val',null);
+        //         $modal.modal('show');
+        //         // $('#modal_create_product').modal('toggle');
+        //         //clearFieldsModal($('#frm_unit_group'));
+        //         clearFieldsUnit($('#frm_unit_group_child'));
+        //     }
+        // });
 
         $('#btn_close_unit_group').click(function(){
             $('#modal_unit_group').modal('toggle');
@@ -1563,8 +1637,8 @@ $(document).ready(function(){
 
                 var _group=response.row_added[0];
                 $('#product_unit').append('<option value="'+_group.unit_id+'" selected>'+_group.unit_name+'</option>');
-                $('#child_unit_id').append('<option value="'+_group.unit_id+'" >'+_group.unit_name+'</option>');
-                if(_child_unit_id.val() == 'unt'){_child_unit_id.select2('val',null); } // append in #child_unit_id changes the selected to the first row
+                $('#bulk_unit_id').append('<option value="'+_group.unit_id+'" >'+_group.unit_name+'</option>');
+                // if(_child_unit_id.val() == 'unt'){_child_unit_id.select2('val',null); } // append in #child_unit_id changes the selected to the first row
                 $('#product_unit').select2('val',_group.unit_id);
             }).always(function(){
                 showSpinningProgress(btn);
@@ -1593,10 +1667,13 @@ $(document).ready(function(){
                 // $('#modal_create_product').modal('show');
 
                 var _group=response.row_added[0];
-                $('#child_unit_id').append('<option value="'+_group.unit_id+'" selected>'+_group.unit_name+'</option>');
+                $('#bulk_unit_id').append('<option value="'+_group.unit_id+'" selected>'+_group.unit_name+'</option>');
                 $('#product_unit').append('<option value="'+_group.unit_id+'" >'+_group.unit_name+'</option>');
                 if(_cboMeasurement.val() == 'unt'){_cboMeasurement.select2('val',null); }  // append in #product_unit changes the selected to the first row
-                $('#child_unit_id').select2('val',_group.unit_id);
+
+
+
+                $('#bulk_unit_id').select2('val',_group.unit_id);
 
             }).always(function(){
                 showSpinningProgress(btn);
@@ -1687,7 +1764,7 @@ $(document).ready(function(){
                 $.ajax({
                     "dataType":"html",
                     "type":"POST",
-                    "url":"Products/transaction/history-product?id="+ d.product_id,
+                    "url":"Products/transaction/history-product-management?id="+ d.product_id,
                     "beforeSend" : function(){
                         row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
                     }
@@ -1722,6 +1799,53 @@ $(document).ready(function(){
 
         showPanelActive('list');
 
+        var setParentPanel= function(b){
+
+            _cboBulkUnitId.select2('val',null);
+            _cboParentId.select2('val',null);
+
+            $('#conversion_rate').val("");
+            $('#bulk_conversion_rate').val("");
+            $('#is_parent').prop('checked', b);
+
+            if(b){  
+
+                // Readonly Elements based on parent status
+                $('#parent_id').prop('disabled',true);
+                $('#conversion_rate').prop('disabled',true);
+                $('#bulk_unit_id').prop('disabled',false);
+                $('#bulk_conversion_rate').prop('disabled',false);
+
+                // Required for Validation
+                $('#parent_id').prop('required',false);
+                // $('#conversion_rate').prop('required',false);
+                $('#bulk_unit_id').prop('required',true);
+                $('#bulk_conversion_rate').prop('required',true);
+
+                $('.elem_child').html('');
+                $('.elem_parent').html('*');
+
+
+            }else{
+
+                // Readonly Elements based on parent status
+                $('#parent_id').prop('disabled',false);
+                $('#conversion_rate').prop('disabled',false);
+                $('#bulk_unit_id').prop('disabled',true);
+                $('#bulk_conversion_rate').prop('disabled',true);
+
+                // Required for Validation
+                $('#parent_id').prop('required',true);
+                // $('#conversion_rate').prop('required',true);
+                $('#bulk_unit_id').prop('required',false);  
+                $('#bulk_conversion_rate').prop('required',false);  
+
+                $('.elem_child').html('*');
+                $('.elem_parent').html('');
+            }
+
+        }        
+
         $('#btn_new').click(function(){
             _txnMode="new";
 
@@ -1732,19 +1856,30 @@ $(document).ready(function(){
             _cboTax.select2('val',null);
             _cboInventory.select2('val',null);
             _cboMeasurement.select2('val',null);
-            _child_unit_id.select2('val',null);
+            _cboBulkUnitId.select2('val',null);
+            _cboParentId.select2('val',null);
+            // _child_unit_id.select2('val',null);
             _cboCredit.select2('val',0);
             _cboDebit.select2('val',0);
-            _cboPrimaryUnit.select2('val',1);
+            // _cboPrimaryUnit.select2('val',1);
             $('#child_unit_desc').prop('required',false);
-           $('#child_unit_id').prop('required',false);
+            $('#child_unit_id').prop('required',false);
             $('#is_tax_exempt').attr('checked', false);
             $('#is_bulk').attr('checked', false);
 
             showPanelActive('entry');
+            setParentPanel(false);
         });
 
-       $('#btn_cancel_product').click(function(){
+        $('#is_parent').on("change", function () {
+            if($(this).prop("checked") === true){
+                setParentPanel(true);
+            }else{
+                setParentPanel(false);
+            }
+        });
+
+        $('#btn_cancel_product').click(function(){
             showPanelActive('list');
         });
 
@@ -1756,13 +1891,27 @@ $(document).ready(function(){
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.product_id;
 
+            if(data.is_parent == 1){
+                setParentPanel(true);
+            }else{
+                setParentPanel(false);
+            }
+
             clearFields('#frm_product');
+
              $('input,textarea,select').each(function(){
                 var _elem=$(this);
                 $.each(data,function(name,value){
-                    if(_elem.attr('name')==name){
-                        _elem.val(value);
+                    if(_elem.hasClass('numeric')){
+                        if(_elem.attr('name')==name){
+                            _elem.val(accounting.formatNumber(value,2));
+                        }  
+                    }else{
+                        if(_elem.attr('name')==name){
+                            _elem.val(value);
+                        }  
                     }
+
                 });
             });
 
@@ -1771,27 +1920,27 @@ $(document).ready(function(){
             _cboTax.select2('val',data.tax_type_id);
             _cboInventory.select2('val',data.item_type_id);
             _cboMeasurement.select2('val',data.parent_unit_id);
-            _child_unit_id.select2('val',data.child_unit_id);
+            // _child_unit_id.select2('val',data.child_unit_id);
             _cboCredit.select2('val',data.income_account_id);
             _cboDebit.select2('val',data.expense_account_id);
             _cboTaxGroup.select2('val',data.tax_type_id);
-            _cboPrimaryUnit.select2('val',data.primary_unit);
+            // _cboPrimaryUnit.select2('val',data.primary_unit);
             _cboBrands.select2('val',data.brand_id);
+            _cboBulkUnitId.select2('val',data.bulk_unit_id);
+            _cboParentId.select2('val',data.parent_id);
+
             $('#is_tax_exempt').prop('checked', (data.is_tax_exempt==1?true:false));
             $('#is_bulk').prop('checked', (data.is_bulk==1?true:false));
 
-       
-         if(data.is_bulk == true){
-            $('#child_unit_desc').prop('required',true);
-           $('#child_unit_id').prop('required',true);
-         } else{
-            $('#child_unit_desc').prop('required',false);
-           $('#child_unit_id').prop('required',false);
-         }
+            if(data.is_bulk == true){
+                $('#child_unit_desc').prop('required',true);
+                $('#child_unit_id').prop('required',true);
+            } else{
+                $('#child_unit_desc').prop('required',false);
+                $('#child_unit_id').prop('required',false);
+            }
 
-
-
-
+            $('.numeric').autoNumeric('init',{mDec:2});
         });
 
 
@@ -1830,7 +1979,11 @@ $(document).ready(function(){
                         dt.row.add(response.row_added[0]).draw();
                         clearFields($('#frm_product'))
                         // showList(true);
-                                    showPanelActive('list');
+                        showPanelActive('list');
+
+                        var _product=response.row_added[0];
+                        $('#parent_id').append('<option value="'+_product.product_id+'">'+_product.product_desc+'</option>');
+
                     }).always(function(){
                         // $('#modal_create_product').modal('toggle');
                         showSpinningProgress($('#btn_save'));
@@ -1841,7 +1994,7 @@ $(document).ready(function(){
                     updateProduct().done(function(response){
                         showNotification(response);
                         dt.row(_selectRowObj).data(response.row_updated[0]).draw();
-                                    showPanelActive('list');
+                        showPanelActive('list');
                     }).always(function(){
                         // $('#modal_create_product').modal('toggle');
                         showSpinningProgress($('#btn_save'));
@@ -1918,6 +2071,7 @@ $(document).ready(function(){
        // _data.push({name : "is_tax_exempt" ,value : _isTaxExempt});
 $('#is_tax_exempt').prop("checked") ?  _data.push({name : "is_tax_exempt" , value : '1'   }) : _data.push({name : "is_tax_exempt" , value : '0'   });
 $('#is_bulk').prop("checked") ?  _data.push({name : "is_bulk" , value : '1'   }) : _data.push({name : "is_bulk" , value : '0'   });
+$('#is_parent').prop("checked") ?  _data.push({name : "is_parent" , value : '1'   }) : _data.push({name : "is_parent" , value : '0'   });
 
         return $.ajax({
             "dataType":"json",
@@ -1933,6 +2087,7 @@ $('#is_bulk').prop("checked") ?  _data.push({name : "is_bulk" , value : '1'   })
 $('#is_tax_exempt').prop("checked") ?  _data.push({name : "is_tax_exempt" , value : '1'   }) : _data.push({name : "is_tax_exempt" , value : '0'   });
 $('#is_bulk').prop("checked") ?  _data.push({name : "is_bulk" , value : '1'   }) : _data.push({name : "is_bulk" , value : '0'   });
         _data.push({name : "product_id" ,value : _selectedID});
+$('#is_parent').prop("checked") ?  _data.push({name : "is_parent" , value : '1'   }) : _data.push({name : "is_parent" , value : '0'   });
 
         return $.ajax({ 
             "dataType":"json",

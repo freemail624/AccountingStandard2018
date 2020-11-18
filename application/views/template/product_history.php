@@ -1,12 +1,20 @@
 <div class="tab-container tab-top tab-default">
-  <ul class="nav nav-tabs">
+  <!-- <ul class="nav nav-tabs">
       <li class="active"><a href="#Bulk_history_<?php echo $product_info->product_id;  ?>" data-toggle="tab"><i class="fa fa-gavel"></i> Bulk</a></li>
    <?php  if($info[0]->is_bulk==1) {?>   <li class=""><a href="#retail_history_<?php echo $product_info->product_id;  ?>" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Retail</a></li><?php }?>
-  </ul>
+  </ul> -->
   <div class="tab-content">
       <div class="tab-pane active" id="Bulk_history_<?php echo $product_info->product_id;  ?>"  >
 <b>Product Name:</b> <?php echo $info[0]->product_desc?><br>
-<b>Unit of Measurement :</b> <?php echo $info[0]->parent_unit_name?><br><br>
+<b>Unit of Measurement :</b> <?php 
+
+  if ($info[0]->is_parent == 1){
+    echo $info[0]->bulk_unit_name;
+  }else{
+    echo $info[0]->parent_unit_name;
+  }
+
+?><br><br>
    <center>
        <table width="100%"  style="border-collapse: collapse;">
            <thead>

@@ -63,12 +63,12 @@
          <tr>
              <td><?php echo $data->product_code; ?></td>
              <td><?php echo $data->product_desc; ?></td>
-             <td><?php echo $data->parent_unit_name; ?></td>             
+             <td><?php echo $data->product_unit_name; ?></td>             
              <td><?php echo $data->category_name; ?></td>
              <td><?php echo $data->supplier_name; ?></td>
-             <td class="right-align"><?php echo number_format($data->product_warn,0);  ?></td>
-             <td class="right-align"><?php echo number_format($data->CurrentQty,0);  ?></td>
-             <td class="right-align"><?php echo number_format($data->recommended_qty,0);  ?></td>
+             <td class="right-align"><?php echo number_format($data->product_warn,2);  ?></td>
+             <td class="right-align"><?php echo number_format($data->total_qty_bulk,2);  ?></td>
+             <td class="right-align"><?php echo number_format($data->recommended_qty,2);  ?></td>
          </tr>
         
         <?php } ?>   

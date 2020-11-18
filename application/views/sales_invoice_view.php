@@ -215,7 +215,7 @@
                         <div class="col-sm-2">
                             <label>SO # :</label> <br />
                             <div class="input-group">
-                                <input type="text" name="so_no" class="form-control">
+                                <input type="text" name="so_no" class="form-control" readonly>
                                 <span class="input-group-addon">
                                     <a href="#" id="link_browse" style="text-decoration: none;color:black;"><b>...</b></a>
                                 </span>
@@ -349,7 +349,7 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="6" style="height: 50px;">&nbsp;</td>
+                                <td colspan="8" style="height: 50px;">&nbsp;</td>
                             </tr>
                             <tr>
                                 <td style="text-align: right;">Discount %:</td>
@@ -400,7 +400,7 @@
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <label ><strong>Remarks :</strong></label>
                         <div class="col-lg-12" style="padding: 0%;">
-                            <textarea name="remarks" id="remarks" class="form-control" placeholder="Remarks"></textarea>
+                            <textarea name="remarks" id="remarks" class="form-control" placeholder="Remarks" data-default="<?php echo $company->sales_remarks; ?>"></textarea>
                         </div>
                     </div>
                 </div>
@@ -438,7 +438,22 @@
     <div class="panel-footer" >
         <div class="row">
             <div class="col-sm-12">
-            <input type="checkbox" name="chk_dispatching" id="checkcheck">&nbsp;&nbsp;<label for="checkcheck"><strong>For Dispatching ?</strong></label><br>
+
+            <label class="control-label hidden" id="is_auto_print"> 
+                <strong> 
+                   <input type="checkbox" name="is_auto_print" for="is_auto_print" <?php if($company->is_print_auto == 1){ echo 'checked'; } ?>>
+                        Print after saving?
+                </strong>
+            </label>
+
+            <label class="control-label" id="checkcheck" style="margin-left: 10px;"> 
+                <strong> 
+                   <input type="checkbox" name="chk_dispatching" for="checkcheck">
+                    For Dispatching ?
+                </strong>
+            </label>
+
+            <br>
             <input type="hidden" name="for_dispatching" id="for_dispatching" class="form-control"><br>
                 <button id="btn_save" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Save Changes</button>
                 <button id="btn_cancel" class="btn-default btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
@@ -676,7 +691,7 @@
                         <div class="">
                             <div class="col-xs-12">
                                 <div class="form-group">
-                                    <label class="col-xs-12 col-md-4 control-label "><strong><b>*</b>Salesperson Code :</strong></label>
+                                    <label class="col-xs-12 col-md-4 control-label "><strong><b class="required">*</b> Salesperson Code :</strong></label>
                                     <div class="col-xs-12 col-md-8">
                                         <input type="text" name="salesperson_code" class="form-control" placeholder="Salesperson Code" data-error-msg="Salesperson Code is required!" required>
                                     </div>
@@ -684,7 +699,7 @@
                             </div><br><br>
                             <div class="col-xs-12">
                                 <div class="form-group">
-                                    <label class="col-xs-12 col-md-4 control-label "><strong><b>*</b> First name :</strong></label>
+                                    <label class="col-xs-12 col-md-4 control-label "><strong><b class="required">*</b> First name :</strong></label>
                                     <div class="col-xs-12 col-md-8">
                                         <input type="text" name="firstname" class="form-control" placeholder="Firstname" data-error-msg="Firstname is required!" required>
                                     </div>
@@ -700,7 +715,7 @@
                             </div><br><br>
                             <div class="col-xs-12">
                                 <div class="form-group">
-                                    <label class="col-xs-12 col-md-4 control-label "><strong><b>*</b> Last name :</strong></label>
+                                    <label class="col-xs-12 col-md-4 control-label "><strong><b class="required">*</b> Last name :</strong></label>
                                     <div class="col-xs-12 col-md-8">
                                         <input type="text" name="lastname" class="form-control" placeholder="Lastname" data-error-msg="Lastname is required!" required>
                                     </div>
@@ -716,7 +731,7 @@
                             </div><br><br>
                             <div class="col-xs-12">
                                 <div class="form-group">
-                                    <label class="col-xs-12 col-md-4 control-label "><b>*</b><strong>Department :</strong></label>
+                                    <label class="col-xs-12 col-md-4 control-label "><b class="required">*</b> <strong> Department :</strong></label>
                                     <div class="col-xs-12 col-md-8">
                                         <select name="department_id" id="cbo_department" class="form-control" data-error-msg="Department is required!" required>
                                             <option value="0">[ Create New Department ]</option>
@@ -864,6 +879,8 @@
 </div>
 <?php echo $_switcher_settings; ?>
 <?php echo $_def_js_files; ?>
+<?php echo $_print_files; ?>
+
 <script src="assets/plugins/spinner/dist/spin.min.js"></script>
 <script src="assets/plugins/spinner/dist/ladda.min.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
@@ -1030,7 +1047,7 @@ $(document).ready(function(){
         });
 
         products = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1'),
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             local : products
         });
@@ -1041,9 +1058,9 @@ $(document).ready(function(){
         source: products,
         templates: {
             header: [
-                '<table class="tt-head"><tr><td width=20%" style="padding-left: 1%;"><b>PLU</b></td><td width="20%" align="left"><b>Description</b></td><td width="10%" style="padding-right: 2%;text-align:right;"><b>On Hand</b></td><td width="10%"  style="padding-right: 2%;text-align:right;"><b>SRP</b></td></tr></table>'
+                '<table class="tt-head"><tr><td width=15%" style="padding-left: 1%;"><b>PLU</b></td><td width="20%" align="left"><b>Description</b></td><td width="5%" align="left"><b>Unit</b></td><td width="10%"  style="padding-right: 2%;text-align:right;"><b>SRP</b></td></tr></table>'
             ].join('\n'),
-            suggestion: Handlebars.compile('<table class="tt-items"><tr><td width="20%" style="padding-left: 1%;">{{product_code}}</td><td width="20%" align="left">{{product_desc}}</td><td width="10%"  style="padding-right: 2%;text-align:right;">{{CurrentQty}}</td><td width="10%" align="right" style="padding-right: 2%;">{{sale_price}}</td></tr></table>')
+            suggestion: Handlebars.compile('<table class="tt-items"><tr><td width="15%" style="padding-left: 1%;">{{product_code}}</td><td width="20%" align="left">{{product_desc}}</td><td width="5%" align="left">{{product_unit_name}}</td><td width="10%" align="right" style="padding-right: 2%;">{{sale_price}}</td></tr></table>')
         }
         }).on('keyup', this, function (event) {
             if (_objTypeHead.typeahead('val') == '') {
@@ -1052,7 +1069,7 @@ $(document).ready(function(){
             if (event.keyCode == 13) {
              
                 // $('.tt-suggestion:first').click();
-    _objTypeHead.typeahead('close');        //     -- changed due to barcode scan not working
+    _objTypeHead.typeahead('close');           //     -- changed due to barcode scan not working
     _objTypeHead.typeahead('val','');         //  -- changed due to barcode scan not working
             }
         }).bind('typeahead:select', function(ev, suggestion) {
@@ -1062,11 +1079,39 @@ $(document).ready(function(){
                 showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
                 return;
             }
-            if(getFloat(suggestion.CurrentQty) <= 0){
-                showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
-            }else if(getFloat(suggestion.CurrentQty) <= getFloat(suggestion.product_warn) ){
-                showNotification({title: suggestion.product_desc ,stat:"info",msg:"This item has low stock remaining.<br>It might result to negative inventory."});
+
+            var product_id = 0;
+            var conversion_rate = 0;
+
+            if(suggestion.is_parent == 1 || (suggestion.is_parent <= 0 && suggestion.parent_id <= 0)){
+                product_id = suggestion.product_id;
+            }else{
+                product_id = suggestion.parent_id;
             }
+
+            getInvetory(product_id).done(function(response){
+                data = response.data[0];
+                var CurrentQty = data.CurrentQty;
+                var CurrentQtyTotal = 0;
+
+                if(suggestion.is_parent == 1){
+                    CurrentQtyTotal = (CurrentQty / suggestion.bulk_conversion_rate);
+                }
+                else if(suggestion.is_parent <= 0 && suggestion.parent_id <= 0){
+                    CurrentQtyTotal = CurrentQty;
+                }
+                else{
+                    CurrentQtyTotal = (CurrentQty / suggestion.conversion_rate);
+                }
+
+                if(getFloat(CurrentQtyTotal) <= 0){
+                    showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
+                }else if(getFloat(CurrentQtyTotal) <= getFloat(suggestion.product_warn) ){
+                    showNotification({title: suggestion.product_desc ,stat:"info",msg:"This item has low stock remaining.<br>It might result to negative inventory."});
+                }
+
+            });
+
             var tax_rate=suggestion.tax_rate; //base on the tax rate set to current product
             //choose what purchase cost to be use
             _customer_type_ = _cboCustomerType.val();
@@ -1102,23 +1147,25 @@ $(document).ready(function(){
                 a = '';
                 bulk_price = sale_price;
 
-                if(suggestion.is_bulk == 1){
-                    retail_price = getFloat(sale_price) / getFloat(suggestion.child_unit_desc);
-                }else if (suggestion.is_bulk== 0){
-                    retail_price = 0;
-                }
+                // if(suggestion.is_bulk == 1){
+                //     retail_price = getFloat(sale_price) / getFloat(suggestion.child_unit_desc);
+                // }else if (suggestion.is_bulk== 0){
+                //     retail_price = 0;
+                // }
+                retail_price = sale_price;
+                suggis_parent = suggestion.is_parent;
+                temp_inv_price = sale_price;                
 
+                // if(suggestion.primary_unit == 1){ 
+                //         suggis_parent = 1; 
+                //         temp_inv_price = sale_price;
+                // }else{ 
+                //     suggis_parent = 0; 
+                //     temp_inv_price = retail_price;
+                //     net_vat = getFloat(net_vat) / getFloat(suggestion.child_unit_desc);
+                //     vat_input = getFloat(vat_input) / getFloat(suggestion.child_unit_desc);
+                // }
 
-                if(suggestion.primary_unit == 1){ 
-                        suggis_parent = 1; 
-                        temp_inv_price = sale_price;
-
-                }else{ 
-                    suggis_parent = 0; 
-                    temp_inv_price = retail_price;
-                    net_vat = getFloat(net_vat) / getFloat(suggestion.child_unit_desc);
-                    vat_input = getFloat(vat_input) / getFloat(suggestion.child_unit_desc);
-                }
             changetxn = 'active';
             $('#tbl_items > tbody').append(newRowItem({
                 inv_qty : "1",
@@ -1136,16 +1183,16 @@ $(document).ready(function(){
                 inv_non_tax_amount: net_vat,
                 inv_tax_amount:vat_input,
                 inv_line_total_after_global:0.00,
-                    bulk_price: bulk_price,
-                    retail_price: retail_price,
-                    is_bulk: suggestion.is_bulk,
-                    parent_unit_id : suggestion.parent_unit_id,
-                    child_unit_id : suggestion.child_unit_id,
-                    child_unit_name : suggestion.child_unit_name,
-                    parent_unit_name : suggestion.parent_unit_name,
-                    is_parent: suggis_parent ,// INITIALLY , UNIT USED IS THE PARENT , 1 for PARENT 0 for CHILD
-                    a:a,
-                    primary_unit:suggestion.primary_unit,
+                bulk_price: bulk_price,
+                retail_price: retail_price,
+                is_bulk: suggestion.is_bulk,
+                parent_unit_id : suggestion.product_unit_id,
+                child_unit_id : suggestion.child_unit_id,
+                child_unit_name : suggestion.child_unit_name,
+                parent_unit_name : suggestion.product_unit_name,
+                is_parent: suggis_parent ,// INITIALLY , UNIT USED IS THE PARENT , 1 for PARENT 0 for CHILD
+                a:a,
+                primary_unit:suggestion.primary_unit,
 
             }));
 
@@ -1492,6 +1539,7 @@ $(document).ready(function(){
             $('#typeaheadsearch').val('');
             $('input[id="checkcheck"]').prop('checked', false);
             $('#for_dispatching').val('0');
+            $('textarea[name="remarks"]').val($('textarea[name="remarks"]').data('default'));
             getproduct().done(function(data){
                 products.clear();
                 products.local = data.data;
@@ -1523,6 +1571,11 @@ $(document).ready(function(){
                 $('#cbo_salesperson').select2('val',data.salesperson_id);
                 $('#cbo_customer_type').select2('val',data.customer_type_id);
                 $('#cbo_order_source').select2('val',data.order_source_id);
+
+                var obj_customers=$('#cbo_customers').find('option[value="' + data.customer_id + '"]');
+                $('#txt_address').val(obj_customers.data('address'));
+                $('#contact_person').val(obj_customers.data('contact'));
+
             });
             $('#modal_so_list').modal('hide');
             resetSummary();
@@ -1592,14 +1645,14 @@ $(document).ready(function(){
                             orig_so_price : value.so_price,
                             inv_line_total_after_global: 0.00,
                             cost_upon_invoice : value.purchase_cost,
-                                child_unit_id : value.child_unit_id,
-                                child_unit_name : value.child_unit_name,
-                                parent_unit_name : value.parent_unit_name,
-                                parent_unit_id : getFloat(value.parent_unit_id),
-                                is_bulk: value.is_bulk,
-                                is_parent : value.is_parent,
-                                bulk_price: temp_sale_price,
-                                retail_price: retail_price,
+                            child_unit_id : value.child_unit_id,
+                            child_unit_name : value.child_unit_name,
+                            parent_unit_name : value.product_unit_name,
+                            parent_unit_id : getFloat(value.product_unit_id),
+                            is_bulk: value.is_bulk,
+                            is_parent : value.is_parent,
+                            bulk_price: temp_sale_price,
+                            retail_price: retail_price,
                             a:a
                         }));
                         _line_unit=$('.line_unit'+a).select2({
@@ -1729,8 +1782,8 @@ $(document).ready(function(){
                             inv_line_total_after_global : 0.00,
                             child_unit_id : value.child_unit_id,
                             child_unit_name : value.child_unit_name,
-                            parent_unit_name : value.parent_unit_name,
-                            parent_unit_id : getFloat(value.parent_unit_id),
+                            parent_unit_name : value.product_unit_name,
+                            parent_unit_id : getFloat(value.product_unit_id),
                             is_bulk: value.is_bulk,
                             is_parent : value.is_parent,
                             bulk_price: temp_sale_price,
@@ -1864,6 +1917,10 @@ $(document).ready(function(){
                         dt.row.add(response.row_added[0]).draw();
                         clearFields($('#frm_sales_invoice'));
                         showList(true);
+                        if(response.is_auto_print == 1){
+                            $('#card').html(response.file);
+                            print();
+                        }
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
                     });
@@ -1873,6 +1930,10 @@ $(document).ready(function(){
                         dt.row(_selectRowObj).data(response.row_updated[0]).draw();
                         clearFields($('#frm_sales_invoice'));
                         showList(true);
+                        if(response.is_auto_print == 1){
+                            $('#card').html(response.file);
+                            print();
+                        }
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
                     });
@@ -2010,6 +2071,9 @@ $(document).ready(function(){
         _data.push({name : "summary_before_discount", value :tbl_summary.find(oTableDetails.before_tax).text()});
         _data.push({name : "summary_tax_amount", value : tbl_summary.find(oTableDetails.inv_tax_amount).text()});
         _data.push({name : "summary_after_tax", value : tbl_summary.find(oTableDetails.after_tax).text()});
+
+        $('input[name="is_auto_print"]').prop("checked") ?  _data.push({name : "is_auto_print" , value : '1'   }) : _data.push({name : "is_auto_print" , value : '0'   });
+
         return $.ajax({
             "dataType":"json",
             "type":"POST",
@@ -2029,6 +2093,9 @@ $(document).ready(function(){
         _data.push({name : "summary_tax_amount", value : tbl_summary.find(oTableDetails.inv_tax_amount).text()});
         _data.push({name : "summary_after_tax", value : tbl_summary.find(oTableDetails.after_tax).text()});
         _data.push({name : "sales_invoice_id" ,value : _selectedID});
+
+        $('input[name="is_auto_print"]').prop("checked") ?  _data.push({name : "is_auto_print" , value : '1'   }) : _data.push({name : "is_auto_print" , value : '0'   });
+
         return $.ajax({
             "dataType":"json",
             "type":"POST",
@@ -2037,6 +2104,15 @@ $(document).ready(function(){
             "beforeSend": showSpinningProgress($('#btn_save'))
         });
     };
+    var getInvetory=function(product_id){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Products/transaction/product-inventory",
+            "data":{product_id : product_id}
+        });
+    }
+
     var removeIssuanceRecord=function(){
         return $.ajax({
             "dataType":"json",

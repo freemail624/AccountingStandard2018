@@ -34,20 +34,31 @@ ORIGINAL QUERY OF THE FUNCTION
                 FROM
                 (SELECT main.*,
                 p.purchase_cost,
-                 p.size, (main.so_tax_rate/100)as tax_rate_decimal,
-                 p.product_code,
-                 p.product_desc,
-                 p.sale_price,
-                 p.discounted_price,
-                 p.dealer_price,
-                 p.distributor_price,
-                 p.public_price,
+                p.size, (main.so_tax_rate/100)as tax_rate_decimal,
+                p.product_code,
+                p.product_desc,
+                p.sale_price,
+                p.discounted_price,
+                p.dealer_price,
+                p.distributor_price,
+                p.public_price,
                 p.parent_unit_id,
                 p.child_unit_id,
                 p.child_unit_desc,
                 p.is_bulk,
+                (CASE
+                    WHEN p.is_parent = TRUE 
+                        THEN p.bulk_unit_id
+                    ELSE parent_unit_id
+                END) as product_unit_id,
+                (CASE
+                    WHEN p.is_parent = TRUE 
+                        THEN blkunit.unit_name
+                    ELSE chldunit.unit_name
+                END) as product_unit_name,
                 (SELECT unit_name FROM units u WHERE u.unit_id = p.parent_unit_id) as parent_unit_name,
                 (SELECT unit_name FROM units u WHERE u.unit_id = p.child_unit_id) as child_unit_name
+
                  FROM
 
                 (
@@ -136,7 +147,11 @@ ORIGINAL QUERY OF THE FUNCTION
                 )as main
 
 
-                LEFT JOIN products as p ON main.product_id=p.product_id) as n) as o ";
+                LEFT JOIN products as p ON main.product_id=p.product_id
+                LEFT JOIN units as blkunit ON blkunit.unit_id = p.bulk_unit_id
+                LEFT JOIN units as chldunit ON chldunit.unit_id = p.parent_unit_id
+
+                ) as n) as o ";
 
         return $this->db->query($sql)->result();
 

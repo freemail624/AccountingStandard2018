@@ -36,7 +36,7 @@ class Sales_invoice extends CORE_Controller
         $data['_switcher_settings'] = $this->load->view('template/elements/switcher', '', TRUE);
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
-
+        $data['_print_files'] = $this->load->view('template/elements/print_file', '', TRUE);
 
         //data required by active view
         $data['departments']=$this->Departments_model->get_list(
@@ -77,7 +77,7 @@ class Sales_invoice extends CORE_Controller
         );
 
         $data['tax_percentage']=(count($tax_rate)>0?$tax_rate[0]->tax_rate:0);
-
+        $data['company']=$this->Company_model->getDefaultRemarks()[0];
         /*$data['products']=$this->Products_model->get_list(
 
             'products.is_deleted=FALSE AND products.is_active=TRUE',
@@ -225,12 +225,24 @@ class Sales_invoice extends CORE_Controller
                         'products.dealer_price',
                         'products.distributor_price',
                         'products.public_price',
+                        '(CASE
+                            WHEN products.is_parent = TRUE 
+                                THEN products.bulk_unit_id
+                            ELSE products.parent_unit_id
+                        END) as product_unit_id',
+                        '(CASE
+                            WHEN products.is_parent = TRUE 
+                                THEN blkunit.unit_name
+                            ELSE chldunit.unit_name
+                        END) as product_unit_name',                        
                         '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.parent_unit_id) as parent_unit_name',
                         '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name'
                     ),
                     array(
                         array('products','products.product_id=sales_invoice_items.product_id','left'),
-                        array('units','units.unit_id=sales_invoice_items.unit_id','left')
+                        array('units','units.unit_id=sales_invoice_items.unit_id','left'),
+                        array('units blkunit','blkunit.unit_id=products.bulk_unit_id','left'),
+                        array('units chldunit','chldunit.unit_id=products.parent_unit_id','left'),                        
                     ),
                     'sales_invoice_items.sales_item_id ASC'
                 );
@@ -342,10 +354,10 @@ class Sales_invoice extends CORE_Controller
                     $m_invoice_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                     if($is_parent[$i] == '1'){
                                             $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
-                                            $m_invoice_items->unit_id=$unit_id[0]->parent_unit_id;
+                                            $m_invoice_items->unit_id=$unit_id[0]->bulk_unit_id;
                     }else{
                                              $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
-                                            $m_invoice_items->unit_id=$unit_id[0]->child_unit_id;
+                                            $m_invoice_items->unit_id=$unit_id[0]->parent_unit_id;
                     }   
 
                     //$on_hand=$m_products->get_product_current_qty($batch_no[$i], $prod_id[$i], date('Y-m-d', strtotime($exp_date[$i])));
@@ -387,6 +399,57 @@ class Sales_invoice extends CORE_Controller
                     $response['stat'] = 'success';
                     $response['msg'] = 'Sales invoice successfully created.';
                     $response['row_added']=$this->response_rows($sales_invoice_id);
+                    // $response['is_auto_print']=$this->input->post('is_auto_print',TRUE);
+                    $response['is_auto_print']=0;
+
+                    $m_sales_invoice=$this->Sales_invoice_model;
+                    $m_sales_invoice_items=$this->Sales_invoice_item_model;
+                    $m_company_info=$this->Company_model;
+
+                    $company_info=$m_company_info->get_list();
+                    $data['company_info']=$company_info[0];
+
+                    $info=$m_sales_invoice->get_list(
+                        $sales_invoice_id,
+                        array(
+                            'sales_invoice.sales_invoice_id',
+                            'sales_invoice.sales_inv_no',
+                            'sales_invoice.remarks', 
+                            'sales_invoice.date_created',
+                            'sales_invoice.customer_id',
+                            'sales_invoice.inv_type',
+                            'sales_invoice.*',
+                            'DATE_FORMAT(sales_invoice.date_invoice,"%m/%d/%Y") as date_invoice',
+                            'DATE_FORMAT(sales_invoice.date_due,"%m/%d/%Y") as date_due',
+                            'departments.department_id',
+                            'departments.department_name',
+                            'customers.customer_name',
+                            'sales_invoice.salesperson_id',
+                            'sales_invoice.address',
+                            'sales_order.so_no',
+                            'order_source.order_source_name',
+                            'CONCAT(salesperson.firstname," ",salesperson.lastname) AS salesperson_name'
+                        ),
+                        array(
+                            array('departments','departments.department_id=sales_invoice.department_id','left'),
+                            array('salesperson','salesperson.salesperson_id=sales_invoice.salesperson_id','left'),
+                            array('customers','customers.customer_id=sales_invoice.customer_id','left'),
+                            array('sales_order','sales_order.sales_order_id=sales_invoice.sales_order_id','left'),
+                            array('order_source','order_source.order_source_id=sales_invoice.order_source_id','left'),
+                        )
+                    );
+
+                    $data['sales_info']=$info[0];
+                    $data['sales_invoice_items']=$m_sales_invoice_items->get_list(
+                        array('sales_invoice_items.sales_invoice_id'=>$sales_invoice_id),
+                        'sales_invoice_items.*,products.product_desc,products.size,units.unit_name,products.product_code',
+                        array(
+                            array('products','products.product_id=sales_invoice_items.product_id','left'),
+                            array('units','units.unit_id=sales_invoice_items.unit_id','left')
+                        )
+                    );
+
+                    $response['file'] = $this->load->view('template/sales_invoice_direct_content',$data,TRUE);
 
                     echo json_encode($response);
                 }
@@ -486,10 +549,10 @@ class Sales_invoice extends CORE_Controller
                         $m_invoice_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                         if($is_parent[$i] == '1'){
                                                 $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
-                                                $m_invoice_items->unit_id=$unit_id[0]->parent_unit_id;
+                                                $m_invoice_items->unit_id=$unit_id[0]->bulk_unit_id;
                         }else{
                                                  $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
-                                                $m_invoice_items->unit_id=$unit_id[0]->child_unit_id;
+                                                $m_invoice_items->unit_id=$unit_id[0]->parent_unit_id;
                         }   
                         //$m_invoice_items->set('unit_id','(SELECT unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
 
@@ -532,6 +595,57 @@ class Sales_invoice extends CORE_Controller
                         $response['msg'] = 'Sales invoice successfully updated.';
                         $response['row_updated']=$this->response_rows($sales_invoice_id);
 
+                        // $response['is_auto_print']=$this->input->post('is_auto_print',TRUE);
+                        $response['is_auto_print']=0;
+
+                        $m_sales_invoice=$this->Sales_invoice_model;
+                        $m_sales_invoice_items=$this->Sales_invoice_item_model;
+                        $m_company_info=$this->Company_model;
+
+                        $company_info=$m_company_info->get_list();
+                        $data['company_info']=$company_info[0];
+
+                        $info=$m_sales_invoice->get_list(
+                            $sales_invoice_id,
+                            array(
+                                'sales_invoice.sales_invoice_id',
+                                'sales_invoice.sales_inv_no',
+                                'sales_invoice.remarks', 
+                                'sales_invoice.date_created',
+                                'sales_invoice.customer_id',
+                                'sales_invoice.inv_type',
+                                'sales_invoice.*',
+                                'DATE_FORMAT(sales_invoice.date_invoice,"%m/%d/%Y") as date_invoice',
+                                'DATE_FORMAT(sales_invoice.date_due,"%m/%d/%Y") as date_due',
+                                'departments.department_id',
+                                'departments.department_name',
+                                'customers.customer_name',
+                                'sales_invoice.salesperson_id',
+                                'sales_invoice.address',
+                                'sales_order.so_no',
+                                'order_source.order_source_name',
+                                'CONCAT(salesperson.firstname," ",salesperson.lastname) AS salesperson_name'
+                            ),
+                            array(
+                                array('departments','departments.department_id=sales_invoice.department_id','left'),
+                                array('salesperson','salesperson.salesperson_id=sales_invoice.salesperson_id','left'),
+                                array('customers','customers.customer_id=sales_invoice.customer_id','left'),
+                                array('sales_order','sales_order.sales_order_id=sales_invoice.sales_order_id','left'),
+                                array('order_source','order_source.order_source_id=sales_invoice.order_source_id','left'),
+                            )
+                        );
+
+                        $data['sales_info']=$info[0];
+                        $data['sales_invoice_items']=$m_sales_invoice_items->get_list(
+                            array('sales_invoice_items.sales_invoice_id'=>$sales_invoice_id),
+                            'sales_invoice_items.*,products.product_desc,products.size,units.unit_name,products.product_code',
+                            array(
+                                array('products','products.product_id=sales_invoice_items.product_id','left'),
+                                array('units','units.unit_id=sales_invoice_items.unit_id','left')
+                            )
+                        );
+
+                        $response['file'] = $this->load->view('template/sales_invoice_direct_content',$data,TRUE);
                         echo json_encode($response);
                     }
 

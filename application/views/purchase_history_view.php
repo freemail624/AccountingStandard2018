@@ -97,7 +97,7 @@
                                             <h2 class="h2-panel-heading">Purchase History<small> | <a href="assets/manual/purchasing/Purchase_History.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                             <div class="row">
                                             <div class="col-sm-3">
-                                                <b class="required">*</b> <label>Invoice Date From: </label>:<br />
+                                                <b class="required">*</b> <label>Invoice Date From: </label><br />
                                                 <div class="input-group">
                                                     <input id="from_date" type="text" class="date-picker form-control" value="<?php echo date("m"); ?>/01/<?php echo date("Y"); ?>">
                                                     <div class="input-group-addon">
@@ -106,7 +106,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
-                                                <b class="required">*</b> <label>Invoice Date To: </label>:<br />
+                                                <b class="required">*</b> <label>Invoice Date To: </label><br />
                                                 <div class="input-group">
                                                     <input id="to_date" type="text" class="date-picker form-control" value="<?php echo date('m/d/Y'); ?>">
                                                     <div class="input-group-addon">
@@ -117,7 +117,7 @@
 
                                             <div class="col-sm-3">
                                                 <b class="required">*</b> <label>Supplier </label>:<br />
-                                                <select name="supplier" id="supplier" >
+                                                <select name="supplier" id="supplier" style="width: 100%;">
                                                     <option value="0"> ALL</option>
                                                     <?php foreach($suppliers as $supplier){ ?>
                                                         <option value="<?php echo $supplier->supplier_id; ?>"><?php echo $supplier->supplier_name; ?></option>

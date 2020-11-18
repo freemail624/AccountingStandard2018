@@ -19,6 +19,7 @@ class Sales_order extends CORE_Controller
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
         $this->load->model('Customer_type_model');
+        $this->load->model('Company_model');  
 
     }
 
@@ -88,6 +89,7 @@ class Sales_order extends CORE_Controller
             'is_deleted=FALSE'
         );
 
+        $data['company']=$this->Company_model->getDefaultRemarks()[0];
         $data['title'] = 'Sales Order';
         
         (in_array('3-1',$this->session->user_rights)? 
@@ -161,15 +163,30 @@ class Sales_order extends CORE_Controller
                             'products.is_bulk',
                             'products.child_unit_id',
                             'products.parent_unit_id',
+                            'products.bulk_unit_id',
                             'products.child_unit_desc',
+                            'products.child_unit_desc',
+                            '(CASE
+                                WHEN products.is_parent = TRUE 
+                                    THEN products.bulk_unit_id
+                                ELSE products.parent_unit_id
+                            END) as product_unit_id',
+                            '(CASE
+                                WHEN products.is_parent = TRUE 
+                                    THEN blkunit.unit_name
+                                ELSE chldunit.unit_name
+                            END) as product_unit_name',
                             'products.discounted_price',
                             'products.dealer_price',
                             'products.distributor_price',
                             'products.public_price',
                             '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.parent_unit_id) as parent_unit_name',
-                            '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name'),
+                            '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name',
+                            '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.bulk_unit_id) as bulk_unit_name'),
                     array(
-                        array('products','products.product_id=sales_order_items.product_id','left')
+                        array('products','products.product_id=sales_order_items.product_id','left'),
+                        array('units blkunit','blkunit.unit_id=products.bulk_unit_id','left'),
+                        array('units chldunit','chldunit.unit_id=products.parent_unit_id','left'),                     
                     ),
                     'sales_order_items.sales_order_item_id DESC'
                 );
@@ -252,9 +269,9 @@ class Sales_order extends CORE_Controller
 
                         $m_sales_order_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                         if($is_parent[$i] == '1'){
-                            $m_sales_order_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
+                            $m_sales_order_items->set('unit_id','(SELECT bulk_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
                         }else{
-                             $m_sales_order_items->set('unit_id','(SELECT child_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
+                             $m_sales_order_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
                         } 
                     $m_sales_order_items->save();
                 }
@@ -359,9 +376,9 @@ class Sales_order extends CORE_Controller
                     $m_sales_order_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
                         $m_sales_order_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                         if($is_parent[$i] == '1'){
-                            $m_sales_order_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
+                            $m_sales_order_items->set('unit_id','(SELECT bulk_unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
                         }else{
-                             $m_sales_order_items->set('unit_id','(SELECT child_unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
+                             $m_sales_order_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
                         } 
                     $m_sales_order_items->save();
                 }

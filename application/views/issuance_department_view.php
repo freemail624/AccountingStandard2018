@@ -572,7 +572,7 @@ dt_si = $('#tbl_si_list').DataTable({
         });
         
          products = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1'),
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             local : products
         });
@@ -583,9 +583,9 @@ dt_si = $('#tbl_si_list').DataTable({
             source: products,
             templates: {
                 header: [
-                    '<table class="tt-head"><tr><td width=20%" style="padding-left: 1%;"><b>PLU</b></td><td width="30%" align="left"><b>Description 1</b></td><td width="20%" align="left"><b>Description 2</b></td><td width="10%" align="right" style="padding-right: 2%;"><b>On Hand</b></td><td width="10%" align="right" style="padding-right: 2%;"><b>Cost</b></td></tr></table>'
+                    '<table class="tt-head"><tr><td width=20%" style="padding-left: 1%;"><b>PLU</b></td><td width="30%" align="left"><b>Description 1</b></td><td width="20%" align="left"><b>Unit</b></td><td width="10%" align="right" style="padding-right: 2%;"><b>Cost</b></td></tr></table>'
                 ].join('\n'),
-                suggestion: Handlebars.compile('<table class="tt-items"><tr><td width="20%" style="padding-left: 1%">{{product_code}}</td><td width="30%" align="left">{{product_desc}}</td><td width="20%" align="left">{{produdct_desc1}}</td><td width="10%" align="right" style="padding-right: 2%;">{{CurrentQty}}</td><td width="10%" align="right" style="padding-right: 2%;">{{purchase_cost}}</td></tr></table>')
+                suggestion: Handlebars.compile('<table class="tt-items"><tr><td width="20%" style="padding-left: 1%">{{product_code}}</td><td width="30%" align="left">{{product_desc}}</td><td width="20%" align="left">{{product_unit_name}}</td><td width="10%" align="right" style="padding-right: 2%;">{{purchase_cost}}</td></tr></table>')
             }
         }).on('keyup', this, function (event) {
             if (event.keyCode == 13) {
@@ -601,11 +601,39 @@ dt_si = $('#tbl_si_list').DataTable({
                 return;
             }
 
-            if(getFloat(suggestion.CurrentQty) <= 0){
-                showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
-            }else if(getFloat(suggestion.CurrentQty) <= getFloat(suggestion.product_warn) ){
-                showNotification({title: suggestion.product_desc ,stat:"info",msg:"This item has low stock remaining.<br>It might result to negative inventory."});
+            var product_id = 0;
+            var conversion_rate = 0;
+
+            if(suggestion.is_parent == 1 || (suggestion.is_parent <= 0 && suggestion.parent_id <= 0)){
+                product_id = suggestion.product_id;
+            }else{
+                product_id = suggestion.parent_id;
             }
+
+            getInvetory(product_id).done(function(response){
+                data = response.data[0];
+                var CurrentQty = data.CurrentQty;
+                var CurrentQtyTotal = 0;
+
+                if(suggestion.is_parent == 1){
+                    CurrentQtyTotal = (CurrentQty / suggestion.bulk_conversion_rate);
+                }
+                else if(suggestion.is_parent <= 0 && suggestion.parent_id <= 0){
+                    CurrentQtyTotal = CurrentQty;
+                }
+                else{
+                    CurrentQtyTotal = (CurrentQty / suggestion.conversion_rate);
+                }
+
+                if(getFloat(CurrentQtyTotal) <= 0){
+                    showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
+                }else if(getFloat(CurrentQtyTotal) <= getFloat(suggestion.product_warn) ){
+                    showNotification({title: suggestion.product_desc ,stat:"info",msg:"This item has low stock remaining.<br>It might result to negative inventory."});
+                }
+
+            });
+
+
             var tax_rate=getFloat(suggestion.tax_rate);
             var total=getFloat(suggestion.purchase_cost);
             var net_vat=0;
@@ -623,12 +651,17 @@ dt_si = $('#tbl_si_list').DataTable({
             }
 
            bulk_price = suggestion.purchase_cost;
-            if(suggestion.is_bulk == 1){
-                retail_price = getFloat(suggestion.purchase_cost) / getFloat(suggestion.child_unit_desc);
-            }else if (suggestion.is_bulk== 0){
-                retail_price = 0;
-            }
-                if(suggestion.primary_unit == 1){ suggis_parent = 1;}else{ suggis_parent = 0;}
+           retail_price = suggestion.purchase_cost;
+
+            // if(suggestion.is_bulk == 1){
+            //     retail_price = getFloat(suggestion.purchase_cost) / getFloat(suggestion.child_unit_desc);
+            // }else if (suggestion.is_bulk== 0){
+            //     retail_price = 0;
+            // }
+            // if(suggestion.primary_unit == 1){ suggis_parent = 1;}else{ suggis_parent = 0;}
+
+            suggis_parent = suggestion.is_parent;
+
             $('#tbl_items > tbody').append(newRowItem({
                 issue_qty : "1",
                 product_code : suggestion.product_code,
@@ -646,12 +679,12 @@ dt_si = $('#tbl_si_list').DataTable({
                 bulk_price: bulk_price,
                 retail_price: retail_price,
                 is_bulk: suggestion.is_bulk,
-                parent_unit_id : suggestion.parent_unit_id,
                 child_unit_id : suggestion.child_unit_id,
                 child_unit_name : suggestion.child_unit_name,
-                parent_unit_name : suggestion.parent_unit_name,
-                    is_parent: suggis_parent ,// INITIALLY , UNIT USED IS THE PARENT , 1 for PARENT 0 for CHILD
-                    primary_unit:suggestion.primary_unit,
+                parent_unit_id : suggestion.product_unit_id,
+                parent_unit_name : suggestion.product_unit_name,
+                is_parent: suggis_parent ,// INITIALLY , UNIT USED IS THE PARENT , 1 for PARENT 0 for CHILD
+                primary_unit:suggestion.primary_unit,
 
                 a:a
  
@@ -886,8 +919,8 @@ dt_si = $('#tbl_si_list').DataTable({
                             exp_date: value.exp_date,
                             child_unit_id : value.child_unit_id,
                             child_unit_name : value.child_unit_name,
-                            parent_unit_name : value.parent_unit_name,
-                            parent_unit_id : getFloat(value.parent_unit_id),
+                            parent_unit_name : value.product_unit_name,
+                            parent_unit_id : getFloat(value.product_unit_id),
                             is_bulk: value.is_bulk,
                             is_parent : value.is_parent,
                             bulk_price: value.purchase_cost,
@@ -1104,6 +1137,16 @@ dt_si = $('#tbl_si_list').DataTable({
             "beforeSend": showSpinningProgress($('#btn_save'))
         });
     };
+
+    var getInvetory=function(product_id){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Products/transaction/product-inventory",
+            "data":{product_id : product_id}
+        });
+    }
+ 
     var removeIssuanceRecord=function(){
         return $.ajax({
             "dataType":"json",

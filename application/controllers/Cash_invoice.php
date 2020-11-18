@@ -80,8 +80,9 @@ class Cash_invoice extends CORE_Controller
             'is_deleted=FALSE'
         );
  
- $data['order_sources'] = $this->Order_source_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
-
+        $data['order_sources'] = $this->Order_source_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
+        $data['company']=$this->Company_model->getDefaultRemarks()[0];
+        
         $data['title'] = 'Cash Invoice';
         
         (in_array('3-4',$this->session->user_rights)? 
@@ -151,12 +152,24 @@ class Cash_invoice extends CORE_Controller
                         'products.distributor_price',
                         'products.public_price',
                         'products.sale_price',
+                        '(CASE
+                            WHEN products.is_parent = TRUE 
+                                THEN products.bulk_unit_id
+                            ELSE products.parent_unit_id
+                        END) as product_unit_id',
+                        '(CASE
+                            WHEN products.is_parent = TRUE 
+                                THEN blkunit.unit_name
+                            ELSE chldunit.unit_name
+                        END) as product_unit_name',                          
                         '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.parent_unit_id) as parent_unit_name',
                         '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name'
                     ),
                     array(
                         array('products','products.product_id=cash_invoice_items.product_id','left'),
-                        array('units','units.unit_id=cash_invoice_items.unit_id','left')
+                        array('units','units.unit_id=cash_invoice_items.unit_id','left'),
+                        array('units blkunit','blkunit.unit_id=products.bulk_unit_id','left'),
+                        array('units chldunit','chldunit.unit_id=products.parent_unit_id','left'),                          
                     ),
                     'cash_invoice_items.cash_item_id ASC'
                 );
@@ -249,10 +262,10 @@ class Cash_invoice extends CORE_Controller
                     $m_invoice_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                     if($is_parent[$i] == '1'){
                             $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
-                            $m_invoice_items->unit_id=$unit_id[0]->parent_unit_id;
+                            $m_invoice_items->unit_id=$unit_id[0]->bulk_unit_id;
                     }else{
                              $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
-                            $m_invoice_items->unit_id=$unit_id[0]->child_unit_id;
+                            $m_invoice_items->unit_id=$unit_id[0]->parent_unit_id;
                     }   
 
                     $unit_id=$m_products->get_list(array('product_id'=>$prod_id[$i]));
@@ -370,10 +383,10 @@ class Cash_invoice extends CORE_Controller
                     $m_invoice_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                     if($is_parent[$i] == '1'){
                         $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
-                        $m_invoice_items->unit_id=$unit_id[0]->parent_unit_id;
+                        $m_invoice_items->unit_id=$unit_id[0]->bulk_unit_id;
                     }else{
                          $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
-                        $m_invoice_items->unit_id=$unit_id[0]->child_unit_id;
+                        $m_invoice_items->unit_id=$unit_id[0]->parent_unit_id;
                     }   
 
                     //unit id retrieval is change, because of TRIGGER restriction

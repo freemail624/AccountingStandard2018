@@ -153,16 +153,16 @@
         <h2 class="h2-panel-heading">Sales Order<small> | <a href="assets/manual/sales/Sales_Order.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
             <table id="tbl_sales_order"  class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
-                <tr>
-                    <th>&nbsp;&nbsp;</th>
-                    <th>SO #</th>
-                    <th>Order Date</th>
-                    <th>Customer</th>
-                    <th style="width: 25%;">Remarks</th>
-                    <th>Status</th>
-                    <th><center>Action</center></th>
-                    <th>id</th>                    
-                </tr>
+                    <tr>
+                        <th>&nbsp;&nbsp;</th>
+                        <th>SO #</th>
+                        <th>Order Date</th>
+                        <th>Customer</th>
+                        <th style="width: 25%;">Remarks</th>
+                        <th>Status</th>
+                        <th><center>Action</center></th>
+                        <th>id</th>                    
+                    </tr>
                 </thead>
                 <tbody>
                 </tbody>
@@ -311,7 +311,7 @@
                 <div class="row">
                         <div class="col-lg-12">
                             <label><strong>Remarks :</strong></label><br />
-                            <textarea name="remarks" id="remarks" class="form-control" placeholder="Remarks"></textarea>
+                            <textarea name="remarks" id="remarks" class="form-control" placeholder="Remarks" data-default="<?php echo $company->sales_remarks; ?>"></textarea>
                         </div>
                 </div>
             <br />
@@ -899,7 +899,7 @@ $(document).ready(function(){
             }
         });*/
         products = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1'),
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             local : products
         });
@@ -915,11 +915,11 @@ $(document).ready(function(){
                                 '<td width=10%" style="padding-left: 1%;">'+
                                     '<b>PLU</b>'+
                                 '</td>'+
-                                '<td width="25%" align="left">'+
+                                '<td width="20%" align="left">'+
                                     '<b>Description</b>'+
                                 '</td>'+
-                                '<td width="5%"  style="padding-right: 2%;text-align:right;">'+
-                                    '<b>On Hand</b>'+
+                                '<td width="5%" align="left">'+
+                                    '<b>Unit</b>'+
                                 '</td>'+
                                 '<td width="5%" align="right" style="padding-right: 2%;">'+
                                     '<b>SRP</b>'+
@@ -933,12 +933,12 @@ $(document).ready(function(){
                                 '<td width="10%" style="padding-left: 1%">'+
                                     '{{product_code}}'+
                                 '</td>'+
-                                '<td width="25%" align="left">'+
+                                '<td width="20%" align="left">'+
                                     '{{product_desc}}'+
                                 '</td>'+
-                                '<td width="5%"  style="padding-right: 2%;text-align:right;">'+
-                                    '{{CurrentQty}}'+
-                                '</td>'+
+                                '<td width="5%" align="left">'+
+                                    '{{product_unit_name}}'+
+                                '</td>'+                                
                                 '<td width="5%" align="right" style="padding-right: 2%;">'+
                                     '{{sale_price}}'+
                                 '</td>'+
@@ -978,13 +978,39 @@ $(document).ready(function(){
                     showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
                     return;
                 }
+                var product_id = 0;
+                var conversion_rate = 0;
 
-
-                if(getFloat(suggestion.CurrentQty) <= 0){
-                    showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
-                }else if(getFloat(suggestion.CurrentQty) <= getFloat(suggestion.product_warn) ){
-                    showNotification({title: suggestion.product_desc ,stat:"info",msg:"This item has low stock remaining.<br>It might result to negative inventory."});
+                if(suggestion.is_parent == 1 || (suggestion.is_parent <= 0 && suggestion.parent_id <= 0)){
+                    product_id = suggestion.product_id;
+                }else{
+                    product_id = suggestion.parent_id;
                 }
+
+                getInvetory(product_id).done(function(response){
+                    data = response.data[0];
+                    var CurrentQty = data.CurrentQty;
+                    var CurrentQtyTotal = 0;
+
+                    if(suggestion.is_parent == 1){
+                        CurrentQtyTotal = (CurrentQty / suggestion.bulk_conversion_rate);
+                    }
+                    else if(suggestion.is_parent <= 0 && suggestion.parent_id <= 0){
+                        CurrentQtyTotal = CurrentQty;
+                    }
+                    else{
+                        CurrentQtyTotal = (CurrentQty / suggestion.conversion_rate);
+                    }
+
+                    if(getFloat(CurrentQtyTotal) <= 0){
+                        showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
+                    }else if(getFloat(CurrentQtyTotal) <= getFloat(suggestion.product_warn) ){
+                        showNotification({title: suggestion.product_desc ,stat:"info",msg:"This item has low stock remaining.<br>It might result to negative inventory."});
+                    }
+
+                });
+
+
                 var tax_rate=suggestion.tax_rate; //base on the tax rate set to current product
                 //choose what purchase cost to be use
                 _customer_type_ = _cboCustomerType.val();
@@ -1020,21 +1046,27 @@ $(document).ready(function(){
                 }
                 bulk_price = sale_price;
 
-                if(suggestion.is_bulk == 1){
-                    retail_price = getFloat(sale_price) / getFloat(suggestion.child_unit_desc);
+                // if(suggestion.is_bulk == 1){
+                //     retail_price = getFloat(sale_price) / getFloat(suggestion.child_unit_desc);
 
-                }else if (suggestion.is_bulk== 0){
-                    retail_price = 0;
-                }
-                if(suggestion.primary_unit == 1){ 
-                        suggis_parent = 1;
-                        temp_inv_price = sale_price;
-                }else{ 
-                        suggis_parent = 0;
-                        temp_inv_price = retail_price;
-                        net_vat = getFloat(net_vat) / getFloat(suggestion.child_unit_desc);
-                        vat_input = getFloat(vat_input) / getFloat(suggestion.child_unit_desc);
-                }                
+                // }else if (suggestion.is_bulk== 0){
+                //     retail_price = 0;
+                // }
+
+                retail_price = sale_price;
+                suggis_parent = suggestion.is_parent;
+                temp_inv_price = sale_price;
+
+                // if(suggestion.primary_unit == 1){ 
+                //         suggis_parent = 1;
+                //         temp_inv_price = sale_price;
+                // }else{ 
+                //         suggis_parent = 0;
+                //         temp_inv_price = retail_price;
+                //         net_vat = getFloat(net_vat) / getFloat(suggestion.child_unit_desc);
+                //         vat_input = getFloat(vat_input) / getFloat(suggestion.child_unit_desc);
+                // }                
+                
                 $('#tbl_items > tbody').append(newRowItem({
                     so_qty : "1",
                     product_code : suggestion.product_code,
@@ -1053,16 +1085,16 @@ $(document).ready(function(){
                     so_tax_amount:vat_input,
                     batch_no : suggestion.batch_no,
                     exp_date : suggestion.exp_date,
-                        bulk_price: bulk_price,
-                        retail_price: retail_price,
-                        is_bulk: suggestion.is_bulk,
-                        parent_unit_id : suggestion.parent_unit_id,
-                        child_unit_id : suggestion.child_unit_id,
-                        child_unit_name : suggestion.child_unit_name,
-                        parent_unit_name : suggestion.parent_unit_name,
-                        is_parent: suggis_parent,
-                        primary_unit:suggestion.primary_unit,
-                        a:a
+                    bulk_price: bulk_price,
+                    retail_price: retail_price,
+                    is_bulk: suggestion.is_bulk,
+                    parent_unit_id : suggestion.product_unit_id,
+                    child_unit_id : suggestion.child_unit_id,
+                    child_unit_name : suggestion.child_unit_name,
+                    parent_unit_name : suggestion.product_unit_name,
+                    is_parent: suggis_parent,
+                    primary_unit:suggestion.primary_unit,
+                    a:a
                 }));
                 changetxn ='active';
                 _line_unit=$('.line_unit'+a).select2({
@@ -1232,6 +1264,7 @@ $(document).ready(function(){
             $('#cbo_department').select2('val', null);
             $('#cbo_customers').select2('val', null);
             $('#cbo_customer_type').select2('val', 0);
+            $('textarea[name="remarks"]').val($('textarea[name="remarks"]').data('default'));
             getproduct().done(function(data){
                 products.clear();
                 products.local = data.data;
@@ -1340,8 +1373,8 @@ $(document).ready(function(){
                             exp_date: value.exp_date,
                             child_unit_id : value.child_unit_id,
                             child_unit_name : value.child_unit_name,
-                            parent_unit_name : value.parent_unit_name,
-                            parent_unit_id : getFloat(value.parent_unit_id),
+                            parent_unit_name : value.product_unit_name,
+                            parent_unit_id : getFloat(value.product_unit_id),
                             is_bulk: value.is_bulk,
                             is_parent : value.is_parent,
                             bulk_price: temp_sale_price,
@@ -1616,6 +1649,16 @@ $(document).ready(function(){
             "beforeSend": showSpinningProgress($('#btn_save'))
         });
     };
+
+    var getInvetory=function(product_id){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Products/transaction/product-inventory",
+            "data":{product_id : product_id}
+        });
+    }
+
     var removeIssuanceRecord=function(){
         return $.ajax({
             "dataType":"json",

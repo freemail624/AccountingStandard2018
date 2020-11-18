@@ -10,9 +10,11 @@
                     <td style="border: 1px solid lightgrey;padding: 5px;"><b>Reference</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;"><b>Txn Type</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;"><b>Description</b></td>
+                    <td style="border: 1px solid lightgrey;padding: 5px;"><b>Package</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>In</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>Out</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>Balance</b></td>
+                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>Bulk Balance</b></td>
                 </tr>
 
            </thead>
@@ -29,9 +31,14 @@
                    <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo $product->ref_no; ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo $product->type; ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo $product->Description; ?></td>
+                   <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo $product->identifier; ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_in_qty,2); ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_out_qty,2); ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;font-weight: bolder;"><?php echo number_format($product->parent_balance,2); ?></td>
+                   <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;font-weight: bolder;">
+                    <?php 
+                        echo number_format($product->parent_bulk_balance,2);
+                     ?></td>
                </tr>
                 <?php } ?>
 

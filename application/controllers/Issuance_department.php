@@ -98,16 +98,28 @@ class Issuance_department extends CORE_Controller
                         'issuance_department_items.*',
                         'products.product_code',
                         'products.product_desc',
-                            'products.purchase_cost',
-                            'products.is_bulk',
-                            'products.child_unit_id',
-                            'products.parent_unit_id',
-                            'products.child_unit_desc',
-                            '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.parent_unit_id) as parent_unit_name',
-                            '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name'
+                        'products.purchase_cost',
+                        'products.is_bulk',
+                        'products.child_unit_id',
+                        'products.parent_unit_id',
+                        'products.child_unit_desc',
+                        '(CASE
+                            WHEN products.is_parent = TRUE 
+                                THEN products.bulk_unit_id
+                            ELSE products.parent_unit_id
+                        END) as product_unit_id',
+                        '(CASE
+                            WHEN products.is_parent = TRUE 
+                                THEN blkunit.unit_name
+                            ELSE chldunit.unit_name
+                        END) as product_unit_name',                              
+                        '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.parent_unit_id) as parent_unit_name',
+                        '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name'
                     ),
                     array(
-                        array('products','products.product_id=issuance_department_items.product_id','left')
+                        array('products','products.product_id=issuance_department_items.product_id','left'),
+                        array('units blkunit','blkunit.unit_id=products.bulk_unit_id','left'),
+                        array('units chldunit','chldunit.unit_id=products.parent_unit_id','left'),    
                     ),
                     'issuance_department_items.issuance_department_item_id DESC'
                 );
@@ -169,9 +181,9 @@ class Issuance_department extends CORE_Controller
                     //unit id retrieval is change, because of TRIGGER restriction
                         $m_issue_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                         if($is_parent[$i] == '1'){
-                            $m_issue_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
+                            $m_issue_items->set('unit_id','(SELECT bulk_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
                         }else{
-                             $m_issue_items->set('unit_id','(SELECT child_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
+                             $m_issue_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
                         } 
                     $m_issue_items->save();
                 }
@@ -243,9 +255,9 @@ class Issuance_department extends CORE_Controller
 
                         $m_issue_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                         if($is_parent[$i] == '1'){
-                            $m_issue_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
+                            $m_issue_items->set('unit_id','(SELECT bulk_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
                         }else{
-                             $m_issue_items->set('unit_id','(SELECT child_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
+                             $m_issue_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
                         } 
                     $m_issue_items->save();
                 }

@@ -271,7 +271,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
     }
 
 
-    function delivery_list_count($id_filter,$department_id=null,$supplier_id=null,$startDate=null,$endDate=null){
+    function delivery_list_count($id_filter,$department_id=null,$supplier_id=null,$startDate=null,$endDate=null,$is_finalized=null){
         $sql="
         SELECT di.*,
         suppliers.supplier_name,
@@ -294,6 +294,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
         WHERE
         di.is_active = TRUE AND di.is_deleted=FALSE 
 
+        ".($is_finalized==null?"":" AND di.is_finalized=TRUE")."
         ".($department_id==null?"":" AND di.department_id=$department_id")."
         ".($supplier_id==null?"":" AND di.supplier_id=$supplier_id")."
         ".($id_filter==null?"":" AND di.dr_invoice_id=$id_filter")."
@@ -328,9 +329,9 @@ GROUP BY n.supplier_id HAVING total_balance > 0
 
         ".($product_id==null?"
 
-            ".($startDate==null?"":" WHERE di.date_delivered BETWEEN '$startDate' AND '$endDate'")."
+            ".($startDate==null?"":" WHERE di.is_finalized = TRUE AND di.date_delivered BETWEEN '$startDate' AND '$endDate'")."
 
-        ":" WHERE p.product_id=$product_id 
+        ":" WHERE p.product_id=$product_id AND di.is_finalized = TRUE
         
             ".($startDate==null?"":" AND di.date_delivered BETWEEN '$startDate' AND '$endDate'")."
 
@@ -347,8 +348,42 @@ GROUP BY n.supplier_id HAVING total_balance > 0
 
     }
 
+    function get_ave_cost($product_id,$dr_invoice_id,$onhand){
+        $sql='SELECT 
+            main.product_id,
+            ((main.current_cost + main.new_cost) / main.total_stock) AS ave_cost
+        FROM
+            (SELECT 
+                ('.$onhand.' * p.purchase_cost) AS current_cost,
+                    (dii.dr_qty * dii.dr_price) AS new_cost,
+                    ('.$onhand.' + dii.dr_qty) AS total_stock,
+                    dii.product_id
+            FROM
+                delivery_invoice di
+            LEFT JOIN delivery_invoice_items dii ON dii.dr_invoice_id = di.dr_invoice_id
+            LEFT JOIN products p ON p.product_id = dii.product_id
+            WHERE
+                di.dr_invoice_id = '.$dr_invoice_id.'
+                    AND dii.product_id = '.$product_id.') AS main';
+         return $this->db->query($sql)->result();
+    }
 
-
+    function get_child_ave_cost($product_id){
+        $sql="SELECT 
+            p.product_id as child_product_id,
+            parent.product_id,
+            ((parent.purchase_cost / parent.bulk_conversion_rate) * p.conversion_rate) AS child_ave_cost
+        FROM
+            products p
+                LEFT JOIN
+            products parent ON parent.product_id = p.parent_id
+        WHERE
+            p.is_deleted = FALSE
+                AND p.is_active = TRUE
+                AND p.is_parent = FALSE
+                AND p.parent_id = ".$product_id;
+        return $this->db->query($sql)->result();
+    }
 
  function get_purchases_for_review(){
     $sql='SELECT 
@@ -365,7 +400,8 @@ GROUP BY n.supplier_id HAVING total_balance > 0
         WHERE di.is_active = TRUE AND
         di.is_deleted = FALSE AND
         di.is_journal_posted = FALSE AND
-        di.is_closed = FALSE';
+        di.is_closed = FALSE AND
+        di.is_finalized = TRUE';
 
          return $this->db->query($sql)->result();
 

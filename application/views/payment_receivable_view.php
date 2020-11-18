@@ -404,7 +404,7 @@
 
     <div id="modal_confirmation" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
         <div class="modal-dialog modal-sm">
-            <div class="modal-content"><!---content--->
+            <div class="modal-content"><!---content-->
                 <div class="modal-header">
                     <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
                     <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Confirmation</h4>
@@ -419,7 +419,7 @@
                     <button id="btn_yes" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Yes</button>
                     <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">No</button>
                 </div>
-            </div><!---content---->
+            </div><!---content-->
         </div>
 
 
