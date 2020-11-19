@@ -93,7 +93,7 @@
         }
 
 
-        .numeric{
+        .numeric, .numeric5{
             text-align: right;
         }
 /*
@@ -487,7 +487,7 @@
                                                                             <span class="input-group-addon">
                                                                                 <i class="fa fa-toggle-off"></i>
                                                                             </span>
-                                                                        <input type="text" name="bulk_conversion_rate" id="bulk_conversion_rate" class="form-control numeric" data-error-msg="Bulk conversion rate is required.">
+                                                                        <input type="text" name="bulk_conversion_rate" id="bulk_conversion_rate" class="form-control numeric5" data-error-msg="Bulk conversion rate is required.">
                                                                     </div>
                                                                 </div>
                                                                 <div class="form-group" style="margin-bottom:0px;">
@@ -507,7 +507,7 @@
                                                                             <span class="input-group-addon">
                                                                                 <i class="fa fa-toggle-off"></i>
                                                                             </span>
-                                                                        <input type="text" name="conversion_rate" id="conversion_rate" class="form-control numeric" data-error-msg="Conversion rate is required.">
+                                                                        <input type="text" name="conversion_rate" id="conversion_rate" class="form-control numeric5" data-error-msg="Conversion rate is required.">
                                                                     </div>
                                                                 </div>
 
@@ -1210,6 +1210,7 @@ $(document).ready(function(){
         showPanelActive('list');  
 
         $('.numeric').autoNumeric('init',{mDec:2});
+        $('.numeric5').autoNumeric('init',{mDec:5});
 
         $('#mobile_no').keypress(validateNumber);
 
@@ -1941,6 +1942,7 @@ $(document).ready(function(){
             }
 
             $('.numeric').autoNumeric('init',{mDec:2});
+            $('.numeric5').autoNumeric('init',{mDec:5});
         });
 
 

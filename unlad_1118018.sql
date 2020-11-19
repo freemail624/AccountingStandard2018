@@ -2457,9 +2457,9 @@ CREATE TABLE `products` (
   `brand_id` bigint(20) DEFAULT '0',
   `is_parent` bit(1) DEFAULT b'0',
   `bulk_unit_id` bigint(20) DEFAULT '0',
-  `bulk_conversion_rate` decimal(20,2) DEFAULT '0.00',
+  `bulk_conversion_rate` decimal(20,5) DEFAULT '0.00000',
   `parent_id` bigint(20) DEFAULT '0',
-  `conversion_rate` decimal(20,2) DEFAULT '0.00',
+  `conversion_rate` decimal(20,5) DEFAULT '0.00000',
   PRIMARY KEY (`product_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
