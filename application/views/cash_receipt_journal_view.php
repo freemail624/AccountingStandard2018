@@ -1159,7 +1159,7 @@ $(document).ready(function(){
     var _txnMode; var _cboParticulars; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode;
     var dtReview; var _cbo_paymentMethod; var _cbo_departments; var dt; var _cbo_check_types; var _cbo_accounttype;
     var _cboCustomerType;  var _cboTaxGroup; var _selectedDepartment = 0; var _cboDepartmentFilter;
-    var _cboArTrans; var dtReviewAdvances; var _selectedParentRow;
+    var _cboArTrans; var dtReviewAdvances; var _selectedParentRow; var _curBtn_; var cancelAdvance;
 
     var oTBJournal={
         "dr" : "td:eq(2)",
@@ -2709,7 +2709,6 @@ $(document).ready(function(){
         };
 
 
-
     };
 
 
@@ -2767,7 +2766,6 @@ $(document).ready(function(){
             var _dataParentID=parent.data('parent-id');
             var btn=parent.find('button[name="btn_finalize_journal_review"]');
             var btncancel=parent.find('button[name="btn_cancel_journal_review"]');
-
             //initialize datepicker
             parent.find('input.date-picker').datepicker({
                 todayBtn: "linked",
@@ -2823,21 +2821,16 @@ $(document).ready(function(){
             });
 
 
-            $('#btn_yes_cancel_advance').click(function(){
-                $.ajax({
+            cancelAdvance=function(){
+                return $.ajax({
                     "dataType":"json",
                     "type":"POST",
                     "url":"Cash_receipt/transaction/cancel-review-advance",
                     "data":{temp_journal_id : _selectedID},
-                    "success": function(response){
-                        showNotification(response);
-                        if(response.stat=="success"){
-                            dtReviewAdvances.row(_selectedParentRow).remove().draw();
-                        }
+                    "beforeSend": showSpinningProgress(_curBtn_)
 
-                    }
                 });
-            });
+            };
 
             var finalizeJournalReview=function(){
                 var _data_review=parent.find('form').serializeArray();
@@ -2855,6 +2848,21 @@ $(document).ready(function(){
 
 
         };    
+
+        $('#btn_yes_cancel_advance').click(function(){
+            _curBtn_=$(this);
+
+            cancelAdvance().done(function(response){
+                if(response.stat=="success"){
+                    dtReviewAdvances.row(_selectedParentRow).remove().draw();
+                }
+                
+                showNotification(response);
+            }).always(function(){
+                showSpinningProgress(_curBtn_);
+            }); 
+        });
+
 });
 
 
