@@ -117,7 +117,8 @@ $sql="SELECT main.* FROM(
             UNION ALL
 
 
-            SELECT output_tax.account_id,output_tax.memo,
+            SELECT output_tax.account_id,
+            output_tax.memo,
             SUM(output_tax.cr_amount)as cr_amount,0 as dr_amount
              FROM
             (SELECT sii.product_id,
@@ -131,6 +132,44 @@ $sql="SELECT main.* FROM(
             INNER JOIN products as p ON sii.product_id=p.product_id
             WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
             )as output_tax GROUP BY output_tax.account_id
+
+
+            UNION ALL 
+
+            SELECT 
+            cost_sale.account_id,
+            cost_sale.memo,
+            0 as cr_amount,
+            SUM(cost_sale.dr_amount) as dr_amount
+            FROM
+            (
+                SELECT sii.product_id,
+                (SELECT cost_sale_account_id FROM account_integration) as account_id,
+                '' as memo,
+                0 as cr_amount,
+                SUM(sii.inv_qty * p.purchase_cost) as dr_amount
+                FROM 
+                    `sales_invoice_items` as sii
+                    INNER JOIN products as p ON sii.product_id=p.product_id
+                    WHERE 
+                        sii.sales_invoice_id=$sales_invoice_id 
+                        AND (SELECT cost_sale_account_id FROM account_integration) >0
+            ) as cost_sale GROUP BY cost_sale.account_id
+
+            UNION ALL
+
+            SELECT
+            p.expense_account_id as account_id,
+            '' as memo,
+            SUM(sii.inv_qty * p.purchase_cost) cr_amount,
+            0 as dr_amount
+
+            FROM `sales_invoice_items` as sii
+            INNER JOIN products as p ON sii.product_id=p.product_id
+            WHERE sii.sales_invoice_id=$sales_invoice_id AND p.expense_account_id>0
+            GROUP BY p.expense_account_id
+
+
             )as main WHERE main.dr_amount>0 OR main.cr_amount>0
             
 

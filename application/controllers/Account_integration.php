@@ -110,6 +110,7 @@ class Account_integration extends CORE_Controller
 
             case 'save':
                 $m_integration=$this->Account_integration_model;
+                $m_integration->cost_sale_account_id=$this->input->post('cost_sale_account_id',TRUE);
                 $m_integration->retained_earnings_id=$this->input->post('retained_earnings_id',TRUE);
                 $m_integration->petty_cash_account_id=$this->input->post('petty_cash_account_id',TRUE);
                 $m_integration->depreciation_expense_debit_id=$this->input->post('depreciation_expense_debit_id',TRUE);

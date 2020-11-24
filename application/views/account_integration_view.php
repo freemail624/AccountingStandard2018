@@ -433,6 +433,25 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
 
                 <div class="tab-pane" id="accounts_integration_setting" style="min-height: 300px;">
                     <form id="frm_account_integration" role="form" class="form-horizontal row-border">
+
+                        <br >
+                        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Cost of Sales Account</strong></span></h4>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> * Cost of Sale :</label>
+                            <div class="col-md-7">
+                                <select name="cost_sale_account_id"  class="cbo_accounts" data-error-msg="Cost of Sales is required." required>
+
+                                    <?php foreach($accounts as $account){ ?>
+                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->cost_sale_account_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
+                                    <?php } ?>
+                                </select>
+                                <span class="help-block m-b-none">Please select the account where cost of sales will be recorded.</span>
+                            </div>
+                        </div>
+
+
+
+
                         <br >
                         <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Retained Earnings Account</strong></span></h4>
                         <div class="form-group">
