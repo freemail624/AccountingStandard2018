@@ -37,7 +37,7 @@ class Account_class_model extends CORE_Model{
                 FROM account_titles as at
                 LEFT JOIN account_classes as ac ON at.account_class_id=ac.account_class_id
                 LEFT JOIN account_types as aty ON ac.account_type_id=aty.account_type_id
-                GROUP BY at.account_class_id ORDER BY aty.account_type_id";
+                GROUP BY at.account_class_id ORDER BY aty.account_type_id ASC, ac.account_class_id ASC";
         return $this->db->query($sql)->result();
     }
 
