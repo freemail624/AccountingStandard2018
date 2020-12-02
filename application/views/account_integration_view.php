@@ -164,6 +164,7 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                 <li><a href="#accounts_integration_setting" data-toggle="tab" style="font-family: tahoma;"> Other Accounts</a></li>
                 <li><a href="#accounts_integration_adjustment" data-toggle="tab" style="font-family: tahoma;">Adjustments</a></li>
                 <li><a href="#accounts_integration_item_transfer" data-toggle="tab" style="font-family: tahoma;">Item Transfer</a></li>
+                <li><a href="#accounts_integration_loading_report" data-toggle="tab" style="font-family: tahoma;">Loading Report</a></li>
                 <!-- <li class=""><a href="#sched_expense_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-gear"></i> Expense Group (Schedule of Expense)</a></li> -->
                 <li class=""><a href="#account_year_setting" data-toggle="tab" style="font-family: tahoma;"> Accounting Period</a></li>
                 <!-- <li class=""><a href="#invoice_counter_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-code"></i> Invoice Number</a></li> -->
@@ -203,6 +204,33 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
             </div>
 
 <!-- ITEM TRANSFER END -->
+
+
+<!-- ITEM TRANSFER START -->
+            <div class="tab-pane" id="accounts_integration_loading_report" style="min-height: 300px;">
+                <form id="frm_account_integration_loading_report" role="form" class="form-horizontal row-border">
+                        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Loading Report (Order Qty) </strong></span></h4>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> <b class="required"> * </b>Product Category :</label>
+                            <div class="col-md-7">
+                                <select name="loading_category_id" class="cbo_accounts" data-error-msg="Issuance Supplier is required." required>
+                                    <?php foreach($categories as $category){ ?>
+                                        <option value="<?php echo $category->category_id; ?>" <?php echo ($current_accounts->loading_category_id==$category->category_id?'selected':''); ?>  ><?php echo $category->category_name; ?></option>
+                                    <?php } ?>
+                                </select>
+                                <span class="help-block m-b-none">Please Choose a default Category for computation of total qty of order. </span>
+                            </div>
+                        </div>
+                </form>
+                    <div class="col-sm-offset-3">
+                        <button id="btn_save_loading_report" type="button" class="btn btn-primary" style="font-family: tahoma;text-transform: none;"><span class=""></span> Save Loading Report Configuration Changes</button>
+                    </div>
+            </div>
+
+<!-- ITEM TRANSFER END -->
+
+
+
 <!-- ADJUSTMENTS START -->
             <div class="tab-pane" id="accounts_integration_adjustment" style="min-height: 300px;">
                 <form id="frm_account_integration_adjustment" role="form" class="form-horizontal row-border">
@@ -279,7 +307,7 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                             <span class="help-block m-b-none">Please select if Cash Invoices will be included in the Inventory computation.</span>
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group hidden">
                         <label class="col-md-3 control-label"> * Warehouse Dispatching Invoice Integration :</label>
                         <div class="col-md-7">
                             <select name="dispatching_invoice_inventory" class="cbo_accounts"   id="cbo_inventory" data-error-msg="Inventory is required." required>
@@ -870,6 +898,15 @@ $(document).ready(function(){
                     showSpinningProgress($('#btn_save_item_transfer_accounts'));
                 });
             });
+
+            $('#btn_save_loading_report').click(function(){
+                saveSettingsLoadingReport().done(function(response){
+                    showNotification(response);
+                }).always(function(){
+                    showSpinningProgress($('#btn_save_loading_report'));
+                });
+            });
+
             $('#btn_save_material_issuance_accounts').click(function(){
                 saveSettingsMaterialIssuance().done(function(response){
                     showNotification(response);
@@ -1064,6 +1101,20 @@ $(document).ready(function(){
 
         });
     };
+
+    var saveSettingsLoadingReport=function(){
+        var _data=$('#frm_account_integration_loading_report').serializeArray();
+        console.log(_data);
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Account_integration/transaction/save_loading_report",
+            "data":_data,
+            "beforeSend": showSpinningProgress($('#btn_save_loading_report'))
+
+        });
+    }; 
 
     var saveSettingsMaterialIssuance=function(){
         var _data=$('#frm_account_integration_material_issuance').serializeArray();

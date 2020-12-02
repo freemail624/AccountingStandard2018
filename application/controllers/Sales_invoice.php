@@ -36,7 +36,6 @@ class Sales_invoice extends CORE_Controller
         $data['_switcher_settings'] = $this->load->view('template/elements/switcher', '', TRUE);
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
-        $data['_print_files'] = $this->load->view('template/elements/print_file', '', TRUE);
 
         //data required by active view
         $data['departments']=$this->Departments_model->get_list(
@@ -78,58 +77,6 @@ class Sales_invoice extends CORE_Controller
 
         $data['tax_percentage']=(count($tax_rate)>0?$tax_rate[0]->tax_rate:0);
         $data['company']=$this->Company_model->getDefaultRemarks()[0];
-        /*$data['products']=$this->Products_model->get_list(
-
-            'products.is_deleted=FALSE AND products.is_active=TRUE',
-
-            array(
-                'products.product_id',
-                'products.product_code',
-                'products.product_desc' ,
-                'products.product_desc1',
-                'products.is_tax_exempt',
-                'FORMAT(products.sale_price,2)as sale_price',
-                'FORMAT(products.purchase_cost,2)as purchase_cost',
-                'products.unit_id',
-                'units.unit_name'
-            ),
-            array(
-                // parameter (table to join(left) , the reference field)
-                array('units','units.unit_id=products.unit_id','left'),
-                array('categories','categories.category_id=products.category_id','left')
-
-            )
-
-        );*/
-
-
-        // $data['products']=$this->Products_model->get_list(
-        //     null, //no id filter
-        //     array(
-        //                'products.product_id',
-        //                'products.product_code',
-        //                'products.product_desc',
-        //                'products.product_desc1',
-        //                'products.is_tax_exempt',
-        //                'products.size',
-        //                'FORMAT(products.sale_price,2)as sale_price',
-        //                //'FORMAT(products.sale_price,2)as sale_price',
-        //                'FORMAT(products.purchase_cost,2)as purchase_cost',
-        //                'products.unit_id',
-        //                'products.on_hand',
-        //                'units.unit_name',
-        //                'tax_types.tax_type_id',
-        //                'tax_types.tax_rate'
-        //     ),
-        //     array(
-        //         // parameter (table to join(left) , the reference field)
-        //         array('units','units.unit_id=products.unit_id','left'),
-        //         array('categories','categories.category_id=products.category_id','left'),
-        //         array('tax_types','tax_types.tax_type_id=products.tax_type_id','left')
-
-        //     )
-
-        // );
 
         $data['invoice_counter']=$this->Invoice_counter_model->get_list(array('user_id'=>$this->session->user_id));
         $data['order_sources'] = $this->Order_source_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
@@ -251,6 +198,12 @@ class Sales_invoice extends CORE_Controller
                 echo json_encode($response);
                 break;
 
+            //***********************************************************************************************************
+            case 'open':  //this returns SI
+                $m_sales_invoice=$this->Sales_invoice_model;
+                $response['data']= $m_sales_invoice->get_open_sales_invoice_list();
+                echo json_encode($response);
+                break;
 
             //***************************************create new Items************************************************
 
@@ -399,57 +352,7 @@ class Sales_invoice extends CORE_Controller
                     $response['stat'] = 'success';
                     $response['msg'] = 'Sales invoice successfully created.';
                     $response['row_added']=$this->response_rows($sales_invoice_id);
-                    // $response['is_auto_print']=$this->input->post('is_auto_print',TRUE);
-                    $response['is_auto_print']=0;
-
-                    $m_sales_invoice=$this->Sales_invoice_model;
-                    $m_sales_invoice_items=$this->Sales_invoice_item_model;
-                    $m_company_info=$this->Company_model;
-
-                    $company_info=$m_company_info->get_list();
-                    $data['company_info']=$company_info[0];
-
-                    $info=$m_sales_invoice->get_list(
-                        $sales_invoice_id,
-                        array(
-                            'sales_invoice.sales_invoice_id',
-                            'sales_invoice.sales_inv_no',
-                            'sales_invoice.remarks', 
-                            'sales_invoice.date_created',
-                            'sales_invoice.customer_id',
-                            'sales_invoice.inv_type',
-                            'sales_invoice.*',
-                            'DATE_FORMAT(sales_invoice.date_invoice,"%m/%d/%Y") as date_invoice',
-                            'DATE_FORMAT(sales_invoice.date_due,"%m/%d/%Y") as date_due',
-                            'departments.department_id',
-                            'departments.department_name',
-                            'customers.customer_name',
-                            'sales_invoice.salesperson_id',
-                            'sales_invoice.address',
-                            'sales_order.so_no',
-                            'order_source.order_source_name',
-                            'CONCAT(salesperson.firstname," ",salesperson.lastname) AS salesperson_name'
-                        ),
-                        array(
-                            array('departments','departments.department_id=sales_invoice.department_id','left'),
-                            array('salesperson','salesperson.salesperson_id=sales_invoice.salesperson_id','left'),
-                            array('customers','customers.customer_id=sales_invoice.customer_id','left'),
-                            array('sales_order','sales_order.sales_order_id=sales_invoice.sales_order_id','left'),
-                            array('order_source','order_source.order_source_id=sales_invoice.order_source_id','left'),
-                        )
-                    );
-
-                    $data['sales_info']=$info[0];
-                    $data['sales_invoice_items']=$m_sales_invoice_items->get_list(
-                        array('sales_invoice_items.sales_invoice_id'=>$sales_invoice_id),
-                        'sales_invoice_items.*,products.product_desc,products.size,units.unit_name,products.product_code',
-                        array(
-                            array('products','products.product_id=sales_invoice_items.product_id','left'),
-                            array('units','units.unit_id=sales_invoice_items.unit_id','left')
-                        )
-                    );
-
-                    $response['file'] = $this->load->view('template/sales_invoice_direct_content',$data,TRUE);
+                    $response['is_auto_print']=$this->input->post('is_auto_print',TRUE);
 
                     echo json_encode($response);
                 }
@@ -595,8 +498,8 @@ class Sales_invoice extends CORE_Controller
                         $response['msg'] = 'Sales invoice successfully updated.';
                         $response['row_updated']=$this->response_rows($sales_invoice_id);
 
-                        // $response['is_auto_print']=$this->input->post('is_auto_print',TRUE);
-                        $response['is_auto_print']=0;
+                        $response['is_auto_print']=$this->input->post('is_auto_print',TRUE);
+                        // $response['is_auto_print']=0;
 
                         $m_sales_invoice=$this->Sales_invoice_model;
                         $m_sales_invoice_items=$this->Sales_invoice_item_model;

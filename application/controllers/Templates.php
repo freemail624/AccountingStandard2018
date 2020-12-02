@@ -99,6 +99,9 @@ class Templates extends CORE_Controller {
         $this->load->model('Bir_2551m_model');
         $this->load->model('Months_model');
 
+        $this->load->model('Loading_model');
+        $this->load->model('Loading_item_model');
+
         $this->load->library('M_pdf');
         $this->load->library('excel');
         $this->load->model('Email_settings_model');
@@ -988,7 +991,7 @@ class Templates extends CORE_Controller {
                     $file_name=$info[0]->sales_inv_no;
                     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                     $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
-                    $content=$this->load->view('template/sales_invoice_content',$data,TRUE); //load the template
+                    $content=$this->load->view('template/sales_invoice_content_standard',$data,TRUE); //load the template
                     //$pdf->setFooter('{PAGENO}');
                     $pdf->WriteHTML($content);
                     //download it.
@@ -996,7 +999,8 @@ class Templates extends CORE_Controller {
 
                 }
                 if($type=='dropdown'){
-                      echo  $this->load->view('template/sales_invoice_content_standard',$data,TRUE); //load the template
+                      echo  $this->load->view('template/sales_invoice_content_standard_dropdown',$data,TRUE); //load the template
+                      echo  $this->load->view('template/sales_invoice_content_menus',$data,TRUE);
 
                 }
                 //preview on browser
@@ -1013,6 +1017,50 @@ class Templates extends CORE_Controller {
                 }
 
                 break;
+
+            //****************************************************
+            case 'loading-report': //delivery invoice
+                $m_loading=$this->Loading_model;
+
+                $m_company_info=$this->Company_model;
+                $type=$this->input->get('type',TRUE);
+
+                $company_info=$m_company_info->get_list();
+                $data['company_info']=$company_info[0];
+
+                $data['info']=$m_loading->get_loading($filter_value);
+                $data['items']=$m_loading->get_loading_customers($filter_value);
+
+                //download pdf
+                if($type=='pdf'){
+                    $file_name=$data['info'][0]->loading_no;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load("LETTER-L"); //pass the instance of the mpdf class
+                    $content=$this->load->view('template/loading_report_content',$data,TRUE); //load the template
+                    //$pdf->setFooter('{PAGENO}');
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output($pdfFilePath,"D");
+
+                }
+
+                if($type=='dropdown'){
+                    echo  $this->load->view('template/loading_report_dropdown',$data,TRUE); //load the template
+                    echo $this->load->view('template/loading_report_menus',$data,TRUE);
+                }
+
+                //preview on browser
+                if($type=='preview'){
+                    $file_name=$data['info'][0]->loading_no;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load("LETTER-L");
+                    $content=$this->load->view('template/loading_report_content',$data,TRUE); //load the template                    
+                    $pdf->WriteHTML($content);
+                    $pdf->Output();
+                }
+
+                break;
+
 
             case 'proforma-invoice': //proforma invoice
                 $m_proforma_invoice=$this->Proforma_invoice_model;
@@ -1107,6 +1155,12 @@ class Templates extends CORE_Controller {
                     )
                 );
 
+                if($type=='dropdown'){
+                      echo  $this->load->view('template/cash_invoice_entries_dropdown',$data,TRUE); //load the template
+                      echo  $this->load->view('template/cash_invoice_content_menus',$data,TRUE);
+
+                }
+
                 //preview on browser
                 if($type=='contentview'){
                     $file_name=$info[0]->cash_inv_no;
@@ -1120,8 +1174,27 @@ class Templates extends CORE_Controller {
                     $pdf->Output();
                 }
 
+                //download pdf
+                if($type=='pdf'){
+                    $file_name=$info[0]->cash_inv_no;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                    $content=$this->load->view('template/cash_invoice_entries',$data,TRUE); //load the template
+                    //$pdf->setFooter('{PAGENO}');
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output($pdfFilePath,"D");
+
+                }
+
                 if($type=='viewport'){
                     echo $this->load->view('template/cash_invoice_for_history',$data,TRUE);
+                }
+
+
+                if($type=='direct'){
+                    echo $this->load->view('template/cash_invoice_direct_content',$data,TRUE);
+
                 }
 
                 break;

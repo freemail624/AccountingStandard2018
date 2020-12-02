@@ -295,6 +295,7 @@ class Cash_invoice extends CORE_Controller
                     $response['stat'] = 'success';
                     $response['msg'] = 'Cash Invoice successfully created.';
                     $response['row_added']=$this->response_rows($cash_invoice_id);
+                    $response['is_auto_print']=$this->input->post('is_auto_print',TRUE);
 
                     echo json_encode($response);
                 }
@@ -415,7 +416,8 @@ class Cash_invoice extends CORE_Controller
                         $response['stat'] = 'success';
                         $response['msg'] = 'Cash Invoice successfully updated.';
                         $response['row_updated']=$this->response_rows($cash_invoice_id);
-
+                        $response['is_auto_print']=$this->input->post('is_auto_print',TRUE);
+                        
                         echo json_encode($response);
                     }
 

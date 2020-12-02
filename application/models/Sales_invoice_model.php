@@ -62,6 +62,35 @@ class Sales_invoice_model extends CORE_Model
         return $this->db->query($sql)->result();
     }
 
+    function get_open_sales_invoice_list(){
+        $sql="SELECT 
+            si.*, c.customer_name, sii.total_inv_qty
+        FROM
+            sales_invoice si
+                LEFT JOIN
+            customers c ON c.customer_id = si.customer_id
+                LEFT JOIN
+            (SELECT sales_invoice_id, SUM(inv_qty) AS total_inv_qty
+                FROM
+                sales_invoice_items
+                LEFT JOIN products p ON p.product_id = sales_invoice_items.product_id
+                WHERE p.category_id = (SELECT loading_category_id FROM account_integration)
+            GROUP BY sales_invoice_items.sales_invoice_id
+            ) as sii ON sii.sales_invoice_id = si.sales_invoice_id
+        WHERE
+            si.is_deleted = FALSE
+                AND si.is_active = TRUE
+                AND si.sales_invoice_id NOT IN (SELECT DISTINCT
+                    li.invoice_id
+                FROM
+                    loading_items li
+                        LEFT JOIN
+                    loading l ON l.loading_id = li.loading_id
+                WHERE
+                    l.is_deleted = FALSE
+                        AND l.is_active = TRUE)";
+        return $this->db->query($sql)->result();
+    }
 
 function get_journal_entries_2($sales_invoice_id){
 
@@ -910,7 +939,15 @@ GROUP BY n.customer_id HAVING total_balance > 0";
         si.is_active = TRUE AND
         si.is_deleted = FALSE AND
         si.is_journal_posted = FALSE
-        ANd si.is_closed = FALSE';
+        ANd si.is_closed = FALSE
+        AND si.sales_invoice_id IN (SELECT 
+                DISTINCT li.invoice_id
+            FROM
+                loading_items li
+                LEFT JOIN loading l ON l.loading_id = li.loading_id
+                WHERE l.is_deleted = FALSE
+                AND l.is_active = TRUE
+                GROUP BY li.invoice_id)';
 
         return $this->db->query($sql)->result();
     }

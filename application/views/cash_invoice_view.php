@@ -36,7 +36,7 @@
             float: left;
         }
         td.details-control {
-            background: url('assets/img/print.png') no-repeat center center;
+            background: url('assets/img/Folder_Closed.png') no-repeat center center;
             cursor: pointer;
         }
         tr.details td.details-control {
@@ -444,7 +444,22 @@
     <div class="panel-footer" >
         <div class="row">
             <div class="col-sm-12">
-                <input type="checkbox" name="chk_dispatching" id="checkcheck">&nbsp;&nbsp;<label for="checkcheck"><strong>For Dispatching ?</strong></label><br>
+
+                <label class="control-label" id="is_auto_print"> 
+                    <strong> 
+                       <input type="checkbox" name="is_auto_print" for="is_auto_print" <?php if($company->is_print_auto == 1){ echo 'checked'; } ?>>
+                            Print after saving?
+                    </strong>
+                </label>
+
+                <label class="control-label hidden" id="checkcheck" style="margin-left: 10px;"> 
+                    <strong> 
+                       <input type="checkbox" name="chk_dispatching" for="checkcheck">
+                        For Dispatching ?
+                    </strong>
+                </label>       
+
+                <br>
                 <input type="hidden" name="for_dispatching" id="for_dispatching" class="form-control"><br>
                 <button id="btn_save" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Save Changes</button>
                 <button id="btn_cancel" class="btn-default btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
@@ -1200,12 +1215,42 @@ $(document).ready(function(){
             }
         });
         var detailRows = [];
+
         $('#tbl_cash_invoice tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
-            var row = dt.row(tr);
-            var d=row.data();
-            window.open('Templates/layout/cash-invoice/'+ d.cash_invoice_id+'?type=contentview');
+            var row = dt.row( tr );
+            var idx = $.inArray( tr.attr('id'), detailRows );
+
+            if ( row.child.isShown() ) {
+                tr.removeClass( 'details' );
+                row.child.hide();
+
+                // Remove from the 'open' array
+                detailRows.splice( idx, 1 );
+            }
+            else {
+                tr.addClass( 'details' );
+                //console.log(row.data());
+                var d=row.data();
+
+                $.ajax({
+                    "dataType":"html",
+                    "type":"POST",
+                    "url":"Templates/layout/cash-invoice/"+ d.cash_invoice_id +"?type=dropdown",
+                    "beforeSend" : function(){
+                        row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                    }
+                }).done(function(response){
+                    row.child( response,'no-padding' ).show();
+                    // Add to the 'open' array
+                    if ( idx === -1 ) {
+                        detailRows.push( tr.attr('id') );
+                    }
+                });
+            }
         } );
+
+
         $('#link_browse').click(function(){
             $('#btn_receive_so').click();
         });
@@ -1877,6 +1922,9 @@ $(document).ready(function(){
                         dt.row.add(response.row_added[0]).draw();
                         clearFields($('#frm_cash_invoice'));
                         showList(true);
+                        if(response.is_auto_print == 1){
+                            window.open('Templates/layout/cash-invoice/'+ response.row_added[0].cash_invoice_id +'?type=direct');
+                        }
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
                     });
@@ -1886,6 +1934,9 @@ $(document).ready(function(){
                         dt.row(_selectRowObj).data(response.row_updated[0]).draw();
                         clearFields($('#frm_cash_invoice'));
                         showList(true);
+                         if(response.is_auto_print == 1){
+                            window.open('Templates/layout/cash-invoice/'+ response.row_updated[0].cash_invoice_id +'?type=direct');
+                        }                        
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
                     });
@@ -2022,6 +2073,7 @@ $(document).ready(function(){
         _data.push({name : "summary_before_discount", value :tbl_summary.find(oTableDetails.before_tax).text()});
         _data.push({name : "summary_tax_amount", value : tbl_summary.find(oTableDetails.inv_tax_amount).text()});
         _data.push({name : "summary_after_tax", value : tbl_summary.find(oTableDetails.after_tax).text()});
+        $('input[name="is_auto_print"]').prop("checked") ?  _data.push({name : "is_auto_print" , value : '1'   }) : _data.push({name : "is_auto_print" , value : '0'   });
         return $.ajax({
             "dataType":"json",
             "type":"POST",
@@ -2040,7 +2092,7 @@ $(document).ready(function(){
         _data.push({name : "summary_before_discount", value :tbl_summary.find(oTableDetails.before_tax).text()});
         _data.push({name : "summary_tax_amount", value : tbl_summary.find(oTableDetails.inv_tax_amount).text()});
         _data.push({name : "summary_after_tax", value : tbl_summary.find(oTableDetails.after_tax).text()});
-        _data.push({name : "cash_invoice_id" ,value : _selectedID});
+        _data.push({name : "cash_invoice_id" ,value : _selectedID});$('input[name="is_auto_print"]').prop("checked") ?  _data.push({name : "is_auto_print" , value : '1'   }) : _data.push({name : "is_auto_print" , value : '0'   });
         return $.ajax({
             "dataType":"json",
             "type":"POST",

@@ -19,6 +19,7 @@ class Account_integration extends CORE_Controller
                 'Users_model',
                 'Customers_model',
                 'Suppliers_model',
+                'Categories_model',
                 'Departments_model',
                 'Purchasing_integration_model',
                 'Trans_model',
@@ -47,9 +48,7 @@ class Account_integration extends CORE_Controller
         $data['departments'] = $this->Departments_model->get_list(array('is_active'=>TRUE, 'is_deleted'=>FALSE));
         $data['customers']=$this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['suppliers']=$this->Suppliers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
-
-
-
+        $data['categories']=$this->Categories_model->get_list('is_active=TRUE AND is_deleted=FALSE');
 
         //grand parent account only
         $data['expenses']=$this->Account_title_model->get_list(
@@ -133,6 +132,26 @@ class Account_integration extends CORE_Controller
 
                 break;
 
+
+            case 'save_loading_report':
+                $m_integration=$this->Account_integration_model;
+                $m_integration->loading_category_id=$this->input->post('loading_category_id',TRUE);         
+                $m_integration->modify(1);
+
+                $response['stat']="success";
+                $response['title']="Success!";
+                $response['msg']="Loading Report successfully integrated.";
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=57; // TRANS TYPE
+                $m_trans->trans_log='Updated System General Configuration';
+                $m_trans->save();
+                echo json_encode($response);
+
+                break;                
 
             case 'save_supplier':
                 $m_integration=$this->Account_integration_model;

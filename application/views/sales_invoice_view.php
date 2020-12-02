@@ -36,7 +36,7 @@
             float: left;
         }
         td.details-control {
-            background: url('assets/img/print.png') no-repeat center center;
+            background: url('assets/img/Folder_Closed.png') no-repeat center center;
             cursor: pointer;
         }
         tr.details td.details-control {
@@ -439,14 +439,14 @@
         <div class="row">
             <div class="col-sm-12">
 
-            <label class="control-label hidden" id="is_auto_print"> 
+            <label class="control-label" id="is_auto_print"> 
                 <strong> 
                    <input type="checkbox" name="is_auto_print" for="is_auto_print" <?php if($company->is_print_auto == 1){ echo 'checked'; } ?>>
                         Print after saving?
                 </strong>
             </label>
 
-            <label class="control-label" id="checkcheck" style="margin-left: 10px;"> 
+            <label class="control-label hidden" id="checkcheck" style="margin-left: 10px;"> 
                 <strong> 
                    <input type="checkbox" name="chk_dispatching" for="checkcheck">
                     For Dispatching ?
@@ -879,7 +879,6 @@
 </div>
 <?php echo $_switcher_settings; ?>
 <?php echo $_def_js_files; ?>
-<?php echo $_print_files; ?>
 
 <script src="assets/plugins/spinner/dist/spin.min.js"></script>
 <script src="assets/plugins/spinner/dist/ladda.min.js"></script>
@@ -1224,20 +1223,43 @@ $(document).ready(function(){
 
 
         var detailRows = [];
+
         $('#tbl_sales_invoice tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
-            var row = dt.row(tr);
-            var d=row.data();
-            //     $.ajax({
-            //         "dataType":"html",
-            //         "type":"POST",
-            //         "url":"Templates/layout/sales-invoice/"+ d.sales_invoice_id+"?type=contentview"
-            //     }).done(function(response){
-            //         $("#sales_invoice").html(response);
-            //         $("#modal_sales_invoice").modal('show');
-            //     });
-            window.open('Templates/layout/sales-invoice/'+ d.sales_invoice_id+'?type=contentview');
+            var row = dt.row( tr );
+            var idx = $.inArray( tr.attr('id'), detailRows );
+
+            if ( row.child.isShown() ) {
+                tr.removeClass( 'details' );
+                row.child.hide();
+
+                // Remove from the 'open' array
+                detailRows.splice( idx, 1 );
+            }
+            else {
+                tr.addClass( 'details' );
+                //console.log(row.data());
+                var d=row.data();
+
+                $.ajax({
+                    "dataType":"html",
+                    "type":"POST",
+                    "url":"Templates/layout/sales-invoice/"+ d.sales_invoice_id +"?type=dropdown",
+                    "beforeSend" : function(){
+                        row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                    }
+                }).done(function(response){
+                    row.child( response,'no-padding' ).show();
+                    // Add to the 'open' array
+                    if ( idx === -1 ) {
+                        detailRows.push( tr.attr('id') );
+                    }
+                });
+            }
         } );
+
+
+
         $('#link_browse').click(function(){
             $('#btn_receive_so').click();
         });
@@ -1918,8 +1940,7 @@ $(document).ready(function(){
                         clearFields($('#frm_sales_invoice'));
                         showList(true);
                         if(response.is_auto_print == 1){
-                            $('#card').html(response.file);
-                            print();
+                            window.open('Templates/layout/sales-invoice/'+ response.row_added[0].sales_invoice_id +'?type=direct');
                         }
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
@@ -1930,9 +1951,8 @@ $(document).ready(function(){
                         dt.row(_selectRowObj).data(response.row_updated[0]).draw();
                         clearFields($('#frm_sales_invoice'));
                         showList(true);
-                        if(response.is_auto_print == 1){
-                            $('#card').html(response.file);
-                            print();
+                         if(response.is_auto_print == 1){
+                            window.open('Templates/layout/sales-invoice/'+ response.row_updated[0].sales_invoice_id +'?type=direct');
                         }
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));

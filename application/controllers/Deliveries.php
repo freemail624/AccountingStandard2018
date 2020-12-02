@@ -447,7 +447,7 @@ class Deliveries extends CORE_Controller
                     
                     $product_id = $dr_products[$i]->product_id;
                     $product=$m_products->product_list(1,null,$product_id,null,null,null,null,null,1,null,null,1);
-                    $on_hand_stock = $product[0]->CurrentQty;
+                    $on_hand_stock = $product[0]->total_qty_bulk;
 
                     $cost = $m_delivery_invoice->get_ave_cost($product_id,$dr_invoice_id,$on_hand_stock);
                     $average_cost = $cost[0]->ave_cost;
