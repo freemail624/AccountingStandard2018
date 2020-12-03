@@ -164,7 +164,7 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                 <li><a href="#accounts_integration_setting" data-toggle="tab" style="font-family: tahoma;"> Other Accounts</a></li>
                 <li><a href="#accounts_integration_adjustment" data-toggle="tab" style="font-family: tahoma;">Adjustments</a></li>
                 <li><a href="#accounts_integration_item_transfer" data-toggle="tab" style="font-family: tahoma;">Item Transfer</a></li>
-                <li><a href="#accounts_integration_loading_report" data-toggle="tab" style="font-family: tahoma;">Loading Report</a></li>
+                <li><a href="#accounts_integration_default_settings" data-toggle="tab" style="font-family: tahoma;">Default Settings</a></li>
                 <!-- <li class=""><a href="#sched_expense_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-gear"></i> Expense Group (Schedule of Expense)</a></li> -->
                 <li class=""><a href="#account_year_setting" data-toggle="tab" style="font-family: tahoma;"> Accounting Period</a></li>
                 <!-- <li class=""><a href="#invoice_counter_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-code"></i> Invoice Number</a></li> -->
@@ -207,23 +207,55 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
 
 
 <!-- ITEM TRANSFER START -->
-            <div class="tab-pane" id="accounts_integration_loading_report" style="min-height: 300px;">
-                <form id="frm_account_integration_loading_report" role="form" class="form-horizontal row-border">
-                        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Loading Report (Order Qty) </strong></span></h4>
-                        <div class="form-group">
-                            <label class="col-md-3 control-label"> <b class="required"> * </b>Product Category :</label>
-                            <div class="col-md-7">
-                                <select name="loading_category_id" class="cbo_accounts" data-error-msg="Issuance Supplier is required." required>
-                                    <?php foreach($categories as $category){ ?>
-                                        <option value="<?php echo $category->category_id; ?>" <?php echo ($current_accounts->loading_category_id==$category->category_id?'selected':''); ?>  ><?php echo $category->category_name; ?></option>
-                                    <?php } ?>
-                                </select>
-                                <span class="help-block m-b-none">Please Choose a default Category for computation of total qty of order. </span>
-                            </div>
+            <div class="tab-pane" id="accounts_integration_default_settings" style="min-height: 300px;">
+                <form id="frm_account_default_integration" role="form" class="form-horizontal row-border">
+
+                    <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Default Department (Sales &amp; Purchasing) </strong></span></h4>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label"> <b class="required"> * </b>Department :</label>
+                        <div class="col-md-7">
+                            <select name="default_department_id" class="cbo_accounts" data-error-msg="Default Department is required." required>
+                                <?php foreach($departments as $department){ ?>
+                                    <option value="<?php echo $department->department_id; ?>" <?php echo ($current_accounts->default_department_id==$department->department_id?'selected':''); ?>>
+                                        <?php echo $department->department_name; ?>
+                                    </option>
+                                <?php } ?>
+                            </select>
+                            <span class="help-block m-b-none">Please Choose a default department for sales &amp; purchasing. </span>
                         </div>
+                    </div>
+
+
+                    <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Order Source (Sales) </strong></span></h4>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label"> <b class="required"> * </b>Order Source :</label>
+                        <div class="col-md-7">
+                            <select name="default_order_source_id" class="cbo_accounts" data-error-msg="Order Source is required." required>
+                                <?php foreach($order_sources as $order_source){ ?>
+                                    <option value="<?php echo $order_source->order_source_id; ?>" <?php echo ($current_accounts->default_order_source_id==$order_source->order_source_id?'selected':''); ?>>
+                                        <?php echo $order_source->order_source_name; ?>
+                                    </option>
+                                <?php } ?>
+                            </select>
+                            <span class="help-block m-b-none">Please Choose a default order source for sales. </span>
+                        </div>
+                    </div>
+
+                    <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Loading Report (Order Qty) </strong></span></h4>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label"> <b class="required"> * </b>Product Category :</label>
+                        <div class="col-md-7">
+                            <select name="loading_category_id" class="cbo_accounts" data-error-msg="Category is required." required>
+                                <?php foreach($categories as $category){ ?>
+                                    <option value="<?php echo $category->category_id; ?>" <?php echo ($current_accounts->loading_category_id==$category->category_id?'selected':''); ?>  ><?php echo $category->category_name; ?></option>
+                                <?php } ?>
+                            </select>
+                            <span class="help-block m-b-none">Please Choose a default category for computation of total qty of order. </span>
+                        </div>
+                    </div>
                 </form>
                     <div class="col-sm-offset-3">
-                        <button id="btn_save_loading_report" type="button" class="btn btn-primary" style="font-family: tahoma;text-transform: none;"><span class=""></span> Save Loading Report Configuration Changes</button>
+                        <button id="btn_save_default_configuration" type="button" class="btn btn-primary" style="font-family: tahoma;text-transform: none;"><span class=""></span> Save Default Configuration Changes</button>
                     </div>
             </div>
 
@@ -461,25 +493,23 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
 
                 <div class="tab-pane" id="accounts_integration_setting" style="min-height: 300px;">
                     <form id="frm_account_integration" role="form" class="form-horizontal row-border">
+                        <div class="hidden">
+                            <br >
+                            <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Cost of Sales Account</strong></span></h4>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label"> * Cost of Sale :</label>
+                                <div class="col-md-7">
+                                    <select name="cost_sale_account_id"  class="cbo_accounts" data-error-msg="Cost of Sales is required." required>
 
-                        <br >
-                        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Cost of Sales Account</strong></span></h4>
-                        <div class="form-group">
-                            <label class="col-md-3 control-label"> * Cost of Sale :</label>
-                            <div class="col-md-7">
-                                <select name="cost_sale_account_id"  class="cbo_accounts" data-error-msg="Cost of Sales is required." required>
-
-                                    <?php foreach($accounts as $account){ ?>
-                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->cost_sale_account_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
-                                    <?php } ?>
-                                </select>
-                                <span class="help-block m-b-none">Please select the account where cost of sales will be recorded.</span>
+                                        <?php foreach($accounts as $account){ ?>
+                                            <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->cost_sale_account_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
+                                        <?php } ?>
+                                    </select>
+                                    <span class="help-block m-b-none">Please select the account where cost of sales will be recorded.</span>
+                                </div>
                             </div>
                         </div>
-
-
-
-
+                        
                         <br >
                         <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Retained Earnings Account</strong></span></h4>
                         <div class="form-group">
@@ -899,11 +929,11 @@ $(document).ready(function(){
                 });
             });
 
-            $('#btn_save_loading_report').click(function(){
-                saveSettingsLoadingReport().done(function(response){
+            $('#btn_save_default_configuration').click(function(){
+                saveDefaultSettings().done(function(response){
                     showNotification(response);
                 }).always(function(){
-                    showSpinningProgress($('#btn_save_loading_report'));
+                    showSpinningProgress($('#btn_save_default_configuration'));
                 });
             });
 
@@ -1102,16 +1132,16 @@ $(document).ready(function(){
         });
     };
 
-    var saveSettingsLoadingReport=function(){
-        var _data=$('#frm_account_integration_loading_report').serializeArray();
+    var saveDefaultSettings=function(){
+        var _data=$('#frm_account_default_integration').serializeArray();
         console.log(_data);
 
         return $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"Account_integration/transaction/save_loading_report",
+            "url":"Account_integration/transaction/save_default_settings",
             "data":_data,
-            "beforeSend": showSpinningProgress($('#btn_save_loading_report'))
+            "beforeSend": showSpinningProgress($('#btn_save_default_configuration'))
 
         });
     }; 

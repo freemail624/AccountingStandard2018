@@ -20,6 +20,7 @@ class Purchases extends CORE_Controller
         $this->load->model('Company_model');
         $this->load->model('Email_settings_model');
         $this->load->model('Trans_model');
+        $this->load->model('Account_integration_model');
 
         $this->load->library('M_pdf');
 
@@ -56,6 +57,7 @@ class Purchases extends CORE_Controller
 
         $data['tax_types']=$this->Tax_types_model->get_list('is_deleted=0');
         $data['company']=$this->Company_model->getDefaultRemarks()[0];
+        $data['accounts']=$this->Account_integration_model->get_list(1);
         // $data['products']=$this->Products_model->get_list(
         //         null, //no id filter
         //         array(

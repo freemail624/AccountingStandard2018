@@ -66,6 +66,28 @@ class Loading_model extends CORE_Model{
         return $this->db->query($sql)->result();                
     }
 
+    function check_invoices($loading_id){
+        $sql="SELECT 
+            COUNT(*) as total_posted
+        FROM
+            loading_items li
+            LEFT JOIN sales_invoice si ON si.sales_invoice_id = li.invoice_id
+            WHERE li.loading_id = $loading_id
+            AND is_journal_posted = TRUE";
+        return $this->db->query($sql)->result();                
+    }
+
+    function check_invoice_loading($sales_invoice_id){
+        $sql="SELECT 
+                *
+            FROM
+                loading_items li
+                LEFT JOIN loading l ON l.loading_id = li.loading_id
+                WHERE l.is_deleted = FALSE AND l.is_active = TRUE
+                AND li.invoice_id = $sales_invoice_id";
+        return $this->db->query($sql)->result();                
+    }
+
 
 }
 

@@ -24,6 +24,8 @@ class Sales_invoice extends CORE_Controller
         $this->load->model('Cash_invoice_model');
         $this->load->model('Customer_type_model');
         $this->load->model('Order_source_model');
+        $this->load->model('Loading_model');
+        $this->load->model('Account_integration_model');
 
 
     }
@@ -80,7 +82,7 @@ class Sales_invoice extends CORE_Controller
 
         $data['invoice_counter']=$this->Invoice_counter_model->get_list(array('user_id'=>$this->session->user_id));
         $data['order_sources'] = $this->Order_source_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
-
+        $data['accounts']=$this->Account_integration_model->get_list(1);
         $data['title'] = 'Sales Invoice';
         
         (in_array('3-2',$this->session->user_rights)? 
@@ -129,6 +131,12 @@ class Sales_invoice extends CORE_Controller
                 echo json_encode($this->Products_model->get_current_item_list($description,$type));
                 break;
 
+            case 'check-invoice-loading':
+                $m_loading=$this->Loading_model;
+                $sales_invoice_id = $this->input->post('sales_invoice_id',TRUE);
+                $response['invoice']=$m_loading->check_invoice_loading($sales_invoice_id);
+                echo json_encode($response);
+                break;
 
             // case 'list':  //this returns JSON of Issuance to be rendered on Datatable
             //     $m_invoice=$this->Sales_invoice_model;

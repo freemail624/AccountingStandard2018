@@ -5150,9 +5150,15 @@ class Templates extends CORE_Controller {
                 );
 
                 $adjustment_type=$adjustment_info[0]->adjustment_type;
-
+                $inv_type_id=$adjustment_info[0]->inv_type_id;
+                
                 if($adjustment_type == 'IN'){
-                    $data['entries']=$m_adjustment->get_journal_entries_2_in($adjustment_id);
+                    
+                    if($inv_type_id > 0){
+                        $data['entries']=$m_adjustment->get_journal_entries_salesreturn($adjustment_id);
+                    }else{
+                        $data['entries']=$m_adjustment->get_journal_entries_2_in($adjustment_id);
+                    }
 
                 }else if ($adjustment_type == 'OUT'){
                     $data['entries']=$m_adjustment->get_journal_entries_2($adjustment_id);

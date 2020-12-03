@@ -18,6 +18,7 @@ class Account_integration extends CORE_Controller
                 'Sales_invoice_model',
                 'Users_model',
                 'Customers_model',
+                'Order_source_model',
                 'Suppliers_model',
                 'Categories_model',
                 'Departments_model',
@@ -49,6 +50,7 @@ class Account_integration extends CORE_Controller
         $data['customers']=$this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['suppliers']=$this->Suppliers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['categories']=$this->Categories_model->get_list('is_active=TRUE AND is_deleted=FALSE');
+        $data['order_sources']=$this->Order_source_model->get_list('is_active=TRUE AND is_deleted=FALSE');
 
         //grand parent account only
         $data['expenses']=$this->Account_title_model->get_list(
@@ -133,14 +135,16 @@ class Account_integration extends CORE_Controller
                 break;
 
 
-            case 'save_loading_report':
+            case 'save_default_settings':
                 $m_integration=$this->Account_integration_model;
-                $m_integration->loading_category_id=$this->input->post('loading_category_id',TRUE);         
+                $m_integration->loading_category_id=$this->input->post('loading_category_id',TRUE);   
+                $m_integration->default_department_id=$this->input->post('default_department_id',TRUE);   
+                $m_integration->default_order_source_id=$this->input->post('default_order_source_id',TRUE);   
                 $m_integration->modify(1);
 
                 $response['stat']="success";
                 $response['title']="Success!";
-                $response['msg']="Loading Report successfully integrated.";
+                $response['msg']="Default Settings successfully integrated.";
 
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;

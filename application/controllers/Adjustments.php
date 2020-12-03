@@ -20,6 +20,7 @@ class Adjustments extends CORE_Controller
         $this->load->model('Customers_model');
         $this->load->model('Sales_invoice_model');
         $this->load->model('Cash_invoice_model');
+        $this->load->model('Account_integration_model');
 
 
     }
@@ -47,6 +48,7 @@ class Adjustments extends CORE_Controller
         $data['customers']=$this->Customers_model->get_list(
             array('customers.is_active'=>TRUE,'customers.is_deleted'=>FALSE)
         );
+        $data['accounts']=$this->Account_integration_model->get_list(1);
 
         $data['title'] = 'Inventory Adjustment';
         
@@ -207,6 +209,7 @@ class Adjustments extends CORE_Controller
                 $m_adjustment->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
                 $m_adjustment->total_tax_amount=$this->get_numeric_value($this->input->post('summary_tax_amount',TRUE));
                 $m_adjustment->total_after_tax=$this->get_numeric_value($this->input->post('summary_after_tax',TRUE));
+                $m_adjustment->inv_type_id = $this->get_numeric_value($this->input->post('inv_type_id',TRUE));
                 $m_adjustment->posted_by_user=$this->session->user_id;
                 $m_adjustment->save();
 
@@ -292,6 +295,7 @@ class Adjustments extends CORE_Controller
                 $m_adjustment->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
                 $m_adjustment->total_tax_amount=$this->get_numeric_value($this->input->post('summary_tax_amount',TRUE));
                 $m_adjustment->total_after_tax=$this->get_numeric_value($this->input->post('summary_after_tax',TRUE));
+                $m_adjustment->inv_type_id = $this->get_numeric_value($this->input->post('inv_type_id',TRUE));
                 $m_adjustment->modified_by_user=$this->session->user_id;
                 $m_adjustment->modify($adjustment_id);
 

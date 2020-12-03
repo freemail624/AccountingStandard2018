@@ -203,15 +203,6 @@
                 <div>
                 <hr>
                     <div class="row">
-                        <div class="col-sm-4">
-                            <b class="required">*</b><label> Department :</label> <br />
-                            <select name="department" id="cbo_departments" data-error-msg="Department is required." required>
-                                <option value="0">[ Create New Department ]</option>
-                                <?php foreach($departments as $department){ ?>
-                                    <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
-                                <?php } ?>
-                            </select>
-                        </div>
                         <div class="col-sm-2">
                             <label>SO # :</label> <br />
                             <div class="input-group">
@@ -220,15 +211,50 @@
                                     <a href="#" id="link_browse" style="text-decoration: none;color:black;"><b>...</b></a>
                                 </span>
                             </div>
+
+                            <div class="hidden">
+                                <b class="required">*</b><label> Department :</label> <br />
+                                <select name="department" id="cbo_departments" data-default="<?php echo $accounts[0]->default_department_id; ?>" data-error-msg="Department is required." required>
+                                    <option value="0">[ Create New Department ]</option>
+                                    <?php foreach($departments as $department){ ?>
+                                        <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
+                                    <?php } ?>
+                                </select>
+                                <b>* </b>  Order Source :<br />
+                                <select name="order_source_id" id="cbo_order_source" data-default="<?php echo $accounts[0]->default_order_source_id; ?>" data-error-msg="Order Source is required." required>
+                                    <option value="0">[ Create New Order Source ]</option>
+                                    <?php foreach($order_sources as $order_source){ ?>
+                                        <option value="<?php echo $order_source->order_source_id; ?>"><?php echo $order_source->order_source_name; ?></option>
+                                    <?php } ?>
+                                </select>
+                                <label>Sales person :</label><br/>
+                                <select name="salesperson_id" id="cbo_salesperson" >
+                                    <option value="0">[ Create New Salesperson ]</option>
+                                    <?php foreach($salespersons as $salesperson){ ?>
+                                        <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->acr_name.' - '.$salesperson->fullname; ?></option>
+                                    <?php } ?>
+                                </select>
+                                <label>Customer Type :</label><br/>
+                                <select name="customer_type_id" id="cbo_customer_type">
+                                    <option value="0">Walk In</option>
+                                    <?php foreach($customer_type as $customer_type){ ?>
+                                        <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
                         </div>
                         <div class="col-sm-4">
-                            <label>Sales person :</label><br/>
-                            <select name="salesperson_id" id="cbo_salesperson" >
-                                <option value="0">[ Create New Salesperson ]</option>
-                                <?php foreach($salespersons as $salesperson){ ?>
-                                    <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->acr_name.' - '.$salesperson->fullname; ?></option>
+                             <b class="required">*</b><label>Customer :</label> <br />
+                            <select name="customer" id="cbo_customers" data-error-msg="Customer is required." required>
+                                <option value="0">[ Create New Customer ]</option>
+                                <?php foreach($customers as $customer){ ?>
+                                    <option data-address="<?php echo $customer->address; ?>" data-contact="<?php echo $customer->contact_name; ?>" value="<?php echo $customer->customer_id; ?>" data-term-default="<?php echo ($customer->term=="none"?"":$customer->term); ?>" data-customer_type="<?php echo $customer->customer_type_id; ?>"><?php echo $customer->customer_name; ?></option>
                                 <?php } ?>
                             </select>
+                        </div>
+                        <div class="col-sm-4">
+                            <label>Contact Person :</label><br/>
+                            <input type="text" name="contact_person" id="contact_person" class="form-control" required data-error-msg="Contact Person is required!" placeholder="Contact Person">
                         </div>
                        
                         <div class="col-sm-2">
@@ -242,29 +268,10 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-4">
-                            <b class="required">*</b><label>Customer :</label> <br />
-                            <select name="customer" id="cbo_customers" data-error-msg="Customer is required." required>
-                                <option value="0">[ Create New Customer ]</option>
-                                <?php foreach($customers as $customer){ ?>
-                                    <option data-address="<?php echo $customer->address; ?>" data-contact="<?php echo $customer->contact_name; ?>" value="<?php echo $customer->customer_id; ?>" data-term-default="<?php echo ($customer->term=="none"?"":$customer->term); ?>" data-customer_type="<?php echo $customer->customer_type_id; ?>"><?php echo $customer->customer_name; ?></option>
-                                <?php } ?>
-                            </select>
+                        <div class="col-sm-8 col-sm-offset-2">
+                            <label>Address :</label><br>
+                            <input class="form-control" id="txt_address" type="text" name="address" placeholder="Customer Address">
                         </div>
-                        <div class="col-sm-2">
-                            <label>Customer Type :</label><br/>
-                            <select name="customer_type_id" id="cbo_customer_type">
-                                <option value="0">Walk In</option>
-                                <?php foreach($customer_type as $customer_type){ ?>
-                                    <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name?></option>
-                                <?php } ?>
-                            </select>
-                        </div>
-                        <div class="col-sm-4">
-                            <label>Contact Person :</label><br/>
-                            <input type="text" name="contact_person" id="contact_person" class="form-control" required data-error-msg="Contact Person is required!" placeholder="Contact Person">
-                        </div>
-
                         <div class="col-sm-2">
                             <b class="required">*</b><label> Due Date :</label> <br />
                             <div class="input-group">
@@ -273,21 +280,6 @@
                                      <i class="fa fa-calendar"></i>
                                 </span>
                             </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                    <div class="col-sm-4">
-                       <b>* </b>  Order Source :<br />
-                        <select name="order_source_id" id="cbo_order_source" data-error-msg="Order Source is required." required>
-                            <option value="0">[ Create New Order Source ]</option>
-                            <?php foreach($order_sources as $order_source){ ?>
-                                <option value="<?php echo $order_source->order_source_id; ?>"><?php echo $order_source->order_source_name; ?></option>
-                            <?php } ?>
-                        </select>
-                    </div> 
-                        <div class="col-sm-8">
-                            <label>Address :</label><br>
-                            <input class="form-control" id="txt_address" type="text" name="address" placeholder="Customer Address">
                         </div>
                     </div>
                 </div>
@@ -299,7 +291,7 @@
         <button id="refreshproducts" class="btn-primary btn pull-right" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>  Refresh</button>
         <div id="custom-templates">
             <input class="typeahead" id="typeaheadsearch" type="text" placeholder="Enter PLU or Search Item">
-            <i class="pull-right">Note: Unit Price will depend on chosen Customer Type</i>
+            <i class="pull-right hidden">Note: Unit Price will depend on chosen Customer Type</i>
         </div><br />
             <form id="frm_items">
                 <div class="table-responsive">
@@ -1542,9 +1534,9 @@ $(document).ready(function(){
             clearFields($('#div_sales_invoice_fields'));
             $('#span_invoice_no').html('SAL-INV-YYYYMMDD-XX');
             showList(false);
-            _cboSource.select2('val',1);
             $('#tbl_items > tbody').html('');
-            $('#cbo_departments').select2('val', null);
+            $('#cbo_departments').select2('val', $('#cbo_departments').data('default'));
+            $('#cbo_order_source').select2('val', $('#cbo_order_source').data('default'));
             $('#cbo_department').select2('val', null);
             $('#cbo_customers').select2('val', null);
             $('#cbo_customer_type').select2('val', 0);
@@ -1592,7 +1584,7 @@ $(document).ready(function(){
                 $('#cbo_department').select2('val',data.department_id);
                 $('#cbo_salesperson').select2('val',data.salesperson_id);
                 $('#cbo_customer_type').select2('val',data.customer_type_id);
-                $('#cbo_order_source').select2('val',data.order_source_id);
+                $('#cbo_order_source').select2('val', $('#cbo_order_source').data('default'));
 
                 var obj_customers=$('#cbo_customers').find('option[value="' + data.customer_id + '"]');
                 $('#txt_address').val(obj_customers.data('address'));
@@ -1697,136 +1689,142 @@ $(document).ready(function(){
             _selectedID=data.sales_invoice_id;
             _is_journal_posted=data.is_journal_posted;
 
-            if(_is_journal_posted > 0){
-                showNotification({title:"<b style='color:white;'> Error!</b>",stat:"error",msg:"Cannot Edit: Invoice is already Posted in Sales Journal."});
-            }
-            else
-            {
+            checkInvoice().done(function(response){
 
-            if(data.for_dispatching == 1){
-                $('input[id="checkcheck"]').prop('checked', true);
-                $('#for_dispatching').val('1');
-            }else{
-                $('input[id="checkcheck"]').prop('checked', false);
-                $('#for_dispatching').val('0');
-            }
-
-            getproduct().done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                countproducts = data.data.length;
-                    if(countproducts > 100){
-                    showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-                    }
-
-            }).always(function(){ });
-                $('#typeaheadsearch').val('');
-
-            _txnMode="edit";
-            $('.sales_invoice_title').html('Edit Sales Invoice');
-            _selectRowObj=$(this).closest('tr');
-            var data=dt.row(_selectRowObj).data();
-            _selectedID=data.sales_invoice_id;
-            
-            $('input,textarea').each(function(){
-                var _elem=$(this);
-                $.each(data,function(name,value){
-                    if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
-                        _elem.val(value);
-                    }
-                });
-            });
-            $('#cbo_order_source').select2('val',data.order_source_id);
-            $('#cbo_customer_type').select2('val',data.customer_type_id);
-            $('#cbo_departments').select2('val',data.department_id);
-            $('#cbo_department').select2('val',data.department_id);
-            $('#cbo_customers').select2('val',data.customer_id);
-            $('#cbo_salesperson').select2('val',data.salesperson_id);
-
-            $.ajax({
-                url : 'Sales_invoice/transaction/items/'+data.sales_invoice_id,
-                type : "GET",
-                cache : false,
-                dataType : 'json',
-                processData : false,
-                contentType : false,
-                beforeSend : function(){
-                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
-                },
-                success : function(response){
-                    var rows=response.data;
-                    $('#tbl_items > tbody').html('');
-                     a=0;
-                    $.each(rows,function(i,value){
-
-                    _customer_type_ = _cboCustomerType.val();
-                    var temp_sale_price=0.00;
-
-                        if(_customer_type_ == '' || _customer_type_ == 0){
-                            temp_sale_price=value.sale_price;
-                        }else if(_customer_type_ == '1' ){ // DISCOUNTED CUSTOMER TYPE
-                            temp_sale_price=value.discounted_price;
-                        }else if(_customer_type_ == '2' ){ // DEALER CUSTOMER TYPE
-                            temp_sale_price=value.dealer_price;
-                        }else if(_customer_type_ == '3' ){ // DISTRIBUTOR CUSTOMER TYPE
-                            temp_sale_price=value.distributor_price;
-                        }else if(_customer_type_ == '4' ){ // PUBLIC CUSTOMER TYPE
-                            temp_sale_price=value.public_price;
-                        }else{
-                            temp_sale_price=value.sale_price;
+                if (response.invoice.length > 0){
+                    showNotification({title:"<b style='color:white;'> Error!</b>",stat:"error",msg:"Cannot Edit: Invoice is already placed in Loading Report."});
+                    return;
+                }else{
+                        if(_is_journal_posted > 0){
+                        showNotification({title:"<b style='color:white;'> Error!</b>",stat:"error",msg:"Cannot Edit: Invoice is already Posted in Sales Journal."});
+                        return;
                         }
-                        var retail_price;
-                            if(value.is_bulk == 1){
-                                retail_price = getFloat(temp_sale_price) / getFloat(value.child_unit_desc);
 
-                            }else if (value.is_bulk == 0){
-                                retail_price = 0;
+                    getproduct().done(function(data){
+                        products.clear();
+                        products.local = data.data;
+                        products.initialize(true);
+                        countproducts = data.data.length;
+                            if(countproducts > 100){
+                            showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
                             }
 
-                        $('#tbl_items > tbody').append(newRowItem({
-                            inv_qty : value.inv_qty,
-                            product_code : value.product_code,
-                            unit_id : value.unit_id,
-                            inv_gross : value.inv_gross,
-                            unit_name : value.unit_name,
-                            product_id: value.product_id,
-                            product_desc : value.product_desc,
-                            inv_line_total_discount : value.inv_line_total_discount,
-                            tax_exempt : false,
-                            inv_tax_rate : value.inv_tax_rate,
-                            inv_price : value.inv_price,
-                            inv_discount : value.inv_discount,
-                            tax_type_id : null,
-                            inv_line_total_price : value.inv_line_total_price,
-                            inv_non_tax_amount: value.inv_non_tax_amount,
-                            inv_tax_amount:value.inv_tax_amount,
-                            inv_line_total_after_global : 0.00,
-                            child_unit_id : value.child_unit_id,
-                            child_unit_name : value.child_unit_name,
-                            parent_unit_name : value.product_unit_name,
-                            parent_unit_id : getFloat(value.product_unit_id),
-                            is_bulk: value.is_bulk,
-                            is_parent : value.is_parent,
-                            bulk_price: temp_sale_price,
-                            retail_price: retail_price,
-                            a:a
-                        }));
-                        changetxn = 'inactive';
-                          _line_unit=$('.line_unit'+a).select2({
-                            minimumResultsForSearch: -1
-                            });
-                            _line_unit.select2('val',value.unit_id);
-                            a++;
+                    }).always(function(){ });
+                        $('#typeaheadsearch').val('');
+
+                    _txnMode="edit";
+                    $('.sales_invoice_title').html('Edit Sales Invoice');                
+
+                    if(data.for_dispatching == 1){
+                        $('input[id="checkcheck"]').prop('checked', true);
+                        $('#for_dispatching').val('1');
+                    }else{
+                        $('input[id="checkcheck"]').prop('checked', false);
+                        $('#for_dispatching').val('0');
+                    }
+                    
+                    $('input,textarea').each(function(){
+                        var _elem=$(this);
+                        $.each(data,function(name,value){
+                            if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
+                                _elem.val(value);
+                            }
+                        });
                     });
-                    changetxn = 'active';
-                    reComputeTotal();
-                    reInitializeNumeric();
+                    $('#cbo_order_source').select2('val',data.order_source_id);
+                    $('#cbo_customer_type').select2('val',data.customer_type_id);
+                    $('#cbo_departments').select2('val',data.department_id);
+                    $('#cbo_department').select2('val',data.department_id);
+                    $('#cbo_customers').select2('val',data.customer_id);
+                    $('#cbo_salesperson').select2('val',data.salesperson_id);
+
+                    $.ajax({
+                        url : 'Sales_invoice/transaction/items/'+data.sales_invoice_id,
+                        type : "GET",
+                        cache : false,
+                        dataType : 'json',
+                        processData : false,
+                        contentType : false,
+                        beforeSend : function(){
+                            $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                        },
+                        success : function(response){
+                            var rows=response.data;
+                            $('#tbl_items > tbody').html('');
+                             a=0;
+                            $.each(rows,function(i,value){
+
+                            _customer_type_ = _cboCustomerType.val();
+                            var temp_sale_price=0.00;
+
+                                if(_customer_type_ == '' || _customer_type_ == 0){
+                                    temp_sale_price=value.sale_price;
+                                }else if(_customer_type_ == '1' ){ // DISCOUNTED CUSTOMER TYPE
+                                    temp_sale_price=value.discounted_price;
+                                }else if(_customer_type_ == '2' ){ // DEALER CUSTOMER TYPE
+                                    temp_sale_price=value.dealer_price;
+                                }else if(_customer_type_ == '3' ){ // DISTRIBUTOR CUSTOMER TYPE
+                                    temp_sale_price=value.distributor_price;
+                                }else if(_customer_type_ == '4' ){ // PUBLIC CUSTOMER TYPE
+                                    temp_sale_price=value.public_price;
+                                }else{
+                                    temp_sale_price=value.sale_price;
+                                }
+                                var retail_price;
+                                    if(value.is_bulk == 1){
+                                        retail_price = getFloat(temp_sale_price) / getFloat(value.child_unit_desc);
+
+                                    }else if (value.is_bulk == 0){
+                                        retail_price = 0;
+                                    }
+
+                                $('#tbl_items > tbody').append(newRowItem({
+                                    inv_qty : value.inv_qty,
+                                    product_code : value.product_code,
+                                    unit_id : value.unit_id,
+                                    inv_gross : value.inv_gross,
+                                    unit_name : value.unit_name,
+                                    product_id: value.product_id,
+                                    product_desc : value.product_desc,
+                                    inv_line_total_discount : value.inv_line_total_discount,
+                                    tax_exempt : false,
+                                    inv_tax_rate : value.inv_tax_rate,
+                                    inv_price : value.inv_price,
+                                    inv_discount : value.inv_discount,
+                                    tax_type_id : null,
+                                    inv_line_total_price : value.inv_line_total_price,
+                                    inv_non_tax_amount: value.inv_non_tax_amount,
+                                    inv_tax_amount:value.inv_tax_amount,
+                                    inv_line_total_after_global : 0.00,
+                                    child_unit_id : value.child_unit_id,
+                                    child_unit_name : value.child_unit_name,
+                                    parent_unit_name : value.product_unit_name,
+                                    parent_unit_id : getFloat(value.product_unit_id),
+                                    is_bulk: value.is_bulk,
+                                    is_parent : value.is_parent,
+                                    bulk_price: temp_sale_price,
+                                    retail_price: retail_price,
+                                    a:a
+                                }));
+                                changetxn = 'inactive';
+                                  _line_unit=$('.line_unit'+a).select2({
+                                    minimumResultsForSearch: -1
+                                    });
+                                    _line_unit.select2('val',value.unit_id);
+                                    a++;
+                            });
+                            changetxn = 'active';
+                            reComputeTotal();
+                            reInitializeNumeric();
+                        }
+                    });
+                    $('#span_invoice_no').html(data.sales_inv_no);
+                    showList(false);                    
                 }
+
             });
-            $('#span_invoice_no').html(data.sales_inv_no);
-            showList(false);
-        }
+
+            
         });
         $('#tbl_sales_invoice tbody').on('click','button[name="remove_info"]',function(){
             _selectRowObj=$(this).closest('tr');
@@ -1854,7 +1852,17 @@ $(document).ready(function(){
                     if(_is_journal_posted > 0){
                         showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Cannot Delete: Invoice is already Posted in Sales Journal."});
                     }else {
-                        $('#modal_confirmation').modal('show');
+
+                        checkInvoice().done(function(response){
+
+                            if (response.invoice.length  > 0){
+                                showNotification({title:"<b style='color:white;'> Error!</b>",stat:"error",msg:"Cannot Edit: Invoice is already placed in Loading Report."});
+                                return;
+                            }else{
+                                $('#modal_confirmation').modal('show');
+                            }
+                        });
+                        
                     }
                 });
 
@@ -2059,7 +2067,7 @@ $(document).ready(function(){
        return $.ajax({
            "dataType":"json",
            "type":"POST",
-           "url":"products/transaction/list",
+           "url":"products/transaction/sales-list",
            "beforeSend": function(){
                 countproducts = products.local.length;
                 if(countproducts > 100){
@@ -2124,6 +2132,16 @@ $(document).ready(function(){
             "beforeSend": showSpinningProgress($('#btn_save'))
         });
     };
+
+    var checkInvoice=function(){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Sales_invoice/transaction/check-invoice-loading",
+            "data":{sales_invoice_id : _selectedID}
+        });
+    }
+
     var getInvetory=function(product_id){
         return $.ajax({
             "dataType":"json",

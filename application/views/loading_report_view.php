@@ -698,7 +698,8 @@ $(document).ready(function(){
                 customer_name : data.customer_name,
                 address: data.address,
                 total_after_tax : data.total_after_tax,
-                total_inv_qty : data.total_inv_qty 
+                total_inv_qty : data.total_inv_qty,
+                btnclass : ""
             }));
 
             _selectRowObjSI.remove();
@@ -732,13 +733,18 @@ $(document).ready(function(){
                 processData : false,
                 contentType : false,
                 beforeSend : function(){
-                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="5"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="6"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
                 },
                 success : function(response){
                     var rows=response.data;
                     $('#tbl_items > tbody').html('');
 
                     $.each(rows,function(i,value){
+                        attr = "";
+
+                         if (value.is_journal_posted == 1){
+                            attr = "hidden";
+                         }
 
                         $('#tbl_items > tbody').append(newRowItem({
                             invoice_id : value.invoice_id,
@@ -747,7 +753,8 @@ $(document).ready(function(){
                             customer_name : value.customer_name,
                             address: value.address,
                             total_after_tax : value.total_after_tax,
-                            total_inv_qty : value.total_inv_qty 
+                            total_inv_qty : value.total_inv_qty,
+                            btnclass : attr
                         }));
                         
                     });
@@ -766,29 +773,23 @@ $(document).ready(function(){
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.loading_id;
 
-            // _is_journal_posted=data.is_journal_posted;
+            $.ajax({
+                "url":"Loading/transaction/check-invoices-posted?id="+_selectedID,
+                type : "GET",
+                cache : false,
+                dataType : 'json',
+                processData : false,
+                contentType : false,
+                }).done(function(response){
+                    var row = response.data[0];
 
-            // $.ajax({
-            //     "url":"Adjustments/transaction/check-invoice-for-returns?id="+_selectedID,
-            // type : "GET",
-            // cache : false,
-            // dataType : 'json',
-            // processData : false,
-            // contentType : false,
-            // }).done(function(response){
-            //     var row = response.data;
-            //     if(row.length > 0){
-            //         showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Cannot Delete: Sales Return exists on this invoice."});
-            //     return;
-            //     }
-            //     if(_is_journal_posted > 0){
-            //         showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Cannot Delete: Invoice is already Posted in Sales Journal."});
-            //     }else {
-            //         $('#modal_confirmation').modal('show');
-            //     }
-            // });
+                    if(row.total_posted > 0){
+                        showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Cannot Delete: Invoices is already Posted in Sales Journal."});
+                    }else {
+                        $('#modal_confirmation').modal('show');
+                    }
+            });
 
-            $('#modal_confirmation').modal('show');
         });
 
     
@@ -975,7 +976,7 @@ $(document).ready(function(){
         '<td width="30%">'+d.address+'</td>'+
         '<td width="15%" class="text-right"><input type="text" name="total_inv_qty[]" class="form-control numeric text-right" readonly value="'+accounting.formatNumber(d.total_inv_qty,2)+'"></td>'+
         '<td width="15%" class="text-right"><input type="text" name="total_after_tax[]" class="form-control numeric text-right" readonly value="'+accounting.formatNumber(d.total_after_tax,2)+'"></td>'+
-        '<td width="5%" align="center"><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>'+
+        '<td width="5%" align="center"><button type="button" name="remove_item" class="btn btn-red '+d.btnclass+'"><i class="fa fa-trash"></i></button></td>'+
         '<td class="hidden"><input name="customer_id[]" type="text" class="form-control" value="'+d.customer_id+'" readonly></td>'+
         '<td class="hidden"><input name="address[]" type="text" class="form-control" value="'+d.address+'" readonly></td>'+
         '</tr>';

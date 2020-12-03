@@ -1883,7 +1883,7 @@ Product Pick List
 
 */
 
-function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=null,$category_id=null,$item_type_id=null,$pick_list=null,$depid=null,$account_cii,$account_dis=null,$CurrentQtyCount=null,$is_parent=null){
+function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=null,$category_id=null,$item_type_id=null,$pick_list=null,$depid=null,$account_cii,$account_dis=null,$CurrentQtyCount=null,$is_parent=null,$is_nonsalable=null){
     $sql="SELECT
             productmain.*
         FROM
@@ -1984,7 +1984,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 WHERE p.is_deleted = FALSE 
                 ".($product_id==NULL?"":" AND p.product_id = $product_id")."
                 ".($is_parent==NULL?"":" AND (p.is_parent = TRUE OR (p.is_parent = FALSE AND p.parent_id = 0))")."
-
+                ".($is_nonsalable==NULL?"":" AND p.is_nonsalable = FALSE")."
                  )as pQ
 
 

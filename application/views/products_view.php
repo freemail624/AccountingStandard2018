@@ -469,6 +469,9 @@
                                                             </div> -->
                                                                 <div class="form-group" style="margin-bottom:0px; vertical-align: middle;text-align: left;"><br>
                                                                         <label  for="is_parent" style="text-align: left;vertical-align: middle;"><input type="checkbox" name="is_parent" class="" id="is_parent" style="transform: scale(2.0);">  &nbsp;&nbsp;Is Parent ?</label>
+
+
+                                                                        <label  for="is_nonsalable" style="text-align: left;float:right;vertical-align: middle;"><input type="checkbox" name="is_nonsalable" class="" id="is_nonsalable" style="transform: scale(2.0);">  &nbsp;&nbsp;Nonsalable ?</label>
                                                                 </div>
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                     <label><b class="required elem_parent"></b> Bulk Unit :</label>
@@ -536,6 +539,29 @@
                                                                                 <?php } ?>
                                                                             </select>
                                                                 </div>
+
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                            <label class="">Cost of Sales Account:</label>
+                                                                            <select name="cos_account_id" id="cos_account_id" data-error-msg="Link to Cost of sales account is required." required>
+                                                                                <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
+                                                                                <option value="0">None</option>
+                                                                                <?php foreach($accounts as $account){ ?>
+                                                                                    <option value="<?php echo $account->account_id; ?>"><?php echo $account->account_title; ?></option>
+                                                                                <?php } ?>
+                                                                            </select>
+                                                                </div>
+
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                            <label class="">Sales Return Account:</label>
+                                                                            <select name="sales_return_account_id" id="sales_return_account_id" data-error-msg="Link to sales return account is required." required>
+                                                                                <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
+                                                                                <option value="0">None</option>
+                                                                                <?php foreach($accounts as $account){ ?>
+                                                                                    <option value="<?php echo $account->account_id; ?>"><?php echo $account->account_title; ?></option>
+                                                                                <?php } ?>
+                                                                            </select>
+                                                                </div>
+
 
                                                             </div>
                                                             </div>
@@ -1101,7 +1127,7 @@
 
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboItemTypes; var _selectedProductType; var _isTaxExempt=0;
-    var _cboSupplier; var _cboCategory; var _cboTax; var _cboInventory; var _cboMeasurement; var _cboCredit; var _cboDebit;
+    var _cboSupplier; var _cboCategory; var _cboTax; var _cboInventory; var _cboMeasurement; var _cboCredit; var _cboDebit; var _cboCostofSale; var _cboSalesReturn;
     var _cboTaxGroup;
     var _section_id; var _menu_id; var _child_unit_id;
     var _cboPrimaryUnit;
@@ -1134,7 +1160,7 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "product_code" },
                 { targets:[2],data: "product_desc" },
-                { targets:[3],data: "parent_unit_name" },
+                { targets:[3],data: "product_unit_name" },
                 { targets:[4],data: "category_name" },
                 {
                     targets:[5],data: "purchase_cost",
@@ -1278,6 +1304,14 @@ $(document).ready(function(){
         _cboDebit=$('#expense_account_id').select2({
             allowClear: false
         });
+
+        _cboCostofSale=$('#cos_account_id').select2({
+            allowClear: false
+        });        
+
+        _cboSalesReturn=$('#sales_return_account_id').select2({
+            allowClear: false
+        });        
 
         _cboTaxGroup=$('#cbo_tax_group').select2({
             allowClear: false
@@ -1862,12 +1896,14 @@ $(document).ready(function(){
             // _child_unit_id.select2('val',null);
             _cboCredit.select2('val',0);
             _cboDebit.select2('val',0);
+            _cboCostofSale.select2('val',0);
+            _cboSalesReturn.select2('val',0);
             // _cboPrimaryUnit.select2('val',1);
             $('#child_unit_desc').prop('required',false);
             $('#child_unit_id').prop('required',false);
             $('#is_tax_exempt').attr('checked', false);
             $('#is_bulk').attr('checked', false);
-
+            $('#is_nonsalable').attr('checked', false);
             showPanelActive('entry');
             setParentPanel(false);
         });
@@ -1924,6 +1960,8 @@ $(document).ready(function(){
             // _child_unit_id.select2('val',data.child_unit_id);
             _cboCredit.select2('val',data.income_account_id);
             _cboDebit.select2('val',data.expense_account_id);
+            _cboCostofSale.select2('val',data.cos_account_id);   
+            _cboSalesReturn.select2('val',data.sales_return_account_id);         
             _cboTaxGroup.select2('val',data.tax_type_id);
             // _cboPrimaryUnit.select2('val',data.primary_unit);
             _cboBrands.select2('val',data.brand_id);
@@ -1932,7 +1970,8 @@ $(document).ready(function(){
 
             $('#is_tax_exempt').prop('checked', (data.is_tax_exempt==1?true:false));
             $('#is_bulk').prop('checked', (data.is_bulk==1?true:false));
-
+            $('#is_nonsalable').prop('checked', (data.is_nonsalable==1?true:false));
+            
             if(data.is_bulk == true){
                 $('#child_unit_desc').prop('required',true);
                 $('#child_unit_id').prop('required',true);
@@ -2075,6 +2114,9 @@ $('#is_tax_exempt').prop("checked") ?  _data.push({name : "is_tax_exempt" , valu
 $('#is_bulk').prop("checked") ?  _data.push({name : "is_bulk" , value : '1'   }) : _data.push({name : "is_bulk" , value : '0'   });
 $('#is_parent').prop("checked") ?  _data.push({name : "is_parent" , value : '1'   }) : _data.push({name : "is_parent" , value : '0'   });
 
+$('#is_nonsalable').prop("checked") ?  _data.push({name : "is_nonsalable" , value : '1'   }) : _data.push({name : "is_nonsalable" , value : '0'   });
+
+
         return $.ajax({
             "dataType":"json",
             "type":"POST",
@@ -2090,7 +2132,7 @@ $('#is_tax_exempt').prop("checked") ?  _data.push({name : "is_tax_exempt" , valu
 $('#is_bulk').prop("checked") ?  _data.push({name : "is_bulk" , value : '1'   }) : _data.push({name : "is_bulk" , value : '0'   });
         _data.push({name : "product_id" ,value : _selectedID});
 $('#is_parent').prop("checked") ?  _data.push({name : "is_parent" , value : '1'   }) : _data.push({name : "is_parent" , value : '0'   });
-
+$('#is_nonsalable').prop("checked") ?  _data.push({name : "is_nonsalable" , value : '1'   }) : _data.push({name : "is_nonsalable" , value : '0'   });
         return $.ajax({ 
             "dataType":"json",
             "type":"POST",

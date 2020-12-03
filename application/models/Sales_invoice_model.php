@@ -173,7 +173,7 @@ $sql="SELECT main.* FROM(
             FROM
             (
                 SELECT sii.product_id,
-                (SELECT cost_sale_account_id FROM account_integration) as account_id,
+                p.cos_account_id as account_id,
                 '' as memo,
                 0 as cr_amount,
                 SUM(sii.inv_qty * p.purchase_cost) as dr_amount
@@ -182,7 +182,7 @@ $sql="SELECT main.* FROM(
                     INNER JOIN products as p ON sii.product_id=p.product_id
                     WHERE 
                         sii.sales_invoice_id=$sales_invoice_id 
-                        AND (SELECT cost_sale_account_id FROM account_integration) >0
+                        AND p.cos_account_id >0
             ) as cost_sale GROUP BY cost_sale.account_id
 
             UNION ALL

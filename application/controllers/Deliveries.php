@@ -19,7 +19,8 @@ class Deliveries extends CORE_Controller
         $this->load->model('Asset_settings_model');
         $this->load->model('Users_model');
         $this->load->model('Trans_model'); 
-        $this->load->model('Company_model');      
+        $this->load->model('Company_model');    
+        $this->load->model('Account_integration_model');  
 
     }
 
@@ -52,6 +53,7 @@ class Deliveries extends CORE_Controller
 
         $data['tax_types']=$this->Tax_types_model->get_list('is_deleted=0');
         $data['company']=$this->Company_model->getDefaultRemarks()[0];
+        $data['accounts']=$this->Account_integration_model->get_list(1);
         $data['title'] = 'Delivery Invoice';
         
         (in_array('2-2',$this->session->user_rights)? 

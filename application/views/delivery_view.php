@@ -270,7 +270,7 @@
                 <div class="col-sm-3">
                     <label>PO #:</label><br />
                     <div class="input-group">
-                        <input type="text" name="po_no" class="form-control" placeholder="PO #">
+                        <input type="text" name="po_no" class="form-control" placeholder="PO #" readonly>
                          <span class="input-group-addon">
                             <a href="#" id="link_browse_po"><b>...</b></a>
                         </span>
@@ -304,7 +304,7 @@
 
                 <div class="col-sm-5">
                    <b class="required">*</b><label> Department :</label> <br />
-                    <select name="department" id="cbo_departments" data-error-msg="Department is required." required>
+                    <select name="department" id="cbo_departments" data-default="<?php echo $accounts[0]->default_department_id; ?>" data-error-msg="Department is required." required>
                         <option value="0">[ Create New Department ]</option>
                         <?php foreach($departments as $department){ ?>
                             <option value="<?php echo $department->department_id; ?>"  data-default-cost="<?php echo $department->default_cost; ?>" ><?php echo $department->department_name; ?></option>
@@ -1043,7 +1043,7 @@ $(document).ready(function(){
 
         _cboDepartments=$("#cbo_departments").select2({
             placeholder: "Please select department.",
-            allowClear: true
+            allowClear: false
         });
 
         _cboDepartments.select2('val',null); 
@@ -1340,7 +1340,7 @@ $(document).ready(function(){
             //$('.toggle-fullscreen').click();
             $('#span_invoice_no').html('INV-XXXX');
             clearFields($('#frm_deliveries'));
-            $('#cbo_departments').select2('val', null);
+            $('#cbo_departments').select2('val', $('#cbo_departments').data('default') );
             $('#cbo_suppliers').select2('val', null);
             $('#img_user').attr('src','assets/img/anonymous-icon.png');
             $('#td_discount').html('0.00');

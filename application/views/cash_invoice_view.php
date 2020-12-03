@@ -185,7 +185,6 @@
                     <th width="20%">Remarks</th>
                     <th><center>Action</center></th>
                     <th></th>
-
                 </tr>
                 </thead>
                 <tbody>
@@ -211,25 +210,8 @@
                 <div>
                 <hr>
                     <div class="row">
-                        <div class="col-sm-4">
-                            <b class="required">*</b><label> Department :</label> <br />
-                            <select name="department" id="cbo_departments" data-error-msg="Department is required." required>
-                                <option value="0">[ Create New Department ]</option>
-                                <?php foreach($departments as $department){ ?>
-                                    <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
-                                <?php } ?>
-                            </select>
-                        </div>
-                        <div class="col-sm-3">
-                           <label>Salesperson :</label><br/>
-                            <select name="salesperson_id" id="cbo_salesperson" >
-                                <option value="0">[ Create New Salesperson ]</option>
-                                <?php foreach($salespersons as $salesperson){ ?>
-                                    <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->acr_name.' - '.$salesperson->fullname; ?></option>
-                                <?php } ?>
-                            </select>
-                        </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-2">
+
                             <label>SO # :</label> <br />
                             <div class="input-group">
                                 <input type="text" name="so_no" class="form-control" readonly>
@@ -237,8 +219,51 @@
                                     <a href="#" id="link_browse" style="text-decoration: none;color:black;"><b>...</b></a>
                                 </span>
                             </div>
+
+                            <div class="hidden">
+                                <b class="required">*</b><label> Department :</label> <br />
+                                <select name="department" id="cbo_departments" data-default="<?php echo $accounts[0]->default_department_id; ?>" data-error-msg="Department is required." required>
+                                    <option value="0">[ Create New Department ]</option>
+                                    <?php foreach($departments as $department){ ?>
+                                        <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
+                                    <?php } ?>
+                                </select>
+                                <label>Salesperson :</label><br/>
+                                <select name="salesperson_id" id="cbo_salesperson" >
+                                    <option value="0">[ Create New Salesperson ]</option>
+                                    <?php foreach($salespersons as $salesperson){ ?>
+                                        <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->acr_name.' - '.$salesperson->fullname; ?></option>
+                                    <?php } ?>
+                                </select>
+                                <label>Customer Type :</label><br/>
+                                <select name="customer_type_id" id="cbo_customer_type">
+                                    <option value="0">Walk In</option>
+                                    <?php foreach($customer_type as $customer_type){ ?>
+                                        <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name?></option>
+                                    <?php } ?>
+                                </select>
+                                <b>* </b>  Order Source :<br />
+                                <select name="order_source_id" id="cbo_order_source" data-default="<?php echo $accounts[0]->default_order_source_id; ?>" data-error-msg="Order Source is required." required>
+                                    <option value="0">[ Create New Order Source ]</option>
+                                    <?php foreach($order_sources as $order_source){ ?>
+                                        <option value="<?php echo $order_source->order_source_id; ?>"><?php echo $order_source->order_source_name; ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
                         </div>
-                        
+                        <div class="col-sm-4">
+                           <b class="required">*</b><label>Customer :</label> <br />
+                            <select name="customer" id="cbo_customers" data-error-msg="Customer is required." required>
+                                <option value="0">[ Create New Customer ]</option>
+                                <?php foreach($customers as $customer){ ?>
+                                    <option data-address="<?php echo $customer->address; ?>" data-contact="<?php echo $customer->contact_name; ?>" value="<?php echo $customer->customer_id; ?>" data-term-default="<?php echo ($customer->term=="none"?"":$customer->term); ?>" data-customer_type="<?php echo $customer->customer_type_id; ?>"><?php echo $customer->customer_name; ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div class="col-sm-4">
+                            <label>Contact Person :</label><br/>
+                            <input type="text" name="contact_person" id="contact_person" class="form-control" required data-error-msg="Contact Person is required!" placeholder="Contact Person">
+                        </div>
                         <div class="col-sm-2 ">
                             <b class="required">*</b> <label>Invoice Date :</label> <br />
                             <div class="input-group">
@@ -250,27 +275,9 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-4">
-                            <b class="required">*</b><label>Customer :</label> <br />
-                            <select name="customer" id="cbo_customers" data-error-msg="Customer is required." required>
-                                <option value="0">[ Create New Customer ]</option>
-                                <?php foreach($customers as $customer){ ?>
-                                    <option data-address="<?php echo $customer->address; ?>" data-contact="<?php echo $customer->contact_name; ?>" value="<?php echo $customer->customer_id; ?>" data-term-default="<?php echo ($customer->term=="none"?"":$customer->term); ?>" data-customer_type="<?php echo $customer->customer_type_id; ?>"><?php echo $customer->customer_name; ?></option>
-                                <?php } ?>
-                            </select>
-                        </div>
-                        <div class="col-sm-3">
-                            <label>Customer Type :</label><br/>
-                            <select name="customer_type_id" id="cbo_customer_type">
-                                <option value="0">Walk In</option>
-                                <?php foreach($customer_type as $customer_type){ ?>
-                                    <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name?></option>
-                                <?php } ?>
-                            </select>
-                        </div>
-                        <div class="col-sm-3">
-                            <label>Contact Person :</label><br/>
-                            <input type="text" name="contact_person" id="contact_person" class="form-control" required data-error-msg="Contact Person is required!" placeholder="Contact Person">
+                        <div class="col-sm-8 col-sm-offset-2">
+                            <label>Address :</label><br>
+                            <input class="form-control" id="txt_address" type="text" name="address" placeholder="Customer Address">
                         </div>
                         <div class="col-sm-2">
                             <b class="required">*</b><label> Due Date :</label> <br />
@@ -280,21 +287,6 @@
                                      <i class="fa fa-calendar"></i>
                                 </span>
                             </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                    <div class="col-sm-4">
-                       <b>* </b>  Order Source :<br />
-                        <select name="order_source_id" id="cbo_order_source" data-error-msg="Order Source is required." required>
-                            <option value="0">[ Create New Order Source ]</option>
-                            <?php foreach($order_sources as $order_source){ ?>
-                                <option value="<?php echo $order_source->order_source_id; ?>"><?php echo $order_source->order_source_name; ?></option>
-                            <?php } ?>
-                        </select>
-                    </div> 
-                        <div class="col-sm-8">
-                            <label>Address :</label><br>
-                            <input class="form-control" id="txt_address" type="text" name="address" placeholder="Customer Address">
                         </div>
                     </div>
                 </div>
@@ -1510,10 +1502,10 @@ $(document).ready(function(){
             showList(false);
 
             $('#tbl_items > tbody').html('');
-            $('#cbo_departments').select2('val', null);
+            $('#cbo_departments').select2('val', $('#cbo_departments').data('default'));
             $('#cbo_department').select2('val', null);
             $('#cbo_customers').select2('val', null);
-            $('#cbo_order_source').select2('val', 1);
+            $('#cbo_order_source').select2('val', $('#cbo_order_source').data('default'));
             $('#cbo_salesperson').select2('val', null);
             $('#img_user').attr('src','assets/img/anonymous-icon.png');
             $('#td_discount').html('0.00');
@@ -1556,7 +1548,7 @@ $(document).ready(function(){
                         _elem.val(value);
                     }
                 });
-                $('#cbo_order_source').select2('val',data.order_source_id);
+                $('#cbo_order_source').select2('val', $('#cbo_order_source').data('default'));
                 $('#cbo_customers').select2('val',data.customer_id);
                 $('#cbo_departments').select2('val',data.department_id);
                 $('#cbo_department').select2('val',data.department_id);
@@ -2042,7 +2034,7 @@ $(document).ready(function(){
        return $.ajax({
            "dataType":"json",
            "type":"POST",
-           "url":"products/transaction/list",
+           "url":"products/transaction/sales-list",
            "beforeSend": function(){
                 countproducts = products.local.length;
                 if(countproducts > 100){

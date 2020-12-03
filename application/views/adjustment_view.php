@@ -193,7 +193,7 @@
                     <div class="row">
                         <div class="col-sm-3">
                            <b class="required">*</b>  Department : <br />
-                            <select name="department" id="cbo_departments" data-error-msg="Department is required." required>
+                            <select name="department" id="cbo_departments" data-default="<?php echo $accounts[0]->default_department_id; ?>" data-error-msg="Department is required." required>
                                 <option value="0">[ Create New Department ]</option>
                                 <?php foreach($departments as $department){ ?>
                                     <option value="<?php echo $department->department_id; ?>" data-tax-type="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
@@ -250,7 +250,7 @@
                                 </span>.
                             </div>
                             <i style="font-size: 9px;">Note: Process Item/s from 1 Invoice only.</i><br>
-                            <i style="font-size: 9px;color: red;" id="note"></i>
+                            <i style="font-size: 9px;color: black;" id="note"></i>
                             </div>
                         </div>
 
@@ -570,7 +570,7 @@
 
 
 $(document).ready(function(){
-    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboAdjustments; var products; var _cboCustomers; var dtCustomer;
+    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboAdjustments; var products; var _cboCustomers; var dtCustomer; var _selectedInvTypeId;
     var _line_unit; var changetxn;
     var oTableItems={
         qty : 'td:eq(0)',
@@ -695,7 +695,7 @@ $(document).ready(function(){
 
         _cboDepartments=$("#cbo_departments").select2({
             placeholder: "Issue item to Department.",
-            allowClear: true
+            allowClear: false
         });
 
 
@@ -891,6 +891,7 @@ $(document).ready(function(){
                     $('.checkhidden').show();
                     $('#adjustment_is_return').val('1');
                     
+                    _cboAdjustments.select2('val', 'IN');
 
                 }else{
                      $('[id=is_adjustment]').trigger('click');
@@ -1035,7 +1036,7 @@ $(document).ready(function(){
             _cboDepartments.select2('val',null);
             clearFields($('#frm_adjustments'));
             $('#tbl_items > tbody').html('');
-            $('#cbo_departments').select2('val', null);
+            $('#cbo_departments').select2('val', $('#cbo_departments').data('default') );
             $('#typeaheadsearch').val('');
             // REMOVE CHECKED ATTRIBUTE FOR BOTH
             $('input[id="is_returns"]').prop('checked', false);
@@ -1076,7 +1077,16 @@ $(document).ready(function(){
         $('#tbl_inv_list tbody').on('click','button[name="accept_item"]',function(){
         _selectRowObjCus=$(this).closest('tr');
         var value=dtCustomer.row(_selectRowObjCus).data();
+        _selectedInvTypeId = value.inv_type_id;
+
         $('#note').text(value.note);
+
+        if(value.is_journal_posted == 1){
+            $('#note').css('color','green');
+        }else{
+            $('#note').css('color','red');
+        }
+
         $("input[name=inv_no]").val(value.inv_no);
             a='';
                 var retail_price;
@@ -1133,6 +1143,7 @@ $(document).ready(function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.adjustment_id;
+            _selectedInvTypeId=data.inv_type_id;
 
             _is_journal_posted=data.is_journal_posted;
             if(_is_journal_posted > 0){
@@ -1472,6 +1483,7 @@ $(document).ready(function(){
         _data.push({name : "summary_before_discount", value :tbl_summary.find(oTableDetails.before_tax).text()});
         _data.push({name : "summary_tax_amount", value : tbl_summary.find(oTableDetails.adjust_tax_amount).text()});
         _data.push({name : "summary_after_tax", value : tbl_summary.find(oTableDetails.after_tax).text()});
+        _data.push({name : "inv_type_id", value : _selectedInvTypeId});
 
         return $.ajax({
             "dataType":"json",
@@ -1492,6 +1504,7 @@ $(document).ready(function(){
         _data.push({name : "summary_before_discount", value :tbl_summary.find(oTableDetails.before_tax).text()});
         _data.push({name : "summary_tax_amount", value : tbl_summary.find(oTableDetails.adjust_tax_amount).text()});
         _data.push({name : "summary_after_tax", value : tbl_summary.find(oTableDetails.after_tax).text()});
+        _data.push({name : "inv_type_id", value : _selectedInvTypeId});
         _data.push({name : "adjustment_id" ,value : _selectedID});
 
         return $.ajax({

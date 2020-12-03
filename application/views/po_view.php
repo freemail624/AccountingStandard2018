@@ -210,7 +210,7 @@
                 <div class="row">
                     <div class="col-sm-5" >
                         Department * : <br />
-                        <select name="department" id="cbo_departments"  data-error-msg="Department is required." required>
+                        <select name="department" id="cbo_departments" data-default="<?php echo $accounts[0]->default_department_id; ?>" data-error-msg="Department is required." required>
                             <option value="0">[ Create New Department ]</option>
                             <?php foreach($departments as $department){ ?>
                                 <option value="<?php echo $department->department_id; ?>" data-default-cost="<?php echo $department->default_cost; ?>" data-delivery-address="<?php echo $department->delivery_address;  ?>"><?php echo $department->department_name; ?></option>
@@ -833,7 +833,7 @@ $(document).ready(function(){
                 { targets:[5],data: "approval_status" },
                 { targets:[6],data: "order_status" },
                 {
-                    targets:[7],data: null,
+                    visible:false,targets:[7],data: null,
                     render: function (data, type, full, meta){
                         var _attribute='';
                         //console.log(data.is_email_sent);
@@ -889,7 +889,7 @@ $(document).ready(function(){
 
         _cboDepartments=$("#cbo_departments").select2({
             placeholder: "Please select department.",
-            allowClear: true
+            allowClear: false
         });
 
         _cboDepartments.select2('val',null);
@@ -1178,7 +1178,7 @@ $(document).ready(function(){
             clearFields($('#frm_purchases'));
             $('#cbo_tax_type').select2('val',null);
             $('#cbo_suppliers').select2('val',null);
-            $('#cbo_departments').select2('val',null);
+            $('#cbo_departments').select2('val', $('#cbo_departments').data('default') );
             $('textarea[name="remarks"]').val($('textarea[name="remarks"]').data('default'));
 
             //$('#cbo_prodType').select2('val',3);

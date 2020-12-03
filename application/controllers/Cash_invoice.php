@@ -24,6 +24,7 @@ class Cash_invoice extends CORE_Controller
         $this->load->model('Sales_invoice_model');
         $this->load->model('Customer_type_model');
         $this->load->model('Order_source_model');
+        $this->load->model('Account_integration_model');
     }
 
     public function index() {
@@ -82,7 +83,7 @@ class Cash_invoice extends CORE_Controller
  
         $data['order_sources'] = $this->Order_source_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
         $data['company']=$this->Company_model->getDefaultRemarks()[0];
-        
+        $data['accounts']=$this->Account_integration_model->get_list(1);
         $data['title'] = 'Cash Invoice';
         
         (in_array('3-4',$this->session->user_rights)? 

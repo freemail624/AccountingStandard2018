@@ -20,6 +20,7 @@ class Sales_order extends CORE_Controller
         $this->load->model('Trans_model');
         $this->load->model('Customer_type_model');
         $this->load->model('Company_model');  
+        $this->load->model('Account_integration_model');
 
     }
 
@@ -90,6 +91,7 @@ class Sales_order extends CORE_Controller
         );
 
         $data['company']=$this->Company_model->getDefaultRemarks()[0];
+        $data['accounts']=$this->Account_integration_model->get_list(1);
         $data['title'] = 'Sales Order';
         
         (in_array('3-1',$this->session->user_rights)? 
@@ -413,6 +415,14 @@ class Sales_order extends CORE_Controller
             case 'delete':
                 $m_sales_order=$this->Sales_order_model;
                 $sales_order_id=$this->input->post('sales_order_id',TRUE);
+
+                if(count($m_sales_order->get_list(array('sales_order.sales_order_id'=>$sales_order_id,'sales_order.is_deleted'=>FALSE,'sales_order.is_active'=>TRUE)))>0){
+                    $response['title']='Error!';
+                    $response['stat']='error';
+                    $response['msg']='Sorry, you cannot delete sales order that is already been received.';
+                    echo json_encode($response);
+                    exit;
+                }
 
                 //mark Items as deleted
                 $m_sales_order->set('date_deleted','NOW()'); //treat NOW() as function and not string

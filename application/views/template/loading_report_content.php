@@ -56,12 +56,12 @@
 			<td width="50%" valign="top">
 				<table width="100%" cellpadding="5" cellspacing="5" class="tbl-info" >
 					<tr>
-						<td class="upp" colspan="3" style="font-size: 10pt;" align="right"><strong><?php echo $info[0]->loading_no; ?></strong></td>
+						<td width="100%" class="upp" colspan="2" style="font-size: 10pt;" align="right"><strong><?php echo $info[0]->loading_no; ?></strong></td>
 					</tr>
-					<tr>
-						<td class="upp strong" width="15%" valign="top">Remarks:</td>
-						<td width="85%" class="font8 upp" rowspan="2" valign="top"><?php echo $info[0]->remarks; ?></td>
-					</tr>
+<!-- 					<tr>
+						<td width="20%" class="upp strong" valign="top">Remarks:</td>
+						<td width="80%" class="font8 upp" valign="top"><?php echo $info[0]->remarks; ?></td>
+					</tr> -->
 				</table>				
 			</td>
 		</tr>

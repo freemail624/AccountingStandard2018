@@ -183,37 +183,8 @@
             <div>
                 <div class="row">
                     <div class="col-sm-5">
-                       <b>* </b>  Department :<br />
-                        <select name="department" id="cbo_departments" data-error-msg="Department is required." required>
-                            <option value="0">[ Create New Department ]</option>
-                            <?php foreach($departments as $department){ ?>
-                                <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
-                            <?php } ?>
-                        </select>
-                    </div>
-                    <div class="col-sm-4">
-                        SalesPerson :<br/>
-                        <select name="salesperson_id" id="cbo_salesperson">
-                            <option value="0">[ Create New Salesperson ]</option>
-                            <?php foreach($salespersons as $salesperson){ ?>
-                                <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->acr_name.' - '.$salesperson->fullname; ?></option>
-                            <?php } ?>
-                        </select>
-                    </div>
 
-                    <div class="col-sm-3 ">
-                        SO # :<br />
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="fa fa-code"></i>
-                            </span>
-                            <input type="text" name="slip_no" class="form-control" placeholder="SO-YYYYMMDD-XXX" readonly>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-5">
-                       <b>* </b>  Customer : <br />
+                        <b>* </b>  Customer : <br />
                         <select name="customer" id="cbo_customers" data-error-msg="Customer is required." required>
                             <option value="0">[ Create New Customer ]</option>
                             <?php $customers = $this->db->where('is_deleted',FALSE); ?>
@@ -223,8 +194,22 @@
                             <option value="<?php echo $customer->customer_id; ?>" data-customer_type="<?php echo $customer->customer_type_id; ?>"><?php echo $customer->customer_name; ?></option>
                             <?php } ?>
                         </select>
-                    </div>
-                        <div class="col-sm-4">
+
+                       <div class="hidden">
+                           <b>* </b>  Department :<br />
+                            <select name="department" id="cbo_departments" data-default="<?php echo $accounts[0]->default_department_id; ?>" data-error-msg="Department is required." required>
+                                <option value="0">[ Create New Department ]</option>
+                                <?php foreach($departments as $department){ ?>
+                                    <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
+                                <?php } ?>
+                            </select>
+                            SalesPerson :<br/>
+                            <select name="salesperson_id" id="cbo_salesperson">
+                                <option value="0">[ Create New Salesperson ]</option>
+                                <?php foreach($salespersons as $salesperson){ ?>
+                                    <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->acr_name.' - '.$salesperson->fullname; ?></option>
+                                <?php } ?>
+                            </select>
                             Customer Type :<br>
                             <select name="customer_type_id" id="cbo_customer_type">
                                 <option value="0">None</option>
@@ -232,8 +217,16 @@
                                     <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name?></option>
                                 <?php } ?>
                             </select>
-                        </div>
-                    <div class="col-sm-3">
+                            SO # :<br />
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-code"></i>
+                                </span>
+                                <input type="text" name="slip_no" class="form-control" placeholder="SO-YYYYMMDD-XXX" readonly>
+                            </div>
+                       </div>
+                    </div>
+                    <div class="col-sm-3 col-sm-offset-4">
                         Order Date : <br />
                         <div class="input-group">
                             <input type="text" id="order_default" name="date_order" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date Order" data-error-msg="Please set the date this items are ordered!" required>
@@ -242,7 +235,7 @@
                                 </span>
                         </div>
                     </div>
-            </div>
+                </div>
             </div>
         </form>
     </div>
@@ -1260,7 +1253,7 @@ $(document).ready(function(){
             $('#order_default').datepicker('setDate', 'today');
             clearFields($('#frm_sales_order'));
             $('#tbl_items tbody').html('');
-            $('#cbo_departments').select2('val', null);
+            $('#cbo_departments').select2('val', $('#cbo_departments').data('default'));
             $('#cbo_department').select2('val', null);
             $('#cbo_customers').select2('val', null);
             $('#cbo_customer_type').select2('val', 0);
@@ -1280,6 +1273,15 @@ $(document).ready(function(){
         $('#tbl_sales_order tbody').on('click','button[name="edit_info"]',function(){
             ///alert("ddd");
             _txnMode="edit";
+            _selectRowObj=$(this).closest('tr');
+            var data=dt.row(_selectRowObj).data();
+            _selectedID=data.sales_order_id;
+            
+            if(getFloat(data.order_status_id)>1){
+                showNotification({"title":"Error!","stat":"error","msg":"Sorry, you cannot edit sales order that is already been received."});
+                return;
+            }
+
             //$('.sales_order_title').html('Edit Sales Order');
                 getproduct().done(function(data){
                     products.clear();
@@ -1293,11 +1295,8 @@ $(document).ready(function(){
                 }).always(function(){ });
                 $('#typeaheadsearch').val('');
 
-
-            _selectRowObj=$(this).closest('tr');
-            var data=dt.row(_selectRowObj).data();
-            _selectedID=data.sales_order_id;
             $('#span_so_no').html(data.so_no);
+            $('input[name="slip_no"]').html(data.so_no);
             $('textarea[name="remarks"]').val(data.remarks);
             $('input,textarea').each(function(){
                 var _elem=$(this);
@@ -1587,7 +1586,7 @@ $(document).ready(function(){
        return $.ajax({
            "dataType":"json",
            "type":"POST",
-           "url":"products/transaction/list",
+           "url":"products/transaction/sales-list",
            "beforeSend": function(){
                 countproducts = products.local.length;
                 if(countproducts > 100){

@@ -91,6 +91,13 @@ class Products extends CORE_Controller
                 echo json_encode($response);
                 break;
 
+            case 'sales-list':
+                $m_products = $this->Products_model;
+                $response['data']=$m_products->product_list(1,null,null,null,null,null,null,null,1,null,null,null,1);
+                // $response['data']=$this->response_rows(array('products.is_deleted'=>FALSE));
+                echo json_encode($response);
+                break;  
+                
             case 'product-inventory':
                 $m_products = $this->Products_model;
                 $product_id = $this->input->post('product_id', TRUE);
@@ -136,6 +143,8 @@ class Products extends CORE_Controller
                 $m_products->item_type_id = $this->input->post('item_type_id', TRUE);
                 $m_products->income_account_id = $this->input->post('income_account_id', TRUE);
                 $m_products->expense_account_id = $this->input->post('expense_account_id', TRUE);
+                $m_products->cos_account_id = $this->input->post('cos_account_id', TRUE);
+                $m_products->sales_return_account_id = $this->input->post('sales_return_account_id', TRUE);
                 $m_products->parent_unit_id = $this->input->post('parent_unit_id', TRUE);
 
                 $m_products->is_bulk =$this->get_numeric_value($this->input->post('is_bulk',TRUE));
@@ -168,6 +177,7 @@ class Products extends CORE_Controller
                 $m_products->parent_id = $this->get_numeric_value($this->input->post('parent_id', TRUE));
                 $m_products->conversion_rate = $this->get_numeric_value($this->input->post('conversion_rate', TRUE));
                 $m_products->primary_unit = $this->get_numeric_value($this->input->post('is_parent', TRUE));
+                $m_products->is_nonsalable = $this->get_numeric_value($this->input->post('is_nonsalable', TRUE));
 
                 $m_products->save();
 
@@ -216,6 +226,8 @@ class Products extends CORE_Controller
                 $m_products->item_type_id = $this->input->post('item_type_id', TRUE);
                 $m_products->income_account_id = $this->input->post('income_account_id', TRUE);
                 $m_products->expense_account_id = $this->input->post('expense_account_id', TRUE);
+                $m_products->cos_account_id = $this->input->post('cos_account_id', TRUE);
+                $m_products->sales_return_account_id = $this->input->post('sales_return_account_id', TRUE);
                 $m_products->parent_unit_id = $this->input->post('parent_unit_id', TRUE);
                 $m_products->child_unit_desc = $this->get_numeric_value($this->input->post('child_unit_desc', TRUE));
                 $m_products->child_unit_id = $this->input->post('child_unit_id', TRUE);  
@@ -248,7 +260,7 @@ class Products extends CORE_Controller
                 $m_products->parent_id = $this->get_numeric_value($this->input->post('parent_id', TRUE));
                 $m_products->conversion_rate = $this->get_numeric_value($this->input->post('conversion_rate', TRUE));
                 $m_products->primary_unit = $this->get_numeric_value($this->input->post('is_parent', TRUE));
-
+                $m_products->is_nonsalable = $this->get_numeric_value($this->input->post('is_nonsalable', TRUE));
                 $m_products->modify($product_id);
 
                 $response['title']='Success!';

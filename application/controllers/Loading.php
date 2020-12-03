@@ -113,7 +113,8 @@ class Loading extends CORE_Controller
                     array(
                         'loading_items.*',
                         'customers.customer_name',
-                        'sales_invoice.sales_inv_no'
+                        'sales_invoice.sales_inv_no',
+                        'sales_invoice.is_journal_posted'
                     ),
                     array(
                         array('customers','customers.customer_id=loading_items.customer_id','left'),
@@ -125,6 +126,12 @@ class Loading extends CORE_Controller
                 echo json_encode($response);
                 break;
 
+            case 'check-invoices-posted':
+                $m_loading=$this->Loading_model;
+                $loading_id = $this->input->get('id');
+                $response['data']=$m_loading->check_invoices($loading_id);
+                echo json_encode($response);
+                break;
 
             //***************************************create new Items************************************************
 

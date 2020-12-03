@@ -85,9 +85,83 @@ parent::__construct();
 
     }
 
+	function get_journal_entries_salesreturn($adjustment_id){
+		$sql="SELECT 
+        main.* 
+        FROM(
+		SELECT
+		p.sales_return_account_id as account_id,
+		SUM(IFNULL(adj.adjust_non_tax_amount,0)) as dr_amount,
+		0 as cr_amount,
+		
+		'' as memo
+		FROM adjustment_items adj
+		INNER JOIN products p ON p.product_id = adj.product_id
+		WHERE adj.adjustment_id= $adjustment_id AND p.sales_return_account_id > 0
+		GROUP BY p.sales_return_account_id
+
+		UNION ALL
+				
+		SELECT 
+			main.*
+		FROM
+			(SELECT (CASE WHEN ai.inv_type_id = 1 THEN (SELECT receivable_account_id FROM account_integration)
+						WHEN ai.inv_type_id = 2 THEN (SELECT payment_from_customer_id FROM account_integration)
+						ELSE 0
+					END) AS account_id,
+					0 AS dr_amount,
+					SUM(IFNULL(adj.adjust_non_tax_amount, 0)) AS cr_amount,
+					'' AS memo
+			FROM
+				adjustment_items adj
+			INNER JOIN products p ON p.product_id = adj.product_id
+			LEFT JOIN adjustment_info ai ON ai.adjustment_id = adj.adjustment_id
+			WHERE
+				adj.adjustment_id = $adjustment_id) AS main
+		WHERE
+			main.account_id > 0
+		GROUP BY main.account_id
+			
+		UNION ALL
+
+        SELECT
+		p.expense_account_id as account_id,
+		SUM(adj.adjust_qty * p.purchase_cost) as dr_amount,
+		0 as cr_amount,
+		
+		'' as memo
+
+		FROM 
+		adjustment_items adj 
+		INNER JOIN products p ON p.product_id = adj.product_id
+		WHERE adj.adjustment_id = $adjustment_id AND p.expense_account_id > 0
+		GROUP BY p.expense_account_id
+        
+		UNION ALL
+        
+        SELECT
+		p.cos_account_id as account_id,
+		0 as dr_amount,
+		SUM(adj.adjust_qty * p.purchase_cost) as cr_amount,
+		'' as memo
+		FROM 
+		adjustment_items adj 
+		INNER JOIN products p ON p.product_id = adj.product_id
+		WHERE adj.adjustment_id = $adjustment_id AND p.cos_account_id > 0
+		GROUP BY p.cos_account_id
+        
+
+		) as main 
+		WHERE main.dr_amount > 0 OR main.cr_amount > 0";
+        return $this->db->query($sql)->result();
+	}
+
+
 	function list_per_customer($customer_id = null){
         $sql="SELECT 
 			si.sales_inv_no as inv_no,
+			si.is_journal_posted,
+			'1' as inv_type_id,
 			p.product_code,
 			p.product_desc,
 			sii.inv_qty,
@@ -125,6 +199,8 @@ parent::__construct();
 
 			SELECT
 			ci.cash_inv_no as inv_no,
+			ci.is_journal_posted,
+			'2' as inv_type_id,
 			p.product_code,
 			p.product_desc,
 			cii.inv_qty,
