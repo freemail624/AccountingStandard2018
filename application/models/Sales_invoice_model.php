@@ -164,26 +164,16 @@ $sql="SELECT main.* FROM(
 
 
             UNION ALL 
-
+            
             SELECT 
-            cost_sale.account_id,
-            cost_sale.memo,
+            p.cos_account_id as account_id,
+            '' as memo,
             0 as cr_amount,
-            SUM(cost_sale.dr_amount) as dr_amount
-            FROM
-            (
-                SELECT sii.product_id,
-                p.cos_account_id as account_id,
-                '' as memo,
-                0 as cr_amount,
-                SUM(sii.inv_qty * p.purchase_cost) as dr_amount
-                FROM 
-                    `sales_invoice_items` as sii
-                    INNER JOIN products as p ON sii.product_id=p.product_id
-                    WHERE 
-                        sii.sales_invoice_id=$sales_invoice_id 
-                        AND p.cos_account_id >0
-            ) as cost_sale GROUP BY cost_sale.account_id
+            SUM(sii.inv_qty * p.purchase_cost) as dr_amount
+            FROM `sales_invoice_items` as sii
+            INNER JOIN products as p ON sii.product_id=p.product_id
+            WHERE sii.sales_invoice_id=$sales_invoice_id AND p.cos_account_id >0
+            GROUP BY p.cos_account_id
 
             UNION ALL
 

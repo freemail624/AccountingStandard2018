@@ -13,6 +13,22 @@ class Customers_model extends CORE_Model{
         parent::__construct();
     }
 
+    function create_default_customer(){
+        //return;
+        $sql="INSERT IGNORE INTO customers
+                  (customer_id,
+                  customer_code,
+                  customer_name,
+                  photo_path)
+              VALUES
+                  (1,
+                  'WALK-IN',
+                  'WALK-IN',
+                  'assets/img/anonymous-icon.png')
+        ";
+        $this->db->query($sql);
+    }
+
     function get_customer_list_for_sales_report(){
         $sql="SELECT 
             customer_id,

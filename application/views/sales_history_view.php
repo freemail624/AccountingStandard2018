@@ -138,7 +138,7 @@
         </div> -->
         <div class="panel-body table-responsive">
         <div class="row panel-row">
-        <h2 class="h2-panel-heading">Sales/Cash Invoice History</h2><hr>
+        <h2 class="h2-panel-heading">Charge/Cash Invoice History</h2><hr>
                     <div class="row">
                         <div class="col-sm-4">
                             <b class="required"></b>Customer : <br />

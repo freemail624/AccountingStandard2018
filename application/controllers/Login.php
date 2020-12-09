@@ -26,6 +26,7 @@ class Login extends CORE_Controller {
         $this->load->model('Asset_property_status_model');
         $this->load->model('Company_model');
         $this->load->model('Suppliers_model');
+        $this->load->model('Customers_model');
         $this->load->model('Email_settings_model');
         $this->load->model('Trans_model');
         $this->load->model('Initial_setup_model');
@@ -184,6 +185,9 @@ class Login extends CORE_Controller {
 
         $m_suppliers=$this->Suppliers_model;
         $m_suppliers->create_default_supplier();
+
+        $m_customers=$this->Customers_model;
+        $m_customers->create_default_customer();
 
 
     }

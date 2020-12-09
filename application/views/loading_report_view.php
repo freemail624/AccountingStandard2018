@@ -508,7 +508,7 @@ $(document).ready(function(){
                 { targets:[3],data: "address" },
                 { sClass:"text-right", targets:[4],data: null,
                     render: function (data, type, full, meta){
-                        return accounting.formatNumber(data.total_after_tax,2);
+                        return accounting.formatNumber(data.total_after_discount,2);
                     }
                 },
                 {
@@ -697,7 +697,7 @@ $(document).ready(function(){
                 customer_id : data.customer_id,
                 customer_name : data.customer_name,
                 address: data.address,
-                total_after_tax : data.total_after_tax,
+                total_after_discount : data.total_after_discount,
                 total_inv_qty : data.total_inv_qty,
                 btnclass : ""
             }));
@@ -752,7 +752,7 @@ $(document).ready(function(){
                             customer_id : value.customer_id,
                             customer_name : value.customer_name,
                             address: value.address,
-                            total_after_tax : value.total_after_tax,
+                            total_after_discount : value.total_after_discount,
                             total_inv_qty : value.total_inv_qty,
                             btnclass : attr
                         }));
@@ -975,7 +975,7 @@ $(document).ready(function(){
         '<td width="20%">'+d.customer_name+'</td>'+
         '<td width="30%">'+d.address+'</td>'+
         '<td width="15%" class="text-right"><input type="text" name="total_inv_qty[]" class="form-control numeric text-right" readonly value="'+accounting.formatNumber(d.total_inv_qty,2)+'"></td>'+
-        '<td width="15%" class="text-right"><input type="text" name="total_after_tax[]" class="form-control numeric text-right" readonly value="'+accounting.formatNumber(d.total_after_tax,2)+'"></td>'+
+        '<td width="15%" class="text-right"><input type="text" name="total_after_discount[]" class="form-control numeric text-right" readonly value="'+accounting.formatNumber(d.total_after_discount,2)+'"></td>'+
         '<td width="5%" align="center"><button type="button" name="remove_item" class="btn btn-red '+d.btnclass+'"><i class="fa fa-trash"></i></button></td>'+
         '<td class="hidden"><input name="customer_id[]" type="text" class="form-control" value="'+d.customer_id+'" readonly></td>'+
         '<td class="hidden"><input name="address[]" type="text" class="form-control" value="'+d.address+'" readonly></td>'+

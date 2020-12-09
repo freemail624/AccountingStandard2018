@@ -140,6 +140,7 @@ class Account_integration extends CORE_Controller
                 $m_integration->loading_category_id=$this->input->post('loading_category_id',TRUE);   
                 $m_integration->default_department_id=$this->input->post('default_department_id',TRUE);   
                 $m_integration->default_order_source_id=$this->input->post('default_order_source_id',TRUE);   
+                $m_integration->default_customer_id=$this->input->post('default_customer_id',TRUE);   
                 $m_integration->modify(1);
 
                 $response['stat']="success";

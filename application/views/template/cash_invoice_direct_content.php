@@ -46,6 +46,9 @@
             <td valign="top" align="right" style="border: 0px solid red;padding: 5px;"><?php echo number_format($item->inv_line_total_price,2); ?></td>
         </tr>
     <?php }?>
+    <tr>
+        <td valign="top" colspan="5" style="padding: 5px;"><br/><?php echo $info->remarks; ?></td>
+    </tr>
 </table>
 
 <span style="top: 690px; left: 430px;border: 0px solid red;width: 150px;max-width: 150px;height: 20px; max-height: 20px;">

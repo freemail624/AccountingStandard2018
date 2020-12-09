@@ -83,7 +83,7 @@ class Sales_invoice extends CORE_Controller
         $data['invoice_counter']=$this->Invoice_counter_model->get_list(array('user_id'=>$this->session->user_id));
         $data['order_sources'] = $this->Order_source_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
         $data['accounts']=$this->Account_integration_model->get_list(1);
-        $data['title'] = 'Sales Invoice';
+        $data['title'] = 'Charge Invoice';
         
         (in_array('3-2',$this->session->user_rights)? 
         $this->load->view('sales_invoice_view', $data)

@@ -125,7 +125,7 @@
 <div class="page-content"><!-- #page-content -->
 <ol class="breadcrumb"  style="margin-bottom: 0;">
     <li><a href="Dashboard">Dashboard</a></li>
-    <li><a href="Sales_invoice">Sales Invoice</a></li>
+    <li><a href="Sales_invoice">Charge Invoice</a></li>
 </ol>
 <div class="container-fluid"">
 <div data-widget-group="group1">
@@ -138,10 +138,10 @@
         </div> -->
         <div class="panel-body table-responsive">
         <div class="row panel-row">
-        <h2 class="h2-panel-heading">Sales Invoice</h2><hr>
+        <h2 class="h2-panel-heading">Charge Invoice</h2><hr>
             <div class="row"> 
                 <div class="col-lg-3"><br> 
-                <button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Record Sales Invoice" ><i class="fa fa-plus"></i> Record Sales Invoice</button> 
+                <button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Record Charge Invoice" ><i class="fa fa-plus"></i> Record Charge Invoice</button> 
                 </div> 
                 <div class="col-lg-3"> 
                         From :<br /> 
@@ -1193,7 +1193,12 @@ $(document).ready(function(){
  
             reInitializeNumeric();
             reComputeTotal();
-                    return prodstat;     
+                
+            $('.qty').focus();
+
+
+            return prodstat;   
+
         });
         $('div.tt-menu').on('click','table.tt-suggestion',function(){
             _objTypeHead.typeahead('val','');
@@ -1922,6 +1927,11 @@ $(document).ready(function(){
             //console.log(net_vat);
             reComputeTotal();
         });
+
+        $('#tbl_items tbody').on('keypress','input.qty',function(){
+            $('#typeaheadsearch').focus();
+        });
+
         $('#btn_yes').click(function(){
             //var d=dt.row(_selectRowObj).data();
             //if(getFloat(d.order_status_id)>1){
@@ -2214,7 +2224,7 @@ $(document).ready(function(){
         }
         return '<tr>'+
         //DISPLAY
-        '<td ><input name="inv_qty[]" type="text" class="numeric form-control trigger-keyup" value="'+accounting.formatNumber(d.inv_qty,2)+'"></td>'+unit+
+        '<td ><input name="inv_qty[]" type="text" class="numeric form-control trigger-keyup qty" value="'+accounting.formatNumber(d.inv_qty,2)+'"></td>'+unit+
         '<td ">'+d.product_desc+'<input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
         '<td ><input name="inv_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.inv_price,2)+'" style="text-align:right;"></td>'+
         '<td  style=""><input name="inv_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_discount,2)+'" style="text-align:right;"></td>'+

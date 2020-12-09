@@ -25,6 +25,11 @@ class Company_model extends CORE_Model{
     		THEN sales_remarks
     		ELSE ""
     	END) as sales_remarks,
+        (CASE
+            WHEN is_deliver_address_default = 1
+            THEN deliver_to_address_default
+            ELSE ""
+        END) as deliver_to_address_default,        
         is_print_auto
 
         FROM company_info WHERE company_id = 1');

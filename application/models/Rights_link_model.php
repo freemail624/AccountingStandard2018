@@ -19,7 +19,7 @@ class Rights_link_model extends CORE_Model{
                                           (8,'2','2-3','Record Payment'),
                                           (10,'15','15-3','Item Adjustment'),
                                           (11,'3','3-1','Sales Order'),
-                                          (12,'3','3-2','Sales Invoice'),
+                                          (12,'3','3-2','Charge Invoice'),
                                           (13,'3','3-3','Record Payment'),
                                           (14,'4','4-2','Category Management'),
                                           (15,'4','4-3','Department Management'),

@@ -226,6 +226,22 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                     </div>
 
 
+                    <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Default Customer (Cash Invoice) </strong></span></h4>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label"> <b class="required"> * </b>Customer :</label>
+                        <div class="col-md-7">
+                            <select name="default_customer_id" class="cbo_accounts" data-error-msg="Default Customer is required." required>
+                                <?php foreach($customers as $customer){ ?>
+                                    <option value="<?php echo $customer->customer_id; ?>" <?php echo ($current_accounts->default_customer_id==$customer->customer_id?'selected':''); ?>>
+                                        <?php echo $customer->customer_name; ?>
+                                    </option>
+                                <?php } ?>
+                            </select>
+                            <span class="help-block m-b-none">Please Choose a default customer for cash invoice. </span>
+                        </div>
+                    </div>                    
+
+
                     <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Order Source (Sales) </strong></span></h4>
                     <div class="form-group">
                         <label class="col-md-3 control-label"> <b class="required"> * </b>Order Source :</label>

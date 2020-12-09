@@ -159,7 +159,7 @@ class Loading extends CORE_Controller
                 $invoice_id=$this->input->post('invoice_id',TRUE);
                 $customer_id=$this->input->post('customer_id',TRUE);
                 $address=$this->input->post('address',TRUE);
-                $total_after_tax=$this->input->post('total_after_tax',TRUE);
+                $total_after_discount=$this->input->post('total_after_discount',TRUE);
                 $total_inv_qty=$this->input->post('total_inv_qty',TRUE);
             
                 for($i=0;$i<count($invoice_id);$i++){
@@ -169,7 +169,7 @@ class Loading extends CORE_Controller
                     $m_loading_items->invoice_type_id=1; // Sales Invoice Type
                     $m_loading_items->customer_id=$customer_id[$i];
                     $m_loading_items->address=$address[$i];
-                    $m_loading_items->total_after_tax=$this->get_numeric_value($total_after_tax[$i]);
+                    $m_loading_items->total_after_discount=$this->get_numeric_value($total_after_discount[$i]);
                     $m_loading_items->total_inv_qty=$this->get_numeric_value($total_inv_qty[$i]);
                     $m_loading_items->save();
 
@@ -225,7 +225,7 @@ class Loading extends CORE_Controller
                 $invoice_id=$this->input->post('invoice_id',TRUE);
                 $customer_id=$this->input->post('customer_id',TRUE);
                 $address=$this->input->post('address',TRUE);
-                $total_after_tax=$this->input->post('total_after_tax',TRUE);
+                $total_after_discount=$this->input->post('total_after_discount',TRUE);
                 $total_inv_qty=$this->input->post('total_inv_qty',TRUE);
             
                 $m_loading_items->delete_via_fk($loading_id); //delete previous items then insert those new
@@ -237,7 +237,7 @@ class Loading extends CORE_Controller
                     $m_loading_items->invoice_type_id=1; // Sales Invoice Type
                     $m_loading_items->customer_id=$customer_id[$i];
                     $m_loading_items->address=$address[$i];
-                    $m_loading_items->total_after_tax=$this->get_numeric_value($total_after_tax[$i]);
+                    $m_loading_items->total_after_discount=$this->get_numeric_value($total_after_discount[$i]);
                     $m_loading_items->total_inv_qty=$this->get_numeric_value($total_inv_qty[$i]);
                     $m_loading_items->save();
 

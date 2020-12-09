@@ -31,7 +31,7 @@ class Loading_model extends CORE_Model{
     function get_loading_customers($loading_id){
         $sql="SELECT 
             c.customer_name,
-            SUM(li.total_after_tax) AS total_payment,
+            SUM(li.total_after_discount) AS total_payment,
             (SELECT 
                     SUM(sii.inv_qty) AS inv_qty
                 FROM
@@ -86,6 +86,40 @@ class Loading_model extends CORE_Model{
                 WHERE l.is_deleted = FALSE AND l.is_active = TRUE
                 AND li.invoice_id = $sales_invoice_id";
         return $this->db->query($sql)->result();                
+    }
+
+
+    function get_loading_items($loading_id){
+        $sql="SELECT 
+            p.category_id,
+            p.product_desc,
+            SUM(sii.inv_qty) as inv_qty
+        FROM
+            loading l
+            LEFT JOIN loading_items li ON li.loading_id = l.loading_id
+            LEFT JOIN sales_invoice_items sii ON sii.sales_invoice_id = li.invoice_id
+            LEFT JOIN products p ON p.product_id = sii.product_id
+            LEFT JOIN categories c ON c.category_id = p.category_id
+            WHERE l.loading_id = $loading_id
+            GROUP BY sii.product_id
+            ORDER BY p.product_desc ASC";
+        return $this->db->query($sql)->result();
+    }
+
+    function get_loading_categories($loading_id){
+        $sql="SELECT 
+            DISTINCT c.category_id,
+            c.category_name
+        FROM
+            loading l
+            LEFT JOIN loading_items li ON li.loading_id = l.loading_id
+            LEFT JOIN sales_invoice_items sii ON sii.sales_invoice_id = li.invoice_id
+            LEFT JOIN products p ON p.product_id = sii.product_id
+            LEFT JOIN categories c ON c.category_id = p.category_id
+            WHERE l.loading_id = $loading_id
+            GROUP BY p.category_id
+            ORDER BY c.category_name ASC";
+        return $this->db->query($sql)->result();
     }
 
 

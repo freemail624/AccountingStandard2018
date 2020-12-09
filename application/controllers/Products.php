@@ -595,7 +595,13 @@ class Products extends CORE_Controller
         return $this->Products_model->get_list(
             $filter,
 
-            'products.*,categories.category_name,suppliers.supplier_name,refproduct.product_type,item_types.item_type,account_titles.account_title, punit.unit_name as parent_unit_name',
+            'products.*,categories.category_name,suppliers.supplier_name,refproduct.product_type,item_types.item_type,account_titles.account_title, punit.unit_name as parent_unit_name,
+            (CASE
+                WHEN products.is_parent = TRUE 
+                    THEN blkunit.unit_name
+                ELSE chldunit.unit_name
+            END) as product_unit_name
+            ',
 
             array(
                 array('suppliers','suppliers.supplier_id=products.supplier_id','left'),
@@ -603,7 +609,9 @@ class Products extends CORE_Controller
                 array('categories','categories.category_id=products.category_id','left'),
                 array('item_types','item_types.item_type_id=products.item_type_id','left'),
                 array('account_titles','account_titles.account_id=products.income_account_id','left'),
-                array('units as punit','punit.unit_id=products.parent_unit_id','left')
+                array('units as punit','punit.unit_id=products.parent_unit_id','left'),
+                array('units as blkunit','blkunit.unit_id=products.bulk_unit_id','left'),
+                array('units as chldunit','chldunit.unit_id=products.parent_unit_id','left')
             )
         );
     }

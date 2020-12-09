@@ -253,7 +253,7 @@
                         </div>
                         <div class="col-sm-4">
                            <b class="required">*</b><label>Customer :</label> <br />
-                            <select name="customer" id="cbo_customers" data-error-msg="Customer is required." required>
+                            <select name="customer" id="cbo_customers" data-default="<?php echo $accounts[0]->default_customer_id; ?>" data-error-msg="Customer is required." required>
                                 <option value="0">[ Create New Customer ]</option>
                                 <?php foreach($customers as $customer){ ?>
                                     <option data-address="<?php echo $customer->address; ?>" data-contact="<?php echo $customer->contact_name; ?>" value="<?php echo $customer->customer_id; ?>" data-term-default="<?php echo ($customer->term=="none"?"":$customer->term); ?>" data-customer_type="<?php echo $customer->customer_type_id; ?>"><?php echo $customer->customer_name; ?></option>
@@ -262,7 +262,7 @@
                         </div>
                         <div class="col-sm-4">
                             <label>Contact Person :</label><br/>
-                            <input type="text" name="contact_person" id="contact_person" class="form-control" required data-error-msg="Contact Person is required!" placeholder="Contact Person">
+                            <input type="text" name="contact_person" id="contact_person" class="form-control" data-error-msg="Contact Person is required!" placeholder="Contact Person">
                         </div>
                         <div class="col-sm-2 ">
                             <b class="required">*</b> <label>Invoice Date :</label> <br />
@@ -994,7 +994,7 @@ $(document).ready(function(){
         });
         _cboCustomers=$("#cbo_customers").select2({
             placeholder: "Please select customer.",
-            allowClear: true
+            allowClear: false
         });
         _cboSalesperson=$("#cbo_salesperson").select2({
             placeholder: "Please select sales person.",
@@ -1187,6 +1187,8 @@ $(document).ready(function(){
  
             reInitializeNumeric();
             reComputeTotal();
+
+            $('.qty').focus();
             //alert("dd")
         });
         $('div.tt-menu').on('click','table.tt-suggestion',function(){
@@ -1504,7 +1506,7 @@ $(document).ready(function(){
             $('#tbl_items > tbody').html('');
             $('#cbo_departments').select2('val', $('#cbo_departments').data('default'));
             $('#cbo_department').select2('val', null);
-            $('#cbo_customers').select2('val', null);
+            $('#cbo_customers').select2('val', $('#cbo_customers').data('default'));
             $('#cbo_order_source').select2('val', $('#cbo_order_source').data('default'));
             $('#cbo_salesperson').select2('val', null);
             $('#img_user').attr('src','assets/img/anonymous-icon.png');
@@ -1889,6 +1891,11 @@ $(document).ready(function(){
             //console.log(net_vat);
             reComputeTotal();
         });
+
+        $('#tbl_items tbody').on('keypress','input.qty',function(){
+            $('#typeaheadsearch').focus();
+        });
+
         $('#btn_yes').click(function(){
             //var d=dt.row(_selectRowObj).data();
             //if(getFloat(d.order_status_id)>1){
@@ -2165,7 +2172,7 @@ $(document).ready(function(){
         }
         return '<tr>'+
         //DISPLAY
-        '<td ><input name="inv_qty[]" type="text" class="numeric form-control trigger-keyup" value="'+accounting.formatNumber(d.inv_qty,2)+'"></td>'+unit+
+        '<td ><input name="inv_qty[]" type="text" class="numeric form-control trigger-keyup qty" value="'+accounting.formatNumber(d.inv_qty,2)+'"></td>'+unit+
         '<td ">'+d.product_desc+'<input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
         '<td ><input name="inv_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.inv_price,2)+'" style="text-align:right;"></td>'+
         '<td  style=""><input name="inv_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_discount,2)+'" style="text-align:right;"></td>'+

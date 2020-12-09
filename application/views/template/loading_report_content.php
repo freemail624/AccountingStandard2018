@@ -78,19 +78,19 @@
 					</tr>
 					<?php 
 					$i=1;
-					foreach($items as $item){ ?>
+					foreach($customers as $customer){ ?>
 						<tr>
 							<td class="border font8" width="5%" align="right"><?php echo $i;?></td>
-							<td class="border font8 upp" width="40%"><?php echo $item->customer_name; ?></td>
-							<td class="border font8" width="20%" align="right"><?php echo number_format($item->total_payment,2); ?></td>
-							<td class="border font8" width="20%" align="right"><?php echo number_format($item->total_qty,2); ?></td>
+							<td class="border font8 upp" width="40%"><?php echo $customer->customer_name; ?></td>
+							<td class="border font8" width="20%" align="right"><?php echo number_format($customer->total_payment,2); ?></td>
+							<td class="border font8" width="20%" align="right"><?php echo number_format($customer->total_qty,2); ?></td>
 							<td class="border font8" width="15%"></td>
 						</tr>					
 					<?php $i++;}?>	
 
-					<?php if(count($items) < 24){
+					<?php if(count($customers) < 24){
 						$a=$i;
-						$total = 24 - count($items);
+						$total = 24 - count($customers);
 						for ($i=0; $i < $total; $i++) { 
 					?>
 						<tr>
@@ -169,6 +169,33 @@
 				</table>	
 			</td>
 		</tr>
+	</table>
+
+	<br/>
+
+	<table cellspacing="5" cellpadding="5" class="tbl-info" width="100%">
+		<?php 
+			$total_qty = 0;
+			foreach($categories as $category){ ?>
+			<tr>
+				<td colspan="3"><strong><?php echo $category->category_name; ?></strong></td>
+			</tr>
+			<?php if(count($items)>0){
+				foreach($items as $item){
+					if($category->category_id == $item->category_id){
+					$total_qty+=$item->inv_qty;
+			?>
+				<tr>
+					<td width="20%" style="padding-left: 25px;"><?php echo $item->product_desc; ?></td>
+					<td width="10%" align="right"><?php echo number_format($item->inv_qty,2); ?></td>
+					<td width="70%">&nbsp;</td>
+				</tr>
+			<?php }}}?>
+
+				<tr>
+					<td colspan="3">&nbsp;</td>
+				</tr>
+		<?php }?>
 	</table>
 </body>
 </html>

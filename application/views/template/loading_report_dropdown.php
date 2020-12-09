@@ -38,12 +38,12 @@
 			</tr>
 			<?php 
 			$i=1;
-			foreach($items as $item){ ?>
+			foreach($customers as $customer){ ?>
 				<tr>
 					<td class="border" width="5%" align="right"><?php echo $i;?></td>
-					<td class="border" width="40%"><?php echo $item->customer_name; ?></td>
-					<td class="border" width="20%" align="right"><?php echo number_format($item->total_payment,2); ?></td>
-					<td class="border" width="20%" align="right"><?php echo number_format($item->total_qty,2); ?></td>
+					<td class="border" width="40%"><?php echo $customer->customer_name; ?></td>
+					<td class="border" width="20%" align="right"><?php echo number_format($customer->total_payment,2); ?></td>
+					<td class="border" width="20%" align="right"><?php echo number_format($customer->total_qty,2); ?></td>
 					<td class="border" width="15%"></td>
 				</tr>					
 			<?php $i++;}?>	

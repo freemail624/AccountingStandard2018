@@ -379,6 +379,23 @@
                                                        </div>
                                                    </div>  
 
+                                                  <div class="form-group">
+                                                       <label class="col-md-2 col-md-offset-1 control-label" id="is_deliver_address_default"> 
+                                                       <strong> 
+                                                       <input type="checkbox" name="is_deliver_address_default" for="is_deliver_address_default" 
+                                                       <?php if($company->is_deliver_address_default == 1){ echo 'checked'; } ?>>
+                                                        Deliver to Address :</strong></label>
+                                                       <div class="col-md-7">
+                                                           <div class="input-group">
+                                                                <span class="input-group-addon">
+                                                                    <i class="fa fa-file"></i>
+                                                                </span>
+                                                                <textarea class="form-control" rows="2" placeholder="Default deliver to address " name="deliver_to_address_default"><?php echo $company->deliver_to_address_default; ?></textarea>
+                                                           </div>
+                                                       </div>
+                                                   </div>  
+
+
                                                    <div class="form-group"> 
                                                        <div class="col-md-7 col-md-offset-3">
                                                          <label class="control-label" id="is_print_auto"> 
@@ -770,7 +787,10 @@
 
             $('input[name="is_purchasing_default"]').prop("checked") ?  _data.push({name : "is_purchasing_default" , value : '1'   }) : _data.push({name : "is_purchasing_default" , value : '0'   });
             $('input[name="is_sales_default"]').prop("checked") ?  _data.push({name : "is_sales_default" , value : '1'   }) : _data.push({name : "is_sales_default" , value : '0'   });
-            $('input[name="is_print_auto"]').prop("checked") ?  _data.push({name : "is_print_auto" , value : '1'   }) : _data.push({name : "is_print_auto" , value : '0'   });            
+            $('input[name="is_print_auto"]').prop("checked") ?  _data.push({name : "is_print_auto" , value : '1'   }) : _data.push({name : "is_print_auto" , value : '0'   });       
+            $('input[name="is_deliver_address_default"]').prop("checked") ?  _data.push({name : "is_deliver_address_default" , value : '1'   }) : _data.push({name : "is_deliver_address_default" , value : '0'   });
+
+
 
             return $.ajax({
                 "dataType":"json",

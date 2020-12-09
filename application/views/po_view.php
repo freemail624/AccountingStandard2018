@@ -186,7 +186,7 @@
                     <th>Approved</th>
                     <th>Status</th>
                     <th>Sent</th>
-                    <th><center>Action</center></th>
+                    <th width="15%"><center>Action</center></th>
                     <th></th>
                 </tr>
                 </thead>
@@ -266,7 +266,7 @@
                 <div class="row">
                     <div class="col-sm-5">
                         Deliver to Address * : <br />
-                        <textarea name="deliver_to_address" class="form-control" placeholder="Deliver to Address" data-error-msg="Deliver address is required!" required></textarea>
+                        <textarea name="deliver_to_address" class="form-control" placeholder="Deliver to Address" data-error-msg="Deliver address is required!" required data-default="<?php echo $company->deliver_to_address_default; ?>"></textarea>
 
                     </div>
 
@@ -505,6 +505,27 @@
         </div><!---content---->
     </div>
 </div><!---modal-->
+
+<div id="modal_confirmation_close" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title"><span id="modal_mode"> </span>Confirm closing of PO</h4>
+
+            </div>
+
+            <div class="modal-body">
+                <p id="modal-body-message">Are you sure ?</p>
+            </div>
+
+            <div class="modal-footer">
+                <button id="btn_yes_close" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Yes</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">No</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div id="modal_new_supplier" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog modal-lg">
@@ -848,14 +869,19 @@ $(document).ready(function(){
 
                 },
                 {
-                    targets:[8],
+                    sClass:"text-left", targets:[8],data: null,
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
-                        var btn_message='<a href="Po_messages?id='+full.purchase_order_id+'" target="_blank" class="btn btn-green btn-sm" name="message_po" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Message"><i class="fa fa-envelope-o"></i> </a>';
-                 
+                        var btn_message='<a href="Po_messages?id='+data.purchase_order_id+'" target="_blank" class="btn btn-green btn-sm" name="message_po" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Message"><i class="fa fa-envelope-o"></i> </a>';
+                        var btn_mark_as_closed='<button class="btn btn-warning btn-sm" name="mark_as_closed" style="" data-toggle="tooltip" data-placement="top" title="Close"><i class="fa fa-times"></i> </button>';
 
-                        return '<center>'+btn_edit+'&nbsp;'+btn_message+'&nbsp;'+btn_trash+'</center>';
+                        if (data.order_status_id == 1  || data.order_status_id == 3){
+                            return btn_edit+'&nbsp;'+btn_message+'&nbsp;'+btn_trash+'&nbsp;'+btn_mark_as_closed;
+                        }else{
+                            return btn_edit+'&nbsp;'+btn_message+'&nbsp;'+btn_trash;  
+                        }
+
                     }
                 },
                 { targets:[9],data: "purchase_order_id",visible:false }
@@ -1180,7 +1206,7 @@ $(document).ready(function(){
             $('#cbo_suppliers').select2('val',null);
             $('#cbo_departments').select2('val', $('#cbo_departments').data('default') );
             $('textarea[name="remarks"]').val($('textarea[name="remarks"]').data('default'));
-
+            $('textarea[name="deliver_to_address"]').val($('textarea[name="deliver_to_address"]').data('default'));
             //$('#cbo_prodType').select2('val',3);
             $('#typeaheadsearch').val('');
             getproduct().done(function(data){
@@ -1371,10 +1397,24 @@ $(document).ready(function(){
         $('#tbl_purchases tbody').on('click','button[name="remove_info"]',function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
+
+            if(data.order_status_id != '1' ){
+                showNotification({title:"Invalid",stat:"error",msg:"Only Open Purchases can be Deleted."});
+            }else {
+                _selectedID=data.purchase_order_id;
+                $('#modal_confirmation').modal('show');
+            }
+
+        });
+
+        $('#tbl_purchases tbody').on('click','button[name="mark_as_closed"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dt.row(_selectRowObj).data();
             _selectedID=data.purchase_order_id;
 
-            $('#modal_confirmation').modal('show');
+            $('#modal_confirmation_close').modal('show');
         });
+
 
         $('#tbl_items tbody').on('change','select',function(){
             if(changetxn == 'active'){
@@ -1449,7 +1489,15 @@ $(document).ready(function(){
             //}
         });
 
+        $('#btn_yes_close').click(function(){
+            MarkRecordAsClosed().done(function(response){
+                showNotification(response);
+                if(response.stat=="success"){
+                    dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
+                }
 
+            });
+        });
 
         $('#btn_cancel').click(function(){
             showList(true);
@@ -1644,6 +1692,15 @@ $(document).ready(function(){
             "beforeSend": showSpinningProgress($('#btn_save'))
         });
     };
+
+    var MarkRecordAsClosed=function(){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Purchases/transaction/close",
+            "data":{purchase_order_id : _selectedID}
+        });
+    };    
 
     var removePurchaseOrder=function(){
         return $.ajax({
