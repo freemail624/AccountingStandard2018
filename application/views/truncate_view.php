@@ -98,6 +98,7 @@
     <li class=""><a href="#references" data-toggle="tab"><i class="fa fa-folder-open-o"></i> References</a></li>
     <li class=""><a href="#masterfiles" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Masterfiles</a></li>    
     <li class=""><a href="#accounting" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Accounting</a></li>
+    <li class=""><a href="#bir" data-toggle="tab"><i class="fa fa-folder-open-o"></i> BIR Forms</a></li>
     <li class=""><a href="#users" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Users</a></li>
     <li class=""><a href="#reset_defaults" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Reset Defaults</a></li>
 
@@ -108,6 +109,11 @@
         <input type="checkbox" id="selectall_accounting" class="css-checkbox"><label class="css-label " for="selectall_accounting">SELECT ALL ACCOUNTING</label><br>
             <input type="checkbox" name="accounting[]" value="account_classes" id="account_classes" class="css-checkbox"><label class="css-label " for="account_classes">Account Classes</label>(<?php echo $current_count->account_classes ?>)<br>
             <input type="checkbox" name="accounting[]" value="account_titles" id="account_titles" class="css-checkbox"><label class="css-label " for="account_titles">Chart of Accounts</label>(<?php echo $current_count->account_titles ?>)<br>
+
+            <input type="checkbox" name="accounting[]" value="asset_movement" id="asset_movement" class="css-checkbox"><label class="css-label " for="asset_movement">Asset Movement</label>(<?php echo $current_count->asset_movement ?>)<br>
+
+
+
             <input type="checkbox" name="accounting[]" value="account_types" id="account_types" class="css-checkbox"><label class="css-label " for="account_types">Account Types</label>(<?php echo $current_count->account_types ?>)<br>
             <input type="checkbox" name="accounting[]" value="account_year" id="account_year" class="css-checkbox"><label class="css-label " for="account_year">Account Year</label>(<?php echo $current_count->account_year ?>)<br>
             <input type="checkbox" name="accounting[]" value="accounting_period" id="accounting_period" class="css-checkbox"><label class="css-label " for="accounting_period">Accounting Period</label>(<?php echo $current_count->accounting_period ?>)<br>
@@ -115,6 +121,19 @@
         </form>
         <button id="btn_accounting" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Truncate Accounting</button>
     </div>
+
+    <div class="tab-pane" id="bir" data-parent-id="" style="min-height: 300px;">
+        <form id="frm_bir">
+        <input type="checkbox" id="selectall_bir" class="css-checkbox"><label class="css-label " for="selectall_bir">SELECT ALL BIR FORMS</label><br>
+            <input type="checkbox" name="bir[]" value="form_2307" id="form_2307" class="css-checkbox"><label class="css-label " for="form_2307">BIR Form 2307</label>(<?php echo $current_count->form_2307 ?>)<br>
+
+
+            <input type="checkbox" name="bir[]" value="form_2551m" id="form_2551m" class="css-checkbox"><label class="css-label " for="form_2551m">BIR Form 2551m</label>(<?php echo $current_count->form_2551m ?>)<br>
+
+        </form>
+        <button id="btn_bir" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Truncate BIR Forms</button>
+    </div>
+
     <div class="tab-pane" id="references" style="min-height: 300px;">
     <input type="checkbox" id="selectall_references" class="css-checkbox"><label class="css-label " for="selectall_references">SELECT ALL REFERENCES</label><br>
     <form id="frm_references">
@@ -201,6 +220,7 @@
         <input type="checkbox" name="masterfiles[]" value="customers" id="customers" class="css-checkbox"><label class="css-label " for="customers">Customers</label>(<?php echo $current_count->customers; ?>)<br>
         <input type="checkbox" name="masterfiles[]" value="customer_photos" id="customer_photos" class="css-checkbox"><label class="css-label " for="customer_photos">Customers Photos</label>(<?php echo $current_count->customer_photos; ?>)<br>
         <input type="checkbox" name="masterfiles[]" value="salesperson" id="salesperson" class="css-checkbox"><label class="css-label " for="salesperson">Salespersons</label>(<?php echo $current_count->salesperson; ?>)<br>
+        <input type="checkbox" name="masterfiles[]" value="agent" id="agent" class="css-checkbox"><label class="css-label " for="agent">Agents</label>(<?php echo $current_count->agent; ?>)<br>
         <input type="checkbox" name="masterfiles[]" value="fixed_assets" id="fixed_assets" class="css-checkbox"><label class="css-label " for="fixed_assets">Fixed Assets</label>(<?php echo $current_count->fixed_assets; ?>)<br>
         </form>
          <button id="btn_masterfiles" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Truncate Masterfiles</button>

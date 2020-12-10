@@ -219,6 +219,18 @@ class Truncate extends CORE_Controller {
                 echo json_encode($response);
             break;
 
+
+            case 'truncate-bir':
+                $bir=$this->input->post('bir',TRUE);
+                for($i=0;$i<count($bir);$i++) { $this->db->truncate($bir[$i]); }    
+
+                $response['title']='Success!';
+                $response['stat']='success';
+                $response['msg']='BIR Forms Tables Successfully Truncated.'; 
+                echo json_encode($response);
+            break;            
+
+
             case 'truncate-users':
                 $users=$this->input->post('users',TRUE);
                 for($i=0;$i<count($users);$i++) { $this->db->truncate($users[$i]); }    
