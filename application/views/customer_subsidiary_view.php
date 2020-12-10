@@ -264,7 +264,7 @@
             });
 
             $(document).on('click','#btn_export',function(){
-                window.open('Templates/layout/customer-subsidiary-export?type=preview&customerId='+_cboCustomers.val()+'&accountId='+_cboAccounts.val()+'&startDate='+_date_from.val()+'&endDate='+_date_to.val());
+                window.open('Customer_Subsidiary/transaction/customer-subsidiary-export?type=preview&customerId='+_cboCustomers.val()+'&accountId='+_cboAccounts.val()+'&startDate='+_date_from.val()+'&endDate='+_date_to.val());
 
             });
 
@@ -276,7 +276,7 @@
                 $.ajax({
                     "dataType":"json",
                     "type":"POST",
-                    "url":"Templates/layout/customer-subsidiary-email?type=preview&customerId="+_cboCustomers.val()+'&accountId='+_cboAccounts.val()+'&startDate='+_date_from.val()+'&endDate='+_date_to.val(),
+                    "url":"Customer_Subsidiary/transaction/customer-subsidiary-email?type=preview&customerId="+_cboCustomers.val()+'&accountId='+_cboAccounts.val()+'&startDate='+_date_from.val()+'&endDate='+_date_to.val(),
                     "beforeSend": showSpinningProgress(btn)
                 }).done(function(response){
                     showNotification(response);

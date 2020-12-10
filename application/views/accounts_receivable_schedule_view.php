@@ -285,7 +285,7 @@
             });
 
             $(document).on('click','#btn_export',function(){
-                window.open('Templates/layout/account-receivable-schedule-export?type=preview&account_id='+_cboAccounts.select2('val')+'&date='+$('#txt_date').val());
+                window.open('Account_receivable_schedule/transaction/account-receivable-schedule-export?type=preview&account_id='+_cboAccounts.select2('val')+'&date='+$('#txt_date').val());
 
             });
 
@@ -297,7 +297,7 @@
                 $.ajax({
                     "dataType":"json",
                     "type":"POST",
-                    "url":"Templates/layout/account-receivable-schedule-email?type=preview&account_id="+_cboAccounts.select2('val')+'&date='+$('#txt_date').val(),
+                    "url":"Account_receivable_schedule/transaction/account-receivable-schedule-email?type=preview&account_id="+_cboAccounts.select2('val')+'&date='+$('#txt_date').val(),
                     "beforeSend": showSpinningProgress(btn)
                 }).done(function(response){
                     showNotification(response);

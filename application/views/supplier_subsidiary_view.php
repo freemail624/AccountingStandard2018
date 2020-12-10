@@ -264,7 +264,7 @@
             });
 
             $(document).on('click','#btn_export',function(){
-                window.open('Templates/layout/supplier-subsidiary-export?type=preview&supplierId='+_cboSuppliers.val()+'&accountId='+_cboAccounts.val()+'&startDate='+_date_from.val()+'&endDate='+_date_to.val());
+                window.open('Supplier_Subsidiary/transaction/supplier-subsidiary-export?type=preview&supplierId='+_cboSuppliers.val()+'&accountId='+_cboAccounts.val()+'&startDate='+_date_from.val()+'&endDate='+_date_to.val());
 
             });
 
@@ -276,7 +276,7 @@
                 $.ajax({
                     "dataType":"json",
                     "type":"POST",
-                    "url":'Templates/layout/supplier-subsidiary-email?type=preview&supplierId='+_cboSuppliers.val()+'&accountId='+_cboAccounts.val()+'&startDate='+_date_from.val()+'&endDate='+_date_to.val(),
+                    "url":'Supplier_Subsidiary/transaction/supplier-subsidiary-email?type=preview&supplierId='+_cboSuppliers.val()+'&accountId='+_cboAccounts.val()+'&startDate='+_date_from.val()+'&endDate='+_date_to.val(),
                     "beforeSend": showSpinningProgress(btn)
                 }).done(function(response){
                     showNotification(response);

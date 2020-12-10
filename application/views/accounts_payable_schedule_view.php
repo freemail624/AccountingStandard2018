@@ -310,7 +310,7 @@
             });
 
             $(document).on('click','#btn_export',function(){
-                window.open('Templates/layout/account-payable-schedule-export?type=preview&account_id='+_cboAccounts.select2('val')+'&date='+$('#txt_date').val());
+                window.open('Account_payable_schedule/transaction/account-payable-schedule-export?type=preview&account_id='+_cboAccounts.select2('val')+'&date='+$('#txt_date').val());
             });
 
             $(document).on('click','#btn_email',function(){
@@ -321,7 +321,7 @@
                 $.ajax({
                     "dataType":"json",
                     "type":"POST",
-                    "url":'Templates/layout/account-payable-schedule-email?type=preview&account_id='+_cboAccounts.select2('val')+'&date='+$('#txt_date').val(),
+                    "url":'Account_payable_schedule/transaction/account-payable-schedule-email?type=preview&account_id='+_cboAccounts.select2('val')+'&date='+$('#txt_date').val(),
                     "beforeSend": showSpinningProgress(btn)
                 }).done(function(response){
                     showNotification(response);

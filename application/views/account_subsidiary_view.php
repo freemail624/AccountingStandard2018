@@ -268,7 +268,7 @@
             });
 
             $(document).on('click','#btn_export',function(){
-                window.open('Templates/layout/export-account-subsidiary?type=preview&accountId='+_cboAccounts.val()+'&startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&includeChild='+_cboOptions.val());
+                window.open('Account_Subsidiary/transaction/export-account-subsidiary?type=preview&accountId='+_cboAccounts.val()+'&startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&includeChild='+_cboOptions.val());
 
             });
 
@@ -280,7 +280,7 @@
                 $.ajax({
                     "dataType":"json",
                     "type":"POST",
-                    "url":"Templates/layout/email-account-subsidiary?type=preview&accountId="+_cboAccounts.val()+'&startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&includeChild='+_cboOptions.val(),
+                    "url":"Account_Subsidiary/transaction/email-account-subsidiary?type=preview&accountId="+_cboAccounts.val()+'&startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&includeChild='+_cboOptions.val(),
                     "beforeSend": showSpinningProgress(btn)
                 }).done(function(response){
                     showNotification(response);
@@ -342,6 +342,7 @@
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
                 "bPaginate":false,
+                "order": [[ 1, "asc" ]],
                 "ajax": {
                     "url": "Account_Subsidiary/transaction/get-account-subsidiary",
                     "type": "GET",
