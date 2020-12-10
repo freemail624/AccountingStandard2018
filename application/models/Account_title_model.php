@@ -208,9 +208,12 @@ function restore_default_account_title(){
           GROUP BY at.account_id) as main
           ON main.account_id = act.account_id
 
-          LEFT JOIN account_classes as ac ON act.account_class_id=ac.account_class_id";
+          LEFT JOIN account_classes as ac ON act.account_class_id=ac.account_class_id
 
-            return $this->db->query($sql)->result();
+          WHERE act.is_deleted = FALSE AND act.is_active = TRUE
+          ORDER BY act.account_no ASC";
+        
+        return $this->db->query($sql)->result();
     }
 
 

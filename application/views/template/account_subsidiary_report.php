@@ -73,6 +73,7 @@
     <table width="100%" border="1" cellspacing="-1">
     	<thead>
             <tr>
+                <th style="border: 1px solid black;text-align: center;height: 30px;padding: 6px;">Book</th>
                 <th style="border: 1px solid black;text-align: center;height: 30px;padding: 6px;">Txn Date</th>
                 <th style="border: 1px solid black;text-align: center;height: 30px;padding: 6px;">Txn #</th>
                 <th style="border: 1px solid black;text-align: center;height: 30px;padding: 6px;">Particular</th>
@@ -88,6 +89,7 @@
         <tbody>
         	<?php foreach($supplier_subsidiary as $items) { ?>
         	<tr>
+                <td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->book_type; ?></td>
         		<td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->date_txn; ?></td>
         		<td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->txn_no; ?></td>
                 <td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->particular; ?></td>

@@ -31,11 +31,11 @@
             float: left;
         }
 
-        td:nth-child(8),td:nth-child(9){
+        td:nth-child(9),td:nth-child(10){
             text-align: right;
         }
 
-        td:nth-child(10){
+        td:nth-child(11){
             text-align: right;
             font-weight: bolder;
         }
@@ -59,7 +59,7 @@
 
                     <ol class="breadcrumb" style="margin-bottom: 0px;">
                         <li><a href="dashboard">Dashboard</a></li>
-                        <li><a href="Account_receivable_schedule">Accounts Receivable Schedule</a></li>
+                        <li><a href="Account_Subsidiary">Account Subsidiary</a></li>
                     </ol>
 
                     <div class="container-fluid">
@@ -126,6 +126,7 @@
                                                             <table id="tbl_account_subsidiary" class="table table-striped" cellspacing="0" width="100%">
                                                                 <thead class="">
                                                                 <tr>
+                                                                    <th width="5%">Book</th>
                                                                     <th>Date</th>
                                                                     <th>Txn #</th>
                                                                     <th>Account</th>
@@ -133,7 +134,6 @@
                                                                     <th>Particular</th>
                                                                     <th>TIN</th>
                                                                     <th>Memo</th>
-
                                                                     <th style="text-align: right">Debit</th>
                                                                     <th style="text-align: right">Credit</th>
                                                                     <th style="text-align: right">Balance</th>
@@ -356,29 +356,30 @@
                     }
                 },
                 "columns": [
-                    { targets:[0],data: "date_txn" },
-                    { targets:[1],data: "txn_no" },
-                    { targets:[2],data: "account_title" },
-                    { targets:[3],data: "parent_title" },
-                    { targets:[4],data: "particular" },
-                    { targets:[5],data: "tin_no" },
-                    { targets:[6],data: "memo" },
+                    { targets:[0],data: "book_type" },
+                    { targets:[1],data: "date_txn" },
+                    { targets:[2],data: "txn_no" },
+                    { targets:[3],data: "account_title" },
+                    { targets:[4],data: "parent_title" },
+                    { targets:[5],data: "particular" },
+                    { targets:[6],data: "tin_no" },
+                    { targets:[7],data: "memo" },
 
 
                     {
-                        targets:[7],data: "debit",
+                        targets:[8],data: "debit",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }
                     },
                     {
-                        targets:[8],data: "credit",
+                        targets:[9],data: "credit",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }
                     },
                     {
-                        targets:[9],data: "balance",
+                        targets:[10],data: "balance",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }}
