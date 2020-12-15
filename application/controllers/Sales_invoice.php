@@ -25,6 +25,7 @@ class Sales_invoice extends CORE_Controller
         $this->load->model('Customer_type_model');
         $this->load->model('Order_source_model');
         $this->load->model('Loading_model');
+        $this->load->model('Agent_model');
         $this->load->model('Account_integration_model');
 
 
@@ -79,7 +80,7 @@ class Sales_invoice extends CORE_Controller
 
         $data['tax_percentage']=(count($tax_rate)>0?$tax_rate[0]->tax_rate:0);
         $data['company']=$this->Company_model->getDefaultRemarks()[0];
-
+        $data['agents']=$this->Agent_model->get_list(array('is_deleted'=>FALSE));
         $data['invoice_counter']=$this->Invoice_counter_model->get_list(array('user_id'=>$this->session->user_id));
         $data['order_sources'] = $this->Order_source_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
         $data['accounts']=$this->Account_integration_model->get_list(1);
@@ -250,6 +251,7 @@ class Sales_invoice extends CORE_Controller
                 $m_invoice->customer_id=$this->input->post('customer',TRUE);
                 $m_invoice->salesperson_id=$this->input->post('salesperson_id',TRUE);
                 $m_invoice->department_id=$this->input->post('department',TRUE);
+                $m_invoice->agent_id=$this->input->post('agent_id',TRUE);
                 $m_invoice->issue_to_department=$this->input->post('issue_to_department',TRUE);
                 $m_invoice->address=$this->input->post('address',TRUE);
                 $m_invoice->sales_order_id=$sales_order_id;
@@ -394,6 +396,7 @@ class Sales_invoice extends CORE_Controller
                     $m_invoice->customer_type_id=$this->input->post('customer_type_id',TRUE);
                     $m_invoice->customer_id=$this->input->post('customer',TRUE);
                     $m_invoice->department_id=$this->input->post('department',TRUE);
+                    $m_invoice->agent_id=$this->input->post('agent_id',TRUE);
                     $m_invoice->remarks=$this->input->post('remarks',TRUE);
                     //$m_invoice->terms=$this->input->post('terms',TRUE);
                     $m_invoice->customer_id=$this->input->post('customer',TRUE);
@@ -761,6 +764,7 @@ class Sales_invoice extends CORE_Controller
                 'sales_invoice.inv_type',
                 'sales_invoice.contact_person',
                 'sales_invoice.customer_type_id',
+                'sales_invoice.agent_id',
                 'sales_invoice.order_source_id',
                 'sales_invoice.for_dispatching',
                 'sales_invoice.is_journal_posted',

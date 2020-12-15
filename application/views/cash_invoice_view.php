@@ -308,7 +308,7 @@
                             <th width="10%">UM</th> <!-- 10% -->
                             <th width="25%">Item</th> <!-- 25% -->
                             <th width="15%" style="text-align: right;">Unit Price</th> <!-- 15% -->
-                            <th width="10%" style="text-align: right;">Discount % </th>
+                            <th width="10%" style="text-align: right;">Discount</th>
                             <!-- DISPLAY NONE  -->
                             <th style="display:none;"" width="10%">Total Discount</th> <!-- total discount -->
                             <th style="display: none;" width="10%">Tax %</th>
@@ -349,8 +349,8 @@
                             <tr>
                                 <td colspan="8" style="height: 50px;">&nbsp;</td>
                             </tr>
-                            <tr>
-                                <td style="text-align: right;">Discount %:</td>
+                            <tr class="hidden">
+                                <td style="text-align: right;">Discount:</td>
                                 <td align="right" colspan="1" id="" color="red">
                                 <input id="txt_overall_discount" name="total_overall_discount" type="text" class="numeric form-control" value="0.00" />
                                 <input type="hidden" id="txt_overall_discount_amount" name="total_overall_discount_amount" class="numeric form-control" value="0.00" readonly></td>
@@ -363,9 +363,12 @@
                                 <td></td>
                             </tr>
                             <tr>
-                                <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
-                                <td align="right" colspan="2" id="td_tax" color="red">0.00</td>
-                                <td colspan="2"  style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
+                                <td colspan="2" style="text-align: right;" class="hidden"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
+                                <td align="right" colspan="2" id="td_tax" color="red" class="hidden">0.00</td>
+                                <td colspan="6"  style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Amount :</strong></td>
+
+                                <!-- <td colspan="6"  style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td> -->
+
                                 <td align="right" colspan="1" id="td_after_tax" color="red">0.00</td>
                                 <td></td>
                             </tr>
@@ -1349,14 +1352,17 @@ $(document).ready(function(){
                  clearFields($('#frm_customer_new'));
                 _cboCustomerTypeCreate.select2('val',0);
                 _cboCustomerType.select2('val',0);
-                _cboCustomers.select2('val',null)
+                _cboCustomers.select2('val',null);
+
                 $('#modal_new_customer').modal('show');
+            }else{
+                var obj_customers=$('#cbo_customers').find('option[value="' + i + '"]');
+                $('#txt_address').val(obj_customers.data('address'));
+                $('#contact_person').val(obj_customers.data('contact'));
+                $('#cbo_customer_type').select2('val',obj_customers.data('customer_type'));
+                $('#typeaheadsearch').focus();
             }
-            var obj_customers=$('#cbo_customers').find('option[value="' + i + '"]');
-            $('#txt_address').val(obj_customers.data('address'));
-            $('#contact_person').val(obj_customers.data('contact'));
-            $('#cbo_customer_type').select2('val',obj_customers.data('customer_type'));
-            if(i==0){ _cboCustomerType.select2('val',0); }
+            
         });
         $('#btn_create_salesperson').click(function(){
             var btn=$(this);
@@ -1502,7 +1508,7 @@ $(document).ready(function(){
             clearFields($('#div_cash_invoice_fields'));
             $('#span_invoice_no').html('CI-INV-YYYYMMDD-XX');
             showList(false);
-
+            // $('#cbo_customers').select2('open');
             $('#tbl_items > tbody').html('');
             $('#cbo_departments').select2('val', $('#cbo_departments').data('default'));
             $('#cbo_department').select2('val', null);
@@ -1538,6 +1544,7 @@ $(document).ready(function(){
             /*$('#cbo_prodType').select2('val', 3);
             $('#cboLookupPrice').select2('val', 1);*/
             reComputeTotal(); //this is to make sure, display summary are recomputed as 0
+            $('#typeaheadsearch').focus();
         });
         $('#tbl_so_list > tbody').on('click','button[name="accept_so"]',function(){
             _selectRowObj=$(this).closest('tr');
@@ -1862,14 +1869,15 @@ $(document).ready(function(){
             var discount=parseFloat(accounting.unformat(row.find(oTableItems.discount).find('input.numeric').val()));
             var qty=parseFloat(accounting.unformat(row.find(oTableItems.qty).find('input.numeric').val()));
             var tax_rate=parseFloat(accounting.unformat(row.find(oTableItems.tax).find('input.numeric').val()))/100;
+            // var gross=parseFloat(accounting.unformat(row.find(oTableItems.gross).find('input.numeric').val()));
+            
             if(discount>price){
                 showNotification({title:"Invalid",stat:"error",msg:"Discount must not greater than unit price."});
                 row.find(oTableItems.discount).find('input.numeric').val('0.00');
-                //$(this).trigger('keyup');
-                //return;
+                row.find(oTableItems.discount).find('input.numeric').select();
+                $(this).trigger('keyup');
+                return;
             }
-
-
 
             // var discounted_price=price-discount;
             // var line_total_discount=discount*qty;
@@ -1877,7 +1885,8 @@ $(document).ready(function(){
 
 
             var line_total = price*qty; //ok not included in the output (view) and not saved in the database
-            var line_total_discount=line_total*(discount/100);  
+            var line_total_discount=discount*qty;  
+            // var line_total_discount=line_total*(discount/100);
             var net_vat=line_total/(1+tax_rate);
             var vat_input=line_total-net_vat;
             var new_line_total=line_total-line_total_discount; 
@@ -1893,7 +1902,17 @@ $(document).ready(function(){
         });
 
         $('#tbl_items tbody').on('keypress','input.qty',function(){
+            var row=$(this).closest('tr');
+            row.find(oTableItems.discount).find('input.numeric').focus();
+            row.find(oTableItems.discount).find('input.numeric').select();
+        });
+
+        $('#tbl_items tbody').on('keypress','input.discount',function(){
             $('#typeaheadsearch').focus();
+        });        
+
+        $('#tbl_items tbody').on('focus','input.numeric',function(){
+            $(this).select();
         });
 
         $('#btn_yes').click(function(){
@@ -2175,7 +2194,7 @@ $(document).ready(function(){
         '<td ><input name="inv_qty[]" type="text" class="numeric form-control trigger-keyup qty" value="'+accounting.formatNumber(d.inv_qty,2)+'"></td>'+unit+
         '<td ">'+d.product_desc+'<input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
         '<td ><input name="inv_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.inv_price,2)+'" style="text-align:right;"></td>'+
-        '<td  style=""><input name="inv_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_discount,2)+'" style="text-align:right;"></td>'+
+        '<td  style=""><input name="inv_discount[]" type="text" class="numeric form-control discount" value="'+ accounting.formatNumber(d.inv_discount,2)+'" style="text-align:right;"></td>'+
         // DISPLAY NONE
         '<td style="display:none;" ><input name="inv_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_line_total_discount,2)+'" readonly></td>'+
         '<td  style="display:none;"><input name="inv_tax_rate[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_tax_rate,2)+'"></td>'+

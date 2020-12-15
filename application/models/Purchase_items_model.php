@@ -19,9 +19,12 @@ class Purchase_items_model extends CORE_Model {
             FROM
                 (SELECT 
                     n.*,
-                    ((n.po_price * n.po_qty) - ((n.po_price * n.po_qty) * (n.po_discount / 100))) AS po_line_total,
-                    ((n.po_price * n.po_qty)*(n.po_discount/100)) AS po_line_total_discount, /* after line discount*/
+                    ((n.po_price * n.po_qty) - (n.po_discount * n.po_qty)) AS po_line_total,
+                    (n.po_discount * n.po_qty) AS po_line_total_discount, /* after line discount*/
                     (n.total_overall_discount / 100) as global_percentage /* we still need to compute global discount*/
+
+                    -- ((n.po_price * n.po_qty) - ((n.po_price * n.po_qty) * (n.po_discount / 100))) AS po_line_total,
+                    -- ((n.po_price * n.po_qty)*(n.po_discount/100)) AS po_line_total_discount, /* after line discount*/
                 FROM
                     (SELECT 
                     main.*,

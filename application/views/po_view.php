@@ -302,7 +302,7 @@
                         <th width="10%">UM</th>
                         <th width="15%">Item</th>
                         <th width="10%" style="text-align: right;">Unit Price</th>
-                        <th width="10%" style="text-align: right;">Discount(%)</th>
+                        <th width="10%" style="text-align: right;">Discount</th>
 
                         <th style="display: none;" width="5%">T.D</th> <!-- total discount -->
                         <th style="display: none;" width="5%">Tax %</th>
@@ -325,7 +325,7 @@
                     <tr>
                         <td colspan="7" style="height: 20px;">&nbsp;</td>
                     </tr>
-                    <tr>
+                    <tr class="hidden">
                         <td colspan="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount (%) :</strong></td>
                         <td align="right" colspan="1" id="" color="red">
                             <input id="txt_overall_discount" name="total_overall_discount" type="text" class="numeric form-control" value="0.00" />
@@ -337,9 +337,12 @@
                         <td align="right" colspan="2" id="td_before_tax" color="red">0.00</td>
                     </tr>
                     <tr>
-                        <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
-                        <td align="right" colspan="1" id="td_tax" color="red">0.00</td>
-                        <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
+                        <td class="hidden" colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
+                        <td class="hidden" align="right" colspan="1" id="td_tax" color="red">0.00</td>
+<!--                         <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td> -->
+
+                        <td colspan="6" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Amount :</strong></td>
+
                         <td align="right" colspan="2" id="td_after_tax" color="red">0.00</td>
                     </tr>
                     </tfoot>
@@ -1091,7 +1094,8 @@ $(document).ready(function(){
             reInitializeNumeric();
             reComputeTotal();
 
-
+            $('.qty').focus();
+            $('.qty').select();
         });
 
         $('div.tt-menu').on('click','table.tt-suggestion',function(){
@@ -1219,6 +1223,7 @@ $(document).ready(function(){
                     }
             }).always(function(){  });
             showList(false);
+            $('#cbo_suppliers').select2('open');
         });
          $('#refreshproducts').click(function(){
             getproduct().done(function(data){
@@ -1442,15 +1447,20 @@ $(document).ready(function(){
             var qty=parseFloat(accounting.unformat(row.find(oTableItems.qty).find('input.numeric').val()));
             var tax_rate=parseFloat(accounting.unformat(row.find(oTableItems.tax).find('input.numeric').val()))/100;
 
-            // if(discount>price){
-            //     showNotification({title:"Invalid",stat:"error",msg:"Discount must not greater than unit price."});
-            //     row.find(oTableItems.discount).find('input.numeric').val('0.00');
-            // }
+            if(discount>price){
+                showNotification({title:"Invalid",stat:"error",msg:"Discount must not greater than unit price."});
+                row.find(oTableItems.discount).find('input.numeric').val('0.00');
+                row.find(oTableItems.discount).find('input.numeric').select();
+                $(this).trigger('keyup');
+                return;
+            }
+
             var global_discount = $('#txt_overall_discount').val();
             var discounted_price=price-discount;
             var line_total_discount=discount*qty;
+            // var line_total_discount=line_total*(discount/100);
             var line_total=price*qty;
-            var new_discount_price=line_total*(discount/100);
+            var new_discount_price=discount*qty;
             var new_line_total=line_total-new_discount_price;
             var total_after_global = new_line_total-(new_line_total*(global_discount/100));
             var net_vat=total_after_global/(1+tax_rate);
@@ -1468,12 +1478,20 @@ $(document).ready(function(){
 
         });
 
+        $('#tbl_items tbody').on('keypress','input.qty',function(){
+            var row=$(this).closest('tr');
+            row.find(oTableItems.discount).find('input.numeric').focus();
+            row.find(oTableItems.discount).find('input.numeric').select();
+        });
 
+        $('#tbl_items tbody').on('keypress','input.discount',function(){
+            $('#typeaheadsearch').focus();
+        });        
 
-
-
-
-
+        $('#tbl_items tbody').on('focus','input.numeric',function(){
+            $(this).select();
+        });
+        
         $('#btn_yes').click(function(){
             //var d=dt.row(_selectRowObj).data();
             //if(getFloat(d.order_status_id)>1){
@@ -1787,10 +1805,10 @@ $(document).ready(function(){
             unit  = '<td ><select class="line_unit'+d.a+'" name="unit_id[]" ><option value="'+d.parent_unit_id+'" data-unit-identifier="1" '+parent+'>'+d.parent_unit_name+'</option></select></td>';
         }
         return '<tr>'+
-        '<td ><input name="po_qty[]" type="text" class="numeric form-control number-keyup" value="'+ d.po_qty+'"></td>'+unit+'<td >'+d.product_desc+' <input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
+        '<td ><input name="po_qty[]" type="text" class="numeric form-control number-keyup qty" value="'+ d.po_qty+'"></td>'+unit+'<td >'+d.product_desc+' <input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
 
         '<td ><input name="po_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.po_price,2)+'" style="text-align:right;"></td>'+
-        '<td ><input name="po_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.po_discount,2)+'" style="text-align:right;"></td>'+
+        '<td ><input name="po_discount[]" type="text" class="numeric form-control discount" value="'+ accounting.formatNumber(d.po_discount,2)+'" style="text-align:right;"></td>'+
         //display:none;
         '<td style="display: none;" ><input name="po_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.po_line_total_discount,2)+'" readonly></td>'+
         '<td style="display: none;"><input name="po_tax_rate[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.po_tax_rate,2)+'"></td>'+
@@ -1874,6 +1892,9 @@ $(document).ready(function(){
         }else{
             var obj_supplier=$('#cbo_suppliers').find('option[value="'+i+'"]');
             _cboTaxType.select2('val',obj_supplier.data('tax-type')); //set tax type base on selected Supplier
+
+            $('#typeaheadsearch').focus();
+
         }
 
 

@@ -961,7 +961,7 @@
                         </div>
                         <div class="modal-footer">
                             <button id="btn_save_brand" class="btn btn-primary">Save</button>
-                            <button id="btn_cancel_brand" class="btn btn-default">Cancel</button>
+                            <button id="btn_cancel_brand" class="btn btn-default" data-dismiss="modal">Cancel</button>
                         </div>
                     </div>
                 </div>
@@ -1346,7 +1346,29 @@ $(document).ready(function(){
                 // $('#modal_create_product').modal('toggle');
                 //clearFieldsModal($('#frm_category_group'));
                 clearFieldsCategory($('#frm_category_group'));
-            }
+            }else{
+
+                // if(_txnMode=="new"){
+                    if ($(this).val() != 0 || $(this).val() != ""){
+                        getAccount($(this).val(),1).done(function(response){
+                            var row = response.data[0];
+                            if(response.data.length > 0){ $('#income_account_id').select2('val',row.account_id); }
+                        });
+                        getAccount($(this).val(),2).done(function(response){
+                            var row = response.data[0];
+                            if(response.data.length > 0){ $('#expense_account_id').select2('val',row.account_id); }
+                        });
+                        getAccount($(this).val(),3).done(function(response){
+                            var row = response.data[0];
+                            if(response.data.length > 0){ $('#cos_account_id').select2('val',row.account_id); }
+                        });
+                        getAccount($(this).val(),4).done(function(response){
+                            var row = response.data[0];
+                            if(response.data.length > 0){ $('#sales_return_account_id').select2('val',row.account_id); }
+                        });                    
+                    }
+                // }
+            }   
         });
 
         // $('#parent_id').on("change", function () {
@@ -2150,6 +2172,15 @@ $('#is_nonsalable').prop("checked") ?  _data.push({name : "is_nonsalable" , valu
             "data":{product_id : _selectedID}
         });
     };
+
+    var getAccount=function(id,type){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Products/transaction/get-account",
+            "data":{category_id : id, type_id : type}
+        });
+    };    
 
     var showList=function(b){
         if(b){

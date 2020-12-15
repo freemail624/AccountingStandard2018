@@ -131,6 +131,16 @@ function restore_default_account_title(){
         return $this->db->query($sql)->result();
     }
 
+    function get_product_account($category_id,$category_type_id){
+        $sql="SELECT at.*, ct.selector FROM account_titles at
+          LEFT JOIN category_type ct ON ct.category_type_id = at.category_type_id
+          WHERE at.is_deleted = FALSE AND at.is_active = TRUE
+          AND at.category_id = $category_id
+          AND at.category_type_id = $category_type_id
+          LIMIT 1
+          ";
+        return $this->db->query($sql)->result();
+    }
 
     // function get_account_titles_balance($start=null,$end=null){
     //     $sql="SELECT

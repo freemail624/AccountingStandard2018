@@ -102,6 +102,7 @@
                                                                 <!-- <th>Acronym Name</th> -->
                                                                 <th>Code</th>
                                                                 <th>Agent</th>
+                                                                <th>Truck #</th>
                                                                 <th><center>Action</center></th>
                                                             </tr>
                                                             </thead>
@@ -203,9 +204,17 @@
                                             </div>
                                             <div class="col-xs-12" style="margin-top: 5px;">
                                                 <div class="form-group">
-                                                    <label class="col-xs-12 col-md-4 control-label "><strong><font color="red">*</font> Agent Name :</strong></label>
+                                                    <label class="col-xs-12 col-md-4 control-label "><strong><font color="red">*</font> Truck # :</strong></label>
                                                     <div class="col-xs-12 col-md-8">
-                                                        <input type="text" name="agent_name" class="form-control" placeholder="Agent Name" data-error-msg="Agent Name is required!" required>
+                                                        <input type="text" name="truck_no" class="form-control" placeholder="Truck #" data-error-msg="Truck # is required!" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12" style="margin-top: 5px;">
+                                                <div class="form-group">
+                                                    <label class="col-xs-12 col-md-4 control-label "><strong> Agent Name :</strong></label>
+                                                    <div class="col-xs-12 col-md-8">
+                                                        <input type="text" name="agent_name" class="form-control" placeholder="Agent Name" data-error-msg="Agent Name is required!">
                                                     </div>
                                                 </div>
                                             </div>
@@ -296,8 +305,9 @@
                 "columns": [
                     { targets:[0],data: "agent_code" },
                     { targets:[1],data: "agent_name" },
+                    { targets:[2],data: "truck_no" },
                     {
-                        targets:[2],
+                        targets:[3],
                         render: function (data, type, full, meta){
                             var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                             var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';

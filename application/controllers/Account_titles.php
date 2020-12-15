@@ -7,6 +7,8 @@ class Account_titles extends CORE_Controller
     function __construct() {
         parent::__construct('');
         $this->validate_session();
+        $this->load->model('Categories_model');
+        $this->load->model('Category_type_model');
         $this->load->model('Account_title_model');
         $this->load->model('Account_type_model');
         $this->load->model('Account_class_model');
@@ -33,6 +35,9 @@ class Account_titles extends CORE_Controller
         $data['types']=$this->Account_type_model->get_list(null,null,null,'account_types.account_type');
         $data['parents']=$this->Account_title_model->get_list(array('account_titles.is_active'=>TRUE,'account_titles.is_deleted'=>FALSE),null,null,'account_titles.account_title ASC');
         $data['accounts']=$this->get_account_hierarchy();
+        $data['categories']=$this->Categories_model->get_list(array('is_deleted'=>false));
+        $data['category_types']=$this->Category_type_model->get_list();
+
         (in_array('6-2',$this->session->user_rights)? 
         $this->load->view('account_titles_view', $data)
         :redirect(base_url('dashboard')));
@@ -64,7 +69,8 @@ class Account_titles extends CORE_Controller
                 $m_accounts=$this->Account_title_model;
                 $parent_account_id=(float)$this->input->post('parent_account',TRUE);
                 $account_no=$this->input->post('account_no',TRUE);
-
+                $category_id=$this->input->post('category_id',TRUE);
+                $category_type_id=$this->input->post('category_type_id',TRUE);
 
                 $m_accounts->begin();
 
@@ -75,6 +81,8 @@ class Account_titles extends CORE_Controller
                 $m_accounts->account_title=$this->input->post('account_title',TRUE);
                 $m_accounts->account_class_id=$this->input->post('account_class',TRUE);
                 $m_accounts->parent_account_id=$parent_account_id;
+                $m_accounts->category_id=$category_id;
+                $m_accounts->category_type_id=$category_type_id;
                 $m_accounts->save();
 
 
@@ -117,6 +125,8 @@ class Account_titles extends CORE_Controller
                 $account_no=$this->input->post('account_no',TRUE);
                 $account_id=$this->input->post('account_id',TRUE);
                 $account_class_id=$this->input->post('account_class',TRUE);
+                $category_id=$this->input->post('category_id',TRUE);
+                $category_type_id=$this->input->post('category_type_id',TRUE);
 
                 //******************************************************************************************************
                 //make sure, you cannot update parent account to its own child account
@@ -131,6 +141,8 @@ class Account_titles extends CORE_Controller
                 $m_accounts->account_title=$this->input->post('account_title',TRUE);
                 $m_accounts->account_class_id=$account_class_id;
                 $m_accounts->parent_account_id=$parent_account_id;
+                $m_accounts->category_id=$category_id;
+                $m_accounts->category_type_id=$category_type_id;
                 $m_accounts->modify($account_id);
 
 

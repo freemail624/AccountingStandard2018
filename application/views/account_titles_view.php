@@ -198,6 +198,44 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <br/>
+                                        <div class="form-group">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-10">
+                                                <h4><i class="fa fa-cog"></i> Product Settings <small>Account Linking</small></h4>
+                                                <hr>
+                                            </div>
+                                            <div class="col-md-1">
+                                            </div>
+                                        </div>                                        
+                                        <div class="form-group">
+                                            <label class="col-md-2 control-label"><strong>Category :</strong></label>
+                                            <div class="col-md-9">
+                                                <select name="category_id" id="cbo_category_id">
+                                                    <option value="new">[ Create New Category ]</option>
+                                                    <option value="0">None</option>
+                                                    <?php foreach($categories as $category){ ?>
+                                                        <option value="<?php echo $category->category_id; ?>"><?php echo $category->category_name; ?></option>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-md-2 control-label"><strong>Category Type:</strong></label>
+                                            <div class="col-md-9">
+                                                <select name="category_type_id" id="cbo_category_type_id">
+                                                    <option value="0">None</option>
+                                                    <?php foreach($category_types as $category_type){ ?>
+                                                        <option value="<?php echo $category_type->category_type_id; ?>"><?php echo $category_type->category_type; ?></option>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                        </div>
+
+
+
+                                        
                                         <br /><br /><br />
                                     </form>
                                 </div>
@@ -288,6 +326,41 @@
 </div><!---modal-->
 
 
+<div id="modal_new_category" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+    <div class="modal-dialog modal-md">
+        <div class="modal-content"><!---content-->
+            <div class="modal-header modal-erp">
+                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>New Category</h4>
+            </div>
+
+            <div class="modal-body" style="overflow:hidden;">
+                <form id="frm_category">
+                    <div class="form-group">
+                        <label><strong>* Category Name :</strong></label>
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <i class="fa fa-code"></i>
+                            </span>
+                            <input type="text" name="category_name" class="form-control" placeholder="Category Name" data-error-msg="Category Name is required." required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><strong>Description :</strong></label>
+                        <textarea name="category_desc" class="form-control" placeholder="Description"></textarea>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button id="btn_create_category" type="button" class="btn btn-primary"  style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span> Create</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
+            </div>
+        </div><!---content-->
+    </div>
+</div><!---modal-->
+
+
 
 
 
@@ -327,7 +400,7 @@
 
 <script>
 $(document).ready(function(){
-    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboClasses; var _cboParentAccounts; var zNodes; var setting; var _cboTypes;
+    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboClasses; var _cboParentAccounts; var zNodes; var setting; var _cboTypes; var _cboCategory; var _cboCategoryType;
 
 
     var reInitializeTreeView=function(){
@@ -422,6 +495,18 @@ $(document).ready(function(){
         });
         _cboClasses.select2('val',null);
 
+        _cboCategory=$("#cbo_category_id").select2({
+            placeholder: "Please select category.",
+            allowClear: false
+        });
+        _cboCategory.select2('val',0);
+
+        _cboCategoryType=$("#cbo_category_type_id").select2({
+            placeholder: "Please select type.",
+            allowClear: false
+        });
+        _cboCategoryType.select2('val',0);        
+
 
         _cboTypes=$("#cbo_account_type").select2({
             placeholder: "Please select classification.",
@@ -489,6 +574,8 @@ $(document).ready(function(){
             $('#account_description').val('');
             $('#account_no').val('');
             _cboClasses.select2('val',null);
+            _cboCategory.select2('val',0);
+            _cboCategoryType.select2('val',0);
             _cboTypes.select2('val',1);
             _cboParentAccounts.select2('val',0);
             showList(false);
@@ -535,6 +622,35 @@ $(document).ready(function(){
 
         });
 
+        $('#btn_create_category').click(function(){
+
+            var btn=$(this);
+
+            if(validateRequiredFields($('#frm_category'))){
+                var data=$('#frm_category').serializeArray();
+
+                $.ajax({
+                    "dataType":"json",
+                    "type":"POST",
+                    "url":"Categories/transaction/create",
+                    "data":data,
+                    "beforeSend" : function(){
+                        showSpinningProgress(btn);
+                    }
+                }).done(function(response){
+                    showNotification(response);
+                    $('#modal_new_category').modal('hide');
+
+                    var _class=response.row_added[0];
+                    $('#cbo_category_id').append('<option value="'+_class.category_id+'" selected>'+_class.category_name+'</option>');
+                    $('#cbo_category_id').select2('val',_class.category_id);
+
+                }).always(function(){
+                    showSpinningProgress(btn);
+                });
+            }
+        });
+
 
         $('#tbl_accounts tbody').on('click','button[name="edit_info"]',function(){
             ///alert("ddd");
@@ -554,6 +670,8 @@ $(document).ready(function(){
             });
 
             $('#cbo_account_class').select2('val',data.account_class_id);
+            $('#cbo_category_id').select2('val',data.category_id);
+            $('#cbo_category_type_id').select2('val',data.category_type_id);
             $('#cbo_parent_account').select2('val',data.parent_account_id);
 
 
@@ -594,6 +712,19 @@ $(document).ready(function(){
 
 
         });
+
+        _cboCategory.on("select2:select", function (e) {
+
+            var i=$(this).select2('val');
+
+            if(i=='new'){ //new category
+                _cboCategory.select2('val',0)
+                $('#modal_new_category').modal('show');
+                clearFields($('#modal_new_category').find('form'));
+            }
+
+
+        });        
 
 
 

@@ -27,8 +27,11 @@ ORIGINAL QUERY OF THE FUNCTION
                 (n.so_price*n.so_qty) as inv_gross,
                 (n.so_price*n.so_qty) as line_total,
                 ((n.so_price*n.so_qty)/(1+tax_rate_decimal))as non_tax_amount,
-                ((n.so_price*n.so_qty)-((n.so_price*n.so_qty)*(n.so_discount/100)))as so_line_total,
-                ((n.so_price*n.so_qty)*(n.so_discount/100)) as so_line_total_discount
+                ((n.so_price*n.so_qty)-(n.so_discount*n.so_qty))as so_line_total,
+                (n.so_discount*n.so_qty) as so_line_total_discount
+
+                -- ((n.so_price*n.so_qty)-((n.so_price*n.so_qty)*(n.so_discount/100)))as so_line_total,
+                -- ((n.so_price*n.so_qty)*(n.so_discount/100)) as so_line_total_discount,
 
             /* END OF EDIT FOR COMPUTATION FOR SALES ORDER AS BUTTON ACCEPT IS CLICKED */          
                 FROM

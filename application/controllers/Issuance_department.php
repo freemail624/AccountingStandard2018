@@ -14,6 +14,7 @@ class Issuance_department extends CORE_Controller
         $this->load->model('Refproduct_model');
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
+        $this->load->model('Account_integration_model');
 
     }
     public function index() {
@@ -32,7 +33,8 @@ class Issuance_department extends CORE_Controller
         $data['refproducts']=$this->Refproduct_model->get_list(
             'is_deleted=FALSE',null,null,'refproduct.refproduct_id'
         );
-
+        
+        $data['accounts']=$this->Account_integration_model->get_list(1);
         $data['title'] = 'Issuance to Department';
         (in_array('15-5',$this->session->user_rights)? 
         $this->load->view('issuance_department_view', $data)

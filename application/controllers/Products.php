@@ -54,7 +54,7 @@ class Products extends CORE_Controller
         $data['categories'] = $this->Categories_model->get_list(array('categories.is_deleted'=>FALSE));
         $data['units'] = $this->Units_model->get_list(array('units.is_deleted'=>FALSE));
         $data['item_types'] = $this->Item_type_model->get_list(array('item_types.is_deleted'=>FALSE));
-        $data['accounts'] = $this->Account_title_model->get_list('is_active= TRUE AND is_deleted = FALSE','account_id,account_title');
+        $data['accounts'] = $this->Account_title_model->get_list('is_active= TRUE AND is_deleted = FALSE');
         $data['tax_types']=$this->Tax_model->get_list(array('tax_types.is_deleted'=>FALSE));
         $data['brands']= $this->Brands_model->get_brand_list();
 
@@ -123,6 +123,13 @@ class Products extends CORE_Controller
                 }
 
                 $response['data'] = $this->response_rows($get);
+                echo json_encode($response);
+                break;
+
+            case 'get-account':
+                $category_id=$this->input->post('category_id', TRUE);
+                $category_type_id=$this->input->post('type_id', TRUE);
+                $response['data'] = $this->Account_title_model->get_product_account($category_id,$category_type_id);
                 echo json_encode($response);
                 break;
 

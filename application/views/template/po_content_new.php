@@ -107,7 +107,7 @@
 			<td style="padding: 6px;border-bottom: 1px solid gray;"><strong>UM</strong></td>
 			<td style="padding: 6px;border-bottom: 1px solid gray;"><strong>Qty</strong></td>
 			<td style="padding: 6px;border-bottom: 1px solid gray;"><strong>Unit Price</strong></td>
-            <td style="padding: 6px;border-bottom: 1px solid gray;"><strong>Discount (%)</strong></td>
+            <td style="padding: 6px;border-bottom: 1px solid gray;"><strong>Discount</strong></td>
 			<td style="padding: 6px;border-bottom: 1px solid gray;"><strong>Amount</strong></td>
 		</tr>
 		<?php foreach($po_items as $item){ ?>

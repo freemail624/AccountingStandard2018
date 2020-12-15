@@ -43,6 +43,7 @@ class Agent extends CORE_Controller {
                 $m_agent->set('date_created','NOW()');
                 $m_agent->agent_code=$this->input->post('agent_code',TRUE);
                 $m_agent->agent_name=$this->input->post('agent_name',TRUE);
+                $m_agent->truck_no=$this->input->post('truck_no',TRUE);
                 $m_agent->created_by_user=$this->session->user_id;
                 $m_agent->save();
 
@@ -98,6 +99,7 @@ class Agent extends CORE_Controller {
                 $m_agent->set('date_modified','NOW()');
                 $m_agent->agent_code=$this->input->post('agent_code',TRUE);
                 $m_agent->agent_name=$this->input->post('agent_name',TRUE);
+                $m_agent->truck_no=$this->input->post('truck_no',TRUE);
                 $m_agent->modified_by_user=$this->session->user_id;
                 $m_agent->modify($agent_id);
 

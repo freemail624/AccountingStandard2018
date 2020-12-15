@@ -195,7 +195,7 @@
                 <td style="width: 5%;"><strong>UM</strong></td>
                 <td style="width: 12%;text-align: right;"><strong>Price</strong></td>
                 <td style="width: 12%;text-align: right;"><strong>Gross</strong></td>
-                <td style="width: 12%;text-align: right;"><strong>Dicount % </strong></td>
+                <td style="width: 12%;text-align: right;"><strong>Discount </strong></td>
                 <td style="width: 12%;text-align: right;"><strong>Tax</strong></td>
                 <td style="width: 12%;text-align: right;"><strong>Net Total</strong></td>
             </tr>
@@ -213,7 +213,7 @@
                     <td><?php echo $item->unit_name; ?></td>
                     <td align="right"><?php echo number_format($item->inv_price,2); ?></td>
                     <td align="right"><?php echo number_format($item->inv_gross,2); ?></td>
-                    <td align="right"><?php echo number_format($item->inv_discount,2); ?> %</td>
+                    <td align="right"><?php echo number_format($item->inv_discount,2); ?></td>
                     <td align="right"><?php echo number_format($item->inv_tax_amount,2); ?></td>
                     <td align="right"><?php echo number_format($item->inv_line_total_price,2); ?></td>
                 </tr>

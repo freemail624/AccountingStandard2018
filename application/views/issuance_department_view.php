@@ -153,7 +153,7 @@ echo $_side_bar_navigation;
                     </div>
                     <div class="col-lg-4">
                         <b class="required">*</b> From Department : <br />
-                        <select name="from_department_id" id="cbo_departments" class="cbo_departments" data-error-msg="From Department is required." required>
+                        <select name="from_department_id" id="cbo_departments" data-default="<?php echo $accounts[0]->default_department_id; ?>" class="cbo_departments" data-error-msg="From Department is required." required>
                             <option value="0">[ Create New Department ]</option>
                             <?php foreach($departments as $department){ ?>
                             <option value="<?php echo $department->department_id; ?>" data-tax-type="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
@@ -177,7 +177,7 @@ echo $_side_bar_navigation;
                             <span class="input-group-addon">
                                 <i class="fa fa-code"></i>
                             </span>
-                            <input type="text" name="terms" class="form-control" required data-error-msg="Terms is required!">
+                            <input type="text" name="terms" id="terms" class="form-control" required data-error-msg="Terms is required!">
                         </div>
                     </div>
                     <div class="col-xs-12 col-lg-4">
@@ -588,10 +588,13 @@ dt_si = $('#tbl_si_list').DataTable({
                 suggestion: Handlebars.compile('<table class="tt-items"><tr><td width="20%" style="padding-left: 1%">{{product_code}}</td><td width="30%" align="left">{{product_desc}}</td><td width="20%" align="left">{{product_unit_name}}</td><td width="10%" align="right" style="padding-right: 2%;">{{purchase_cost}}</td></tr></table>')
             }
         }).on('keyup', this, function (event) {
+            if (_objTypeHead.typeahead('val') == '') {
+                return false;
+            }
             if (event.keyCode == 13) {
                 // $('.tt-suggestion:first').click();
-                _objTypeHead.typeahead('close');
-                _objTypeHead.typeahead('val','');
+                _objTypeHead.typeahead('close');           //     -- changed due to barcode scan not working
+                _objTypeHead.typeahead('val','');         //  -- changed due to barcode scan not working
             }
         }).bind('typeahead:select', function(ev, suggestion) {
             //console.log(suggestion);
@@ -661,7 +664,7 @@ dt_si = $('#tbl_si_list').DataTable({
             // if(suggestion.primary_unit == 1){ suggis_parent = 1;}else{ suggis_parent = 0;}
 
             suggis_parent = suggestion.is_parent;
-
+            changetxn ='active';
             $('#tbl_items > tbody').append(newRowItem({
                 issue_qty : "1",
                 product_code : suggestion.product_code,
@@ -689,13 +692,16 @@ dt_si = $('#tbl_si_list').DataTable({
                 a:a
  
             }));
-            changetxn ='active';
             _line_unit=$('.line_unit'+a).select2({
             minimumResultsForSearch: -1
             });
 
             reInitializeNumeric();
             reComputeTotal();
+
+            $('.qty').focus();
+            
+            return prodstat;   
             //alert("dd")
         });
         $('div.tt-menu').on('click','table.tt-suggestion',function(){
@@ -759,6 +765,8 @@ dt_si = $('#tbl_si_list').DataTable({
                 $(this).select2('val',null);
                 $('#modal_new_department').modal('show');
                 clearFields($('#modal_new_department').find('form'));
+            }else{
+                $('#terms').focus();
             }
         });
 
@@ -810,7 +818,7 @@ dt_si = $('#tbl_si_list').DataTable({
             $('#item_issuance_title').html('Record Item to Transfer');
             //$('.toggle-fullscreen').click();
             clearFields($('#frm_issuances'));
-            $('#cbo_departments').select2('val', null);
+            $('#cbo_departments').select2('val', $('#cbo_departments').data('default'));
             $('#cbo_departments_to').select2('val', null);
             $('#typeaheadsearch').val('');
             getproduct().done(function(data){
@@ -824,6 +832,7 @@ dt_si = $('#tbl_si_list').DataTable({
 
             }).always(function(){  });
             showList(false);
+            $('#cbo_departments_to').select2('open');
             reComputeTotal();
         });
         $('#btn_browse').click(function(event){
@@ -997,6 +1006,22 @@ dt_si = $('#tbl_si_list').DataTable({
             //console.log(net_vat);
             reComputeTotal();
         });
+
+        $('#tbl_items tbody').on('keypress','input.qty',function(){
+            $('#typeaheadsearch').focus();
+        });
+
+        $('#tbl_items tbody').on('focus','input.numeric',function(){
+            $(this).select();
+        });
+
+        $('#terms').on('keypress',function(evt){
+            if(evt.keyCode==13){
+                evt.preventDefault();
+                $('#typeaheadsearch').focus();
+            }
+        });
+
         $('#btn_yes').click(function(){
             //var d=dt.row(_selectRowObj).data();
             //if(getFloat(d.order_status_id)>1){
@@ -1200,10 +1225,10 @@ dt_si = $('#tbl_si_list').DataTable({
             unit  = '<td ><select class="line_unit'+d.a+'" name="unit_id[]" ><option value="'+d.parent_unit_id+'" data-unit-identifier="1" '+parent+'>'+d.parent_unit_name+'</option></select></td>';
         }
         return '<tr>'+
-        '<td width="10%"><input name="issue_qty[]" type="text" class="numeric form-control trigger-number" value="'+ d.issue_qty+'"></td>'+unit+
+        '<td width="10%"><input name="issue_qty[]" type="text" class="numeric form-control trigger-number qty" value="'+ d.issue_qty+'"></td>'+unit+
         '<td width="30%">'+d.product_desc+'<input type="text" style="display: none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
         '<td width="11%"><input name="issue_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.issue_price,2)+'" style="text-align:right;"></td>'+
-        '<td width="11%" style="display: none;"><input name="issue_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.issue_discount,2)+'" style="text-align:right;"></td>'+
+        '<td width="11%" style="display: none;"><input name="issue_discount[]" type="text" class="numeric form-control discount" value="'+ accounting.formatNumber(d.issue_discount,2)+'" style="text-align:right;"></td>'+
         '<td style="display: none;" width="11%"><input name="issue_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.issue_line_total_discount,2)+'" readonly></td>'+
         '<td width="11%" style="display: none;"><input name="issue_tax_rate[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.issue_tax_rate,2)+'"></td>'+
         '<td width="11%" align="right"><input name="issue_line_total_price[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.issue_line_total_price,2)+'" readonly></td>'+
