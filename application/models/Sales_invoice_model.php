@@ -62,7 +62,7 @@ class Sales_invoice_model extends CORE_Model
         return $this->db->query($sql)->result();
     }
 
-    function get_open_sales_invoice_list(){
+    function get_open_sales_invoice_list($agent_id){
         $sql="SELECT 
             si.*, c.customer_name, sii.total_inv_qty
         FROM
@@ -74,12 +74,13 @@ class Sales_invoice_model extends CORE_Model
                 FROM
                 sales_invoice_items
                 LEFT JOIN products p ON p.product_id = sales_invoice_items.product_id
-                WHERE p.category_id = (SELECT loading_category_id FROM account_integration)
+                WHERE p.is_basyo = TRUE
             GROUP BY sales_invoice_items.sales_invoice_id
             ) as sii ON sii.sales_invoice_id = si.sales_invoice_id
         WHERE
             si.is_deleted = FALSE
                 AND si.is_active = TRUE
+                AND si.agent_id = $agent_id
                 AND si.sales_invoice_id NOT IN (SELECT DISTINCT
                     li.invoice_id
                 FROM
@@ -110,59 +111,7 @@ $sql="SELECT main.* FROM(
             INNER JOIN products as p ON sii.product_id=p.product_id
             WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
             ) as acc_receivable GROUP BY acc_receivable.account_id
-
-            UNION ALL
             
-            SELECT acc_discount.account_id,acc_discount.memo,
-            0 as cr_amount,SUM(acc_discount.dr_amount) as dr_amount
-             FROM
-            (SELECT sii.product_id,
-
-            (SELECT receivable_discount_account_id FROM account_integration) as account_id
-            ,
-            '' as memo,
-            0 cr_amount,
-            SUM((sii.inv_line_total_price - sii.inv_line_total_after_global) + sii.inv_line_total_discount) as dr_amount
-
-            FROM `sales_invoice_items` as sii
-            INNER JOIN products as p ON sii.product_id=p.product_id
-            WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
-            ) as acc_discount GROUP BY acc_discount.account_id
-
-            UNION ALL
-
-
-            SELECT
-            p.income_account_id as account_id,
-            '' as memo,
-            SUM(sii.inv_non_tax_amount) cr_amount,
-            0 as dr_amount
-
-            FROM `sales_invoice_items` as sii
-            INNER JOIN products as p ON sii.product_id=p.product_id
-            WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
-            GROUP BY p.income_account_id
-
-            UNION ALL
-
-
-            SELECT output_tax.account_id,
-            output_tax.memo,
-            SUM(output_tax.cr_amount)as cr_amount,0 as dr_amount
-             FROM
-            (SELECT sii.product_id,
-
-            (SELECT output_tax_account_id FROM account_integration) as account_id
-            ,
-            '' as memo,
-            SUM(sii.inv_tax_amount) as cr_amount,
-            0 as dr_amount
-            FROM `sales_invoice_items` as sii
-            INNER JOIN products as p ON sii.product_id=p.product_id
-            WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
-            )as output_tax GROUP BY output_tax.account_id
-
-
             UNION ALL 
             
             SELECT 
@@ -176,6 +125,36 @@ $sql="SELECT main.* FROM(
             GROUP BY p.cos_account_id
 
             UNION ALL
+            
+            -- SELECT acc_discount.account_id,acc_discount.memo,
+            -- 0 as cr_amount,SUM(acc_discount.dr_amount) as dr_amount
+            --  FROM
+            -- (SELECT sii.product_id,
+
+            -- (SELECT receivable_discount_account_id FROM account_integration) as account_id
+            -- ,
+            -- '' as memo,
+            -- 0 cr_amount,
+            -- SUM((sii.inv_line_total_price - sii.inv_line_total_after_global) + sii.inv_line_total_discount) as dr_amount
+
+            -- FROM `sales_invoice_items` as sii
+            -- INNER JOIN products as p ON sii.product_id=p.product_id
+            -- WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
+            -- ) as acc_discount GROUP BY acc_discount.account_id
+
+
+            SELECT
+            p.sd_account_id as account_id,
+            '' as memo,
+            0 cr_amount,
+            SUM(sii.inv_qty*sii.inv_discount) as dr_amount
+
+            FROM `sales_invoice_items` as sii
+            INNER JOIN products as p ON sii.product_id=p.product_id
+            WHERE sii.sales_invoice_id=$sales_invoice_id AND p.sd_account_id>0
+            GROUP BY p.sd_account_id
+
+            UNION ALL
 
             SELECT
             p.expense_account_id as account_id,
@@ -187,6 +166,39 @@ $sql="SELECT main.* FROM(
             INNER JOIN products as p ON sii.product_id=p.product_id
             WHERE sii.sales_invoice_id=$sales_invoice_id AND p.expense_account_id>0
             GROUP BY p.expense_account_id
+
+            UNION ALL
+
+            SELECT
+            p.income_account_id as account_id,
+            '' as memo,
+            SUM(sii.inv_non_tax_amount) cr_amount,
+            0 as dr_amount
+
+            FROM `sales_invoice_items` as sii
+            INNER JOIN products as p ON sii.product_id=p.product_id
+            WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
+            GROUP BY p.income_account_id
+
+
+            UNION ALL
+
+            SELECT output_tax.account_id,
+            output_tax.memo,
+            SUM(output_tax.cr_amount)as cr_amount,
+            0 as dr_amount
+             FROM
+            (SELECT sii.product_id,
+
+            (SELECT output_tax_account_id FROM account_integration) as account_id
+            ,
+            '' as memo,
+            SUM(sii.inv_tax_amount) as cr_amount,
+            0 as dr_amount
+            FROM `sales_invoice_items` as sii
+            INNER JOIN products as p ON sii.product_id=p.product_id
+            WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
+            )as output_tax GROUP BY output_tax.account_id
 
 
             )as main WHERE main.dr_amount>0 OR main.cr_amount>0

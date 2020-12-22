@@ -49,6 +49,7 @@ ORIGINAL QUERY OF THE FUNCTION
                 p.child_unit_id,
                 p.child_unit_desc,
                 p.is_bulk,
+                p.is_basyo,
                 (CASE
                     WHEN p.is_parent = TRUE 
                         THEN p.bulk_unit_id
@@ -60,7 +61,8 @@ ORIGINAL QUERY OF THE FUNCTION
                     ELSE chldunit.unit_name
                 END) as product_unit_name,
                 (SELECT unit_name FROM units u WHERE u.unit_id = p.parent_unit_id) as parent_unit_name,
-                (SELECT unit_name FROM units u WHERE u.unit_id = p.child_unit_id) as child_unit_name
+                (SELECT unit_name FROM units u WHERE u.unit_id = p.child_unit_id) as child_unit_name,
+                (SELECT count(*) FROM account_integration WHERE basyo_product_id = p.product_id) as is_product_basyo
 
                  FROM
 

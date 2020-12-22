@@ -239,16 +239,16 @@ echo $_side_bar_navigation;
                                     <tr>
                                         <td colspan="6" style="height: 50px;">&nbsp;</td>
                                     </tr>
-                                    <tr>
+                                    <tr class="hidden">
                                         <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount :</strong></td>
                                         <td align="right" colspan="1" id="td_discount" color="red">0.00</td>
                                         <td colspan="2" id="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
                                         <td align="right" colspan="1" id="td_before_tax" color="red">0.00</td>
                                     </tr>
                                     <tr>
-                                        <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
-                                        <td align="right" colspan="1" id="td_tax" color="red">0.00</td>
-                                        <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
+                                        <td class="hidden" colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
+                                        <td class="hidden" align="right" colspan="1" id="td_tax" color="red">0.00</td>
+                                        <td colspan="5" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Amount :</strong></td>
                                         <td align="right" colspan="1" id="td_after_tax" color="red">0.00</td>
                                     </tr>
                                 </tfoot>
@@ -470,7 +470,9 @@ $(document).ready(function(){
                             tax_type_id : null,
                             issue_line_total_price : value.inv_line_total_price,
                             issue_non_tax_amount: value.inv_non_tax_amount,
-                            issue_tax_amount:value.inv_tax_amount
+                            issue_tax_amount:value.inv_tax_amount,
+                            is_basyo:value.is_basyo,
+                            is_product_basyo:value.is_product_basyo
                         }));
                     });
                     reComputeTotal();
@@ -664,9 +666,15 @@ dt_si = $('#tbl_si_list').DataTable({
             // if(suggestion.primary_unit == 1){ suggis_parent = 1;}else{ suggis_parent = 0;}
 
             suggis_parent = suggestion.is_parent;
+
+            var qty = 1;
+            if (suggestion.is_product_basyo == 1){
+                qty = TotalBasyo();
+            }
+
             changetxn ='active';
             $('#tbl_items > tbody').append(newRowItem({
-                issue_qty : "1",
+                issue_qty : qty,
                 product_code : suggestion.product_code,
                 product_id: suggestion.product_id,
                 product_desc : suggestion.product_desc,
@@ -688,8 +696,9 @@ dt_si = $('#tbl_si_list').DataTable({
                 parent_unit_name : suggestion.product_unit_name,
                 is_parent: suggis_parent ,// INITIALLY , UNIT USED IS THE PARENT , 1 for PARENT 0 for CHILD
                 primary_unit:suggestion.primary_unit,
-
-                a:a
+                a:a,
+                is_basyo:suggestion.is_basyo,
+                is_product_basyo:suggestion.is_product_basyo
  
             }));
             _line_unit=$('.line_unit'+a).select2({
@@ -701,7 +710,7 @@ dt_si = $('#tbl_si_list').DataTable({
 
             $('.qty').focus();
             
-            return prodstat;   
+            // return prodstat;   
             //alert("dd")
         });
         $('div.tt-menu').on('click','table.tt-suggestion',function(){
@@ -934,7 +943,9 @@ dt_si = $('#tbl_si_list').DataTable({
                             is_parent : value.is_parent,
                             bulk_price: value.purchase_cost,
                             retail_price: retail_price,
-                            a:a
+                            a:a,
+                            is_basyo:value.is_basyo,
+                            is_product_basyo:value.is_product_basyo
  
                         }));    
                             changetxn = 'inactive';
@@ -1004,11 +1015,19 @@ dt_si = $('#tbl_si_list').DataTable({
             $(oTableItems.net_vat,row).find('input.numeric').val(accounting.formatNumber(net_vat,2)); //net of vat
             $(oTableItems.vat_input,row).find('input.numeric').val(accounting.formatNumber(vat_input,2)); //vat input
             //console.log(net_vat);
+            if(accounting.unformat(row.find('.is_basyo').val()) == 1){
+                reComputeTotalBasyo();
+            }
+
             reComputeTotal();
         });
 
-        $('#tbl_items tbody').on('keypress','input.qty',function(){
-            $('#typeaheadsearch').focus();
+        $('#tbl_items tbody').on('keypress','input.qty',function(evt){
+            if(evt.keyCode==13){
+                evt.preventDefault();
+                reInitializeNumeric();
+                $('#typeaheadsearch').focus();
+            }
         });
 
         $('#tbl_items tbody').on('focus','input.numeric',function(){
@@ -1102,6 +1121,7 @@ dt_si = $('#tbl_si_list').DataTable({
         });
         $('#tbl_items > tbody').on('click','button[name="remove_item"]',function(){
             $(this).closest('tr').remove();
+            reComputeTotalBasyo();
             reComputeTotal();
         });
     })();
@@ -1226,7 +1246,7 @@ dt_si = $('#tbl_si_list').DataTable({
         }
         return '<tr>'+
         '<td width="10%"><input name="issue_qty[]" type="text" class="numeric form-control trigger-number qty" value="'+ d.issue_qty+'"></td>'+unit+
-        '<td width="30%">'+d.product_desc+'<input type="text" style="display: none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
+        '<td width="30%">'+d.product_desc+'<input type="text" style="display: none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"> <input type="text" class="hidden is_basyo" value="'+d.is_basyo+'"> <input type="text" class="hidden is_product_basyo" value="'+d.is_product_basyo+'"> </td>'+
         '<td width="11%"><input name="issue_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.issue_price,2)+'" style="text-align:right;"></td>'+
         '<td width="11%" style="display: none;"><input name="issue_discount[]" type="text" class="numeric form-control discount" value="'+ accounting.formatNumber(d.issue_discount,2)+'" style="text-align:right;"></td>'+
         '<td style="display: none;" width="11%"><input name="issue_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.issue_line_total_discount,2)+'" readonly></td>'+
@@ -1262,6 +1282,36 @@ dt_si = $('#tbl_si_list').DataTable({
         tbl_summary.find(oTableDetails.after_tax).html('<b>'+accounting.formatNumber(after_tax,2)+'</b>');
                
     };
+
+    var TotalBasyo=function(){
+        var rows=$('#tbl_items > tbody tr');
+        var total_basyo = 0;
+        var qty = 0;
+
+        $.each(rows,function(){
+            var is_basyo = $(this).find('.is_basyo').val();
+            if(is_basyo == 1){
+                qty=parseFloat(accounting.unformat($(oTableItems.qty,$(this)).find('input.numeric').val()));
+                total_basyo += qty;
+            }
+        });
+
+        return accounting.formatNumber(total_basyo,2);
+    };
+
+    var reComputeTotalBasyo=function(){
+        var total_basyo = TotalBasyo();
+
+        var basyo_rows=$('#tbl_items > tbody tr');
+        $.each(basyo_rows,function(){
+            var is_product_basyo = $(this).find('.is_product_basyo').val();
+            if(is_product_basyo == 1){
+                $(this).find('.qty').val(total_basyo);
+                $(this).find('.qty').trigger('keyup');
+            }
+        });
+    };
+
     var reInitializeNumeric=function(){
         $('.numeric').autoNumeric('init');
     };

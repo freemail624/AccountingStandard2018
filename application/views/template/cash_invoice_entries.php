@@ -144,10 +144,21 @@
                 <td class="bottom right" style="text-align: right;height: 30px;padding: 6px;"><?php echo number_format($info->total_overall_discount_amount,2); ?></td>
             </tr>
             <tr>
-                <td colspan="4" class="left bottom bottom" style="height: 30px;padding: 6px;">Date:</td>
+                <td colspan="4" class="left" style="height: 30px;padding: 6px;">Date:</td>
                 <td colspan="2" class="left bottom" style="text-align: left;height: 30px;padding: 6px;"><strong>Total:</strong></td>
                 <td class="bottom right" style="text-align: right;height: 30px;padding: 6px;"><strong><?php echo number_format($info->total_after_discount,2); ?></strong></td>
             </tr>
+            <tr>
+                <td colspan="4" class="left" style="height: 30px;padding: 6px;"></td>
+                <td colspan="2" class="left bottom" style="text-align: left;height: 30px;padding: 6px;"><strong>Tendered:</strong></td>
+                <td class="bottom right" style="text-align: right;height: 30px;padding: 6px;"><strong><?php echo number_format($info->total_tendered,2); ?></strong></td>
+            </tr>
+            <tr>
+                <td colspan="4" class="left bottom" style="height: 30px;padding: 6px;"></td>
+                <td colspan="2" class="left bottom" style="text-align: left;height: 30px;padding: 6px;"><strong>Change:</strong></td>
+                <td class="bottom right" style="text-align: right;height: 30px;padding: 6px;"><strong><?php echo number_format($info->total_change,2); ?></strong></td>
+            </tr>            
+
             </tfoot>
         </table><br /><br />
     </center>

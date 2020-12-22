@@ -16,10 +16,13 @@ class Loading_model extends CORE_Model{
         $sql="SELECT 
             loading.*,
             DATE_FORMAT(loading.loading_date,'%m/%d/%Y') as loading_date,
-            agent.agent_name
+            agent.agent_name,
+            CONCAT_WS(user.user_fname,user.user_mname,user.user_lname) as loaded_by,
+            user.journal_approved_by
         FROM
             loading
             LEFT JOIN agent ON agent.agent_id = loading.agent_id
+            LEFT JOIN user_accounts user ON user.user_id = loading.posted_by_user
         WHERE
             loading.is_deleted = FALSE AND loading.is_active = TRUE
             ".($loading_id==null?"":" AND loading.loading_id='".$loading_id."'")."
@@ -43,10 +46,7 @@ class Loading_model extends CORE_Model{
                         LEFT JOIN
                     loading_items li ON li.invoice_id = si.sales_invoice_id
                 WHERE
-                    p.category_id = (SELECT 
-                            loading_category_id
-                        FROM
-                            account_integration)
+                    p.is_basyo = TRUE
                         AND si.is_deleted = FALSE
                         AND si.is_active = TRUE
                         AND li.loading_id = l.loading_id
@@ -117,6 +117,7 @@ class Loading_model extends CORE_Model{
             LEFT JOIN products p ON p.product_id = sii.product_id
             LEFT JOIN categories c ON c.category_id = p.category_id
             WHERE l.loading_id = $loading_id
+            AND c.category_id > 0
             GROUP BY p.category_id
             ORDER BY c.category_name ASC";
         return $this->db->query($sql)->result();

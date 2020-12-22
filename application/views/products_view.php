@@ -312,6 +312,15 @@
 
                                                                 </div>
 
+                                                                    <div class="form-group" style="margin-bottom:0px; vertical-align: middle;text-align: left;"><br>
+                                                                    <label  for="is_tax_exempt" style="text-align: left;vertical-align: middle;"><input type="checkbox" name="is_tax_exempt" class="" id="is_tax_exempt" style="transform: scale(2.0);">  &nbsp;&nbsp;Tax Exempt ?</label>
+
+                                                                    <label  for="is_parent" style="text-align: left;vertical-align: middle;margin-left: 20px;">
+                                                                    <input type="checkbox" name="is_parent" class="" id="is_parent" style="transform: scale(2.0);">  &nbsp;&nbsp;Is Parent ?</label>
+
+                                                                    <label  for="is_nonsalable" style="text-align: left;float:right;vertical-align: middle;"><input type="checkbox" name="is_nonsalable" class="" id="is_nonsalable" style="transform: scale(2.0);">  &nbsp;&nbsp;Nonsalable ?</label>
+
+                                                                </div>
 
                                                         </div>
 
@@ -320,7 +329,7 @@
                                                         <div class="row">
                                                             <div class="col-lg-12">
                                                                 <div class="col-lg-6" style="margin:0px;">
-                                                            
+                                                                
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                     <label class="">Purchase Cost :</label>
                                                                     <div class="input-group">
@@ -339,6 +348,47 @@
                                                                                 <i class="fa fa-toggle-off"></i>
                                                                             </span>
                                                                         <input type="text" name="sale_price" id="sale_price" class="form-control numeric">
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    <label><b class="required elem_parent"></b> Bulk Unit :</label>
+                                                                    <select class="form-control" name="bulk_unit_id" id="bulk_unit_id" data-error-msg="Bulk Unit is required.">
+                                                                        <option value="unt">[ Create New Unit ]</option>
+                                                                        <?php foreach($units as $row) { ?>
+                                                                            <option value="<?php echo $row->unit_id; ?>">
+                                                                                <?php echo $row->unit_name; ?>
+                                                                            </option>
+                                                                        <?php }?>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    <label><b class="required elem_parent"></b> Bulk Conversion Rate: </label>
+                                                                    <div class="input-group">
+                                                                            <span class="input-group-addon">
+                                                                                <i class="fa fa-toggle-off"></i>
+                                                                            </span>
+                                                                        <input type="text" name="bulk_conversion_rate" id="bulk_conversion_rate" class="form-control numeric5" data-error-msg="Bulk conversion rate is required.">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    <label><b class="required elem_child"></b> Parent :</label>
+                                                                    <select class="form-control" name="parent_id" id="parent_id" data-error-msg="Parent Product is required.">
+                                                                        <option value="0">None</option>
+                                                                        <?php foreach($products as $product){ ?>
+                                                                            <option value="<?php echo $product->product_id; ?>">
+                                                                                <?php echo $product->product_desc; ?>
+                                                                            </option>
+                                                                        <?php }?>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    <label>Conversion Rate: </label>
+                                                                    <div class="input-group">
+                                                                            <span class="input-group-addon">
+                                                                                <i class="fa fa-toggle-off"></i>
+                                                                            </span>
+                                                                        <input type="text" name="conversion_rate" id="conversion_rate" class="form-control numeric5" data-error-msg="Conversion rate is required.">
                                                                     </div>
                                                                 </div>
 
@@ -386,32 +436,11 @@
                                                                     </div>
                                                                 </div>
 
-                                                                <div class="form-group" style="margin-bottom:0px;">
-                                                                    <label class="">Warning Quantity (Minimum Stock):</label>
-                                                                    <div class="input-group">
-                                                                            <span class="input-group-addon">
-                                                                                <i class="fa fa-toggle-off"></i>
-                                                                            </span>
-                                                                        <input type="text" name="product_warn" id="product_warn" class="form-control numeric">
-                                                                    </div>
-                                                                </div>
+                                                                
 
 
-                                                                <div class="form-group" style="margin-bottom:0px;">
-                                                                    <label class="">Ideal Quantity (Maximum Stock):</label>
-                                                                    <div class="input-group">
-                                                                            <span class="input-group-addon">
-                                                                                <i class="fa fa-toggle-off"></i>
-                                                                            </span>
-                                                                        <input type="text" name="product_ideal" id="product_ideal" class="form-control numeric">
-                                                                    </div>
-                                                                </div>
+                                                                
 
-
-                                                                <div class="form-group" style="margin-bottom:0px; vertical-align: middle;text-align: left;"><br>
-                                                                        <label  for="is_tax_exempt" style="text-align: left;vertical-align: middle;"><input type="checkbox" name="is_tax_exempt" class="" id="is_tax_exempt" style="transform: scale(2.0);">  &nbsp;&nbsp;Tax Exempt ?</label>
-
-                                                                </div>
 
                                                             </div>
 
@@ -467,53 +496,27 @@
                                                                     ?>
                                                                 </select> 
                                                             </div> -->
-                                                                <div class="form-group" style="margin-bottom:0px; vertical-align: middle;text-align: left;"><br>
-                                                                        <label  for="is_parent" style="text-align: left;vertical-align: middle;"><input type="checkbox" name="is_parent" class="" id="is_parent" style="transform: scale(2.0);">  &nbsp;&nbsp;Is Parent ?</label>
 
-
-                                                                        <label  for="is_nonsalable" style="text-align: left;float:right;vertical-align: middle;"><input type="checkbox" name="is_nonsalable" class="" id="is_nonsalable" style="transform: scale(2.0);">  &nbsp;&nbsp;Nonsalable ?</label>
-                                                                </div>
                                                                 <div class="form-group" style="margin-bottom:0px;">
-                                                                    <label><b class="required elem_parent"></b> Bulk Unit :</label>
-                                                                    <select class="form-control" name="bulk_unit_id" id="bulk_unit_id" data-error-msg="Bulk Unit is required.">
-                                                                        <option value="unt">[ Create New Unit ]</option>
-                                                                        <?php foreach($units as $row) { ?>
-                                                                            <option value="<?php echo $row->unit_id; ?>">
-                                                                                <?php echo $row->unit_name; ?>
-                                                                            </option>
-                                                                        <?php }?>
-                                                                    </select>
-                                                                </div>
-                                                                <div class="form-group" style="margin-bottom:0px;">
-                                                                    <label><b class="required elem_parent"></b> Bulk Conversion Rate: </label>
+                                                                    <label class="">Warning Quantity (Minimum Stock):</label>
                                                                     <div class="input-group">
                                                                             <span class="input-group-addon">
                                                                                 <i class="fa fa-toggle-off"></i>
                                                                             </span>
-                                                                        <input type="text" name="bulk_conversion_rate" id="bulk_conversion_rate" class="form-control numeric5" data-error-msg="Bulk conversion rate is required.">
+                                                                        <input type="text" name="product_warn" id="product_warn" class="form-control numeric">
                                                                     </div>
                                                                 </div>
+
+
                                                                 <div class="form-group" style="margin-bottom:0px;">
-                                                                    <label><b class="required elem_child"></b> Parent :</label>
-                                                                    <select class="form-control" name="parent_id" id="parent_id" data-error-msg="Parent Product is required.">
-                                                                        <option value="0">None</option>
-                                                                        <?php foreach($products as $product){ ?>
-                                                                            <option value="<?php echo $product->product_id; ?>">
-                                                                                <?php echo $product->product_desc; ?>
-                                                                            </option>
-                                                                        <?php }?>
-                                                                    </select>
-                                                                </div>
-                                                                <div class="form-group" style="margin-bottom:0px;">
-                                                                    <label>Conversion Rate: </label>
+                                                                    <label class="">Ideal Quantity (Maximum Stock):</label>
                                                                     <div class="input-group">
                                                                             <span class="input-group-addon">
                                                                                 <i class="fa fa-toggle-off"></i>
                                                                             </span>
-                                                                        <input type="text" name="conversion_rate" id="conversion_rate" class="form-control numeric5" data-error-msg="Conversion rate is required.">
+                                                                        <input type="text" name="product_ideal" id="product_ideal" class="form-control numeric">
                                                                     </div>
                                                                 </div>
-
 
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                             <label class="">Link to Credit Account (For Sales Journal):</label>
@@ -563,6 +566,44 @@
                                                                 </div>
 
 
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    <label class="">Sales Discount Account:</label>
+                                                                    <select name="sd_account_id" id="sd_account_id" data-error-msg="Link to sales discount account is required." required>
+                                                                        <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
+                                                                        <option value="0">None</option>
+                                                                        <?php foreach($accounts as $account){ ?>
+                                                                            <option value="<?php echo $account->account_id; ?>"><?php echo $account->account_title; ?></option>
+                                                                        <?php } ?>
+                                                                    </select>
+                                                                </div>
+
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                            <label class="">Purchase Return Account:</label>
+                                                                            <select name="po_return_account_id" id="po_return_account_id" data-error-msg="Link to purchase return account is required." required>
+                                                                                <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
+                                                                                <option value="0">None</option>
+                                                                                <?php foreach($accounts as $account){ ?>
+                                                                                    <option value="<?php echo $account->account_id; ?>"><?php echo $account->account_title; ?></option>
+                                                                                <?php } ?>
+                                                                            </select>
+                                                                </div>                                                                
+
+
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                            <label class="">Purchase Discount Account:</label>
+                                                                            <select name="pd_account_id" id="pd_account_id" data-error-msg="Link to purchase discount account is required." required>
+                                                                                <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
+                                                                                <option value="0">None</option>
+                                                                                <?php foreach($accounts as $account){ ?>
+                                                                                    <option value="<?php echo $account->account_id; ?>"><?php echo $account->account_title; ?></option>
+                                                                                <?php } ?>
+                                                                            </select>
+                                                                </div>     
+
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                <br>
+                                                                    <label  for="is_basyo" style="text-align: left;float:right;vertical-align: middle;"><input type="checkbox" name="is_basyo" class="" id="is_basyo" style="transform: scale(2.0);">  &nbsp;&nbsp;For Basyo ?</label>
+                                                                </div>                                                                       
                                                             </div>
                                                             </div>
 
@@ -662,6 +703,15 @@
                         <div class="modal-body">
                             <form id="frm_unit_group">
                                 <div class="form-group">
+                                    <label class="boldlabel"><b class="required">*</b> Unit Code :</label>
+                                    <div class="input-group">
+                                                <span class="input-group-addon">
+                                                    <i class="fa fa-envelope-o"></i>
+                                                </span>
+                                        <input type="text" name="unit_code" id="unit_code" class="form-control" placeholder="Unit Code" data-error-msg="Unit code is required." required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
                                     <label class="boldlabel"><b class="required">*</b> Unit Name :</label>
                                     <div class="input-group">
                                                 <span class="input-group-addon">
@@ -701,6 +751,15 @@
 
                         <div class="modal-body">
                             <form id="frm_unit_group_child">
+                                <div class="form-group">
+                                    <label class="boldlabel"><b class="required">*</b> Unit Code :</label>
+                                    <div class="input-group">
+                                                <span class="input-group-addon">
+                                                    <i class="fa fa-envelope-o"></i>
+                                                </span>
+                                        <input type="text" name="unit_code" id="unit_code" class="form-control" placeholder="Unit Code" data-error-msg="Unit code is required." required>
+                                    </div>
+                                </div>                            
                                 <div class="form-group">
                                     <label class="boldlabel"><b class="required">*</b> Unit Name :</label>
                                     <div class="input-group">
@@ -1128,6 +1187,9 @@
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboItemTypes; var _selectedProductType; var _isTaxExempt=0;
     var _cboSupplier; var _cboCategory; var _cboTax; var _cboInventory; var _cboMeasurement; var _cboCredit; var _cboDebit; var _cboCostofSale; var _cboSalesReturn;
+    var _cboSalesDiscount;
+    var _cboPurchaseReturn;
+    var _cboPurchaseDiscount;
     var _cboTaxGroup;
     var _section_id; var _menu_id; var _child_unit_id;
     var _cboPrimaryUnit;
@@ -1311,7 +1373,19 @@ $(document).ready(function(){
 
         _cboSalesReturn=$('#sales_return_account_id').select2({
             allowClear: false
-        });        
+        });       
+
+        _cboSalesDiscount=$('#sd_account_id').select2({
+            allowClear: false
+        });       
+
+        _cboPurchaseReturn=$('#po_return_account_id').select2({
+            allowClear: false
+        });       
+
+        _cboPurchaseDiscount=$('#pd_account_id').select2({
+            allowClear: false
+        });                        
 
         _cboTaxGroup=$('#cbo_tax_group').select2({
             allowClear: false
@@ -1348,7 +1422,7 @@ $(document).ready(function(){
                 clearFieldsCategory($('#frm_category_group'));
             }else{
 
-                // if(_txnMode=="new"){
+                if(_txnMode=="new"){
                     if ($(this).val() != 0 || $(this).val() != ""){
                         getAccount($(this).val(),1).done(function(response){
                             var row = response.data[0];
@@ -1365,9 +1439,22 @@ $(document).ready(function(){
                         getAccount($(this).val(),4).done(function(response){
                             var row = response.data[0];
                             if(response.data.length > 0){ $('#sales_return_account_id').select2('val',row.account_id); }
-                        });                    
+                        });       
+                        getAccount($(this).val(),5).done(function(response){
+                            var row = response.data[0];
+                            if(response.data.length > 0){ $('#sd_account_id').select2('val',row.account_id); }
+                        });       
+                        getAccount($(this).val(),6).done(function(response){
+                            var row = response.data[0];
+                            if(response.data.length > 0){ $('#po_return_account_id').select2('val',row.account_id); }
+                        });     
+                        getAccount($(this).val(),7).done(function(response){
+                            var row = response.data[0];
+                            if(response.data.length > 0){ $('#pd_account_id').select2('val',row.account_id); }
+                        });     
+
                     }
-                // }
+                }
             }   
         });
 
@@ -1920,12 +2007,17 @@ $(document).ready(function(){
             _cboDebit.select2('val',0);
             _cboCostofSale.select2('val',0);
             _cboSalesReturn.select2('val',0);
+            _cboSalesDiscount.select2('val',0);
+            _cboPurchaseReturn.select2('val',0);
+            _cboPurchaseDiscount.select2('val',0);
             // _cboPrimaryUnit.select2('val',1);
             $('#child_unit_desc').prop('required',false);
             $('#child_unit_id').prop('required',false);
             $('#is_tax_exempt').attr('checked', false);
             $('#is_bulk').attr('checked', false);
             $('#is_nonsalable').attr('checked', false);
+            $('#is_basyo').attr('checked', false);
+
             showPanelActive('entry');
             setParentPanel(false);
         });
@@ -1983,7 +2075,10 @@ $(document).ready(function(){
             _cboCredit.select2('val',data.income_account_id);
             _cboDebit.select2('val',data.expense_account_id);
             _cboCostofSale.select2('val',data.cos_account_id);   
-            _cboSalesReturn.select2('val',data.sales_return_account_id);         
+            _cboSalesReturn.select2('val',data.sales_return_account_id);    
+            _cboSalesDiscount.select2('val',data.sd_account_id);
+            _cboPurchaseReturn.select2('val',data.po_return_account_id);
+            _cboPurchaseDiscount.select2('val',data.pd_account_id);
             _cboTaxGroup.select2('val',data.tax_type_id);
             // _cboPrimaryUnit.select2('val',data.primary_unit);
             _cboBrands.select2('val',data.brand_id);
@@ -1993,7 +2088,8 @@ $(document).ready(function(){
             $('#is_tax_exempt').prop('checked', (data.is_tax_exempt==1?true:false));
             $('#is_bulk').prop('checked', (data.is_bulk==1?true:false));
             $('#is_nonsalable').prop('checked', (data.is_nonsalable==1?true:false));
-            
+            $('#is_basyo').prop('checked', (data.is_basyo==1?true:false));
+
             if(data.is_bulk == true){
                 $('#child_unit_desc').prop('required',true);
                 $('#child_unit_id').prop('required',true);
@@ -2137,6 +2233,7 @@ $('#is_bulk').prop("checked") ?  _data.push({name : "is_bulk" , value : '1'   })
 $('#is_parent').prop("checked") ?  _data.push({name : "is_parent" , value : '1'   }) : _data.push({name : "is_parent" , value : '0'   });
 
 $('#is_nonsalable').prop("checked") ?  _data.push({name : "is_nonsalable" , value : '1'   }) : _data.push({name : "is_nonsalable" , value : '0'   });
+$('#is_basyo').prop("checked") ?  _data.push({name : "is_basyo" , value : '1'   }) : _data.push({name : "is_basyo" , value : '0'   });
 
 
         return $.ajax({
@@ -2155,6 +2252,10 @@ $('#is_bulk').prop("checked") ?  _data.push({name : "is_bulk" , value : '1'   })
         _data.push({name : "product_id" ,value : _selectedID});
 $('#is_parent').prop("checked") ?  _data.push({name : "is_parent" , value : '1'   }) : _data.push({name : "is_parent" , value : '0'   });
 $('#is_nonsalable').prop("checked") ?  _data.push({name : "is_nonsalable" , value : '1'   }) : _data.push({name : "is_nonsalable" , value : '0'   });
+
+$('#is_basyo').prop("checked") ?  _data.push({name : "is_basyo" , value : '1'   }) : _data.push({name : "is_basyo" , value : '0'   });
+
+
         return $.ajax({ 
             "dataType":"json",
             "type":"POST",

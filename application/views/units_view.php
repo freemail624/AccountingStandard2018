@@ -95,6 +95,7 @@
                                                 <table id="tbl_units" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead>
                                                     <tr>
+                                                        <th>Unit Code</th>
                                                         <th>Unit Name</th>
                                                         <th>Unit Description</th>
                                                         <th><center>Action</center></th>
@@ -188,6 +189,17 @@
                         <div class="modal-body">
                             <form id="frm_unit" role="form" class="form-horizontal row-border">
                                 <div class="form-group">
+                                    <label class="col-md-3 col-md-offset-1 control-label"><strong><B> * </B> Unit Code :</strong></label>
+                                    <div class="col-md-7">
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-tag"></i>
+                                            </span>
+                                            <input type="text" name="unit_code" class="form-control" placeholder="Unit Code" data-error-msg="Unit Code is required!" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
                                     <label class="col-md-3 col-md-offset-1 control-label"><strong><B> * </B> Unit Name :</strong></label>
                                     <div class="col-md-7">
                                         <div class="input-group">
@@ -253,10 +265,11 @@ $(document).ready(function(){
                 "searchPlaceholder":"Search Unit"
             },
             "columns": [
-                { targets:[0],data: "unit_name" },
-                { targets:[1],data: "unit_desc" },
+                { targets:[0],data: "unit_code" },
+                { targets:[1],data: "unit_name" },
+                { targets:[2],data: "unit_desc" },
                 {
-                    targets:[2],
+                    targets:[3],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
@@ -406,6 +419,7 @@ $(document).ready(function(){
             if($(this).val()==""){
                 showNotification({title:"Error!",stat:"error",msg:$(this).data('error-msg')});
                 $(this).closest('div.form-group').addClass('has-error');
+                $(this).focus();
                 stat=false;
                 return false;
             }

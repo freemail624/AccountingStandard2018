@@ -89,6 +89,9 @@
             margin-bottom: 10px;
             text-transform: uppercase!important;
         }
+        #td_change{
+            font-weight: bold;
+        }
         @media screen and (max-width: 480px) {
             table{
                 min-width: 800px;
@@ -372,6 +375,22 @@
                                 <td align="right" colspan="1" id="td_after_tax" color="red">0.00</td>
                                 <td></td>
                             </tr>
+
+                            <tr class="">
+                                <td colspan="6"  style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tendered :</strong></td>
+                                <td align="right" color="red">
+                                    <input id="td_tendered" name="td_tendered" type="text" class="numeric form-control" value="0.00" />
+                                </td>
+                                <td></td>
+                            </tr>
+
+                            <tr class="">
+                                <td colspan="6"  style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Change :</strong></td>
+
+                                <td align="right" colspan="1" id="td_change" color="red">0.00</td>
+                                <td></td>
+                            </tr>
+
                         </tfoot>
 <!--                         <tfoot>
                             <tr>
@@ -1155,9 +1174,14 @@ $(document).ready(function(){
                 //     net_vat = getFloat(net_vat) / getFloat(suggestion.child_unit_desc);
                 //     vat_input = getFloat(vat_input) / getFloat(suggestion.child_unit_desc);
                 // }
+            var qty = 1;
+            if (suggestion.is_product_basyo == 1){
+                qty = TotalBasyo();
+            }
+
             changetxn = 'active';
             $('#tbl_items > tbody').append(newRowItem({
-                inv_qty : "1",
+                inv_qty : qty,
                 inv_gross : temp_inv_price,
                 product_code : suggestion.product_code,
                 product_id: suggestion.product_id,
@@ -1181,7 +1205,9 @@ $(document).ready(function(){
                 parent_unit_name : suggestion.product_unit_name,
                 is_parent: suggis_parent ,// INITIALLY , UNIT USED IS THE PARENT , 1 for PARENT 0 for CHILD
                 primary_unit:suggestion.primary_unit,
-                a:a
+                a:a,
+                is_basyo:suggestion.is_basyo,
+                is_product_basyo:suggestion.is_product_basyo
             }));
 
             _line_unit=$('.line_unit'+a).select2({
@@ -1190,6 +1216,7 @@ $(document).ready(function(){
  
             reInitializeNumeric();
             reComputeTotal();
+            reComputeChange(1);
 
             $('.qty').focus();
             //alert("dd")
@@ -1513,6 +1540,7 @@ $(document).ready(function(){
             $('#cbo_departments').select2('val', $('#cbo_departments').data('default'));
             $('#cbo_department').select2('val', null);
             $('#cbo_customers').select2('val', $('#cbo_customers').data('default'));
+            $('#cbo_customers').trigger('select2:select');
             $('#cbo_order_source').select2('val', $('#cbo_order_source').data('default'));
             $('#cbo_salesperson').select2('val', null);
             $('#img_user').attr('src','assets/img/anonymous-icon.png');
@@ -1544,6 +1572,7 @@ $(document).ready(function(){
             /*$('#cbo_prodType').select2('val', 3);
             $('#cboLookupPrice').select2('val', 1);*/
             reComputeTotal(); //this is to make sure, display summary are recomputed as 0
+            reComputeChange(1);
             $('#typeaheadsearch').focus();
         });
         $('#tbl_so_list > tbody').on('click','button[name="accept_so"]',function(){
@@ -1646,7 +1675,9 @@ $(document).ready(function(){
                             is_parent : value.is_parent,
                             bulk_price: bulk_price,
                             retail_price: retail_price,
-                            a:a
+                            a:a,
+                            is_basyo:value.is_basyo,
+                            is_product_basyo:value.is_product_basyo
                         }));
                         _line_unit=$('.line_unit'+a).select2({
                             minimumResultsForSearch: -1
@@ -1656,9 +1687,10 @@ $(document).ready(function(){
                     });
                 changetxn = 'active';
                 $('#txt_overall_discount').val(accounting.formatNumber($('#txt_overall_discount').val(),2));
+                $('#total_tendered').val(accounting.formatNumber(data.td_after_tax,2));
                 reInitializeNumeric();
                 reComputeTotal();
-                
+                reComputeChange(1);
                 }
             });
         });
@@ -1782,7 +1814,9 @@ $(document).ready(function(){
                             is_parent : value.is_parent,
                             bulk_price: temp_sale_price,
                             retail_price: retail_price,
-                            a:a
+                            a:a,
+                            is_basyo:value.is_basyo,
+                            is_product_basyo:value.is_product_basyo
                         }));
                         changetxn = 'inactive';
                           _line_unit=$('.line_unit'+a).select2({
@@ -1793,13 +1827,18 @@ $(document).ready(function(){
                     });
                     changetxn = 'active';
                     reComputeTotal();
-            reInitializeNumeric();
+                    reInitializeNumeric();
 
                 }
             });
             $('#span_invoice_no').html(data.cash_inv_no);
             $('#txt_overall_discount').val(accounting.formatNumber($('#txt_overall_discount').val(),2));
+
+            $('#td_tendered').val(accounting.formatNumber(data.total_tendered,2));
+            $('#td_change').html(accounting.formatNumber(data.total_change,2));
+
             showList(false);
+
         }
         });
         $('#tbl_cash_invoice tbody').on('click','button[name="remove_info"]',function(){
@@ -1845,6 +1884,10 @@ $(document).ready(function(){
         //track every changes on numeric fields
         $('#txt_overall_discount').on('keyup',function(){
             reComputeTotal();
+        });
+
+        $('#td_tendered').on('keyup',function(){
+            reComputeChange();
         });
 
         $('#tbl_items tbody').on('change','select',function(){
@@ -1898,7 +1941,12 @@ $(document).ready(function(){
             $(oTableItems.net_vat,row).find('input.numeric').val(net_vat); //net of vat
             $(oTableItems.vat_input,row).find('input.numeric').val(vat_input); //vat input
             //console.log(net_vat);
+            if(accounting.unformat(row.find('.is_basyo').val()) == 1){
+                reComputeTotalBasyo();
+            }
+
             reComputeTotal();
+            reComputeChange(1);
         });
 
         $('#tbl_items tbody').on('keypress','input.qty',function(){
@@ -1907,11 +1955,18 @@ $(document).ready(function(){
             row.find(oTableItems.discount).find('input.numeric').select();
         });
 
-        $('#tbl_items tbody').on('keypress','input.discount',function(){
-            $('#typeaheadsearch').focus();
+        $('#tbl_items tbody').on('keypress','input.discount',function(evt){
+            if(evt.keyCode==13){
+                evt.preventDefault();
+                $('#typeaheadsearch').focus();
+            }
         });        
 
         $('#tbl_items tbody').on('focus','input.numeric',function(){
+            $(this).select();
+        });
+
+        $('#td_tendered').on('focus',function(){
             $(this).select();
         });
 
@@ -1999,6 +2054,7 @@ $(document).ready(function(){
             });*/
         $('#tbl_items > tbody').on('click','button[name="remove_item"]',function(){
             $(this).closest('tr').remove();
+            reComputeTotalBasyo();
             reComputeTotal();
         });
         $('#btn_browse').click(function(event){
@@ -2051,6 +2107,18 @@ $(document).ready(function(){
                         $(this).focus();
                         stat=false;
                         return false;
+                    }else{
+
+                        var total_tendered = accounting.unformat($('#td_tendered').val());
+                        var total_amount = accounting.unformat($('#td_after_tax').text());
+
+                        if(total_amount>total_tendered){
+                            showNotification({title:"Error!",stat:"error",msg:"Total Tendered amount must be equal or higher than Total Amount."});
+                            $("#td_tendered").focus();
+                            $("#td_tendered").select();
+                            stat=false;
+                            return false;        
+                        }
                     }
                 }
         });
@@ -2091,6 +2159,9 @@ $(document).ready(function(){
         _data.push({name : "summary_before_discount", value :tbl_summary.find(oTableDetails.before_tax).text()});
         _data.push({name : "summary_tax_amount", value : tbl_summary.find(oTableDetails.inv_tax_amount).text()});
         _data.push({name : "summary_after_tax", value : tbl_summary.find(oTableDetails.after_tax).text()});
+        _data.push({name : "total_tendered", value : $('#td_tendered').val()});
+        _data.push({name : "total_change", value : $('#td_change').text()});
+
         $('input[name="is_auto_print"]').prop("checked") ?  _data.push({name : "is_auto_print" , value : '1'   }) : _data.push({name : "is_auto_print" , value : '0'   });
         return $.ajax({
             "dataType":"json",
@@ -2110,6 +2181,8 @@ $(document).ready(function(){
         _data.push({name : "summary_before_discount", value :tbl_summary.find(oTableDetails.before_tax).text()});
         _data.push({name : "summary_tax_amount", value : tbl_summary.find(oTableDetails.inv_tax_amount).text()});
         _data.push({name : "summary_after_tax", value : tbl_summary.find(oTableDetails.after_tax).text()});
+        _data.push({name : "total_tendered", value : $('#td_tendered').val()});
+        _data.push({name : "total_change", value : $('#td_change').text()});
         _data.push({name : "cash_invoice_id" ,value : _selectedID});$('input[name="is_auto_print"]').prop("checked") ?  _data.push({name : "is_auto_print" , value : '1'   }) : _data.push({name : "is_auto_print" , value : '0'   });
         return $.ajax({
             "dataType":"json",
@@ -2192,7 +2265,7 @@ $(document).ready(function(){
         return '<tr>'+
         //DISPLAY
         '<td ><input name="inv_qty[]" type="text" class="numeric form-control trigger-keyup qty" value="'+accounting.formatNumber(d.inv_qty,2)+'"></td>'+unit+
-        '<td ">'+d.product_desc+'<input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
+        '<td ">'+d.product_desc+'<input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"> <input type="text" class="hidden is_basyo" value="'+d.is_basyo+'"> <input type="text" class="hidden is_product_basyo" value="'+d.is_product_basyo+'"> </td>'+
         '<td ><input name="inv_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.inv_price,2)+'" style="text-align:right;"></td>'+
         '<td  style=""><input name="inv_discount[]" type="text" class="numeric form-control discount" value="'+ accounting.formatNumber(d.inv_discount,2)+'" style="text-align:right;"></td>'+
         // DISPLAY NONE
@@ -2244,7 +2317,57 @@ $(document).ready(function(){
         $('#td_total_after_discount').html(accounting.formatNumber(after_tax - (after_tax * ($('#txt_overall_discount').val() / 100)),2));
         $('#td_tax').html(accounting.formatNumber(inv_tax_amount,2));
                     $('#td_discount').html(accounting.formatNumber(discounts,2)); // unknown - must be referring to table summary but not on id given
+
     };
+
+    var reComputeChange=function(b){
+        var rows=$('#tbl_items > tbody tr');
+        var after_tax=0;
+        $.each(rows,function(){
+            after_tax+=parseFloat(accounting.unformat($(oTableItems.total,$(this)).find('input.numeric').val()));
+        });
+
+        if(_txnMode=="new"){
+            if(b==true){
+                $('#td_tendered').val(accounting.formatNumber(after_tax,2));
+            }
+        }
+
+        var tendered = accounting.unformat($('#td_tendered').val());
+        var total_change = tendered - after_tax;
+
+        $('#td_change').html(accounting.formatNumber(total_change,2));
+    };
+
+    var TotalBasyo=function(){
+        var rows=$('#tbl_items > tbody tr');
+        var total_basyo = 0;
+        var qty = 0;
+
+        $.each(rows,function(){
+            var is_basyo = $(this).find('.is_basyo').val();
+            if(is_basyo == 1){
+                qty=parseFloat(accounting.unformat($(oTableItems.qty,$(this)).find('input.numeric').val()));
+                total_basyo += qty;
+            }
+        });
+
+        return accounting.formatNumber(total_basyo,2);
+    };
+
+    var reComputeTotalBasyo=function(){
+        var total_basyo = TotalBasyo();
+
+        var basyo_rows=$('#tbl_items > tbody tr');
+        $.each(basyo_rows,function(){
+            var is_product_basyo = $(this).find('.is_product_basyo').val();
+            if(is_product_basyo == 1){
+                $(this).find('.qty').val(total_basyo);
+                $(this).find('.qty').trigger('keyup');
+            }
+        });
+    };
+
     var resetSummary=function(){
         var tbl_summary=$('#tbl_cash_invoice_summary');
         tbl_summary.find(oTableDetails.discount).html('0.00');

@@ -652,10 +652,12 @@ class Templates extends CORE_Controller {
                     $filter_value,
                     'issuance_department_info.*,
                     departments.department_name as to_department_name,
-                    depfrom.department_name as from_department_name',
+                    depfrom.department_name as from_department_name,
+                    CONCAT_WS(" ", user_accounts.user_fname,user_accounts.user_mname,user_accounts.user_lname) as encoded_by',
                     array(
                         array('departments','departments.department_id=issuance_department_info.to_department_id','left'),
-                        array('departments as depfrom','depfrom.department_id=issuance_department_info.from_department_id','left')
+                        array('departments as depfrom','depfrom.department_id=issuance_department_info.from_department_id','left'),
+                        array('user_accounts','user_accounts.user_id=issuance_department_info.posted_by_user','left'),
                     )
                 );
 
@@ -665,7 +667,7 @@ class Templates extends CORE_Controller {
                 $data['company_info']=$company[0];
                 $data['issue_items']=$m_dr_items->get_list(
                     array('issuance_department_items.issuance_department_id'=>$filter_value),
-                    'issuance_department_items.*,products.product_desc,units.unit_name',
+                    'issuance_department_items.*,products.product_desc,units.unit_name,units.unit_code',
                     array(
                         array('products','products.product_id=issuance_department_items.product_id','left'),
                         array('units','units.unit_id=issuance_department_items.unit_id','left')
@@ -685,6 +687,11 @@ class Templates extends CORE_Controller {
                     echo $this->load->view('template/issuance_department_content',$data,TRUE);
                 }
 
+
+                if($type=='direct'){
+                    // echo $this->load->view('template/sales_invoice_direct_content',$data,TRUE);
+                    echo $this->load->view('template/issuance_department_continuous_paper',$data,TRUE);
+                }    
 
                 //download pdf
                 if($type=='pdf'){
@@ -933,7 +940,9 @@ class Templates extends CORE_Controller {
                         'sales_invoice.address',
                         'sales_order.so_no',
                         'order_source.order_source_name',
-                        'CONCAT(salesperson.firstname," ",salesperson.lastname) AS salesperson_name'
+                        'CONCAT(salesperson.firstname," ",salesperson.lastname) AS salesperson_name',
+                        'CONCAT_WS(" ", user_accounts.user_fname,user_accounts.user_mname,user_accounts.user_lname) as encoded_by',
+                        'user_accounts.journal_approved_by'
                     ),
                     array(
                         array('departments','departments.department_id=sales_invoice.department_id','left'),
@@ -941,13 +950,14 @@ class Templates extends CORE_Controller {
                         array('customers','customers.customer_id=sales_invoice.customer_id','left'),
                         array('sales_order','sales_order.sales_order_id=sales_invoice.sales_order_id','left'),
                         array('order_source','order_source.order_source_id=sales_invoice.order_source_id','left'),
+                        array('user_accounts','user_accounts.user_id=sales_invoice.posted_by_user','left'),
                     )
                 );
 
                 $data['sales_info']=$info[0];
                 $data['sales_invoice_items']=$m_sales_invoice_items->get_list(
                     array('sales_invoice_items.sales_invoice_id'=>$filter_value),
-                    'sales_invoice_items.*,products.product_desc,products.size,units.unit_name,products.product_code',
+                    'sales_invoice_items.*,products.product_desc,products.size,units.unit_name,units.unit_code,products.product_code',
                     array(
                         array('products','products.product_id=sales_invoice_items.product_id','left'),
                         array('units','units.unit_id=sales_invoice_items.unit_id','left')
@@ -978,7 +988,8 @@ class Templates extends CORE_Controller {
                 }
 
                 if($type=='direct'){
-                    echo $this->load->view('template/sales_invoice_direct_content',$data,TRUE);
+                    // echo $this->load->view('template/sales_invoice_direct_content',$data,TRUE);
+                    echo $this->load->view('template/sales_invoice_direct_continuous_paper',$data,TRUE);
                 }                
 
                 if($type=='drview'){
@@ -1136,13 +1147,16 @@ class Templates extends CORE_Controller {
                     'cash_invoice.salesperson_id',
                     'cash_invoice.address',
                     'sales_order.so_no',
-                    'customers.customer_name'
+                    'customers.customer_name',
+                    'CONCAT_WS(" ", user_accounts.user_fname,user_accounts.user_mname,user_accounts.user_lname) as encoded_by',
+                    'user_accounts.journal_approved_by'
 
                 ),
                 array(
                     array('departments','departments.department_id=cash_invoice.department_id','left'),
                     array('customers','customers.customer_id=cash_invoice.customer_id','left'),
                     array('sales_order','sales_order.sales_order_id=cash_invoice.sales_order_id','left'),
+                    array('user_accounts','user_accounts.user_id=cash_invoice.posted_by_user','left'),
                 ),
                 'cash_invoice.cash_invoice_id DESC'
             );
@@ -1150,7 +1164,7 @@ class Templates extends CORE_Controller {
                 $data['info']=$info[0];
                 $data['items']=$m_cash_invoice_items->get_list(
                     array('cash_invoice_items.cash_invoice_id'=>$filter_value),
-                    'cash_invoice_items.*,products.product_desc,products.size,units.unit_name,products.product_code',
+                    'cash_invoice_items.*,products.product_desc,products.size,units.unit_name,units.unit_code,products.product_code',
                     array(
                         array('products','products.product_id=cash_invoice_items.product_id','left'),
                         array('units','units.unit_id=cash_invoice_items.unit_id','left')
@@ -1195,8 +1209,8 @@ class Templates extends CORE_Controller {
 
 
                 if($type=='direct'){
-                    echo $this->load->view('template/cash_invoice_direct_content',$data,TRUE);
-
+                    // echo $this->load->view('template/cash_invoice_direct_content',$data,TRUE);
+                    echo $this->load->view('template/cash_invoice_direct_continuous_paper',$data,TRUE);
                 }
 
                 break;
@@ -5116,9 +5130,9 @@ class Templates extends CORE_Controller {
                 $m_pur_int_model=$this->Purchasing_integration_model;
                 $m_adjustment_items=$this->Adjustment_item_model;
                 $m_suppliers=$this->Suppliers_model;
+                $m_customers=$this->Customers_model;
                 $m_accounts=$this->Account_title_model;
                 $m_departments=$this->Departments_model;
-
 
 
                 $adjustment_info=$m_adjustment->get_list($adjustment_id,
@@ -5129,6 +5143,7 @@ class Templates extends CORE_Controller {
                     array(
                         array('user_accounts','user_accounts.user_id=adjustment_info.posted_by_user','left')
                     ));
+
                 $supplier_id = $m_pur_int_model->get_list(null,'purchasing_integration.adj_supplier_id,suppliers.*',
                     array(array('suppliers','suppliers.supplier_id=purchasing_integration.iss_supplier_id','left'))
                     );
@@ -5151,9 +5166,20 @@ class Templates extends CORE_Controller {
                     )
                 );
 
+                $data['customers']=$m_customers->get_list(
+                    array('is_active'=>TRUE,
+                          'is_deleted'=> FALSE
+                        ),
+                    array(
+                        'customers.customer_id',
+                        'customers.customer_name'
+                        )
+                );
+
                 $adjustment_type=$adjustment_info[0]->adjustment_type;
                 $inv_type_id=$adjustment_info[0]->inv_type_id;
-                
+
+
                 if($adjustment_type == 'IN'){
                     
                     if($inv_type_id > 0){
@@ -5163,7 +5189,12 @@ class Templates extends CORE_Controller {
                     }
 
                 }else if ($adjustment_type == 'OUT'){
-                    $data['entries']=$m_adjustment->get_journal_entries_2($adjustment_id);
+
+                    if($inv_type_id > 0){
+                        $data['entries']=$m_adjustment->get_journal_entries_purchasereturn($adjustment_id);
+                    }else{
+                        $data['entries']=$m_adjustment->get_journal_entries_2($adjustment_id);
+                    }
 
                 }
                 
@@ -5186,15 +5217,41 @@ class Templates extends CORE_Controller {
                     );
 
                 //validate if customer is not deleted
-                $valid_supplier=$m_suppliers->get_list(
-                    array(
-                        'supplier_id'=>$supplier_id[0]->adj_supplier_id,
-                        'is_active'=>TRUE,
-                        'is_deleted'=>FALSE
-                    )
-                );
-                $data['valid_particular']=(count($valid_supplier)>0);
-                $data['supplier_info']=$supplier_id[0];
+                $valid_particular = 0;
+                $particular_id = 0;
+
+                if($adjustment_info[0]->inv_type_id == 1 || $adjustment_info[0]->inv_type_id == 2){
+                     $valid_particular=$m_customers->get_list(
+                        array(
+                            'customer_id'=>$adjustment_info[0]->customer_id,
+                            'is_active'=>TRUE,
+                            'is_deleted'=>FALSE
+                        )
+                    );
+                    $particular_id = $adjustment_info[0]->customer_id;
+                }else if($adjustment_info[0]->inv_type_id == 3){
+                     $valid_particular=$m_suppliers->get_list(
+                        array(
+                            'supplier_id'=>$adjustment_info[0]->supplier_id,
+                            'is_active'=>TRUE,
+                            'is_deleted'=>FALSE
+                        )
+                    );
+                    $particular_id = $adjustment_info[0]->supplier_id;
+                }else{
+                     $valid_particular=$m_suppliers->get_list(
+                        array(
+                            'supplier_id'=>$supplier_id[0]->adj_supplier_id,
+                            'is_active'=>TRUE,
+                            'is_deleted'=>FALSE
+                        )
+                    );
+
+                    $particular_id = $supplier_id[0]->adj_supplier_id;
+                }            
+
+                $data['valid_particular']=(count($valid_particular)>0);
+                $data['particular_id']=$particular_id;
                 echo $this->load->view('template/adjustment_for_review',$data,TRUE); //details of the journal
 
 

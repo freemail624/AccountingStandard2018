@@ -36,6 +36,7 @@ class Units extends CORE_Controller {
             case 'create':
                 $m_units = $this->Units_model;
 
+                $m_units->unit_code = $this->input->post('unit_code', TRUE);
                 $m_units->unit_name = $this->input->post('unit_name', TRUE);
                 $m_units->unit_desc = $this->input->post('unit_desc', TRUE);
                 $m_units->save();
@@ -87,6 +88,7 @@ class Units extends CORE_Controller {
                 $m_units=$this->Units_model;
 
                 $unit_id=$this->input->post('unit_id',TRUE);
+                $m_units->unit_code = $this->input->post('unit_code', TRUE);
                 $m_units->unit_name=$this->input->post('unit_name',TRUE);
                 $m_units->unit_desc=$this->input->post('unit_desc',TRUE);
 

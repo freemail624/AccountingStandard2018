@@ -218,12 +218,12 @@
                                                                 <thead class="">
                                                                 <tr>
                                                                     <th width="5%"></th>
-                                                                    <th width="15%">PLU</th>
-                                                                    <th width="32%">Product</th>
-                                                                    <th width="12%" style="text-align: right">Quantity In</th>
-                                                                    <th width="12%" style="text-align: right">Quantity Out</th>
-                                                                    <th width="12%" style="text-align: right">Balance</th>
-                                                                    <th width="12%" style="text-align: right">Bulk Balance</th>
+                                                                    <th width="20%">PLU</th>
+                                                                    <th width="25%">Product</th>
+                                                                    <th width="10%" style="text-align: right">Quantity In</th>
+                                                                    <th width="10%" style="text-align: right">Quantity Out</th>
+                                                                    <th width="15%" style="text-align: right">Balance</th>
+                                                                    <th width="15%" style="text-align: right">Bulk Balance</th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>

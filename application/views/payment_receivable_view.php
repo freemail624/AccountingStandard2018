@@ -231,7 +231,7 @@
                                                         <div class="row">
                                                             <div class="col-lg-12">
                                                                 <label><b class="required">*</b>Department :</label> <br />
-                                                                <select id="cbo_branch" name="department" required data-error-msg="Department is required">
+                                                                <select id="cbo_branch" name="department" required data-error-msg="Department is required" data-default="<?php echo $accounts[0]->default_department_id; ?>">
                                                                     <?php foreach($departments as $department){ ?>
                                                                         <option value="<?php echo $department->department_id; ?>" selected><?php echo $department->department_name; ?></option>
                                                                     <?php } ?>
@@ -664,8 +664,9 @@
                 clearFields($('#div_payment_fields'));
                 $('#td_total_payables').html('<b>0.00</b>');
                 showList(false);
-                _cboBranch.select2('val',null);
+                $('#cbo_branch').select2('val', $('#cbo_branch').data('default'));
                 _cboReceiptType.select2('val',1); //set official receipt as default
+                $('#cbo_Customers').select2('open');
 
             });
 

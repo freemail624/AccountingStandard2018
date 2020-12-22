@@ -168,6 +168,7 @@ class Sales_order extends CORE_Controller
                             'products.bulk_unit_id',
                             'products.child_unit_desc',
                             'products.child_unit_desc',
+                            'products.is_basyo',
                             '(CASE
                                 WHEN products.is_parent = TRUE 
                                     THEN products.bulk_unit_id
@@ -184,7 +185,10 @@ class Sales_order extends CORE_Controller
                             'products.public_price',
                             '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.parent_unit_id) as parent_unit_name',
                             '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name',
-                            '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.bulk_unit_id) as bulk_unit_name'),
+                            '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.bulk_unit_id) as bulk_unit_name',
+
+                            '(SELECT count(*) FROM account_integration WHERE basyo_product_id = products.product_id) as is_product_basyo'),
+
                     array(
                         array('products','products.product_id=sales_order_items.product_id','left'),
                         array('units blkunit','blkunit.unit_id=products.bulk_unit_id','left'),

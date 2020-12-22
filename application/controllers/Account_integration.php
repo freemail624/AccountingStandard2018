@@ -24,7 +24,8 @@ class Account_integration extends CORE_Controller
                 'Departments_model',
                 'Purchasing_integration_model',
                 'Trans_model',
-                'Sched_expense_integration'
+                'Sched_expense_integration',
+                'Products_model'
             )
 
         );
@@ -51,7 +52,7 @@ class Account_integration extends CORE_Controller
         $data['suppliers']=$this->Suppliers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['categories']=$this->Categories_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['order_sources']=$this->Order_source_model->get_list('is_active=TRUE AND is_deleted=FALSE');
-
+        $data['products']=$this->Products_model->product_list(1,null,null,null,null,null,null,null,1);
         //grand parent account only
         $data['expenses']=$this->Account_title_model->get_list(
             'account_titles.is_active=1 AND account_titles.is_deleted=0 AND at.account_type_id=5 AND account_titles.account_id IN(SELECT x.grand_parent_id FROM account_titles as x WHERE x.parent_account_id=0)',
@@ -141,6 +142,7 @@ class Account_integration extends CORE_Controller
                 $m_integration->default_department_id=$this->input->post('default_department_id',TRUE);   
                 $m_integration->default_order_source_id=$this->input->post('default_order_source_id',TRUE);   
                 $m_integration->default_customer_id=$this->input->post('default_customer_id',TRUE);   
+                $m_integration->basyo_product_id=$this->input->post('basyo_product_id',TRUE);   
                 $m_integration->modify(1);
 
                 $response['stat']="success";

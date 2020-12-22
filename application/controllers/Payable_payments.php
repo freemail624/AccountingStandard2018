@@ -16,6 +16,7 @@ class Payable_payments extends CORE_Controller
         $this->load->model('Departments_model');
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
+        $this->load->model('Account_integration_model');
     }
 
     public function index() {
@@ -31,7 +32,7 @@ class Payable_payments extends CORE_Controller
         $data['suppliers']=$this->Suppliers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['methods']=$this->Payment_method_model->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
         $data['departments']=$this->Departments_model->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
-
+        $data['accounts']=$this->Account_integration_model->get_list(1);
         $data['title'] = 'AP Payment';
         
         (in_array('2-3',$this->session->user_rights)? 

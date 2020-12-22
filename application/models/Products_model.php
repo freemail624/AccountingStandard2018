@@ -1975,7 +1975,9 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                     WHEN p.is_parent = TRUE 
                         THEN blkunit.unit_name
                     ELSE chldunit.unit_name
-                END) as product_unit_name
+                END) as product_unit_name,
+
+                (SELECT count(*) FROM account_integration WHERE basyo_product_id = p.product_id) as is_product_basyo
 
                 FROM products as p
                 LEFT JOIN categories as c ON c.category_id=p.category_id

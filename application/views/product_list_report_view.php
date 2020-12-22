@@ -178,9 +178,18 @@ $(document).ready(function(){
             window.open('Product_list_report/transaction/report?sup='+$('#new_supplier').val()+'&cat='+$('#product_category').val()+'&inv='+$('#cbo_item_type').val());
         });
 
+        $('#btn_print_srp').click(function(){
+            window.open('Product_list_report/transaction/srp-report?sup='+$('#new_supplier').val()+'&cat='+$('#product_category').val()+'&inv='+$('#cbo_item_type').val());
+        });
+
         $('#btn_excel').click(function(){
             window.open('Product_list_report/transaction/excel?sup='+$('#new_supplier').val()+'&cat='+$('#product_category').val()+'&inv='+$('#cbo_item_type').val());
         });
+
+        $('#btn_srp_excel').click(function(){
+            window.open('Product_list_report/transaction/srp-excel?sup='+$('#new_supplier').val()+'&cat='+$('#product_category').val()+'&inv='+$('#cbo_item_type').val());
+        });        
+
         $('#btn_email').on('click', function() {
         showNotification({title:"Sending!",stat:"info",msg:"Please wait for a few seconds."});
 
@@ -345,16 +354,17 @@ $(document).ready(function(){
                                                 <br>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="col-sm-2">
+                                                    <div class="col-sm-12">
                                                         <button class="btn btn-primary pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " title="Print" ><i class="fa fa-print"></i> Print Report
                                                         </button>
-                                                    </div>
-                                                    <div class="col-sm-2">
                                                         <button class="btn btn-success pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_excel" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " title="Export to Excel" ><i class="fa fa-file-excel-o"></i> Excel Report
                                                         </button>
-                                                    </div>
-                                                    <div class="col-sm-2">
                                                         <button class="btn btn-success pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_email" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " title="Export to Excel" ><span class=""></span>  <i class="fa fa-file-excel-o"></i> Email Report
+                                                        </button>
+
+                                                        <button class="btn btn-primary pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_print_srp" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " title="Print" ><i class="fa fa-print"></i> Print (SRP) Report
+                                                        </button>
+                                                        <button class="btn btn-success pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_srp_excel" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " title="Export to Excel" ><i class="fa fa-file-excel-o"></i> Excel (SRP) Report
                                                         </button>
                                                     </div>
                                                 </div>

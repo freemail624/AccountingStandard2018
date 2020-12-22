@@ -170,7 +170,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
                 (SELECT 
                     p.expense_account_id AS account_id,
                         '' AS memo,
-                        SUM(dii.dr_qty * dii.dr_price) dr_amount,
+                        SUM(dii.dr_non_tax_amount) dr_amount,
                         0 AS cr_amount
                 FROM
                     `delivery_invoice_items` AS dii
@@ -232,26 +232,40 @@ GROUP BY n.supplier_id HAVING total_balance > 0
                 
                 UNION ALL
                 
-               SELECT 
-                    acc_payable.account_id,
-                        acc_payable.memo,
-                        0 AS dr_amount,
-                        SUM(acc_payable.cr_amount) AS cr_amount
-                FROM
-                    (SELECT 
-                        (SELECT 
-                                payable_discount_account_id
-                            FROM
-                                account_integration) AS account_id,
+               -- SELECT 
+               --      acc_payable.account_id,
+               --          acc_payable.memo,
+               --          0 AS dr_amount,
+               --          SUM(acc_payable.cr_amount) AS cr_amount
+               --  FROM
+               --      (SELECT 
+               --          (SELECT 
+               --                  payable_discount_account_id
+               --              FROM
+               --                  account_integration) AS account_id,
+               --          '' AS memo,
+               --          0 dr_amount,
+               --          SUM(di.total_discount+di.total_overall_discount_amount) AS cr_amount
+               --  FROM
+               --      `delivery_invoice` AS di
+               --  WHERE
+               --      di.dr_invoice_id = $purchase_invoice_id) AS acc_payable
+               --  WHERE acc_payable.account_id > 0 
+               --  GROUP BY acc_payable.account_id 
+
+                SELECT 
+                    p.pd_account_id AS account_id,
                         '' AS memo,
                         0 dr_amount,
-                        SUM(di.total_discount+di.total_overall_discount_amount) AS cr_amount
+                        SUM(dii.dr_qty * dii.dr_discount) AS cr_amount
                 FROM
-                    `delivery_invoice` AS di
+                    `delivery_invoice_items` AS dii
+                INNER JOIN products AS p ON dii.product_id = p.product_id
                 WHERE
-                    di.dr_invoice_id = $purchase_invoice_id) AS acc_payable
-                WHERE acc_payable.account_id > 0 
-                GROUP BY acc_payable.account_id 
+                    dii.dr_invoice_id = $purchase_invoice_id
+                        AND p.pd_account_id > 0
+                GROUP BY p.pd_account_id 
+
                 
                 ) AS main
             WHERE

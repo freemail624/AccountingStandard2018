@@ -189,30 +189,73 @@
             <form id="frm_adjustments" role="form" class="form-horizontal">
                 
                 <div >
-
                     <div class="row">
                         <div class="col-sm-3">
-                           <b class="required">*</b>  Department : <br />
+                            <b class="required">*</b>  Department : <br />
                             <select name="department" id="cbo_departments" data-default="<?php echo $accounts[0]->default_department_id; ?>" data-error-msg="Department is required." required>
                                 <option value="0">[ Create New Department ]</option>
                                 <?php foreach($departments as $department){ ?>
                                     <option value="<?php echo $department->department_id; ?>" data-tax-type="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
                                 <?php } ?>
-                            </select>
+                            </select>  
+
+                            <b class="required">*</b>  Adjustment type : <br />
+                            <select name="adjustment_type" id="cbo_adjustments" data-error-msg="Adjustment Type is required" required>
+                                <option value="IN" selected>Adjustment IN</option>
+                                <option value="OUT">Adjustment OUT</option>
+                            </select>                                
                         </div>
                         <div class="col-sm-3">
                             
                             <input type="checkbox" name="accounting[]" value="is_adjustment" id="is_adjustment" class="css-checkbox" style="font-size: 12px!important;"><label class="css-label " for="is_adjustment" style="font-size: 12px!important;">Adjustment</label><br>
+                            
                             <input type="checkbox" name="accounting[]" value="is_returns" id="is_returns" class="css-checkbox" style="font-size: 12px!important;"><label class="css-label " for="is_returns" style="font-size: 12px!important;">Sales Return</label><br>
                             <input type="hidden" name="adjustment_is_return" id="adjustment_is_return" class="form-control">
+                            <input type="checkbox" name="accounting[]" value="is_dr_returns" id="is_dr_returns" class="css-checkbox" style="font-size: 12px!important;"><label class="css-label " for="is_dr_returns" style="font-size: 12px!important;">Purchase Return</label><br>
+                            <input type="hidden" name="adjustment_is_dr_return" id="adjustment_is_dr_return" class="form-control"> <br>                            
+
                         </div>
-                        <div class="col-sm-3"><div class="checkhidden">
-                            <b class="required">*</b>Customer : <br />
-                            <select name="customer_id" id="cbo_customers" data-error-msg="Customer is required." >
-                                <?php foreach($customers as $customer){ ?>
-                                    <option data-address="<?php echo $customer->address; ?>" data-contact="<?php echo $customer->contact_name; ?>" value="<?php echo $customer->customer_id; ?>" data-term-default="<?php echo ($customer->term=="none"?"":$customer->term); ?>" data-customer_type="<?php echo $customer->customer_type_id; ?>" data-name-customer="<?php echo $customer->customer_name; ?>"><?php echo $customer->customer_name; ?></option>
-                                <?php } ?>
-                            </select></div>
+                        <div class="col-sm-3">
+                            <div class="checkhidden check_sr">
+                                <b class="required">*</b>Customer : <br />
+                                <select name="customer_id" id="cbo_customers" data-error-msg="Customer is required." >
+                                    <?php foreach($customers as $customer){ ?>
+                                        <option data-address="<?php echo $customer->address; ?>" data-contact="<?php echo $customer->contact_name; ?>" value="<?php echo $customer->customer_id; ?>" data-term-default="<?php echo ($customer->term=="none"?"":$customer->term); ?>" data-customer_type="<?php echo $customer->customer_type_id; ?>" data-name-customer="<?php echo $customer->customer_name; ?>"><?php echo $customer->customer_name; ?></option>
+                                    <?php } ?>
+                                </select>
+
+                                Invoice # :<br />
+                                <div class="input-group">
+                                    <input type="text" name="inv_no" id="inv_no" class="form-control" readonly required data-error-msg="Invoice is Required for the Sales Return.">
+                                    <span class="input-group-addon">
+                                        <a href="#" id="link_browse_inv" style="text-decoration: none;color:black;"><b>...</b></a>
+                                    </span>
+                                </div>
+                                <i style="font-size: 9px;">Note: Process Item/s from 1 Invoice only.</i><br>
+                                <i style="font-size: 9px;color: black;" id="note"></i>
+                            </div>
+
+                            <div class="checkhidden check_dr">
+                                <b class="required">*</b>Supplier : <br />
+                                <select name="supplier_id" id="cbo_suppliers" data-error-msg="Supplier is required." >
+                                    <?php foreach($suppliers as $supplier){ ?>
+                                        <option value="<?php echo $supplier->supplier_id; ?>" data-supplier-name="<?php echo $supplier->supplier_name; ?>">
+                                            <?php echo $supplier->supplier_name; ?>
+                                        </option>
+                                    <?php } ?>
+                                </select>
+
+                                Invoice # :<br />
+                                <div class="input-group">
+                                    <input type="text" name="dr_invoice_no" id="dr_invoice_no" class="form-control" readonly required data-error-msg="Invoice is Required for the Purchase Return.">
+                                    <span class="input-group-addon">
+                                        <a href="#" id="link_browse_dr_inv" style="text-decoration: none;color:black;"><b>...</b></a>
+                                    </span>
+                                </div>
+                                <i style="font-size: 9px;">Note: Process Item/s from 1 Invoice only.</i><br>
+                                <i style="font-size: 9px;color: black;" id="dr_note"></i>                                
+                            </div>
+
                         </div>
 
 
@@ -222,47 +265,16 @@
                                 <span class="input-group-addon">
                                     <i class="fa fa-code"></i>
                                 </span>
-
                                 <input type="text" name="slip_no" class="form-control" placeholder="ADJ-YYYYMMDD-XXX" readonly>
                             </div>
-                        </div>
-                    </div>
 
-
-                    <div class="row">
-                        <div class="col-sm-3">
-                           <b class="required">*</b>  Adjustment type : <br />
-                            <select name="adjustment_type" id="cbo_adjustments" data-error-msg="Adjustment Type is required" required>
-                                <option value="IN" selected>Adjustment IN</option>
-                                <option value="OUT">Adjustment OUT</option>
-                            </select>
-                        </div>
-
-                        <div class="col-sm-3">
-                        </div>
-
-                        <div class="col-sm-3"><div class="checkhidden">
-                            Invoice # :<br />
-                            <div class="input-group">
-                                <input type="text" name="inv_no" id="inv_no" class="form-control" readonly required data-error-msg="Invoice is Required for the Sales Return.">
-                                <span class="input-group-addon">
-                                    <a href="#" id="link_browse_inv" style="text-decoration: none;color:black;"><b>...</b></a>
-                                </span>.
-                            </div>
-                            <i style="font-size: 9px;">Note: Process Item/s from 1 Invoice only.</i><br>
-                            <i style="font-size: 9px;color: black;" id="note"></i>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-3 ">
-                            Date Adjusted / Date Returned:<br />
-                            <div class="input-group">
-
-                                <input type="text" name="date_adjusted" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Due Date" data-error-msg="Delivery Date is required!" required>
-                         <span class="input-group-addon">
-                             <i class="fa fa-calendar"></i>
-                        </span>
-                            </div>
+                              Date Adjusted / Date Returned:<br />
+                                <div class="input-group">
+                                    <input type="text" name="date_adjusted" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Due Date" data-error-msg="Delivery Date is required!" required>
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </span>
+                                </div>
                         </div>
                     </div>
 
@@ -505,8 +517,38 @@
 <div class="clearfix"></div>
 </div><!---modal-->
 
-
-
+<div id="modal_dr_list" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+    <div class="modal-dialog" style="width: 80%;">
+        <div class="modal-content">
+            <div class="modal-header ">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                <h2 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Invoices of <label style="font-weight: normal;" id="modal_supplier_name"></label></h2>
+            </div>
+            <div class="modal-body">
+                <table id="tbl_dr_list" class="table table-striped" cellspacing="0" width="100%">
+                    <thead class="">
+                    <tr>
+                        <th></th>
+                        <th>Invoice #</th>
+                        <th>Item</th>
+                        <th>Qty</th>
+                        <th>Unit</th>
+                        <th><center>Action</center></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Sales Order Content -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+            <br>
+                <button id="cancel_modal" class="btn btn-default" data-dismiss="modal"  style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Close</button>
+            </div>
+        </div>
+    </div>
+<div class="clearfix"></div>
+</div><!---modal-->
 
 
 <footer role="contentinfo">
@@ -570,7 +612,7 @@
 
 
 $(document).ready(function(){
-    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboAdjustments; var products; var _cboCustomers; var dtCustomer; var _selectedInvTypeId;
+    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboAdjustments; var products; var _cboCustomers; var _cboSuppliers; var dtCustomer; var dtSupplier; var _selectedInvTypeId;
     var _line_unit; var changetxn;
     var oTableItems={
         qty : 'td:eq(0)',
@@ -635,9 +677,13 @@ $(document).ready(function(){
                 { visible:false,targets:[0],data: "product_id" },
                 { targets:[1],data: "inv_no" },
                 { targets:[2],data: "product_desc" },
-                { targets:[3],data: "inv_qty" },
+                { targets:[3],data:null,
+                    render: function (data, type, full, meta){
+                        return accounting.formatNumber(data.inv_qty,2);
+                    }
+                },
                 { targets:[4],data: "unit_name" },
-                {  targets:[6],
+                {  targets:[5],
                     render: function (data, type, full, meta){
                         var btn_accept='<button class="btn btn-success btn-sm" name="accept_item"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Accept"><i class="fa fa-check"></i> </button>';
                         return '<center>'+btn_accept+'</center>';
@@ -645,8 +691,41 @@ $(document).ready(function(){
                 }
             ]
         });
-        dt=$('#tbl_issuances').DataTable(
-{            "dom": '<"toolbar">frtip',
+        
+        dtSupplier=$('#tbl_dr_list').DataTable({
+            "dom": '<"toolbar">frtip',
+            "bLengthChange":false,
+                "order": [[ 1, "desc" ]],
+            "ajax" : {
+                "url" : "Adjustments/transaction/list-per-supplier",
+                "bDestroy": true,            
+                "data": function ( d ) {
+                        return $.extend( {}, d, {
+                            "supplier_id":$('#cbo_suppliers').val()
+                        });
+                    }
+            }, 
+            "columns": [
+                { visible:false,targets:[0],data: "product_id" },
+                { targets:[1],data: "dr_invoice_no" },
+                { targets:[2],data: "product_desc" },
+                { targets:[3],data:null,
+                    render: function (data, type, full, meta){
+                        return accounting.formatNumber(data.dr_qty,2);
+                    }
+                },
+                { targets:[4],data: "unit_name" },
+                {  targets:[5],
+                    render: function (data, type, full, meta){
+                        var btn_accept='<button class="btn btn-success btn-sm" name="accept_item"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Accept"><i class="fa fa-check"></i> </button>';
+                        return '<center>'+btn_accept+'</center>';
+                    }
+                }
+            ]
+        });
+
+        dt=$('#tbl_issuances').DataTable({
+            "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "order": [[ 8, "desc" ]],
             "ajax" : "Adjustments/transaction/list",
@@ -718,6 +797,11 @@ $(document).ready(function(){
             placeholder: "Please select customer.",
         });
         _cboCustomers.select2('val',null);
+
+        _cboSuppliers=$("#cbo_suppliers").select2({
+            placeholder: "Please select supplier.",
+        });
+        _cboSuppliers.select2('val',null);        
 
         products = new Bloodhound({
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name'),
@@ -881,32 +965,100 @@ $(document).ready(function(){
         }
     });
 
+    $('#link_browse_dr_inv').click(function(){
+         iSup= _cboSuppliers.select2('val');
+        if(iSup == 0 || iSup == null){
+            showNotification({title: "Error !",stat:"error",msg: "Please Select a Supplier before proceeding."});
+        }else{
+            $('#tbl_dr_list tbody').html('<tr><td colspan="7"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
+            $('#tbl_dr_list').DataTable().ajax.reload();
+
+            var obj_supmodal=$('#cbo_suppliers').find('option[value="' + iSup + '"]');
+            $('#modal_supplier_name').text(obj_supmodal.data('supplier-name'));
+            $('#modal_dr_list').modal('show');
+        }
+    }); 
+
+    _cboCustomers.on("select2:select", function (e) {
+        $('#link_browse_inv').trigger('click');
+    });
+
+    _cboSuppliers.on("select2:select", function (e) {
+        $('#link_browse_dr_inv').trigger('click');
+    });
 
     var bindEventHandlers=(function(){
             $('[id=is_returns]').click(function(event) {
                 if(this.checked == true) {
                     $('input[id="is_adjustment"]').prop('checked', false);
+                    $('input[id="is_dr_returns"]').prop('checked', false);
+
                     $("#cbo_customers").prop('required',true);
                     $("#inv_no").prop('required',true);
-                    $('.checkhidden').show();
+                    $("#cbo_suppliers").prop('required',false);
+                    $("#dr_invoice_no").prop('required',false);
+
+                    $('.check_sr').show();
+                    $('.check_dr').hide();
                     $('#adjustment_is_return').val('1');
+                    $('#adjustment_is_dr_return').val('0');
+                    $("input[name=dr_invoice_no]").val('');
                     
+                    _cboSuppliers.select2('val',null);
                     _cboAdjustments.select2('val', 'IN');
+                    $('#note').html('');
 
                 }else{
                      $('[id=is_adjustment]').trigger('click');
                 }
             });
 
+            $('[id=is_dr_returns]').click(function(event) {
+                if(this.checked == true) {
+                    $('input[id="is_adjustment"]').prop('checked', false);
+                    $('input[id="is_returns"]').prop('checked', false);
+
+                    $("#cbo_customers").prop('required',false);
+                    $("#inv_no").prop('required',false);
+                    $("#cbo_suppliers").prop('required',true);
+                    $("#dr_invoice_no").prop('required',true);
+
+                    $('.check_sr').hide();
+                    $('.check_dr').show();
+                    $('#adjustment_is_return').val('0');
+                    $("input[name=inv_no]").val('');
+                    $('#adjustment_is_dr_return').val('1');
+                
+                    _cboCustomers.select2('val',null);
+                    _cboAdjustments.select2('val', 'OUT');
+
+                    $('#dr_note').html('');
+                }else{
+                     $('[id=is_adjustment]').trigger('click');
+                }
+            });            
+
+
             $('[id=is_adjustment]').click(function(event) {
                 if(this.checked == true) {
                     $('input[id="is_returns"]').prop('checked', false);
+                    $('input[id="is_dr_returns"]').prop('checked', false);
+
+
                     $("#cbo_customers").prop('required',false);
                     $("#inv_no").prop('required',false);
+                    $("#cbo_suppliers").prop('required',false);
+                    $("#dr_invoice_no").prop('required',false);
+
                     _cboCustomers.select2('val',null);
+                    _cboSuppliers.select2('val',null);
+
                     $('.checkhidden').hide();
                     $('#adjustment_is_return').val('0');
+                    $('#adjustment_is_dr_return').val('0');
                     $("input[name=inv_no]").val('');
+                    $("input[name=dr_invoice_no]").val('');
+
                 }else{
                     $('[id=is_returns]').trigger('click');
                 }
@@ -1034,20 +1186,26 @@ $(document).ready(function(){
             //$('.toggle-fullscreen').click();
             _cboAdjustments.select2('val',null);
             _cboDepartments.select2('val',null);
+            _cboCustomers.select2('val',null);
+            _cboSuppliers.select2('val',null);
             clearFields($('#frm_adjustments'));
             $('#tbl_items > tbody').html('');
             $('#cbo_departments').select2('val', $('#cbo_departments').data('default') );
             $('#typeaheadsearch').val('');
             // REMOVE CHECKED ATTRIBUTE FOR BOTH
             $('input[id="is_returns"]').prop('checked', false);
-            $('input[id="is_adjustment"]').prop('checked', false);
+            $('input[id="is_dr_returns"]').prop('checked', false);
             // THEN ADD TO ADJUSTMENT CHECKBOX
             $('input[id="is_adjustment"]').prop('checked', true);
             $('.checkhidden').hide();
             $('#adjustment_is_return').val('0');
+            $('#adjustment_is_dr_return').val('0');
             $("#cbo_customers").prop('required',false);
+            $("#cbo_suppliers").prop('required',false);
             $("#inv_no").prop('required',false);
+            $("#dr_invoice_no").prop('required',false);
             $('#note').text('');
+            $('#dr_note').text('');
             getproduct().done(function(data){
                 products.clear();
                 products.local = data.data;
@@ -1133,8 +1291,65 @@ $(document).ready(function(){
                     $(this).hide();
         });
 
+        $('#tbl_dr_list tbody').on('click','button[name="accept_item"]',function(){
+            _selectRowObjSup=$(this).closest('tr');
+            var value=dtSupplier.row(_selectRowObjSup).data();
+            _selectedInvTypeId = value.inv_type_id;
 
+            $('#dr_note').text(value.note);
 
+            if(value.is_journal_posted == 1){
+                $('#dr_note').css('color','green');
+            }else{
+                $('#dr_note').css('color','red');
+            }
+            $("input[name=dr_invoice_no]").val(value.dr_invoice_no);
+            a='';
+            var retail_price;
+                            
+            if(value.is_bulk == 1){
+                retail_price = getFloat(value.sale_price) / getFloat(value.child_unit_desc);
+            }else if (value.is_bulk == 0){
+                retail_price = 0;
+            }
+        
+            $('#tbl_items > tbody').prepend(newRowItem({
+                adjust_qty : value.dr_qty,
+                product_code : value.product_code,
+                product_id: value.product_id,
+                product_desc : value.product_desc,
+                adjust_line_total_discount : value.dr_line_total_discount,
+                tax_exempt : false,
+                adjust_tax_rate : value.dr_tax_rate,
+                adjust_price : value.dr_price,
+                adjust_discount : value.dr_discount,
+                tax_type_id : null,
+                adjust_line_total_price : value.dr_line_total_price,
+                adjust_non_tax_amount: value.dr_non_tax_amount,
+                adjust_tax_amount:value.dr_tax_amount,
+                child_unit_id : value.child_unit_id,
+                child_unit_name : value.child_unit_name,
+                parent_unit_name : value.product_unit_name,
+                parent_unit_id : getFloat(value.product_unit_id),
+                is_bulk: value.is_bulk,
+                is_parent : value.is_parent,
+                bulk_price: value.sale_price,
+                retail_price: retail_price,
+                a:a
+            }));
+            changetxn = 'inactive';
+            _line_unit=$('.line_unit'+a).select2({
+                minimumResultsForSearch: -1
+            });
+            _line_unit.select2('val',value.unit_id);
+            a++;
+            reInitializeNumeric();
+            reComputeTotal();
+            changetxn = 'active';
+
+            showNotification({title:"Successful !",stat:"success",msg: value.product_desc+' has been chosen'});
+            $(this).hide();
+        });
 
 
         $('#tbl_issuances tbody').on('click','button[name="edit_info"]',function(){
@@ -1178,17 +1393,24 @@ $(document).ready(function(){
 
 
             $('#note').text('');
+            $('#dr_note').text('');
             _cboAdjustments.select2('val',data.adjustment_type);
             $('#cbo_departments').select2('val',data.department_id);
             $('#cbo_customers').select2('val',data.customer_id);
-
+            $('#cbo_suppliers').select2('val',data.supplier_id);
 
             $("#is_returns").prop('checked', false); 
+            $("#is_dr_returns").prop('checked', false); 
             $("#is_adjustment").prop('checked', false); 
 
             if(data.adjustment_is_return == '1'){ // is return
                 $('input[id="is_returns"]').trigger('click');
-            }else if(data.adjustment_is_return == '0'){// is adjustment
+            }
+            else if(data.adjustment_is_dr_return == '1'){ // is dr return
+                $('input[id="is_dr_returns"]').trigger('click');
+                $('#dr_invoice_no').val(data.inv_no);
+            }
+            else{// is adjustment
                 $('input[id="is_adjustment"]').trigger('click');                
             } 
 
@@ -1251,9 +1473,6 @@ $(document).ready(function(){
                 }
             });
 
-
-
-
             showList(false);
 
             } // end of else if for validation if adjustment is posted in Accounting
@@ -1311,8 +1530,9 @@ $(document).ready(function(){
             var discounted_price=price-discount;
             var line_total_discount=discount*qty;
             var line_total=discounted_price*qty;
-            var net_vat=line_total/(1+tax_rate);
-            var vat_input=line_total-net_vat;
+            var gross_line_total=qty*price;
+            var net_vat=gross_line_total/(1+tax_rate);
+            var vat_input=gross_line_total-net_vat;
 
             $(oTableItems.total,row).find('input.numeric').val(accounting.formatNumber(line_total,2)); // line total amount
             $(oTableItems.total_line_discount,row).find('input.numeric').val(line_total_discount); //line total discount

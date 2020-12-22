@@ -264,7 +264,7 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <b class="required">*</b>  Department  : <br />
-                                <select id="cbo_branch" name="department" class="form-control">
+                                <select id="cbo_branch" name="department" class="form-control" data-default="<?php echo $accounts[0]->default_department_id; ?>">
                                     <?php foreach($departments as $department){ ?>
                                         <option value="<?php echo $department->department_id; ?>" selected><?php echo $department->department_name; ?></option>
                                     <?php } ?>
@@ -751,6 +751,8 @@ $(document).ready(function(){
             clearFields($('#frm_payments'));
             _cboSuppliers.select2('val',null);
             showList(false);
+            $('#cbo_branch').select2('val', $('#cbo_branch').data('default'));
+            $('#cbo_suppliers').select2('open');
         });
 
 

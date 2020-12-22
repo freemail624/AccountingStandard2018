@@ -76,19 +76,19 @@
                                         <input type="text" name="date_txn" class="date-picker  form-control" value="<?php echo $adjustment_info->date_adjusted; ?>">
                                     </div>
                                     <br /><br />
-                                    <label class="col-lg-2"> <b class="required">*</b> Supplier : </label>
+                                    <label class="col-lg-2"> <b class="required">*</b> Particular : </label>
                                     <div class="col-lg-10">
 
                                             <select id="cbo_particulars" name="particular_id" class=" cbo_supplier_list selectpicker show-tick form-control" data-live-search="true" data-error-msg="Particular is required." required>
                                                 <optgroup label="Customers">
                                                     <?php foreach($customers as $customer){ ?>
-                                                        <option value='C-<?php echo $customer->customer_id; ?>'><?php echo $customer->customer_name; ?></option>
+                                                        <option value='C-<?php echo $customer->customer_id; ?>' <?php echo ($particular_id===$customer->customer_id?'selected':''); ?>><?php echo $customer->customer_name; ?></option>
                                                     <?php } ?>
                                                 </optgroup>
 
                                                 <optgroup label="Suppliers">
                                                     <?php foreach($suppliers as $supplier){ ?>
-                                                        <option value='S-<?php echo $supplier->supplier_id; ?>' <?php echo ($supplier_info->adj_supplier_id===$supplier->supplier_id?'selected':''); ?>><?php echo $supplier->supplier_name; ?></option>
+                                                        <option value='S-<?php echo $supplier->supplier_id; ?>' <?php echo ($particular_id===$supplier->supplier_id?'selected':''); ?>><?php echo $supplier->supplier_name; ?></option>
                                                     <?php } ?>
                                                 </optgroup>
 

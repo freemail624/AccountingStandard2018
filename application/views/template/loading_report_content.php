@@ -38,17 +38,17 @@
 				<table width="100%" cellpadding="5" cellspacing="5" class="tbl-info">
 					<tr>
 						<td class="upp" width="15%"><strong>Date :</strong> </td>
-						<td width="45%" class="border-bottom font8 upp"><?php echo $info[0]->loading_date; ?></td>
+						<td width="45%" class="font8 upp"><?php echo $info[0]->loading_date; ?></td>
 						<td width="40%"></td>
 					</tr>
 					<tr>
 						<td class="upp"><strong>Driver :</strong></td>
-						<td class="border-bottom font8 upp"><?php echo $info[0]->agent_name; ?></td>
+						<td class="font8 upp"><?php echo $info[0]->agent_name; ?></td>
 						<td></td>
 					</tr>
 					<tr>
 						<td class="upp"><strong>Place :</strong></td>
-						<td class="border-bottom font8 upp"><?php echo $info[0]->loading_place; ?></td>
+						<td class="font8 upp"><?php echo $info[0]->loading_place; ?></td>
 						<td></td>
 					</tr>
 				</table>
@@ -174,28 +174,52 @@
 	<br/>
 
 	<table cellspacing="5" cellpadding="5" class="tbl-info" width="100%">
-		<?php 
-			$total_qty = 0;
-			foreach($categories as $category){ ?>
-			<tr>
-				<td colspan="3"><strong><?php echo $category->category_name; ?></strong></td>
-			</tr>
-			<?php if(count($items)>0){
-				foreach($items as $item){
-					if($category->category_id == $item->category_id){
-					$total_qty+=$item->inv_qty;
-			?>
-				<tr>
-					<td width="20%" style="padding-left: 25px;"><?php echo $item->product_desc; ?></td>
-					<td width="10%" align="right"><?php echo number_format($item->inv_qty,2); ?></td>
-					<td width="70%">&nbsp;</td>
-				</tr>
-			<?php }}}?>
+		<tr>
+			<td width="50%" valign="top">
+				<table cellspacing="5" cellpadding="5" class="tbl-info" width="100%">
+					<?php 
+						$total_qty = 0;
+						foreach($categories as $category){ ?>
+						<tr>
+							<td colspan="3" width="100%"><strong><?php echo $category->category_name; ?></strong></td>
+						</tr>
+						<?php if(count($items)>0){
+							foreach($items as $item){
+								if($category->category_id == $item->category_id){
+								$total_qty+=$item->inv_qty;
+						?>
+							<tr>
+								<td width="50%" style="padding-left: 25px;"><?php echo $item->product_desc; ?></td>
+								<td width="10%" align="right"><?php echo number_format($item->inv_qty,2); ?></td>
+								<td width="40%">&nbsp;</td>
+							</tr>
+						<?php }}}?>
 
-				<tr>
-					<td colspan="3">&nbsp;</td>
-				</tr>
-		<?php }?>
+							<tr>
+								<td colspan="3">&nbsp;</td>
+							</tr>
+					<?php }?>
+				</table>
+			</td>
+			<td width="50%" valign="top">
+				<table cellspacing="5" cellpadding="5" class="tbl-info" width="100%">
+					<tr>
+						<td colspan="2" width="100%">NOTE : <?php echo $info[0]->remarks; ?></td>
+					</tr>
+					<tr>
+						<td colspan="2" style="height: 20px;"></td>
+					</tr>
+					<tr>
+						<td width="70%" align="right">LOADED BY : </td>
+						<td width="30%"></td>
+					</tr>
+					<tr>
+						<td width="70%" align="right">CHECKED BY : </td>
+						<td width="30%"></td>
+					</tr>
+				</table>
+			</td>
+		</tr>
 	</table>
 </body>
 </html>

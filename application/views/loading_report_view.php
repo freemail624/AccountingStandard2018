@@ -494,7 +494,15 @@ $(document).ready(function(){
         dt_si=$('#tbl_si_list').DataTable({
             "bLengthChange":false,
             "order": [[ 6, "asc" ]],
-            "ajax" : "Sales_invoice/transaction/open",
+            "ajax" : { 
+                "url":"Sales_invoice/transaction/open", 
+                "bDestroy": true,             
+                "data": function ( d ) { 
+                        return $.extend( {}, d, { 
+                            "agent_id":$('#cbo_agents').val()
+                        }); 
+                    } 
+            }, 
             "columns": [
                 {
                     "targets": [0],
@@ -581,6 +589,12 @@ $(document).ready(function(){
 
 
         $('#link_browse').click(function(){
+
+            if($('#cbo_agents').val() == 0 || $('#cbo_agents').val() == null || "" ){
+                showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Please select a truck."});
+                return;
+            }
+
             $('#btn_receive_si').click();
         });
 
@@ -638,6 +652,42 @@ $(document).ready(function(){
                 clearFields($('#frm_agent_new'));
                 _cboAgents.select2('val',null)
                 $('#modal_new_agent').modal('show');
+            }else{
+            $('#tbl_si_list tbody').html('<tr><td colspan="6"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
+                dt_si.ajax.reload( null, false );
+                // $('#modal_si_list').modal('show');  
+
+                var agent_id = $(this).val();
+                $.ajax({
+                    url : 'Sales_invoice/transaction/open-si/'+agent_id,
+                    type : "GET",
+                    cache : false,
+                    dataType : 'json',
+                    processData : false,
+                    contentType : false,
+                    beforeSend : function(){
+                        $('#tbl_items > tbody').html('<tr><td align="center" colspan="6"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                    },
+                    success : function(response){
+                        var rows=response.data;
+                        $('#tbl_items > tbody').html('');
+                        $.each(rows,function(i,value){
+
+                            $('#tbl_items > tbody').prepend(newRowItem({
+                                invoice_id : value.sales_invoice_id,
+                                sales_inv_no : value.sales_inv_no,
+                                customer_id : value.customer_id,
+                                customer_name : value.customer_name,
+                                address: value.address,
+                                total_after_discount : value.total_after_discount,
+                                total_inv_qty : value.total_inv_qty,
+                                btnclass : ""
+                            })); 
+
+                        });
+                        reComputeTotal();
+                    }
+                });
             }
         });
 
@@ -678,6 +728,8 @@ $(document).ready(function(){
             $('#span_loading_report_no').html('LOADING-YYYYMMDD-XX');
             $('#cbo_agents').select2('val',null);
             showList(false);
+
+            $('#cbo_agents').select2('open');
             $('#tbl_items > tbody').html('');
             $('#invoice_default').datepicker('setDate', 'today');
             reComputeTotal(); //this is to make sure, display summary are recomputed as 0

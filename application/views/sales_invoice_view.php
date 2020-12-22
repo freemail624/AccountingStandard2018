@@ -270,8 +270,8 @@
                     <div class="row">
 
                         <div class="col-sm-2">
-                            <label>Truck #:</label>
-                            <select name="agent_id" id="cbo_agents" data-error-msg="Agent is required.">
+                            <label><b class="required">*</b> Truck #:</label>
+                            <select name="agent_id" id="cbo_agents" data-error-msg="Agent is required." required>
                                 <option value="0">[ Create New Agent ]</option>
                                 <?php foreach($agents as $agent){ ?>
                                     <option value="<?php echo $agent->agent_id; ?>">
@@ -1168,6 +1168,7 @@ $(document).ready(function(){
 
             });
 
+
             var tax_rate=suggestion.tax_rate; //base on the tax rate set to current product
             //choose what purchase cost to be use
             _customer_type_ = _cboCustomerType.val();
@@ -1221,10 +1222,14 @@ $(document).ready(function(){
                 //     net_vat = getFloat(net_vat) / getFloat(suggestion.child_unit_desc);
                 //     vat_input = getFloat(vat_input) / getFloat(suggestion.child_unit_desc);
                 // }
+            var qty = 1;
+            if (suggestion.is_product_basyo == 1){
+                qty = TotalBasyo();
+            }
 
             changetxn = 'active';
             $('#tbl_items > tbody').append(newRowItem({
-                inv_qty : "1",
+                inv_qty : qty,
                 inv_gross : temp_inv_price,
                 product_code : suggestion.product_code,
                 product_id: suggestion.product_id,
@@ -1249,6 +1254,8 @@ $(document).ready(function(){
                 is_parent: suggis_parent ,// INITIALLY , UNIT USED IS THE PARENT , 1 for PARENT 0 for CHILD
                 a:a,
                 primary_unit:suggestion.primary_unit,
+                is_basyo:suggestion.is_basyo,
+                is_product_basyo:suggestion.is_product_basyo
 
             }));
 
@@ -1777,7 +1784,9 @@ $(document).ready(function(){
                             is_parent : value.is_parent,
                             bulk_price: temp_sale_price,
                             retail_price: retail_price,
-                            a:a
+                            a:a,
+                            is_basyo:value.is_basyo,
+                            is_product_basyo:value.is_product_basyo
                         }));
                         _line_unit=$('.line_unit'+a).select2({
                             minimumResultsForSearch: -1
@@ -1915,7 +1924,9 @@ $(document).ready(function(){
                                     is_parent : value.is_parent,
                                     bulk_price: temp_sale_price,
                                     retail_price: retail_price,
-                                    a:a
+                                    a:a,
+                                    is_basyo:value.is_basyo,
+                                    is_product_basyo:value.is_product_basyo
                                 }));
                                 changetxn = 'inactive';
                                   _line_unit=$('.line_unit'+a).select2({
@@ -2035,6 +2046,11 @@ $(document).ready(function(){
             $(oTableItems.net_vat,row).find('input.numeric').val(net_vat); //net of vat
             $(oTableItems.vat_input,row).find('input.numeric').val(vat_input); //vat input
             //console.log(net_vat);
+
+            if(accounting.unformat(row.find('.is_basyo').val()) == 1){
+                reComputeTotalBasyo();
+            }
+
             reComputeTotal();
         });
 
@@ -2043,9 +2059,12 @@ $(document).ready(function(){
             row.find(oTableItems.discount).find('input.numeric').focus();
             row.find(oTableItems.discount).find('input.numeric').select();
         });
-
-        $('#tbl_items tbody').on('keypress','input.discount',function(){
-            $('#typeaheadsearch').focus();
+        
+        $('#tbl_items tbody').on('keypress','input.discount',function(evt){
+            if(evt.keyCode==13){
+                evt.preventDefault();
+                $('#typeaheadsearch').focus();
+            }
         });        
 
         $('#tbl_items tbody').on('focus','input.numeric',function(){
@@ -2136,6 +2155,7 @@ $(document).ready(function(){
             });*/
         $('#tbl_items > tbody').on('click','button[name="remove_item"]',function(){
             $(this).closest('tr').remove();
+            reComputeTotalBasyo();
             reComputeTotal();
         });
         $('#btn_browse').click(function(event){
@@ -2345,7 +2365,7 @@ $(document).ready(function(){
         return '<tr>'+
         //DISPLAY
         '<td ><input name="inv_qty[]" type="text" class="numeric form-control trigger-keyup qty" value="'+accounting.formatNumber(d.inv_qty,2)+'"></td>'+unit+
-        '<td ">'+d.product_desc+'<input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
+        '<td ">'+d.product_desc+'<input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"> <input type="text" class="hidden is_basyo" value="'+d.is_basyo+'"> <input type="text" class="hidden is_product_basyo" value="'+d.is_product_basyo+'"> </td>'+
         '<td ><input name="inv_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.inv_price,2)+'" style="text-align:right;"></td>'+
         '<td  style=""><input name="inv_discount[]" type="text" class="numeric form-control discount" value="'+ accounting.formatNumber(d.inv_discount,2)+'" style="text-align:right;"></td>'+
         // DISPLAY NONE
@@ -2396,6 +2416,36 @@ $(document).ready(function(){
         $('#td_tax').html(accounting.formatNumber(inv_tax_amount,2));
                     $('#td_discount').html(accounting.formatNumber(discounts,2)); // unknown - must be referring to table summary but not on id given
     };
+
+    var TotalBasyo=function(){
+        var rows=$('#tbl_items > tbody tr');
+        var total_basyo = 0;
+        var qty = 0;
+
+        $.each(rows,function(){
+            var is_basyo = $(this).find('.is_basyo').val();
+            if(is_basyo == 1){
+                qty=parseFloat(accounting.unformat($(oTableItems.qty,$(this)).find('input.numeric').val()));
+                total_basyo += qty;
+            }
+        });
+
+        return accounting.formatNumber(total_basyo,2);
+    };
+
+    var reComputeTotalBasyo=function(){
+        var total_basyo = TotalBasyo();
+
+        var basyo_rows=$('#tbl_items > tbody tr');
+        $.each(basyo_rows,function(){
+            var is_product_basyo = $(this).find('.is_product_basyo').val();
+            if(is_product_basyo == 1){
+                $(this).find('.qty').val(total_basyo);
+                $(this).find('.qty').trigger('keyup');
+            }
+        });
+    };
+
     var resetSummary=function(){
         var tbl_summary=$('#tbl_sales_invoice_summary');
         tbl_summary.find(oTableDetails.discount).html('0.00');

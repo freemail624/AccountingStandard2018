@@ -145,6 +145,7 @@ class Cash_invoice extends CORE_Controller
                         'units.unit_id',
                         'units.unit_name',
                         'products.is_bulk',
+                        'products.is_basyo',
                         'products.child_unit_id',
                         'products.parent_unit_id',
                         'products.child_unit_desc',
@@ -164,7 +165,8 @@ class Cash_invoice extends CORE_Controller
                             ELSE chldunit.unit_name
                         END) as product_unit_name',                          
                         '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.parent_unit_id) as parent_unit_name',
-                        '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name'
+                        '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name',
+                        '(SELECT count(*) FROM account_integration WHERE basyo_product_id = products.product_id) as is_product_basyo'
                     ),
                     array(
                         array('products','products.product_id=cash_invoice_items.product_id','left'),
@@ -219,6 +221,8 @@ class Cash_invoice extends CORE_Controller
                 $m_invoice->total_tax_amount=$this->get_numeric_value($this->input->post('summary_tax_amount',TRUE));
                 $m_invoice->total_after_tax=$this->get_numeric_value($this->input->post('summary_after_tax',TRUE));
                 $m_invoice->total_after_discount=$this->get_numeric_value($this->input->post('total_after_discount',TRUE));
+                $m_invoice->total_tendered=$this->get_numeric_value($this->input->post('total_tendered',TRUE));
+                $m_invoice->total_change=$this->get_numeric_value($this->input->post('total_change',TRUE));
                 $m_invoice->posted_by_user=$this->session->user_id;
                 $m_invoice->save();
 
@@ -339,6 +343,8 @@ class Cash_invoice extends CORE_Controller
                     $m_invoice->total_tax_amount=$this->get_numeric_value($this->input->post('summary_tax_amount',TRUE));
                     $m_invoice->total_after_tax=$this->get_numeric_value($this->input->post('summary_after_tax',TRUE));
                     $m_invoice->total_after_discount=$this->get_numeric_value($this->input->post('total_after_discount',TRUE));
+                    $m_invoice->total_tendered=$this->get_numeric_value($this->input->post('total_tendered',TRUE));
+                    $m_invoice->total_change=$this->get_numeric_value($this->input->post('total_change',TRUE));
                     $m_invoice->address=$this->input->post('address',TRUE);
                     $m_invoice->modified_by_user=$this->session->user_id;
                     $m_invoice->modify($cash_invoice_id);

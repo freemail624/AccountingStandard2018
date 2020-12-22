@@ -82,10 +82,10 @@
     <table width="100%" >
         <thead>
             <tr>
-                <td width="10%">PLU</td>
-                <td width="30%">Description</td>
-                <td width="15%" align="right">Quantity In</td>
-                <td width="15%" align="right">Quantity Out</td>
+                <td width="20%">PLU</td>
+                <td width="25%">Description</td>
+                <td width="12%" align="right">Quantity In</td>
+                <td width="13%" align="right">Quantity Out</td>
                 <td width="15%" align="right">Balance</td>
                 <td width="15%" align="right">Bulk Balance</td>
             </tr>

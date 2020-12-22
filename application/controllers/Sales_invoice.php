@@ -174,6 +174,7 @@ class Sales_invoice extends CORE_Controller
                         'products.product_desc',
                         'products.sale_price',
                         'products.is_bulk',
+                        'products.is_basyo',
                         'products.child_unit_id',
                         'products.parent_unit_id',
                         'products.child_unit_desc',
@@ -192,7 +193,8 @@ class Sales_invoice extends CORE_Controller
                             ELSE chldunit.unit_name
                         END) as product_unit_name',                        
                         '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.parent_unit_id) as parent_unit_name',
-                        '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name'
+                        '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name',
+                        '(SELECT count(*) FROM account_integration WHERE basyo_product_id = products.product_id) as is_product_basyo'
                     ),
                     array(
                         array('products','products.product_id=sales_invoice_items.product_id','left'),
@@ -210,7 +212,15 @@ class Sales_invoice extends CORE_Controller
             //***********************************************************************************************************
             case 'open':  //this returns SI
                 $m_sales_invoice=$this->Sales_invoice_model;
-                $response['data']= $m_sales_invoice->get_open_sales_invoice_list();
+                $agent_id = $this->input->get('agent_id'); 
+                $response['data']= $m_sales_invoice->get_open_sales_invoice_list($agent_id);
+                echo json_encode($response);
+                break;
+
+            case 'open-si':
+                $m_sales_invoice=$this->Sales_invoice_model;
+                $agent_id = $id_filter; 
+                $response['data']= $m_sales_invoice->get_open_sales_invoice_list($agent_id);
                 echo json_encode($response);
                 break;
 

@@ -210,7 +210,7 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
             <div class="tab-pane" id="accounts_integration_default_settings" style="min-height: 300px;">
                 <form id="frm_account_default_integration" role="form" class="form-horizontal row-border">
 
-                    <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Default Department (Sales &amp; Purchasing) </strong></span></h4>
+                    <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Sales &amp; Purchasing </strong></span></h4>
                     <div class="form-group">
                         <label class="col-md-3 control-label"> <b class="required"> * </b>Department :</label>
                         <div class="col-md-7">
@@ -225,8 +225,21 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                         </div>
                     </div>
 
+                    <div class="form-group">
+                        <label class="col-md-3 control-label"> <b class="required"> * </b>Product :</label>
+                        <div class="col-md-7">
+                            <select name="basyo_product_id" class="cbo_accounts" data-error-msg="Product (Basyo) is required." required>
+                                <?php foreach($products as $product){ ?>
+                                    <option value="<?php echo $product->product_id; ?>" <?php echo ($current_accounts->basyo_product_id==$product->product_id?'selected':''); ?>>
+                                        <?php echo $product->product_desc; ?>
+                                    </option>
+                                <?php } ?>
+                            </select>
+                            <span class="help-block m-b-none">Please Choose a default department for sales &amp; purchasing. </span>
+                        </div>
+                    </div>
 
-                    <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Default Customer (Cash Invoice) </strong></span></h4>
+                    <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Cash Invoice </strong></span></h4>
                     <div class="form-group">
                         <label class="col-md-3 control-label"> <b class="required"> * </b>Customer :</label>
                         <div class="col-md-7">

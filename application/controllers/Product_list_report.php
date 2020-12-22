@@ -91,6 +91,26 @@ class Product_list_report extends CORE_Controller
                 $this->load->view('template/product_list_report_content',$data);
                 break;
 
+            case 'srp-report':
+                $m_company=$this->Company_model;
+                $company=$m_company->get_list();
+                $data['company_info']=$company[0];
+                $m_products = $this->Products_model;
+                $supplier_id = $this->input->get('sup');
+                $category_id = $this->input->get('cat');
+                $item_type_id = $this->input->get('inv');
+                $data['data']=$m_products->product_list(1,null,null,$supplier_id,$category_id,$item_type_id,null,null,1);
+                // echo json_encode($response);
+                        
+                if($category_id == null){
+                    $data['customer'] = 'All Category';
+                }else{
+                    $data['customer'] = $this->Categories_model->get_list($category_id,'category_name')[0];
+                }
+
+                $this->load->view('template/product_list_srp_report_content',$data);
+                break;
+
             case 'excel':
                 $m_company=$this->Company_model;
                 $company_info=$m_company->get_list();
@@ -248,8 +268,116 @@ class Product_list_report extends CORE_Controller
                 $objWriter->save('php://output');
                 break;
 
+            case 'srp-excel':
+                $m_company=$this->Company_model;
+                $company_info=$m_company->get_list();
+
+                $m_products = $this->Products_model;
+                $supplier_id = $this->input->get('sup');
+                $category_id = $this->input->get('cat');
+                $item_type_id = $this->input->get('inv');
+
+                $suppliers = $this->Suppliers_model->get_list($supplier_id);
+                $categories = $this->Categories_model->get_list($category_id);
+                $item_types =$this->Item_type_model->get_list($item_type_id);
+
+                ($supplier_id == null ? $supplier_name = 'ALL' : $supplier_name=$suppliers[0]->supplier_name);
+                ($category_id == null ? $category_name = 'ALL' : $category_name=$categories[0]->category_name);
+                ($item_type_id == null ? $item_type = 'ALL' : $item_type=$item_types[0]->item_type);
+                $data=$m_products->product_list(1,null,null,$supplier_id,$category_id,$item_type_id,null,null,1);
+                // echo json_encode($response);
+                // $this->load->view('template/product_list_report_content',$data);
+
+                $excel=$this->excel;
+
+                $excel->setActiveSheetIndex(0);
+
+                $excel->getActiveSheet()->getStyle('A')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+                $excel->getActiveSheet()->getStyle('B')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+
+                $excel->getActiveSheet()->getStyle('C')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+                $excel->getActiveSheet()->getStyle('D')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+                $excel->getActiveSheet()->getStyle('E')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
 
+                $excel->getActiveSheet()->getColumnDimension('A')->setWidth(25);
+                $excel->getActiveSheet()->getColumnDimension('B')->setWidth(30);
+                $excel->getActiveSheet()->getColumnDimension('C')->setWidth(25);
+                $excel->getActiveSheet()->getColumnDimension('D')->setWidth(25);
+                $excel->getActiveSheet()->getColumnDimension('E')->setWidth(25);
+
+                $excel->getActiveSheet()->setTitle('Product List Report');
+
+                $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
+                                        ->setCellValue('A2',$company_info[0]->company_address)
+                                        ->setCellValue('A3',$company_info[0]->email_address)
+                                        ->setCellValue('A4',$company_info[0]->mobile_no);
+
+                $excel->getActiveSheet()->getStyle('A8')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('B8')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('C8')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('D8')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('E8')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('F8')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('G8')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('H8')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('I8')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('J8')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('K8')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('L8')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('M8')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('N8')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('O8')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('P8')->getFont()->setBold(TRUE);
+
+            $excel->getActiveSheet()->setCellValue('A6','PRODUCT LIST REPORT')
+            ->setCellValue('C6','Supplier: '.$supplier_name)
+            ->setCellValue('D6','Category: '.$category_name)
+            ->setCellValue('E6','Inventory Type: '.$item_type)
+
+                ->setCellValue('A8','PLU')
+                ->setCellValue('B8','Product Description')
+                ->setCellValue('C8','Category')
+                ->setCellValue('D8','Unit')
+                ->setCellValue('E8','Sale Price');
+
+
+                $i = 9;
+
+
+                foreach ($data as $data) {
+                            $excel->getActiveSheet()->setCellValue('A'.$i,$data->product_code)
+                                ->setCellValue('B'.$i,$data->product_desc)
+                                ->setCellValue('C'.$i, $data->category_name)
+                                ->setCellValue('D'.$i,$data->product_unit_name)
+                                ->setCellValue('E'.$i,number_format($data->sale_price,2));
+                $i++;
+
+                }
+
+                $i++;
+
+            $excel->getActiveSheet()->setCellValue('A'.$i,'Exported By: '.$this->session->user_fullname);
+            $i++;
+            $excel->getActiveSheet()->setCellValue('A'.$i,'Date Exported: '.date("Y-m-d H:i:s"));
+
+
+                // Redirect output to a client’s web browser (Excel2007)
+                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                header('Content-Disposition: attachment;filename="Product List Report '.date("Y-m-d H:i:s").'.xlsx"');
+                header('Cache-Control: max-age=0');
+                // If you're serving to IE 9, then the following may be needed
+                header('Cache-Control: max-age=1');
+
+                // If you're serving to IE over SSL, then the following may be needed
+                header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+                header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+                header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+                header ('Pragma: public'); // HTTP/1.0
+
+                $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+                $objWriter->save('php://output');
+                break;
 
         case 'email':
 

@@ -102,6 +102,7 @@ class Issuance_department extends CORE_Controller
                         'products.product_desc',
                         'products.purchase_cost',
                         'products.is_bulk',
+                        'products.is_basyo',
                         'products.child_unit_id',
                         'products.parent_unit_id',
                         'products.child_unit_desc',
@@ -116,7 +117,8 @@ class Issuance_department extends CORE_Controller
                             ELSE chldunit.unit_name
                         END) as product_unit_name',                              
                         '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.parent_unit_id) as parent_unit_name',
-                        '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name'
+                        '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name',
+                        '(SELECT count(*) FROM account_integration WHERE basyo_product_id = products.product_id) as is_product_basyo'
                     ),
                     array(
                         array('products','products.product_id=issuance_department_items.product_id','left'),
