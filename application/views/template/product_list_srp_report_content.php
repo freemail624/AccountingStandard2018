@@ -5,7 +5,6 @@
 	<style>
 		body {
 			font-family: 'Segoe UI',sans-serif;
-			font-size: 12px;
 		}
 		table, th, td { border-color: white; }
 		tr { border-bottom: none !important; }
@@ -16,10 +15,7 @@
         .right-align{
             text-align: right;
         }
-        @media print {
-      @page { margin: 0; size: landscape; }
-      body { margin: 1.0cm; }
-}
+
 	</style>
 	<script>
 		(function(){
@@ -41,36 +37,40 @@
     </table><hr>
     <div>
         <h3>
-            <strong>Product List Report</strong><br/>
-            <span style="font-weight: normal; ">Category : <?php echo $customer; ?></span>
+            <strong>PRODUCT LIST REPORT</strong>
+            <span style="font-weight: normal; float: right;">Category : <?php echo $customer; ?></span>
         </h3>
+        <table width="100%">
+            <tr>
+                <td></td>
+            </tr>
+        </table>
     </div>
 
     			
-    <table width="100%" cellpadding="3" cellspacing="0" border="1" style="font-size: 9px;">
-    	<thead>
-            <th>PLU</th>
-            <th>Product Description</th>
-            <th>Category</th>
-            <th>Unit</th>
-            <th>Sales Price </th>
-    	</thead>
-    	<tbody>
-         <?php 
+        <?php foreach($categories as $category){?>
+            <table width="100%" cellpadding="3" cellspacing="0" border="1" style="font-size: 13px;">
+                <thead>
+                    <tr>
+                        <td colspan="2" width="80%"><strong>CATEGORY : <?php echo $category->category_name; ?></strong></td>
+                        <td width="20%" align="right"><strong>Sales Price</strong></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($data as $item) {
+                        if($category->category_id == $item->category_id){
+                    ?>
+                    <tr>
+                         <td width="60%"><?php echo $item->product_desc; ?></td>
+                         <td width="20%"><?php echo $item->category_name; ?></td>
+                         <td width="20%" class="right-align"><?php echo number_format($item->sale_price,2);  ?></td>
+                    </tr>
+                    <?php }}?>
+                </tbody>
+            </table>
+            <br/><br/>
 
-         foreach ($data as $data) { ?>
-         <tr>
-             <td><?php echo $data->product_code; ?></td>
-             <td><?php echo $data->product_desc; ?></td>
-             <td><?php echo $data->category_name; ?></td>
-             <td><?php echo $data->product_unit_name; ?></td>
-             <td class="right-align"><?php echo number_format($data->sale_price,2);  ?></td>
-         </tr>
-        
-        <?php } ?>   
-        </tbody>
-    </table>
-
+        <?php }?>
 
 </body>
 </html>

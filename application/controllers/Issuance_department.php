@@ -10,11 +10,13 @@ class Issuance_department extends CORE_Controller
         $this->load->model('Departments_model');
         $this->load->model('Tax_types_model');
         $this->load->model('Products_model');
-        //$this->load->model('Customers_model');
+        $this->load->model('Company_model');
         $this->load->model('Refproduct_model');
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
         $this->load->model('Account_integration_model');
+
+        
 
     }
     public function index() {
@@ -33,7 +35,7 @@ class Issuance_department extends CORE_Controller
         $data['refproducts']=$this->Refproduct_model->get_list(
             'is_deleted=FALSE',null,null,'refproduct.refproduct_id'
         );
-        
+        $data['company']=$this->Company_model->getDefaultRemarks()[0];
         $data['accounts']=$this->Account_integration_model->get_list(1);
         $data['title'] = 'Issuance to Department';
         (in_array('15-5',$this->session->user_rights)? 
@@ -209,6 +211,7 @@ class Issuance_department extends CORE_Controller
                     $response['stat'] = 'success';
                     $response['msg'] = 'Items successfully issued.';
                     $response['row_added']=$this->response_rows($issuance_department_id);
+                    $response['is_auto_print']=$this->input->post('is_auto_print',TRUE);
                     echo json_encode($response);
                 }
                 break;
@@ -281,6 +284,7 @@ class Issuance_department extends CORE_Controller
                     $response['stat'] = 'success';
                     $response['msg'] = 'Issue items successfully updated.';
                     $response['row_updated']=$this->response_rows($issuance_department_id);
+                    $response['is_auto_print']=$this->input->post('is_auto_print',TRUE);
                     echo json_encode($response);
                 }
                 break;

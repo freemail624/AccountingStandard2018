@@ -1463,8 +1463,10 @@ $(document).ready(function(){
             var new_discount_price=discount*qty;
             var new_line_total=line_total-new_discount_price;
             var total_after_global = new_line_total-(new_line_total*(global_discount/100));
-            var net_vat=line_total/(1+tax_rate);
-            var vat_input=line_total-net_vat;
+            // var net_vat=line_total/(1+tax_rate);
+            // var vat_input=line_total-net_vat;
+            var net_vat=total_after_global/(1+tax_rate);
+            var vat_input=total_after_global-net_vat;
 
             $(oTableItems.total,row).find('input.numeric').val(accounting.formatNumber(new_line_total,2)); // line total amount
             $(oTableItems.total_after_global,row).find('input.numeric').val(accounting.formatNumber(total_after_global,2)); // line total amount

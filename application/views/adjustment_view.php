@@ -1531,8 +1531,8 @@ $(document).ready(function(){
             var line_total_discount=discount*qty;
             var line_total=discounted_price*qty;
             var gross_line_total=qty*price;
-            var net_vat=gross_line_total/(1+tax_rate);
-            var vat_input=gross_line_total-net_vat;
+            var net_vat=line_total/(1+tax_rate);
+            var vat_input=line_total-net_vat;
 
             $(oTableItems.total,row).find('input.numeric').val(accounting.formatNumber(line_total,2)); // line total amount
             $(oTableItems.total_line_discount,row).find('input.numeric').val(line_total_discount); //line total discount

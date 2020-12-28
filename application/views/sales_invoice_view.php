@@ -2036,9 +2036,9 @@ $(document).ready(function(){
             var line_total = price*qty; //ok not included in the output (view) and not saved in the database
             var line_total_discount=discount*qty; 
             // var line_total_discount=line_total*(discount/100);
-            var net_vat=line_total/(1+tax_rate);
-            var vat_input=line_total-net_vat;
             var new_line_total=line_total-line_total_discount; 
+            var net_vat=new_line_total/(1+tax_rate);
+            var vat_input=new_line_total-net_vat;
 
             $(oTableItems.gross,row).find('input.numeric').val(accounting.formatNumber(line_total,2)); //gross
             $(oTableItems.total,row).find('input.numeric').val(accounting.formatNumber(new_line_total,2)); // line total amount

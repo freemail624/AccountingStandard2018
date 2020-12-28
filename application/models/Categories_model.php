@@ -19,5 +19,20 @@ class Categories_model extends CORE_Model {
             ";
         return $this->db->query($sql)->result();
     }
+
+    function get_category_products(){
+        $sql="SELECT 
+            DISTINCT p.category_id,
+            c.category_name
+        FROM
+            products p
+            LEFT JOIN categories c ON c.category_id = p.category_id
+        WHERE
+            p.is_deleted = FALSE
+            ORDER BY c.category_id";
+        
+        return $this->db->query($sql)->result();
+    }
+
 }
 ?>

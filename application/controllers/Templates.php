@@ -646,7 +646,10 @@ class Templates extends CORE_Controller {
                 $m_issuance=$this->Issuance_department_model;
                 $m_dr_items=$this->Issuance_department_item_model;
                 $m_company=$this->Company_model;
+                $m_accounts=$this->Account_integration_model;
+
                 $type=$this->input->get('type',TRUE);
+                $data['is_basyo']=$m_accounts->get_list(1)[0];
 
                 $info=$m_issuance->get_list(
                     $filter_value,
@@ -896,6 +899,7 @@ class Templates extends CORE_Controller {
                 $m_sales_invoice=$this->Sales_invoice_model;
                 $m_sales_invoice_items=$this->Sales_invoice_item_model;
                 $m_company_info=$this->Company_model;
+                $m_accounts=$this->Account_integration_model;
                 $type=$this->input->get('type',TRUE);
 
                 // $info=$m_sales_invoice->get_list(
@@ -920,7 +924,7 @@ class Templates extends CORE_Controller {
                 // );
                 $company_info=$m_company_info->get_list();
                 $data['company_info']=$company_info[0];
-
+                $data['is_basyo']=$m_accounts->get_list(1)[0];
                 $info=$m_sales_invoice->get_list(
                     $filter_value,
                     array(
@@ -1132,10 +1136,11 @@ class Templates extends CORE_Controller {
                 $m_cash_invoice=$this->Cash_invoice_model;
                 $m_cash_invoice_items=$this->Cash_invoice_items_model;
                 $m_company_info=$this->Company_model;
+                $m_accounts=$this->Account_integration_model;
                 $type=$this->input->get('type',TRUE);
                 $company_info=$m_company_info->get_list();
                 $data['company_info']=$company_info[0];
-
+                $data['is_basyo']=$m_accounts->get_list(1)[0];
                 $info=$m_cash_invoice->get_list(
                 $filter_value,
                 array(

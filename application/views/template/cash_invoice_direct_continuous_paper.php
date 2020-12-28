@@ -1,7 +1,7 @@
 <style type="text/css">
     span, table{
     font-size: 12pt;
-    font-family: Courier New!important;
+    font-family: Calibri Light!important;
     font-weight: 100!important;
     /*color: #696969!important;*/
     color: black!important;
@@ -9,7 +9,7 @@
 
 @page {
   size: 24.13cm 27.94cm!important;
-  margin: 0.5in 1in 0.5in 1in!important;
+  margin: 0.5in 0.25in 0.5in 0.25in!important;
   scale: default!important;
 }
 
@@ -58,26 +58,52 @@
         <td width="20%" class="border-right border-bottom" align="right">UNIT PRICE</td>
         <td width="20%" class="border-bottom" align="right">AMOUNT</td>
     </tr>
-    <?php foreach($items as $item){ ?>
+    <?php 
+        $subtotal=0;
+        foreach($items as $item){ 
+
+        if($is_basyo->basyo_product_id != $item->product_id){
+        $subtotal+=$item->inv_line_total_after_global;
+    ?>
         <tr>
             <td valign="top" class="border-right"><center><?php echo number_format($item->inv_qty,2); ?></center></td>
             <td valign="top" class="border-right"><?php echo $item->unit_code; ?></td>
             <td valign="top" class="border-right"><?php echo $item->product_desc; ?></td>
             <td valign="top" class="border-right" align="right"><?php echo number_format($item->inv_price-$item->inv_discount,2); ?></td>
-            <!-- <td valign="top" align="right"><?php echo number_format($item->inv_discount,2); ?></td> -->
             <td valign="top" align="right"><?php echo number_format($item->inv_line_total_after_global,2); ?></td>
         </tr>
-    <?php }?>
-</table>
-<br/><br/>
-<table width="100%" style="border-collapse: collapse;" cellspacing="5" cellpadding="5">
+    <?php }}?>
+    <tr>        
+        <td valign="top" class="border-right">&nbsp;</td>
+        <td valign="top" class="border-right">&nbsp;</td>
+        <td valign="top" class="border-right">&nbsp;</td>
+        <td valign="top" class="border-right">&nbsp;</td>
+        <td valign="top" align="right">&nbsp;</td>       
+    </tr>   
+    <tr>        
+        <td valign="top" class="border-right">&nbsp;</td>
+        <td valign="top" class="border-right">&nbsp;</td>
+        <td valign="top" class="border-right">&nbsp;</td>
+        <td valign="top" class="border-right">&nbsp;</td>
+        <td valign="top" align="right">&nbsp;</td>       
+    </tr>          
+    <tr>        
+        <td valign="top"></td>
+        <td valign="top"></td>
+        <td valign="top"></td>
+        <td valign="top" align="right">SUB-TOTAL :</td>
+        <td valign="top" align="right" style="font-size: 14pt!important;"><?php echo number_format($subtotal,2); ?></td>        
+    </tr>   
+    <?php foreach($items as $item){
+        if($is_basyo->basyo_product_id == $item->product_id){ ?>
     <tr>
-        <td width="10%">&nbsp;</td>
-        <td width="10%">&nbsp;</td>
-        <td width="40%">&nbsp;</td>
-        <td width="20%">&nbsp;</td>
-        <td width="20%">&nbsp;</td>
+        <td valign="top"><center><?php echo number_format($item->inv_qty,2); ?></center></td>
+        <td valign="top"><?php echo $item->unit_code; ?></td>
+        <td valign="top"><?php echo $item->product_desc; ?></td>
+        <td valign="top" align="right"><?php echo number_format($item->inv_price-$item->inv_discount,2); ?></td>
+        <td valign="top" align="right"><?php echo number_format($item->inv_line_total_after_global,2); ?></td>
     </tr>
+    <?php }}?>
     <tr>
         <td valign="bottom" width="80%" align="right" colspan="4">TOTAL AMOUNT DUE :</td>
         <td valign="bottom" width="20%" align="right" style="font-size: 15pt!important;"><?php echo number_format($info->total_after_tax,2); ?></td>
@@ -87,35 +113,37 @@
         <td valign="top" width="20%" align="right"><?php echo number_format($info->total_tendered,2); ?></td>
     </tr>   
     <tr>
-        <td valign="top" width="80%" align="right" colspan="4">CHANGE AMOUNT:</td>
+        <td valign="top" width="80%" align="right" colspan="4">CHANGE AMOUNT :</td>
         <td valign="top" width="20%" align="right"><?php echo number_format($info->total_change,2); ?></td>
-    </tr>      
-    <tr>
-        <td colspan="5" style="height: 20px;"></td>
-    </tr>      
+    </tr>            
+</table>
+<br/><br/>
+<table width="100%" style="border-collapse: collapse;" cellspacing="5" cellpadding="5">  
      <tr>
-        <td width="20%" colspan="2">RECEIVED BY : </td>
-        <td width="60%" colspan="2" align="right" style="font-size: 9pt!important;">ENCODED BY : </td>
-        <td width="20%" style="font-size: 9pt!important;"><?php echo $info->encoded_by; ?></td>
+        <td width="100%" colspan="5">RECEIVED BY : </td>
     </tr>
     <tr>
-        <td width="60%" colspan="3"></td>
-        <td width="20%" align="right" style="font-size: 9pt!important;">CHECKED BY : </td>
-        <td width="20%"></td>
+        <td width="100%" colspan="5"></td>
     </tr>    
 </table>
 
 <table width="100%" style="border-collapse: collapse;" cellspacing="5" cellpadding="5">
     <tr>
-        <td width="40%">&nbsp;</td>
-        <td width="60%"></td>
+        <td width="27%">&nbsp;</td>
+        <td width="73%">&nbsp;</td>
     </tr>
     <tr>
         <td class="border-top" align="left">SIGNATURE OVER PRINTED NAME</td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td colspan="2" style="height: 20px;"></td>
+        <td colspan="5" style="height: 5px;"></td>
+    </tr>
+    <tr>
+        <td colspan="5" style="font-size: 9pt!important;">
+            ENCODED BY : <?php echo $info->encoded_by; ?><br/>
+            CHECKED BY : 
+        </td>
     </tr>
     <tr>
         <td colspan="2">NOTE : <?php echo $info->remarks; ?></td>

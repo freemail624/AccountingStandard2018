@@ -172,12 +172,12 @@ echo $_side_bar_navigation;
                 </div>
                 <div class="row">
                     <div class="col-xs-12 col-lg-4">
-                        <b class="required">*</b>  Terms :<br />
+                        Terms :<br />
                         <div class="input-group">
                             <span class="input-group-addon">
                                 <i class="fa fa-code"></i>
                             </span>
-                            <input type="text" name="terms" id="terms" class="form-control" required data-error-msg="Terms is required!">
+                            <input type="text" name="terms" id="terms" class="form-control" data-error-msg="Terms is required!">
                         </div>
                     </div>
                     <div class="col-xs-12 col-lg-4">
@@ -297,6 +297,13 @@ echo $_side_bar_navigation;
 <div class="panel-footer">
     <div class="row">
         <div class="col-sm-12">
+            <label class="control-label" id="is_auto_print"> 
+                <strong> 
+                   <input type="checkbox" name="is_auto_print" for="is_auto_print" <?php if($company->is_print_auto == 1){ echo 'checked'; } ?>>
+                        Print after saving?
+                </strong>
+            </label>
+            <br/>
             <button id="btn_save" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>  Save Changes</button>
             <button id="btn_cancel" class="btn-default btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"">Cancel</button>
         </div>
@@ -775,7 +782,8 @@ dt_si = $('#tbl_si_list').DataTable({
                 $('#modal_new_department').modal('show');
                 clearFields($('#modal_new_department').find('form'));
             }else{
-                $('#terms').focus();
+                // $('#terms').focus();
+                $('#typeaheadsearch').focus();
             }
         });
 
@@ -1103,6 +1111,9 @@ dt_si = $('#tbl_si_list').DataTable({
                             dt.row.add(response.row_added[0]).draw();
                             clearFields($('#frm_issuances'));
                             showList(true);
+                            if(response.is_auto_print == 1){
+                                window.open('Templates/layout/issuance-department/'+ response.row_added[0].issuance_department_id +'?type=direct');
+                            }
                         }).always(function(){
                             showSpinningProgress($('#btn_save'));
                         });
@@ -1112,6 +1123,9 @@ dt_si = $('#tbl_si_list').DataTable({
                             dt.row(_selectRowObj).data(response.row_updated[0]).draw();
                             clearFields($('#frm_issuances'));
                             showList(true);
+                            if(response.is_auto_print == 1){
+                                window.open('Templates/layout/issuance-department/'+ response.row_updated[0].issuance_department_id +'?type=direct');
+                            }                            
                         }).always(function(){
                             showSpinningProgress($('#btn_save'));
                         });
@@ -1157,6 +1171,9 @@ dt_si = $('#tbl_si_list').DataTable({
         _data.push({name : "summary_before_discount", value :tbl_summary.find(oTableDetails.before_tax).text()});
         _data.push({name : "summary_tax_amount", value : tbl_summary.find(oTableDetails.issue_tax_amount).text()});
         _data.push({name : "summary_after_tax", value : tbl_summary.find(oTableDetails.after_tax).text()});
+
+        $('input[name="is_auto_print"]').prop("checked") ?  _data.push({name : "is_auto_print" , value : '1'   }) : _data.push({name : "is_auto_print" , value : '0'   });
+
         return $.ajax({
             "dataType":"json",
             "type":"POST",
@@ -1174,6 +1191,9 @@ dt_si = $('#tbl_si_list').DataTable({
         _data.push({name : "summary_tax_amount", value : tbl_summary.find(oTableDetails.issue_tax_amount).text()});
         _data.push({name : "summary_after_tax", value : tbl_summary.find(oTableDetails.after_tax).text()});
         _data.push({name : "issuance_department_id" ,value : _selectedID});
+
+        $('input[name="is_auto_print"]').prop("checked") ?  _data.push({name : "is_auto_print" , value : '1'   }) : _data.push({name : "is_auto_print" , value : '0'   });
+
         return $.ajax({
             "dataType":"json",
             "type":"POST",

@@ -105,8 +105,10 @@ class Product_list_report extends CORE_Controller
                 if($category_id == null){
                     $data['customer'] = 'All Category';
                 }else{
-                    $data['customer'] = $this->Categories_model->get_list($category_id,'category_name')[0];
+                    $data['customer'] = $this->Categories_model->get_list($category_id,'category_name')[0]->category_name;
                 }
+
+                $data['categories']=$this->Categories_model->get_category_products();
 
                 $this->load->view('template/product_list_srp_report_content',$data);
                 break;
@@ -281,6 +283,8 @@ class Product_list_report extends CORE_Controller
                 $categories = $this->Categories_model->get_list($category_id);
                 $item_types =$this->Item_type_model->get_list($item_type_id);
 
+                $categories=$this->Categories_model->get_category_products();
+
                 ($supplier_id == null ? $supplier_name = 'ALL' : $supplier_name=$suppliers[0]->supplier_name);
                 ($category_id == null ? $category_name = 'ALL' : $category_name=$categories[0]->category_name);
                 ($item_type_id == null ? $item_type = 'ALL' : $item_type=$item_types[0]->item_type);
@@ -296,15 +300,11 @@ class Product_list_report extends CORE_Controller
                 $excel->getActiveSheet()->getStyle('B')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 
                 $excel->getActiveSheet()->getStyle('C')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                $excel->getActiveSheet()->getStyle('D')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                $excel->getActiveSheet()->getStyle('E')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
 
-                $excel->getActiveSheet()->getColumnDimension('A')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('B')->setWidth(30);
-                $excel->getActiveSheet()->getColumnDimension('C')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('D')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('E')->setWidth(25);
+                $excel->getActiveSheet()->getColumnDimension('A')->setWidth(30);
+                $excel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
+                $excel->getActiveSheet()->getColumnDimension('C')->setWidth(20);;
 
                 $excel->getActiveSheet()->setTitle('Product List Report');
 
@@ -313,53 +313,43 @@ class Product_list_report extends CORE_Controller
                                         ->setCellValue('A3',$company_info[0]->email_address)
                                         ->setCellValue('A4',$company_info[0]->mobile_no);
 
-                $excel->getActiveSheet()->getStyle('A8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('B8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('C8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('D8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('E8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('F8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('G8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('H8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('I8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('J8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('K8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('L8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('M8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('N8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('O8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('P8')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('A9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('B9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('C9')->getFont()->setBold(TRUE);
 
-            $excel->getActiveSheet()->setCellValue('A6','PRODUCT LIST REPORT')
-            ->setCellValue('C6','Supplier: '.$supplier_name)
-            ->setCellValue('D6','Category: '.$category_name)
-            ->setCellValue('E6','Inventory Type: '.$item_type)
-
-                ->setCellValue('A8','PLU')
-                ->setCellValue('B8','Product Description')
-                ->setCellValue('C8','Category')
-                ->setCellValue('D8','Unit')
-                ->setCellValue('E8','Sale Price');
-
+                $excel->getActiveSheet()->setCellValue('A6','PRODUCT LIST REPORT')
+                ->setCellValue('C6','Supplier: '.$supplier_name)
+                ->setCellValue('A7','Category: '.$category_name)
+                ->setCellValue('C7','Inventory Type: '.$item_type);
 
                 $i = 9;
+                foreach ($categories as $category){
+                    $i = $i + 1;
+                    $excel->getActiveSheet()->setCellValue('A'.$i,'CATEGORY : '.$category->category_name)
+                    ->setCellValue('C'.$i,'SALES PRICE');
+                    $excel->getActiveSheet()->getStyle('A'.$i.':C'.$i)->getFont()->setBold(TRUE); 
+                    $excel->getActiveSheet()->getStyle('C'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                        foreach($data as $item){                        
+                            if($category->category_id == $item->category_id){
+                                $i++;
+
+                                $excel->getActiveSheet()->setCellValue('A'.$i,$item->product_desc)
+                                ->setCellValue('B'.$i,$item->category_name)
+                                ->setCellValue('C'.$i,number_format($item->sale_price,2));
+                                $excel->getActiveSheet()->getStyle('C'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                            }
+                        }
 
 
-                foreach ($data as $data) {
-                            $excel->getActiveSheet()->setCellValue('A'.$i,$data->product_code)
-                                ->setCellValue('B'.$i,$data->product_desc)
-                                ->setCellValue('C'.$i, $data->category_name)
-                                ->setCellValue('D'.$i,$data->product_unit_name)
-                                ->setCellValue('E'.$i,number_format($data->sale_price,2));
-                $i++;
+                    $i++;
 
                 }
-
+            
                 $i++;
-
-            $excel->getActiveSheet()->setCellValue('A'.$i,'Exported By: '.$this->session->user_fullname);
-            $i++;
-            $excel->getActiveSheet()->setCellValue('A'.$i,'Date Exported: '.date("Y-m-d H:i:s"));
+                $excel->getActiveSheet()->setCellValue('A'.$i,'Exported By: '.$this->session->user_fullname);
+                $i++;
+                $excel->getActiveSheet()->setCellValue('A'.$i,'Date Exported: '.date("Y-m-d H:i:s"));
 
 
                 // Redirect output to a client’s web browser (Excel2007)
