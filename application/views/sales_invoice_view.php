@@ -1060,7 +1060,7 @@ $(document).ready(function(){
         });
         _cboCustomers=$("#cbo_customers").select2({
             placeholder: "Please select customer.",
-            allowClear: true
+            allowClear: false
         });
         _cboCustomerType=$("#cbo_customer_type").select2({
             allowClear: false
@@ -2093,11 +2093,13 @@ $(document).ready(function(){
                 if(_txnMode=="new"){
                     createSalesInvoice().done(function(response){
                         showNotification(response);
-                        dt.row.add(response.row_added[0]).draw();
-                        clearFields($('#frm_sales_invoice'));
-                        showList(true);
-                        if(response.is_auto_print == 1){
-                            window.open('Templates/layout/sales-invoice/'+ response.row_added[0].sales_invoice_id +'?type=direct');
+                        if(response.stat == 'success'){
+                            dt.row.add(response.row_added[0]).draw();
+                            clearFields($('#frm_sales_invoice'));
+                            showList(true);
+                            if(response.is_auto_print == 1){
+                                window.open('Templates/layout/sales-invoice/'+ response.row_added[0].sales_invoice_id +'?type=direct');
+                            }
                         }
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
@@ -2105,11 +2107,13 @@ $(document).ready(function(){
                 }else{
                     updateSalesInvoice().done(function(response){
                         showNotification(response);
-                        dt.row(_selectRowObj).data(response.row_updated[0]).draw();
-                        clearFields($('#frm_sales_invoice'));
-                        showList(true);
-                         if(response.is_auto_print == 1){
-                            window.open('Templates/layout/sales-invoice/'+ response.row_updated[0].sales_invoice_id +'?type=direct');
+                        if(response.stat == 'success'){
+                            dt.row(_selectRowObj).data(response.row_updated[0]).draw();
+                            clearFields($('#frm_sales_invoice'));
+                            showList(true);
+                             if(response.is_auto_print == 1){
+                                window.open('Templates/layout/sales-invoice/'+ response.row_updated[0].sales_invoice_id +'?type=direct');
+                            }
                         }
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
@@ -2213,6 +2217,7 @@ $(document).ready(function(){
         });
         return stat;
     };
+
     var getproduct=function(){
        return $.ajax({
            "dataType":"json",
@@ -2290,7 +2295,7 @@ $(document).ready(function(){
             "url":"Sales_invoice/transaction/check-invoice-loading",
             "data":{sales_invoice_id : _selectedID}
         });
-    }
+    };
 
     var getInvetory=function(product_id){
         return $.ajax({

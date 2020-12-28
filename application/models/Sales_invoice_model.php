@@ -1063,6 +1063,22 @@ GROUP BY n.customer_id HAVING total_balance > 0";
 
         return $this->db->query($sql)->result();
     }
+
+    function checkCustomerInvoice($customer_id,$date_due,$sales_invoice_id=null){
+        $sql="SELECT si.*,
+                c.customer_name,
+                date_format(si.date_due,'%m/%d/%Y') as date_due
+                FROM sales_invoice si
+                LEFT JOIN customers c ON c.customer_id = si.customer_id
+            WHERE 
+                si.is_deleted = FALSE AND 
+                si.is_active = TRUE AND 
+                si.customer_id = ".$customer_id." AND
+                si.date_due = '".$date_due."'
+                ".($sales_invoice_id==null?'':' AND si.sales_invoice_id!='.$sales_invoice_id)."";
+        return $this->db->query($sql)->result();
+    }
+
 }
 
 

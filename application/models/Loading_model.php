@@ -17,6 +17,7 @@ class Loading_model extends CORE_Model{
             loading.*,
             DATE_FORMAT(loading.loading_date,'%m/%d/%Y') as loading_date,
             agent.agent_name,
+            agent.truck_no,
             CONCAT_WS(user.user_fname,user.user_mname,user.user_lname) as loaded_by,
             user.journal_approved_by
         FROM
@@ -102,7 +103,7 @@ class Loading_model extends CORE_Model{
             LEFT JOIN categories c ON c.category_id = p.category_id
             WHERE l.loading_id = $loading_id
             GROUP BY sii.product_id
-            ORDER BY p.product_desc ASC";
+            ORDER BY p.category_id ASC";
         return $this->db->query($sql)->result();
     }
 
@@ -119,7 +120,7 @@ class Loading_model extends CORE_Model{
             WHERE l.loading_id = $loading_id
             AND c.category_id > 0
             GROUP BY p.category_id
-            ORDER BY c.category_name ASC";
+            ORDER BY c.category_id ASC";
         return $this->db->query($sql)->result();
     }
 
