@@ -214,8 +214,8 @@
                         </div>              
 
                         <div class="col-sm-5">
-                            <b class="required">*</b> <label> Place :</label><br>
-                            <input class="form-control" id="txt_address" type="text" name="loading_place" placeholder="Location" required data-error-msg="Location is required.">
+                            <b class="required">*</b> <label> Route :</label><br>
+                            <input class="form-control" id="txt_route" type="text" name="loading_place" placeholder="Route" required data-error-msg="Route is required.">
                         </div>        
                         <div class="col-sm-1">
                             <label>Invoices #</label> <br />
@@ -234,7 +234,16 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class=""></div>
+                        <div class="col-sm-4">
+                            <b class="required">*</b> <label> Pahinante :</label><br>
+                            <input class="form-control" id="driver_pahinante" type="text" name="driver_pahinante" placeholder="Pahinante" required data-error-msg="Pahinante is required.">
+                        </div>
+                        <div class="col-sm-5"></div>
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-2">
+                            <b class="required">*</b> <label> Daily Allowance :</label><br>
+                            <input type="text" class="numeric form-control" id="allowance_amount" name="allowance_amount" placeholder="Daily Allowance" required data-error-msg="Daily Allowance is required." data-default="<?php echo $accounts[0]->daily_allowance; ?>">
+                        </div>
                     </div>
                 </div>
             </form>
@@ -691,8 +700,17 @@ $(document).ready(function(){
                         reComputeTotal();
                     }
                 });
+
+                $('#txt_route').focus();
             }
         });
+
+        $('#txt_route').on('keypress',function(evt){
+            if(evt.keyCode==13){
+                evt.preventDefault();
+                $('#driver_pahinante').focus();
+            }
+        });       
 
         //create new agent
         $('#btn_save_agent').click(function(){
@@ -730,6 +748,8 @@ $(document).ready(function(){
             clearFields($('#div_sales_invoice_fields'));
             $('#span_loading_report_no').html('LOADING-YYYYMMDD-XX');
             $('#cbo_agents').select2('val',null);
+            $('#allowance_amount').val(accounting.formatNumber($('#allowance_amount').data('default'),2));
+
             showList(false);
 
             $('#cbo_agents').select2('open');

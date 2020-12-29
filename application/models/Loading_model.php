@@ -103,7 +103,7 @@ class Loading_model extends CORE_Model{
             LEFT JOIN categories c ON c.category_id = p.category_id
             WHERE l.loading_id = $loading_id
             GROUP BY sii.product_id
-            ORDER BY p.category_id ASC";
+            ORDER BY p.category_id, p.product_id ASC";
         return $this->db->query($sql)->result();
     }
 

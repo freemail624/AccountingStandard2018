@@ -24,7 +24,7 @@ class Loading extends CORE_Controller
         $this->load->model('Cash_invoice_model');
         $this->load->model('Customer_type_model');
         $this->load->model('Order_source_model');
-
+        $this->load->model('Account_integration_model');
         $this->load->model('Loading_model');
         $this->load->model('Loading_item_model');
         $this->load->model('Agent_model');
@@ -69,6 +69,7 @@ class Loading extends CORE_Controller
         );
 
         $data['agents']=$this->Agent_model->get_list(array('is_deleted'=>FALSE));
+        $data['accounts']=$this->Account_integration_model->get_list(1);
 
         $tax_rate=$this->Company_model->get_list(
             null,
@@ -147,9 +148,11 @@ class Loading extends CORE_Controller
                 $m_loading->set('date_created','NOW()'); //treat NOW() as function and not string
                 $m_loading->agent_id=$this->input->post('agent_id',TRUE);
                 $m_loading->loading_place=$this->input->post('loading_place',TRUE);
+                $m_loading->driver_pahinante=$this->input->post('driver_pahinante',TRUE);
                 $m_loading->loading_date=date('Y-m-d',strtotime($this->input->post('loading_date',TRUE)));
                 $m_loading->total_amount=$this->get_numeric_value($this->input->post('grand_total_amount',TRUE));
                 $m_loading->total_inv_qty=$this->get_numeric_value($this->input->post('grand_total_inv_qty',TRUE));
+                $m_loading->allowance_amount=$this->get_numeric_value($this->input->post('allowance_amount',TRUE));
                 $m_loading->remarks = $this->input->post('remarks',TRUE);
                 $m_loading->posted_by_user=$this->session->user_id;
                 $m_loading->save();
@@ -215,9 +218,11 @@ class Loading extends CORE_Controller
                 $m_loading->set('date_modified','NOW()'); //treat NOW() as function and not string
                 $m_loading->agent_id=$this->input->post('agent_id',TRUE);
                 $m_loading->loading_place=$this->input->post('loading_place',TRUE);
+                $m_loading->driver_pahinante=$this->input->post('driver_pahinante',TRUE);
                 $m_loading->loading_date=date('Y-m-d',strtotime($this->input->post('loading_date',TRUE)));
                 $m_loading->total_amount=$this->get_numeric_value($this->input->post('grand_total_amount',TRUE));
                 $m_loading->total_inv_qty=$this->get_numeric_value($this->input->post('grand_total_inv_qty',TRUE));
+                $m_loading->allowance_amount=$this->get_numeric_value($this->input->post('allowance_amount',TRUE));
                 $m_loading->remarks = $this->input->post('remarks',TRUE);
                 $m_loading->modified_by_user=$this->session->user_id;
                 $m_loading->modify($loading_id);

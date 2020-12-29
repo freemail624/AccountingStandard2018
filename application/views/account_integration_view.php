@@ -68,6 +68,10 @@
             from { -webkit-transform: rotate(0deg); }
             to { -webkit-transform: rotate(360deg); }
         }
+
+        .numeric{
+            text-align: right;
+        }
 /*
 .tab-primary.tab-container > .nav-tabs > li.active > a {
 background:#1f1f1f!important;color: white !important;border-top: 0.5px solid #ffd65c!important;
@@ -282,6 +286,17 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                             <span class="help-block m-b-none">Please Choose a default category for computation of total qty of order. </span>
                         </div>
                     </div>
+
+                    <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Daily Allowance </strong></span></h4>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label"> <b class="required"> * </b>Allowance :</label>
+                        <div class="col-md-2">
+                            <input type="text" class="numeric form-control" name="daily_allowance" placeholder="Daily Allowance" required data-error-msg="Daily Allowance is required." value="<?php echo $current_accounts->daily_allowance; ?>">
+                        </div>
+                        <div class="5">
+                            <span class="help-block m-b-none">Please Choose a default daily allowance for loading report. </span></div>
+                    </div>
+                    <br/>
                 </form>
                     <div class="col-sm-offset-3">
                         <button id="btn_save_default_configuration" type="button" class="btn btn-primary" style="font-family: tahoma;text-transform: none;"><span class=""></span> Save Default Configuration Changes</button>
@@ -858,6 +873,9 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
 <script src="assets/plugins/select2/select2.full.min.js"></script>
 
 
+<!-- numeric formatter -->
+<script src="assets/plugins/formatter/autoNumeric.js" type="text/javascript"></script>
+<script src="assets/plugins/formatter/accounting.js" type="text/javascript"></script>
 
 
 
@@ -904,6 +922,7 @@ $(document).ready(function(){
         });
 
 
+        $('.numeric').autoNumeric('init');
         // $('#cbo_inventory').select2('val', 0);
 
     }();

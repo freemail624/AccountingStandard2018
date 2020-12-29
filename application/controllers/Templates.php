@@ -1054,7 +1054,16 @@ class Templates extends CORE_Controller {
                     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                     $pdf = $this->m_pdf->load("LETTER-L"); //pass the instance of the mpdf class
                     $content=$this->load->view('template/loading_report_content',$data,TRUE); //load the template
-                    //$pdf->setFooter('{PAGENO}');
+
+                    $pdf = new \Mpdf\Mpdf([
+                        'pagenumPrefix' => 'Page number ',
+                        'pagenumSuffix' => ' - ',
+                        'nbpgPrefix' => ' out of ',
+                        'nbpgSuffix' => ' pages'
+                    ]);
+
+
+                    $pdf->setFooter('{PAGENO}{nbpg}');
                     $pdf->WriteHTML($content);
                     //download it.
                     $pdf->Output($pdfFilePath,"D");
@@ -1071,7 +1080,8 @@ class Templates extends CORE_Controller {
                     $file_name=$data['info'][0]->loading_no;
                     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                     $pdf = $this->m_pdf->load("LETTER-L");
-                    $content=$this->load->view('template/loading_report_content',$data,TRUE); //load the template                    
+                    $content=$this->load->view('template/loading_report_content',$data,TRUE); //load the template                
+                    $pdf->setFooter('{PAGENO}');    
                     $pdf->WriteHTML($content);
                     $pdf->Output();
                 }

@@ -180,90 +180,48 @@
 	<br/>
 
 	<table cellspacing="5" cellpadding="5" class="tbl-info" width="100%">
-		<?php 
-		$a=count($items)/40;
-		$b=ceil($a);
-		for($x=0; $x < $b; $x++){ 
-		?>
 		<tr>
 			<td width="50%" valign="top">
 				<table cellspacing="5" cellpadding="5" class="tbl-info" width="100%">
 					<tr>
-						<td colspan="3" valign="top" class="font-items upp" width="100%" style="padding-bottom: 20px;">
+						<td colspan="3" class="font-items upp" width="100%" style="padding-bottom: 20px;">
 							<strong>ROUTE :</strong> <?php echo $info[0]->loading_place; ?>
 						</td>
 					</tr>
 
-						<?php 
-
-							foreach($categories as $category){ 
-							if(count(array_filter(array_slice($items,0+($x*40),20), function($p) use($category) {
-								return $p->category_id == $category->category_id;
-							})) >  0){
-							?>
-
+					<?php 
+						$total_qty = 0;
+						foreach($categories as $category){ ?>
 						<tr>
-							<td valign="top" class="font-items" colspan="3" width="100%"><strong><?php echo $category->category_name; ?></strong> </td>
+							<td class="font-items" colspan="3" width="100%"><strong><?php echo $category->category_name; ?></strong></td>
 						</tr>
 						<?php if(count($items)>0){
-							foreach(array_slice($items,0+($x*40),20) as $item){
+							foreach($items as $item){
 								if($category->category_id == $item->category_id){
+								$total_qty+=$item->inv_qty;
 						?>
 							<tr>
-								<td valign="top" class="font-items" width="50%" style="padding-left: 25px;"><?php echo $item->product_desc; ?></td>
-								<td valign="top" class="font-items" width="10%" align="right"><?php echo number_format($item->inv_qty,2); ?></td>
-								<td valign="top" class="font-items" width="40%">&nbsp;</td>
+								<td class="font-items" width="50%" style="padding-left: 25px;"><?php echo $item->product_desc; ?></td>
+								<td class="font-items" width="10%" align="right"><?php echo number_format($item->inv_qty,2); ?></td>
+								<td class="font-items" width="40%">&nbsp;</td>
 							</tr>
 						<?php }}}?>
 
 							<tr>
-								<td valign="top" class="font-items" colspan="3">&nbsp;</td>
+								<td class="font-items" colspan="3">&nbsp;</td>
 							</tr>
-					<?php }}?>
+					<?php }?>
 				</table>
 			</td>
 			<td width="50%" valign="top">
 				<table cellspacing="5" cellpadding="5" class="tbl-info" width="100%">
-
-						<?php foreach($categories as $category){ 
-							if(count(array_filter(array_slice($items,20+($x*40),20), function($p) use($category) {
-								return $p->category_id == $category->category_id;
-							})) >  0){
-							?>
-							<tr>
-								<td valign="top" class="font-items" colspan="3" width="100%"><strong><?php echo $category->category_name; ?></strong> </td>
-							</tr>
-						<?php 
-						if(count($items)>0){
-							foreach(array_slice($items,20+($x*40),20) as $item){
-								if($category->category_id == $item->category_id){
-						?>
-							<tr>
-								<td valign="top" class="font-items" width="50%" style="padding-left: 25px;"><?php echo $item->product_desc; ?></td>
-								<td valign="top" class="font-items" width="10%" align="right"><?php echo number_format($item->inv_qty,2); ?></td>
-								<td valign="top" class="font-items" width="40%">&nbsp;</td>
-							</tr>
-						<?php }}}?>
-
-							<tr>
-								<td valign="top" class="font-items" colspan="3">&nbsp;</td>
-							</tr>
-					<?php }}?>
-					<?php 
-					$last = $b-1;
-					if($x==$last){ ?>
-						<tr>
-							<td valign="top" class="font-items" colspan="3" width="100%"><strong>NOTE :</strong> <?php echo $info[0]->remarks; ?></td>
-						</tr>
-					<?php } ?>
+					<tr>
+						<td class="font-items" width="100%"><strong>NOTE :</strong> <?php echo $info[0]->remarks; ?></td>
+					</tr>
 				</table>
 				<br/>
 			</td>
 		</tr>
-		<tr>
-			<td>Page <?php echo $x+1; ?> of <?php echo $b; ?></td>
-		</tr>
-		<?php } ?>
 	</table>
 
 	<div style="position:absolute;bottom:0;width:100%;margin-right: 250px!important;margin-bottom: 80px; font-family: calibri;text-align: right;font-size: 9pt!important;">
@@ -271,5 +229,6 @@
 			CHECKED BY : <br/>
 	</div>
 
+	
 </body>
 </html>
