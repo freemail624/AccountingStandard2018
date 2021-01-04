@@ -101,6 +101,7 @@
                         </li>
                         <li class="<?php echo (in_array('11',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-credit-card"></i><span>Bank Reconciliation</span></a>
                             <ul class="acc-menu">
+                                <li class="<?php echo (in_array('11-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Bank_statement">Bank Statement</a></li>
                                 <li class="<?php echo (in_array('11-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Bank_reconciliation">Bank Reconciliation</a></li>
                             </ul>
                         </li>

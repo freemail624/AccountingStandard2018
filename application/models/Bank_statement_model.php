@@ -7,6 +7,20 @@
 	        parent::__construct();
 	    }
 
+	    function get_bank_statement_list($bank_statement_id=null){
+	    	$sql="SELECT 
+				    bs.*,
+				    at.account_title,
+				    m.month_name
+				FROM
+				    bank_statement bs
+				    LEFT JOIN account_titles at ON at.account_id = bs.account_id
+				    LEFT JOIN months m ON m.month_id = bs.month_id
+				    WHERE bs.is_deleted = FALSE AND bs.is_active = TRUE
+        			".($bank_statement_id==null?"":" AND bs.bank_statement_id=".$bank_statement_id."")."";
+	        return $this->db->query($sql)->result();
+	    }
+
 	    function get_prev_balance($month_id,$year,$account_id=0){
 	        $sql="SELECT 
 			    *

@@ -168,12 +168,13 @@
 
 					$month_id = $this->input->post('month_id',TRUE);
 					$account_id = $this->input->post('account_id',TRUE);
+					$year_id = $this->input->post('year_id',TRUE);
 
 					if($account_id == null  || ""){ $account_id=0; }
 
 					$year = date('Y');
 
-					$response['data'] = $m_bank_statement->get_prev_balance($month_id,$year,$account_id);
+					$response['data'] = $m_bank_statement->get_prev_balance($month_id,$year,$account_id,$year_id);
 					echo json_encode($response);
 					break;
 
