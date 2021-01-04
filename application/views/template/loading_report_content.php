@@ -260,9 +260,9 @@
 				<br/>
 			</td>
 		</tr>
-		<tr>
-			<td>Page <?php echo $x+1; ?> of <?php echo $b; ?></td>
-		</tr>
+<!-- 		<tr>
+			<td>Page <?php //echo $x+1; ?> of <?php //echo $b; ?></td>
+		</tr> -->
 		<?php } ?>
 	</table>
 

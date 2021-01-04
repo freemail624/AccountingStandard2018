@@ -235,14 +235,14 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-4">
-                            <b class="required">*</b> <label> Pahinante :</label><br>
-                            <input class="form-control" id="driver_pahinante" type="text" name="driver_pahinante" placeholder="Pahinante" required data-error-msg="Pahinante is required.">
+                            <label> Pahinante :</label><br>
+                            <input class="form-control" id="driver_pahinante" type="text" name="driver_pahinante" placeholder="Pahinante" data-error-msg="Pahinante is required.">
                         </div>
                         <div class="col-sm-5"></div>
                         <div class="col-sm-1"></div>
                         <div class="col-sm-2">
-                            <b class="required">*</b> <label> Daily Allowance :</label><br>
-                            <input type="text" class="numeric form-control" id="allowance_amount" name="allowance_amount" placeholder="Daily Allowance" required data-error-msg="Daily Allowance is required." data-default="<?php echo $accounts[0]->daily_allowance; ?>">
+                            <label> Daily Allowance :</label><br>
+                            <input type="text" class="numeric form-control" id="allowance_amount" name="allowance_amount" placeholder="Daily Allowance" data-error-msg="Daily Allowance is required." data-default="<?php echo $accounts[0]->daily_allowance; ?>">
                         </div>
                     </div>
                 </div>
