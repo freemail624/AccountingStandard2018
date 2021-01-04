@@ -272,7 +272,7 @@
                                     <th>Txn Date</th>
                                     <th>Posted</th>
                                     <th>Status</th>
-                                    <th style="width: 15%;"><center>Action</center></th>
+                                    <th style="width: 20%;"><center>Action</center></th>
                                     <th></th>
 
                                 </tr>
@@ -1181,7 +1181,7 @@ $(document).ready(function(){
                         var btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-print"></i> Print Check</button>';
 
                         if(data.payment_method_id == 2){
-                        	return ''+btn_check_print+"&nbsp;"+btn_cancel+'';
+                        	return ''+btn_edit+'&nbsp;'+btn_check_print+"&nbsp;"+btn_cancel+'';
 
                         }else{
 

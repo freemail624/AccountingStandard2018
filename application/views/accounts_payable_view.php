@@ -843,7 +843,7 @@
 
                             /*return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';*/
 
-                            return '<center>'+btn_cancel+'</center>';
+                            return '<center>'+btn_edit+'&nbsp;'+btn_cancel+'</center>';
                         }
                     },
                     { targets:[8],data: "journal_id", visible:false }
