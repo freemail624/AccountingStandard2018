@@ -74,17 +74,17 @@
         </tr>
     <?php }}?>
     <tr>        
-        <td valign="top" class="border-right">&nbsp;</td>
-        <td valign="top" class="border-right">&nbsp;</td>
-        <td valign="top" class="border-right">&nbsp;</td>
-        <td valign="top" class="border-right">&nbsp;</td>
+        <td valign="top">&nbsp;</td>
+        <td valign="top">&nbsp;</td>
+        <td valign="top">&nbsp;</td>
+        <td valign="top">&nbsp;</td>
         <td valign="top" align="right">&nbsp;</td>       
     </tr>   
     <tr>        
-        <td valign="top" class="border-right">&nbsp;</td>
-        <td valign="top" class="border-right">&nbsp;</td>
-        <td valign="top" class="border-right">&nbsp;</td>
-        <td valign="top" class="border-right">&nbsp;</td>
+        <td valign="top">&nbsp;</td>
+        <td valign="top">&nbsp;</td>
+        <td valign="top">&nbsp;</td>
+        <td valign="top">&nbsp;</td>
         <td valign="top" align="right">&nbsp;</td>       
     </tr>          
     <tr>        
@@ -117,7 +117,7 @@
         <td valign="top" width="20%" align="right"><?php echo number_format($info->total_change,2); ?></td>
     </tr>            
 </table>
-<br/><br/>
+<!-- <br/><br/>
 <table width="100%" style="border-collapse: collapse;" cellspacing="5" cellpadding="5">  
      <tr>
         <td width="100%" colspan="5">RECEIVED BY : </td>
@@ -148,7 +148,7 @@
     <tr>
         <td colspan="2">NOTE : <?php echo $info->remarks; ?></td>
     </tr>        
-</table>
+</table> -->
 
 <script type="text/javascript">
 window.print();

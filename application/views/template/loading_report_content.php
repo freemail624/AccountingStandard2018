@@ -260,10 +260,14 @@
 				<br/>
 			</td>
 		</tr>
-<!-- 		<tr>
-			<td>Page <?php //echo $x+1; ?> of <?php //echo $b; ?></td>
-		</tr> -->
-		<?php } ?>
+
+		<?php if($b > 1){ ?>
+
+		<tr>
+			<td></td>
+			<td align="right">Page <?php echo $x+1; ?> of <?php echo $b; ?></td>
+		</tr>
+		<?php }} ?>
 	</table>
 
 	<div style="position:absolute;bottom:0;width:100%;margin-right: 250px!important;margin-bottom: 80px; font-family: calibri;text-align: right;font-size: 9pt!important;">

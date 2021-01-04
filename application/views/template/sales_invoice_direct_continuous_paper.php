@@ -75,17 +75,17 @@
         </tr>
     <?php }}?>
     <tr>        
-        <td valign="top" class="border-right">&nbsp;</td>
-        <td valign="top" class="border-right">&nbsp;</td>
-        <td valign="top" class="border-right">&nbsp;</td>
-        <td valign="top" class="border-right">&nbsp;</td>
+        <td valign="top">&nbsp;</td>
+        <td valign="top">&nbsp;</td>
+        <td valign="top">&nbsp;</td>
+        <td valign="top">&nbsp;</td>
         <td valign="top" align="right">&nbsp;</td>       
     </tr>   
     <tr>        
-        <td valign="top" class="border-right">&nbsp;</td>
-        <td valign="top" class="border-right">&nbsp;</td>
-        <td valign="top" class="border-right">&nbsp;</td>
-        <td valign="top" class="border-right">&nbsp;</td>
+        <td valign="top">&nbsp;</td>
+        <td valign="top">&nbsp;</td>
+        <td valign="top">&nbsp;</td>
+        <td valign="top">&nbsp;</td>
         <td valign="top" align="right">&nbsp;</td>       
     </tr>            
     <tr>        
