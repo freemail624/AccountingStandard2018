@@ -941,7 +941,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
         si.is_active = TRUE AND
         si.is_deleted = FALSE AND
         si.is_journal_posted = FALSE
-        ANd si.is_closed = FALSE
+        AND si.is_closed = FALSE
         AND si.sales_invoice_id IN (SELECT 
                 DISTINCT li.invoice_id
             FROM
