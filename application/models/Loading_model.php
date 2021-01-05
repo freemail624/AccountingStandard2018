@@ -19,11 +19,40 @@ class Loading_model extends CORE_Model{
             agent.agent_name,
             agent.truck_no,
             CONCAT_WS(user.user_fname,user.user_mname,user.user_lname) as loaded_by,
-            user.journal_approved_by
+            user.journal_approved_by,
+            items.grand_total_amount
         FROM
             loading
             LEFT JOIN agent ON agent.agent_id = loading.agent_id
             LEFT JOIN user_accounts user ON user.user_id = loading.posted_by_user
+            LEFT JOIN (SELECT 
+            li.loading_id,
+            SUM(li.total_after_discount) AS grand_total_amount,
+            (SELECT 
+                        SUM(sii.inv_qty) AS inv_qty
+                    FROM
+                        sales_invoice_items sii
+                            LEFT JOIN
+                        products p ON p.product_id = sii.product_id
+                            LEFT JOIN
+                        sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
+                            LEFT JOIN
+                        loading_items li ON li.invoice_id = si.sales_invoice_id
+                    WHERE
+                        p.is_basyo = TRUE
+                            AND si.is_deleted = FALSE
+                            AND si.is_active = TRUE
+                            AND li.loading_id = l.loading_id
+                    GROUP BY li.loading_id) AS total_inv_qty
+            FROM
+                loading_items li
+                    LEFT JOIN
+                loading l ON l.loading_id = li.loading_id
+            WHERE
+                l.is_deleted = FALSE
+                    AND l.is_active = TRUE
+            GROUP BY li.loading_id) as items ON items.loading_id = loading.loading_id
+
         WHERE
             loading.is_deleted = FALSE AND loading.is_active = TRUE
             ".($loading_id==null?"":" AND loading.loading_id='".$loading_id."'")."
@@ -65,6 +94,37 @@ class Loading_model extends CORE_Model{
                 AND l.loading_id = $loading_id
         GROUP BY li.customer_id";
         return $this->db->query($sql)->result();                
+    }
+
+    function get_loading_total($loading_id){
+        $sql="SELECT 
+            SUM(li.total_after_discount) AS total_amount,
+            (SELECT 
+                    SUM(sii.inv_qty) AS inv_qty
+                FROM
+                    sales_invoice_items sii
+                        LEFT JOIN
+                    products p ON p.product_id = sii.product_id
+                        LEFT JOIN
+                    sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
+                        LEFT JOIN
+                    loading_items li ON li.invoice_id = si.sales_invoice_id
+                WHERE
+                    p.is_basyo = TRUE
+                        AND si.is_deleted = FALSE
+                        AND si.is_active = TRUE
+                        AND li.loading_id = l.loading_id
+                GROUP BY li.loading_id) AS total_inv_qty
+        FROM
+            loading_items li
+                LEFT JOIN
+            loading l ON l.loading_id = li.loading_id
+        WHERE
+            l.is_deleted = FALSE
+                AND l.is_active = TRUE
+                AND l.loading_id = $loading_id
+        GROUP BY li.loading_id";
+        return $this->db->query($sql)->result();         
     }
 
     function check_invoices($loading_id){

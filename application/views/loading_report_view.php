@@ -344,6 +344,7 @@
                         <th>SI#</th>
                         <th>Customer</th>
                         <th>Address</th>
+                        <th>Loading#</th>
                         <th>Amount</th>
                         <th><center>Action</center></th>
                         <th>Sales Invoice ID</th>
@@ -488,7 +489,7 @@ $(document).ready(function(){
                 { targets:[5],data: "remarks"  ,render: $.fn.dataTable.render.ellipsis(30)},
                 { sClass:"text-right", targets:[6],data: null,
                     render: function (data, type, full, meta){
-                        return accounting.formatNumber(data.total_amount,2);
+                        return accounting.formatNumber(data.grand_total_amount,2);
                     }
                 },
                 {
@@ -505,13 +506,14 @@ $(document).ready(function(){
 
         dt_si=$('#tbl_si_list').DataTable({
             "bLengthChange":false,
-            "order": [[ 6, "asc" ]],
+            "order": [[ 7, "asc" ]],
             "ajax" : { 
                 "url":"Sales_invoice/transaction/open", 
                 "bDestroy": true,             
                 "data": function ( d ) { 
                         return $.extend( {}, d, { 
-                            "agent_id":$('#cbo_agents').val()
+                            "agent_id":$('#cbo_agents').val(),
+                            "loading_date":$('input[name="loading_date"]').val()
                         }); 
                     } 
             }, 
@@ -526,19 +528,24 @@ $(document).ready(function(){
                 { targets:[1],data: "sales_inv_no" },
                 { targets:[2],data: "customer_name" },
                 { targets:[3],data: "address" },
-                { sClass:"text-right", targets:[4],data: null,
+                { targets:[4],data: "loading_no",
+                    render: function (data, type, full, meta){
+                        return '<span style="color: red;">'+data+'</span>';
+                    }
+                },
+                { sClass:"text-right", targets:[5],data: null,
                     render: function (data, type, full, meta){
                         return accounting.formatNumber(data.total_after_discount,2);
                     }
                 },
                 {
-                    targets:[5],
+                    targets:[6],
                     render: function (data, type, full, meta){
                         var btn_accept='<button class="btn btn-success btn-sm" name="accept_si"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Accrpt SI"><i class="fa fa-check"></i> Accept SI</button>';
                         return '<center>'+btn_accept+'</center>';
                     }
                 },
-                { targets:[6],data: "sales_invoice_id", visible:false }
+                { targets:[7],data: "sales_invoice_id", visible:false }
             ]
         });
 
@@ -658,6 +665,54 @@ $(document).ready(function(){
             $('#tbl_loading').DataTable().ajax.reload() 
         }); 
 
+        var getInvoices=function(){
+
+            $('#tbl_si_list tbody').html('<tr><td colspan="6"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
+            dt_si.ajax.reload( null, false ); 
+
+            var loading_date = $('input[name="loading_date"]').val();
+            var agent_id = $('#cbo_agents').val();
+
+            var formattedDate = new Date(loading_date);
+            var d = formattedDate.getDate();
+            var m =  formattedDate.getMonth();
+            m += 1;  // JavaScript months are 0-11
+            var y = formattedDate.getFullYear();
+
+            var date = d+'-'+m+'-'+y;
+            
+            $.ajax({
+                url : 'Sales_invoice/transaction/open-si/'+agent_id+'/'+date,
+                type : "GET",
+                cache : false,
+                dataType : 'json',
+                processData : false,
+                contentType : false,
+                beforeSend : function(){
+                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="6"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                },
+                success : function(response){
+                    var rows=response.data;
+                    $('#tbl_items > tbody').html('');
+                    $.each(rows,function(i,value){
+
+                        $('#tbl_items > tbody').prepend(newRowItem({
+                            invoice_id : value.sales_invoice_id,
+                            sales_inv_no : value.sales_inv_no,
+                            customer_id : value.customer_id,
+                            customer_name : value.customer_name,
+                            address: value.address,
+                            total_after_discount : value.total_after_discount,
+                            total_inv_qty : value.total_inv_qty,
+                            btnclass : ""
+                        })); 
+
+                    });
+                    reComputeTotal();
+                }
+            });
+        };
+
         //loads modal to create new agent
         _cboAgents.on('select2:select', function(){
             if (_cboAgents.val() == 0) {
@@ -665,42 +720,7 @@ $(document).ready(function(){
                 _cboAgents.select2('val',null)
                 $('#modal_new_agent').modal('show');
             }else{
-            $('#tbl_si_list tbody').html('<tr><td colspan="6"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
-                dt_si.ajax.reload( null, false );
-                // $('#modal_si_list').modal('show');  
-
-                var agent_id = $(this).val();
-                $.ajax({
-                    url : 'Sales_invoice/transaction/open-si/'+agent_id,
-                    type : "GET",
-                    cache : false,
-                    dataType : 'json',
-                    processData : false,
-                    contentType : false,
-                    beforeSend : function(){
-                        $('#tbl_items > tbody').html('<tr><td align="center" colspan="6"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
-                    },
-                    success : function(response){
-                        var rows=response.data;
-                        $('#tbl_items > tbody').html('');
-                        $.each(rows,function(i,value){
-
-                            $('#tbl_items > tbody').prepend(newRowItem({
-                                invoice_id : value.sales_invoice_id,
-                                sales_inv_no : value.sales_inv_no,
-                                customer_id : value.customer_id,
-                                customer_name : value.customer_name,
-                                address: value.address,
-                                total_after_discount : value.total_after_discount,
-                                total_inv_qty : value.total_inv_qty,
-                                btnclass : ""
-                            })); 
-
-                        });
-                        reComputeTotal();
-                    }
-                });
-
+                getInvoices();
                 $('#txt_route').focus();
             }
         });
@@ -711,6 +731,10 @@ $(document).ready(function(){
                 $('#driver_pahinante').focus();
             }
         });       
+
+        $('input[name="loading_date"]').on('change',function(){
+            getInvoices();
+        });
 
         //create new agent
         $('#btn_save_agent').click(function(){
@@ -939,7 +963,7 @@ $(document).ready(function(){
 
         return stat;
     };
- 
+
     var validateTableItems=function(){
         var stat=true;
 

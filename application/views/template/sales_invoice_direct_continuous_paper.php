@@ -120,12 +120,12 @@
 </table>
 <table width="100%" style="border-collapse: collapse;" cellspacing="5" cellpadding="5">
     <tr>
-        <td width="27%">&nbsp;</td>
-        <td width="73%">&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
     </tr>
     <tr>
-        <td class="border-top" align="left">SIGNATURE OVER PRINTED NAME</td>
-        <td>&nbsp;</td>
+        <td width="33%" class="border-top" align="left">SIGNATURE OVER PRINTED NAME</td>
+        <td width="67%">&nbsp;</td>
     </tr>
     <tr>
         <td colspan="2" style="height: 5px;"></td>

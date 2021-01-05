@@ -38,7 +38,13 @@
 			</tr>
 			<?php 
 			$i=1;
-			foreach($customers as $customer){ ?>
+			$grand_total=0;
+			$grand_total_qty=0;
+			foreach($customers as $customer){
+				$grand_total += $customer->total_payment;
+				$grand_total_qty += $customer->total_qty;
+
+			 	?>
 				<tr>
 					<td class="border" width="5%" align="right"><?php echo $i;?></td>
 					<td class="border" width="40%"><?php echo $customer->customer_name; ?></td>
@@ -49,8 +55,8 @@
 			<?php $i++;}?>	
 				<tr>
 					<td class="border upp strong" align="right" colspan="2">Total:</td>
-					<td class="border strong" align="right"><?php echo number_format($info[0]->total_amount,2); ?></td>
-					<td class="border strong" align="right"><?php echo number_format($info[0]->total_inv_qty,2); ?></td>
+					<td class="border strong" align="right"><?php echo number_format($grand_total,2); ?></td>
+					<td class="border strong" align="right"><?php echo number_format($grand_total_qty,2); ?></td>
 					<td class="border">&nbsp;</td>						
 				</tr>
 		</table>

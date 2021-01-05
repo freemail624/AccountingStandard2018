@@ -150,8 +150,8 @@ class Loading extends CORE_Controller
                 $m_loading->loading_place=$this->input->post('loading_place',TRUE);
                 $m_loading->driver_pahinante=$this->input->post('driver_pahinante',TRUE);
                 $m_loading->loading_date=date('Y-m-d',strtotime($this->input->post('loading_date',TRUE)));
-                $m_loading->total_amount=$this->get_numeric_value($this->input->post('grand_total_amount',TRUE));
-                $m_loading->total_inv_qty=$this->get_numeric_value($this->input->post('grand_total_inv_qty',TRUE));
+                // $m_loading->total_amount=$this->get_numeric_value($this->input->post('grand_total_amount',TRUE));
+                // $m_loading->total_inv_qty=$this->get_numeric_value($this->input->post('grand_total_inv_qty',TRUE));
                 $m_loading->allowance_amount=$this->get_numeric_value($this->input->post('allowance_amount',TRUE));
                 $m_loading->remarks = $this->input->post('remarks',TRUE);
                 $m_loading->posted_by_user=$this->session->user_id;
@@ -166,6 +166,12 @@ class Loading extends CORE_Controller
                 $total_inv_qty=$this->input->post('total_inv_qty',TRUE);
             
                 for($i=0;$i<count($invoice_id);$i++){
+
+                    // For Transfer of product to other loading report
+                    $loading = $m_loading->check_invoice_loading($invoice_id[$i]);
+                    if(count($loading) > 0){
+                        $m_loading_items->delete_via_pk($loading[0]->loading_item_id);
+                    }
 
                     $m_loading_items->invoice_id=$invoice_id[$i];
                     $m_loading_items->loading_id=$loading_id;
@@ -220,8 +226,8 @@ class Loading extends CORE_Controller
                 $m_loading->loading_place=$this->input->post('loading_place',TRUE);
                 $m_loading->driver_pahinante=$this->input->post('driver_pahinante',TRUE);
                 $m_loading->loading_date=date('Y-m-d',strtotime($this->input->post('loading_date',TRUE)));
-                $m_loading->total_amount=$this->get_numeric_value($this->input->post('grand_total_amount',TRUE));
-                $m_loading->total_inv_qty=$this->get_numeric_value($this->input->post('grand_total_inv_qty',TRUE));
+                // $m_loading->total_amount=$this->get_numeric_value($this->input->post('grand_total_amount',TRUE));
+                // $m_loading->total_inv_qty=$this->get_numeric_value($this->input->post('grand_total_inv_qty',TRUE));
                 $m_loading->allowance_amount=$this->get_numeric_value($this->input->post('allowance_amount',TRUE));
                 $m_loading->remarks = $this->input->post('remarks',TRUE);
                 $m_loading->modified_by_user=$this->session->user_id;
@@ -237,6 +243,12 @@ class Loading extends CORE_Controller
 
                 for($i=0;$i<count($invoice_id);$i++){
                     
+                    // For Transfer of product to other loading report
+                    $loading = $m_loading->check_invoice_loading($invoice_id[$i]);
+                    if(count($loading) > 0){
+                        $m_loading_items->delete_via_pk($loading[0]->loading_item_id);
+                    }
+
                     $m_loading_items->invoice_id=$invoice_id[$i];
                     $m_loading_items->loading_id=$loading_id;
                     $m_loading_items->invoice_type_id=1; // Sales Invoice Type
@@ -312,6 +324,5 @@ class Loading extends CORE_Controller
         }
 
     }
-
 
 }

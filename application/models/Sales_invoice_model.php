@@ -62,9 +62,10 @@ class Sales_invoice_model extends CORE_Model
         return $this->db->query($sql)->result();
     }
 
-    function get_open_sales_invoice_list($agent_id){
+    function get_open_sales_invoice_list($agent_id=null,$loading_date=null,$status=null){
         $sql="SELECT 
-            si.*, c.customer_name, sii.total_inv_qty
+            si.*, c.customer_name, sii.total_inv_qty,
+            COALESCE(loading.loading_no,'') as loading_no
         FROM
             sales_invoice si
                 LEFT JOIN
@@ -77,19 +78,35 @@ class Sales_invoice_model extends CORE_Model
                 WHERE p.is_basyo = TRUE
             GROUP BY sales_invoice_items.sales_invoice_id
             ) as sii ON sii.sales_invoice_id = si.sales_invoice_id
-        WHERE
-            si.is_deleted = FALSE
-                AND si.is_active = TRUE
-                AND si.agent_id = $agent_id
-                AND si.sales_invoice_id NOT IN (SELECT DISTINCT
+
+            LEFT JOIN
+            (
+                SELECT 
+                    l.loading_no,
                     li.invoice_id
                 FROM
                     loading_items li
                         LEFT JOIN
                     loading l ON l.loading_id = li.loading_id
-                WHERE
-                    l.is_deleted = FALSE
-                        AND l.is_active = TRUE)";
+                    WHERE l.is_deleted = FALSE AND l.is_active = TRUE
+            ) as loading ON loading.invoice_id = si.sales_invoice_id
+
+        WHERE
+            si.is_deleted = FALSE
+                AND si.is_active = TRUE
+                ".($agent_id==null?"":" AND si.agent_id='".$agent_id."'")."
+                ".($loading_date==null?"":" AND si.date_due='".$loading_date."'")."
+                ".($status==null?"":" 
+                    AND si.sales_invoice_id NOT IN (SELECT DISTINCT
+                        li.invoice_id
+                    FROM
+                        loading_items li
+                            LEFT JOIN
+                        loading l ON l.loading_id = li.loading_id
+                    WHERE
+                        l.is_deleted = FALSE
+                            AND l.is_active = TRUE)
+                ")."";
         return $this->db->query($sql)->result();
     }
 

@@ -80,7 +80,10 @@ class CORE_model extends CI_Model
         return   $this->db->delete($this->table);
     }
 
-
+    function delete_via_pk($id){
+        $this->db->where($this->pk_id,$id);
+        return   $this->db->delete($this->table);
+    }
 
     function get_list($where_filter=null,$select_list=null,$join_array=null,$order_by=null,$group_by=null,$auto_select_escape=TRUE,$limit=null,$having=null){
 

@@ -36,6 +36,13 @@
 	</style>
 </head>
 <body>
+
+	<?php 
+		$c=count($customers)/25;
+		$d=ceil($c);
+		for($e=0; $e < $d; $e++){ 
+	?>
+
 	<table width="100%" cellpadding="5" cellspacing="5" class="tbl-info">
 		<tr>
 			<td width="50%" valign="top">
@@ -80,8 +87,11 @@
 						<td class="upp border" width="15%"><center><strong>Return Basyo</strong></center></td>
 					</tr>
 					<?php 
-					$i=1;
-					foreach($customers as $customer){ ?>
+					$i=1+($e*25);
+
+						if(count($customers)>0){
+							foreach(array_slice($customers,0+($e*25),25) as $customer){
+					?>
 						<tr>
 							<td class="border font8" width="5%" align="right"><?php echo $i;?></td>
 							<td class="border font8 upp" width="40%"><?php echo $customer->customer_name; ?></td>
@@ -91,9 +101,9 @@
 						</tr>					
 					<?php $i++;}?>	
 
-					<?php if(count($customers) < 25){
+					<?php if(count(array_slice($customers,0+($e*25),25)) < 25){
 						$a=$i;
-						$total = 25 - count($customers);
+						$total = 25 - count(array_slice($customers,0+($e*25),25));
 						for ($i=0; $i < $total; $i++) { 
 					?>
 						<tr>
@@ -103,17 +113,39 @@
 							<td class="border font8" width="20%">&nbsp;</td>
 							<td class="border font8" width="15%">&nbsp;</td>
 						</tr>
-					<?php $a++;}}?>
+					<?php $a++;}}}?>
+
+					<?php 
+					$last = $d-1;
+					if($e==$last){
+					?>
+
 						<tr>
 							<td style="padding: 10px;" class="border font8 upp strong" align="right" colspan="2">Total:</td>
-							<td style="padding: 10px;" class="border font8 strong" align="right"><?php echo number_format($info[0]->total_amount,2); ?></td>
-							<td style="padding: 10px;" class="border font8 strong" align="right"><?php echo number_format($info[0]->total_inv_qty,2); ?></td>
+							<td style="padding: 10px;" class="border font8 strong" align="right"><?php echo number_format($grandtotal[0]->total_amount,2); ?></td>
+							<td style="padding: 10px;" class="border font8 strong" align="right"><?php echo number_format($grandtotal[0]->total_inv_qty,2); ?></td>
 							<td style="padding: 10px;" class="border font8">&nbsp;</td>						
 						</tr>
+
+					<?php }else{?>
+
+
+						<tr>
+							<td style="padding: 10px;" class="border font8 upp strong" align="right" colspan="2">&nbsp;</td>
+							<td style="padding: 10px;" class="border font8 strong" align="right">&nbsp;</td>
+							<td style="padding: 10px;" class="border font8 strong" align="right">&nbsp;</td>
+							<td style="padding: 10px;" class="border font8">&nbsp;</td>						
+						</tr>
+
+					<?php }?>
 				</table>
 			</td>
 
 			<td width="50%" valign="top">		
+
+			<?php 
+			if($e==0){?>
+
 			<br/>
 				<table cellspacing="5" cellpadding="5" class="tbl-info" width="100%" style="border: 1px solid black;margin-left: 30px;">
 					<tr>
@@ -172,10 +204,14 @@
 						<td class="border upp strong" width="50%">Total:</td>
 						<td class="border" width="50%">&nbsp;</td>
 					</tr>
-				</table>	
+				</table>
+
+				<?php } ?>	
 			</td>
 		</tr>
 	</table>
+
+	<?php }?>
 
 	<br/>
 

@@ -92,7 +92,7 @@ class Sales_invoice extends CORE_Controller
     }
 
 
-    function transaction($txn = null,$id_filter=null) {
+    function transaction($txn = null,$id_filter=null,$id_filter2=null) {
         switch ($txn){
 
             case'close-invoice':  
@@ -213,14 +213,15 @@ class Sales_invoice extends CORE_Controller
             case 'open':  //this returns SI
                 $m_sales_invoice=$this->Sales_invoice_model;
                 $agent_id = $this->input->get('agent_id'); 
-                $response['data']= $m_sales_invoice->get_open_sales_invoice_list($agent_id);
+                $response['data']= $m_sales_invoice->get_open_sales_invoice_list();
                 echo json_encode($response);
                 break;
 
             case 'open-si':
                 $m_sales_invoice=$this->Sales_invoice_model;
                 $agent_id = $id_filter; 
-                $response['data']= $m_sales_invoice->get_open_sales_invoice_list($agent_id);
+                $loading_date = date('Y-m-d',strtotime($id_filter2));
+                $response['data']= $m_sales_invoice->get_open_sales_invoice_list($agent_id,$loading_date,1);
                 echo json_encode($response);
                 break;
 

@@ -1047,6 +1047,7 @@ class Templates extends CORE_Controller {
                 $data['customers']=$m_loading->get_loading_customers($filter_value);
                 $data['categories']=$m_loading->get_loading_categories($filter_value);
                 $data['items']=$m_loading->get_loading_items($filter_value);
+                $data['grandtotal']=$m_loading->get_loading_total($filter_value);
 
                 //download pdf
                 if($type=='pdf'){
