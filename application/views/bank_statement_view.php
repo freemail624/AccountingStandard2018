@@ -40,6 +40,9 @@
                 background: url('assets/img/Folder_Opened.png') no-repeat center center;
             }
 
+            #tbl_bank_statement_filter{
+                display: none;
+            }
             .child_table{
                 padding: 5px;
                 border: 1px #ff0000 solid;
@@ -79,7 +82,8 @@
 
                             <ol class="breadcrumb" style="margin:0; background: transparent;">
                                 <li><a href="dashboard">Dashboard</a></li>
-                                <li><a href="Bank_statement">Bank Statement</a></li>
+                                <li><a href="Bank_statement">Bank Statement</a>
+                                </li>
                             </ol>
 
                             <div class="container-fluid">
@@ -89,16 +93,52 @@
                                             <div id="div_bank_statement_list">
                                                 <div class="panel panel-default">
                                                     <div class="panel-body table-responsive">
-                                                    <h2 class="h2-panel-heading">Bank Statement</h2><hr>
+                                                    <h2 class="h2-panel-heading">
+                                                        Bank Statement
+                                                    </h2><hr>
+                                                    <div class="row">
+                                                            <div class="col-sm-3"><br>
+
+                                                            <button class="btn btn-primary" id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Bank Statement"><i class="fa fa-plus"></i> New Bank Statement</button>
+
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                Account:<br/>
+                                                                <select class="form-control" name="cbo_account_id" id="cbo_account_id" style="width: 100%;">
+                                                                    <?php 
+                                                                        foreach($accounts as $account){?>
+                                                                        <option value="<?php echo $account->account_id; ?>">
+                                                                            <?php echo $account->account_title; ?>
+                                                                        </option>
+                                                                    <?php }?>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-sm-2">
+                                                                Year: <br/>
+                                                                <select class="form-control" name="year" id="year" style="width: 100%;">
+                                                                    <?php 
+                                                                    $active_year = date("Y");
+                                                                    $minyear=$active_year-10; $maxyear=$active_year+10;
+                                                                        while($minyear!=$maxyear){?>
+                                                                        <option value="<?php echo $minyear; ?>" <?php if($minyear==$active_year){echo 'selected'; }?>>
+                                                                            <?php echo $minyear; ?>
+                                                                        </option>
+                                                                    <?php $minyear++;}?>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-sm-3">Search:<br><input type="text" class="form-control" id="searchbox_table"> </div>
+                                                            </div><br>
+
+
                                                         <table id="tbl_bank_statement" class="table table-striped" cellspacing="0" width="100%">
                                                             <thead class="">
                                                             <tr>
-                                                                <th>Account</th>
-                                                                <th>Month</th>
-                                                                <th>Year</th>
-                                                                <th>Opening Balance</th>
-                                                                <th>Closing Balance</th>
-                                                                <th><center>Action</center></th>
+                                                                <th width="30%">Account</th>
+                                                                <th width="15%">Month</th>
+                                                                <th width="15%">Year</th>
+                                                                <th width="15%">Opening Balance</th>
+                                                                <th width="15%">Closing Balance</th>
+                                                                <th width="10%"><center>Action</center></th>
                                                             </tr>
                                                             </thead>
                                                             <tbody>
@@ -234,47 +274,7 @@
                                                                             </td>
                                                                         </tr>
                                                                         </tbody>
-    <!--                                                                     <tfoot>
-                                                                        <tr>
-                                                                            <td colspan="2" align="right"><strong>Total</strong></td>
-                                                                            <td align="right"><strong>0.00</strong></td>
-                                                                            <td align="right"><strong>0.00</strong></td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        </tfoot> -->
                                                                     </table>
-
-                                                                    <table id="table_hidden" class="hidden">
-                                                                    <tr>
-                                                                        <td>
-                                                                            <input type="text" name="general_ledger_date[]" class="date-picker form-control" placeholder="mm/dd/yyyy">
-                                                                        </td>
-                                                                        <td>
-                                                                            <input type="text" name="value_date[]" class="date-picker form-control" placeholder="mm/dd/yyyy">
-                                                                        </td>
-                                                                        <td>
-                                                                            <input type="text" name="cheque_no[]" class="form-control">
-                                                                        </td>
-                                                                        <td>
-                                                                            <input type="text" name="dr_amount[]" class="form-control numeric">
-                                                                        </td>
-                                                                        <td>
-                                                                            <input type="text" name="cr_amount[]" class="form-control numeric">
-                                                                        </td>
-                                                                        <td>
-                                                                            <input type="text" name="balance_amount[]" class="form-control numeric" readonly>
-                                                                        </td>
-
-                                                                        <td>
-                                                                            <input type="text" name="memo[]" class="form-control">
-                                                                        </td>
-                                                                            <td>
-                                                                                <button type="button" class="btn btn-default add_account"><i class="fa fa-plus-circle" style="color: green;"></i></button>
-                                                                                <button type="button" class="btn btn-default remove_account"><i class="fa fa-times-circle" style="color: red;"></i></button>
-                                                                            </td>
-                                                                        </tr>
-                                                                        </table>
                                                                 </div>
                                                             </div>
                                                             </div>
@@ -282,6 +282,38 @@
                                                     </div>                                                </form>
                                                     </div>
                                                     <div class="panel-footer">
+                                                        <div class="row hidden">
+                                                            <table id="table_hidden" class="hidden">
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" name="general_ledger_date[]" class="date-picker form-control" placeholder="mm/dd/yyyy">
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" name="value_date[]" class="date-picker form-control" placeholder="mm/dd/yyyy">
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" name="cheque_no[]" class="form-control">
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" name="dr_amount[]" class="form-control numeric">
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" name="cr_amount[]" class="form-control numeric">
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" name="balance_amount[]" class="form-control numeric" readonly>
+                                                                </td>
+
+                                                                <td>
+                                                                    <input type="text" name="memo[]" class="form-control">
+                                                                </td>
+                                                                    <td>
+                                                                        <button type="button" class="btn btn-default add_account"><i class="fa fa-plus-circle" style="color: green;"></i></button>
+                                                                        <button type="button" class="btn btn-default remove_account"><i class="fa fa-times-circle" style="color: red;"></i></button>
+                                                                    </td>
+                                                                </tr>
+                                                                </table>
+                                                        </div>
                                                         <div class="row">
                                                             <div class="col-sm-12">
                                                                 <button id="btn_save" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;""><span class=""></span>  Save Changes</button>
@@ -353,8 +385,8 @@
     <script>
 
     $(document).ready(function(){
-        var dt; var _txnMode; var _selectedID; var _selectRowObj;
-        var _cboAccounts; var _cboMonths; var _cboYears;
+        var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboAccounttbl;
+        var _cboAccounts; var _cboMonths; var _cboYears; var _cboYeartbl;
 
         var oTBJournal={
             "dr" : "td:eq(3)",
@@ -389,13 +421,33 @@
                 placeholder: 'Please Select Year'
             });
 
+            _cboAccounttbl=$('#cbo_account_id').select2({
+                allowClear: false,
+                placeholder: 'Please Select Account'
+            });
+
+            _cboYeartbl=$('#year').select2({
+                allowClear: false,
+                placeholder: 'Please Select Year'
+            }); 
+
             dt=$('#tbl_bank_statement').DataTable({
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
-                "ajax" : "Bank_statement/transaction/list",
-                "language": {
-                    "searchPlaceholder": "Search"
+                "ajax" : {
+                    "url":"Bank_statement/transaction/list",
+                    "bDestroy": true,            
+                    "data": function ( d ) {
+                        return $.extend( {}, d, {
+                                "year":_cboYeartbl.val(),
+                                "account_id":_cboAccounttbl.val()
+                            });
+                        }
+                }, 
+                oLanguage: {
+                        sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
                 },
+                processing : true,
                 "columns": [
 
                     { targets:[0],data: "account_title" },
@@ -422,12 +474,6 @@
                     }
                 ]
             });
-
-            var createToolBarButton=function(){
-                var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Bank Statement" >'+
-                    '<i class="fa fa-plus"></i> New Bank Statement</button>';
-                $("div.toolbar").html(_btnNew);
-            }();
 
             reInitializeNumeric();
         }();
@@ -460,8 +506,8 @@
             $('#btn_new').click(function(){
                 _txnMode="new";
                 clearFields();
-                // $('#category_title').text('New Category');
-                // $('#modal_new_category').modal('show');
+                $('#account_id').select2('val',null);
+                clearStatement();
                 showList(false);
             });
 
@@ -469,7 +515,11 @@
                 _txnMode="edit";
                 _selectRowObj=$(this).closest('tr');
                 var data=dt.row(_selectRowObj).data();
-                _selectedID=data.category_id;
+                _selectedID=data.bank_statement_id;
+
+                $('#account_id').select2('val',data.account_id);
+                $('#month_id').select2('val',data.month_id);
+                $('#year_id').select2('val',data.year);
 
                 $('input,textarea').each(function(){
                     var _elem=$(this);
@@ -479,77 +529,71 @@
                         }
                     });
                 });
-                $('#category_title').text('Edit Category');
-                $('#modal_new_category').modal('show');
-                //showList(false);
+
+                setTimeout(function(){
+                    $('#opening_balance').val(accounting.formatNumber(data.opening_balance,2));
+                    $('#closing_balance').val(accounting.formatNumber(data.closing_balance,2));
+                },200);
+
+                $.ajax({
+                    "dataType":"html",
+                    "type":"POST",
+                    "url":"Bank_statement/transaction/items?id="+ data.bank_statement_id,
+                    "beforeSend" : function(){
+                        $('#tbl_entries > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                    }
+                }).done(function(response){
+                    
+                    $('#tbl_entries > tbody').html("");
+                    $('#tbl_entries > tbody').html(response);
+
+                    reInitializeNumeric();
+                    reInitializeDate();
+
+                });
+
+                showList(false);
             });
 
             $('#tbl_bank_statement tbody').on('click','button[name="remove_info"]',function(){
                 _selectRowObj=$(this).closest('tr');
                 var data=dt.row(_selectRowObj).data();
-                _selectedID=data.category_id;
+                _selectedID=data.bank_statement_id;
                 $('#modal_confirmation').modal('show');
             });
 
             $('#btn_yes').click(function(){
-                removeCategory().done(function(response){
+                removeBankStatement().done(function(response){
                     showNotification(response);
                     dt.row(_selectRowObj).remove().draw();
                 });
             });
 
-            $('input[name="file_upload[]"]').change(function(event){
-                var _files=event.target.files;
-
-                $('#div_img_category').hide();
-                $('#div_img_loader').show();
-
-                var data=new FormData();
-                $.each(_files,function(key,value){
-                    data.append(key,value);
-                });
-
-                console.log(_files);
-
-                $.ajax({
-                    url : 'Categories/transaction/upload',
-                    type : "POST",
-                    data : data,
-                    cache : false,
-                    dataType : 'json',
-                    processData : false,
-                    contentType : false,
-                    success : function(response){
-                        $('#div_img_loader').hide();
-                        $('#div_img_category').show();
-                    }
-                });
-            });
-
             $('#btn_cancel').click(function(){
-                // $('#modal_new_category').modal('hide');
                 showList(true);
             });
 
             $('#btn_save').click(function(){
                 if(validateRequiredFields($('#frm_bank_statement'))){
                     if(_txnMode=="new"){
-                        createCategory().done(function(response){
+                        createBankStatement().done(function(response){
                             showNotification(response);
-                            dt.row.add(response.row_added[0]).draw();
-                            clearFields();
-                            $('#modal_new_category').modal('hide');
-
+                            if(response.stat == 'success'){
+                                dt.row.add(response.row_added[0]).draw();
+                                clearFields();
+                                showList(true);
+                            }
                         }).always(function(){
                             showSpinningProgress($('#btn_save'));
                         });
                     }else{
-                        updateCategory().done(function(response){
+                        updateBankStatement().done(function(response){
                             showNotification(response);
-                            dt.row(_selectRowObj).data(response.row_updated[0]).draw();
-                            clearFields();
-                            showList(true);
-                            $('#modal_new_category').modal('hide');
+                            if(response.stat == 'success'){
+                                dt.row(_selectRowObj).data(response.row_updated[0]).draw();
+                                clearFields();
+                                showList(true);
+                            }
                         }).always(function(){
                             showSpinningProgress($('#btn_save'));
                         });
@@ -557,9 +601,9 @@
                 }
             });
 
-            $('#account_id').on('change',function(){
-                get_prev_statement();
-            });
+        $('#account_id, #month_id, #year_id').on('change',function(){
+            get_prev_statement();
+        });        
 
         var reInitializeDate = function(){
 
@@ -592,7 +636,6 @@
         });
 
         $('#opening_balance').on("keyup", function(){
-
             var opening_balance_amt = $(this).val();
             $('#closing_balance').val(accounting.formatNumber(opening_balance_amt,2));
 
@@ -723,8 +766,21 @@
                 recomputeStatement();    
             }
 
-
         }); 
+
+        _cboYeartbl.on("select2:select", function (e) {
+            $('#tbl_bank_statement').DataTable().ajax.reload()
+        });
+
+        _cboAccounttbl.on("select2:select", function (e) {
+            $('#tbl_bank_statement').DataTable().ajax.reload()
+        });
+
+        $("#searchbox_table").keyup(function(){         
+            dt
+                .search(this.value)
+                .draw();
+        });
 
         var get_prev_statement = function(){
             prevBankStatement().done(function(response){
@@ -757,7 +813,7 @@
                         return false;
                     }
                 }else{
-                if($(this).val()=="" || $(this).val()== '0'){
+                if($(this).val()=="" || $(this).val()== '0' || $(this).val()== '0.00'){
                     showNotification({title:"Error!",stat:"error",msg:$(this).data('error-msg')});
                     $(this).closest('div.form-group').addClass('has-error');
                     $(this).focus();
@@ -770,37 +826,37 @@
             return stat;
         };
 
-        var createCategory=function(){
-            var _data=$('#frm_category').serializeArray();
+        var createBankStatement=function(){
+            var _data=$('#frm_bank_statement').serializeArray();
 
             return $.ajax({
                 "dataType":"json",
                 "type":"POST",
-                "url":"Categories/transaction/create",
+                "url":"Bank_statement/transaction/create",
                 "data":_data,
                 "beforeSend": showSpinningProgress($('#btn_save'))
             });
         };
 
-        var updateCategory=function(){
-            var _data=$('#frm_category').serializeArray();
-            _data.push({name : "category_id" ,value : _selectedID});
+        var updateBankStatement=function(){
+            var _data=$('#frm_bank_statement').serializeArray();
+            _data.push({name : "bank_statement_id" ,value : _selectedID});
 
             return $.ajax({
                 "dataType":"json",
                 "type":"POST",
-                "url":"Categories/transaction/update",
+                "url":"Bank_statement/transaction/update",
                 "data":_data,
                 "beforeSend": showSpinningProgress($('#btn_save'))
             });
         };
 
-        var removeCategory=function(){
+        var removeBankStatement=function(){
             return $.ajax({
                 "dataType":"json",
                 "type":"POST",
-                "url":"Categories/transaction/delete",
-                "data":{category_id : _selectedID}
+                "url":"Bank_statement/transaction/delete",
+                "data":{bank_statement_id : _selectedID}
             });
         };
 

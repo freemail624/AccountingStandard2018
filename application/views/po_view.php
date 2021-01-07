@@ -1585,7 +1585,6 @@ $(document).ready(function(){
             //tbl_summary.find(oTableDetails.tax_amount).html(accounting.formatNumber(data.total_tax_amount,2));
             //tbl_summary.find(oTableDetails.after_tax).html('<b>'+accounting.formatNumber(data.total_after_tax,2)+'</b>');
 
-
             $.ajax({
                 url : 'Purchases/transaction/items/'+data.purchase_order_id,
                 type : "GET",
@@ -1649,9 +1648,6 @@ $(document).ready(function(){
                     changetxn = 'active';
                 }
             });
-
-
-
 
             showList(false);
 

@@ -237,7 +237,7 @@
                                             <div class="container-fluid" style="padding-top: 20px; padding-bottom: 20px;">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <div class="col-md-4">
+                                                    <div class="col-md-3">
                                                         <label>Month: </label><br/>
                                                         <select class="form-control" name="month_id" id="month_id" style="width: 100%;">
                                                             <?php 
@@ -249,7 +249,20 @@
                                                             <?php }?>
                                                         </select>
                                                     </div>
-                                                    <div class="col-md-4">
+                                                    <div class="col-md-2">
+                                                        <label>Year: </label><br/>
+                                                        <select class="form-control" name="year" id="year" style="width: 100%;">
+                                                            <?php 
+                                                            $active_year = date("Y");
+                                                            $minyear=$active_year-10; $maxyear=$active_year+10;
+                                                                while($minyear!=$maxyear){?>
+                                                                <option value="<?php echo $minyear; ?>" <?php if($minyear==$active_year){echo 'selected'; }?>>
+                                                                    <?php echo $minyear; ?>
+                                                                </option>
+                                                            <?php $minyear++;}?>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-3 col-md-offset-1">
                                                         <label>Opening Balance: </label>
                                                         <div class="input-group">
                                                             <span class="input-group-addon">
@@ -258,7 +271,7 @@
                                                             <input type="text" name="opening_balance" id="opening_balance" class="numeric form-control text-right" data-error-msg="Opening balance is required!" >
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-4">
+                                                    <div class="col-md-3">
                                                         <label>Closing Balance: </label>
                                                         <div class="input-group">
                                                             <span class="input-group-addon">
@@ -586,7 +599,7 @@
 
 $(document).ready(function(){
     var dt; var dtHistory;  var _cboAccounts;
-    var _checkNo; var dtBankReconData; var _cboMonths;
+    var _checkNo; var dtBankReconData; var _cboMonths; var _cboYears;
     var load_status=0;
 
     var oTBJournal={
@@ -611,6 +624,10 @@ $(document).ready(function(){
 
         _cboMonths=$('#month_id').select2({
             placeholder: 'Please Select Month'
+        });
+
+        _cboYears=$('#year').select2({
+            placeholder: 'Please Select Year'
         });
 
         var data = _cboAccounts.select2('data');
@@ -916,17 +933,52 @@ $(document).ready(function(){
         }); 
 
         var get_prev_statement = function(){
-            prevBankStatement().done(function(response){
-                var opening_balance = 0;
+
+            // Check Bank Statement if existing
+            var bank_statement = 
+            checkBankStatement().done(function(response){
 
                 if (response.data.length > 0){
-                    var data = response.data[0];
-                    opening_balance = data.closing_balance;
-                    load_status = 1;
+                    alert('Meron');
+                }else{
+                    alert('Wala');
                 }
 
-                $('#opening_balance').val(accounting.formatNumber(opening_balance,2));
             });
+
+            // prevBankStatement().done(function(response){
+            //     var opening_balance = 0;
+
+            //     var month_id = $('#month_id').val();
+            //     var account_id = $('#cbo_accounts').val();
+            //     var year_id = $('#year').val();
+
+            //     if (response.data.length > 0){
+            //         var data = response.data[0];
+            //         opening_balance = data.closing_balance;
+            //         load_status = 1;
+
+            //         $.ajax({
+            //             "dataType":"html",
+            //             "type":"POST",
+            //             "url":"Bank_statement/transaction/bank-items?month_id="+ data.month_id +"&account_id="+ account_id + "&year_id="+ year_id,
+            //             "beforeSend" : function(){
+            //                 $('#tbl_entries > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+            //             }
+            //         }).done(function(response){
+                        
+            //             $('#tbl_entries > tbody').html("");
+            //             $('#tbl_entries > tbody').html(response);
+
+            //             reInitializeNumeric();
+            //             reInitializeDate();
+
+            //         });
+
+            //     }
+
+            //     $('#opening_balance').val(accounting.formatNumber(opening_balance,2));
+            // });
         };
 
         $('#btn_step_2').click(function(){
@@ -1106,11 +1158,27 @@ $(document).ready(function(){
         var _data=$('#').serializeArray();
         _data.push({name: "month_id", value: $('#month_id').val() });
         _data.push({name: "account_id", value: $('#cbo_accounts').val() });
+        _data.push({name: "year_id", value: $('#year').val() });
 
         return $.ajax({
             "dataType":"json",
             "type":"POST",
             "url":"Bank_reconciliation/transaction/get_previous_balance",
+            "data":_data,
+            "beforeSend": showSpinningProgress($('#btn_process'))
+        });
+    };
+
+    var checkBankStatement = function(){
+        var _data=$('#').serializeArray();
+        _data.push({name: "month_id", value: $('#month_id').val() });
+        _data.push({name: "account_id", value: $('#cbo_accounts').val() });
+        _data.push({name: "year_id", value: $('#year').val() });
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Bank_statement/transaction/check_bank_statement",
             "data":_data,
             "beforeSend": showSpinningProgress($('#btn_process'))
         });
