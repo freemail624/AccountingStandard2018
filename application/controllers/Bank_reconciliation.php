@@ -64,14 +64,14 @@
 					$m_bank_statement_items = $this->Bank_statement_item_model;
 
 					$month_id = $this->input->post('month_id', TRUE);
-					$check_month = $m_bank_statement->get_list(array('month_id'=>$month_id));
+					$account_id = $this->input->post('account_id',TRUE);
+					$year_id = $this->input->post('year',TRUE);
 
-					if(count($check_month) > 0){
-						$response['title'] = 'Error!';
-	                    $response['stat'] = 'error';
-	                    $response['msg'] = 'Bank Statement Month is already existed!';
-	                    echo json_encode($response);
-	                    exit();
+					$bank_statement = $m_bank_statement->get_list(array('month_id'=>$month_id,'account_id'=>$account_id,'year'=>$year_id,'is_deleted'=>FALSE,'is_active'=>TRUE));
+					$bank_statement_id = 0;
+
+					if(count($bank_statement) > 0){
+						$bank_statement_id = $bank_statement[0]->bank_statement_id;
 					}
 
 					$m_bankr->begin();
@@ -80,8 +80,8 @@
 					$opening_balance = $this->input->post('opening_balance',TRUE);
 					$closing_balance = $this->input->post('closing_balance',TRUE);
 
-					$general_ledger_date = date('Y-m-d',strtotime($this->input->post('general_ledger_date',TRUE)));
-					$value_date = date('Y-m-d',strtotime($this->input->post('value_date',TRUE)));
+					$general_ledger_date = $this->input->post('general_ledger_date',TRUE);
+					$value_date = $this->input->post('value_date',TRUE);
 					$cheque_no = $this->input->post('cheque_no',TRUE);
 					$dr_amount = $this->input->post('dr_amount',TRUE);
 					$cr_amount = $this->input->post('cr_amount',TRUE);
@@ -89,18 +89,23 @@
 					$remarks = $this->input->post('memo',TRUE);
 
 					$m_bank_statement->month_id = $month_id;
-					$m_bank_statement->year = date('Y');
-					$m_bank_statement->account_id=$this->input->post('account_id',TRUE);
+					$m_bank_statement->year = $year_id;
+					$m_bank_statement->account_id=$account_id;
 					$m_bank_statement->opening_balance = $this->get_numeric_value($opening_balance);
 					$m_bank_statement->closing_balance = $this->get_numeric_value($closing_balance);
-					$m_bank_statement->save();
 
-					$bank_statement_id = $m_bank_statement->last_insert_id();
+					if($bank_statement_id > 0){
+						$m_bank_statement->modify($bank_statement_id);
+						$m_bank_statement_items->delete_via_fk($bank_statement_id);
+					}else{
+						$m_bank_statement->save();
+						$bank_statement_id = $m_bank_statement->last_insert_id();
+					}
 
 					for ($i=0; $i < count($balance_amount); $i++) { 
 						$m_bank_statement_items->bank_statement_id = $bank_statement_id;
-						$m_bank_statement_items->general_ledger_date = $general_ledger_date[$i];
-						$m_bank_statement_items->value_date = $value_date[$i];
+						$m_bank_statement_items->general_ledger_date = date('Y-m-d',strtotime($general_ledger_date[$i]));
+						$m_bank_statement_items->value_date = date('Y-m-d',strtotime($value_date[$i]));
 						$m_bank_statement_items->check_no = $cheque_no[$i];
 						$m_bank_statement_items->dr_amount = $this->get_numeric_value($dr_amount[$i]);
 						$m_bank_statement_items->cr_amount = $this->get_numeric_value($cr_amount[$i]);
@@ -108,7 +113,6 @@
 						$m_bank_statement_items->remarks = $remarks[$i];
 						$m_bank_statement_items->save();
 					}
-
 
 					$m_bankr->set('date_reconciled','NOW()');
 					$m_bankr->reconciled_by=$this->session->user_id;

@@ -1413,7 +1413,7 @@ $(document).ready(function(){
                 }
             }
             } else {
-                showNotification({title:"Journal Entries Etries!",stat:"error",msg:'Incomplete assignment of Account Titles in the table.'});
+                showNotification({title:"Journal Entries!",stat:"error",msg:'Incomplete assignment of Account Titles in the table.'});
                 stat=false;
             } // ELSE OF VALIDATE ACCOUNTS
         });

@@ -46,9 +46,15 @@ class Bank_statement extends CORE_Controller
             case 'check_bank_statement':
                 $m_bank_statement = $this->Bank_statement_model;
 
-                $account_id = $this->input->get('account_id',TRUE);
-                $month_id = $this->input->get('month_id',TRUE);
-                $year_id = $this->input->get('year_id',TRUE);
+                $account = $this->input->post('account_id',TRUE);
+                $month_id = $this->input->post('month_id',TRUE);
+                $year_id = $this->input->post('year_id',TRUE);
+
+                $account_id = 0;
+
+                if ($account != null || ""){
+                    $account_id = $this->input->post('account_id',TRUE);
+                }
 
                 $response['data'] = $m_bank_statement->get_bank_statement_recon_list($year_id,$account_id,$month_id);
                 echo json_encode($response);
@@ -78,6 +84,8 @@ class Bank_statement extends CORE_Controller
 
                 $month_id = $this->input->post('month_id', TRUE);
                 $year_id = $this->input->post('year_id', TRUE);
+                $account_id = $this->input->post('account_id',TRUE);
+
                 $month = $this->Months_model->get_list($month_id);
 
                 $check_month = $m_bank_statement->get_list(array('month_id'=>$month_id,'year'=>$year_id,'is_deleted'=>FALSE,'is_active'=>TRUE));
@@ -106,7 +114,7 @@ class Bank_statement extends CORE_Controller
 
                 $m_bank_statement->month_id = $month_id;
                 $m_bank_statement->year = $year_id;
-                $m_bank_statement->account_id=$this->input->post('account_id',TRUE);
+                $m_bank_statement->account_id = $account_id;
                 $m_bank_statement->opening_balance = $this->get_numeric_value($opening_balance);
                 $m_bank_statement->closing_balance = $this->get_numeric_value($closing_balance);
                 $m_bank_statement->save();
@@ -228,10 +236,8 @@ class Bank_statement extends CORE_Controller
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
                 $m_trans->set('trans_date','NOW()');
-                $m_trans->trans_key_id=1; //CRUD
+                $m_trans->trans_key_id=2; //CRUD
                 $m_trans->trans_type_id=75; // TRANS TYPE
-                $m_trans->trans_log='Created Bank Statement for : '.$month[0]->month_name.' '.$year_id;
-
                 $m_trans->trans_log='Updated Bank Statement for : '.$month[0]->month_name.' '.$year_id.' ID('.$bank_statement_id.')';
                 $m_trans->save();
 

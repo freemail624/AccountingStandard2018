@@ -24,7 +24,7 @@
 	        return $this->db->query($sql)->result();
 	    }
 
-	    function get_bank_statement_recon_list($year=null,$account_id=0,$month_id=null){
+	    function get_bank_statement_recon_list($year,$account_id,$month_id){
 	    	$sql="SELECT 
 				    bs.*,
 				    at.account_title,
@@ -33,10 +33,10 @@
 				    bank_statement bs
 				    LEFT JOIN account_titles at ON at.account_id = bs.account_id
 				    LEFT JOIN months m ON m.month_id = bs.month_id
-				    WHERE bs.is_deleted = FALSE AND bs.is_active = TRUE
-        			".($year==null?"":" AND bs.year=".$year."")."
-        			".($account_id==null?"":" AND bs.account_id=".$account_id."")."
-        			".($month_id==null?"":" AND bs.month_id=".$month_id."")."";
+				    WHERE bs.is_deleted = FALSE AND bs.is_active = TRUE AND 
+				    bs.year=".$year." AND 
+        			bs.month_id=".$month_id."
+        			AND bs.account_id=".$account_id."";
 	        return $this->db->query($sql)->result();
 	    }
 

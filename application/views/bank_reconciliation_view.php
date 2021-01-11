@@ -235,6 +235,7 @@
                                           </div>
                                           <div id="bank_statement_tab" class="tab-pane fade">
                                             <div class="container-fluid" style="padding-top: 20px; padding-bottom: 20px;">
+                                            <form id="frm_bank_statement">
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="col-md-3">
@@ -350,43 +351,44 @@
                                                                     </tr>
                                                                     </tfoot> -->
                                                                 </table>
-
-                                                                <table id="table_hidden" class="hidden">
-                                                                <tr>
-                                                                    <td>
-                                                                        <input type="text" name="general_ledger_date[]" class="date-picker form-control" placeholder="mm/dd/yyyy">
-                                                                    </td>
-                                                                    <td>
-                                                                        <input type="text" name="value_date[]" class="date-picker form-control" placeholder="mm/dd/yyyy">
-                                                                    </td>
-                                                                    <td>
-                                                                        <input type="text" name="cheque_no[]" class="form-control">
-                                                                    </td>
-                                                                    <td>
-                                                                        <input type="text" name="dr_amount[]" class="form-control numeric">
-                                                                    </td>
-                                                                    <td>
-                                                                        <input type="text" name="cr_amount[]" class="form-control numeric">
-                                                                    </td>
-                                                                    <td>
-                                                                        <input type="text" name="balance_amount[]" class="form-control numeric" readonly>
-                                                                    </td>
-
-                                                                    <td>
-                                                                        <input type="text" name="memo[]" class="form-control">
-                                                                    </td>
-                                                                        <td>
-                                                                            <button type="button" class="btn btn-default add_account"><i class="fa fa-plus-circle" style="color: green;"></i></button>
-                                                                            <button type="button" class="btn btn-default remove_account"><i class="fa fa-times-circle" style="color: red;"></i></button>
-                                                                        </td>
-                                                                    </tr>
-                                                                    </table>
                                                             </div>
                                                         </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                            </form>
+                                            <table id="table_hidden" class="hidden">
+                                            <tr>
+                                                <td>
+                                                    <input type="text" name="general_ledger_date[]" class="date-picker form-control" placeholder="mm/dd/yyyy">
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="value_date[]" class="date-picker form-control" placeholder="mm/dd/yyyy">
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="cheque_no[]" class="form-control">
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="dr_amount[]" class="form-control numeric">
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="cr_amount[]" class="form-control numeric">
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="balance_amount[]" class="form-control numeric" readonly>
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" name="memo[]" class="form-control">
+                                                </td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-default add_account"><i class="fa fa-plus-circle" style="color: green;"></i></button>
+                                                        <button type="button" class="btn btn-default remove_account"><i class="fa fa-times-circle" style="color: red;"></i></button>
+                                                    </td>
+                                                </tr>
+                                                </table>
+
                                           </div>                                          
                                           <div id="bank_reconciliation_tab" class="tab-pane fade">
                                             <div class="container-fluid" style="padding-top: 20px; padding-bottom: 20px;">
@@ -682,6 +684,7 @@ $(document).ready(function(){
         dt=$('#tbl_bank_reconciliation').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
+            "bPaginate": false,
             "language":{
                 "searchPlaceholder":"Search Checks"
             },            
@@ -761,19 +764,26 @@ $(document).ready(function(){
     var bindEventHandlers=function(){
         _cboAccounts.on('change', function(){
             var data = _cboAccounts.select2('data');
-            $('input[name="current_bank_account"]').val(data[0].text);
-            $('input[name="account_to_reconcile"]').val(data[0].text);
 
-            $.ajax({
-                "dataType":"json",
-                "type":"GET",
-                "url":"Bank_reconciliation/transaction/get-account-balance?account_id="+_cboAccounts.select2('val')
-            }).done(function(response){
-                $('input[name="account_balance"]').val(response.data);
+            if ($(this).val() != null || ""){
+                $('input[name="current_bank_account"]').val(data[0].text);
+                $('input[name="account_to_reconcile"]').val(data[0].text);
+
+                $.ajax({
+                    "dataType":"json",
+                    "type":"GET",
+                    "url":"Bank_reconciliation/transaction/get-account-balance?account_id="+_cboAccounts.select2('val')
+                }).done(function(response){
+                    $('input[name="account_balance"]').val(response.data);
 
 
-                reComputeTotal();
-            });
+                    reComputeTotal();
+                });
+
+                get_prev_statement();
+                clearStatement();
+                recomputeStatement();
+            }
 
         });
 
@@ -870,7 +880,6 @@ $(document).ready(function(){
             $('#opening_balance').val(accounting.formatNumber(0,2));
             $('#tbl_entries > tbody').html("");
             
-
             $.ajax({
                 url: 'Bank_reconciliation/transaction/get-statement-entries',
                 type: "GET",
@@ -935,65 +944,68 @@ $(document).ready(function(){
         var get_prev_statement = function(){
 
             // Check Bank Statement if existing
-            var bank_statement = 
+            clearStatement();
             checkBankStatement().done(function(response){
 
                 if (response.data.length > 0){
-                    alert('Meron');
+
+                    var data = response.data[0];
+                    $('#opening_balance').val(accounting.formatNumber(data.opening_balance,2));
+                    $('#closing_balance').val(accounting.formatNumber(data.closing_balance,2));
+
+                    $.ajax({
+                        "dataType":"html",
+                        "type":"POST",
+                        "url":"Bank_statement/transaction/bank-items?month_id="+ data.month_id +"&account_id="+ data.account_id + "&year_id="+ data.year,
+                        "beforeSend" : function(){
+                            $('#tbl_entries > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                        }
+                    }).done(function(response){
+                        
+                        $('#tbl_entries > tbody').html("");
+                        $('#tbl_entries > tbody').html(response);
+
+                        reInitializeNumeric();
+                        reInitializeDate();
+
+                    });
+
                 }else{
-                    alert('Wala');
+                    prevBankStatement().done(function(response){
+                        var opening_balance = 0;
+
+                        if (response.data.length > 0){
+                            var data = response.data[0];
+                            opening_balance = data.closing_balance;
+                            load_status = 1;
+                        }
+
+                        $('#opening_balance').val(accounting.formatNumber(opening_balance,2));
+                    });
                 }
 
             });
-
-            // prevBankStatement().done(function(response){
-            //     var opening_balance = 0;
-
-            //     var month_id = $('#month_id').val();
-            //     var account_id = $('#cbo_accounts').val();
-            //     var year_id = $('#year').val();
-
-            //     if (response.data.length > 0){
-            //         var data = response.data[0];
-            //         opening_balance = data.closing_balance;
-            //         load_status = 1;
-
-            //         $.ajax({
-            //             "dataType":"html",
-            //             "type":"POST",
-            //             "url":"Bank_statement/transaction/bank-items?month_id="+ data.month_id +"&account_id="+ account_id + "&year_id="+ year_id,
-            //             "beforeSend" : function(){
-            //                 $('#tbl_entries > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
-            //             }
-            //         }).done(function(response){
-                        
-            //             $('#tbl_entries > tbody').html("");
-            //             $('#tbl_entries > tbody').html(response);
-
-            //             reInitializeNumeric();
-            //             reInitializeDate();
-
-            //         });
-
-            //     }
-
-            //     $('#opening_balance').val(accounting.formatNumber(opening_balance,2));
-            // });
         };
 
-        $('#btn_step_2').click(function(){
+        // $('#btn_step_2').click(function(){
 
-            if (load_status == 0){
-                get_prev_statement();
-            }
+        //     if (load_status == 0){
+        //         get_prev_statement();
+        //     }
     
-        });
+        // });
 
         _cboMonths.on('change', function(){
             get_prev_statement();
             clearStatement();
             recomputeStatement();
-        });        
+        });
+
+        _cboYears.on('change', function(){
+            get_prev_statement();
+            clearStatement();
+            recomputeStatement();
+        });                
 
         $('#btn_step_3').click(function(){
             var total = 0;
@@ -1002,14 +1014,14 @@ $(document).ready(function(){
                 total += parseFloat($(this).data('amount'));
             });
 
-            $('#tbl_bank_reconciliation tbody tr').each(function() {
-                var _selectRowObj=$(this);
-                var data=dt.row(_selectRowObj).data();
+            // $('#tbl_bank_reconciliation tbody tr').each(function() {
+            //     var _selectRowObj=$(this);
+            //     var data=dt.row(_selectRowObj).data();
 
-                if (!$('#outstanding_' + data.check_no).is(':checked') && !$('#good_check_' + data.check_no).is(':checked') && !$('#default_' + data.check_no).is(':checked')) {
-                    $('#default_' + data.check_no).prop('checked','checked');
-                }
-            });
+            //     if (!$('#outstanding_' + data.check_no).is(':checked') && !$('#good_check_' + data.check_no).is(':checked') && !$('#default_' + data.check_no).is(':checked')) {
+            //         $('#default_' + data.check_no).prop('checked','checked');
+            //     }
+            // });
 
             $('input[name="outstanding_checks"]').val(accounting.formatNumber(total,2));
             $('input[name="actual_balance"]').val(accounting.formatNumber($('#closing_balance').val(),2));
@@ -1038,10 +1050,14 @@ $(document).ready(function(){
             if(validateRequiredFields()){
                 reconcileChecks().done(function(response){
                     showNotification(response);
-                    clearFields();
-                    dt.destroy();
-                    dtHistory.destroy();
-                    reinitializeDataTable();
+
+                    if(response.stat == "success"){
+                        clearFields();
+                        $('#tbl_bank_reconciliation').DataTable().ajax.reload();
+                        $('#tbl_history').DataTable().ajax.reload();
+                        clearStatement();
+                    }
+
                 }).always(function(){
                     showSpinningProgress($('#btn_process'));
                 })
@@ -1074,12 +1090,14 @@ $(document).ready(function(){
         var stat=true;
         var _msg="";
 
-        if ($('input[name="outstanding_checks"]').val() == '0.00') {
-            _msg="Outstanding check must not be zero";
-            showNotification({title: 'Error!', msg: _msg, stat: 'error'});
-            stat=false;
-            return false;
-        } else if (_cboAccounts.val() == null) {
+        // if ($('input[name="outstanding_checks"]').val() == '0.00') {
+        //     _msg="Outstanding check must not be zero";
+        //     showNotification({title: 'Error!', msg: _msg, stat: 'error'});
+        //     stat=false;
+        //     return false;
+        // } else 
+
+        if (_cboAccounts.val() == null) {
             _msg="Account to reconcile is required";
             showNotification({title: 'Error!', msg: _msg, stat: 'error'});
             stat=false;
@@ -1112,7 +1130,8 @@ $(document).ready(function(){
     var reconcileChecks=function(){
         // var _journalId;
         // var _status;
-        var _data=[];
+        // var _data=[];
+        var _data=$('#frm_bank_statement').serializeArray();
 
         $('.status:checked').each(function(){
             var $this = $(this),
@@ -1220,8 +1239,9 @@ $(document).ready(function(){
     };
 
     var clearFields=function(f){
-        $('input[type="text"],textarea,select',f).val('0.00');
+        $('input[type="text"]:not(.date-picker),textarea',f).val('0.00');
         $('input[name="current_bank_account"]').val('');
+        $('input[name="account_to_reconcile"]').val('');
         _cboAccounts.select2('val',null);
         $(f).find('input:first').focus();
     };
