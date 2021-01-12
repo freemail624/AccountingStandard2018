@@ -7,6 +7,7 @@ class Billing_adjustments extends CORE_Controller
         parent::__construct('');
         $this->validate_session();
         $this->load->model('Billing_adjustments_model');
+        $this->load->model('Departments_model');
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
         $this->load->library('M_pdf');
@@ -21,6 +22,7 @@ class Billing_adjustments extends CORE_Controller
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['title'] = 'Billing Adjustments for Approval';
+        $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'department_name ASC');
         (in_array('20',$this->session->parent_rights)? 
         $this->load->view('billing_adjustments_view', $data)
         :redirect(base_url('dashboard')));
@@ -29,28 +31,11 @@ class Billing_adjustments extends CORE_Controller
     function transaction($txn = null,$id_filter=null) {
         switch ($txn){
             case 'list':  //this returns JSON of Purchase Order to be rendered on Datatable
-
                 $is_approved=$this->input->get('is_approved',TRUE);
-                $filter =  "b_adjustments.is_deleted = FALSE AND b_adjustments.is_approved = $is_approved";
-                $response['data'] = $this->Billing_adjustments_model->get_list($filter,
-                    'b_adjustments.*,
-                    IFNULL(b_adjustments.notes,"") as notes,
-                    IF(b_adjustments.adjustment_type = "1","OUT","IN") as adjustment_type,
-                    b_tenants.trade_name,
-                    b_refcharges.charge_desc,
-                    CONCAT(DATE(b_refbillingperiod.period_start_date)," - ",DATE(b_refbillingperiod.period_end_date)) as period_date,
-                    CONCAT(b_refmonths.month_name," ",b_adjustments.app_year) as period_desc',
-                    array(
-                        array('b_tenants','b_tenants.tenant_id=b_adjustments.tenant_id','left'),
-                        array('b_refmonths','b_refmonths.month_id=b_adjustments.month_id','left'),
-                        array('b_refbillingperiod','b_refbillingperiod.period_id=b_adjustments.period_id','left'),
-                        array('b_refcharges','b_refcharges.charge_id=b_adjustments.charge_id','left')
-                    )
-                    );
+                $department_id = $this->input->get('department_id', TRUE);
+                $response['data'] = $this->Billing_adjustments_model->getBillingAdjustmentList($is_approved,$department_id);
                 echo json_encode($response);
             break;
-
-
 
             case 'mark-approved': //called on DASHBOARD when approved button is clicked
                 $m_adjustment=$this->Billing_adjustments_model;

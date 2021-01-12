@@ -12,6 +12,74 @@ class Journal_info_model extends CORE_Model{
         parent::__construct();
     }
 
+    function get_check_list($check_type_id='all',$tsd,$ted) 
+    {
+        $query = $this->db->query("SELECT 
+                main.*
+            FROM
+                (SELECT 
+                    ji.journal_id,
+                        0 AS cv_id,
+                        1 AS type_id,
+                        ji.check_no,
+                        ji.amount,
+                        DATE_FORMAT(ji.check_date, '%m/%d/%Y') AS check_date,
+                        ji.remarks,
+                        ji.check_status,
+                        IF(ji.check_status = 1, 'Yes', 'No') AS status,
+                        s.supplier_name,
+                        (CASE
+                            WHEN ji.check_type_id = 0 THEN 'NONE'
+                            ELSE UPPER(bank.check_type_desc)
+                        END) AS bank,
+                        ji.ref_no,
+                        ji.book_type
+                FROM
+                    journal_info ji
+                LEFT JOIN suppliers s ON s.supplier_id = ji.supplier_id
+                LEFT JOIN b_refchecktype bank ON bank.check_type_id = ji.check_type_id
+                WHERE
+                    ji.is_active = TRUE
+                        AND ji.is_deleted = FALSE
+                        AND ji.payment_method_id = 2 
+                        AND ji.book_type = 'CDJ'
+                        AND ji.date_txn BETWEEN '".$tsd."' AND '".$ted."'
+                        ".($check_type_id=='all'?"":" AND ji.check_type_id=".$check_type_id)."
+
+                        UNION ALL SELECT 
+
+                    0 AS journal_id,
+                        cv.cv_id,
+                        2 AS type_id,
+                        cv.check_no,
+                        cv.amount,
+                        DATE_FORMAT(cv.check_date, '%m/%d/%Y') AS check_date,
+                        cv.remarks,
+                        cv.check_status,
+                        IF(cv.check_status = 1, 'Yes', 'No') AS status,
+                        s.supplier_name,
+                        (CASE
+                            WHEN cv.check_type_id = 0 THEN 'NONE'
+                            ELSE UPPER(bank.check_type_desc)
+                        END) AS bank,
+                        cv.ref_no,
+                        'CV' as book_type
+                FROM
+                    cv_info cv
+                LEFT JOIN suppliers s ON s.supplier_id = cv.supplier_id
+                LEFT JOIN b_refchecktype bank ON bank.check_type_id = cv.check_type_id
+                WHERE
+                    cv.is_active = TRUE
+                        AND cv.is_deleted = FALSE
+                        AND cv.payment_method_id = 2
+                        AND cv.cv_status_id != 2
+                        AND cv.date_txn BETWEEN '".$tsd."' AND '".$ted."'
+                        ".($check_type_id=='all'?"":" AND cv.check_type_id=".$check_type_id)."
+
+                        ) AS main");
+        return $query->result();        
+    }
+
     function get_bank_recon($account_id,$sDate,$eDate) 
     {
         $sql="SELECT 

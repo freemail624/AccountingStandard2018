@@ -25,11 +25,8 @@ class Billing_review extends CORE_Controller
     public function transaction($txn=null){
         switch($txn){
             case 'list-billing-for-review':
-                $response['data']=$this->Temp_journal_info_model->get_list(array('is_sales'=>1,'book_type_id'=>0,'is_journal_posted'=>FALSE),
-                    'temp_journal_info.*,
-                    customers.customer_name',
-                    array(array('customers','customers.customer_id = temp_journal_info.customer_id','left'))
-                    );
+                $department_id = $this->input->get('department_id', TRUE);
+                $response['data']=$this->Temp_journal_info_model->getBillingList($department_id);
                 echo json_encode($response);
                 break;
 
@@ -47,11 +44,8 @@ class Billing_review extends CORE_Controller
                 break;
 
             case 'list-billing-advances-for-review':
-                $response['data']=$this->Temp_journal_info_model->get_list(array('book_type_id'=>2,'is_journal_posted'=>FALSE,'temp_journal_info.is_deleted'=>FALSE),
-                    'temp_journal_info.*,
-                    customers.customer_name',
-                    array(array('customers','customers.customer_id = temp_journal_info.customer_id','left'))
-                    );
+                $department_id = $this->input->get('department_id', TRUE);
+                $response['data']=$this->Temp_journal_info_model->getBillingAdvancesList($department_id);
                 echo json_encode($response);
                 break;
         };

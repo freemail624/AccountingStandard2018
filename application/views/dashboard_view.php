@@ -1410,6 +1410,7 @@ Chart.defaults.global.defaultFontColor = "#000000";
                 btn = $(this);
                 showSpinningProgress($(this));
                 $('button[name="mark_as_cancelled_voucher"]').addClass('disabled');
+                $('button[name="mark_as_disapproved_voucher"]').addClass('disabled');
                 $('button[name="mark_as_approved_voucher"]').addClass('disabled');
 
                  approveVoucher().done(function(response){
@@ -1419,6 +1420,35 @@ Chart.defaults.global.defaultFontColor = "#000000";
                         btn.closest('div').find('.closing_title').removeClass('hidden');
                         btn.closest('div').find('button[name="mark_as_approved_voucher"]').addClass('hidden');
                         btn.closest('div').find('button[name="mark_as_cancelled_voucher"]').addClass('hidden');
+                        btn.closest('div').find('button[name="mark_as_disapproved_voucher"]').addClass('hidden');
+                      }, 1000);
+                      setTimeout(function(){ dtvoucher.row(_selectRowObj).remove().draw(); }, 4000);
+                    }
+
+                });
+
+            });
+
+            $('#tbl_vouchers_list > tbody').on('click','button[name="mark_as_disapproved_voucher"]',function(){
+                _selectRowObj=$(this).parents('tr').prev();
+                var data=dtvoucher.row(_selectRowObj).data();
+                _selectedIDvoucher = data.cv_id;
+                // alert(_selectedIDvoucher);
+                console.log(data);
+                btn = $(this);
+                showSpinningProgress($(this));
+                $('button[name="mark_as_cancelled_voucher"]').addClass('disabled');
+                $('button[name="mark_as_disapproved_voucher"]').addClass('disabled');
+                $('button[name="mark_as_approved_voucher"]').addClass('disabled');
+
+                 disapproveVoucher().done(function(response){
+                    showNotification(response);
+                    if(response.stat=="success"){
+                      setTimeout(function(){  showSpinningProgress(btn); 
+                        btn.closest('div').find('.closing_title').removeClass('hidden');
+                        btn.closest('div').find('button[name="mark_as_approved_voucher"]').addClass('hidden');
+                        btn.closest('div').find('button[name="mark_as_cancelled_voucher"]').addClass('hidden');
+                        btn.closest('div').find('button[name="mark_as_disapproved_voucher"]').addClass('hidden');
                       }, 1000);
                       setTimeout(function(){ dtvoucher.row(_selectRowObj).remove().draw(); }, 4000);
                     }
@@ -1436,22 +1466,24 @@ Chart.defaults.global.defaultFontColor = "#000000";
                 btn = $(this);
                 showSpinningProgress($(this));
                 $('button[name="mark_as_cancelled_voucher"]').addClass('disabled');
+                $('button[name="mark_as_disapproved_voucher"]').addClass('disabled');
                 $('button[name="mark_as_approved_voucher"]').addClass('disabled');
 
-                 disapproveVoucher().done(function(response){
+                 cancelVoucher().done(function(response){
                     showNotification(response);
                     if(response.stat=="success"){
                       setTimeout(function(){  showSpinningProgress(btn); 
                         btn.closest('div').find('.closing_title').removeClass('hidden');
                         btn.closest('div').find('button[name="mark_as_approved_voucher"]').addClass('hidden');
                         btn.closest('div').find('button[name="mark_as_cancelled_voucher"]').addClass('hidden');
+                        btn.closest('div').find('button[name="mark_as_disapproved_voucher"]').addClass('hidden');
                       }, 1000);
                       setTimeout(function(){ dtvoucher.row(_selectRowObj).remove().draw(); }, 4000);
                     }
 
                 });
 
-            });
+            });            
 
 
             //****************************************************************************************
@@ -1548,12 +1580,21 @@ Chart.defaults.global.defaultFontColor = "#000000";
             return $.ajax({
                 "dataType":"json",
                 "type":"POST",
-                "url":"Cash_disbursement/transaction/cancel-voucher",
+                "url":"Cash_disbursement/transaction/disapprove-voucher",
                 "data":{cv_id : _selectedIDvoucher}
 
             });
         };
 
+        var cancelVoucher=function(){
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Cash_disbursement/transaction/cancel-voucher",
+                "data":{cv_id : _selectedIDvoucher}
+
+            });
+        };
 
         var showNotification=function(obj){
             PNotify.removeAll(); //remove all notifications

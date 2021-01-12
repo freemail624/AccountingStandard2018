@@ -219,9 +219,11 @@
                     <div class="col-lg-3">
                             Filter:<br />
                             <select id="cbo_table_filter" class="form-control">
-                                <option value="1">Pending / For Verification</option>
-                                <option value="2">Approved</option>
-                                <option value="3">Disapproved</option>
+                                <?php foreach($cv_status as $status){?>
+                                    <option value="<?php echo $status->cv_status_id; ?>">
+                                        <?php echo $status->status_name; ?>
+                                    </option>
+                                <?php }?>
                             </select> 
                     </div>
                     <div class="col-lg-2">
@@ -660,7 +662,7 @@
     </div>
 </div>
 
-<div id="modal_check_layout" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+<div id="modal_check_layout" class="modal fade" role="dialog"><!--modal-->
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header" style="background-color:#2ecc71;">
@@ -826,22 +828,23 @@ $(document).ready(function(){
                         var btn_cancel='<button class="btn btn-red btn-sm" name="delete_info" title="Delete Temporary Voucher"><i class="fa fa-trash"></i> </button>';
                         var btn_for_approval='<button class="btn btn-info btn-sm" style="width: 123px;" disabled>For Approval</button>';
                         var btn_approved='<button class="btn btn-light btn-sm" disabled>Approved</button>';
-                        var btn_disapproved='<button class="btn btn-light btn-sm" disabled>Disapproved</button>';
+                        var btn_cancelled='<button class="btn btn-light btn-sm" disabled>Cancelled</button>';
                         var btn_check_print = "";
 
                         if(data.payment_method_id == 2){
                             btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="text-transform: none;" data-toggle="tooltip" data-placement="top" title="Cheque"><img src="assets/img/facheque.png"></button>'
                         }
 
-
-                        if(data.verified_by_user == "0"  && data.verified_by_user == "0" && data.approved_by_user == "0") {
+                        if(data.cv_status_id == 1) { // Pending / For Verification
                             return btn_check_print+"&nbsp;"+btn_verified+"&nbsp;"+btn_edit+"&nbsp;"+btn_cancel+'';
-                        }else if(data.verified_by_user > "0" && data.approved_by_user == "0" && data.cancelled_by_user == "0"){
-                            return btn_check_print+"&nbsp;"+btn_for_approval ;
-                        }else if (data.verified_by_user > "0" && data.approved_by_user > "0" && data.cancelled_by_user == "0"){
-                            return btn_approved ;
-                        }else if (data.verified_by_user > "0" && data.approved_by_user == "0" && data.cancelled_by_user > "0"){
-                            return btn_disapproved ;
+                        }else if(data.cv_status_id == 2){ // Approved
+                            return btn_approved;
+                        }else if (data.cv_status_id == 3){ // Disapproved
+                            return btn_edit+"&nbsp;"+btn_cancel;
+                        }else if (data.cv_status_id == 4){ // Cancelled
+                            return btn_cancelled;
+                        }else if (data.cv_status_id == 5){ // Verified
+                            return btn_check_print+"&nbsp;"+btn_for_approval;
                         }
                         	
                     }

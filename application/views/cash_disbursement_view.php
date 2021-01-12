@@ -1033,7 +1033,7 @@
     </div>
 </div><!---modal-->
 
-<div id="modal_check_layout" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+<div id="modal_check_layout" class="modal fade" role="dialog"><!--modal-->
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header" style="background-color:#2ecc71;">

@@ -148,7 +148,7 @@
             width: 100% !important; 
         } 
 
-        #tbl_accounts_receivable_filter{
+        #tbl_accounts_receivable_filter, #tbl_billing_review_filter{
             display: none;
         }
 
@@ -255,6 +255,24 @@
         <div class="panel panel-default hidden" id="panel_tbl_billing_review" style="margin-top: 20px;">
                 <div class="panel-body table-responsive">
                     <h2 class="h2-panel-heading">Review Customer Advances (Billing)</h2><hr>
+                    <div class="row">
+                        <div class="col-lg-6">
+                        </div>
+                        <div class="col-lg-3">
+                                Department :<br />
+                                <select id="cbo_departments_review" class="selectpicker show-tick form-control" data-live-search="true">
+                                        <option value="0"> All Departments</option>
+                                    <?php foreach($departments as $department){ ?>
+                                        <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
+                                    <?php } ?>
+                                </select>
+                        </div>
+                        <div class="col-lg-3">
+                                Search :<br />
+                                 <input type="text" id="searchbox_billing" class="form-control">
+                        </div>
+                    </div>
+                    <br />
                     <div class="row-panel">
                         <table id="tbl_billing_review" class="table table-striped" cellspacing="0" width="100%">
                             <thead class="">
@@ -1157,7 +1175,7 @@
 <script>
 $(document).ready(function(){
     var _txnMode; var _cboParticulars; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode;
-    var dtReview; var _cbo_paymentMethod; var _cbo_departments; var dt; var _cbo_check_types; var _cbo_accounttype;
+    var dtReview; var _cbo_paymentMethod; var _cbo_departments; var dt; var _cbo_check_types; var _cbo_accounttype; var _cboDepartmentReview;
     var _cboCustomerType;  var _cboTaxGroup; var _selectedDepartment = 0; var _cboDepartmentFilter;
     var _cboArTrans; var dtReviewAdvances; var _selectedParentRow; var _curBtn_; var cancelAdvance;
 
@@ -1181,6 +1199,11 @@ $(document).ready(function(){
             placeholder: "Please Select Default Department.",
             allowClear: false
         });
+
+        _cboDepartmentReview=$("#cbo_departments_review").select2({
+            placeholder: "Please Select Default Department.",
+            allowClear: false
+        });    
 
         dt=$('#tbl_accounts_receivable').DataTable({
             "dom": '<"toolbar">frtip',
@@ -1249,8 +1272,21 @@ $(document).ready(function(){
 
 
         dtReviewAdvances=$('#tbl_billing_review').DataTable({
+            "dom": '<"toolbar">frtip',
+            oLanguage: {
+                    sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+            },
+            processing : true,            
             "bLengthChange":false,
-            "ajax" : "Billing_review/transaction/list-billing-advances-for-review",
+            "ajax" : {
+                "url" :  "Billing_review/transaction/list-billing-advances-for-review",
+                "bDestroy": true,            
+                "data": function ( d ) {
+                        return $.extend( {}, d, {
+                            "department_id": _cboDepartmentReview.val()
+                        });
+                    }
+            },                
             "columns": [
                 {
                     "targets": [0],
@@ -1460,11 +1496,21 @@ $(document).ready(function(){
             $('#tbl_accounts_receivable').DataTable().ajax.reload()
        });
 
+        _cboDepartmentReview.on("select2:select", function (e) {
+            $('#tbl_billing_review').DataTable().ajax.reload()
+       });       
+
         $("#searchbox_ar").keyup(function(){         
             dt
                 .search(this.value)
                 .draw();
         });
+
+        $("#searchbox_billing").keyup(function(){         
+            dtReviewAdvances
+                .search(this.value)
+                .draw();
+        });         
 
         $("#tbl_billing_payment_for_review_searchbox").keyup(function(){         
             dtReviewBilling

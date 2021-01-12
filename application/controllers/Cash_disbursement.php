@@ -96,6 +96,7 @@ class Cash_disbursement extends CORE_Controller
 
                 $this->load->view('template/journal_entries', $data);
                 break;
+
             case 'create-template':
                 $m_journal_temp_info=$this->Journal_template_info_model;
                 $m_journal_temp_entry=$this->Journal_template_entry_model;
@@ -131,6 +132,7 @@ class Cash_disbursement extends CORE_Controller
                 $response['row_added']=$this->get_response_rows($journal_template_id);
                 echo json_encode($response);
                 break;
+
             case 'post-voucher' :
                 $cv_id = $this->input->post('cv_id',TRUE);
                 $voucher_info= $this->Cash_vouchers_model->get_list($cv_id)[0];
@@ -157,8 +159,6 @@ class Cash_disbursement extends CORE_Controller
                 }else{
                     $ref_type_count = COUNT($m_journal->get_list(array('ref_type'=>$ref_type)))+1 + $account_integration[0]->jv_start_no;
                 }
-
-                
 
                 $m_journal->ref_type=$ref_type;
                 // $m_journal->ref_no=str_pad($ref_type_count, 8, "0", STR_PAD_LEFT); // Commented for a while 
@@ -207,6 +207,7 @@ class Cash_disbursement extends CORE_Controller
                 $m_modify_voucher = $this->Cash_vouchers_model;
                 $m_modify_voucher->approved_by_user = $this->session->user_id;
                 $m_modify_voucher->journal_id = $journal_id;
+                $m_modify_voucher->cv_status_id = 2;
                 $m_modify_voucher->set('date_approved','NOW()');
                 $m_modify_voucher->modify($cv_id);
 
@@ -263,14 +264,15 @@ class Cash_disbursement extends CORE_Controller
                 echo json_encode($response);
                 break;
 
-            case 'cancel-voucher' :
+            case 'disapprove-voucher' :
                 $cv_id = $this->input->post('cv_id',TRUE);
                 $voucher_info= $this->Cash_vouchers_model->get_list($cv_id)[0];
                 $dr_invoice_id = $voucher_info->dr_invoice_id;
 
                 $m_modify_voucher = $this->Cash_vouchers_model;
-                $m_modify_voucher->cancelled_by_user = $this->session->user_id;
-                $m_modify_voucher->set('date_cancelled','NOW()');
+                $m_modify_voucher->disapproved_by_user = $this->session->user_id;
+                $m_modify_voucher->cv_status_id = 3;
+                $m_modify_voucher->set('date_disapproved','NOW()');
                 $m_modify_voucher->modify($cv_id);
 
                 // AUDIT TRAIL START
@@ -280,7 +282,7 @@ class Cash_disbursement extends CORE_Controller
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=12; //CRUD
                 $m_trans->trans_type_id=75; // TRANS TYPE
-                $m_trans->trans_log='Disapproved and Cancelled  '.$voucher_info->txn_no;
+                $m_trans->trans_log='Disapproved '.$voucher_info->txn_no;
                 $m_trans->save();
                 //AUDIT TRAIL END
 
@@ -291,9 +293,43 @@ class Cash_disbursement extends CORE_Controller
 
                 $response['stat']='success';
                 $response['title']='Success!';
-                $response['msg']='Voucher successfully Disapproved !';
+                $response['msg']='Voucher successfully Disapproved!';
                 echo json_encode($response);
                 break;
+
+            case 'cancel-voucher' :
+                $cv_id = $this->input->post('cv_id',TRUE);
+                $voucher_info= $this->Cash_vouchers_model->get_list($cv_id)[0];
+                $dr_invoice_id = $voucher_info->dr_invoice_id;
+
+                $m_modify_voucher = $this->Cash_vouchers_model;
+                $m_modify_voucher->cancelled_by_user = $this->session->user_id;
+                $m_modify_voucher->cv_status_id = 4;
+                $m_modify_voucher->set('date_cancelled','NOW()');
+                $m_modify_voucher->modify($cv_id);
+
+                // AUDIT TRAIL START
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=4; //CRUD
+                $m_trans->trans_type_id=75; // TRANS TYPE
+                $m_trans->trans_log='Cancelled '.$voucher_info->txn_no;
+                $m_trans->save();
+                //AUDIT TRAIL END
+
+                //update status of dr
+                // $m_dr=$this->Delivery_invoice_model;
+                // $m_dr->order_status_id=$this->get_dr_status($dr_invoice_id);
+                // $m_dr->modify($dr_invoice_id);
+
+                $response['stat']='success';
+                $response['title']='Success!';
+                $response['msg']='Voucher successfully Cancelled !';
+                echo json_encode($response);
+                break;
+
             case 'create' :
                 $m_journal=$this->Journal_info_model;
                 $m_supplier=$this->Suppliers_model;

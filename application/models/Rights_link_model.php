@@ -107,7 +107,8 @@ class Rights_link_model extends CORE_Model{
                                           (121,'12','12-8','Open Deliveries'),
                                           (122,'17','17-4','Schedule of Creditable Input Tax'),
                                           (123,'9','9-27','Operating Expense'),
-                                          (124,'11','11-2','Bank Statement')
+                                          (124,'11','11-2','Bank Statement'),
+                                          (125,'1','1-9','Check Summary')
 
 
                                           ON DUPLICATE KEY UPDATE

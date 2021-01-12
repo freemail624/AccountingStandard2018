@@ -150,7 +150,7 @@
             padding-bottom: 15px;
         }
         
-        #tbl_accounts_receivable_filter{
+        #tbl_accounts_receivable_filter, #tbl_billing_review_filter{
             display: none;
         }
         div.dataTables_processing{ 
@@ -225,6 +225,25 @@
                     <!-- <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo" style="text-decoration: none;"> -->
                     <h2 class="h2-panel-heading">Review Billing (Pending)</h2><hr>
                     <!-- </a> -->
+                    <div class="row">
+                        <div class="col-lg-6">
+                        </div>
+                        <div class="col-lg-3">
+                                Department :<br />
+                                <select id="cbo_departments_review" class="selectpicker show-tick form-control" data-live-search="true">
+                                        <option value="0"> All Departments</option>
+                                    <?php foreach($departments as $department){ ?>
+                                        <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
+                                    <?php } ?>
+                                </select>
+                        </div>
+                        <div class="col-lg-3">
+                                Search :<br />
+                                 <input type="text" id="searchbox_billing" class="form-control">
+                        </div>
+                    </div>
+                    <br />
+
                     <div >
                     <table id="tbl_billing_review" class="table table-striped" cellspacing="0" width="100%">
                         <thead class="">
@@ -232,6 +251,7 @@
                             <th>&nbsp;</th>
                             <th>Billing Reference No</th>
                             <th>Customer</th>
+                            <th>Billing Period</th>
                             <th>Transaction Date</th>
                             <th width="25%">Remarks</th>
                         </tr>
@@ -912,7 +932,7 @@
 $(document).ready(function(){
     var _txnMode; var _cboCustomers; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode;
     var dtReview; var _cboDepartments; var _selectedDepartment = 0; var _cboDepartmentFilter;
-    var _cboCustomerType;
+    var _cboCustomerType; var _cboDepartmentReview;
     var _cboArTrans;
 
     var oTBJournal={
@@ -935,6 +955,11 @@ $(document).ready(function(){
             placeholder: "Please Select Default Department.",
             allowClear: false
         });
+
+        _cboDepartmentReview=$("#cbo_departments_review").select2({
+            placeholder: "Please Select Default Department.",
+            allowClear: false
+        });     
 
         dt=$('#tbl_accounts_receivable').DataTable({
             "dom": '<"toolbar">frtip',
@@ -1026,8 +1051,22 @@ $(document).ready(function(){
         });
 
         dtReviewBilling=$('#tbl_billing_review').DataTable({
+            "dom": '<"toolbar">frtip',
+            oLanguage: {
+                    sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+            },
+            processing : true,            
             "bLengthChange":false,
-            "ajax" : "Billing_review/transaction/list-billing-for-review",
+            "ajax" : {
+                "url" :  "Billing_review/transaction/list-billing-for-review",
+                "bDestroy": true,            
+                "data": function ( d ) {
+                        return $.extend( {}, d, {
+                            "department_id": _cboDepartmentReview.val()
+
+                        });
+                    }
+            },    
             "columns": [
                 {
                     "targets": [0],
@@ -1038,8 +1077,9 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "ref_no" },
                 { targets:[2],data: "customer_name" },
-                { targets:[3],data: "date_txn" },
-                { targets:[4],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(80)}
+                { targets:[3],data: "billing_period" },
+                { targets:[4],data: "date_txn" },
+                { targets:[5],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(80)}
             ],
               "initComplete": function(settings, json) {
                  if(this.api().data().length != 0){
@@ -1131,11 +1171,21 @@ $(document).ready(function(){
             $('#tbl_accounts_receivable').DataTable().ajax.reload()
        });
 
+        _cboDepartmentReview.on("select2:select", function (e) {
+            $('#tbl_billing_review').DataTable().ajax.reload()
+       });        
+
         $("#searchbox_ar").keyup(function(){         
             dt
                 .search(this.value)
                 .draw();
         });
+
+        $("#searchbox_billing").keyup(function(){         
+            dtReviewBilling
+                .search(this.value)
+                .draw();
+        });  
 
         $('#tbl_accounts_receivable tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');

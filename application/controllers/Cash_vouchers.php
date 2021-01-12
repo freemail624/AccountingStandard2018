@@ -17,6 +17,7 @@ class Cash_vouchers extends CORE_Controller
                 'Payment_method_model',
                 'Cash_vouchers_model',
                 'Cash_vouchers_accounts_model',
+                'CV_status_model',
                 'Tax_types_model',
                 'Delivery_invoice_model',
                 'Payment_method_model',
@@ -56,6 +57,7 @@ class Cash_vouchers extends CORE_Controller
         $data['payment_methods']=$this->Payment_method_model->get_list('is_deleted=0');
         $data['layouts']=$this->Check_layout_model->get_list('is_deleted=0');
         $data['tax_codes']=$this->Tax_code_model->get_taxcode_list();
+        $data['cv_status']=$this->CV_status_model->get_list(null, null, null, 'sort_id ASC');
 
         $data['title'] = 'Temporary Cash Voucher Journal';
         (in_array('1-8',$this->session->user_rights)? 
@@ -71,20 +73,13 @@ class Cash_vouchers extends CORE_Controller
                 $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
                 $ted = date('Y-m-d',strtotime($this->input->get('ted')));
                 $fil = $this->input->get('fil');
-                if($fil == 1){ // PENDING OR VERIFIED
-                    $additional = " AND DATE(cv_info.date_txn) BETWEEN '$tsd' AND '$ted' AND cv_info.approved_by_user = 0 AND cv_info.cancelled_by_user = 0";
-                }else if($fil == 2) { // APPROVED AND POSTED
-                    $additional = " AND DATE(cv_info.date_txn) BETWEEN '$tsd' AND '$ted' AND cv_info.approved_by_user > 0 AND cv_info.cancelled_by_user = 0";
-                }else if($fil == 3) { // DISAPPROVED AND CANCELLED
-                    $additional = " AND DATE(cv_info.date_txn) BETWEEN '$tsd' AND '$ted' AND cv_info.approved_by_user = 0 AND cv_info.cancelled_by_user > 0";
-                }
-                
+                $additional = " AND DATE(cv_info.date_txn) BETWEEN '$tsd' AND '$ted' AND cv_info.cv_status_id = ".$fil;
                 $response['data']=$this->get_response_rows(null,$additional);
                 echo json_encode($response);
                 break;
 
             case 'list-for-approval':               
-                $response['data']=$this->get_response_rows(null,'AND cv_info.approved_by_user = 0 AND cv_info.cancelled_by_user = 0 AND cv_info.verified_by_user > 0');
+                $response['data']=$this->get_response_rows(null,'AND cv_info.cv_status_id=5');
                 echo json_encode($response);
                 break;
 
@@ -128,6 +123,30 @@ class Cash_vouchers extends CORE_Controller
                     die(json_encode($response));
                 }
 
+                $ref_type = $this->input->post('ref_type');
+                $ref_no = $this->input->post('ref_no');
+                $check_no = $this->input->post('check_no');
+
+                $valid_refno=$this->Cash_vouchers_model->check_validation(null,$ref_type,$ref_no);
+
+                if(count($valid_refno)>0){
+                    $response['stat']='error';
+                    $response['title']='<b>'.$ref_type.'-'.$ref_no.' is already existing!</b>';
+                    $response['msg']='Please make sure reference no is unique!<br />';
+                    die(json_encode($response));
+                }  
+
+                if($this->input->post('check_date',TRUE) != '' || $this->input->post('check_date',TRUE) != null){
+                    $valid_checkno=$this->Cash_vouchers_model->check_validation(null,null,null,$check_no);
+
+                    if(count($valid_checkno)>0){
+                        $response['stat']='error';
+                        $response['title']='<b> Check No#: '.$check_no.' is already existing!</b>';
+                        $response['msg']='Please make sure check no is unique!<br />';
+                        die(json_encode($response));
+                    }                      
+                }
+
                 $m_dr=$this->Delivery_invoice_model;
                 $arr_rr_info=$m_dr->get_list(
                     array('delivery_invoice.dr_invoice_no'=>$this->input->post('dr_invoice_no',TRUE)),
@@ -136,8 +155,8 @@ class Cash_vouchers extends CORE_Controller
                 $dr_invoice_id=(count($arr_rr_info)>0?$arr_rr_info[0]->dr_invoice_id:0);
 
 
-                $m_info->ref_type=$this->input->post('ref_type');
-                $m_info->ref_no=$this->input->post('ref_no');
+                $m_info->ref_type=$ref_type;
+                $m_info->ref_no=$ref_no;
                 $m_info->supplier_id=$this->input->post('supplier_id',TRUE);
                 $m_info->remarks=$this->input->post('remarks',TRUE);
                 $m_info->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
@@ -145,7 +164,7 @@ class Cash_vouchers extends CORE_Controller
                 $m_info->payment_method_id=$this->input->post('payment_method');
                 $m_info->check_type_id=$this->input->post('check_type_id');
                 if($this->input->post('check_date',TRUE) != '' || $this->input->post('check_date',TRUE) != null){
-                    $m_info->check_no=$this->input->post('check_no');
+                    $m_info->check_no=$check_no;
                     $m_info->check_date=date('Y-m-d',strtotime($this->input->post('check_date',TRUE)));
                 }
                 $m_info->amount=$this->get_numeric_value($this->input->post('amount'));
@@ -184,8 +203,10 @@ class Cash_vouchers extends CORE_Controller
                 $m_info->modify($cv_id);
 
                 //update status of dr
-                $m_dr->order_status_id=$this->get_dr_status($dr_invoice_id);
-                $m_dr->modify($dr_invoice_id);
+                if($dr_invoice_id>0){
+                    $m_dr->order_status_id=$this->get_dr_status($dr_invoice_id);
+                    $m_dr->modify($dr_invoice_id);
+                }
 
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
@@ -220,6 +241,30 @@ class Cash_vouchers extends CORE_Controller
                     die(json_encode($response));
                 }
 
+                $ref_type = $this->input->post('ref_type');
+                $ref_no = $this->input->post('ref_no');
+                $check_no = $this->input->post('check_no');
+
+                $valid_refno=$this->Cash_vouchers_model->check_validation($cv_id,$ref_type,$ref_no);
+
+                if(count($valid_refno)>0){
+                    $response['stat']='error';
+                    $response['title']='<b>'.$ref_type.'-'.$ref_no.' is already existing!</b>';
+                    $response['msg']='Please make sure reference no is unique!<br />';
+                    die(json_encode($response));
+                }  
+
+                if($this->input->post('check_date',TRUE) != '' || $this->input->post('check_date',TRUE) != null){
+                    $valid_checkno=$this->Cash_vouchers_model->check_validation($cv_id,null,null,$check_no);
+
+                    if(count($valid_checkno)>0){
+                        $response['stat']='error';
+                        $response['title']='<b> Check No#: '.$check_no.' is already existing!</b>';
+                        $response['msg']='Please make sure check no is unique!<br />';
+                        die(json_encode($response));
+                    }                      
+                }                
+
                 $m_dr=$this->Delivery_invoice_model;
                 $arr_rr_info=$m_dr->get_list(
                     array('delivery_invoice.dr_invoice_no'=>$this->input->post('dr_invoice_no',TRUE)),
@@ -251,6 +296,15 @@ class Cash_vouchers extends CORE_Controller
                 // $m_info->atc_2307=$this->input->post('atc_2307',TRUE);
                 // $m_info->remarks_2307=$this->input->post('remarks_2307',TRUE);
                 $m_info->dr_invoice_id=$dr_invoice_id;
+
+                $cv_status = $this->Cash_vouchers_model->get_list($cv_id);
+                if(count($cv_status)>0){
+                    $cv_status_id = $cv_status[0]->cv_status_id;
+                    if($cv_status_id == 3){
+                        $m_info->cv_status_id = 1; // Pending for verification
+                    }
+                }
+
                 $m_info->modify($cv_id);
 
 
@@ -272,8 +326,10 @@ class Cash_vouchers extends CORE_Controller
                 }
 
                 //update status of dr
-                $m_dr->order_status_id=$this->get_dr_status($dr_invoice_id);
-                $m_dr->modify($dr_invoice_id);
+                if($dr_invoice_id>0){
+                    $m_dr->order_status_id=$this->get_dr_status($dr_invoice_id);
+                    $m_dr->modify($dr_invoice_id);
+                }
 
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
@@ -332,7 +388,8 @@ class Cash_vouchers extends CORE_Controller
 
                 //mark Items as deleted
                 $m_info->set('date_verified','NOW()'); //treat NOW() as function and not string
-                $m_info->verified_by_user=$this->session->user_id;//user that cancelled the record
+                $m_info->verified_by_user=$this->session->user_id;//user that verified the record
+                $m_info->cv_status_id=5; // Verify
                 $m_info->modify($cv_id);
 
 
@@ -343,7 +400,6 @@ class Cash_vouchers extends CORE_Controller
                 $m_trans->trans_type_id=75; // TRANS TYPE
                 $m_trans->trans_log='Marked as Final Temporary Voucher ('.$cv_id.')';
                 $m_trans->save();
-
 
                 $response['title']='Success!';
                 $response['stat']='success';
@@ -407,13 +463,18 @@ class Cash_vouchers extends CORE_Controller
 
                 $m_dr=$this->Delivery_invoice_model;
                 $row=$m_dr->get_dr_balance_qty($id);
-                $order_status_id;
-                if($row[0]->Balance == $row[0]->total_dr_amount){
-                    $order_status_id = 1;
-                }else if($row[0]->Balance > 0){
-                    $order_status_id = 3;
-                }else{
-                    $order_status_id = 2;
+                $order_status_id = 1;
+
+                if(count($row)>0){
+                    $order_status_id;
+                    if($row[0]->Balance == $row[0]->total_dr_amount){
+                        $order_status_id = 1;
+                    }else if($row[0]->Balance > 0){
+                        $order_status_id = 3;
+                    }else{
+                        $order_status_id = 2;
+                    }
+
                 }
 
                 return $order_status_id;
@@ -423,11 +484,6 @@ class Cash_vouchers extends CORE_Controller
                 // return ($row[0]->Balance>0?3:2);                    
 
             }
-
     }
-
-
-
-
 
 }

@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Account Subsidiary Report</title>
+    <title>Check Summary Report</title>
     <style type="text/css">
         body {
             font-family: 'Tahoma',sans-serif;
             font-size: 10px;
         }
-        @media print{@page {size: portrait}}
+        /*@media print{@page {size: portrait}}*/
         td{
             padding: 3px;
         }
@@ -39,6 +39,7 @@
                 <tr>
                     <th>Bank</th>
                     <th>Check #</th>
+                    <th>Check Date</th>
                     <th>Amount</th>
                     <th>Reference</th>
                     <th>Particular</th>
@@ -49,8 +50,9 @@
             <tbody>
                 <?php foreach($checks as $check){ ?>
                 <tr>
-                    <td><?php echo $check->bank_name; ?></td>
+                    <td><?php echo $check->bank; ?></td>
                     <td><?php echo $check->check_no; ?></td>
+                    <td><?php echo $check->check_date; ?></td>
                     <td align="right"><?php echo number_format($check->amount,2); ?></td>
                     <td><?php echo $check->ref_no; ?></td>
                     <td><?php echo $check->supplier_name; ?></td>
@@ -69,7 +71,7 @@
 </body>
 
 <script>
-    //window.print();
+    window.print();
 </script>
 
 </html>

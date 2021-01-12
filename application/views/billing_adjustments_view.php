@@ -150,17 +150,25 @@
         <div class="panel-body table-responsive" style="width: 100%;overflow-x: hidden;">
         <h2 class="h2-panel-heading">Billing Adjustments</h2><hr>
         <div class="row">
-        <div class="col-sm-12">
-        <div class="col-sm-2">
-        Approval Status: <br>
-            <select id="cbo_approval">
-                <option value="1">Approved</option>
-                <option value="0">Pending</option>
-                <option value="2">Disapproved</option>
-            </select>
-        </div>
-        <div class="col-sm-3">Search:<br><input type="text" class="form-control" id="searchbox_adjustment_table"> </div>
-        </div>
+            <div class="col-sm-2">
+                Approval Status: <br>
+                <select id="cbo_approval">
+                    <option value="1">Approved</option>
+                    <option value="0">Pending</option>
+                    <option value="2">Disapproved</option>
+                </select>
+            </div>
+            <div class="col-sm-3">
+                Department :<br />
+                <select id="cbo_departments_review" class="selectpicker show-tick form-control" data-live-search="true">
+                        <option value="0"> All Departments</option>
+                    <?php foreach($departments as $department){ ?>
+                        <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
+                    <?php } ?>
+                </select>
+            </div>
+            <div class="col-sm-4"></div>
+            <div class="col-sm-3">Search:<br><input type="text" class="form-control" id="searchbox_adjustment_table"> </div>
         </div><br>
             <table id="tbl_adjustments" class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
@@ -301,7 +309,7 @@
 <script>
 
 $(document).ready(function(){
-    var dt; var _selectedID; var _selectRowObj;  var _cboApproval;
+    var dt; var _selectedID; var _selectRowObj;  var _cboApproval; var _cboDepartments;
 
     var initializeControls=function(){
         _cboApproval=$('#cbo_approval').select2({
@@ -312,6 +320,11 @@ $(document).ready(function(){
 
         _cboApproval.select2('val',0);
 
+        _cboDepartments=$('#cbo_departments_review').select2({
+            placeholder: "Select Department",
+            allowClear: false
+        });
+
         dt=$('#tbl_adjustments').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
@@ -321,6 +334,8 @@ $(document).ready(function(){
                 "data": function ( d ) {
                     return $.extend( {}, d, {
                             "is_approved":_cboApproval.val(),
+                            "department_id":_cboDepartments.val()
+
                         });
                     }
             }, 
@@ -394,6 +409,9 @@ $(document).ready(function(){
             $('#tbl_adjustments').DataTable().ajax.reload()
         });
 
+        _cboDepartments.on("select2:select", function (e) {
+            $('#tbl_adjustments').DataTable().ajax.reload()
+        });
 
         $("#searchbox_adjustment_table").keyup(function(){         
             dt
