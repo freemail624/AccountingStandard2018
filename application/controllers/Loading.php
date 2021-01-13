@@ -144,10 +144,16 @@ class Loading extends CORE_Controller
 
                 $m_loading->begin();
 
+                $is_switch = $this->input->post('is_switch',TRUE);
+                $agent_id = $this->input->post('agent_id',TRUE);
+                $transfer_id = $this->input->post('transfer_id',TRUE);
+                $loading_date =date('Y-m-d',strtotime($this->input->post('loading_date',TRUE)));
+
                 //treat NOW() as function and not string
                 $m_loading->set('date_created','NOW()'); //treat NOW() as function and not string
-                $m_loading->agent_id=$this->input->post('agent_id',TRUE);
+                $m_loading->agent_id=$agent_id;
                 $m_loading->loading_place=$this->input->post('loading_place',TRUE);
+                $m_loading->driver_name=$this->input->post('driver_name',TRUE);
                 $m_loading->driver_pahinante=$this->input->post('driver_pahinante',TRUE);
                 $m_loading->loading_date=date('Y-m-d',strtotime($this->input->post('loading_date',TRUE)));
                 // $m_loading->total_amount=$this->get_numeric_value($this->input->post('grand_total_amount',TRUE));
@@ -165,11 +171,22 @@ class Loading extends CORE_Controller
                 $total_after_discount=$this->input->post('total_after_discount',TRUE);
                 $total_inv_qty=$this->input->post('total_inv_qty',TRUE);
             
+                if($is_switch == 1){
+                    // Update 1st Truck
+                    $truck = $this->Sales_invoice_model->get_open_sales_invoice_list($agent_id,$loading_date,1);
+
+                    for ($a=0; $a < count($truck); $a++) { 
+                        $m_sales_invoice->agent_id = $transfer_id;
+                        $m_sales_invoice->modify($truck[$a]->sales_invoice_id);
+                    }
+                }
+
                 for($i=0;$i<count($invoice_id);$i++){
 
                     // For Transfer of product to other loading report
                     $loading = $m_loading->check_invoice_loading($invoice_id[$i]);
                     if(count($loading) > 0){
+                        // Delete loading item in Loading
                         $m_loading_items->delete_via_pk($loading[0]->loading_item_id);
                     }
 
@@ -181,6 +198,10 @@ class Loading extends CORE_Controller
                     $m_loading_items->total_after_discount=$this->get_numeric_value($total_after_discount[$i]);
                     $m_loading_items->total_inv_qty=$this->get_numeric_value($total_inv_qty[$i]);
                     $m_loading_items->save();
+
+                    // Update truck on sales invoice
+                    $m_sales_invoice->agent_id = $agent_id;
+                    $m_sales_invoice->modify($invoice_id[$i]);                    
 
                 }
 
@@ -219,11 +240,12 @@ class Loading extends CORE_Controller
                 $loading_id=$this->input->post('loading_id',TRUE); 
 
                 $m_loading->begin();
-
+                $agent_id = $this->input->post('agent_id',TRUE);
                 //treat NOW() as function and not string
                 $m_loading->set('date_modified','NOW()'); //treat NOW() as function and not string
-                $m_loading->agent_id=$this->input->post('agent_id',TRUE);
+                $m_loading->agent_id=$agent_id;
                 $m_loading->loading_place=$this->input->post('loading_place',TRUE);
+                $m_loading->driver_name=$this->input->post('driver_name',TRUE);
                 $m_loading->driver_pahinante=$this->input->post('driver_pahinante',TRUE);
                 $m_loading->loading_date=date('Y-m-d',strtotime($this->input->post('loading_date',TRUE)));
                 // $m_loading->total_amount=$this->get_numeric_value($this->input->post('grand_total_amount',TRUE));
@@ -258,6 +280,9 @@ class Loading extends CORE_Controller
                     $m_loading_items->total_inv_qty=$this->get_numeric_value($total_inv_qty[$i]);
                     $m_loading_items->save();
 
+                    // Update truck on sales invoice
+                    $m_sales_invoice->agent_id = $agent_id;
+                    $m_sales_invoice->modify($invoice_id[$i]); 
                 }
 
                 //******************************************************************************************

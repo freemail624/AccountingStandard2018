@@ -63,8 +63,8 @@
                     <th>UM</th>
                     <th class="right-align">QTY Sold</th>
                     <th class="right-align">SRP</th>
-                    <th class="right-align">Gross</th>
                     <th class="right-align">Unit Cost</th>
+                    <th class="right-align">Gross</th>
                     <th class="right-align">Net Profit</th>
                   
                     </thead>
@@ -77,8 +77,8 @@
 	                        <td><?php echo $value->unit_name;?></td>
 	                        <td class="right-align"><?php echo number_format($value->qty_sold,2);?></td>
 	                        <td class="right-align"><?php echo number_format($value->srp,2);?></td>
-	                        <td class="right-align"><?php echo number_format($value->gross,2);?></td>
 	                        <td class="right-align"><?php echo number_format($value->purchase_cost,2);?></td>
+                            <td class="right-align"><?php echo number_format($value->gross,2);?></td>
 	                        <td class="right-align"><?php echo number_format($value->net_profit,2);?></td>
                         </tr>
                         <?php 
@@ -92,8 +92,8 @@
                         <td></td>
                         <td class="right-align"><strong><?php echo number_format($p_qty,2);?></strong></td>
                         <td class="right-align"></td>
-                        <td class="right-align"><strong><?php echo number_format($p_gross,2);?></strong></td>
                         <td class="right-align"></td>
+                        <td class="right-align"><strong><?php echo number_format($p_gross,2);?></strong></td>
                         <td class="right-align"><strong><?php echo number_format($p_net,2);?></strong></td>
                         </tr>
                         </tbody>

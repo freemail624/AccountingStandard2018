@@ -20,7 +20,8 @@ class Loading_model extends CORE_Model{
             agent.truck_no,
             CONCAT_WS(user.user_fname,user.user_mname,user.user_lname) as loaded_by,
             user.journal_approved_by,
-            items.grand_total_amount
+            items.grand_total_amount,
+            invoices.total
         FROM
             loading
             LEFT JOIN agent ON agent.agent_id = loading.agent_id
@@ -52,7 +53,9 @@ class Loading_model extends CORE_Model{
                 l.is_deleted = FALSE
                     AND l.is_active = TRUE
             GROUP BY li.loading_id) as items ON items.loading_id = loading.loading_id
-
+            LEFT JOIN (
+                SELECT loading_id, count(*) as total FROM loading_items GROUP BY loading_id 
+            ) as invoices ON invoices.loading_id = loading.loading_id
         WHERE
             loading.is_deleted = FALSE AND loading.is_active = TRUE
             ".($loading_id==null?"":" AND loading.loading_id='".$loading_id."'")."

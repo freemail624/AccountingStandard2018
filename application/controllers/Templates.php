@@ -1014,7 +1014,7 @@ class Templates extends CORE_Controller {
 
                 }
                 if($type=='dropdown'){
-                      echo  $this->load->view('template/sales_invoice_content_standard_dropdown',$data,TRUE); //load the template
+                      echo  $this->load->view('template/sales_invoice_content_standard_dropdown_1',$data,TRUE); //load the template
                       echo  $this->load->view('template/sales_invoice_content_menus',$data,TRUE);
 
                 }
@@ -1179,7 +1179,7 @@ class Templates extends CORE_Controller {
                 );
 
                 if($type=='dropdown'){
-                      echo  $this->load->view('template/cash_invoice_entries_dropdown',$data,TRUE); //load the template
+                      echo  $this->load->view('template/cash_invoice_entries_dropdown_1',$data,TRUE); //load the template
                       echo  $this->load->view('template/cash_invoice_content_menus',$data,TRUE);
 
                 }

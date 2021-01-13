@@ -1601,13 +1601,17 @@ $(document).ready(function(){
                     }
                 }).done(function(response){
                     showNotification(response);
-                    $('#modal_new_customer').modal('hide');
-                    var _customer=response.row_added[0];
-                    $('#cbo_customers').append('<option value="'+_customer.customer_id+'" selected data-contact="'+_customer.contact_name+'" data-customer_type="'+_customer.customer_type_id+'">'+ _customer.customer_name + '</option>');
-                    $('#cbo_customers').select2('val',_customer.customer_id);
-                    $('#txt_address').val(_customer.address);
-                    $('#contact_person').val(_customer.contact_name);
-                    $('#cbo_customer_type').select2('val',_customer.customer_type_id);
+
+                    if(response.stat == 'success'){
+                        $('#modal_new_customer').modal('hide');
+                        var _customer=response.row_added[0];
+                        $('#cbo_customers').append('<option value="'+_customer.customer_id+'" selected data-contact="'+_customer.contact_name+'" data-customer_type="'+_customer.customer_type_id+'">'+ _customer.customer_name + '</option>');
+                        $('#cbo_customers').select2('val',_customer.customer_id);
+                        $('#txt_address').val(_customer.address);
+                        $('#contact_person').val(_customer.contact_name);
+                        $('#cbo_customer_type').select2('val',_customer.customer_type_id);
+                    }
+
                 }).always(function(){
                     showSpinningProgress(btn);
                 });
@@ -1808,144 +1812,136 @@ $(document).ready(function(){
             _selectedID=data.sales_invoice_id;
             _is_journal_posted=data.is_journal_posted;
 
-            checkInvoice().done(function(response){
+            if(_is_journal_posted > 0){
+                showNotification({title:"<b style='color:white;'> Error!</b>",stat:"error",msg:"Cannot Edit: Invoice is already Posted in Sales Journal."});
+                return;
+            }
 
-                if (response.invoice.length > 0){
-                    showNotification({title:"<b style='color:white;'> Error!</b>",stat:"error",msg:"Cannot Edit: Invoice is already placed in Loading Report."});
-                    return;
-                }else{
-                        if(_is_journal_posted > 0){
-                        showNotification({title:"<b style='color:white;'> Error!</b>",stat:"error",msg:"Cannot Edit: Invoice is already Posted in Sales Journal."});
-                        return;
-                        }
+            getproduct().done(function(data){
+                products.clear();
+                products.local = data.data;
+                products.initialize(true);
+                countproducts = data.data.length;
 
-                    getproduct().done(function(data){
-                        products.clear();
-                        products.local = data.data;
-                        products.initialize(true);
-                        countproducts = data.data.length;
-                            if(countproducts > 100){
-                            showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-                            }
-
-                    }).always(function(){ });
-                        $('#typeaheadsearch').val('');
-
-                    _txnMode="edit";
-                    $('.sales_invoice_title').html('Edit Sales Invoice');                
-
-                    if(data.for_dispatching == 1){
-                        $('input[id="checkcheck"]').prop('checked', true);
-                        $('#for_dispatching').val('1');
-                    }else{
-                        $('input[id="checkcheck"]').prop('checked', false);
-                        $('#for_dispatching').val('0');
-                    }
-                    
-                    $('input,textarea').each(function(){
-                        var _elem=$(this);
-                        $.each(data,function(name,value){
-                            if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
-                                _elem.val(value);
-                            }
-                        });
-                    });
-                    $('#cbo_order_source').select2('val',data.order_source_id);
-                    $('#cbo_customer_type').select2('val',data.customer_type_id);
-                    $('#cbo_departments').select2('val',data.department_id);
-                    $('#cbo_department').select2('val',data.department_id);
-                    $('#cbo_customers').select2('val',data.customer_id);
-                    $('#cbo_salesperson').select2('val',data.salesperson_id);
-                    $('#cbo_agents').select2('val',data.agent_id);
-
-                    $.ajax({
-                        url : 'Sales_invoice/transaction/items/'+data.sales_invoice_id,
-                        type : "GET",
-                        cache : false,
-                        dataType : 'json',
-                        processData : false,
-                        contentType : false,
-                        beforeSend : function(){
-                            $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
-                        },
-                        success : function(response){
-                            var rows=response.data;
-                            $('#tbl_items > tbody').html('');
-                             a=0;
-                            $.each(rows,function(i,value){
-
-                            _customer_type_ = _cboCustomerType.val();
-                            var temp_sale_price=0.00;
-
-                                if(_customer_type_ == '' || _customer_type_ == 0){
-                                    temp_sale_price=value.sale_price;
-                                }else if(_customer_type_ == '1' ){ // DISCOUNTED CUSTOMER TYPE
-                                    temp_sale_price=value.discounted_price;
-                                }else if(_customer_type_ == '2' ){ // DEALER CUSTOMER TYPE
-                                    temp_sale_price=value.dealer_price;
-                                }else if(_customer_type_ == '3' ){ // DISTRIBUTOR CUSTOMER TYPE
-                                    temp_sale_price=value.distributor_price;
-                                }else if(_customer_type_ == '4' ){ // PUBLIC CUSTOMER TYPE
-                                    temp_sale_price=value.public_price;
-                                }else{
-                                    temp_sale_price=value.sale_price;
-                                }
-                                var retail_price;
-                                    if(value.is_bulk == 1){
-                                        retail_price = getFloat(temp_sale_price) / getFloat(value.child_unit_desc);
-
-                                    }else if (value.is_bulk == 0){
-                                        retail_price = 0;
-                                    }
-
-                                $('#tbl_items > tbody').append(newRowItem({
-                                    inv_qty : value.inv_qty,
-                                    product_code : value.product_code,
-                                    unit_id : value.unit_id,
-                                    inv_gross : value.inv_gross,
-                                    unit_name : value.unit_name,
-                                    product_id: value.product_id,
-                                    product_desc : value.product_desc,
-                                    inv_line_total_discount : value.inv_line_total_discount,
-                                    tax_exempt : false,
-                                    inv_tax_rate : value.inv_tax_rate,
-                                    inv_price : value.inv_price,
-                                    inv_discount : value.inv_discount,
-                                    tax_type_id : null,
-                                    inv_line_total_price : value.inv_line_total_price,
-                                    inv_non_tax_amount: value.inv_non_tax_amount,
-                                    inv_tax_amount:value.inv_tax_amount,
-                                    inv_line_total_after_global : 0.00,
-                                    child_unit_id : value.child_unit_id,
-                                    child_unit_name : value.child_unit_name,
-                                    parent_unit_name : value.product_unit_name,
-                                    parent_unit_id : getFloat(value.product_unit_id),
-                                    is_bulk: value.is_bulk,
-                                    is_parent : value.is_parent,
-                                    bulk_price: temp_sale_price,
-                                    retail_price: retail_price,
-                                    a:a,
-                                    is_basyo:value.is_basyo,
-                                    is_product_basyo:value.is_product_basyo
-                                }));
-                                changetxn = 'inactive';
-                                  _line_unit=$('.line_unit'+a).select2({
-                                    minimumResultsForSearch: -1
-                                    });
-                                    _line_unit.select2('val',value.unit_id);
-                                    a++;
-                            });
-                            changetxn = 'active';
-                            reComputeTotal();
-                            reInitializeNumeric();
-                        }
-                    });
-                    $('#span_invoice_no').html(data.sales_inv_no);
-                    showList(false);                    
+                if(countproducts > 100){
+                showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
                 }
 
-            });
+            }).always(function(){ });
+                $('#typeaheadsearch').val('');
 
+            _txnMode="edit";
+            $('.sales_invoice_title').html('Edit Sales Invoice');                
+
+            if(data.for_dispatching == 1){
+                $('input[id="checkcheck"]').prop('checked', true);
+                $('#for_dispatching').val('1');
+            }else{
+                $('input[id="checkcheck"]').prop('checked', false);
+                $('#for_dispatching').val('0');
+            }
+            
+            $('input,textarea').each(function(){
+                var _elem=$(this);
+                $.each(data,function(name,value){
+                    if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
+                        _elem.val(value);
+                    }
+                });
+            });
+            
+            $('#cbo_order_source').select2('val',data.order_source_id);
+            $('#cbo_customer_type').select2('val',data.customer_type_id);
+            $('#cbo_departments').select2('val',data.department_id);
+            $('#cbo_department').select2('val',data.department_id);
+            $('#cbo_customers').select2('val',data.customer_id);
+            $('#cbo_salesperson').select2('val',data.salesperson_id);
+            $('#cbo_agents').select2('val',data.agent_id);
+
+            $.ajax({
+                url : 'Sales_invoice/transaction/items/'+data.sales_invoice_id,
+                type : "GET",
+                cache : false,
+                dataType : 'json',
+                processData : false,
+                contentType : false,
+                beforeSend : function(){
+                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                },
+                success : function(response){
+                    var rows=response.data;
+                    $('#tbl_items > tbody').html('');
+                     a=0;
+                    $.each(rows,function(i,value){
+
+                    _customer_type_ = _cboCustomerType.val();
+                    var temp_sale_price=0.00;
+
+                        if(_customer_type_ == '' || _customer_type_ == 0){
+                            temp_sale_price=value.sale_price;
+                        }else if(_customer_type_ == '1' ){ // DISCOUNTED CUSTOMER TYPE
+                            temp_sale_price=value.discounted_price;
+                        }else if(_customer_type_ == '2' ){ // DEALER CUSTOMER TYPE
+                            temp_sale_price=value.dealer_price;
+                        }else if(_customer_type_ == '3' ){ // DISTRIBUTOR CUSTOMER TYPE
+                            temp_sale_price=value.distributor_price;
+                        }else if(_customer_type_ == '4' ){ // PUBLIC CUSTOMER TYPE
+                            temp_sale_price=value.public_price;
+                        }else{
+                            temp_sale_price=value.sale_price;
+                        }
+                        var retail_price;
+                            if(value.is_bulk == 1){
+                                retail_price = getFloat(temp_sale_price) / getFloat(value.child_unit_desc);
+
+                            }else if (value.is_bulk == 0){
+                                retail_price = 0;
+                            }
+
+                        $('#tbl_items > tbody').append(newRowItem({
+                            inv_qty : value.inv_qty,
+                            product_code : value.product_code,
+                            unit_id : value.unit_id,
+                            inv_gross : value.inv_gross,
+                            unit_name : value.unit_name,
+                            product_id: value.product_id,
+                            product_desc : value.product_desc,
+                            inv_line_total_discount : value.inv_line_total_discount,
+                            tax_exempt : false,
+                            inv_tax_rate : value.inv_tax_rate,
+                            inv_price : value.inv_price,
+                            inv_discount : value.inv_discount,
+                            tax_type_id : null,
+                            inv_line_total_price : value.inv_line_total_price,
+                            inv_non_tax_amount: value.inv_non_tax_amount,
+                            inv_tax_amount:value.inv_tax_amount,
+                            inv_line_total_after_global : 0.00,
+                            child_unit_id : value.child_unit_id,
+                            child_unit_name : value.child_unit_name,
+                            parent_unit_name : value.product_unit_name,
+                            parent_unit_id : getFloat(value.product_unit_id),
+                            is_bulk: value.is_bulk,
+                            is_parent : value.is_parent,
+                            bulk_price: temp_sale_price,
+                            retail_price: retail_price,
+                            a:a,
+                            is_basyo:value.is_basyo,
+                            is_product_basyo:value.is_product_basyo
+                        }));
+                        changetxn = 'inactive';
+                          _line_unit=$('.line_unit'+a).select2({
+                            minimumResultsForSearch: -1
+                            });
+                            _line_unit.select2('val',value.unit_id);
+                            a++;
+                    });
+                    changetxn = 'active';
+                    reComputeTotal();
+                    reInitializeNumeric();
+                }
+            });
+            $('#span_invoice_no').html(data.sales_inv_no);
+            showList(false);          
             
         });
         $('#tbl_sales_invoice tbody').on('click','button[name="remove_info"]',function(){

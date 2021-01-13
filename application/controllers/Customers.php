@@ -78,7 +78,17 @@ class Customers extends CORE_Controller {
                 $m_customers=$this->Customers_model;
                 $m_photos=$this->Customer_photos_model;
 
-                $m_customers->customer_name=$this->input->post('customer_name',TRUE);
+                $customer_name = $this->input->post('customer_name',TRUE);
+                //validate customer name
+                $customer=$this->Customers_model->get_customer($customer_name,$customer_id);
+                if(count($customer)>0){
+                    $response['stat']='error';
+                    $response['title']='<b>Customer Error</b>';
+                    $response['msg']=$customer_name.' is already existing. <br/>Please make sure customer name is unique!<br />';
+                    die(json_encode($response));
+                }
+
+                $m_customers->customer_name=$customer_name;
                 $m_customers->contact_name=$this->input->post('contact_name',TRUE);
                 $m_customers->address=$this->input->post('address',TRUE);
                 $m_customers->email_address=$this->input->post('email_address',TRUE);
@@ -123,7 +133,17 @@ class Customers extends CORE_Controller {
                 $m_customers=$this->Customers_model;
                 $m_photos=$this->Customer_photos_model;
 
-                $m_customers->customer_name=$this->input->post('customer_name',TRUE);
+                $customer_name = $this->input->post('customer_name',TRUE);
+                //validate customer name
+                $customer=$this->Customers_model->get_customer($customer_name);
+                if(count($customer)>0){
+                    $response['stat']='error';
+                    $response['title']='<b>Customer Error</b>';
+                    $response['msg']=$customer_name.' is already existing. <br/>Please make sure customer name is unique!<br />';
+                    die(json_encode($response));
+                }
+
+                $m_customers->customer_name=$customer_name;
                 $m_customers->contact_name=$this->input->post('contact_name',TRUE);
                 $m_customers->address=$this->input->post('address',TRUE);
                 $m_customers->email_address=$this->input->post('email_address',TRUE);
@@ -242,6 +262,16 @@ class Customers extends CORE_Controller {
                 $m_photos=$this->Customer_photos_model;
 
                 $customer_id=$this->input->post('customer_id',TRUE);
+                $customer_name = $this->input->post('customer_name',TRUE);
+                //validate customer name
+                $customer=$this->Customers_model->get_customer($customer_name,$customer_id);
+                if(count($customer)>0){
+                    $response['stat']='error';
+                    $response['title']='<b>Customer Error</b>';
+                    $response['msg']=$customer_name.' is already existing. <br/>Please make sure customer name is unique!<br />';
+                    die(json_encode($response));
+                }
+
                 $m_customers->customer_name=$this->input->post('customer_name',TRUE);
                 $m_customers->contact_name=$this->input->post('contact_name',TRUE);
                 $m_customers->address=$this->input->post('address',TRUE);

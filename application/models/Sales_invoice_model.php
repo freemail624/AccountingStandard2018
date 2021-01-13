@@ -9,7 +9,7 @@ class Sales_invoice_model extends CORE_Model
     {
         parent::__construct();
     }
-
+    
     function get_journal_entries($sales_invoice_id){
         $sql="SELECT main.* FROM(SELECT
             p.income_account_id as account_id,
@@ -62,9 +62,9 @@ class Sales_invoice_model extends CORE_Model
         return $this->db->query($sql)->result();
     }
 
-    function get_open_sales_invoice_list($agent_id=null,$loading_date=null,$status=null){
+    function get_open_sales_invoice_list($agent_id=null,$loading_date=null,$status=null,$sales_invoice_id=null){
         $sql="SELECT 
-            si.*, c.customer_name, sii.total_inv_qty,
+            si.*, c.customer_name, COALESCE(sii.total_inv_qty,0) as total_inv_qty,
             COALESCE(loading.loading_no,'') as loading_no
         FROM
             sales_invoice si
@@ -96,6 +96,7 @@ class Sales_invoice_model extends CORE_Model
                 AND si.is_active = TRUE
                 ".($agent_id==null?"":" AND si.agent_id='".$agent_id."'")."
                 ".($loading_date==null?"":" AND si.date_due='".$loading_date."'")."
+                ".($sales_invoice_id==null?"":" AND si.sales_invoice_id='".$sales_invoice_id."'")."
                 ".($status==null?"":" 
                     AND si.sales_invoice_id NOT IN (SELECT DISTINCT
                         li.invoice_id

@@ -1512,13 +1512,16 @@ $(document).ready(function(){
                     }
                 }).done(function(response){
                     showNotification(response);
-                    $('#modal_new_customer').modal('hide');
-                    var _customer=response.row_added[0];
-                    $('#cbo_customers').append('<option value="'+_customer.customer_id+'" selected data-contact="'+_customer.contact_name+'" data-customer_type="'+_customer.customer_type_id+'">'+ _customer.customer_name + '</option>');
-                    $('#cbo_customers').select2('val',_customer.customer_id);
-                    $('#txt_address').val(_customer.address);
-                    $('#contact_person').val(_customer.contact_name);
-                    $('#cbo_customer_type').select2('val',_customer.customer_type_id);
+
+                    if(response.stat == 'success'){
+                        $('#modal_new_customer').modal('hide');
+                        var _customer=response.row_added[0];
+                        $('#cbo_customers').append('<option value="'+_customer.customer_id+'" selected data-contact="'+_customer.contact_name+'" data-customer_type="'+_customer.customer_type_id+'">'+ _customer.customer_name + '</option>');
+                        $('#cbo_customers').select2('val',_customer.customer_id);
+                        $('#txt_address').val(_customer.address);
+                        $('#contact_person').val(_customer.contact_name);
+                        $('#cbo_customer_type').select2('val',_customer.customer_type_id);
+                    }
 
                 }).always(function(){
                     showSpinningProgress(btn);

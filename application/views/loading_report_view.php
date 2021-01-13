@@ -75,7 +75,7 @@
             -moz-border-radius: 5px;
             border-radius: 5px;
         }
-        .numeric{
+        .numeric, .number{
             text-align: right;
         }
        /* .container-fluid {
@@ -111,6 +111,13 @@
         { 
             display:none; 
         } 
+
+        .green{
+            color: green;
+        }
+        .red{
+            color: red;
+        }
     </style>
     <link type="text/css" href="assets/css/light-theme.css" rel="stylesheet">
 </head>
@@ -172,10 +179,11 @@
                     <th></th>
                     <th>Loading #</th>
                     <th>Date</th>
-                    <th>Driver</th>
+                    <th>Truck</th>
                     <th>Place</th>
                     <th style="width: 20%">Remarks</th>
                     <th>Total</th>
+                    <th>Total Invoices</th>
                     <th><center>Action</center></th>
                     <th>Loading ID</th>
                 </tr>
@@ -204,7 +212,7 @@
                 <hr>
                     <div class="row">
                         <div class="col-sm-4">
-                            <b class="required">*</b> <label> Driver :</label> <br />
+                            <b class="required">*</b> <label> Truck :</label> <br />
                             <select name="agent_id" id="cbo_agents" data-error-msg="Agent is required." required>
                                 <option value="0">[ Create New Agent ]</option>
                                 <?php foreach($agents as $agent){ ?>
@@ -235,21 +243,48 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-4">
+                            <label> Driver :</label><br>
+                            <input class="form-control" id="driver_name" type="text" name="driver_name" placeholder="Driver Name" data-error-msg="Driver is required.">
+                        </div>
+                        <div class="col-sm-3">
                             <label> Pahinante :</label><br>
                             <input class="form-control" id="driver_pahinante" type="text" name="driver_pahinante" placeholder="Pahinante" data-error-msg="Pahinante is required.">
                         </div>
-                        <div class="col-sm-5"></div>
-                        <div class="col-sm-1"></div>
+                        <div class="col-sm-2">
+                            <label> Total Invoices :</label><br>
+                            <input class="form-control number" id="total_invoices" type="text" name="total_invoices" placeholder="Total Invoices" readonly>
+                        </div>
+                        <div class="col-sm-1">
+                            <div class="switch_button_panel">
+                                <label>Switch <i id="switch_icon"></i></label> <br />
+                                <center>
+                                    <button type="button" class="btn btn-default" id="link_transfer" style="padding: 5px!important;width: 100%;">...</button>
+                                </center>
+                            </div>
+                        </div>
                         <div class="col-sm-2">
                             <label> Daily Allowance :</label><br>
                             <input type="text" class="numeric form-control" id="allowance_amount" name="allowance_amount" placeholder="Daily Allowance" data-error-msg="Daily Allowance is required." data-default="<?php echo $accounts[0]->daily_allowance; ?>">
+                        </div>
+                    </div>
+                    <div class="row" id="transfer-details-panel" style="display: none;">
+                        <div class="col-sm-4">
+                            <input type="text" class="hidden" name="transfer_id" id="transfer_id">
+                        </div>
+                        <div class="col-sm-6">
+                            <br>
+                            <span id="switch_details" style="float: right;"></span>
+                        </div>
+                        <div class="col-sm-2">
+                            <br>
+                            <button type="button" class="btn btn-danger" id="btn_cancel_switch" style="width: 100%;">Cancel Switch</button>
                         </div>
                     </div>
                 </div>
             </form>
         </div>
         <div>
-        <br/><br/>
+        <br/>
         <form id="frm_items">
             <div class="table-responsive">
                 <table id="tbl_items" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
@@ -396,6 +431,33 @@
         </div>
     </div>
 </div>
+<div id="modal_transfer_invoice" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background: #2ecc71">
+                 <h2 id="department_title" class="modal-title" style="color:white;">Switch Invoices</h2>
+            </div>
+            <div class="modal-body">
+                <form id="frm_transfer" role="form" class="form-horizontal">
+                    <div class="row" style="margin: 1%;">
+                        <div class="col-lg-12">
+                            <b class="required">*</b> <label> Switch to Truck :</label> <br />
+                            <select name="agent_id_transfer" id="cbo_agents_transfer" data-error-msg="Agent is required." required>
+                                <?php foreach($agents as $agent){ ?>
+                                    <option value="<?php echo $agent->agent_id; ?>"><?php echo $agent->agent_name; ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="btn_switch_invoice" class="btn btn-primary">Switch</button>
+                <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 </div>
 <footer role="contentinfo">
@@ -438,8 +500,8 @@
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _selectRowObjSI; 
     var dt_si; var products; var changetxn;
-    var prodstat;
-    var _line_unit; var _cboAgents;
+    var prodstat; var is_switch;
+    var _line_unit; var _cboAgents; var _cboAgentsTransfer;
 
     var oTableItems={
         invoice_id : 'td:eq(0)',
@@ -460,7 +522,7 @@ $(document).ready(function(){
         dt=$('#tbl_loading').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 8, "desc" ]],
+            "order": [[ 9, "desc" ]],
             "ajax" : { 
                 "url":"Loading/transaction/list", 
                 "bDestroy": true,             
@@ -492,15 +554,20 @@ $(document).ready(function(){
                         return accounting.formatNumber(data.grand_total_amount,2);
                     }
                 },
+                { sClass:"text-right", targets:[7],data: null,
+                    render: function (data, type, full, meta){
+                        return accounting.formatNumber(data.total,0);
+                    }
+                },                
                 {
-                    targets:[7],
+                    targets:[8],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
                         return '<center>'+btn_edit+"&nbsp;"+btn_trash+'</center>';
                     }
                 },
-                { targets:[8],data: "loading_id", visible:false }
+                { targets:[9],data: "loading_id", visible:false }
             ]
         });
 
@@ -550,13 +617,21 @@ $(document).ready(function(){
         });
 
         $('.numeric').autoNumeric('init');
+        $('.number').autoNumeric('init', {"mDec": '0'});
 
         _cboAgents=$("#cbo_agents").select2({
-            placeholder: "Please select Driver.",
+            placeholder: "Please select truck.",
             allowClear: false
         });
 
         _cboAgents.select2('val', null);
+
+        _cboAgentsTransfer=$("#cbo_agents_transfer").select2({
+            placeholder: "Please select truck.",
+            allowClear: false
+        });
+
+        _cboAgentsTransfer.select2('val', null);        
 
         $('.date-picker').datepicker({
             todayBtn: "linked",
@@ -617,6 +692,20 @@ $(document).ready(function(){
             $('#btn_receive_si').click();
         });
 
+
+        $('#link_transfer').click(function(){
+
+            if($('#cbo_agents').val() == 0 || $('#cbo_agents').val() == null || "" ){
+                showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Please select a truck."});
+                return;
+            }
+
+            _cboAgentsTransfer.select2('val',null);
+            $('#btn_switch_invoice').prop('disabled', false);
+            $('#modal_transfer_invoice').modal('show');
+        });
+
+
         $('#tbl_si_list tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
             var row = dt_si.row( tr );
@@ -665,13 +754,21 @@ $(document).ready(function(){
             $('#tbl_loading').DataTable().ajax.reload() 
         }); 
 
-        var getInvoices=function(){
+        var getInvoices=function(switch_id){
 
             $('#tbl_si_list tbody').html('<tr><td colspan="6"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
             dt_si.ajax.reload( null, false ); 
 
             var loading_date = $('input[name="loading_date"]').val();
-            var agent_id = $('#cbo_agents').val();
+            var agent_id;
+
+            if(switch_id==1){
+                agent_id = $('#transfer_id').val();
+                is_switch=1;
+            }else{
+                agent_id = $('#cbo_agents').val();
+                is_switch=0;
+            }
 
             var formattedDate = new Date(loading_date);
             var d = formattedDate.getDate();
@@ -708,7 +805,9 @@ $(document).ready(function(){
                         })); 
 
                     });
+
                     reComputeTotal();
+                    recomputeTotalInvoices();
                 }
             });
         };
@@ -720,9 +819,56 @@ $(document).ready(function(){
                 _cboAgents.select2('val',null)
                 $('#modal_new_agent').modal('show');
             }else{
-                getInvoices();
+                getInvoices(0);
                 $('#txt_route').focus();
             }
+        });
+
+        //loads modal to create new agent
+        _cboAgentsTransfer.on('select2:select', function(){
+
+            var agent_id = _cboAgents.val();
+            var transfer_id = $(this).val();
+
+            if(agent_id == transfer_id){
+                showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Truck must not be the same with the truck you will transfer."});
+                $('#btn_switch_invoice').prop('disabled', true);
+                return;
+            }else{
+                $('#btn_switch_invoice').prop('disabled', false);
+            }
+
+        });        
+
+        $('#btn_switch_invoice').on('click', function(){
+
+            var transfer_id = $('#cbo_agents_transfer').val();
+
+            if(transfer_id==null){
+                showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Please select a truck to switch invoices."});
+                    return;
+            }
+
+            $('#cbo_agents').prop('disabled', true);
+            $("#switch_icon").removeAttr('class');
+            $('#switch_icon').addClass('fa fa-check-circle green');
+            $('#transfer_id').val(transfer_id);
+
+            var truck_from = $('#cbo_agents option:selected').text();
+            var truck_to = $('#cbo_agents_transfer option:selected').text();
+            var details = 'Switching Invoices from <b>'+ truck_to +'</b> to <b>'+truck_from+'</b>';
+            $('#switch_details').html(details);
+            $('#transfer-details-panel').show();
+            $('#modal_transfer_invoice').modal('hide');
+            getInvoices(1);
+        });
+
+        $('#btn_cancel_switch').on('click', function(){
+
+            $('#cbo_agents').prop('disabled', false);
+            $("#switch_icon").removeAttr('class');
+            $('#transfer-details-panel').hide();
+            getInvoices(0);
         });
 
         $('#txt_route').on('keypress',function(evt){
@@ -733,7 +879,7 @@ $(document).ready(function(){
         });       
 
         $('input[name="loading_date"]').on('change',function(){
-            getInvoices();
+            getInvoices(0);
         });
 
         //create new agent
@@ -773,7 +919,10 @@ $(document).ready(function(){
             $('#span_loading_report_no').html('LOADING-YYYYMMDD-XX');
             $('#cbo_agents').select2('val',null);
             $('#allowance_amount').val(accounting.formatNumber($('#allowance_amount').data('default'),2));
-
+            $("#switch_icon").removeAttr('class');
+            $('#transfer-details-panel').hide();
+            $('.switch_button_panel').show();
+            $('#cbo_agents').prop('disabled', false);
             showList(false);
 
             $('#cbo_agents').select2('open');
@@ -802,6 +951,7 @@ $(document).ready(function(){
             }));
 
             _selectRowObjSI.remove();
+            recomputeTotalInvoices();
             reComputeTotal();
         });
 
@@ -810,6 +960,11 @@ $(document).ready(function(){
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.loading_id;
             _txnMode="edit";
+
+            $("#switch_icon").removeAttr('class');
+            $('#transfer-details-panel').hide();
+            $('.switch_button_panel').hide();
+            $('#cbo_agents').prop('disabled', false);
 
             $('#span_loading_report_no').html(data.loading_no);
             
@@ -855,9 +1010,9 @@ $(document).ready(function(){
                             total_inv_qty : value.total_inv_qty,
                             btnclass : attr
                         }));
-                        
                     });
 
+                    recomputeTotalInvoices();
                     reComputeTotal();
                     reInitializeNumeric();
                 }
@@ -933,6 +1088,7 @@ $(document).ready(function(){
         $('#tbl_items > tbody').on('click','button[name="remove_item"]',function(){
             $(this).closest('tr').remove();
             reComputeTotal();
+            recomputeTotalInvoices();
         });
 
     })();
@@ -983,6 +1139,8 @@ $(document).ready(function(){
         _data.push({name : "remarks", value : $('textarea[name="remarks"]').val()});
         _data.push({name : "grand_total_amount", value: $('#td_grand_total_amount').text()});
         _data.push({name : "grand_total_inv_qty", value: $('#td_grand_total_inv_qty').text()});
+        _data.push({name : "is_switch", value: is_switch});
+        _data.push({name : "agent_id", value: $('#cbo_agents').val()});
 
         // $('input[name="is_auto_print"]').prop("checked") ?  _data.push({name : "is_auto_print" , value : '1'   }) : _data.push({name : "is_auto_print" , value : '0'   });
 
@@ -1095,8 +1253,14 @@ $(document).ready(function(){
         $('#td_grand_total_amount').html(accounting.formatNumber(grand_total_amount,2));
     };
 
+    var recomputeTotalInvoices=function(){
+        var rowCount = $('#tbl_items > tbody > tr').length;
+        $('#total_invoices').val(rowCount);
+    };
+               
     var reInitializeNumeric=function(){
         $('.numeric').autoNumeric('init');
+        $('.number').autoNumeric('init', {"mDec": '0'});
     };
 
 

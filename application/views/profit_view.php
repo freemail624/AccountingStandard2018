@@ -189,7 +189,15 @@
 
         <h2 class="h2-panel-heading">Profit Report</h2><hr>
             <div class="row">
-                <div class="col-sm-4">
+                <div class="col-sm-3">
+                   <b>*</b> Invoice Type :<br />
+                    <select name="invoice_type" id="invoice_type">
+                        <option value="1">All Invoices</option>
+                        <option value="2">Charge Invoice</option>
+                        <option value="3">Cash Invoice</option>
+                    </select>
+                </div>
+                <div class="col-sm-3">
                    <b>* </b> Report Type :<br />
                     <select name="report_type" id="report_type">
                         <option value="1">By Product</option>
@@ -197,7 +205,7 @@
                         <option value="3">By Invoice (Summary)</option>
                     </select>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-sm-3">
                         From :<br />
                         <div class="input-group">
                             <input type="text" id="txt_start_date" name="" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>">
@@ -206,7 +214,7 @@
                              </span>
                         </div>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-sm-3">
                         To :<br />
                         <div class="input-group">
                             <input type="text" id="txt_end_date" name="" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>">
@@ -215,16 +223,28 @@
                              </span>
                         </div>
                 </div> 
-            </div><br>
+            </div>
             <div class="row">
-                <div class="col-sm-2"> 
-                    <button class="btn btn-primary pull-left" style="margin-right: 5px; margin-top: 0; margin-bottom: 10px;" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif; ">
-                        <i class="fa fa-print"></i> Print Report
-                    </button>
+                <div class="col-sm-3">
+                    <div class="truck_panel" style="display: none;">
+                        Truck : <br />
+                        <select name="agent_id" id="cbo_agents" data-error-msg="Agent is required." required style="width: 100%;">
+                        <option value="0">All</option>
+                            <?php foreach($trucks as $truck){ ?>
+                                <option value="<?php echo $truck->agent_id; ?>"><?php echo $truck->agent_name; ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
                 </div>
-                <div class="col-sm-2"> 
-                    <button class="btn btn-success pull-left" style="margin-right: 5px; margin-top: 0; margin-bottom: 10px;" id="btn_export"  data-placement="left" title="Export" ><i class="fa fa-file-excel-o"></i> Export Report
-                </button>
+                <div class="col-sm-9">
+                    <br>
+                    <div style="float: right;">
+                        <button class="btn btn-primary pull-left" style="margin-right: 5px; margin-top: 0; margin-bottom: 10px;" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif; ">
+                            <i class="fa fa-print"></i> Print Report
+                        </button>
+                        <button class="btn btn-success pull-left" style="margin-right: 5px; margin-top: 0; margin-bottom: 10px;" id="btn_export"  data-placement="left" title="Export" ><i class="fa fa-file-excel-o"></i> Export Report
+                        </button>
+                    </div>
                 </div>
             </div>
             <div id="tbl_delivery_invoice">
@@ -308,14 +328,19 @@
 
 
 $(document).ready(function(){
-    var dt;  var _cboReportType; 
-
-
-
+    var dt;  var _cboReportType; var _cboTrucks; var _cboInvoiceType;
 
     var initializeControls=function(){
         _cboReportType=$("#report_type").select2({
-            placeholder: "Please select Order Source."
+            placeholder: "Please select report type."
+        });
+
+        _cboInvoiceType=$("#invoice_type").select2({
+            placeholder: "Please select invoice type."
+        });
+
+        _cboTrucks=$("#cbo_agents").select2({
+            placeholder: "Please select truck."
         });
 
         $('#txt_end_date').datepicker({
@@ -341,7 +366,7 @@ $(document).ready(function(){
        var bindEventHandlers=function(){
 
         $('#btn_print').click(function(){
-            window.open('Profit/transaction/print-by-product?type='+_cboReportType.val()+'&start='+$('#txt_start_date').val()+'&end='+$('#txt_end_date').val());
+            window.open('Profit/transaction/print-by-product?type='+_cboReportType.val()+'&start='+$('#txt_start_date').val()+'&end='+$('#txt_end_date').val()+'&invoice_type='+$('#invoice_type').val()+'&agent_id='+$('#cbo_agents').val());
         });
 
         _cboReportType.on("select2:select", function (e) {
@@ -349,6 +374,23 @@ $(document).ready(function(){
             if(type == '1'){ reportProducts();}else if(type == '2'){ reportInvoiceDetailed();}else if(type == '3'){ reportInvoiceSummary(); }
         });
 
+        _cboTrucks.on("select2:select", function (e) {
+            type = _cboReportType.val();
+            if(type == '1'){ reportProducts();}else if(type == '2'){ reportInvoiceDetailed();}else if(type == '3'){ reportInvoiceSummary(); }
+        });        
+
+        _cboInvoiceType.on("select2:select", function (e) {
+            type = _cboReportType.val();
+            var invoice_type = $(this).val();
+
+            if(invoice_type == 2){
+                $('.truck_panel').show();
+            }else{
+                $('.truck_panel').hide();
+            }
+
+            if(type == '1'){ reportProducts();}else if(type == '2'){ reportInvoiceDetailed();}else if(type == '3'){ reportInvoiceSummary(); }
+        });     
 
 
         $("#txt_start_date").datepicker().on("change", function () {        
@@ -364,11 +406,11 @@ $(document).ready(function(){
         $('#btn_export').on('click', function() {
             type = _cboReportType.val();
             if(type == '1'){
-                window.open('Profit/transaction/export-by-product?type='+_cboReportType.val()+'&start='+$('#txt_start_date').val()+'&end='+$('#txt_end_date').val(),'_self');
+                window.open('Profit/transaction/export-by-product?type='+_cboReportType.val()+'&start='+$('#txt_start_date').val()+'&end='+$('#txt_end_date').val()+'&invoice_type='+$('#invoice_type').val()+'&agent_id='+$('#cbo_agents').val(),'_self');
             }else if(type == '2'){
-                window.open('Profit/transaction/export-by-invoice-detailed?type='+_cboReportType.val()+'&start='+$('#txt_start_date').val()+'&end='+$('#txt_end_date').val(),'_self');
+                window.open('Profit/transaction/export-by-invoice-detailed?type='+_cboReportType.val()+'&start='+$('#txt_start_date').val()+'&end='+$('#txt_end_date').val()+'&invoice_type='+$('#invoice_type').val()+'&agent_id='+$('#cbo_agents').val(),'_self');
             }else if(type == '3'){
-                window.open('Profit/transaction/export-by-invoice-summary?type='+_cboReportType.val()+'&start='+$('#txt_start_date').val()+'&end='+$('#txt_end_date').val(),'_self');
+                window.open('Profit/transaction/export-by-invoice-summary?type='+_cboReportType.val()+'&start='+$('#txt_start_date').val()+'&end='+$('#txt_end_date').val()+'&invoice_type='+$('#invoice_type').val()+'&agent_id='+$('#cbo_agents').val(),'_self');
             }
                
         });
@@ -399,8 +441,11 @@ $(document).ready(function(){
     function reportProducts() {
         $('#tbl_delivery_invoice').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
         var data = [];
+         data.push({name : "agent_id" ,value : $('#cbo_agents').val()});
          data.push({name : "start" ,value : $('#txt_start_date').val()});
          data.push({name : "end" ,value : $('#txt_end_date').val()});
+         data.push({name : "invoice_type" ,value : $('#invoice_type').val()});
+
         $.ajax({
             url : 'Profit/transaction/report-by-product',
             type : "GET",
@@ -421,8 +466,8 @@ $(document).ready(function(){
                     '<th>UM</th>'+
                     '<th class="right-align">QTY Sold</th>'+
                     '<th class="right-align">SRP</th>'+
-                    '<th class="right-align">Gross</th>'+
                     '<th class="right-align">Unit Cost</th>'+
+                    '<th class="right-align">Gross</th>'+
                     '<th class="right-align">Net Profit</th>'+
                     
                     '</thead>'+
@@ -439,8 +484,8 @@ $(document).ready(function(){
                         '<td>'+value.unit_name+'</td>'+
                         '<td class="right-align">'+value.qty_sold+'</td>'+
                         '<td class="right-align">'+accounting.formatNumber(value.srp,2)+'</td>'+
-                        '<td class="right-align">'+accounting.formatNumber(value.gross,2)+'</td>'+
                         '<td class="right-align">'+accounting.formatNumber(value.purchase_cost,2)+'</td>'+
+                        '<td class="right-align">'+accounting.formatNumber(value.gross,2)+'</td>'+
                         '<td class="right-align">'+accounting.formatNumber(value.net_profit,2)+'</td>'+
                         '</tr>'
                     );
@@ -456,8 +501,8 @@ $(document).ready(function(){
                         '<td></td>'+
                         '<td class="right-align"><strong>'+accounting.formatNumber(p_qty,2)+'</strong></td>'+
                         '<td class="right-align"></td>'+
-                        '<td class="right-align"><strong>'+accounting.formatNumber(p_gross,2)+'</strong></td>'+
                         '<td class="right-align"></td>'+
+                        '<td class="right-align"><strong>'+accounting.formatNumber(p_gross,2)+'</strong></td>'+
                         '<td class="right-align"><strong>'+accounting.formatNumber(p_net,2)+'</strong></td>'+
                         '</tr>'
                     );
@@ -470,8 +515,11 @@ $(document).ready(function(){
     function reportInvoiceDetailed() {
         $('#tbl_delivery_invoice').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
         var data = [];
+         data.push({name : "agent_id" ,value : $('#cbo_agents').val()});
          data.push({name : "start" ,value : $('#txt_start_date').val()});
          data.push({name : "end" ,value : $('#txt_end_date').val()});
+         data.push({name : "invoice_type" ,value : $('#invoice_type').val()});
+
         $.ajax({
             url : 'Profit/transaction/report-by-invoice-detailed',
             type : "GET",
@@ -496,8 +544,8 @@ $(document).ready(function(){
                     '<th>UM</th>'+
                     '<th class="right-align">QTY Sold</th>'+
                     '<th class="right-align">SRP</th>'+
-                    '<th class="right-align">Gross</th>'+
                     '<th class="right-align">Unit Cost</th>'+
+                    '<th class="right-align">Gross</th>'+
                     '<th class="right-align">Net Profit</th>'+
                     
                     '</thead>'+
@@ -516,8 +564,8 @@ $(document).ready(function(){
                         '<td>'+value.unit_name+'</td>'+
                         '<td class="right-align">'+value.inv_qty+'</td>'+
                         '<td class="right-align">'+accounting.formatNumber(value.srp,2)+'</td>'+
-                        '<td class="right-align">'+accounting.formatNumber(value.inv_gross,2)+'</td>'+
                         '<td class="right-align">'+accounting.formatNumber(value.purchase_cost,2)+'</td>'+
+                        '<td class="right-align">'+accounting.formatNumber(value.inv_gross,2)+'</td>'+
                         '<td class="right-align">'+accounting.formatNumber(value.net_profit,2)+'</td>'+
                         '</tr>'
                     );
@@ -531,8 +579,8 @@ $(document).ready(function(){
                         '<td></td>'+
                         '<td class="right-align"><strong>'+value.qty_total+'</strong></td>'+
                         '<td class="right-align"></td>'+
-                        '<td class="right-align"><strong>'+accounting.formatNumber(value.gross_total,2)+'</strong></td>'+
                         '<td class="right-align"></td>'+
+                        '<td class="right-align"><strong>'+accounting.formatNumber(value.gross_total,2)+'</strong></td>'+
                         '<td class="right-align"><strong>'+accounting.formatNumber(value.profit_total,2)+'</strong></td>'+
                         '</tr>'
                     );
@@ -565,8 +613,11 @@ $(document).ready(function(){
     function reportInvoiceSummary() {
         $('#tbl_delivery_invoice').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
         var data = [];
+         data.push({name : "agent_id" ,value : $('#cbo_agents').val()});
          data.push({name : "start" ,value : $('#txt_start_date').val()});
          data.push({name : "end" ,value : $('#txt_end_date').val()});
+         data.push({name : "invoice_type" ,value : $('#invoice_type').val()});
+
         $.ajax({
             url : 'Profit/transaction/report-by-invoice-summary',
             type : "GET",

@@ -25,6 +25,7 @@ class Sales_invoice extends CORE_Controller
         $this->load->model('Customer_type_model');
         $this->load->model('Order_source_model');
         $this->load->model('Loading_model');
+        $this->load->model('Loading_item_model');
         $this->load->model('Agent_model');
         $this->load->model('Account_integration_model');
 
@@ -395,6 +396,9 @@ class Sales_invoice extends CORE_Controller
             ////***************************************update Items************************************************
             case 'update':
                 $m_invoice=$this->Sales_invoice_model;
+                $m_loading=$this->Loading_model;
+                $m_loading_items=$this->Loading_item_model;
+
                 $sales_invoice_id=$this->input->post('sales_invoice_id',TRUE);
                 $sales_inv_no=$this->input->post('sales_inv_no',TRUE);
 
@@ -510,7 +514,17 @@ class Sales_invoice extends CORE_Controller
                         $m_products->modify($this->get_numeric_value($prod_id[$i]));
                     }
 
+                    $checkInvoice = $m_loading->check_invoice_loading($sales_invoice_id);
+                    if(count($checkInvoice)>0){
+                        $loading = $m_invoice->get_open_sales_invoice_list(null,null,null,$sales_invoice_id);
 
+                        if(count($loading)>0){
+                            $m_loading_items->total_after_discount = $this->get_numeric_value($loading[0]->total_after_discount);
+                            $m_loading_items->total_inv_qty = $this->get_numeric_value($loading[0]->total_inv_qty);
+                            $m_loading_items->address = $loading[0]->address;
+                            $m_loading_items->modify($checkInvoice[0]->loading_item_id);
+                        }
+                    }
 
                     //update status of so
                     $m_so->order_status_id=$this->get_so_status($sales_order_id);

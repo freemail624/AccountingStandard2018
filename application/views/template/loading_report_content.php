@@ -5,7 +5,7 @@
 	<style type="text/css">
 		.tbl-info{
 			border-collapse: collapse;
-			font-size: 7pt;
+			font-size: 8pt;
 			font-family: calibri;
 		}
 
@@ -26,11 +26,11 @@
 		}
 
 		.font8{
-			font-size: 7pt!important;
+			font-size: 8pt!important;
 		}
 
 		.font-items{
-			font-size: 8pt!important;
+			font-size: 9pt!important;
 		}
 
 	</style>
@@ -43,10 +43,10 @@
 		for($e=0; $e < $d; $e++){ 
 	?>
 
-	<table width="100%" cellpadding="5" cellspacing="5" class="tbl-info">
+	<table width="100%" cellpadding="4" cellspacing="4" class="tbl-info">
 		<tr>
 			<td width="50%" valign="top">
-				<table width="100%" cellpadding="5" cellspacing="5" class="tbl-info">
+				<table width="100%" cellpadding="4" cellspacing="4" class="tbl-info">
 					<tr>
 						<td class="upp" width="65%">
 							<strong>Date : </strong><?php echo $info[0]->loading_date; ?> </td>
@@ -55,13 +55,13 @@
 						</td>
 					</tr>
 					<tr>
-						<td class="upp"><strong>Driver : </strong> <?php echo $info[0]->agent_name; ?></td>
+						<td class="upp"><strong>Driver : </strong> <?php echo $info[0]->driver_name; ?></td>
 						<td class="font8 upp"><strong>Pahinante : </strong> <?php echo $info[0]->driver_pahinante; ?></td>
 					</tr>
 				</table>
 			</td>
 			<td width="50%" valign="top">
-				<table width="100%" cellpadding="5" cellspacing="5" class="tbl-info" style="margin-left: 30px;">
+				<table width="100%" cellpadding="4" cellspacing="4" class="tbl-info" style="margin-left: 30px;">
 					<tr>
 						<td class="upp" width="50%" valign="top"><strong>Truck # : </strong> <?php echo $info[0]->truck_no; ?></td>
 						<td width="50%" class="upp" valign="top" style="font-size: 10pt;" align="right">
@@ -78,7 +78,7 @@
 		<tr>
 			<td width="50%" valign="top">
 			<br/>
-				<table cellpadding="5" cellspacing="5" class="tbl-info" width="100%" style="border: 1px solid black;">
+				<table cellpadding="4" cellspacing="4" class="tbl-info" width="100%" style="border: 1px solid black;">
 					<tr>
 						<td class="upp border" width="5%"><center><strong>#</strong></center></td>
 						<td class="upp border" width="40%"><center><strong>Customer</strong></center></td>
@@ -147,7 +147,7 @@
 			if($e==0){?>
 
 			<br/>
-				<table cellspacing="5" cellpadding="5" class="tbl-info" width="100%" style="border: 1px solid black;margin-left: 30px;">
+				<table cellspacing="4" cellpadding="4" class="tbl-info" width="100%" style="border: 1px solid black;margin-left: 30px;">
 					<tr>
 						<td class="upp border" colspan="3"><center><strong>Backload:</strong></center></td>
 					</tr>
@@ -166,16 +166,16 @@
 				</table>
 				<br/>
 
-				<table cellspacing="5" cellpadding="5" class="tbl-info" width="50%" style="border: 1px solid black;margin-left: 30px;">
+				<table cellspacing="4" cellpadding="4" class="tbl-info" width="50%" style="border: 1px solid black;margin-left: 30px;">
 					<tr>
 						<td class="border"><strong>TOTAL BASYO IN: Basyo na binalik sa Bodega</strong></td>
 					</tr>
 					<tr>
-						<td class="border" style="padding: 30px;padding-bottom: 52px;">&nbsp;</td>
+						<td class="border" style="padding: 25px;padding-bottom: 52px;">&nbsp;</td>
 					</tr>
 				</table>
 				<br/>
-				<table cellspacing="5" cellpadding="5" class="tbl-info" width="100%" style="border: 1px solid black;margin-left: 30px;">
+				<table cellspacing="4" cellpadding="4" class="tbl-info" width="100%" style="border: 1px solid black;margin-left: 30px;">
 					<tr>
 						<td class="border upp strong" colspan="2"><strong><center>Daily Allowance</center></strong></td>
 					</tr>
