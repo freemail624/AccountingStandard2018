@@ -2822,6 +2822,10 @@ $(document).ready(function(){
 
             });
 
+            $('.cbo_department_list').on("change", function (e) {
+                var department_id = $(this).select2('val'); 
+                $('#tbl_entries_for_review_bill'+_dataParentID+' select.dept').each(function(){ $(this).select2('val',department_id)});
+            });
 
             parent.on('click','button[name="btn_finalize_journal_review"]',function(){
 
