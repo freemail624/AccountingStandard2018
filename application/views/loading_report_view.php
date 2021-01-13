@@ -177,14 +177,14 @@
                 <thead >
                 <tr>
                     <th></th>
-                    <th>Loading #</th>
+                    <th width="15%">Loading #</th>
                     <th>Date</th>
-                    <th>Truck</th>
+                    <th width="10%">Truck</th>
                     <th>Place</th>
-                    <th style="width: 20%">Remarks</th>
+                    <th width="20%">Remarks</th>
                     <th>Total</th>
-                    <th>Total Invoices</th>
-                    <th><center>Action</center></th>
+                    <th>Invoices</th>
+                    <th width="10%"><center>Action</center></th>
                     <th>Loading ID</th>
                 </tr>
                 </thead>
@@ -554,7 +554,7 @@ $(document).ready(function(){
                         return accounting.formatNumber(data.grand_total_amount,2);
                     }
                 },
-                { sClass:"text-right", targets:[7],data: null,
+                { targets:[7],data: null,
                     render: function (data, type, full, meta){
                         return accounting.formatNumber(data.total,0);
                     }
