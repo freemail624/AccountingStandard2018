@@ -51,8 +51,8 @@
 <div class="tab-pane active" id="journal_review_<?php echo $info->temp_journal_id; ?>" data-parent-id="<?php echo $info->temp_journal_id; ?>" style="min-height: 300px;">
     <?php if(!$valid_particular){ ?>
         <div class="alert alert-dismissable alert-danger">
-            <i class="ti ti-close"></i>&nbsp; <strong>Sorry!</strong> We could not find the record of <b><?php echo $info->customer_name; ?></b>.<br />
-            <i class="ti ti-close"></i>&nbsp; Please make sure that <b><?php echo $info->customer_name; ?></b> is not deleted or cancelled to your masterfile record.
+            <i class="ti ti-close"></i>&nbsp; <strong>Sorry!</strong> We could not find the record of <b><?php echo $customer_name; ?></b>.<br />
+            <i class="ti ti-close"></i>&nbsp; Please make sure that <b><?php echo $customer_name; ?></b> is not deleted or cancelled to your masterfile record.
             <br /><br />
             <i class="fa fa-bars"></i>&nbsp; Please call the System Administrator or Developer for assistance.
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>

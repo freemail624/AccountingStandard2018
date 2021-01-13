@@ -4341,6 +4341,8 @@ class Templates extends CORE_Controller {
 
                 $data['customer_dep_link'] = $this->Customers_model->get_list(array('customer_id'=>$info[0]->customer_id))[0];
                 $data['info']=$info[0];
+                $data['customer_name']=$data['customer_dep_link']->customer_name;
+                
                 $data['departments']=$m_departments->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
                 $data['customers']=$m_customers->get_list(
                     array(
