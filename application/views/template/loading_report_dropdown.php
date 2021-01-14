@@ -28,7 +28,7 @@
 </head>
 <body>
 	<div style="padding: 20px;">
-		<table cellpadding="5" cellspacing="5" class="tbl-info" width="100%" style="border: 1px solid black!important;">
+		<table cellpadding="5" cellspacing="5" class="tbl-info" width="100%" style="border: 1px solid black!important;font-size: 10pt!important;">
 			<tr>
 				<td class="upp border" width="5%"><center><strong>#</strong></center></td>
 				<td class="upp border" width="40%"><center><strong>Customer</strong></center></td>

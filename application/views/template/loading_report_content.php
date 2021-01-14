@@ -48,9 +48,9 @@
 			<td width="50%" valign="top">
 				<table width="100%" cellpadding="4" cellspacing="4" class="tbl-info">
 					<tr>
-						<td class="upp" width="65%">
+						<td class="upp" width="38%">
 							<strong>Date : </strong><?php echo $info[0]->loading_date; ?> </td>
-						<td width="35%" class="font8 upp">
+						<td width="62%" class="font8 upp">
 							<strong>ROUTE :</strong> <?php echo $info[0]->loading_place; ?>
 						</td>
 					</tr>

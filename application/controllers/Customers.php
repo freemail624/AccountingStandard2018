@@ -80,7 +80,7 @@ class Customers extends CORE_Controller {
 
                 $customer_name = $this->input->post('customer_name',TRUE);
                 //validate customer name
-                $customer=$this->Customers_model->get_customer($customer_name,$customer_id);
+                $customer=$this->Customers_model->get_customer($customer_name);
                 if(count($customer)>0){
                     $response['stat']='error';
                     $response['title']='<b>Customer Error</b>';

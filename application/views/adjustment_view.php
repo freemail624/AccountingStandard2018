@@ -1865,7 +1865,7 @@ $(document).ready(function(){
          return prodstat;    
     };   
     var reInitializeNumeric=function(){
-        $('.numeric').autoNumeric('init');
+        $('.numeric').autoNumeric('init', {'mDec': 5});
     };
 
 
