@@ -423,7 +423,7 @@ class Cash_receipt extends CORE_Controller
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=8; //CRUD
                 $m_trans->trans_type_id=69; // TRANS TYPE
-                $m_trans->trans_log='Finalized Payment Reference No. '.$this->input->post('ref_no',TRUE).' Cash Receipt Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
+                $m_trans->trans_log='Finalized Payment Reference No. '.$this->input->post('or_no',TRUE).' Cash Receipt Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
                 $m_trans->save();
                 //AUDIT TRAIL END
                 }

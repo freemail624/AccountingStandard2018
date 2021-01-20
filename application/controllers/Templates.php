@@ -4397,11 +4397,13 @@ class Templates extends CORE_Controller {
                 $info = $m_temp_info->get_list($temp_journal_id,
                         '*,
                         DATE_FORMAT(b_payment_info.created_datetime,"%m/%d/%Y") as date_txn,
+                        DATE_FORMAT(b_payment_info.payment_date,"%m/%d/%Y") as payment_date,
                         IF(b_payment_info.payment_type = 1, 2, 1) as payment_method_id,
                         DATE_FORMAT(b_payment_info.check_date,"%m/%d/%Y") as check_date,
                         DATEDIFF(b_payment_info.check_date,NOW()) as rem_day_for_due,
                         customers.link_department_id,
-                        b_payment_info.remarks
+                        b_payment_info.remarks,
+                        b_payment_info.reference_no
                         ',
                         array(array('b_payment_info','b_payment_info.payment_id = temp_journal_info.payment_id','left'),
                             array('customers','customers.customer_id = temp_journal_info.customer_id','left'))

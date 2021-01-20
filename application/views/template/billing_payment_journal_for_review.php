@@ -19,7 +19,7 @@
                 <div class="tab-container tab-default" >
                     <ul class="nav nav-tabs">
                         <li class="active"><a href="#journal_review_<?php echo $info->temp_journal_id; ?>" data-toggle="tab"><i class="fa fa-gavel"></i> Review Journal</a></li>
-                        <li class=""><a href="#payment_review_<?php echo $info->temp_journal_id; ?>" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Payment</a></li>
+                        <li class="hidden"><a href="#payment_review_<?php echo $info->temp_journal_id; ?>" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Payment</a></li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="journal_review_<?php echo $info->temp_journal_id; ?>" data-parent-id="<?php echo $info->temp_journal_id; ?>" style="min-height: 300px;">
@@ -50,15 +50,15 @@
                                     <div class="col-lg-8">
                                         <div style="border: 1px solid lightgrey;padding: 2%;border-radius: 5px;">
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-7">
                                                     Txn # * :<br />
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon">
-                                                            <i class="fa fa-calendar"></i>
-                                                        </span>
-                                                        <input type="text" name="txn_no" class="form-control" value="TXN-YYYYMMDD-XXX" readonly>
-                                                    </div>
-                                                </div><br />
+                                                    <input type="text" name="txn_no" class="form-control" value="TXN-YYYYMMDD-XXX" readonly>
+                                                </div>
+                                                <div class="col-lg-4 col-lg-offset-1">
+                                                    OR # :<br />
+                                                    <input type="text" name="or_no" id="or_no" class="form-control" value="<?php echo $info->reference_no; ?>" readonly>
+                                                </div>
+                                                <br />
                                             </div>
                                             <div class="row">
                                                 <div class="col-lg-7">
@@ -72,7 +72,7 @@
                                                 <div class="col-lg-4 col-lg-offset-1">
                                                     Date * :<br />
                                                     <div class="input-group">
-                                                        <input type="text" name="date_txn" class="date-picker  form-control" value="<?php echo $info->date_txn; ?>">
+                                                        <input type="text" name="date_txn" class="date-picker  form-control" value="<?php echo $info->payment_date; ?>">
                                                         <span class="input-group-addon">
                                                             <i class="fa fa-calendar"></i>
                                                         </span>
