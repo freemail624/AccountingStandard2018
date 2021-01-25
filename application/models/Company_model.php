@@ -26,6 +26,11 @@ class Company_model extends CORE_Model{
     		ELSE ""
     	END) as sales_remarks,
         (CASE
+            WHEN is_cash_default = 1
+            THEN cash_remarks
+            ELSE ""
+        END) as cash_remarks,
+        (CASE
             WHEN is_deliver_address_default = 1
             THEN deliver_to_address_default
             ELSE ""

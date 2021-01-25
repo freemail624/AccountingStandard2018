@@ -436,7 +436,7 @@ $(document).ready(function(){
                     '<th class="right-align">Quantity</th>'+
                     '<th class="right-align">Unit Cost</th>'+
                     '<th class="right-align">Gross</th>'+
-                    '<th class="right-align">Discount(%)</th>'+
+                    '<th class="right-align">Discount</th>'+
                     '<th class="right-align">Net </th>'+
                     
                     '</thead>'+

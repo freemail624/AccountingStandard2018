@@ -368,16 +368,34 @@
                                                        <strong> 
                                                        <input type="checkbox" name="is_sales_default" for="is_sales_default" 
                                                        <?php if($company->is_sales_default == 1){ echo 'checked'; } ?>>
-                                                        Sales :</strong></label>
+                                                        Charge Invoice :</strong></label>
                                                        <div class="col-md-7">
                                                            <div class="input-group">
                                                                 <span class="input-group-addon">
                                                                     <i class="fa fa-file"></i>
                                                                 </span>
-                                                                <textarea class="form-control" rows="2" placeholder="Sales Default Remarks" name="sales_remarks"><?php echo $company->sales_remarks; ?></textarea>
+                                                                <textarea class="form-control" rows="2" placeholder="Charge Default Remarks" name="sales_remarks"><?php echo $company->sales_remarks; ?></textarea>
                                                            </div>
                                                        </div>
                                                    </div>  
+
+
+                                                    <div class="form-group">
+                                                       <label class="col-md-2 col-md-offset-1 control-label" id="is_cash_default"> 
+                                                       <strong> 
+                                                       <input type="checkbox" name="is_cash_default" for="is_cash_default" 
+                                                       <?php if($company->is_cash_default == 1){ echo 'checked'; } ?>>
+                                                        Cash Invoice :</strong></label>
+                                                       <div class="col-md-7">
+                                                           <div class="input-group">
+                                                                <span class="input-group-addon">
+                                                                    <i class="fa fa-file"></i>
+                                                                </span>
+                                                                <textarea class="form-control" rows="2" placeholder="Cash Default Remarks" name="cash_remarks"><?php echo $company->cash_remarks; ?></textarea>
+                                                           </div>
+                                                       </div>
+                                                   </div>  
+
 
                                                   <div class="form-group">
                                                        <label class="col-md-2 col-md-offset-1 control-label" id="is_deliver_address_default"> 
@@ -787,6 +805,7 @@
 
             $('input[name="is_purchasing_default"]').prop("checked") ?  _data.push({name : "is_purchasing_default" , value : '1'   }) : _data.push({name : "is_purchasing_default" , value : '0'   });
             $('input[name="is_sales_default"]').prop("checked") ?  _data.push({name : "is_sales_default" , value : '1'   }) : _data.push({name : "is_sales_default" , value : '0'   });
+            $('input[name="is_cash_default"]').prop("checked") ?  _data.push({name : "is_cash_default" , value : '1'   }) : _data.push({name : "is_cash_default" , value : '0'   });
             $('input[name="is_print_auto"]').prop("checked") ?  _data.push({name : "is_print_auto" , value : '1'   }) : _data.push({name : "is_print_auto" , value : '0'   });       
             $('input[name="is_deliver_address_default"]').prop("checked") ?  _data.push({name : "is_deliver_address_default" , value : '1'   }) : _data.push({name : "is_deliver_address_default" , value : '0'   });
 

@@ -91,7 +91,7 @@
                                                                 <div class="col-xs-12 col-lg-4">
                                                                     Period Start * :<br />
                                                                     <div class="input-group">
-                                                                        <input type="text" id="txt_date" name="date_from" class="date-picker form-control" value="01/01/<?php echo date("Y"); ?>">
+                                                                        <input type="text" id="txt_date_start" name="date_from" class="date-picker form-control date_filter" value="01/01/<?php echo date("Y"); ?>">
                                                                          <span class="input-group-addon">
                                                                                 <i class="fa fa-calendar"></i>
                                                                          </span>
@@ -101,7 +101,7 @@
                                                                 <div class="col-xs-12 col-lg-4">
                                                                     Period End * :<br />
                                                                     <div class="input-group">
-                                                                        <input type="text" id="txt_date" name="date_to" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>">
+                                                                        <input type="text" id="txt_date_end" name="date_to" class="date-picker form-control date_filter" value="<?php echo date("m/d/Y"); ?>">
                                                                          <span class="input-group-addon">
                                                                                 <i class="fa fa-calendar"></i>
                                                                          </span>
@@ -111,8 +111,9 @@
                                                             </div>
                                                         </div>
                                                         <br />
+
                                                         <div class="tab-container tab-top tab-success">
-                                                            <ul class="nav nav-tabs">
+                                                            <ul class="nav nav-tabs" id="parent">
                                                                 <li class="active" style=""><a data-toggle="tab" href="#customers" id="btn_customer">Customers</a></li>
                                                                 <li style=""><a data-toggle="tab" href="#salesman" id="btn_salesman">Salesperson</a></li>
                                                                 <li style=""><a data-toggle="tab" href="#products" id="btn_products">Products</a></li>
@@ -634,6 +635,12 @@
                 dtProductSummary.destroy();
                 reloadProductList();
             });
+
+            $('.date_filter').on("change", function(){
+                var current_tab = $("ul#parent li.active").find('a').attr('id');
+                $('#'+current_tab).trigger('click');
+            });
+
         }();
 
 

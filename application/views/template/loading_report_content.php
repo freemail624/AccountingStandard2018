@@ -226,7 +226,8 @@
 				<table cellspacing="5" cellpadding="5" class="tbl-info" width="100%">
 					<tr>
 						<td colspan="3" valign="top" class="font-items upp" width="100%" style="padding-bottom: 20px;">
-							<strong>ROUTE :</strong> <?php echo $info[0]->loading_place; ?>
+							<strong>ROUTE :</strong> <?php echo $info[0]->loading_place; ?><br/>
+							<strong>LOADING # :</strong> <?php echo $info[0]->loading_no; ?><br/>
 						</td>
 					</tr>
 
