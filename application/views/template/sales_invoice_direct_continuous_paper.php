@@ -136,7 +136,7 @@
             CHECKED BY : </td>
     </tr>
     <tr>
-        <td colspan="2">NOTE : <?php echo $sales_info->remarks; ?></td>
+        <td colspan="2" style="font-size: 14pt;">NOTE : <?php echo $sales_info->remarks; ?></td>
     </tr>        
 </table>
 

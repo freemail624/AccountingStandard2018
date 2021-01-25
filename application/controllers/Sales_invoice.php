@@ -213,8 +213,13 @@ class Sales_invoice extends CORE_Controller
             //***********************************************************************************************************
             case 'open':  //this returns SI
                 $m_sales_invoice=$this->Sales_invoice_model;
-                $agent_id = $this->input->get('agent_id'); 
-                $response['data']= $m_sales_invoice->get_open_sales_invoice_list();
+                $sdate = $this->input->get('start_date'); 
+                $edate = $this->input->get('end_date'); 
+
+                $start_date = date('Y-m-d',strtotime($sdate));
+                $end_date = date('Y-m-d',strtotime($edate));
+
+                $response['data']= $m_sales_invoice->get_open_sales_invoice_list_date($start_date,$end_date);
                 echo json_encode($response);
                 break;
 

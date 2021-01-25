@@ -65,8 +65,10 @@ class Company extends CORE_Controller
                 // Sales and Purchasing Settings
                 $m_company->is_purchasing_default=$this->input->post('is_purchasing_default',TRUE);
                 $m_company->is_sales_default=$this->input->post('is_sales_default',TRUE);
+                $m_company->is_cash_default=$this->input->post('is_cash_default',TRUE);
                 $m_company->purchase_remarks=$this->input->post('purchase_remarks',TRUE);
                 $m_company->sales_remarks=$this->input->post('sales_remarks',TRUE);
+                $m_company->cash_remarks=$this->input->post('cash_remarks',TRUE);
                 $m_company->is_print_auto=$this->input->post('is_print_auto',TRUE);
                 $m_company->is_deliver_address_default=$this->input->post('is_deliver_address_default',TRUE);
                 $m_company->deliver_to_address_default=$this->input->post('deliver_to_address_default',TRUE);

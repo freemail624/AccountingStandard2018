@@ -118,6 +118,12 @@
         .red{
             color: red;
         }
+
+        #tbl_si_list_filter    
+        { 
+            display:none; 
+        } 
+
     </style>
     <link type="text/css" href="assets/css/light-theme.css" rel="stylesheet">
 </head>
@@ -372,6 +378,30 @@
                 <h2 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Sales Invoice</h2>
             </div>
             <div class="modal-body">
+                <div class="row"> 
+                    <div class="col-lg-3"> 
+                            From :<br /> 
+                            <div class="input-group"> 
+                                <input type="text" id="txt_start_date_si" name="" class="date-picker form-control date_filter" value="<?php echo date("m"); ?>/01/<?php echo date("Y"); ?>"> 
+                                 <span class="input-group-addon"> 
+                                        <i class="fa fa-calendar"></i> 
+                                 </span> 
+                            </div> 
+                    </div> 
+                    <div class="col-lg-3"> 
+                            To :<br /> 
+                            <div class="input-group"> 
+                                <input type="text" id="txt_end_date_si" name="" class="date-picker form-control date_filter" value="<?php echo date("m/d/Y"); ?>"> 
+                                 <span class="input-group-addon"> 
+                                        <i class="fa fa-calendar"></i> 
+                                 </span> 
+                            </div> 
+                    </div> 
+                    <div class="col-lg-3 col-lg-offset-3"> 
+                            Search :<br /> 
+                             <input type="text" id="tbl_sales_invoice_search" class="form-control"> 
+                    </div> 
+                </div> <br>
                 <table id="tbl_si_list" class="table table-striped" cellspacing="0" width="100%">
                     <thead class="">
                     <tr>
@@ -579,8 +609,8 @@ $(document).ready(function(){
                 "bDestroy": true,             
                 "data": function ( d ) { 
                         return $.extend( {}, d, { 
-                            "agent_id":$('#cbo_agents').val(),
-                            "loading_date":$('input[name="loading_date"]').val()
+                            "start_date":$('#txt_start_date_si').val(),
+                            "end_date":$('#txt_end_date_si').val()                            
                         }); 
                     } 
             }, 
@@ -742,6 +772,12 @@ $(document).ready(function(){
 
         $("#tbl_loading_search").keyup(function(){          
                 dt 
+                .search(this.value) 
+                .draw(); 
+        }); 
+
+        $("#tbl_sales_invoice_search").keyup(function(){          
+                dt_si 
                 .search(this.value) 
                 .draw(); 
         }); 
@@ -908,10 +944,19 @@ $(document).ready(function(){
         });
 
         $('#btn_receive_si').click(function(){
+
+            var loading_date = $('#invoice_default').val();
+            $('.date_filter').val(loading_date);
+
             $('#tbl_si_list tbody').html('<tr><td colspan="6"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
             dt_si.ajax.reload( null, false );
             $('#modal_si_list').modal('show');
         });
+
+        $('.date_filter').on("change", function(){
+            $('#tbl_si_list tbody').html('<tr><td colspan="6"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
+            dt_si.ajax.reload( null, false );
+        }); 
 
         $('#btn_new').click(function(){
             _txnMode="new";
@@ -956,10 +1001,10 @@ $(document).ready(function(){
         });
 
         $('#tbl_loading tbody').on('click','button[name="edit_info"]',function(){
+            _txnMode="edit";
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.loading_id;
-            _txnMode="edit";
 
             $("#switch_icon").removeAttr('class');
             $('#transfer-details-panel').hide();
@@ -1154,21 +1199,22 @@ $(document).ready(function(){
     };
 
     var updateLoading=function(){
-        var _data=$('#frm_loading,#frm_items').serializeArray();
-        _data.push({name : "remarks", value : $('textarea[name="remarks"]').val()});
-        _data.push({name : "grand_total_amount", value: $('#td_grand_total_amount').text()});
-        _data.push({name : "grand_total_inv_qty", value: $('#td_grand_total_inv_qty').text()});
-        _data.push({name : "loading_id" ,value : _selectedID});
+        alert();
+        // var _data=$('#frm_loading,#frm_items').serializeArray();
+        // _data.push({name : "remarks", value : $('textarea[name="remarks"]').val()});
+        // _data.push({name : "grand_total_amount", value: $('#td_grand_total_amount').text()});
+        // _data.push({name : "grand_total_inv_qty", value: $('#td_grand_total_inv_qty').text()});
+        // _data.push({name : "loading_id" ,value : _selectedID});
 
-        // $('input[name="is_auto_print"]').prop("checked") ?  _data.push({name : "is_auto_print" , value : '1'   }) : _data.push({name : "is_auto_print" , value : '0'   });
+        // // $('input[name="is_auto_print"]').prop("checked") ?  _data.push({name : "is_auto_print" , value : '1'   }) : _data.push({name : "is_auto_print" , value : '0'   });
 
-        return $.ajax({
-            "dataType":"json",
-            "type":"POST",
-            "url":"Loading/transaction/update",
-            "data":_data,
-            "beforeSend": showSpinningProgress($('#btn_save'))
-        });
+        // return $.ajax({
+        //     "dataType":"json",
+        //     "type":"POST",
+        //     "url":"Loading/transaction/update",
+        //     "data":_data,
+        //     "beforeSend": showSpinningProgress($('#btn_save'))
+        // });
     };
 
     var removeLoading=function(){

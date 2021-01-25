@@ -184,16 +184,16 @@ class Loading extends CORE_Controller
                 for($i=0;$i<count($invoice_id);$i++){
 
                     // For Transfer of product to other loading report
-                    $loading = $m_loading->check_invoice_loading($invoice_id[$i]);
+                    $loading = $m_loading->check_invoice_loading($this->get_numeric_value($invoice_id[$i]));
                     if(count($loading) > 0){
                         // Delete loading item in Loading
                         $m_loading_items->delete_via_pk($loading[0]->loading_item_id);
                     }
 
-                    $m_loading_items->invoice_id=$invoice_id[$i];
+                    $m_loading_items->invoice_id=$this->get_numeric_value($invoice_id[$i]);
                     $m_loading_items->loading_id=$loading_id;
                     $m_loading_items->invoice_type_id=1; // Sales Invoice Type
-                    $m_loading_items->customer_id=$customer_id[$i];
+                    $m_loading_items->customer_id=$this->get_numeric_value($customer_id[$i]);
                     $m_loading_items->address=$address[$i];
                     $m_loading_items->total_after_discount=$this->get_numeric_value($total_after_discount[$i]);
                     $m_loading_items->total_inv_qty=$this->get_numeric_value($total_inv_qty[$i]);
@@ -201,7 +201,7 @@ class Loading extends CORE_Controller
 
                     // Update truck on sales invoice
                     $m_sales_invoice->agent_id = $agent_id;
-                    $m_sales_invoice->modify($invoice_id[$i]);                    
+                    $m_sales_invoice->modify($this->get_numeric_value($invoice_id[$i]));                    
 
                 }
 
@@ -266,15 +266,15 @@ class Loading extends CORE_Controller
                 for($i=0;$i<count($invoice_id);$i++){
                     
                     // For Transfer of product to other loading report
-                    $loading = $m_loading->check_invoice_loading($invoice_id[$i]);
+                    $loading = $m_loading->check_invoice_loading($this->get_numeric_value($invoice_id[$i]));
                     if(count($loading) > 0){
                         $m_loading_items->delete_via_pk($loading[0]->loading_item_id);
                     }
 
-                    $m_loading_items->invoice_id=$invoice_id[$i];
+                    $m_loading_items->invoice_id=$this->get_numeric_value($invoice_id[$i]);
                     $m_loading_items->loading_id=$loading_id;
                     $m_loading_items->invoice_type_id=1; // Sales Invoice Type
-                    $m_loading_items->customer_id=$customer_id[$i];
+                    $m_loading_items->customer_id=$this->get_numeric_value($customer_id[$i]);
                     $m_loading_items->address=$address[$i];
                     $m_loading_items->total_after_discount=$this->get_numeric_value($total_after_discount[$i]);
                     $m_loading_items->total_inv_qty=$this->get_numeric_value($total_inv_qty[$i]);
@@ -282,7 +282,7 @@ class Loading extends CORE_Controller
 
                     // Update truck on sales invoice
                     $m_sales_invoice->agent_id = $agent_id;
-                    $m_sales_invoice->modify($invoice_id[$i]); 
+                    $m_sales_invoice->modify($this->get_numeric_value($invoice_id[$i])); 
                 }
 
                 //******************************************************************************************

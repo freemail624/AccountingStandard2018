@@ -203,7 +203,7 @@ class Sales_report_source extends CORE_Controller
                                         ->getStyle('F'.$i)->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('G'.$i,'Gross')
                                         ->getStyle('G'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('H'.$i,'Discount(%)')
+                $excel->getActiveSheet()->setCellValue('H'.$i,'Discount')
                                         ->getStyle('H'.$i)->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('I'.$i,'Net')
                                         ->getStyle('I'.$i)->getFont()->setBold(TRUE);

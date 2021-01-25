@@ -1008,6 +1008,7 @@ $(document).ready(function(){
                     _cboAdjustments.select2('val', 'IN');
                     $('#note').html('');
 
+
                 }else{
                      $('[id=is_adjustment]').trigger('click');
                 }
@@ -1058,7 +1059,7 @@ $(document).ready(function(){
                     $('#adjustment_is_dr_return').val('0');
                     $("input[name=inv_no]").val('');
                     $("input[name=dr_invoice_no]").val('');
-
+                    _selectedInvTypeId = 0;
                 }else{
                     $('[id=is_returns]').trigger('click');
                 }
@@ -1391,13 +1392,8 @@ $(document).ready(function(){
                 });
             });
 
-
             $('#note').text('');
             $('#dr_note').text('');
-            _cboAdjustments.select2('val',data.adjustment_type);
-            $('#cbo_departments').select2('val',data.department_id);
-            $('#cbo_customers').select2('val',data.customer_id);
-            $('#cbo_suppliers').select2('val',data.supplier_id);
 
             $("#is_returns").prop('checked', false); 
             $("#is_dr_returns").prop('checked', false); 
@@ -1413,6 +1409,11 @@ $(document).ready(function(){
             else{// is adjustment
                 $('input[id="is_adjustment"]').trigger('click');                
             } 
+
+            _cboAdjustments.select2('val',data.adjustment_type);
+            $('#cbo_departments').select2('val',data.department_id);
+            $('#cbo_customers').select2('val',data.customer_id);
+            $('#cbo_suppliers').select2('val',data.supplier_id);
 
             $.ajax({
                 url : 'Adjustments/transaction/items/'+data.adjustment_id,
@@ -1611,7 +1612,6 @@ $(document).ready(function(){
 
 
         $('#btn_save').click(function(){
-
             if(validateRequiredFields($('#frm_adjustments'))){
                 if(_txnMode=="new"){
                     createAdjustment().done(function(response){

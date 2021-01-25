@@ -420,7 +420,7 @@
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <label ><strong>Remarks :</strong></label>
                         <div class="col-lg-12" style="padding: 0%;">
-                            <textarea name="remarks" id="remarks" class="form-control" placeholder="Remarks" data-default="<?php echo $company->sales_remarks; ?>"></textarea>
+                            <textarea name="remarks" id="remarks" class="form-control" placeholder="Remarks" data-default="<?php echo $company->cash_remarks; ?>"></textarea>
                         </div>
                     </div>
                 </div>

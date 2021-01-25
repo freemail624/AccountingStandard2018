@@ -111,6 +111,43 @@ class Sales_invoice_model extends CORE_Model
         return $this->db->query($sql)->result();
     }
 
+    function get_open_sales_invoice_list_date($start_date=null,$end_date=null){
+        $sql="SELECT 
+            si.*, c.customer_name, COALESCE(sii.total_inv_qty,0) as total_inv_qty,
+            COALESCE(loading.loading_no,'') as loading_no
+        FROM
+            sales_invoice si
+                LEFT JOIN
+            customers c ON c.customer_id = si.customer_id
+                LEFT JOIN
+            (SELECT sales_invoice_id, SUM(inv_qty) AS total_inv_qty
+                FROM
+                sales_invoice_items
+                LEFT JOIN products p ON p.product_id = sales_invoice_items.product_id
+                WHERE p.is_basyo = TRUE
+            GROUP BY sales_invoice_items.sales_invoice_id
+            ) as sii ON sii.sales_invoice_id = si.sales_invoice_id
+
+            LEFT JOIN
+            (
+                SELECT 
+                    l.loading_no,
+                    li.invoice_id
+                FROM
+                    loading_items li
+                        LEFT JOIN
+                    loading l ON l.loading_id = li.loading_id
+                    WHERE l.is_deleted = FALSE AND l.is_active = TRUE
+            ) as loading ON loading.invoice_id = si.sales_invoice_id
+
+        WHERE
+            si.is_deleted = FALSE
+                AND si.is_active = TRUE
+                AND (si.date_due BETWEEN '".$start_date."' AND '".$end_date."')";
+        return $this->db->query($sql)->result();
+    }
+
+
 function get_journal_entries_2($sales_invoice_id){
 
 $sql="SELECT main.* FROM(
@@ -733,7 +770,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                 IFNULL(si.salesperson_id,0)  as salesperson_id,
                 sii.product_id,
                 sii.inv_qty,
-                sii.inv_price,
+                (sii.inv_price - sii.inv_discount) as inv_price,
                 sii.inv_line_total_after_global
             FROM
                 sales_invoice AS si
@@ -751,7 +788,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                 ci.customer_id,
                 ci.salesperson_id,
                 cii.product_id,
-                cii.inv_qty,
+                (cii.inv_qty - cii.inv_discount) as inv_qty,
                 cii.inv_price,
                 cii.inv_line_total_after_global
             FROM
