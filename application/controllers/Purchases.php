@@ -9,6 +9,7 @@ class Purchases extends CORE_Controller
         $this->validate_session();
 
         $this->load->model('Purchases_model');
+        $this->load->model('Purchase_request_model');
         $this->load->model('Suppliers_model');
         $this->load->model('Tax_types_model');
         $this->load->model('Products_model');
@@ -258,12 +259,20 @@ class Purchases extends CORE_Controller
                         echo json_encode($response);
                         exit;
                     }*/
+                    $m_pr=$this->Purchase_request_model;
+                    $arr_pr_info=$m_pr->get_list(
+                        array('purchase_request.pr_no'=>$this->input->post('pr_no',TRUE)),
+                        'purchase_request.purchase_request_id'
+                    );
+                    $purchase_request_id=(count($arr_pr_info)>0?$arr_pr_info[0]->purchase_request_id:0);
+
 
 
                     $m_purchases->begin();
 
                     $m_purchases->set('date_created','NOW()'); //treat NOW() as function and not string
                     //$m_purchases->po_no=$this->input->post('po_no',TRUE);
+                    $m_purchases->purchase_request_id=$purchase_request_id;
                     $m_purchases->terms=$this->input->post('terms',TRUE);
                     $m_purchases->duration=$this->input->post('duration',TRUE);
                     $m_purchases->deliver_to_address=$this->input->post('deliver_to_address',TRUE);
@@ -326,6 +335,10 @@ class Purchases extends CORE_Controller
                     $m_purchases->po_no='PO-'.date('Ymd').'-'.$po_id;
                     $m_purchases->modify($po_id);
 
+                    //update status of pr
+                    $m_pr->order_status_id=$this->get_pr_status($purchase_request_id);
+                    $m_pr->modify($purchase_request_id);
+
                     $m_trans=$this->Trans_model;
                     $m_trans->user_id=$this->session->user_id;
                     $m_trans->set('trans_date','NOW()');
@@ -356,9 +369,18 @@ class Purchases extends CORE_Controller
                     $m_purchases=$this->Purchases_model;
                     $po_id=$this->input->post('purchase_order_id',TRUE);
 
+                    $m_pr=$this->Purchase_request_model;
+                    $arr_pr_info=$m_pr->get_list(
+                        array('purchase_request.pr_no'=>$this->input->post('pr_no',TRUE)),
+                        'purchase_request.purchase_request_id'
+                    );
+                    $purchase_request_id=(count($arr_pr_info)>0?$arr_pr_info[0]->purchase_request_id:0);
+
                     $m_purchases->begin();
 
                     //$m_purchases->po_no=$this->input->post('po_no',TRUE);
+
+                    $m_purchases->purchase_request_id=$purchase_request_id;
                     $m_purchases->terms=$this->input->post('terms',TRUE);
                     $m_purchases->duration=$this->input->post('duration',TRUE);
                     $m_purchases->deliver_to_address=$this->input->post('deliver_to_address',TRUE);
@@ -735,15 +757,38 @@ class Purchases extends CORE_Controller
                 'suppliers.supplier_name',
                 'tax_types.tax_type',
                 'approval_status.approval_status',
-                'order_status.order_status'
+                'order_status.order_status',
+                'purchase_request.pr_no'
             ),
             array(
                 array('suppliers','suppliers.supplier_id=purchase_order.supplier_id','left'),
                 array('tax_types','tax_types.tax_type_id=purchase_order.tax_type_id','left'),
                 array('approval_status','approval_status.approval_id=purchase_order.approval_id','left'),
-                array('order_status','order_status.order_status_id=purchase_order.order_status_id','left')
+                array('order_status','order_status.order_status_id=purchase_order.order_status_id','left'),
+                array('purchase_request','purchase_request.purchase_request_id=purchase_order.purchase_request_id','left')
             ),
             'purchase_order.purchase_order_id DESC'
         );
     }
+
+    function get_pr_status($id){
+            //NOTE : 1 means open, 2 means Closed, 3 means partially invoice
+            $m_po=$this->Purchases_model;
+
+            if(count($m_po->get_list(
+                        array('purchase_order.purchase_request_id'=>$id,'purchase_order.is_active'=>TRUE,'purchase_order.is_deleted'=>FALSE),
+                        'purchase_order.purchase_order_id'))==0 ){ //means no po found on delivery/purchase invoice that means this po is still open
+
+                return 1;
+
+            }else{
+
+                $m_pr=$this->Purchase_request_model;
+                $row=$m_pr->get_pr_balance_qty($id);
+                return ($row[0]->Balance>0?3:2);
+
+            }
+
+    }
+
 }

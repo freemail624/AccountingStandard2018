@@ -600,7 +600,7 @@
                                                                             </select>
                                                                 </div>     
 
-                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                <div class="form-group hidden" style="margin-bottom:0px;">
                                                                 <br>
                                                                     <label  for="is_basyo" style="text-align: left;float:right;vertical-align: middle;"><input type="checkbox" name="is_basyo" class="" id="is_basyo" style="transform: scale(2.0);">  &nbsp;&nbsp;For Basyo ?</label>
                                                                 </div>                                                                       

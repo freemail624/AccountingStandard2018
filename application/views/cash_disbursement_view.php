@@ -447,13 +447,19 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <label>Bank :</label><br />
-                                        <select id="cbo_bank" class="form-control" name="bank_id">
-                                            <option value="create_bank">[Create New Bank]</option>
-                                            <?php foreach($bank_refs as $bank) { ?>
-                                                <option value="<?php echo $bank->bank_id; ?>"><?php echo $bank->bank_name; ?></option>
-                                            <?php } ?>
-                                        </select>
+                                        <div id="bank_panel">
+                                            <label>Bank :</label><br />
+                                            <select id="cbo_bank" class="form-control" name="bank_id">
+                                                <option value="create_bank">[Create New Bank]</option>
+                                                <?php foreach($bank_refs as $bank) { ?>
+                                                    <option value="<?php echo $bank->bank_id; ?>"><?php echo $bank->bank_name; ?></option>
+                                                <?php } ?>
+                                            </select>
+                                        </div>
+                                        <div id="stt_panel">
+                                            <label>STT Ref #:</label><br />
+                                            <input type="text" class="form-control" name="stt_ref_no" id="stt_ref_no">
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -1973,9 +1979,21 @@ $(document).ready(function(){
             if($(this).val() == 2) {
                 $('#check_date').prop('required',true);
                 $('#check_no').prop('required',true);
-            } else {
+                $('#stt_ref_no').prop('required',false);
+                $('#bank_panel').show();
+                $('#stt_panel').hide();
+            } else if($(this).val() == 4){
                 $('#check_date').prop('required',false);
                 $('#check_no').prop('required',false);
+                $('#stt_ref_no').prop('required',true);
+                $('#bank_panel').hide();
+                $('#stt_panel').show();
+            }else {
+                $('#bank_panel').show();
+                $('#stt_panel').hide();
+                $('#check_date').prop('required',false);
+                $('#check_no').prop('required',false);
+                $('#stt_ref_no').prop('required',false);
             }
         });
 

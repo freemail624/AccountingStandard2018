@@ -10,6 +10,9 @@ class Templates extends CORE_Controller {
         $this->load->model('Purchases_model');
         $this->load->model('Purchase_items_model');
 
+        $this->load->model('Purchase_request_model');
+        $this->load->model('Purchase_request_items_model');
+
         $this->load->model('Delivery_invoice_model');
         $this->load->model('Delivery_invoice_item_model');
 
@@ -381,6 +384,92 @@ class Templates extends CORE_Controller {
 
 
                         break;
+
+            case 'pr': //purchase order
+                        $m_requests=$this->Purchase_request_model;
+                        $m_requests_items=$this->Purchase_request_items_model;
+
+                        $m_company=$this->Company_model;
+                        $type=$this->input->get('type',TRUE);
+
+                        $info=$m_requests->get_list(
+                                $filter_value,
+                                'purchase_request.*,CONCAT_WS(" ",purchase_request.terms,purchase_request.duration)as term_description,suppliers.supplier_name,suppliers.address,suppliers.email_address,suppliers.contact_no',
+                                array(
+                                    array('suppliers','suppliers.supplier_id=purchase_request.supplier_id','left')
+                                )
+                            );
+
+                        $company=$m_company->get_list();
+
+                        $data['requests']=$info[0];
+                        $data['company_info']=$company[0];
+                        $data['pr_items']=$m_requests_items->get_list(
+                                array('purchase_request_id'=>$filter_value),
+                                'purchase_request_items.*,products.product_desc,units.unit_name',
+
+                                array(
+                                    array('products','products.product_id=purchase_request_items.product_id','left'),
+                                    array('units','units.unit_id=purchase_request_items.unit_id','left')
+                                )
+                                
+                            );
+
+
+                        //show only inside grid with menu buttons
+                        if($type=='fullview'||$type==null){
+                            echo $this->load->view('template/pr_content_new_wo_header',$data,TRUE);
+                            echo $this->load->view('template/pr_content_menus',$data,TRUE);
+                        }
+
+                        //for approval view on DASHBOARD
+                        if($type=='approval'){
+
+                            //echo '<br /><hr /><center><strong>Purchase Order for Approval</strong></center><hr />';
+                            echo '<br />';
+                            echo $this->load->view('template/pr_content_new_wo_header',$data,TRUE);
+                            echo $this->load->view('template/pr_content_approval_menus',$data,TRUE);
+                        }
+
+                        //show only inside grid
+                        if($type=='contentview'){
+                            echo $this->load->view('template/pr_content_new',$data,TRUE);
+                        }
+
+                        //download pdf
+                        if($type=='pdf'){
+                            $file_name=$info[0]->pr_no;
+                            $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                            $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                            $content=$this->load->view('template/pr_content_new',$data,TRUE); //load the template
+                            $pdf->setFooter('{PAGENO}');
+                            $pdf->WriteHTML($content);
+                            //download it.
+                            $pdf->Output($pdfFilePath,"D");
+
+                        }
+
+                        //preview on browser
+                        if($type=='preview'){
+                            $file_name=$info[0]->pr_no;
+                            $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                            $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                            $content=$this->load->view('template/pr_content_new',$data,TRUE); //load the template
+                            $pdf->setFooter('{PAGENO}');
+                            $pdf->WriteHTML($content);
+                            //download it.
+                            $pdf->Output();
+
+                        }
+
+
+                    
+
+
+
+
+                        break;
+
 
 
             //****************************************************

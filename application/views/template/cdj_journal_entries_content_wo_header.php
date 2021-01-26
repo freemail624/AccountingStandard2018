@@ -79,7 +79,11 @@
         </tr>
         <tr>
             <td style="padding: 4px;"><strong>PARTICULAR :</strong> <?php echo $journal_info->supplier_name; ?></td>
-            <td style="padding: 4px;"><strong>PAYMENT METHOD :</strong> <?php echo $journal_info->payment_method; ?></td>
+            <td style="padding: 4px;"><strong>PAYMENT METHOD :</strong> <?php echo $journal_info->payment_method; ?>
+                <?php if($journal_info->payment_method_id==4){
+                 echo '<b>STT Ref#:</b>'.$journal_info->stt_ref_no; 
+                 }?>
+            </td>
         </tr>
     </table><br>
     <table width="100%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11" border="0">

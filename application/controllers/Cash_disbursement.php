@@ -200,6 +200,7 @@ class Cash_disbursement extends CORE_Controller
                 // $m_journal->bank=$this->input->post('bank');
                 $m_journal->bank_id=$this->input->post('bank_id');
                 $m_journal->check_no=$this->input->post('check_no');
+                $m_journal->stt_ref_no=$this->input->post('stt_ref_no');
                 $m_journal->check_date=date('Y-m-d',strtotime($this->input->post('check_date',TRUE)));
                 $m_journal->amount=$this->get_numeric_value($this->input->post('amount'));
 
@@ -336,6 +337,7 @@ class Cash_disbursement extends CORE_Controller
                 $m_journal->check_date=date('Y-m-d',strtotime($this->input->post('check_date',TRUE)));
                 $m_journal->ref_type=$this->input->post('ref_type');
                 $m_journal->ref_no=$this->input->post('ref_no');
+                $m_journal->stt_ref_no=$this->input->post('stt_ref_no');
                 $m_journal->amount=$this->get_numeric_value($this->input->post('amount'));
 
                 //for audit details

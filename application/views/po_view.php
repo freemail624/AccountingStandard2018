@@ -217,15 +217,22 @@
                             <?php } ?>
                         </select>
                     </div>
-
-
-                    <div class="col-sm-3 col-sm-offset-3">
+                    <div class="col-sm-3">
                         PO # : <br />
                         <div class="input-group">
                             <span class="input-group-addon">
                                 <i class="fa fa-code"></i>
                             </span>
                             <input type="text" name="po_no" class="form-control" placeholder="PO-YYYYMMDD-XXX" readonly>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        PR #:<br />
+                        <div class="input-group">
+                            <input type="text" name="pr_no" class="form-control" placeholder="PR #" readonly>
+                             <span class="input-group-addon">
+                                <a href="#" id="link_browse_pr"><b>...</b></a>
+                            </span>
                         </div>
                     </div>
 
@@ -726,6 +733,44 @@
 </div>
 
 
+<div id="modal_pr_list" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+    <div class="modal-dialog" style="width: 80%;">
+        <div class="modal-content"><!---content-->
+            <div class="modal-header ">
+                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Purchase Requests</h4>
+
+            </div>
+
+            <div class="modal-body">
+                <table id="tbl_pr_list" class="table table-striped" cellspacing="0" width="100%">
+                    <thead class="">
+                    <tr>
+                        <th></th>
+                        <th>PR#</th>
+                        <th>Vendor</th>
+                        <th>Terms</th>
+                        <th>Deliver to</th>
+                        <th>Status</th>
+                        <th><center>Action</center></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Cancel</button>
+            </div>
+        </div><!---content-->
+    </div>
+</div><!---modal-->
+
 
 <footer role="contentinfo">
     <div class="clearfix">
@@ -823,6 +868,33 @@ $(document).ready(function(){
 
 
     var initializeControls=function(){
+
+        dt_pr=$('#tbl_pr_list').DataTable({
+            "bLengthChange":false,
+            "ajax" : "Purchase_request/transaction/open",
+            "columns": [
+                {
+                    "targets": [0],
+                    "class":          "details-control",
+                    "orderable":      false,
+                    "data":           null,
+                    "defaultContent": ""
+                },
+                { targets:[1],data: "pr_no" },
+                { targets:[2],data: "supplier_name" },
+                { targets:[3],data: "term_description" },
+                { targets:[5],data: "deliver_to_address" },
+                { targets:[6],data: "order_status" },
+                {
+                    targets:[7],
+                    render: function (data, type, full, meta){
+                        var btn_accept='<button class="btn btn-success btn-sm" name="accept_pr"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Receive this PR"><i class="fa fa-check"></i> Accept PR</button>';
+                        return '<center>'+btn_accept+'</center>';
+                    }
+                }
+
+            ]
+        });
 
         dt=$('#tbl_purchases').DataTable({
             "dom": '<"toolbar">frtip',
@@ -1155,8 +1227,49 @@ $(document).ready(function(){
             }
         } );
 
+        $('#tbl_pr_list tbody').on( 'click', 'tr td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = dt_pr.row( tr );
+            var idx = $.inArray( tr.attr('id'), detailRows );
+
+            if ( row.child.isShown() ) {
+                tr.removeClass( 'details' );
+                row.child.hide();
+
+                // Remove from the 'open' array
+                detailRows.splice( idx, 1 );
+            }
+            else {
+                tr.addClass( 'details' );
+                //console.log(row.data());
+                _selectRowObj=$(this).closest('tr');
+                var d=dt_pr.row(_selectRowObj).data();
+
+                $.ajax({
+                    "dataType":"html",
+                    "type":"POST",
+                    "url":"Templates/layout/pr/"+ d.purchase_request_id+'/contentview',
+                    "beforeSend" : function(){
+                        row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                    }
+                }).done(function(response){
+                    row.child( response ).show();
+                    // Add to the 'open' array
+                    if ( idx === -1 ) {
+                        detailRows.push( tr.attr('id') );
+                    }
+                });
 
 
+
+            }
+        } );
+
+        $('#link_browse_pr').click(function(){
+            $('#tbl_pr_list tbody').html('<tr><td colspan="7"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
+            dt_pr.ajax.reload( null, false );
+            $('#modal_pr_list').modal('show');
+        });
 
 
         // $('#tbl_purchases tbody').on('click','#btn_email',function(){
@@ -1399,6 +1512,96 @@ $(document).ready(function(){
 
         });
 
+
+        $('#tbl_pr_list > tbody').on('click','button[name="accept_pr"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dt_pr.row(_selectRowObj).data();
+
+            $('textarea[name="remarks"]').val(data.remarks);
+            $('#cbo_suppliers').select2('val',data.supplier_id);
+            $('#cbo_departments').select2('val',data.department_id);
+
+
+            $('input,textarea').each(function(){
+                var _elem=$(this);
+                $.each(data,function(name,value){
+                    if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
+                        _elem.val(value);
+                    }
+                });
+            });
+
+
+            $('#modal_pr_list').modal('hide');
+            resetSummary();
+            $.ajax({
+                url : 'Purchase_request/transaction/item-balance/'+data.purchase_request_id,
+                type : "GET",
+                cache : false,
+                dataType : 'json',
+                processData : false,
+                contentType : false,
+                beforeSend : function(){
+                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                },
+                success : function(response){
+                    var rows=response.data;
+
+                    $('#tbl_items > tbody').html('');
+                        a=0;
+                    $.each(rows,function(i,value){
+                        var retail_price;
+
+                            if(value.is_bulk == 1){
+                                retail_price = getFloat(value.purchase_cost) / getFloat(value.child_unit_desc);
+
+                            }else if (value.is_bulk == 0){
+                                retail_price = 0;
+                            }
+
+                        $('#tbl_items > tbody').append(newRowItem({
+                            po_qty : value.po_qty,
+                            product_code : value.product_code,
+                            child_unit_id : value.child_unit_id,
+                            child_unit_name : value.child_unit_name,
+                            parent_unit_name : value.product_unit_name,
+                            parent_unit_id : getFloat(value.product_unit_id),
+                            product_id: value.product_id,
+                            product_desc : value.product_desc,
+                            po_line_total_discount : value.po_line_total_discount,
+                            tax_exempt : false,
+                            po_tax_rate : value.po_tax_rate,
+                            po_price : value.po_price,
+                            po_discount : value.po_discount,
+                            tax_type_id : null,
+                            po_line_total : value.po_line_total,
+                            po_line_total_after_global : value.po_line_total_after_global,
+                            po_non_tax_amount: value.non_tax_amount,
+                            po_tax_amount:value.tax_amount,
+                            is_bulk: value.is_bulk,
+                            is_parent : value.is_parent,
+                            bulk_price: value.purchase_cost,
+                            retail_price: retail_price,
+                            a:a
+
+                        }));
+                        changetxn = 'inactive';
+                        // SET THE VALUE FOR UNIT (SELECT 2)
+                        _line_unit=$('.line_unit'+a).select2({
+                            minimumResultsForSearch: -1
+                        });
+                        _line_unit.select2('val',value.unit_id);
+                        a++;
+                    });
+                    reInitializeNumeric();
+                    reComputeTotal();
+                    changetxn = 'active';
+                   
+                }
+
+            });
+        });
+
         $('#tbl_purchases tbody').on('click','button[name="remove_info"]',function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
@@ -1511,6 +1714,14 @@ $(document).ready(function(){
             });
             //}
         });
+        
+    var resetSummary=function(){
+        var tbl_summary=$('#tbl_delivery_summary');
+        tbl_summary.find(oTableDetails.discount).html('0.00');
+        tbl_summary.find(oTableDetails.before_tax).html('0.00');
+        tbl_summary.find(oTableDetails.tax_amount).html('0.00');
+        tbl_summary.find(oTableDetails.after_tax).html('<b>0.00</b>');
+    };
 
         $('#btn_yes_close').click(function(){
             MarkRecordAsClosed().done(function(response){
