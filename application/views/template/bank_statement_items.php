@@ -3,7 +3,7 @@
 	<td>
 	    <input type="text" name="general_ledger_date[]" class="date-picker form-control" placeholder="mm/dd/yyyy" value="<?php echo date('m/d/Y',strtotime($item->general_ledger_date)); ?>">
 	</td>
-	<td>
+	<td class="hidden">
 	    <input type="text" name="value_date[]" class="date-picker form-control" placeholder="mm/dd/yyyy" value="<?php echo date('m/d/Y',strtotime($item->value_date)); ?>">
 	</td>
 	<td>

@@ -2,7 +2,7 @@
     <td>
         <input type="text" name="general_ledger_date[]" class="date-picker form-control" placeholder="mm/dd/yyyy">
     </td>
-    <td>
+    <td class="hidden">
         <input type="text" name="value_date[]" class="date-picker form-control" placeholder="mm/dd/yyyy">
     </td>
     <td>

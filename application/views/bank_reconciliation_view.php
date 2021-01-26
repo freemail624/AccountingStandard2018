@@ -302,7 +302,7 @@
                                                                     <thead class="">
                                                                     <tr>
                                                                         <th width="10%">Date</th>
-                                                                        <th width="10%">Value Date</th>
+                                                                        <th width="10%" class="hidden">Value Date</th>
                                                                         <th width="10%">Cheque No.</th>
                                                                         <th width="15%" style="text-align: right;">Withdrawal Amt. (Dr)</th>
                                                                         <th width="15%" style="text-align: right;">Deposit (Cr)</th>
@@ -316,7 +316,7 @@
                                                                     <td>
                                                                         <input type="text" name="general_ledger_date[]" class="date-picker form-control" placeholder="mm/dd/yyyy">
                                                                     </td>
-                                                                    <td>
+                                                                    <td class="hidden">
                                                                         <input type="text" name="value_date[]" class="date-picker form-control" placeholder="mm/dd/yyyy">
                                                                     </td>
                                                                     <td>
@@ -363,7 +363,7 @@
                                                 <td>
                                                     <input type="text" name="general_ledger_date[]" class="date-picker form-control" placeholder="mm/dd/yyyy">
                                                 </td>
-                                                <td>
+                                                <td class="hidden">
                                                     <input type="text" name="value_date[]" class="date-picker form-control" placeholder="mm/dd/yyyy">
                                                 </td>
                                                 <td>
@@ -888,7 +888,7 @@ $(document).ready(function(){
                 processData: false,
                 contentType: false,
                 beforeSend: function () {
-                    $('#tbl_entries > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                    $('#tbl_entries > tbody').html('<tr><td align="center" colspan="7"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
                 }
             }).done(function(response){
                 $('#tbl_entries > tbody').html(response);
@@ -958,7 +958,7 @@ $(document).ready(function(){
                         "type":"POST",
                         "url":"Bank_statement/transaction/bank-items?month_id="+ data.month_id +"&account_id="+ data.account_id + "&year_id="+ data.year,
                         "beforeSend" : function(){
-                            $('#tbl_entries > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                            $('#tbl_entries > tbody').html('<tr><td align="center" colspan="7"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
                         }
                     }).done(function(response){
                         

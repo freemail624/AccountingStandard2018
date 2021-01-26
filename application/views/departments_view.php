@@ -99,6 +99,7 @@
                                                         <th>Department Name</th>
                                                         <th>Department Description</th>
                                                         <th>Sort ID</th>
+                                                        <th>Billing Sort ID</th>
                                                         <th><center>Action</center></th>
                                                     </tr>
                                                     </thead>
@@ -166,12 +167,19 @@
                                 </div>
 
                                 <div class="row" style="margin: 1%;">
-                                    <div class="col-lg-12">
+                                    <div class="col-lg-3">
                                         <div class="form-group" style="margin-bottom:0px;">
                                                 <label class="">Sort ID :</label>
-                                                <input name="sort_id" id="sort_id" class="form-control numeric" placeholder="Sort" style="width: 15%;">
-
+                                                <input name="sort_id" id="sort_id" class="form-control numeric" placeholder="Sort" style="width: 100%;">
                                         </div>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <div class="form-group" style="margin-bottom:0px;padding-left: 10px;">
+                                                <label class="">Billing Sort ID :</label>
+                                                <input name="billing_sort_id" id="billing_sort_id" class="form-control numeric" placeholder="Billing Sort" style="width: 100%;">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
                                     </div>
                                 </div>                                
                                 <!-- 
@@ -256,8 +264,9 @@ $(document).ready(function(){
                 { targets:[0],data: "department_name" },
                 { targets:[1],data: "department_desc" },
                 { targets:[2],data: "sort_id" },
+                { targets:[3],data: "billing_sort_id" },
                 {
-                    targets:[3],
+                    targets:[4],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';

@@ -40,6 +40,7 @@ class Departments extends CORE_Controller {
                 $m_departments->delivery_address = $this->input->post('delivery_address', TRUE);
                 $m_departments->default_cost = $this->input->post('default_cost', TRUE);
                 $m_departments->sort_id = $this->get_numeric_value($this->input->post('sort_id', TRUE));
+                $m_departments->billing_sort_id = $this->get_numeric_value($this->input->post('billing_sort_id', TRUE));
                 $m_departments->save();
 
                 $department_id = $m_departments->last_insert_id();
@@ -94,6 +95,7 @@ class Departments extends CORE_Controller {
                 $m_departments->delivery_address = $this->input->post('delivery_address', TRUE);
                 $m_departments->default_cost = $this->input->post('default_cost', TRUE);
                 $m_departments->sort_id = $this->get_numeric_value($this->input->post('sort_id', TRUE));
+                $m_departments->billing_sort_id = $this->get_numeric_value($this->input->post('billing_sort_id', TRUE));
                 $m_departments->modify($department_id);
 
                 $m_trans=$this->Trans_model;
