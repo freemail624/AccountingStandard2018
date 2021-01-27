@@ -31,7 +31,7 @@ class Billing_review extends CORE_Controller
                 break;
 
             case 'list-billing-payment-for-review':
-                $response['data']=$this->Temp_journal_info_model->get_list(array('is_sales'=>0,'book_type_id'=>1,'is_journal_posted'=>FALSE),
+                $response['data']=$this->Temp_journal_info_model->get_list(array('is_sales'=>0,'book_type_id'=>1,'is_journal_posted'=>FALSE,'temp_journal_info.is_deleted'=>FALSE,'temp_journal_info.is_active'=>TRUE),
                     'temp_journal_info.*,
                     customers.customer_name,
                     b_payment_info.transaction_no,
