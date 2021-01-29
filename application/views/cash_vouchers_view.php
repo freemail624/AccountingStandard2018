@@ -238,7 +238,7 @@
                                     <th></th>
                                     <th style="width: 15%;">Txn #</th>
                                     <th>Type</th>
-                                    <th>Ref Type</th>
+                                    <th width="10%">Ref Type</th>
                                     <th>Particular</th>
                                     <th>RR #</th>
                                     <th>Method</th>
