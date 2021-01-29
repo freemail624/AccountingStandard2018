@@ -1032,6 +1032,8 @@ class Templates extends CORE_Controller {
                         'departments.department_id',
                         'departments.department_name',
                         'customers.customer_name',
+                        'customers.contact_no',
+                        'customers.email_address',
                         'sales_invoice.salesperson_id',
                         'sales_invoice.address',
                         'sales_order.so_no',
@@ -1061,10 +1063,10 @@ class Templates extends CORE_Controller {
                 );
 
                 //show only inside grid with menu button
-                // if($type=='fullview'||$type==null){
-                //     echo $this->load->view('template/sales_invoice_content',$data,TRUE);
-                //     echo $this->load->view('template/sales_invoice_content_menus',$data,TRUE);
-                // }
+                if($type=='fullview'||$type==null){
+                    echo $this->load->view('template/sales_invoice_content',$data,TRUE);
+                    echo $this->load->view('template/sales_invoice_content_menus',$data,TRUE);
+                }
 
                 //show only inside grid with menu button
                 if($type=='html'){
@@ -1116,7 +1118,7 @@ class Templates extends CORE_Controller {
                     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                     $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
                     $content=$this->load->view('template/sales_invoice_content_standard',$data,TRUE); //load the template
-                    $pdf->setFooter('{PAGENO}');
+                    // $pdf->setFooter('{PAGENO}');
                     
                     $pdf->WriteHTML($content);
                     //download it.
@@ -1247,6 +1249,8 @@ class Templates extends CORE_Controller {
                     'cash_invoice.address',
                     'sales_order.so_no',
                     'customers.customer_name',
+                    'customers.email_address',
+                    'customers.contact_no',
                     'CONCAT_WS(" ", user_accounts.user_fname,user_accounts.user_mname,user_accounts.user_lname) as encoded_by',
                     'user_accounts.journal_approved_by'
 
@@ -1282,7 +1286,7 @@ class Templates extends CORE_Controller {
                     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                     $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
                     $content=$this->load->view('template/cash_invoice_entries',$data,TRUE); //load the template
-                    $pdf->setFooter('{PAGENO}');
+                    // $pdf->setFooter('{PAGENO}');
                     
                     $pdf->WriteHTML($content);
                     //download it.
@@ -1495,7 +1499,7 @@ class Templates extends CORE_Controller {
 
                 $info=$m_sales_order->get_list(
                     $filter_value,
-                    'sales_order.*,departments.department_name,customers.customer_name',
+                    'sales_order.*,departments.department_name,customers.customer_name,customers.contact_no,customers.email_address,customers.contact_name,customers.address',
                     array(
                         array('departments','departments.department_id=sales_order.department_id','left'),
                         array('customers','customers.customer_id=sales_order.customer_id','left')
@@ -1533,7 +1537,7 @@ class Templates extends CORE_Controller {
                     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                     $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
                     $content=$this->load->view('template/so_content',$data,TRUE); //load the template
-                    $pdf->setFooter('{PAGENO}');
+                    // $pdf->setFooter('{PAGENO}');
                     $pdf->WriteHTML($content);
                     //download it.
                     $pdf->Output($pdfFilePath,"D");
@@ -1546,7 +1550,7 @@ class Templates extends CORE_Controller {
                     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                     $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
                     $content=$this->load->view('template/so_content',$data,TRUE); //load the template
-                    $pdf->setFooter('{PAGENO}');
+                    // $pdf->setFooter('{PAGENO}');
                     $pdf->WriteHTML($content);
                     //download it.
                     $pdf->Output();

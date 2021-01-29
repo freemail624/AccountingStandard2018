@@ -90,12 +90,12 @@
                 <span style="font-size: 12pt;"><b><?php echo $purchase_info->supplier_name; ?></b></span><br/>
                 <span>Cel No.:</span> <?php echo $purchase_info->contact_no; ?><br/>
                 <span>Email:</span> <?php echo $purchase_info->email_address; ?><br/>
-                <span>Attention: <b><?php echo $purchase_info->contact_person; ?></b></span>
+                <span>Attention: <b><?php echo $purchase_info->contact_name; ?></b></span>
             </td>
             <td width="50%" class="border" valign="top" style="height: 100px;min-height: 100px;padding: 10px;">
                 <span class="default-color">DELIVER TO</span><br/><br/>
 
-                <span><?php echo $purchase_info->deliver_to_address; ?></span>
+                <span><?php echo $purchase_info->address; ?></span>
             </td>
         </tr>
     </table>
@@ -127,7 +127,7 @@
             <td width="25%" class="default-color border" valign="top" align="right">UNIT PRICE</td>
             <td width="25%" class="default-color border" valign="top" align="right">TOTAL</td>
         </tr>
-        <?php foreach($po_items as $item){ ?>
+        <?php foreach($sales_invoice_items as $item){ ?>
         <tr>
             <td class="left right"><?php echo number_format($item->po_qty,2); ?></td>
             <td class="left right"><?php echo $item->product_desc; ?></td>
