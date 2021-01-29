@@ -36,6 +36,15 @@
             float: left;
         }
 
+        #tbl_pr_list td.details-control {
+            background: url('assets/img/Folder_Closed.png') no-repeat center center;
+            cursor: pointer;
+        }
+
+        #tbl_pr_list tr.details td.details-control {
+            background: url('assets/img/Folder_Opened.png') no-repeat center center;
+        }
+
         td.details-control {
             background: url('assets/img/print.png') no-repeat center center;
             cursor: pointer;
@@ -44,6 +53,7 @@
         tr.details td.details-control {
             background: url('assets/img/print.png') no-repeat center center;
         }
+
 
         .child_table{
             padding: 5px;
@@ -181,6 +191,7 @@
                     <th></th>
                     <th style="text-align: center;">Email</th>
                     <th>PO#</th>
+                    <th>Request #</th>
                     <th>Vendor</th>
                     <th>Terms</th>
                     <th>Approved</th>
@@ -227,15 +238,14 @@
                         </div>
                     </div>
                     <div class="col-sm-4">
-                        PR #:<br />
+                        Delivery Date :<br />
                         <div class="input-group">
-                            <input type="text" name="pr_no" class="form-control" placeholder="PR #" readonly>
+                            <input type="text" name="delivery_date" id="delivery_date" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Delivery Date" data-error-msg="Delivery Date is required!">
                              <span class="input-group-addon">
-                                <a href="#" id="link_browse_pr"><b>...</b></a>
+                                 <i class="fa fa-calendar"></i>
                             </span>
-                        </div>
+                        </div> 
                     </div>
-
 
                 </div>
 
@@ -249,14 +259,21 @@
                             <?php } ?>
                         </select>
                     </div>
-
-                    <div class="col-sm-4 col-sm-offset-3">
-
+                    <div class="col-sm-3">
+                        PR #:<br />
+                        <div class="input-group">
+                            <input type="text" name="pr_no" class="form-control" placeholder="PR #" readonly>
+                             <span class="input-group-addon">
+                                <a href="#" id="link_browse_pr"><b>...</b></a>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
                         Contact Person : <br />
                         <div class="input-group">
-                                                                <span class="input-group-addon">
-                                                                    <i class="fa fa-users"></i>
-                                                                </span>
+                            <span class="input-group-addon">
+                                <i class="fa fa-users"></i>
+                            </span>
                             <input type="text" name="contact_person" class="form-control" placeholder="Contact Person">
                         </div>
 
@@ -279,7 +296,14 @@
 
                     <div class="col-sm-4 col-sm-offset-3">
                         Terms : <br />
-                        <input type="text" name="terms" class="form-control">
+                        <select class="form-control" name="term_id" id="cbo_terms">
+                            <option value="new">[ Create New Term ]</option>
+                            <?php foreach($terms as $term){?>
+                                <option value="<?php echo $term->term_id; ?>">
+                                    <?php echo $term->term_description; ?>
+                                </option>
+                            <?php }?>
+                        </select>
                     </div>
                 </div>
 
@@ -512,9 +536,42 @@
                 <button id="btn_close_new_department" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
 
             </div>
-        </div><!---content---->
+        </div><!---content-->
     </div>
 </div><!---modal-->
+
+<div id="modal_new_term" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>New Term</h4>
+            </div>
+            <div class="modal-body">
+                <form id="frm_term">
+                    <div class="row">
+                        <div class="col-md-12" style="margin-left: 10px;">
+                            <div class="form-group">
+                                <label>* Terms :</label>
+                                <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-users"></i>
+                                        </span>
+                                    <input type="text" name="term_description" class="form-control" placeholder="Term Description" data-error-msg="Term Description is required." required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="btn_save_term" type="button" class="btn btn-primary"  style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span> Create</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
+            </div>
+        </div><!---content-->
+    </div>
+</div><!---modal-->
+
 
 <div id="modal_confirmation_close" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-sm">
@@ -748,9 +805,7 @@
                     <tr>
                         <th></th>
                         <th>PR#</th>
-                        <th>Vendor</th>
-                        <th>Terms</th>
-                        <th>Deliver to</th>
+                        <th>Date</th>
                         <th>Status</th>
                         <th><center>Action</center></th>
                     </tr>
@@ -835,7 +890,7 @@
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboSuppliers; var _cboTaxType;
     var _cboDepartments; var _defCostType; var products; var _line_unit; var changetxn;
-
+    var _cboTerms;
 
     //_defCostType=1; //Luzon Area Purchase Cost is default, this will change when branch is specified
 
@@ -881,12 +936,10 @@ $(document).ready(function(){
                     "defaultContent": ""
                 },
                 { targets:[1],data: "pr_no" },
-                { targets:[2],data: "supplier_name" },
-                { targets:[3],data: "term_description" },
-                { targets:[5],data: "deliver_to_address" },
-                { targets:[6],data: "order_status" },
+                { targets:[2],data: "date_created" },
+                { targets:[3],data: "order_status" },
                 {
-                    targets:[7],
+                    targets:[4],
                     render: function (data, type, full, meta){
                         var btn_accept='<button class="btn btn-success btn-sm" name="accept_pr"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Receive this PR"><i class="fa fa-check"></i> Accept PR</button>';
                         return '<center>'+btn_accept+'</center>';
@@ -899,7 +952,7 @@ $(document).ready(function(){
         dt=$('#tbl_purchases').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 9, "desc" ]],
+            "order": [[ 10, "desc" ]],
             "ajax" : "Purchases/transaction/list",
             "columns": [
                 {
@@ -924,12 +977,13 @@ $(document).ready(function(){
                     }
                 },
                 { targets:[2],data: "po_no" },
-                { targets:[3],data: "supplier_name" },
-                { targets:[4],data: "term_description" },
-                { targets:[5],data: "approval_status" },
-                { targets:[6],data: "order_status" },
+                { targets:[3],data: "pr_no" },
+                { targets:[4],data: "supplier_name" },
+                { targets:[5],data: "term_description" },
+                { targets:[6],data: "approval_status" },
+                { targets:[7],data: "order_status" },
                 {
-                    visible:false,targets:[7],data: null,
+                    visible:false,targets:[8],data: null,
                     render: function (data, type, full, meta){
                         var _attribute='';
                         //console.log(data.is_email_sent);
@@ -944,7 +998,7 @@ $(document).ready(function(){
 
                 },
                 {
-                    sClass:"text-left", targets:[8],data: null,
+                    sClass:"text-left", targets:[9],data: null,
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
@@ -959,7 +1013,7 @@ $(document).ready(function(){
 
                     }
                 },
-                { targets:[9],data: "purchase_order_id",visible:false }
+                { targets:[10],data: "purchase_order_id",visible:false }
             ]
         });
 
@@ -968,6 +1022,15 @@ $(document).ready(function(){
                 '<i class="fa fa-plus"></i> New Purchase Order</button>';
             $("div.toolbar").html(_btnNew);
         }();
+
+        $('.date-picker').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: true,
+            autoclose: true
+
+        });
 
         $('.numeric').autoNumeric('init');
 
@@ -995,16 +1058,18 @@ $(document).ready(function(){
 
         _cboDepartments.select2('val',null);
 
+        _cboTerms=$("#cbo_terms").select2({
+            placeholder: "Please select a term.",
+            allowClear: false
+        });
 
+        _cboTerms.select2('val',null);
 
         _cboTaxType=$('#cbo_tax_type').select2({
             placeholder: "Please select tax type.",
             alloowClear: true
 
         });
-
-
-
 
         var _cboTaxGroup=$('#cbo_tax_group').select2({
             placeholder: "Please select tax type.",
@@ -1322,8 +1387,11 @@ $(document).ready(function(){
             $('#cbo_tax_type').select2('val',null);
             $('#cbo_suppliers').select2('val',null);
             $('#cbo_departments').select2('val', $('#cbo_departments').data('default') );
+            $('#cbo_terms').select2('val',null);
             $('textarea[name="remarks"]').val($('textarea[name="remarks"]').data('default'));
             $('textarea[name="deliver_to_address"]').val($('textarea[name="deliver_to_address"]').data('default'));
+
+            $('#delivery_date').datepicker('setDate', 'today');
             //$('#cbo_prodType').select2('val',3);
             $('#typeaheadsearch').val('');
             getproduct().done(function(data){
@@ -1369,6 +1437,30 @@ $(document).ready(function(){
                 });
             }
         });
+
+        $('#btn_save_term').click(function(){
+
+            var btn=$(this);
+
+            if(validateRequiredFields($('#frm_term'))){
+                var data=$('#frm_term').serializeArray();
+
+                createTerm().done(function(response){
+                    showNotification(response);
+                    $('#modal_new_term').modal('hide');
+
+                    var _term=response.row_added[0];
+                    $('#cbo_terms').append('<option value="'+_term.term_id+'" selected>'+_term.term_description+'</option>');
+                    $('#cbo_terms').select2('val',_term.term_id);
+
+                    clearFields($('#modal_new_term'));
+
+                }).always(function(){
+                    showSpinningProgress(btn);
+                });
+            }
+        });
+
 
         $('#btn_create_new_supplier').click(function(){
 
@@ -1433,6 +1525,7 @@ $(document).ready(function(){
 
             $('#cbo_suppliers').select2('val',data.supplier_id);
             $('#cbo_departments').select2('val',data.department_id);
+            $('#cbo_terms').select2('val',data.term_id);
 
             //var tbl_summary=$('#tbl_purchase_summary');
             //tbl_summary.find(oTableDetails.discount).html(accounting.formatNumber(data.total_discount,2));
@@ -1774,6 +1867,7 @@ $(document).ready(function(){
 
 
 
+
         $('#tbl_items > tbody').on('click','button[name="remove_item"]',function(){
             $(this).closest('tr').remove();
             reComputeTotal();
@@ -1871,6 +1965,18 @@ $(document).ready(function(){
             "url":"Departments/transaction/create",
             "data":_data,
             "beforeSend": showSpinningProgress($('#btn_create_new_department'))
+        });
+    };
+
+    var createTerm=function(){
+        var _data=$('#frm_term').serializeArray();
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Terms/transaction/create",
+            "data":_data,
+            "beforeSend": showSpinningProgress($('#btn_save_term'))
         });
     };
 
@@ -2088,14 +2194,21 @@ $(document).ready(function(){
         if(i==0){ //new supplier
             _cboDepartments.select2('val',null)
             $('#modal_new_department').modal('show');
-            //clearFields($('#modal_new_supplier').find('form'));
         }else{
             var obj_department=$('#cbo_departments').find('option[value="'+i+'"]');
             _defCostType=obj_department.data('default-cost');
-            //_cboTaxType.select2('val',obj_supplier.data('tax-type')); //set tax type base on selected Supplier
         }
 
 
+    });
+
+
+    _cboTerms.on("select2:select", function (e) {
+        var i=$(this).select2('val');
+        if(i=="new"){
+            _cboTerms.select2('val',null);
+            $('#modal_new_term').modal('show');
+        }
     });
 
 

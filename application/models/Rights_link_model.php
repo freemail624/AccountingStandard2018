@@ -108,7 +108,8 @@ class Rights_link_model extends CORE_Model{
                                           (101,'5','5-5','Agent Management'),
                                           (102,'3','3-8','Loading Report'),
                                           (103,'2','2-9','Purchase Request'),
-                                          (104,'12','12-8','Open Purchase Requests')
+                                          (104,'12','12-8','Open Purchase Requests'),
+                                          (105,'4','4-9','Term Management')
 
                                           ON DUPLICATE KEY UPDATE
                                           rights_links.parent_code=VALUES(rights_links.parent_code),

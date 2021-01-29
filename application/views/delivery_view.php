@@ -237,131 +237,132 @@
         <h2 class="h2-panel-heading">Invoice # : <span id="span_invoice_no">INV-XXXX</span></h2><hr>
         <div>
             <div class="row">
-                <div class="col-sm-3">
-                    <label>Invoice #:</label><br />
-                    <div class="input-group">
-                        <span class="input-group-addon">
-                            <i class="fa fa-code"></i>
-                        </span>
-                        <input type="text" name="dr_invoice_no" class="form-control" placeholder="P-INV-YYYYMMDD-XXX" readonly>
+                <div class="col-md-5">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <label>Invoice #:</label><br />
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-code"></i>
+                                </span>
+                                <input type="text" name="dr_invoice_no" class="form-control" placeholder="P-INV-YYYYMMDD-XXX" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <label>Invoice Date :</label><br />
+                            <div class="input-group">
+
+                                <input type="text" name="date_delivered" id="order_default" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Due Date" data-error-msg="Delivery Date is required!" required>
+                                 <span class="input-group-addon">
+                                     <i class="fa fa-calendar"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-7">
+                            <label>PO #:</label><br />
+                            <div class="input-group">
+                                <input type="text" name="po_no" class="form-control" placeholder="PO #" readonly>
+                                 <span class="input-group-addon">
+                                    <a href="#" id="link_browse_po"><b>...</b></a>
+                                </span>
+                            </div>                            
+                        </div>
+                        <div class="col-md-5">
+                            <label>Due Date:</label><br />
+                            <div class="input-group">
+                                <input type="text" name="date_due" id="due_default" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Due Date" data-error-msg="Due Date is required!" required>
+                                <span class="input-group-addon">
+                                         <i class="fa fa-calendar"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                           <b class="required">*</b><label> Department :</label> <br />
+                            <select name="department" id="cbo_departments" data-default="<?php echo $accounts[0]->default_department_id; ?>" data-error-msg="Department is required." required>
+                                <option value="0">[ Create New Department ]</option>
+                                <?php foreach($departments as $department){ ?>
+                                    <option value="<?php echo $department->department_id; ?>"  data-default-cost="<?php echo $department->default_cost; ?>" ><?php echo $department->department_name; ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
                     </div>
                 </div>
-
-                <div class="col-sm-2">
-                    <label>Invoice Date :</label><br />
-                    <div class="input-group">
-
-                        <input type="text" name="date_delivered" id="order_default" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Due Date" data-error-msg="Delivery Date is required!" required>
-                         <span class="input-group-addon">
-                             <i class="fa fa-calendar"></i>
-                        </span>
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <b class="required">*</b> <label>Supplier </label>:<br />
+                            <select name="supplier" id="cbo_suppliers" data-error-msg="Supplier is required." required>
+                                <option value="0">[ Create New Supplier ]</option>
+                                <?php foreach($suppliers as $supplier){ ?>
+                                    <option value="<?php echo $supplier->supplier_id; ?>" 
+                                        data-tax-type="<?php echo $supplier->tax_type_id; ?>" 
+                                        data-address="<?php echo $supplier->address; ?>" data-contact-person="<?php echo $supplier->contact_name; ?>">
+                                        <?php echo $supplier->supplier_name; ?>
+                                    </option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <b class="required">*</b> <label>Deliver to </label>:<br />
+                            <textarea name="deliver_to_address" class="form-control" rows="5" placeholder="Deliver to address"></textarea>
+                        </div>
                     </div>
                 </div>
-
-                <div class="col-sm-3 col-sm-offset-4">
-
+                <div class="col-md-3">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Reference #:</label><br />
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-code"></i>
+                                </span>
+                                <input type="text" name="external_ref_no" class="form-control" placeholder="External Ref No.">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Terms :</label><br />
+                            <select class="form-control" name="term_id" id="cbo_terms">
+                                <option value="new">[ Create New Term ]</option>
+                                <?php foreach($terms as $term){ ?>
+                                    <option value="<?php echo $term->term_id; ?>">
+                                        <?php echo $term->term_description; ?> 
+                                    </option>
+                                <?php }?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Contact Person :</label><br />
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-users"></i>
+                                </span>
+                                <input type="text" name="contact_person" class="form-control" placeholder="Contact Person">
+                            </div>
+                            <div class="hidden">
+                                <label>Tax type :</label><br />
+                                <select name="tax_type" id="cbo_tax_type"  data-error-msg="Tax Type is required !">
+                                    <?php foreach($tax_types as $tax_type){ ?>
+                                        <option value="<?php echo $tax_type->tax_type_id; ?>" data-tax-rate="<?php echo $tax_type->tax_rate; ?>"><?php echo $tax_type->tax_type; ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
             </div>
-
-
-
-            <div class="row">
-                <div class="col-sm-3">
-                    <label>PO #:</label><br />
-                    <div class="input-group">
-                        <input type="text" name="po_no" class="form-control" placeholder="PO #" readonly>
-                         <span class="input-group-addon">
-                            <a href="#" id="link_browse_po"><b>...</b></a>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="col-sm-2">
-                    <label>Due Date:</label><br />
-                    <div class="input-group">
-                        <input type="text" name="date_due" id="due_default" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Due Date" data-error-msg="Due Date is required!" required>
-                        <span class="input-group-addon">
-                                 <i class="fa fa-calendar"></i>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="col-sm-3 col-sm-offset-4">
-                    <label>Reference #:</label><br />
-                    <div class="input-group">
-                        <span class="input-group-addon">
-                            <i class="fa fa-code"></i>
-                        </span>
-                        <input type="text" name="external_ref_no" class="form-control" placeholder="External Ref No.">
-                    </div>
-                </div>
-
-            </div>
-
-
-            <div class="row">
-
-                <div class="col-sm-5">
-                   <b class="required">*</b><label> Department :</label> <br />
-                    <select name="department" id="cbo_departments" data-default="<?php echo $accounts[0]->default_department_id; ?>" data-error-msg="Department is required." required>
-                        <option value="0">[ Create New Department ]</option>
-                        <?php foreach($departments as $department){ ?>
-                            <option value="<?php echo $department->department_id; ?>"  data-default-cost="<?php echo $department->default_cost; ?>" ><?php echo $department->department_name; ?></option>
-                        <?php } ?>
-                    </select>
-                </div>
-
-                <div class="col-sm-3 col-sm-offset-4">
-                    <label>Terms :</label><br />
-                    <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="fa fa-calendar"></i>
-                            </span>
-                        <input type="text" name="terms" class="form-control">
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="row">
-
-                <div class="col-sm-5">
-                    <b class="required">*</b> <label>Supplier </label>:<br />
-                    <select name="supplier" id="cbo_suppliers" data-error-msg="Supplier is required." required>
-                        <option value="0">[ Create New Supplier ]</option>
-                        <?php foreach($suppliers as $supplier){ ?>
-                            <option value="<?php echo $supplier->supplier_id; ?>" data-tax-type="<?php echo $supplier->tax_type_id; ?>" data-contact-person="<?php echo $supplier->contact_name; ?>"><?php echo $supplier->supplier_name; ?></option>
-                        <?php } ?>
-                    </select>
-                </div>
-
-
-
-
-
-                <div class="col-sm-3 col-sm-offset-4">
-                    <label>Contact Person :</label><br />
-                    <div class="input-group">
-                        <span class="input-group-addon">
-                            <i class="fa fa-users"></i>
-                        </span>
-                        <input type="text" name="contact_person" class="form-control" placeholder="Contact Person">
-                    </div>
-                </div>
-
-                <div class="col-sm-3 col-sm-offset-4" style="display: none;">
-                    <label>Tax type :</label><br />
-                    <select name="tax_type" id="cbo_tax_type"  data-error-msg="Tax Type is required !">
-                        <?php foreach($tax_types as $tax_type){ ?>
-                            <option value="<?php echo $tax_type->tax_type_id; ?>" data-tax-rate="<?php echo $tax_type->tax_rate; ?>"><?php echo $tax_type->tax_type; ?></option>
-                        <?php } ?>
-                    </select>
-                </div>
-            </div><hr />
         </div>
     </form>
-   
+    <hr>
 </div>
 
 <div class="row ">
@@ -820,7 +821,37 @@
 </div><!---modal-->
 
 
-
+<div id="modal_new_term" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>New Term</h4>
+            </div>
+            <div class="modal-body">
+                <form id="frm_term">
+                    <div class="row">
+                        <div class="col-md-12" style="margin-left: 10px;">
+                            <div class="form-group">
+                                <label>* Terms :</label>
+                                <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-users"></i>
+                                        </span>
+                                    <input type="text" name="term_description" class="form-control" placeholder="Term Description" data-error-msg="Term Description is required." required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="btn_save_term" type="button" class="btn btn-primary"  style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span> Create</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
+            </div>
+        </div><!---content-->
+    </div>
+</div><!---modal-->
 
 
 
@@ -886,7 +917,7 @@
 $(document).ready(function(){
     var dt; var dt_po; var _txnMode; var _selectedID; var _selectRowObj; var _cboSuppliers; var _cboTaxType;
     var _productType; var _cboDepartments; var _defCostType; var products; var _line_unit; var changetxn ;
-
+    var _cboTerms;
     //_defCostType=0;
 
     var oTableItems={
@@ -967,7 +998,7 @@ $(document).ready(function(){
                 { targets:[4],data: "po_no" },
                 { targets:[5],data: "term_description" },
                 { targets:[6],data: "date_delivered" },
-                { targets:[7],data: null,
+                { visible: false, targets:[7],data: null,
                     render: function (data, type, full, meta){
                         var _attribute='';
                         //console.log(data.is_email_sent);
@@ -992,7 +1023,7 @@ $(document).ready(function(){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
 
-                        return '<div style="text-align: right;">'+btn_finalized+'&nbsp;'+btn_edit+'&nbsp;'+btn_trash+'</div>';
+                        return '<div style="text-align: right;">'+btn_edit+'&nbsp;'+btn_trash+'</div>';
                     }
                 },
                 { targets:[9],data: "dr_invoice_id", visible:false }
@@ -1048,6 +1079,15 @@ $(document).ready(function(){
         });
 
         _cboDepartments.select2('val',null); 
+
+        _cboTerms=$("#cbo_terms").select2({
+            placeholder: "Please select a term.",
+            allowClear: false
+        });
+
+        _cboTerms.select2('val',null); 
+
+
         $('#custom-templates .typeahead').keypress(function(event){
             if (event.keyCode == 13) {
                 $('.tt-suggestion:first').click();
@@ -1303,6 +1343,15 @@ $(document).ready(function(){
 
         });
 
+        _cboTerms.on("select2:select", function (e) {
+            var i=$(this).select2('val');
+            if(i=="new"){
+                _cboTerms.select2('val',null)
+                $('#modal_new_term').modal('show');
+            }
+        });
+
+
         _cboSuppliers.on("select2:select", function (e) {
 
             var i=$(this).select2('val');
@@ -1317,6 +1366,7 @@ $(document).ready(function(){
                 // $('input[name="contact_person"]').text(obj_supplier.data('contact-person'));
                 _cboTaxType.select2('val',$(this).find('option:selected').data('tax-type'));
                 $('input[name="contact_person"]').val($(this).find('option:selected').data('contact-person'));
+                $('textarea[name="deliver_to_address"]').val($(this).find('option:selected').data('address'));
 
                 $('#typeaheadsearch').focus();
             }
@@ -1346,6 +1396,7 @@ $(document).ready(function(){
             clearFields($('#frm_deliveries'));
             $('#cbo_departments').select2('val', $('#cbo_departments').data('default') );
             $('#cbo_suppliers').select2('val', null);
+            $('#cbo_terms').select2('val', null);
             $('#img_user').attr('src','assets/img/anonymous-icon.png');
             $('#td_discount').html('0.00');
             $('#td_before_tax').html('0.00');
@@ -1391,6 +1442,7 @@ $(document).ready(function(){
             $('textarea[name="remarks"]').val(data.remarks);
             $('#cbo_suppliers').select2('val',data.supplier_id);
             $('#cbo_departments').select2('val',data.department_id);
+            $('#cbo_terms').select2('val',data.term_id);
 
 
             $('input,textarea').each(function(){
@@ -1504,7 +1556,7 @@ $(document).ready(function(){
                     $('#modal_new_supplier').modal('hide');
 
                     var _suppliers=response.row_added[0];
-                    $('#cbo_suppliers').append('<option value="'+_suppliers.supplier_id+'" data-tax-type="'+_suppliers.tax_type_id+'" selected>'+_suppliers.supplier_name+'</option>');
+                    $('#cbo_suppliers').append('<option value="'+_suppliers.supplier_id+'" data-tax-type="'+_suppliers.tax_type_id+'" data-address="'+_suppliers.address+'" selected>'+_suppliers.supplier_name+'</option>');
                     $('#cbo_suppliers').select2('val',_suppliers.supplier_id);
                     $('#cbo_tax_type').select2('val',_suppliers.tax_type_id);
 
@@ -1531,6 +1583,29 @@ $(document).ready(function(){
                     $('#cbo_tax_type').select2('val',_department.tax_type_id);
 
                     clearFields($('#modal_new_department'));
+
+                }).always(function(){
+                    showSpinningProgress(btn);
+                });
+            }
+        });
+
+        $('#btn_save_term').click(function(){
+
+            var btn=$(this);
+
+            if(validateRequiredFields($('#frm_term'))){
+                var data=$('#frm_term').serializeArray();
+
+                createTerm().done(function(response){
+                    showNotification(response);
+                    $('#modal_new_term').modal('hide');
+
+                    var _term=response.row_added[0];
+                    $('#cbo_terms').append('<option value="'+_term.term_id+'" selected>'+_term.term_description+'</option>');
+                    $('#cbo_terms').select2('val',_term.term_id);
+
+                    clearFields($('#modal_new_term'));
 
                 }).always(function(){
                     showSpinningProgress(btn);
@@ -1573,9 +1648,6 @@ $(document).ready(function(){
             if(_is_journal_posted > 0){
                 showNotification({title:"Error!",stat:"error",msg:"Cannot Edit: Invoice is already Posted in Purchase Journal."});
             } 
-            else if(_is_finalized > 0){
-                showNotification({title:"Error!",stat:"error",msg:"Cannot Edit: Invoice is already finalized."});
-            }
             else {
                 getproduct().done(function(data){
                     products.clear();
@@ -1599,6 +1671,7 @@ $(document).ready(function(){
                 $('textarea[name="remarks"]').val(data.remarks);
                 $('#cbo_suppliers').select2('val',data.supplier_id);
                 $('#cbo_departments').select2('val',data.department_id);
+                $('#cbo_terms').select2('val',data.term_id);
 
                 $('input,textarea').each(function(){
                     var _elem=$(this);
@@ -1715,9 +1788,6 @@ $(document).ready(function(){
             if(_is_journal_posted > 0){
                 showNotification({title:"Error!",stat:"error",msg:"Cannot Delete: Invoice is already Posted in Purchase Journal."});
             } 
-            else if(_is_finalized > 0){
-                showNotification({title:"Error!",stat:"error",msg:"Cannot Delete: Invoice is already finalized."});
-            }
             else {
                 $('#modal_confirmation').modal('show');
             }
@@ -2006,6 +2076,17 @@ $(document).ready(function(){
       });
     };
 
+    var createTerm=function(){
+        var _data=$('#frm_term').serializeArray();
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Terms/transaction/create",
+            "data":_data,
+            "beforeSend": showSpinningProgress($('#btn_save_term'))
+        });
+    };
 
     var createSupplier=function() {
         var _data=$('#frm_suppliers_new').serializeArray();

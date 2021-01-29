@@ -147,15 +147,26 @@
                                                        </div>
                                                    </div>
 
-
                                                    <div class="form-group">
-                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong>* Company Address :</strong></label>
+                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong>* Company Address 1 :</strong></label>
                                                        <div class="col-md-7">
                                                            <div class="input-group">
                                                                 <span class="input-group-addon">
                                                                     <i class="fa fa-file"></i>
                                                                 </span>
                                                                <input type="text" name="company_address" class="form-control" value="<?php echo $company->company_address; ?>" placeholder="Company Address" data-error-msg="Company address is required!" required>
+                                                           </div>
+                                                       </div>
+                                                   </div>
+
+                                                   <div class="form-group">
+                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong> Company Address 2 :</strong></label>
+                                                       <div class="col-md-7">
+                                                           <div class="input-group">
+                                                                <span class="input-group-addon">
+                                                                    <i class="fa fa-file"></i>
+                                                                </span>
+                                                               <input type="text" name="company_address_2" class="form-control" value="<?php echo $company->company_address_2; ?>" placeholder="Company Address" data-error-msg="Company address is required!">
                                                            </div>
                                                        </div>
                                                    </div>

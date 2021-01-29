@@ -41,7 +41,7 @@
 		<strong>P.R. # :</strong> <?php echo $requests->pr_no; ?></td> <br>
 		<strong>Date : </strong><?php echo date_format(new DateTime($requests->date_created),"m/d/Y"); ?>
 	</div><br>
-	<table width="100%"  cellspacing="-1" style="border:none!important;">
+	<table width="100%"  class="hidden" cellspacing="-1" style="border:none!important;">
 		<tr>
 			<td style="padding: 6px;" width="50%" colspan="2"><strong>Supplier / Address:</strong></td>
 			<td style="padding: 6px;" width="50%"><strong>Deliver to :</strong></td>

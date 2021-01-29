@@ -1,176 +1,196 @@
 <head>  <title>Purchase Invoice</title></head>
 <body>
-<style>
+    <style type="text/css">
         body {
             font-family: 'Calibri',sans-serif;
             font-size: 12px;
         }
-              .bottom-only{
-      border:none!important;
-      }
 
-        .align-right {
-            text-align: right;
+        .border{
+            border: 1px solid black!important; 
         }
 
-        .align-left {
-            text-align: left;
+        .default-color{
+            color:#2d419b;
+            font-weight: bold; 
+            font-size: 9pt;
         }
-
-        .align-center {
-            text-align: center;
+        .top{
+            border-top: 1px solid black;
         }
-
-        .report-header {
-            font-weight: bolder;
+        .bottom{
+            border-bottom: 1px solid black;
         }
-    tr {
-/*        border: none!important;*/
-    }
-
-    tr:nth-child(even){
-   /*     background: #414141 !important;*/
- /*       border: none!important;*/
-    }
-
-/*    tr:hover {
-        transition: .4s;
-        background: #414141 !important;
-        color: white;
-    }
-
-    tr:hover .btn {
-        border-color: #494949!important;
-        border-radius: 0!important;
-        -webkit-box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
-        -moz-box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
-        box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
-    }*/
+        .left{
+            border-left: 1px solid black;
+        }
+        .right{
+            border-right: 1px solid black;
+        }
         table{
-        border:none!important;
-    }
-</style>
-
+            border-collapse: collapse;
+        }
+    </style>
 <div>
+    <table width="100%">
+        <tr class="">
+            <td width="50%" valign="top">
+                <img src="<?php echo $company_info->logo_path; ?>" style="height: 70px; width: 300px;"> 
+                <br/><br/>
 
-    <table width="100%" border="0"> 
-        <tr class="row_child_tbl_sales_order">
-            <td class="bottom-only" width="10%" style="object-fit: cover;"><img src="<?php echo $company_info->logo_path; ?>" style="height: 90px; width: 90px; text-align: left;"></td>
-            <td  class="bottom-only" width="90%" class="">
-                <h1 class="report-header"><strong><?php echo $company_info->company_name; ?></strong></h1>
                 <p><?php echo $company_info->company_address; ?></p>
-                <p><?php echo $company_info->landline.'/'.$company_info->mobile_no; ?></p>
-                <span><?php echo $company_info->email_address; ?></span><br>
+                <p><?php echo $company_info->company_address_2; ?></p>
+                <span>Email : <?php echo $company_info->email_address; ?></span>
+                <p>Tel and Fax no.: <?php echo $company_info->landline.' &nbsp;'.$company_info->mobile_no; ?></p>
+            </td>
+            <td width="50%" style="text-align: right;" valign="top">
+                <h1><b>RECEIVING RECEIPT</b></h1><br/>
+                <table width="100%" class="table table-striped" style="border-collapse: collapse;">
+                    <tr>
+                        <td width="65%">&nbsp;</td>
+                        <td width="35%" class="border default-color" align="center">
+                            <b>ORDER NO</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td class="border" style="padding: 5px 0px 5px 0px;" align="center"><?php echo $delivery_info->dr_invoice_no; ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><br/></td>
+                    </tr>
+                    <tr>
+                        <td width="65%">&nbsp;</td>
+                        <td width="35%" class="border default-color" align="center">
+                            <b>DATE</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td class="border" style="padding: 5px 0px 5px 0px;" align="center">
+                            <?php echo date('M d,Y',strtotime($delivery_info->date_delivered));?>
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
-    </table><hr>
-    <center><table width="95%" cellpadding="5" style="font-family: tahoma;font-size: 11;" border="0">
-            <tr>
-                <td width="45%" valign="top" style="border: none;">
-                    <span>Supplier :</span><br /><br />
-                    <address>
-                        <strong><?php echo $delivery_info->supplier_name; ?></strong><br>
-                        <?php echo $delivery_info->address; ?><br>
-                        <?php echo $delivery_info->email_address; ?><br>
-                        <abbr title="Phone">P:</abbr> <?php echo $delivery_info->contact_no; ?>
-                    </address>
+    </table>
+    <br><br>
+    <table width="100%" cellpadding="5" class="table table-striped">
+        <tr>
+            <td colspan="2" align="right" style="padding: 5px;">Please supply and deliver in accordance with the terms and conditions set below:</td>
+        </tr>
+        <tr>
+            <td width="50%" class="border" valign="top" style="height: 100px;min-height: 100px;padding: 10px;">
+                <span class="default-color">SUPPLIER</span><br/><br/>
 
-                    <br />
-                    <span>Contact Person :</span><br />
-                    <strong><?php echo $delivery_info->contact_person; ?></strong><br>
-                </td>
+                <span style="font-size: 12pt;"><b><?php echo $delivery_info->supplier_name; ?></b></span><br/>
+                <span>Cel No.:</span> <?php echo $delivery_info->contact_no; ?><br/>
+                <span>Email:</span> <?php echo $delivery_info->email_address; ?><br/>
+                <span>Attention: <b><?php echo $delivery_info->contact_person; ?></b></span>
+            </td>
+            <td width="50%" class="border" valign="top" style="height: 100px;min-height: 100px;padding: 10px;">
+                <span class="default-color">DELIVER TO</span><br/><br/>
 
-                <td width="50%" align="right" style="border: none;">
-                    <h4>Purchase Invoice No.</h4>
-                    <h4 class="text-navy"><?php echo $delivery_info->dr_invoice_no; ?></h4>
+                <span><?php echo $delivery_info->deliver_to_address; ?></span>
+            </td>
+        </tr>
+    </table>
+    <br/>
+     <table width="100%" cellpadding="5" class="table table-striped">
+        <tr>
+            <td valign="top" class="default-color top left right">DELIVERY DATE</td>
+            <td valign="top" class="default-color top left right">TERMS OF PAYMENT</td>
+            <td valign="top" class="default-color top left right">PO NUMBER
+            </td>
+        </tr>
+        <tr>
+            <td valign="top" class="left right bottom" style="height: 30px;min-height: 30px;" align="center">
+                <span><?php echo ($delivery_info->date_due!=null||$delivery_info!='0000-00-00'? date('M d,Y',strtotime($delivery_info->date_due)) : ""); ?></span>
+            </td>
+            <td valign="top" class="left right bottom" style="height: 30px;min-height: 30px;" align="center">
+                <span><?php echo $delivery_info->term_description; ?></span>
+            </td>
+            <td valign="top" class="left right bottom" style="height: 30px;min-height: 30px;" align="center">
+                <span><?php echo $delivery_info->po_no; ?></span>
+            </td>
+        </tr>
+    </table>
+    <br/>
+    <table width="100%" cellpadding="6" class="table table-striped">
+        <tr>
+            <td width="15%" class="default-color border" valign="top">QTY</td>
+            <td width="35%" class="default-color border" valign="top">DESCRIPTION</td>
+            <td width="25%" class="default-color border" valign="top" align="right">UNIT PRICE</td>
+            <td width="25%" class="default-color border" valign="top" align="right">TOTAL</td>
+        </tr>
+        <?php foreach($dr_items as $item){ ?>
+        <tr>
+            <td class="left right"><?php echo number_format($item->dr_qty,2); ?></td>
+            <td class="left right"><?php echo $item->product_desc; ?></td>
+            <td class="left right" align="right"><?php echo number_format($item->dr_price,2); ?></td>
+            <td class="left right" align="right"><?php echo number_format($item->dr_line_total_after_global,2); ?></td>
+        </tr>
+        <?php }?>
+        <tr>
+            <td colspan="2" class="top" rowspan="5" valign="top">
+                <table width="100%" style="font-size: 8pt;">
+                    <tr>
+                        <td valign="top">1.</td>
+                        <td valign="top">            
+                            The Purchase Order No. marked above must appear in all invoices and/or delivery receipts of the Supplier.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="top">2.</td>
+                        <td valign="top">
+                            Accustandard reserves the right to inspect the items and to reject the same if found not in accordance with the specifictions or not in good condition.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="top">3.</td>
+                        <td valign="top">
+                            The original sales invoice and original delivery receipt should be submitted to the accounting department to process the payment.
+                        </td>
+                    </tr>
+                </table>
 
-                    <span>Company :</span>
-                    <address>
-                        <strong><?php echo $company_info->company_name; ?></strong><br>
-                        <strong><?php echo $company_info->company_address; ?></strong><br>
-                        <abbr title="Phone">P:</abbr> <?php echo $company_info->landline; ?>
-                    </address>
-                    <br />
+            </td>
+            <td class="border" align="right">TOTAL</td>
+            <td class="border" align="right">
+                <?php echo number_format($delivery_info->total_after_discount,2); ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="border" align="right">SHIPPING COST</td>
+            <td class="border" align="right">
+                <?php echo number_format($delivery_info->shipping_cost,2); ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="border" align="right">CUSTOM DUTIES</td>
+            <td class="border" align="right">
+                <?php echo number_format($delivery_info->custom_duties,2); ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="border" align="right">OTHERS</td>
+            <td class="border" align="right">
+                <?php echo number_format($delivery_info->other_amount,2); ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="border" align="right"><b>TOTAL AMOUNT DUE</b></td>
+            <td class="border" align="right">
+                <?php echo number_format($delivery_info->grand_total_amount,2); ?>
+            </td>
+        </tr>
+    </table>
 
-                    <p>
+    <br/><br/><br/><br/>
 
-                        <span><strong>PO # : </strong> <?php echo  $delivery_info->po_no; ?></span><br />
-                        <span><strong>Reference : </strong> <?php echo  $delivery_info->external_ref_no; ?></span><br />
-                        <span><strong>Delivery Date : </strong> <?php echo  date_format(new DateTime($delivery_info->date_created),"m/d/Y"); ?></span><br />
-                        <span><strong>Due Date : </strong> <?php echo  date_format(new DateTime($delivery_info->date_due),"m/d/Y"); ?></span><br />
-                        <span><strong>Terms : </strong> <?php echo $delivery_info->term_description; ?></span>
-                    </p>
-                </td>
-            </tr>
-        </table></center>
-
-    <br /><br />
-
-    <center>
-        <table width="95%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11" >
-            <thead>
-            <tr>
-                <th width="50%" style="border-bottom: 2px solid gray;text-align: left;height: 30px;padding: 6px;">Item</th>
-                <th width="12%" style="border-bottom: 2px solid gray;text-align: right;height: 30px;padding: 6px;">Qty</th>
-                <th width="12%" style="border-bottom: 2px solid gray;text-align: center;height: 30px;padding: 6px;">UM</th>
-                <th width="12%" style="border-bottom: 2px solid gray;text-align: right;height: 30px;padding: 6px;">Price</th>
-                <th width="12%" style="border-bottom: 2px solid gray;text-align: right;height: 30px;padding: 6px;">Total</th>
-            </tr>
-            </thead>
-            <tbody>
-            <?php foreach($dr_items as $item){ ?>
-                <tr>
-                    <td width="50%" style="border-bottom: 1px solid gray;text-align: left;height: 30px;padding: 6px;"><?php echo $item->product_desc; ?></td>
-                    <td width="12%" style="border-bottom: 1px solid gray;text-align: right;height: 30px;padding: 6px;"><?php echo number_format($item->dr_qty,2); ?></td>
-                    <td width="12%" style="border-bottom: 1px solid gray;text-align: center;height: 30px;padding: 6px;"><?php echo $item->unit_name; ?></td>
-                    <td width="12%" style="border-bottom: 1px solid gray;text-align: right;height: 30px;padding: 6px;"><?php echo number_format($item->dr_price,2); ?></td>
-
-                    <td width="12%" style="border-bottom: 1px solid gray;text-align: right;height: 30px;padding: 6px;"><?php echo number_format($item->dr_line_total_after_global,2); ?></td>
-                </tr>
-            <?php } ?>
-           <tr>
-            <td colspan="5" style="text-align: left;font-weight: bolder; ;height: 30px;padding: 6px;border-left: 1px solid gray;border-right: 1px solid gray;"><b>Remarks:</b></td>
-            </tr>
-            <tr>
-            <td colspan="5" style="text-align: left;font-weight: bolder; ;height: 30px;padding: 6px;border-left: 1px solid gray;border-bottom: 1px solid gray;border-right: 1px solid gray;"><?php echo $delivery_info->remarks; ?></td>
-            </tr>
-            </tbody>
-            <tfoot>
-            <tr>
-                <td align="left" colspan="2" style="border-left: 1px solid gray;padding: 6px;"><b>Prepared By:</b></td>
-                <td colspan="2" style="padding: 6px;border-bottom: 1px solid gray;height: 15px;border-left: 1px solid gray;" align="left">Global Discount %:</td>
-                <td style="padding: 6px;border-bottom: 1px solid gray;height: 15px;border-right: 1px solid gray;" align="right"><?php echo number_format($delivery_info->total_overall_discount,2); ?></td>
-            </tr>
-            <tr>
-                <td colspan="2" style="text-align: right;height: 15px;padding: 6px;border-left: 1px solid gray;"></td>
-                <td colspan="2" style="border-bottom: 1px solid gray;text-align: left;height: 15px;padding: 6px;border-left: 1px solid gray;">Discount 2 : </td>
-                <td style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;border-right: 1px solid gray;"><?php echo number_format($delivery_info->total_overall_discount_amount+$delivery_info->total_discount,2); ?></td>
-            </tr>
-            <tr>
-                <td colspan="2" style="text-align: right;height: 15px;padding: 6px;border-bottom: 1px solid gray;border-left: 1px solid gray;"></td>
-                <td colspan="2" style="padding: 6px;border-bottom: 1px solid gray;height: 15px;border-left: 1px solid gray;" align="left">Total Before Tax:</td>
-                <td style="padding: 6px;border-bottom: 1px solid gray;height: 15px;border-right: 1px solid gray;" align="right"><?php echo number_format($delivery_info->total_before_tax,2); ?></td>
-            </tr>
-            <tr>
-                <td colspan="2" style="text-align: left;height: 15px;padding: 6px;border-left: 1px solid gray;"><b>Received By:</b></td>
-                <td colspan="2" style="border-bottom: 1px solid gray;text-align: left;height: 15px;padding: 6px;border-left: 1px solid gray;">Tax Amount : </td>
-                <td style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;border-right: 1px solid gray;"><?php echo number_format($delivery_info->total_tax_amount,2); ?></td>
-            </tr>
-            <tr>
-                
-                <td align="left" colspan="2" style="border-left: 1px solid gray;"></td>
-                <td colspan="2" style="border-bottom: 1px solid gray;text-align: left;height: 15px;padding: 6px;border-left: 1px solid gray;">Total After Tax : </td>
-                <td style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;border-right: 1px solid gray;"><?php echo number_format($delivery_info->total_after_tax,2); ?></td>
-            </tr>
-
-            <tr>
-                <td colspan="2" style="text-align: left;height: 15px;padding: 6px;border-bottom: 1px solid gray;border-left: 1px solid gray;">Date:</td>
-                <td colspan="2" style="border-bottom: 1px solid gray;text-align: left;height: 15px;padding: 6px;border-left: 1px solid gray;"><strong>Total: </strong></td>
-                <td style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;border-right: 1px solid gray;"><strong><?php echo number_format($delivery_info->total_after_discount,2); ?></strong></td>
-            </tr>
-            </tfoot>
-        </table><br /><br />
-    </center>
+    <?php include 'po_report_footer.php'; ?>
+    
 </div>
 
 

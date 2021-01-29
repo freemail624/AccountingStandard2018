@@ -176,7 +176,6 @@ class Purchase_request extends CORE_Controller
 
                 case 'open':  //this returns PO that are already approved
                     $m_requests=$this->Purchase_request_model;
-                    //$where_filter=null,$select_list=null,$join_array=null,$order_by=null,$group_by=null,$auto_select_escape=TRUE,$custom_where_filter=null
                     $response['data']= $m_requests->get_list(
 
                         'purchase_request.is_deleted=FALSE AND purchase_request.is_active=TRUE AND purchase_request.approval_id=1 AND (purchase_request.order_status_id=1 OR purchase_request.order_status_id=3)',
@@ -187,7 +186,8 @@ class Purchase_request extends CORE_Controller
                             'suppliers.supplier_name',
                             'tax_types.tax_type',
                             'approval_status.approval_status',
-                            'order_status.order_status'
+                            'order_status.order_status',
+                            'DATE_FORMAT(purchase_request.date_created,"%m/%d/%Y") as date_created'
                         ),
                         array(
                             array('suppliers','suppliers.supplier_id=purchase_request.supplier_id','left'),
@@ -250,18 +250,17 @@ class Purchase_request extends CORE_Controller
                 case 'create':
                     $m_requests=$this->Purchase_request_model;
 
-                    /*if(count($m_requests->get_list(array('po_no'=>$this->input->post('po_no',TRUE))))>0){
+                    $prod_id=$this->input->post('product_id',TRUE);
+
+                    if(count($prod_id)<=0){
                         $response['title'] = 'Invalid!';
                         $response['stat'] = 'error';
-                        $response['msg'] = 'PO # already exists.';
-
+                        $response['msg'] = 'Please select an item to proceed!';
                         echo json_encode($response);
                         exit;
-                    }*/
-
+                    }
 
                     $m_requests->begin();
-
                     $m_requests->set('date_created','NOW()'); //treat NOW() as function and not string
                     //$m_requests->po_no=$this->input->post('po_no',TRUE);
                     $m_requests->terms=$this->input->post('terms',TRUE);
@@ -347,14 +346,21 @@ class Purchase_request extends CORE_Controller
                         echo json_encode($response);
                     }
 
-                    
-                    
-
                     break;
 
                 case 'update':
                     $m_requests=$this->Purchase_request_model;
                     $purchase_request_id=$this->input->post('purchase_request_id',TRUE);
+
+                    $prod_id=$this->input->post('product_id',TRUE);
+
+                    if(count($prod_id)<=0){
+                        $response['title'] = 'Invalid!';
+                        $response['stat'] = 'error';
+                        $response['msg'] = 'Please select an item to proceed!';
+                        echo json_encode($response);
+                        exit;
+                    }
 
                     $m_requests->begin();
 

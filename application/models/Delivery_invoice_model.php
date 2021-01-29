@@ -394,8 +394,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
         purchase_order.po_no,
         DATE_FORMAT(di.date_due,'%m/%d/%Y')as date_due,
         DATE_FORMAT(di.date_delivered,'%m/%d/%Y')as date_delivered,
-
-        CONCAT_WS(' ',CAST(di.terms as CHAR(250)) ,di.duration) as term_description
+        terms.term_description
         FROM
         delivery_invoice as di
          
@@ -403,6 +402,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
         LEFT JOIN departments ON departments.department_id = di.department_id
         LEFT JOIN tax_types ON tax_types.tax_type_id=di.tax_type_id
         LEFT JOIN purchase_order ON purchase_order.purchase_order_id=di.purchase_order_id 
+        LEFT JOIN terms ON terms.term_id=di.term_id 
 
 
         WHERE
@@ -412,7 +412,6 @@ GROUP BY n.supplier_id HAVING total_balance > 0
         ".($department_id==null?"":" AND di.department_id=$department_id")."
         ".($supplier_id==null?"":" AND di.supplier_id=$supplier_id")."
         ".($id_filter==null?"":" AND di.dr_invoice_id=$id_filter")."
-
         ".($startDate==null?"":" AND di.date_delivered BETWEEN '$startDate' AND '$endDate'")."
         ";
         return $this->db->query($sql)->result();

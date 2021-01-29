@@ -32,6 +32,8 @@ class Truncate_model extends CORE_Model{
                 (SELECT COUNT(*) FROM dispatching_invoice_items) as dispatching_invoice_items,
                 (SELECT COUNT(*) FROM proforma_invoice) as proforma_invoice,
                 (SELECT COUNT(*) FROM proforma_invoice_items) as proforma_invoice_items,
+                (SELECT COUNT(*) FROM purchase_request) as purchase_request,
+                (SELECT COUNT(*) FROM purchase_request_items) as purchase_request_items,
                 (SELECT COUNT(*) FROM purchase_order) as purchase_order,
                 (SELECT COUNT(*) FROM purchase_order_items) as purchase_order_items,
                 (SELECT COUNT(*) FROM sales_order) as sales_order,

@@ -20,6 +20,7 @@ class Deliveries extends CORE_Controller
         $this->load->model('Users_model');
         $this->load->model('Trans_model'); 
         $this->load->model('Company_model');    
+        $this->load->model('Terms_model');    
         $this->load->model('Account_integration_model');  
 
     }
@@ -50,7 +51,7 @@ class Deliveries extends CORE_Controller
             )
         );
 
-
+        $data['terms']=$this->Terms_model->get_list(array("is_deleted"=>FALSE));
         $data['tax_types']=$this->Tax_types_model->get_list('is_deleted=0');
         $data['company']=$this->Company_model->getDefaultRemarks()[0];
         $data['accounts']=$this->Account_integration_model->get_list(1);
@@ -192,8 +193,9 @@ class Deliveries extends CORE_Controller
                 //$m_delivery_invoice->batch_no=$this->input->post('batch_no',TRUE);
                 $m_delivery_invoice->external_ref_no=$this->input->post('external_ref_no',TRUE);
                 $m_delivery_invoice->contact_person=$this->input->post('contact_person',TRUE);
-                $m_delivery_invoice->terms=$this->input->post('terms',TRUE);
+                $m_delivery_invoice->term_id=$this->input->post('term_id',TRUE);
                 //$m_delivery_invoice->duration=$this->input->post('duration',TRUE);
+                $m_delivery_invoice->deliver_to_address = $this->input->post('deliver_to_address',TRUE);
                 $m_delivery_invoice->supplier_id = $this->input->post('supplier',TRUE);
                 $m_delivery_invoice->department_id = $this->input->post('department',TRUE);
                 $m_delivery_invoice->remarks = $this->input->post('remarks',TRUE);
@@ -327,9 +329,10 @@ class Deliveries extends CORE_Controller
                 //$m_delivery_invoice->batch_no=$this->input->post('batch_no',TRUE);
                 $m_delivery_invoice->external_ref_no=$this->input->post('external_ref_no',TRUE);
                 $m_delivery_invoice->contact_person=$this->input->post('contact_person',TRUE);
-                $m_delivery_invoice->terms=$this->input->post('terms',TRUE);
+                $m_delivery_invoice->term_id=$this->input->post('term_id',TRUE);
                 //$m_delivery_invoice->duration=$this->input->post('duration',TRUE);
                 $m_delivery_invoice->supplier_id=$this->input->post('supplier',TRUE);
+                $m_delivery_invoice->deliver_to_address = $this->input->post('deliver_to_address',TRUE);
                 $m_delivery_invoice->department_id = $this->input->post('department',TRUE);
                 $m_delivery_invoice->remarks=$this->input->post('remarks',TRUE);
                 $m_delivery_invoice->tax_type_id=$this->input->post('tax_type',TRUE);

@@ -42,24 +42,36 @@
 		<strong>Date : </strong><?php echo date_format(new DateTime($purchase_info->date_created),"m/d/Y"); ?>
 	</div><br>
 	<table width="100%"  cellspacing="-1" style="border:none!important;">
+
 		<tr>
-			<td style="padding: 6px;" width="50%" colspan="2"><strong>Supplier / Address:</strong></td>
-			<td style="padding: 6px;" width="50%"><strong>Deliver to :</strong></td>
+			<td style="padding: 6px;" width="35%" rowspan="2" valign="top">
+				<span><strong>SUPPLIER:</strong></span><br/><br/>
+				<span><strong><?php echo $purchase_info->supplier_name; ?></strong></span><br/>
+				<span>Cel No.: <?php echo $purchase_info->contact_no; ?></span><br/>
+				<span>Email : <?php echo $purchase_info->email_address; ?></span><br/>
+				<span>Attention: <?php echo $purchase_info->contact_person; ?></span><br/>
+			</td>
+			<td style="padding: 6px;" width="45%" valign="top">
+				<span><strong>DELIVER TO : </strong></span><br/>
+				<span><?php echo $purchase_info->deliver_to_address; ?></span><br/>
+			</td>
+			<td style="padding: 6px;" width="20%" valign="top">
+				<span><strong>REQUEST # : </strong></span><br/>
+				<span><?php echo $purchase_info->pr_no; ?></span><br/>
+			</td>
 		</tr>
 		<tr>
-			<td style="padding: 6px;" width="50%" colspan="2"><?php echo $purchase_info->supplier_name; ?></td>
-			<td style="padding: 6px;" width="50%"><?php echo $purchase_info->deliver_to_address; ?></td>
-		</tr>
-		<tr>
-			<td style="padding: 6px;" width="25%" colspan="2"><strong>Terms :</strong></td>
-			<td style="padding: 6px;" width="25%"><strong>Ref # :</strong></td>
-	
-		</tr>
-		<tr>
-			<td style="padding: 6px;" width="25%" colspan="2"><?php echo $purchase_info->terms; ?></td>
-			<td style="padding: 6px;" width="25%"></td>
+			<td style="padding: 6px;" valign="top">
+				<span><strong>TERMS : </strong></span><br/>
+				<span><?php echo $purchase_info->term_description; ?></span><br/>
+			</td>
+			<td style="padding: 6px;" width="20%" valign="top">
+				<span><strong>DELIVERY DATE : </strong></span><br/>
+				<span><?php echo $purchase_info->delivery_date; ?></span><br/>
+			</td>
 		</tr>
 	</table>
+	<hr>
 	<br>
 	<table width="100%" cellpadding="10" cellspacing="-1" class="table table-striped" style="text-align: center;border:none!important;">
 		<tr>

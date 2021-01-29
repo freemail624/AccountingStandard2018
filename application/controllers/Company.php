@@ -45,6 +45,7 @@ class Company extends CORE_Controller
                 $m_company->company_id=1;
                 $m_company->company_name=$this->input->post('company_name',TRUE);
                 $m_company->company_address=$this->input->post('company_address',TRUE);
+                $m_company->company_address_2=$this->input->post('company_address_2',TRUE);
                 $m_company->email_address=$this->input->post('email_address',TRUE);
                 $m_company->mobile_no=$this->input->post('mobile_no',TRUE);
                 $m_company->landline=$this->input->post('landline',TRUE);

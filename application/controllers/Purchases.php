@@ -21,6 +21,7 @@ class Purchases extends CORE_Controller
         $this->load->model('Company_model');
         $this->load->model('Email_settings_model');
         $this->load->model('Trans_model');
+        $this->load->model('Terms_model');
         $this->load->model('Account_integration_model');
 
         $this->load->library('M_pdf');
@@ -56,42 +57,16 @@ class Purchases extends CORE_Controller
             )
         );
 
+        $data['terms']=$this->Terms_model->get_list(array("is_deleted"=>FALSE));
         $data['tax_types']=$this->Tax_types_model->get_list('is_deleted=0');
         $data['company']=$this->Company_model->getDefaultRemarks()[0];
         $data['accounts']=$this->Account_integration_model->get_list(1);
-        // $data['products']=$this->Products_model->get_list(
-        //         null, //no id filter
-        //         array(
-        //                    'products.product_id',
-        //                    'products.product_code',
-        //                    'products.product_desc',
-        //                    'products.product_desc1',
-        //                    'products.is_tax_exempt',
-        //                    'FORMAT(products.sale_price,2)as sale_price',
-        //                    'FORMAT(products.purchase_cost,2)as purchase_cost',
-        //                    'products.unit_id',
-        //                    'products.on_hand',
-        //                    'units.unit_name',
-        //                    'tax_types.tax_type_id',
-        //                    'tax_types.tax_rate'
-        //         ),
-        //         array(
-        //             // parameter (table to join(left) , the reference field)
-        //             array('units','units.unit_id=products.unit_id','left'),
-        //             array('categories','categories.category_id=products.category_id','left'),
-        //             array('tax_types','tax_types.tax_type_id=products.tax_type_id','left')
-
-        //         )
-
-        //     );
 
         $data['title'] = 'Purchase Order';
         (in_array('2-1',$this->session->user_rights)? 
         $this->load->view('po_view', $data)
         :redirect(base_url('dashboard')));
         
-
-
     }
 
     function transaction($txn = null,$id_filter=null) {
@@ -158,11 +133,12 @@ class Purchases extends CORE_Controller
                         'purchase_order.is_active=TRUE AND purchase_order.is_deleted=FALSE AND purchase_order.approval_id=2',
                         //fields
                         'purchase_order.*,suppliers.supplier_name,COUNT(po_attachments.po_attachment_id) as attachment,
-                        CONCAT_WS(" ",purchase_order.terms,purchase_order.duration)As term_description,
+                        terms.term_description,
                         CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by',
                         //joins
                         array(
                             array('suppliers','suppliers.supplier_id=purchase_order.supplier_id','left'),
+                            array('terms','terms.term_id=purchase_order.term_id','left'),
                             array('user_accounts','user_accounts.user_id=purchase_order.posted_by_user','left'),
                             array('po_attachments','po_attachments.purchase_order_id=purchase_order.purchase_order_id','left')
                         ),
@@ -184,7 +160,7 @@ class Purchases extends CORE_Controller
 
                         array(
                             'purchase_order.*',
-                            'CONCAT_WS(" ",CAST(purchase_order.terms AS CHAR),purchase_order.duration)as term_description',
+                            'terms.term_description',
                             'suppliers.supplier_name',
                             'tax_types.tax_type',
                             'approval_status.approval_status',
@@ -193,6 +169,7 @@ class Purchases extends CORE_Controller
                         array(
                             array('suppliers','suppliers.supplier_id=purchase_order.supplier_id','left'),
                             array('tax_types','tax_types.tax_type_id=purchase_order.tax_type_id','left'),
+                            array('terms','terms.term_id=purchase_order.term_id','left'),
                             array('approval_status','approval_status.approval_id=purchase_order.approval_id','left'),
                             array('order_status','order_status.order_status_id=purchase_order.order_status_id','left')
                         ),
@@ -273,9 +250,10 @@ class Purchases extends CORE_Controller
                     $m_purchases->set('date_created','NOW()'); //treat NOW() as function and not string
                     //$m_purchases->po_no=$this->input->post('po_no',TRUE);
                     $m_purchases->purchase_request_id=$purchase_request_id;
-                    $m_purchases->terms=$this->input->post('terms',TRUE);
+                    $m_purchases->term_id=$this->input->post('term_id',TRUE);
                     $m_purchases->duration=$this->input->post('duration',TRUE);
                     $m_purchases->deliver_to_address=$this->input->post('deliver_to_address',TRUE);
+                    $m_purchases->delivery_date = date('Y-m-d',strtotime($this->input->post('delivery_date',TRUE)));
                     $m_purchases->contact_person=$this->input->post('contact_person',TRUE);
                     $m_purchases->supplier_id=$this->input->post('supplier',TRUE);
                     $m_purchases->department_id=$this->input->post('department',TRUE);
@@ -377,13 +355,11 @@ class Purchases extends CORE_Controller
                     $purchase_request_id=(count($arr_pr_info)>0?$arr_pr_info[0]->purchase_request_id:0);
 
                     $m_purchases->begin();
-
-                    //$m_purchases->po_no=$this->input->post('po_no',TRUE);
-
                     $m_purchases->purchase_request_id=$purchase_request_id;
-                    $m_purchases->terms=$this->input->post('terms',TRUE);
+                    $m_purchases->term_id=$this->input->post('term_id',TRUE);
                     $m_purchases->duration=$this->input->post('duration',TRUE);
                     $m_purchases->deliver_to_address=$this->input->post('deliver_to_address',TRUE);
+                    $m_purchases->delivery_date = date('Y-m-d',strtotime($this->input->post('delivery_date',TRUE)));
                     $m_purchases->contact_person=$this->input->post('contact_person',TRUE);
                     $m_purchases->supplier_id=$this->input->post('supplier',TRUE);
                     $m_purchases->department_id=$this->input->post('department',TRUE);
@@ -753,19 +729,21 @@ class Purchases extends CORE_Controller
             $filter_value,
             array(
                 'purchase_order.*',
-                'CONCAT_WS(" ",CAST(purchase_order.terms AS CHAR),purchase_order.duration)as term_description',
+                'terms.term_description',
                 'suppliers.supplier_name',
                 'tax_types.tax_type',
                 'approval_status.approval_status',
                 'order_status.order_status',
-                'purchase_request.pr_no'
+                'purchase_request.pr_no',
+                'DATE_FORMAT(purchase_order.delivery_date,"%m/%d/%Y") as delivery_date,'
             ),
             array(
                 array('suppliers','suppliers.supplier_id=purchase_order.supplier_id','left'),
                 array('tax_types','tax_types.tax_type_id=purchase_order.tax_type_id','left'),
                 array('approval_status','approval_status.approval_id=purchase_order.approval_id','left'),
                 array('order_status','order_status.order_status_id=purchase_order.order_status_id','left'),
-                array('purchase_request','purchase_request.purchase_request_id=purchase_order.purchase_request_id','left')
+                array('purchase_request','purchase_request.purchase_request_id=purchase_order.purchase_request_id','left'),
+                array('terms','terms.term_id=purchase_order.term_id','left')
             ),
             'purchase_order.purchase_order_id DESC'
         );

@@ -4,161 +4,108 @@
 	<title>Purchase Request</title>
 	<style type="text/css">
 		body {
-			font-family: 'Calibri',sans-serif;
+			font-family: 'Calibiri',sans-serif;
 			font-size: 12px;
 		}
 
-		.align-right {
-			text-align: right;
-		}
-
-		.align-left {
-			text-align: left;
-		}
-
-		.align-center {
-			text-align: center;
-		}
-
-		.report-header {
-			font-weight: bolder;
-		}
-
-		hr {
-			/*border-top: 3px solid #404040;*/
-		}
-
-		tr {
-            border: none!important;
-        }
-/*
-        tr:nth-child(even){
-            background: #414141 !important;
-            border: none!important;
-            color: white !important;
+        .border{
+            border: 1px solid black!important; 
         }
 
-        tr:nth-child(odd){
-            background: #414141 !important;
-            border: none!important;
-            color: white !important;
-        }*/
-
-/*        tr:hover {
-            transition: .4s;
-            background: #414141 !important;
-            color: white;
+        .default-color{
+            color:#2d419b;
+            font-weight: bold; 
+            font-size: 9pt;
         }
-
-        tr:hover .btn {
-            border-color: #494949!important;
-            border-radius: 0!important;
-            -webkit-box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
-            -moz-box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
-            box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
+        .left{
+            border-left: 1px solid black;
         }
-*/
-    table{
-        border:none!important;
-    }
+        .right{
+            border-right: 1px solid black;
+        }
+        table{
+            border-collapse: collapse;
+        }
+        .top{
+            border-top: 1px solid black;
+        }
 	</style>
 </head>
 <body>
 	<table width="100%">
-        <tr class="row_child_tbl_sales_order">
-            <td width="10%"><img src="<?php echo $company_info->logo_path; ?>" style="height: 100px; width: 100%; text-align: left;"></td>
-            <td width="90%" class="">
-                <h1 class="report-header"><strong><?php echo $company_info->company_name; ?></strong></h1>
-                <p><?php echo $company_info->company_address; ?></p>
-                <p><?php echo $company_info->landline.'/'.$company_info->mobile_no; ?></p>
-                <span><?php echo $company_info->email_address; ?></span><br>
+        <tr class="">
+            <td width="50%" valign="top">
+                <img src="<?php echo $company_info->logo_path; ?>" style="height: 70px; width: 300px;"> 
+                <br/><br/>
 
+                <p><?php echo $company_info->company_address; ?></p>
+                <p><?php echo $company_info->company_address_2; ?></p>
+                <span>Email : <?php echo $company_info->email_address; ?></span>
+                <p>Tel and Fax no.: <?php echo $company_info->landline.' &nbsp;'.$company_info->mobile_no; ?></p>
+            </td>
+            <td width="50%" style="text-align: right;" valign="top">
+                <h1><b>PURCHASE REQUEST</b></h1><br/>
+                <table width="100%" class="table table-striped" style="border-collapse: collapse;">
+                    <tr>
+                        <td width="65%">&nbsp;</td>
+                        <td width="35%" class="border default-color" align="center">
+                            <b>REQUEST NO</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td class="border" style="padding: 5px 0px 5px 0px;" align="center"><?php echo $requests->pr_no; ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><br/></td>
+                    </tr>
+                    <tr>
+                        <td width="65%">&nbsp;</td>
+                        <td width="35%" class="border default-color" align="center">
+                            <b>DATE</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td class="border" style="padding: 5px 0px 5px 0px;" align="center">
+                            <?php echo date('M d,Y',strtotime($requests->date_created));?>
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
-    </table><hr>
-	<div class="">
-		<h3 class="report-header"><strong>PURCHASE REQUEST</strong></h3>
-		<strong>P.R. # :</strong> <?php echo $requests->pr_no; ?></td> <br>
-		<strong>Date : </strong><?php echo date_format(new DateTime($requests->date_created),"m/d/Y"); ?>
-	</div><br>
-	<table width="100%"  cellspacing="-1">
-		<tr>
-			<td style="padding: 6px;" width="50%" colspan="2"><strong>Supplier / Address:</strong></td>
-			<td style="padding: 6px;" width="50%"><strong>Deliver to :</strong></td>
-		</tr>
-		<tr>
-			<td style="padding: 6px;" width="50%" colspan="2"><?php echo $requests->supplier_name; ?></td>
-			<td style="padding: 6px;" width="50%"><?php echo $requests->deliver_to_address; ?></td>
-		</tr>
-		<tr>
-			<td style="padding: 6px;" width="25%" colspan="2"><strong>Terms :</strong></td>
-			<td style="padding: 6px;" width="25%"><strong>Ref # :</strong></td>
-	
-		</tr>
-		<tr>
-			<td style="padding: 6px;" width="25%" colspan="2"><?php echo $requests->terms; ?></td>
-			<td style="padding: 6px;" width="25%"></td>
-		</tr>
-	</table>
-	<br>
-	<table width="100%" cellpadding="10" cellspacing="-1" class="table table-striped" style="text-align: center;">
-		<tr>
-			<td style="padding: 6px;border-bottom: 1px solid gray;"><strong>Description</strong></td>
-			<td style="padding: 6px;border-bottom: 1px solid gray;"><strong>UM</strong></td>
-			<td style="padding: 6px;border-bottom: 1px solid gray;"><strong>Qty</strong></td>
-			<td style="padding: 6px;border-bottom: 1px solid gray;"><strong>Unit Price</strong></td>
-            <td style="padding: 6px;border-bottom: 1px solid gray;"><strong>Discount</strong></td>
-			<td style="padding: 6px;border-bottom: 1px solid gray;"><strong>Amount</strong></td>
-		</tr>
-		<?php foreach($pr_items as $item){ ?>
-            <tr>
-                <td width="50%" style="border-bottom: 1px solid gray;text-align: left;height: 10px;padding: 6px;"><?php echo $item->product_desc; ?></td>
-                <td width="10%" style="border-bottom: 1px solid gray;text-align: center;height: 10px;padding: 6px;"><?php echo $item->unit_name; ?></td>
-                <td width="15%" style="border-bottom: 1px solid gray;text-align: right;height: 10px;padding: 6px;"><?php echo number_format($item->po_qty,2); ?></td>
-                <td width="15%" style="border-bottom: 1px solid gray;text-align: right;height: 10px;padding: 6px;"><?php echo number_format($item->po_price,2); ?></td>
-                <td width="15%" style="border-bottom: 1px solid gray;text-align: right;height: 10px;padding: 6px;"><?php echo number_format($item->po_discount,2); ?></td>
-                <td width="10%" style="border-bottom: 1px solid gray;text-align: right;height: 10px;padding: 6px;"><?php echo number_format($item->po_line_total_after_global,2); ?></td>
-            </tr>
-        <?php } ?>
+    </table>
+	<br><br>
+
+    <table width="100%" cellpadding="8" class="table table-striped">
+        <tr>
+            <td width="15%" class="default-color border" valign="top">QTY</td>
+            <td width="35%" class="default-color border" valign="top">DESCRIPTION</td>
+            <td width="25%" class="default-color border" valign="top" align="right">UNIT PRICE</td>
+            <td width="25%" class="default-color border" valign="top" align="right">TOTAL</td>
+        </tr>
+        <?php foreach($pr_items as $item){ ?>
+        <tr>
+            <td class="left right"><?php echo number_format($item->po_qty,2); ?></td>
+            <td class="left right"><?php echo $item->product_desc; ?></td>
+            <td class="left right" align="right"><?php echo number_format($item->po_price,2); ?></td>
+            <td class="left right" align="right"><?php echo number_format($item->po_line_total_after_global,2); ?></td>
+        </tr>
+        <?php }?>
 
         <tr>
-            <td colspan="6" style="text-align: left;height: 30px;padding: 6px;border-left: 1px solid gray;border-right: 1px solid gray;"><b>Remarks:</b></td>
-        </tr>
+            <td colspan="2" class="top" rowspan="5" valign="top">
+            </td>
+            <td class="default-color border" align="right" style="font-size: 10pt;"><b>TOTAL AMOUNT DUE</b></td>
+            <td class="border" align="right" style="font-size: 10pt;">
+                <b><?php echo number_format($requests->total_after_discount,2); ?></b>
+            </td>        
         <tr>
-            <td colspan="6" style="text-align: left;height: 30px;padding: 6px;border-left: 1px solid gray;border-bottom: 1px solid gray;border-right: 1px solid gray;"><?php echo $requests->remarks; ?></td>
-        </tr>
-        <tr>
-        	<td align="left" colspan="2" style="border-left: 1px solid gray;"><b>Prepared By:</b></td>
-        	<td colspan="3" style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-left: 1px solid gray;" align="left">Global Discount %:</td>
-        	<td style="padding: 6px;border-bottom: 1px solid gray;height: 30px; border-right: 1px solid gray;" align="right"><?php echo number_format($requests->total_overall_discount,2); ?></td>
-        </tr>
-        <tr>
-            <td align="left" colspan="2"  style="border-left: 1px solid gray;"></td>
-            <td  colspan="3"  style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-left: 1px solid gray;" align="left">Total Discount :</td>
-            <td style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-right: 1px solid gray;" align="right"><?php echo number_format($requests->total_overall_discount_amount +$requests->total_discount ,2); ?></td>
-        </tr>
-        <tr>
-            <td  align="left" colspan="2"  style="border-bottom: 1px solid gray;border-left: 1px solid gray;"></td>
-            <td colspan="3" style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-left: 1px solid gray;" align="left">Total Before Tax:</td>
-            <td style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-right: 1px solid gray;" align="right"><?php echo number_format($requests->total_before_tax,2); ?></td>
-        </tr>
-        <tr>
-        	<td align="left" colspan="2" style="border-left: 1px solid gray;"><b>Received By:</b></td>
-        	<td colspan="3" style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-left: 1px solid gray;" align="left">Total Tax Amount:</td>
-        	<td style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-right: 1px solid gray;" align="right"><?php echo number_format($requests->total_tax_amount,2); ?></td>
-        </tr>
-        <tr>
-        	<td align="left" colspan="2" style="border-left: 1px solid gray;" ></td>
-        	<td colspan="3" style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-left: 1px solid gray;" align="left">Total After Tax:</td>
-        	<td style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-right: 1px solid gray;" align="right"><?php echo number_format($requests->total_after_tax,2); ?></td>
-        </tr>
+    </table>
 
-        <tr>
-            <td align="left" colspan="2"  style="border-bottom: 1px solid gray;border-left: 1px solid gray;">Date</td>
-            <td  colspan="3"  style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-left: 1px solid gray;" align="left"><strong>Total:</strong></td>
-            <td style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-right: 1px solid gray;" align="right"><strong><?php echo number_format($requests->total_after_discount,2); ?></strong></td>
-        </tr>
-	</table>
+    <br/><br/><br/><br/>
+
+    <?php include 'po_report_footer.php'; ?>
 
 </body>
 </html>

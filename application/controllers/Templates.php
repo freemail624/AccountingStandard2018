@@ -309,9 +309,11 @@ class Templates extends CORE_Controller {
 
                         $info=$m_purchases->get_list(
                                 $filter_value,
-                                'purchase_order.*,CONCAT_WS(" ",purchase_order.terms,purchase_order.duration)as term_description,suppliers.supplier_name,suppliers.address,suppliers.email_address,suppliers.contact_no',
+                                'purchase_order.*,terms.term_description,suppliers.supplier_name,suppliers.address,suppliers.email_address,suppliers.contact_no, purchase_request.pr_no',
                                 array(
-                                    array('suppliers','suppliers.supplier_id=purchase_order.supplier_id','left')
+                                    array('suppliers','suppliers.supplier_id=purchase_order.supplier_id','left'),
+                                    array('purchase_request','purchase_request.purchase_request_id=purchase_order.purchase_request_id','left'),
+                                    array('terms','terms.term_id=purchase_order.term_id','left')
                                 )
                             );
 
@@ -357,7 +359,7 @@ class Templates extends CORE_Controller {
                             $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                             $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
                             $content=$this->load->view('template/po_content_new',$data,TRUE); //load the template
-                            $pdf->setFooter('{PAGENO}');
+                            // $pdf->setFooter('{PAGENO}');
                             $pdf->WriteHTML($content);
                             //download it.
                             $pdf->Output($pdfFilePath,"D");
@@ -370,7 +372,7 @@ class Templates extends CORE_Controller {
                             $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                             $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
                             $content=$this->load->view('template/po_content_new',$data,TRUE); //load the template
-                            $pdf->setFooter('{PAGENO}');
+                            // $pdf->setFooter('{PAGENO}');
                             $pdf->WriteHTML($content);
                             //download it.
                             $pdf->Output();
@@ -442,7 +444,7 @@ class Templates extends CORE_Controller {
                             $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                             $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
                             $content=$this->load->view('template/pr_content_new',$data,TRUE); //load the template
-                            $pdf->setFooter('{PAGENO}');
+                            // $pdf->setFooter('{PAGENO}');
                             $pdf->WriteHTML($content);
                             //download it.
                             $pdf->Output($pdfFilePath,"D");
@@ -455,7 +457,7 @@ class Templates extends CORE_Controller {
                             $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                             $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
                             $content=$this->load->view('template/pr_content_new',$data,TRUE); //load the template
-                            $pdf->setFooter('{PAGENO}');
+                            // $pdf->setFooter('{PAGENO}');
                             $pdf->WriteHTML($content);
                             //download it.
                             $pdf->Output();
@@ -483,11 +485,12 @@ class Templates extends CORE_Controller {
                         $info=$m_delivery->get_list(
                             $filter_value,
 
-                            'delivery_invoice.*,purchase_order.po_no,CONCAT_WS(" ",delivery_invoice.terms,delivery_invoice.duration)as term_description,
+                            'delivery_invoice.*,purchase_order.po_no,terms.term_description,
                             suppliers.supplier_name,suppliers.address,suppliers.email_address,suppliers.contact_no',
 
                             array(
                                 array('suppliers','suppliers.supplier_id=delivery_invoice.supplier_id','left'),
+                                array('terms','terms.term_id=delivery_invoice.term_id','left'),
                                 array('purchase_order','purchase_order.purchase_order_id=delivery_invoice.purchase_order_id','left')
                             )
                         );
@@ -523,7 +526,7 @@ class Templates extends CORE_Controller {
                             $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                             $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
                             $content=$this->load->view('template/dr_content',$data,TRUE); //load the template
-                            $pdf->setFooter('{PAGENO}');
+                            // $pdf->setFooter('{PAGENO}');
                             $pdf->WriteHTML($content);
                             //download it.
                             $pdf->Output($pdfFilePath,"D");
@@ -536,7 +539,7 @@ class Templates extends CORE_Controller {
                             $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                             $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
                             $content=$this->load->view('template/dr_content',$data,TRUE); //load the template
-                            $pdf->setFooter('{PAGENO}');
+                            // $pdf->setFooter('{PAGENO}');
                             $pdf->WriteHTML($content);
                             //download it.
                             $pdf->Output();

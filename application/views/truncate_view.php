@@ -168,6 +168,8 @@
     <div class="tab-pane" id="invoices" style="min-height: 300px;">
         <form id="frm_invoices">
         <input type="checkbox" id="selectall_invoice" class="css-checkbox"><label class="css-label " for="selectall_invoice">SELECT ALL INVOICES</label><br>
+        <input type="checkbox" name="invoice[]" value="purchase_request" id="purchase_request" class="css-checkbox"><label class="css-label " for="purchase_request">Purchase Request Info</label>(<?php echo $current_count->purchase_request; ?>)<br>
+        <input type="checkbox" name="invoice[]" value="purchase_request_items" id="purchase_request_items" class="css-checkbox"><label class="css-label " for="purchase_request_items">Purchase Request Items</label>(<?php echo $current_count->purchase_request_items; ?>)<br>
         <input type="checkbox" name="invoice[]" value="purchase_order" id="purchase_order" class="css-checkbox"><label class="css-label " for="purchase_order">Purchase Order Info</label>(<?php echo $current_count->purchase_order; ?>)<br>
         <input type="checkbox" name="invoice[]" value="purchase_order_items" id="purchase_order_items" class="css-checkbox"><label class="css-label " for="purchase_order_items">Purchase Order Items</label>(<?php echo $current_count->purchase_order_items; ?>)<br>
         <input type="checkbox" name="invoice[]" value="po_attachments" id="po_attachments" class="css-checkbox"><label class="css-label " for="po_attachments">Purchase Order Attachments</label>(<?php echo $current_count->po_attachments; ?>)<br>

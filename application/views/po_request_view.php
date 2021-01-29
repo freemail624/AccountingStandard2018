@@ -217,9 +217,7 @@
                             <?php } ?>
                         </select>
                     </div>
-
-
-                    <div class="col-sm-3 col-sm-offset-3">
+                    <div class="col-sm-3 col-sm-offset-4">
                         PR # : <br />
                         <div class="input-group">
                             <span class="input-group-addon">
@@ -228,31 +226,25 @@
                             <input type="text" name="pr_no" class="form-control" placeholder="PR-YYYYMMDD-XXX" readonly>
                         </div>
                     </div>
-
-
                 </div>
-
-                <div class="row">
+                <div class="row hidden">
                     <div class="col-sm-5">
                         Supplier * : <br />
-                        <select name="supplier" id="cbo_suppliers" data-error-msg="Supplier is required." required>
+                        <select name="supplier" id="cbo_suppliers" data-error-msg="Supplier is required.">
                             <option value="0">[ Create New Supplier ]</option>
                             <?php foreach($suppliers as $supplier){ ?>
                                 <option value="<?php echo $supplier->supplier_id; ?>" data-tax-type="<?php echo $supplier->tax_type_id; ?>" data-contact-person="<?php echo $supplier->contact_name; ?>"><?php echo $supplier->supplier_name; ?></option>
                             <?php } ?>
                         </select>
                     </div>
-
                     <div class="col-sm-4 col-sm-offset-3">
-
                         Contact Person : <br />
                         <div class="input-group">
-                                                                <span class="input-group-addon">
-                                                                    <i class="fa fa-users"></i>
-                                                                </span>
+                            <span class="input-group-addon">
+                                <i class="fa fa-users"></i>
+                            </span>
                             <input type="text" name="contact_person" class="form-control" placeholder="Contact Person">
                         </div>
-
                         <div style="display: none;">
                             Tax type : <br />
                             <select name="tax_type" id="cbo_tax_type">
@@ -262,11 +254,10 @@
                             </select></div>
                     </div>
                 </div>
-
-                <div class="row">
+                <div class="row hidden">
                     <div class="col-sm-5">
                         Deliver to Address * : <br />
-                        <textarea name="deliver_to_address" class="form-control" placeholder="Deliver to Address" data-error-msg="Deliver address is required!" required data-default="<?php echo $company->deliver_to_address_default; ?>"></textarea>
+                        <textarea name="deliver_to_address" class="form-control" placeholder="Deliver to Address" data-error-msg="Deliver address is required!" data-default="<?php echo $company->deliver_to_address_default; ?>"></textarea>
 
                     </div>
 
@@ -704,7 +695,7 @@
                 <button id="btn_create_new_supplier" type="button" class="btn btn-primary"  style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span> Create</button>
                 <button id="btn_close_new_supplier" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
             </div>
-        </div><!---content---->
+        </div><!---content-->
     </div>
 </div><!---modal-->
 
@@ -852,8 +843,8 @@ $(document).ready(function(){
                     }
                 },
                 { targets:[2],data: "pr_no" },
-                { targets:[3],data: "supplier_name" },
-                { targets:[4],data: "term_description" },
+                { visible:false, targets:[3],data: "supplier_name" },
+                { visible:false, targets:[4],data: "term_description" },
                 { targets:[5],data: "approval_status" },
                 { targets:[6],data: "order_status" },
                 {
@@ -874,15 +865,15 @@ $(document).ready(function(){
                 {
                     sClass:"text-left", targets:[8],data: null,
                     render: function (data, type, full, meta){
-                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
+                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
-                        var btn_message='<a href="Po_messages?id='+data.purchase_request_id+'" target="_blank" class="btn btn-green btn-sm" name="message_po" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Message"><i class="fa fa-envelope-o"></i> </a>';
+                        var btn_message='<a href="Pr_messages?id='+data.purchase_request_id+'" target="_blank" class="btn btn-green btn-sm" name="message_po" data-toggle="tooltip" data-placement="top" title="Message"><i class="fa fa-envelope-o"></i> </a>';
                         var btn_mark_as_closed='<button class="btn btn-warning btn-sm" name="mark_as_closed" style="" data-toggle="tooltip" data-placement="top" title="Close"><i class="fa fa-times"></i> </button>';
 
                         if (data.order_status_id == 1  || data.order_status_id == 3){
-                            return btn_edit+'&nbsp;'+'&nbsp;'+btn_trash+'&nbsp;'+btn_mark_as_closed;
+                            return btn_edit+'&nbsp;&nbsp;'+btn_trash+'&nbsp;&nbsp;'+btn_mark_as_closed;
                         }else{
-                            return btn_edit+'&nbsp;'+'&nbsp;'+btn_trash;  
+                            return btn_edit+'&nbsp;&nbsp;'+btn_trash;  
                         }
 
                     }
@@ -1223,7 +1214,7 @@ $(document).ready(function(){
                     }
             }).always(function(){  });
             showList(false);
-            $('#cbo_suppliers').select2('open');
+            // $('#cbo_suppliers').select2('open');
         });
          $('#refreshproducts').click(function(){
             getproduct().done(function(data){
@@ -1540,20 +1531,28 @@ $(document).ready(function(){
                 if(_txnMode=="new"){
                     createPurchaseRequest().done(function(response){
                         showNotification(response);
-                        dt.row.add(response.row_added[0]).draw();
-                        clearFields($('#frm_purchase_requests'));
-                        showList(true);
+
+                        if(response.stat == 'success'){
+                            dt.row.add(response.row_added[0]).draw();
+                            clearFields($('#frm_purchase_requests'));
+                            showList(true);
+                            showSpinningProgress($('#btn_save'));
+                        }
+
                     }).always(function(){
-                        showSpinningProgress($('#btn_save'));
                     });
                 }else{
                     updatePurchaseRequest().done(function(response){
                         showNotification(response);
-                        dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
-                        clearFields($('#frm_purchase_requests'));
-                        showList(true);
+
+                        if(response.stat == 'success'){
+                            dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
+                            clearFields($('#frm_purchase_requests'));
+                            showList(true);
+                            showSpinningProgress($('#btn_save'));
+                        }
+
                     }).always(function(){
-                        showSpinningProgress($('#btn_save'));
                     });
                 }
 
