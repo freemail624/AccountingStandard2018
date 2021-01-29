@@ -12,15 +12,43 @@ class Temp_journal_info_model extends CORE_Model
         parent::__construct();
     }
 
+    function getBillingPaymentList($department_id=0)
+    {
+        $query = $this->db->query("
+                SELECT 
+                    temp_journal_info.*,
+                    customers.customer_name,
+                    departments.department_name,
+                    b_payment_info.transaction_no,
+                    b_payment_info.reference_no,
+                    b_payment_info.remarks,
+                    IF(b_payment_info.payment_type = 1, DATEDIFF(b_payment_info.check_date,NOW()),0) as rem_day_for_due
+                FROM temp_journal_info
+                LEFT JOIN customers ON customers.customer_id = temp_journal_info.customer_id
+                LEFT JOIN departments ON departments.department_id = customers.link_department_id
+                LEFT JOIN b_payment_info ON b_payment_info.payment_id = temp_journal_info.payment_id
+                WHERE 
+                    temp_journal_info.is_deleted = FALSE AND
+                    temp_journal_info.is_active = TRUE AND
+                    temp_journal_info.is_journal_posted = FALSE AND
+                    temp_journal_info.is_sales = FALSE AND 
+                    temp_journal_info.book_type_id = 1
+                    ".($department_id==0?"":" AND customers.link_department_id='".$department_id."'")."");
+        return $query->result();
+    }
+
+
     function getBillingList($department_id=0)
     {
         $query = $this->db->query("SELECT 
         		tji.*, c.customer_name,
-        		CONCAT(m.month_name,' ',billing.app_year) as billing_period
+        		CONCAT(m.month_name,' ',billing.app_year) as billing_period,
+                d.department_name
         	FROM temp_journal_info tji 
         	LEFT JOIN customers c ON c.customer_id = tji.customer_id
         	LEFT JOIN b_billing_info billing ON billing.billing_no = tji.ref_no
         	LEFT JOIN b_refmonths m ON m.month_id = billing.month_id
+            LEFT JOIN departments d ON d.department_id = c.link_department_id
         	WHERE 
                 tji.is_deleted = FALSE AND
         		tji.is_sales = TRUE AND
@@ -33,9 +61,11 @@ class Temp_journal_info_model extends CORE_Model
     function getBillingAdvancesList($department_id=0)
     {
         $query = $this->db->query("SELECT 
-                tji.*, c.customer_name
+                tji.*, c.customer_name,
+                d.department_name
             FROM temp_journal_info tji 
             LEFT JOIN customers c ON c.customer_id = tji.customer_id
+            LEFT JOIN departments d ON d.department_id = c.link_department_id
             WHERE 
                 tji.is_deleted = FALSE AND
                 tji.book_type_id = 2 AND

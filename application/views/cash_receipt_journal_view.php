@@ -279,6 +279,7 @@
                             <tr>
                                 <th width="5%"></th>
                                 <th width="10%">Reference No</th>
+                                <th width="10%">Department</th>
                                 <th width="30%">Customer Name</th>
                                 <th width="15%">Transaction Date</th>
                                 <th width="40%">Remarks</th>
@@ -300,19 +301,34 @@
                 <div class="panel-body" style="">
                 <h2 class="h2-panel-heading">Billing Payment (Pending)</h2><hr>
                     <div >
-                        <div style="margin-bottom: 10px;">
-                        <input type="text" class="form-control" id="tbl_billing_payment_for_review_searchbox" placeholder="Search Billing Payments">
+                        <div class="row">
+                            <div class="col-md-4">
+                                Department :<br />
+                                <select id="cbo_departments_payment" class="selectpicker show-tick form-control" data-live-search="true">
+                                        <option value="0"> All Departments</option>
+                                    <?php foreach($departments as $department){ ?>
+                                        <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
+                                    <?php } ?>
+                                </select>   
+                            </div>
+                            <div class="col-md-8">
+                                <br/>
+                                <input type="text" class="form-control" id="tbl_billing_payment_for_review_searchbox" placeholder="Search Billing Payments">
+                            </div>
                         </div>
+                        <br/>
+
                         <table id="tbl_billing_payment_for_review" class="table table-striped" cellspacing="0" width="100%">
                             <thead class="">
                             <tr>
                                 <th width="5%">&nbsp;</th>
-                                <th width="15%">Billing Ref No</th>
-                                <th width="10%">OR#</th>
+                                <th width="12%">Billing Ref No</th>
+                                <th width="7%">OR#</th>
+                                <th width="15%">Department</th>
                                 <th width="20%">Customer</th>
                                 <th>Transaction Date</th>
                                 <th>Notice</th>
-                                <th width="25%">Remarks</th>
+                                <th width="20%">Remarks</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -1176,7 +1192,7 @@
 <script>
 $(document).ready(function(){
     var _txnMode; var _cboParticulars; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode;
-    var dtReview; var _cbo_paymentMethod; var _cbo_departments; var dt; var _cbo_check_types; var _cbo_accounttype; var _cboDepartmentReview;
+    var dtReview; var _cbo_paymentMethod; var _cbo_departments; var dt; var _cbo_check_types; var _cbo_accounttype; var _cboDepartmentReview; var _cboDepartmentPayment;
     var _cboCustomerType;  var _cboTaxGroup; var _selectedDepartment = 0; var _cboDepartmentFilter;
     var _cboArTrans; var dtReviewAdvances; var _selectedParentRow; var _curBtn_; var cancelAdvance;
 
@@ -1202,6 +1218,11 @@ $(document).ready(function(){
         });
 
         _cboDepartmentReview=$("#cbo_departments_review").select2({
+            placeholder: "Please Select Default Department.",
+            allowClear: false
+        });    
+
+        _cboDepartmentPayment=$("#cbo_departments_payment").select2({
             placeholder: "Please Select Default Department.",
             allowClear: false
         });    
@@ -1297,9 +1318,10 @@ $(document).ready(function(){
                     "defaultContent": ""
                 },
                 { targets:[1],data: "ref_no" },
-                { targets:[2],data: "customer_name" },
-                { targets:[3],data: "date_txn" },
-                { targets:[4],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(50)}
+                { targets:[2],data: "department_name" },
+                { targets:[3],data: "customer_name" },
+                { targets:[4],data: "date_txn" },
+                { targets:[5],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(50)}
             ],
             "initComplete": function(settings, json) {
                  if(this.api().data().length != 0){
@@ -1373,8 +1395,21 @@ $(document).ready(function(){
         });
 
         dtReviewBilling=$('#tbl_billing_payment_for_review').DataTable({
+            "dom": '<"toolbar">frtip',
+            oLanguage: {
+                    sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+            },
+            processing : true,            
             "bLengthChange":false,
-            "ajax" : "Billing_review/transaction/list-billing-payment-for-review",
+            "ajax" : {
+                "url" :  "Billing_review/transaction/list-billing-payment-for-review",
+                "bDestroy": true,            
+                "data": function ( d ) {
+                        return $.extend( {}, d, {
+                            "department_id": _cboDepartmentPayment.val()
+                        });
+                    }
+            },         
             "columns": [
                 {
                     "targets": [0],
@@ -1385,9 +1420,10 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "transaction_no" },
                 { targets:[2],data: "reference_no" },
-                { targets:[3],data: "customer_name" },
-                { targets:[4],data: "date_txn" },
-                {                targets:[5],   data: "rem_day_for_due",
+                { targets:[3],data: "department_name" },
+                { targets:[4],data: "customer_name" },
+                { targets:[5],data: "date_txn" },
+                { targets:[6],   data: "rem_day_for_due",
                     render: function (data, type, full, meta){
                         if(data>0){ //if check and remaining day before due is greater than 0
                             return "<span style='color: red'><b><i class='fa fa-times-circle'></i> "+data+"</b> day(s) before Check is due.</span>";
@@ -1395,7 +1431,7 @@ $(document).ready(function(){
                             return "";
                         }
                     } },
-                { targets:[6],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(80)}
+                { targets:[7],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(80)}
             ],
               "initComplete": function(settings, json) {
                  if(this.api().data().length != 0){
@@ -1500,7 +1536,11 @@ $(document).ready(function(){
 
         _cboDepartmentReview.on("select2:select", function (e) {
             $('#tbl_billing_review').DataTable().ajax.reload()
-       });       
+       }); 
+
+        _cboDepartmentPayment.on("select2:select", function (e) {
+            $('#tbl_billing_payment_for_review').DataTable().ajax.reload()
+       }); 
 
         $("#searchbox_ar").keyup(function(){         
             dt

@@ -423,7 +423,8 @@
                                                                 <thead>
                                                                     <th width="5%"></th>
                                                                     <th width="15%">TXN #</th>
-                                                                    <th width="15%">TYPE</th>
+                                                                    <th width="5%">TYPE</th>
+                                                                    <th width="10%">REF TYPE</th>
                                                                     <th>Particular</th>
                                                                     <th width="7%">Method</th>
                                                                     <th width="40%">Remarks </th>
@@ -1119,12 +1120,17 @@ Chart.defaults.global.defaultFontColor = "#000000";
                     },
                     { targets:[1],data: "txn_no" },
                     { targets:[2],data: "ref_type" },
-                    { targets:[3],data: "particular" },
-                    { targets:[4],data: "payment_method" },
-                    { targets:[5],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(60)},
+                    { targets:[3],data:null,
+                        render: function (data, type, full, meta){
+                            return data.ref_type+'-'+data.ref_no
+                        }
+                    },
+                    { targets:[4],data: "particular" },
+                    { targets:[5],data: "payment_method" },
+                    { targets:[6],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(60)},
 
                     { visible:false,
-                        targets:[6],
+                        targets:[7],
                         render: function (data, type, full, meta){
                             //alert(full.purchase_order_id);
 

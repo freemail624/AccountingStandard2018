@@ -250,6 +250,7 @@
                         <tr>
                             <th>&nbsp;</th>
                             <th>Billing Reference No</th>
+                            <th>Department</th>
                             <th>Customer</th>
                             <th>Billing Period</th>
                             <th>Transaction Date</th>
@@ -1076,10 +1077,11 @@ $(document).ready(function(){
                     "defaultContent": ""
                 },
                 { targets:[1],data: "ref_no" },
-                { targets:[2],data: "customer_name" },
-                { targets:[3],data: "billing_period" },
-                { targets:[4],data: "date_txn" },
-                { targets:[5],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(80)}
+                { targets:[2],data: "department_name" },
+                { targets:[3],data: "customer_name" },
+                { targets:[4],data: "billing_period" },
+                { targets:[5],data: "date_txn" },
+                { targets:[6],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(80)}
             ],
               "initComplete": function(settings, json) {
                  if(this.api().data().length != 0){

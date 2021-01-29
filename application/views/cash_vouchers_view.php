@@ -238,6 +238,7 @@
                                     <th></th>
                                     <th style="width: 15%;">Txn #</th>
                                     <th>Type</th>
+                                    <th>Ref Type</th>
                                     <th>Particular</th>
                                     <th>RR #</th>
                                     <th>Method</th>
@@ -788,7 +789,7 @@ $(document).ready(function(){
         dt=$('#tbl_temp_vouchers_list').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 9, "desc" ]],
+            "order": [[ 10, "desc" ]],
             oLanguage: {
                     sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
             },
@@ -815,13 +816,18 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "txn_no" },
                 { targets:[2],data: "ref_type" },
-                { targets:[3],data: "particular" },
-                { targets:[4],data: "dr_invoice_no" },
-                { targets:[5],data: "payment_method" },
-                { targets:[6],data: "date_txn" },
-                { targets:[7],data: "posted_by" },
+                { targets:[3],data:null,
+                    render: function (data, type, full, meta){
+                        return data.ref_type+'-'+data.ref_no
+                    }
+                },
+                { targets:[4],data: "particular" },
+                { targets:[5],data: "dr_invoice_no" },
+                { targets:[6],data: "payment_method" },
+                { targets:[7],data: "date_txn" },
+                { targets:[8],data: "posted_by" },
                 { sClass: "right_align_items","orderable":false,
-                    targets:[8],data:null,
+                    targets:[9],data:null,
                     render: function (data, type, full, meta){
                         var btn_verified='<button class="btn btn-warning btn-sm" name="mark_verified" title="Mark as Verified">Verify</button>';
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info" title="Edit"><i class="fa fa-pencil"></i> </button>';
@@ -849,7 +855,7 @@ $(document).ready(function(){
                         	
                     }
                 },
-                { targets:[9],data: "cv_id",visible:false },
+                { targets:[10],data: "cv_id",visible:false },
 
 
             ]
