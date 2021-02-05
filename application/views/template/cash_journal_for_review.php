@@ -206,53 +206,59 @@
                                 <table class="table table-striped" style="width: 100% !important;">
                                     <thead>
                                     <tr style="border-bottom: solid gray;">
-                                        <td ><strong>Item </strong></td>
-                                        <td ><strong>UM</strong></td>
-                                        <td  class="align-right"><strong>Qty</strong></td>
-                                        <td  class="align-right"><strong>Unit Price</strong></td>
-                                        <td  class="align-right"><strong>Discount</strong></td>
-                                        <td  class="align-right"><strong>Gross</strong></td>
-                                        <td  class="align-right"><strong>Net Total</strong></td>
+                                        <td><strong>Item </strong></td>
+                                        <td class="align-right"><strong>Qty</strong></td>
+                                        <td><strong>UM</strong></td>
+                                        <td class="align-right"><strong>PP</strong></td>
+                                        <td class="align-right"><strong>SP</strong></td>
+                                        <td class="align-right"><strong>Discount</strong></td>
+                                        <td class="align-right"><strong>Tax</strong></td>
+                                        <td class="align-right"><strong>Gross</strong></td>
                                     </tr>
                                     </thead>
                                     <tbody>
 
-                                    <?php foreach ($items as $item) { ?>
+                                    <?php 
+                                        $gross_total=0;
+                                        foreach ($items as $item) {
+                                        $gross_total+=$item->inv_gross;
+
+                                        ?>
                                         <tr>
                                         <td><?php echo $item->product_desc; ?></td>
-                                        <td><?php echo $item->unit_name; ?></td>
                                         <td class="align-right"><?php echo $item->inv_qty; ?></td>
+                                        <td><?php echo $item->unit_name; ?></td>
+                                        <td class="align-right"><?php echo number_format($item->purchase_cost,2); ?></td>
                                         <td class="align-right"><?php echo number_format($item->inv_price,2); ?></td>
-                                        <td class="align-right"><?php echo number_format($item->inv_discount,2); ?></td>
+                                        <td class="align-right"><?php echo number_format(($item->inv_discount*$item->inv_qty),2); ?></td>
+                                        <td class="align-right"><?php echo number_format($item->inv_tax_amount,2); ?></td>
                                         <td class="align-right"><?php echo number_format($item->inv_gross,2); ?></td>
-                                        <td class="align-right"><?php echo number_format($item->inv_line_total_price,2); ?></td>
                                         </tr>
                                     <?php } ?>
                                     </tbody>
                                     <tfoot>
                                     <tr>
-                                        <td colspan="6"  class="align-right"><strong>Discount 1:</strong></td>
+                                        <td colspan="8"><hr></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="7"  class="align-right">Gross Total:</td>
+                                        <td class="align-right"><?php echo number_format($gross_total,2); ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="7"  class="align-right">Discount per Item:</td>
                                         <td class="align-right"><?php echo number_format($info->total_discount,2); ?></td>
                                     </tr>
                                     <tr>
-                                        <td colspan="6" class="align-right"><strong>Total Before Tax:</strong></td>
-                                        <td class="align-right"><?php echo number_format($info->total_before_tax,2); ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="6" class="align-right"><strong>Tax Amount:</strong></td>
-                                        <td class="align-right"><?php echo number_format($info->total_tax_amount,2); ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="6" class="align-right"><strong>Total After Tax:</strong></td>
-                                        <td class="align-right"><?php echo number_format($info->total_after_tax,2); ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="6" class="align-right"><strong>Discount 2:</strong></td>
+                                        <td colspan="7" class="align-right">Global Discount:</td>
                                         <td class="align-right"><?php echo number_format($info->total_overall_discount_amount,2); ?></td>
                                     </tr>
                                     <tr>
-                                        <td colspan="6" class="align-right"><strong>Total :</strong></td>
-                                        <td class="align-right"><?php echo number_format($info->total_after_discount,2); ?></td>
+                                        <td colspan="7" class="align-right"><strong>Total Invoice Amount:   </strong></td>
+                                        <td class="align-right">
+                                            <strong>
+                                                <?php echo number_format($info->total_after_discount,2); ?>
+                                            </strong>
+                                        </td>
                                     </tr>
                                     </tfoot>
                                 </table>

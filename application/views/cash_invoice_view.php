@@ -212,86 +212,119 @@
                 <h2 class="h2-panel-heading">Invoice # : <span id="span_invoice_no">CI-INV-YYYYMMDD-XX</span></h4>
                 <div>
                 <hr>
-                    <div class="row">
-                        <div class="col-sm-2">
-
-                            <label>SO # :</label> <br />
-                            <div class="input-group">
-                                <input type="text" name="so_no" class="form-control" readonly>
-                                <span class="input-group-addon">
-                                    <a href="#" id="link_browse" style="text-decoration: none;color:black;"><b>...</b></a>
-                                </span>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>SO # :</label> <br />
+                                <div class="input-group">
+                                    <input type="text" name="so_no" class="form-control" readonly>
+                                    <span class="input-group-addon">
+                                        <a href="#" id="link_browse" style="text-decoration: none;color:black;"><b>...</b></a>
+                                    </span>
+                                </div>
                             </div>
-
-                            <div class="hidden">
-                                <b class="required">*</b><label> Department :</label> <br />
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label><b class="required">*</b> Department :</label> <br />
                                 <select name="department" id="cbo_departments" data-default="<?php echo $accounts[0]->default_department_id; ?>" data-error-msg="Department is required." required>
                                     <option value="0">[ Create New Department ]</option>
                                     <?php foreach($departments as $department){ ?>
                                         <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
                                     <?php } ?>
-                                </select>
-                                <label>Salesperson :</label><br/>
+                                </select>                                
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label><b class="required">*</b>  Order Source :</label><br />
+                                <select name="order_source_id" id="cbo_order_source" data-default="<?php echo $accounts[0]->default_order_source_id; ?>" data-error-msg="Order Source is required." required>
+                                    <option value="0">[ Create New Order Source ]</option>
+                                    <?php foreach($order_sources as $order_source){ ?>
+                                        <option value="<?php echo $order_source->order_source_id; ?>"><?php echo $order_source->order_source_name; ?></option>
+                                    <?php } ?>
+                                </select>                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label><b class="required">*</b> Customer :</label> <br />
+                                <select name="customer" id="cbo_customers" data-error-msg="Customer is required." required>
+                                    <option value="0">[ Create New Customer ]</option>
+                                    <?php foreach($customers as $customer){ ?>
+                                        <option data-address="<?php echo $customer->address; ?>" data-contact="<?php echo $customer->contact_name; ?>" value="<?php echo $customer->customer_id; ?>" data-term-default="<?php echo ($customer->term=="none"?"":$customer->term); ?>" data-customer_type="<?php echo $customer->customer_type_id; ?>"><?php echo $customer->customer_name; ?></option>
+                                    <?php } ?>
+                                </select>    
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>Address :</label><br>
+                                <textarea class="form-control" id="txt_address" type="text" name="address" placeholder="Customer Address" rows="5"></textarea>                              
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>Contact Person :</label><br/>
+                                <input type="text" name="contact_person" id="contact_person" class="form-control" data-error-msg="Contact Person is required!" placeholder="Contact Person">                 
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>Sales person :</label><br/>
                                 <select name="salesperson_id" id="cbo_salesperson" >
                                     <option value="0">[ Create New Salesperson ]</option>
                                     <?php foreach($salespersons as $salesperson){ ?>
                                         <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->acr_name.' - '.$salesperson->fullname; ?></option>
                                     <?php } ?>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
                                 <label>Customer Type :</label><br/>
                                 <select name="customer_type_id" id="cbo_customer_type">
                                     <option value="0">Walk In</option>
                                     <?php foreach($customer_type as $customer_type){ ?>
                                         <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name?></option>
                                     <?php } ?>
-                                </select>
-                                <b>* </b>  Order Source :<br />
-                                <select name="order_source_id" id="cbo_order_source" data-default="<?php echo $accounts[0]->default_order_source_id; ?>" data-error-msg="Order Source is required." required>
-                                    <option value="0">[ Create New Order Source ]</option>
-                                    <?php foreach($order_sources as $order_source){ ?>
-                                        <option value="<?php echo $order_source->order_source_id; ?>"><?php echo $order_source->order_source_name; ?></option>
-                                    <?php } ?>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                           <b class="required">*</b><label>Customer :</label> <br />
-                            <select name="customer" id="cbo_customers" data-default="<?php echo $accounts[0]->default_customer_id; ?>" data-error-msg="Customer is required." required>
-                                <option value="0">[ Create New Customer ]</option>
-                                <?php foreach($customers as $customer){ ?>
-                                    <option data-address="<?php echo $customer->address; ?>" data-contact="<?php echo $customer->contact_name; ?>" value="<?php echo $customer->customer_id; ?>" data-term-default="<?php echo ($customer->term=="none"?"":$customer->term); ?>" data-customer_type="<?php echo $customer->customer_type_id; ?>"><?php echo $customer->customer_name; ?></option>
-                                <?php } ?>
-                            </select>
-                        </div>
-                        <div class="col-sm-4">
-                            <label>Contact Person :</label><br/>
-                            <input type="text" name="contact_person" id="contact_person" class="form-control" data-error-msg="Contact Person is required!" placeholder="Contact Person">
-                        </div>
-                        <div class="col-sm-2 ">
-                            <b class="required">*</b> <label>Invoice Date :</label> <br />
-                            <div class="input-group">
-                                <input type="text" name="date_invoice" id="invoice_default" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date Invoice" data-error-msg="Please set the date this items are issued!" required>
-                                 <span class="input-group-addon">
-                                     <i class="fa fa-calendar"></i>
-                                </span>
+                                </select>                                
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-sm-8 col-sm-offset-2">
-                            <label>Address :</label><br>
-                            <input class="form-control" id="txt_address" type="text" name="address" placeholder="Customer Address">
+                    <div class="col-md-3">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <b class="required">*</b> <label>Invoice Date :</label> <br />
+                                <div class="input-group">
+                                    <input type="text" name="date_invoice" id="invoice_default" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date Invoice" data-error-msg="Please set the date this items are issued!" required>
+                                     <span class="input-group-addon">
+                                         <i class="fa fa-calendar"></i>
+                                    </span>
+                                </div>                                
+                            </div>
                         </div>
-                        <div class="col-sm-2">
-                            <b class="required">*</b><label> Due Date :</label> <br />
-                            <div class="input-group">
-                                <input type="text" name="date_due" id="due_default" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date Due" data-error-msg="Please set the date this items are issued!" required>
-                                 <span class="input-group-addon">
-                                     <i class="fa fa-calendar"></i>
-                                </span>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label><b class="required">*</b> Due Date :</label> <br />
+                                <div class="input-group">
+                                    <input type="text" name="date_due" id="due_default" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date Due" data-error-msg="Please set the date this items are issued!" required>
+                                     <span class="input-group-addon">
+                                         <i class="fa fa-calendar"></i>
+                                    </span>
+                                </div>                                
                             </div>
                         </div>
                     </div>
+
+                </div>
+
+
                 </div>
             </form>
         </div>
@@ -352,25 +385,25 @@
                             <tr>
                                 <td colspan="8" style="height: 50px;">&nbsp;</td>
                             </tr>
-                            <tr class="hidden">
-                                <td style="text-align: right;">Discount:</td>
+                            <tr class="">
+                                <td style="text-align: right;"><strong>Discount:</strong></td>
                                 <td align="right" colspan="1" id="" color="red">
                                 <input id="txt_overall_discount" name="total_overall_discount" type="text" class="numeric form-control" value="0.00" />
                                 <input type="hidden" id="txt_overall_discount_amount" name="total_overall_discount_amount" class="numeric form-control" value="0.00" readonly></td>
 
-                                <td style="text-align: right;">Total After Discount:</td>
-                                <td id="td_total_after_discount" style="text-align: right">0.00</td>
+                                <td class="hidden" style="text-align: right;"><strong>Total After Discount:</strong></td>
+                                <td class="hidden" id="td_total_after_discount" style="text-align: right">0.00</td>
 
-                                <td style="text-align: right;" colspan="2">Total before tax:</td>
+                                <td style="text-align: right;" colspan="4"><strong>Total before tax:</strong></td>
                                 <td id="td_total_before_tax" style="text-align: right">0.00</td>
                                 <td></td>
                             </tr>
                             <tr>
-                                <td colspan="2" style="text-align: right;" class="hidden"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
-                                <td align="right" colspan="2" id="td_tax" color="red" class="hidden">0.00</td>
-                                <td colspan="6"  style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Amount :</strong></td>
+                                <td colspan="3" style="text-align: right;" class=""><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
+                                <td align="right" colspan="1" id="td_tax" color="red" class="">0.00</td>
 
-                                <!-- <td colspan="6"  style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td> -->
+
+                                <td colspan="2"  style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
 
                                 <td align="right" colspan="1" id="td_after_tax" color="red">0.00</td>
                                 <td></td>
@@ -459,7 +492,7 @@
         <div class="row">
             <div class="col-sm-12">
 
-                <label class="control-label" id="is_auto_print"> 
+                <label class="control-label hidden" id="is_auto_print"> 
                     <strong> 
                        <input type="checkbox" name="is_auto_print" for="is_auto_print" <?php if($company->is_print_auto == 1){ echo 'checked'; } ?>>
                             Print after saving?
@@ -1008,11 +1041,11 @@ $(document).ready(function(){
         $('#contact_no').keypress(validateNumber);
         _cboDepartments=$("#cbo_departments").select2({
             placeholder: "Please select Department.",
-            allowClear: true
+            allowClear: false
         });
         _cboDepartment=$("#cbo_department").select2({
             placeholder: "Please select Department.",
-            allowClear: true
+            allowClear: false
         });
         _cboCustomers=$("#cbo_customers").select2({
             placeholder: "Please select customer.",
@@ -1020,14 +1053,14 @@ $(document).ready(function(){
         });
         _cboSalesperson=$("#cbo_salesperson").select2({
             placeholder: "Please select sales person.",
-            allowClear: true
+            allowClear: false
         });
         _cboCustomerTypeCreate=$("#cbo_customer_type_create").select2({
             allowClear: false
         });
         _cboSource=$("#cbo_order_source").select2({
             placeholder: "Please select Order Source.",
-            allowClear: true
+            allowClear: false
         });
         _cboSalesperson.select2('val',null);
         _cboDepartments.select2('val', null);
@@ -1886,6 +1919,7 @@ $(document).ready(function(){
         });
         //track every changes on numeric fields
         $('#txt_overall_discount').on('keyup',function(){
+            $('.trigger-keyup').keyup();
             reComputeTotal();
         });
 
@@ -1929,17 +1963,17 @@ $(document).ready(function(){
             // var line_total_discount=discount*qty;
             // var line_total=discounted_price*qty;
 
-
+            var global_discount = $('#txt_overall_discount').val();
             var line_total = price*qty; //ok not included in the output (view) and not saved in the database
-            var line_total_discount=discount*qty;  
+            var line_total_discount=discount*qty; 
             // var line_total_discount=line_total*(discount/100);
             var new_line_total=line_total-line_total_discount; 
-            var net_vat=new_line_total/(1+tax_rate);
-            var vat_input=new_line_total-net_vat;
-
+            var total_after_global = new_line_total-(new_line_total*(global_discount/100));
+            var net_vat=total_after_global/(1+tax_rate);
+            var vat_input=total_after_global-net_vat;
 
             $(oTableItems.gross,row).find('input.numeric').val(accounting.formatNumber(line_total,2)); //gross
-            $(oTableItems.total,row).find('input.numeric').val(accounting.formatNumber(new_line_total,2)); // line total amount
+            $(oTableItems.total,row).find('input.numeric').val(accounting.formatNumber(total_after_global,2)); // line total amount
             $(oTableItems.total_line_discount,row).find('input.numeric').val(line_total_discount); //line total discount
             $(oTableItems.net_vat,row).find('input.numeric').val(net_vat); //net of vat
             $(oTableItems.vat_input,row).find('input.numeric').val(vat_input); //vat input
@@ -2291,7 +2325,7 @@ $(document).ready(function(){
     };
     var reComputeTotal=function(){
         var rows=$('#tbl_items > tbody tr');
-        var discounts=0; var before_tax=0; var after_tax=0; var inv_tax_amount=0;
+        var discounts=0; var before_tax=0; var after_tax=0; var inv_tax_amount=0; var gross=0;
         var global_discount = parseFloat(accounting.unformat($('#txt_overall_discount').val()/100));
         $.each(rows,function(){
             //console.log($(oTableItems.net_vat,$(this)));
@@ -2299,7 +2333,7 @@ $(document).ready(function(){
             total_after_global = (total - (total*global_discount));
             $(oTableItems.total_after_global,$(this)).find('input.numeric').val(accounting.formatNumber(total_after_global,2));
 
-
+            gross+=parseFloat(accounting.unformat($(oTableItems.gross,$(this)).find('input.numeric').val()));
             discounts+=parseFloat(accounting.unformat($(oTableItems.total_line_discount,$(this)).find('input.numeric').val()));
             before_tax+=parseFloat(accounting.unformat($(oTableItems.net_vat,$(this)).find('input.numeric').val()));
             inv_tax_amount+=parseFloat(accounting.unformat($(oTableItems.vat_input,$(this)).find('input.numeric').val()));
@@ -2314,7 +2348,7 @@ $(document).ready(function(){
         tbl_summary.find(oTableDetails.after_tax).html('<b>'+accounting.formatNumber(after_tax,2)+'</b>');
 
 
-        $('#txt_overall_discount_amount').val(accounting.formatNumber(after_tax * ($('#txt_overall_discount').val() / 100),2));
+        $('#txt_overall_discount_amount').val(accounting.formatNumber((gross-discounts) * ($('#txt_overall_discount').val() / 100),2));
         $('#td_total_before_tax').html(accounting.formatNumber(before_tax,2));
         $('#td_after_tax').html('<b>'+accounting.formatNumber(after_tax,2)+'</b>');
         $('#td_total_after_discount').html(accounting.formatNumber(after_tax - (after_tax * ($('#txt_overall_discount').val() / 100)),2));

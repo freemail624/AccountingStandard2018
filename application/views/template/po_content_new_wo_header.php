@@ -123,11 +123,25 @@
         	<td colspan="3" style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-left: 1px solid gray;" align="left">Total After Tax:</td>
         	<td style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-right: 1px solid gray;" align="right"><?php echo number_format($purchase_info->total_after_tax,2); ?></td>
         </tr>
-
+        <tr>
+            <td align="left" colspan="2"  style="border-bottom: 1px solid gray;border-left: 1px solid gray;"></td>
+            <td  colspan="3"  style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-left: 1px solid gray;" align="left">Shipping Cost:</td>
+            <td style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-right: 1px solid gray;" align="right"><?php echo number_format($purchase_info->shipping_cost,2); ?></td>
+        </tr>
+        <tr>
+            <td align="left" colspan="2"  style="border-bottom: 1px solid gray;border-left: 1px solid gray;"></td>
+            <td  colspan="3"  style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-left: 1px solid gray;" align="left">Custom Duties:</td>
+            <td style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-right: 1px solid gray;" align="right"><?php echo number_format($purchase_info->custom_duties,2); ?></td>
+        </tr>
+        <tr>
+            <td align="left" colspan="2"  style="border-bottom: 1px solid gray;border-left: 1px solid gray;"></td>
+            <td  colspan="3"  style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-left: 1px solid gray;" align="left">Other Amount:</td>
+            <td style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-right: 1px solid gray;" align="right"><?php echo number_format($purchase_info->other_amount,2); ?></td>
+        </tr>
         <tr>
             <td align="left" colspan="2"  style="border-bottom: 1px solid gray;border-left: 1px solid gray;">Date</td>
             <td  colspan="3"  style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-left: 1px solid gray;" align="left"><strong>Total:</strong></td>
-            <td style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-right: 1px solid gray;" align="right"><strong><?php echo number_format($purchase_info->total_after_discount,2); ?></strong></td>
+            <td style="padding: 6px;border-bottom: 1px solid gray;height: 30px;border-right: 1px solid gray;" align="right"><strong><?php echo number_format($purchase_info->grand_total_amount,2); ?></strong></td>
         </tr>
 	</table>
 

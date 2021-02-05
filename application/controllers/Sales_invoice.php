@@ -828,12 +828,14 @@ class Sales_invoice extends CORE_Controller
                 'customers.customer_name',
                 'sales_invoice.salesperson_id',
                 'sales_invoice.address',
-                'sales_order.so_no'
+                'sales_order.so_no',
+                '(SELECT count(*) FROM sales_attachments WHERE sales_invoice_id = sales_invoice.sales_invoice_id) as total_attachments'
             ),
             array(
                 array('departments','departments.department_id=sales_invoice.department_id','left'),
                 array('customers','customers.customer_id=sales_invoice.customer_id','left'),
                 array('sales_order','sales_order.sales_order_id=sales_invoice.sales_order_id','left'),
+
             ),
             'sales_invoice.sales_invoice_id DESC'
         );

@@ -209,16 +209,44 @@
             <div >
                 <div class="row">
                     <div class="col-sm-5" >
-                        Department * : <br />
+                        <label><b class="required">*</b> Department :</label> <br />
                         <select name="department" id="cbo_departments" data-default="<?php echo $accounts[0]->default_department_id; ?>" data-error-msg="Department is required." required>
                             <option value="0">[ Create New Department ]</option>
                             <?php foreach($departments as $department){ ?>
                                 <option value="<?php echo $department->department_id; ?>" data-default-cost="<?php echo $department->default_cost; ?>" data-delivery-address="<?php echo $department->delivery_address;  ?>"><?php echo $department->department_name; ?></option>
                             <?php } ?>
                         </select>
+
+                        <div class="hidden">
+                            Supplier * : <br />
+                            <select name="supplier" id="cbo_suppliers" data-error-msg="Supplier is required.">
+                                <option value="0">[ Create New Supplier ]</option>
+                                <?php foreach($suppliers as $supplier){ ?>
+                                    <option value="<?php echo $supplier->supplier_id; ?>" data-tax-type="<?php echo $supplier->tax_type_id; ?>" data-contact-person="<?php echo $supplier->contact_name; ?>"><?php echo $supplier->supplier_name; ?></option>
+                                <?php } ?>
+                            </select> 
+                            Contact Person : <br />
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-users"></i>
+                                </span>
+                                <input type="text" name="contact_person" class="form-control" placeholder="Contact Person">
+                            </div>
+                            Tax type : <br />
+                            <select name="tax_type" id="cbo_tax_type">
+                                <?php foreach($tax_types as $tax_type){ ?>
+                                    <option value="<?php echo $tax_type->tax_type_id; ?>" data-tax-rate="<?php echo $tax_type->tax_rate; ?>"><?php echo $tax_type->tax_type; ?></option>
+                                <?php } ?>
+                            </select>                            
+                            Deliver to Address * : <br />
+                            <textarea name="deliver_to_address" class="form-control" placeholder="Deliver to Address" data-error-msg="Deliver address is required!" data-default="<?php echo $company->deliver_to_address_default; ?>"></textarea>
+                            Terms : <br />
+                            <input type="text" name="terms" class="form-control">
+                        </div>
+
                     </div>
                     <div class="col-sm-3 col-sm-offset-4">
-                        PR # : <br />
+                        <label>PR # :</label> <br />
                         <div class="input-group">
                             <span class="input-group-addon">
                                 <i class="fa fa-code"></i>
@@ -227,56 +255,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="row hidden">
-                    <div class="col-sm-5">
-                        Supplier * : <br />
-                        <select name="supplier" id="cbo_suppliers" data-error-msg="Supplier is required.">
-                            <option value="0">[ Create New Supplier ]</option>
-                            <?php foreach($suppliers as $supplier){ ?>
-                                <option value="<?php echo $supplier->supplier_id; ?>" data-tax-type="<?php echo $supplier->tax_type_id; ?>" data-contact-person="<?php echo $supplier->contact_name; ?>"><?php echo $supplier->supplier_name; ?></option>
-                            <?php } ?>
-                        </select>
-                    </div>
-                    <div class="col-sm-4 col-sm-offset-3">
-                        Contact Person : <br />
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="fa fa-users"></i>
-                            </span>
-                            <input type="text" name="contact_person" class="form-control" placeholder="Contact Person">
-                        </div>
-                        <div style="display: none;">
-                            Tax type : <br />
-                            <select name="tax_type" id="cbo_tax_type">
-                                <?php foreach($tax_types as $tax_type){ ?>
-                                    <option value="<?php echo $tax_type->tax_type_id; ?>" data-tax-rate="<?php echo $tax_type->tax_rate; ?>"><?php echo $tax_type->tax_type; ?></option>
-                                <?php } ?>
-                            </select></div>
-                    </div>
-                </div>
-                <div class="row hidden">
-                    <div class="col-sm-5">
-                        Deliver to Address * : <br />
-                        <textarea name="deliver_to_address" class="form-control" placeholder="Deliver to Address" data-error-msg="Deliver address is required!" data-default="<?php echo $company->deliver_to_address_default; ?>"></textarea>
-
-                    </div>
-
-                    <div class="col-sm-4 col-sm-offset-3">
-                        Terms : <br />
-                        <input type="text" name="terms" class="form-control">
-                    </div>
-                </div>
-
-
             </div>
-
         </form>
-
     </div>
-
-
-
-    <div><br />
+    <div>
     <hr>
         <label class="control-label" style="font-family: Tahoma;"><strong>Enter PLU or Search Item :</strong></label>
         <button id="refreshproducts" class="btn-primary btn pull-right" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>  Refresh</button>
@@ -316,7 +298,7 @@
                     <tr>
                         <td colspan="7" style="height: 20px;">&nbsp;</td>
                     </tr>
-                    <tr class="hidden">
+                    <tr class="">
                         <td colspan="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount (%) :</strong></td>
                         <td align="right" colspan="1" id="" color="red">
                             <input id="txt_overall_discount" name="total_overall_discount" type="text" class="numeric form-control" value="0.00" />
@@ -328,12 +310,9 @@
                         <td align="right" colspan="2" id="td_before_tax" color="red">0.00</td>
                     </tr>
                     <tr>
-                        <td class="hidden" colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
-                        <td class="hidden" align="right" colspan="1" id="td_tax" color="red">0.00</td>
-<!--                         <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td> -->
-
-                        <td colspan="6" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Amount :</strong></td>
-
+                        <td class="" colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
+                        <td class="" align="right" colspan="1" id="td_tax" color="red">0.00</td>
+                        <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
                         <td align="right" colspan="2" id="td_after_tax" color="red">0.00</td>
                     </tr>
                     </tfoot>

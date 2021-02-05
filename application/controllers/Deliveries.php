@@ -210,7 +210,11 @@ class Deliveries extends CORE_Controller
                 $m_delivery_invoice->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
                 $m_delivery_invoice->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                 $m_delivery_invoice->total_after_discount=$this->get_numeric_value($this->input->post('total_after_discount',TRUE));
-
+                $m_delivery_invoice->shipping_cost=$this->get_numeric_value($this->input->post('shipping_cost',TRUE));
+                $m_delivery_invoice->custom_duties=$this->get_numeric_value($this->input->post('custom_duties',TRUE));
+                $m_delivery_invoice->other_amount=$this->get_numeric_value($this->input->post('other_amount',TRUE));
+                $m_delivery_invoice->grand_total_amount=$this->get_numeric_value($this->input->post('grand_total_amount',TRUE));
+                    
                 $m_delivery_invoice->save();
 
                 $dr_invoice_id=$m_delivery_invoice->last_insert_id();
@@ -346,6 +350,10 @@ class Deliveries extends CORE_Controller
                 $m_delivery_invoice->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
                 $m_delivery_invoice->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                 $m_delivery_invoice->total_after_discount=$this->get_numeric_value($this->input->post('total_after_discount',TRUE));
+                $m_delivery_invoice->shipping_cost=$this->get_numeric_value($this->input->post('shipping_cost',TRUE));
+                $m_delivery_invoice->custom_duties=$this->get_numeric_value($this->input->post('custom_duties',TRUE));
+                $m_delivery_invoice->other_amount=$this->get_numeric_value($this->input->post('other_amount',TRUE));
+                $m_delivery_invoice->grand_total_amount=$this->get_numeric_value($this->input->post('grand_total_amount',TRUE));
                 $m_delivery_invoice->modify($dr_invoice_id);
 
 

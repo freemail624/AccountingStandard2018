@@ -105,11 +105,16 @@ class Rights_link_model extends CORE_Model{
                                           (98,'8','8-6','Profit Report'),
                                           (99,'3','3-6','Sales/Cash Invoice History'),
                                           (100,'3','3-7','Customer Sales History'),
-                                          (101,'5','5-5','Agent Management'),
-                                          (102,'3','3-8','Loading Report'),
-                                          (103,'2','2-9','Purchase Request'),
-                                          (104,'12','12-8','Open Purchase Requests'),
-                                          (105,'4','4-9','Term Management')
+                                          -- (101,'5','5-5','Agent Management'),
+                                          -- (102,'3','3-8','Loading Report'),
+                                          (102,'2','2-9','Purchase Request'),
+                                          (103,'12','12-8','Open Purchase Requests'),
+                                          (104,'4','4-9','Term Management'),
+                                          (105,'17','17-1','Cash Request'),
+                                          (106,'17','17-2','Travel Orders'),
+                                          (107,'17','17-3','Incident Report'),
+                                          (108,'17','17-4','Accomplishment Report')
+
 
                                           ON DUPLICATE KEY UPDATE
                                           rights_links.parent_code=VALUES(rights_links.parent_code),

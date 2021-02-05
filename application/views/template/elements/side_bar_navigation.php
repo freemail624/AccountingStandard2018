@@ -70,7 +70,7 @@
                                 <li class="<?php echo (in_array('3-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Cash_invoice">Cash Invoice</a></li>
                                 <!-- <li class="<?php echo (in_array('3-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Dispatching">Warehouse Dispatching</a></li> -->
 
-                                <li class="<?php echo (in_array('3-8',$this->session->user_rights)?'':'hidden'); ?>"><a href="Loading">Loading Report</a></li>
+<!--                                 <li class="<?php echo (in_array('3-8',$this->session->user_rights)?'':'hidden'); ?>"><a href="Loading">Loading Report</a></li> -->
 
                                 <li class="<?php echo (in_array('3-7',$this->session->user_rights)?'':'hidden'); ?>"><a href="Customer_sale_history">Customer Sales History</a></li>
                                 <li class="<?php echo (in_array('3-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Sales_history">Sales/Cash Invoice History</a></li>
@@ -79,6 +79,19 @@
                                 <li class="<?php echo (in_array('3-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Receivable_payments">Collection Entry</a></li>
                             </ul>
                         </li>
+
+
+
+                        <li class="<?php echo (in_array('17',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="fa fa-folder"></i><span>Office Forms</span></a>
+                            <ul class="acc-menu">
+                                <li class="<?php echo (in_array('17-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Cash_request">Cash Request</a></li>
+                                <li class="<?php echo (in_array('17-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Travel_order">Travel Order</a></li>
+                                <li class="<?php echo (in_array('17-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Incident_report">Incident Report</a></li>
+  <!--                               <li class="<?php //echo (in_array('17-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Accomplishment_report">Accomplishment Report</a></li> -->
+                            </ul>
+                        </li>
+
+
                         <li class="<?php echo (in_array('15',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-stats-up"></i><span>Inventory</span></a>
                             <ul class="acc-menu">
                                 <li class="<?php echo (in_array('15-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="products">Product Management</a></li>
@@ -108,7 +121,7 @@
                                 <li class="<?php echo (in_array('5-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="suppliers">Supplier Management</a></li>
                                 <li class="<?php echo (in_array('5-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="customers">Customer Management</a></li>
                                 <li class="<?php echo (in_array('5-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Salesperson">Salesperson Management</a></li>
-                                <li class="<?php echo (in_array('5-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Agent">Agent Management</a></li>
+<!--                                 <li class="<?php //echo (in_array('5-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Agent">Agent Management</a></li> -->
                             </ul>
                         </li>
                         <li class="<?php echo (in_array('14',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-view-list-alt"></i><span>Treasury</span></a>

@@ -275,7 +275,7 @@
                                         <tr>
                                             <td><?php echo $pay->dr_invoice_no; ?></td>
                                             <td><?php echo $pay->delivered_date; ?></td>
-                                            <td><?php echo $pay->terms; ?></td>
+                                            <td><?php echo $pay->term_description; ?></td>
                                             <td><?php echo $pay->due_date; ?></td>
                                             <td><?php echo $pay->remarks; ?></td>
                                             <td align="right"><?php echo number_format($pay->payment_amount,2); ?></td>

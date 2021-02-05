@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -249,7 +248,7 @@
                             </div>
                         </div>
                         <div class="col-md-5">
-                            <label>Invoice Date :</label><br />
+                            <label><b class="required">*</b> Invoice Date :</label><br />
                             <div class="input-group">
 
                                 <input type="text" name="date_delivered" id="order_default" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Due Date" data-error-msg="Delivery Date is required!" required>
@@ -270,7 +269,7 @@
                             </div>                            
                         </div>
                         <div class="col-md-5">
-                            <label>Due Date:</label><br />
+                            <label><b class="required">*</b> Due Date:</label><br />
                             <div class="input-group">
                                 <input type="text" name="date_due" id="due_default" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Due Date" data-error-msg="Due Date is required!" required>
                                 <span class="input-group-addon">
@@ -405,7 +404,7 @@
                     <tr>
                         <td colspan="9" style="height: 20px;">&nbsp;</td>
                     </tr>
-                    <tr class="hidden">
+                    <tr class="">
                         <td colspan="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount :</strong></td>
                         <td align="right" colspan="1" id="" color="red">
                         <input id="txt_overall_discount" name="total_overall_discount" type="text" class="numeric form-control" value="0.00" />
@@ -418,12 +417,35 @@
                         <td align="right" colspan="4" id="td_before_tax" color="red">0.00</td>
                     </tr>
                     <tr>
-                        <td class="hidden" colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
-                        <td class="hidden" align="right" colspan="1" id="td_tax" color="red">0.00</td>
-                        <td colspan="6" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Amount :</strong></td>
-                        <!-- <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td> -->
+                        <td class="" colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
+                        <td class="" align="right" colspan="1" id="td_tax" color="red">0.00</td>
+                        <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
                         <td align="right" colspan="4" id="td_after_tax" color="red">0.00</td>
                     </tr>
+                    <tr>
+                        <td colspan="5" align="right"><strong>Shipping Cost :</strong> </td>
+                        <td colspan="4">
+                            <input type="text" name="shipping_cost" id="shipping_cost" class="additional-payment numeric form-control">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" align="right"><strong>Custom Duties :</strong> </td>
+                        <td colspan="5">
+                            <input type="text" name="custom_duties" id="custom_duties" class="additional-payment numeric form-control">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" align="right"><strong>Other Amounts :</strong> </td>
+                        <td colspan="4">
+                            <input type="text" name="other_amount" id="other_amount" class="additional-payment numeric form-control">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" align="right"><strong>Total Amount :</strong> </td>
+                        <td colspan="4">
+                            <input type="text" name="grand_total_amount" id="grand_total_amount" class="numeric form-control" readonly style="font-weight: bold;">
+                        </td>
+                    </tr>                    
                 </tfoot>
 
             </table>
@@ -1407,6 +1429,12 @@ $(document).ready(function(){
             $('#due_default').datepicker('setDate', 'today');
             $('#typeaheadsearch').val('');
             $('textarea[name="remarks"]').val($('textarea[name="remarks"]').data('default'));
+
+            $('#shipping_cost').val('0.00');
+            $('#custom_duties').val('0.00');
+            $('#other_amount').val('0.00');
+            reComputeTotal();
+
             getproduct().done(function(data){
                 products.clear();
                 products.local = data.data;
@@ -1444,16 +1472,18 @@ $(document).ready(function(){
             $('#cbo_departments').select2('val',data.department_id);
             $('#cbo_terms').select2('val',data.term_id);
 
-
             $('input,textarea').each(function(){
                 var _elem=$(this);
                 $.each(data,function(name,value){
                     if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
-                        _elem.val(value);
+                        if(_elem.hasClass('numeric')){
+                            _elem.val(accounting.formatNumber(value,2));
+                        }else{
+                            _elem.val(value);
+                        }
                     }
                 });
             });
-
 
             $('#modal_po_list').modal('hide');
             resetSummary();
@@ -1677,11 +1707,14 @@ $(document).ready(function(){
                     var _elem=$(this);
                     $.each(data,function(name,value){
                         if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
-                            _elem.val(value);
+                            if(_elem.hasClass('numeric')){
+                                _elem.val(accounting.formatNumber(value,2));
+                            }else{
+                                _elem.val(value);
+                            }
                         }
                     });
                 });
-
 
                 resetSummary();
 
@@ -2279,15 +2312,24 @@ $(document).ready(function(){
         $('#td_tax').html(accounting.formatNumber(tax_amount,2));
         $('#td_total_after_discount').html(accounting.formatNumber(after_tax,2));
         $('#txt_overall_discount_amount').val(accounting.formatNumber((gross-discounts-after_tax),2));
+
+        var shipping_cost=parseFloat(accounting.unformat($('#shipping_cost').val()));
+        var custom_duties=parseFloat(accounting.unformat($('#custom_duties').val()));
+        var other_amount=parseFloat(accounting.unformat($('#other_amount').val()));
+
+        var grand_total_amount = after_tax + shipping_cost + custom_duties + other_amount;
+        $('#grand_total_amount').val(accounting.formatNumber(grand_total_amount,2));
+
     };
 
-
+    $('.additional-payment').on('keyup',function(){
+        $('.numeric').keyup();
+        reComputeTotal();
+    });
 
     var reInitializeNumeric=function(){
         $('.numeric').autoNumeric('init',{mDec: 2});
     };
-
-
 
     var resetSummary=function(){
         var tbl_summary=$('#tbl_delivery_summary');

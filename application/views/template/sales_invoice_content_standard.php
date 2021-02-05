@@ -124,8 +124,10 @@
         </tr>
         <?php 
             $total_tax_amount = 0;
+            $gross_total = 0;
             foreach($sales_invoice_items as $item){
-            $total_tax_amount+=$item->inv_tax_amount; ?>
+            $total_tax_amount+=$item->inv_tax_amount;
+            $gross_total+=$item->inv_gross; ?>
         <tr>
             <td class="left right"><?php echo number_format($item->inv_qty,2); ?></td>
             <td class="left right"><?php echo $item->product_desc; ?></td>
@@ -134,7 +136,7 @@
         </tr>
         <?php }?>
         <tr>
-            <td colspan="2" class="top" rowspan="3" valign="top">
+            <td colspan="2" class="top" rowspan="4" valign="top">
                 <table width="100%" style="font-size: 8pt;">
                     <tr>
                         <td valign="top">1.</td>
@@ -151,9 +153,15 @@
                 </table>
 
             </td>
+            <td class="border" align="right">SUB TOTAL</td>
+            <td class="border" align="right">
+                <?php echo number_format($gross_total,2); ?>
+            </td>
+        </tr>
+        <tr>
             <td class="border" align="right">DISCOUNT</td>
             <td class="border" align="right">
-                <?php echo number_format($sales_info->total_discount,2); ?>
+                <?php echo number_format($sales_info->total_discount + $sales_info->total_overall_discount_amount,2); ?>
             </td>
         </tr>
         <tr>

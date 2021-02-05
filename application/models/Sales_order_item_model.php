@@ -21,14 +21,18 @@ class Sales_order_item_model extends CORE_Model
                 (n.so_discount*n.so_qty) as so_line_total_discount
 ORIGINAL QUERY OF THE FUNCTION
 */
-    $sql="SELECT o.*,(o.line_total-o.non_tax_amount)as tax_amount FROM
+    $sql="SELECT o.*,(o.so_line_total-o.non_tax_amount) as tax_amount FROM
 
                 (SELECT n.*,               
                 (n.so_price*n.so_qty) as inv_gross,
                 (n.so_price*n.so_qty) as line_total,
-                ((n.so_price*n.so_qty)/(1+tax_rate_decimal))as non_tax_amount,
-                ((n.so_price*n.so_qty)-(n.so_discount*n.so_qty))as so_line_total,
-                (n.so_discount*n.so_qty) as so_line_total_discount
+                ((((n.so_price*n.so_qty)-(n.so_discount*n.so_qty)) -  
+                (((n.so_price*n.so_qty)-(n.so_discount*n.so_qty))*(n.total_overall_discount/100))
+                ) / (1+tax_rate_decimal)) as non_tax_amount,
+                (((n.so_price*n.so_qty)-(n.so_discount*n.so_qty)) -  
+                (((n.so_price*n.so_qty)-(n.so_discount*n.so_qty))*(n.total_overall_discount/100))
+                ) as so_line_total,
+                (n.so_discount*n.so_qty) as so_line_total_discount  
 
                 -- ((n.so_price*n.so_qty)-((n.so_price*n.so_qty)*(n.so_discount/100)))as so_line_total,
                 -- ((n.so_price*n.so_qty)*(n.so_discount/100)) as so_line_total_discount,
@@ -75,7 +79,8 @@ ORIGINAL QUERY OF THE FUNCTION
                 MAX(m.so_tax_rate)as so_tax_rate,
                 (SUM(m.SoQty)-SUM(m.InvQty))as so_qty,
                 MAX(m.unit_id) as unit_id,
-                MAX(m.is_parent) as is_parent
+                MAX(m.is_parent) as is_parent,
+                MAX(m.total_overall_discount) as total_overall_discount
 
 
                 FROM
@@ -92,7 +97,8 @@ ORIGINAL QUERY OF THE FUNCTION
                     soi.batch_no,
                     soi.exp_date,
                         soi.unit_id,
-                        soi.is_parent
+                        soi.is_parent,
+                        so.total_overall_discount
                     FROM sales_order as so
                     INNER JOIN sales_order_items as soi ON so.sales_order_id=soi.sales_order_id
                     WHERE so.sales_order_id=$sales_order_id AND so.is_active=TRUE AND so.is_deleted=FALSE
@@ -114,7 +120,8 @@ ORIGINAL QUERY OF THE FUNCTION
                     sii.batch_no,
                     sii.exp_date,
                         0 as unit_id,
-                        0 as is_parent
+                        0 as is_parent,
+                        0 as total_overall_discount
 
                     FROM (sales_invoice as si
                     INNER JOIN sales_order as so ON si.sales_order_id=so.sales_order_id)
@@ -136,7 +143,8 @@ ORIGINAL QUERY OF THE FUNCTION
                     cii.batch_no,
                     cii.exp_date,
                         0 as unit_id,
-                        0 as is_parent
+                        0 as is_parent,
+                        0 as total_overall_discount
 
                     FROM (cash_invoice as ci
                     INNER JOIN sales_order as so ON ci.sales_order_id=so.sales_order_id)

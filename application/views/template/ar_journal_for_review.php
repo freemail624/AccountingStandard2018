@@ -190,14 +190,14 @@
         <table class="table table-striped" style="width: 100% !important;">
             <thead>
             <tr style="border-bottom: solid gray;">
-                <td style="width: 25%;"><strong>Item</strong></td>
+                <td style="width: 20%;"><strong>Item</strong></td>
                 <td style="width: 7%;text-align: right;"><strong>Qty</strong></td>
                 <td style="width: 5%;"><strong>UM</strong></td>
-                <td style="width: 12%;text-align: right;"><strong>Price</strong></td>
-                <td style="width: 12%;text-align: right;"><strong>Gross</strong></td>
+                <td style="width: 12%;text-align: right;"><strong>PP</strong></td>
+                <td style="width: 12%;text-align: right;"><strong>SP</strong></td>
                 <td style="width: 12%;text-align: right;"><strong>Discount </strong></td>
                 <td style="width: 12%;text-align: right;"><strong>Tax</strong></td>
-                <td style="width: 12%;text-align: right;"><strong>Net Total</strong></td>
+                <td style="width: 12%;text-align: right;"><strong>Gross</strong></td>
             </tr>
             </thead>
             <tbody>
@@ -211,11 +211,11 @@
                     <td><?php echo $item->product_desc; ?></td>
                     <td align="right"><?php echo number_format($item->inv_qty,2); ?></td>
                     <td><?php echo $item->unit_name; ?></td>
+                    <td align="right"><?php echo number_format($item->purchase_cost,2); ?></td>
                     <td align="right"><?php echo number_format($item->inv_price,2); ?></td>
-                    <td align="right"><?php echo number_format($item->inv_gross,2); ?></td>
-                    <td align="right"><?php echo number_format($item->inv_discount,2); ?></td>
+                    <td align="right"><?php echo number_format(($item->inv_discount*$item->inv_qty),2); ?></td>
                     <td align="right"><?php echo number_format($item->inv_tax_amount,2); ?></td>
-                    <td align="right"><?php echo number_format($item->inv_line_total_price,2); ?></td>
+                    <td align="right"><?php echo number_format($item->inv_gross,2); ?></td>
                 </tr>
                 <?php
                 $inv_total_price+=$item->inv_line_total_price;
@@ -227,29 +227,26 @@
             <tfoot style="text-align: right;">
 
             <tr><td colspan="8"> <hr></td></tr>
+
             <tr>
-                <td colspan="7">Discount 1:</td>
+                <td colspan="7">Gross Total:</td>
+                <td><?php echo number_format($inv_total_gross,2); ?></td>
+            </tr>
+            <tr>
+                <td colspan="7">Discount per Item:</td>
                 <td><?php echo number_format($sales_info->total_discount,2); ?></td>
             </tr>
             <tr>
-                <td colspan="7">Total Before Tax:</td>
-                <td><?php echo number_format($sales_info->total_before_tax,2); ?></td>
-            </tr>
+                <td colspan="7">Global Discount:</td>
+                <td><?php echo number_format($sales_info->total_overall_discount_amount,2); ?></td>
+            </tr>            
             <tr>
-                <td colspan="7">Tax Amount:</td>
+                <td colspan="7">Total Tax:</td>
                 <td><?php echo number_format($sales_info->total_tax_amount,2); ?></td>
             </tr>
             <tr>
-                <td colspan="7">Total After Tax</td>
-                <td><?php echo number_format($sales_info->total_after_tax,2); ?></td>
-            </tr>
-            <tr>
-                <td colspan="7">Discount 2:</td>
-                <td><?php echo number_format($sales_info->total_overall_discount_amount,2); ?></td>
-            </tr>
-            <tr>
-                <td colspan="7"><b>Total: </b></td>
-                <td><b><?php echo number_format($sales_info->total_after_discount,2); ?></b></td>
+                <td colspan="7"><b>Total Invoice Amount: </b></td>
+                <td><b><?php echo number_format($sales_info->total_after_tax,2); ?></b></td>
             </tr>
 
             </tfoot>

@@ -67,7 +67,7 @@ class Suppliers_model extends CORE_Model {
         ji.txn_no,
         ji.journal_id,
         s.supplier_name,
-        IFNULL(di.terms,ji.remarks) terms,
+        terms.term_description,
         di.date_due,
         IFNULL(di.remarks,ji.remarks) remarks,
         IFNULL(ref_no, txn_no) inv_no,
@@ -77,6 +77,7 @@ class Suppliers_model extends CORE_Model {
         INNER JOIN (SELECT * FROM journal_accounts WHERE account_id = (SELECT payable_account_id FROM account_integration)) ja ON ja.journal_id = ji.journal_id)
         LEFT JOIN suppliers s ON s.supplier_id = ji.supplier_id
         LEFT JOIN delivery_invoice di ON di.dr_invoice_no = ji.ref_no
+        LEFT JOIN terms ON terms.term_id = di.term_id
         WHERE
         ji.is_deleted=FALSE
         AND ji.is_active=TRUE

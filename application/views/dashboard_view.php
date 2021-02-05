@@ -335,7 +335,8 @@
                                                         <?php echo $company_info[0]->company_name; ?>
                                                     </h1>
                                                 </div>
-                                                  <h4 class="welcome-msg" style=""><?php echo $company_info[0]->company_address; ?></h4><br>
+                                                  <h4 class="welcome-msg" style=""><?php echo $company_info[0]->company_address; ?></h4>
+                                                  <h4 class="welcome-msg" style=""><?php echo $company_info[0]->company_address_2; ?></h4><br>
                                                 </div>                                                    
                                                 </div>
                                                 <hr style="border-color:#067cb2;!important;border-top:5px solid #03a9f4;margin-top: 0px;">

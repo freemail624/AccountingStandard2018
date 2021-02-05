@@ -109,7 +109,7 @@
         </tr>
         <tr>
             <td valign="top" class="left right bottom" style="height: 30px;min-height: 30px;" align="center">
-                <span><?php echo ($purchase_info->delivery_date!=null||$purchase_info!='0000-00-00'? date('M d,Y',strtotime($purchase_info->delivery_date)) : ""); ?></span>
+                <span><?php echo ($purchase_info->delivery_date!=null||$purchase_info->delivery_date!='0000-00-00'? date('M d,Y',strtotime($purchase_info->delivery_date)) : ""); ?></span>
             </td>
             <td valign="top" class="left right bottom" style="height: 30px;min-height: 30px;" align="center">
                 <span><?php echo $purchase_info->term_description; ?></span>
@@ -127,7 +127,7 @@
             <td width="25%" class="default-color border" valign="top" align="right">UNIT PRICE</td>
             <td width="25%" class="default-color border" valign="top" align="right">TOTAL</td>
         </tr>
-        <?php foreach($sales_invoice_items as $item){ ?>
+        <?php foreach($po_items as $item){ ?>
         <tr>
             <td class="left right"><?php echo number_format($item->po_qty,2); ?></td>
             <td class="left right"><?php echo $item->product_desc; ?></td>
@@ -159,7 +159,7 @@
                 </table>
 
             </td>
-            <td class="border" align="right">TOTAL</td>
+            <td class="border" align="right">SUB-TOTAL</td>
             <td class="border" align="right">
                 <?php echo number_format($purchase_info->total_after_discount,2); ?>
             </td>

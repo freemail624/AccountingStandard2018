@@ -5,11 +5,9 @@
             font-family: 'Calibri',sans-serif;
             font-size: 12px;
         }
-
         .border{
             border: 1px solid black!important; 
         }
-
         .default-color{
             color:#2d419b;
             font-weight: bold; 
@@ -39,7 +37,6 @@
             <td width="50%" valign="top">
                 <img src="<?php echo $company_info->logo_path; ?>" style="height: 70px; width: 300px;"> 
                 <br/><br/>
-
                 <p><?php echo $company_info->company_address; ?></p>
                 <p><?php echo $company_info->company_address_2; ?></p>
                 <span>Email : <?php echo $company_info->email_address; ?></span>
@@ -124,8 +121,10 @@
         </tr>
         <?php 
             $total_tax_amount = 0;
+            $gross_total=0;
             foreach($items as $item){
-            $total_tax_amount+=$item->inv_tax_amount; ?>
+            $total_tax_amount+=$item->inv_tax_amount;
+            $gross_total+=$item->inv_gross; ?>
         <tr>
             <td class="left right"><?php echo number_format($item->inv_qty,2); ?></td>
             <td class="left right"><?php echo $item->product_desc; ?></td>
@@ -134,7 +133,7 @@
         </tr>
         <?php }?>
         <tr>
-            <td colspan="2" class="top" rowspan="3" valign="top">
+            <td colspan="2" class="top" rowspan="6" valign="top">
                 <table width="100%" style="font-size: 8pt;">
                     <tr>
                         <td valign="top">1.</td>
@@ -151,9 +150,15 @@
                 </table>
 
             </td>
+            <td class="border" align="right">SUB TOTAL</td>
+            <td class="border" align="right">
+                <?php echo number_format($gross_total,2); ?>
+            </td>
+        </tr>
+        <tr>
             <td class="border" align="right">DISCOUNT</td>
             <td class="border" align="right">
-                <?php echo number_format($info->total_discount,2); ?>
+                <?php echo number_format($info->total_discount + $info->total_overall_discount_amount,2); ?>
             </td>
         </tr>
         <tr>
@@ -168,10 +173,20 @@
                 <?php echo number_format($info->total_after_discount,2); ?>
             </td>
         </tr>
+        <tr>
+            <td class="border" align="right"><b>TENDERED</b></td>
+            <td class="border" align="right">
+                <?php echo number_format($info->total_tendered,2); ?>
+            </td>
+        </tr>    
+        <tr>
+            <td class="border" align="right"><b>CHANGE</b></td>
+            <td class="border" align="right">
+                <?php echo number_format($info->total_change,2); ?>
+            </td>
+        </tr>                
     </table>
-
     <br/><br/><br/><br/>
-
     <?php include 'po_report_footer.php'; ?>   
 </div>
 

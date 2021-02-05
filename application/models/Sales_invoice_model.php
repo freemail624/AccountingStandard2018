@@ -160,7 +160,7 @@ $sql="SELECT main.* FROM(
             ,
             '' as memo,
             0 cr_amount,
-            SUM(sii.inv_line_total_after_global) as dr_amount
+            SUM(sii.inv_line_total_price) as dr_amount
 
             FROM `sales_invoice_items` as sii
             INNER JOIN products as p ON sii.product_id=p.product_id
@@ -180,32 +180,16 @@ $sql="SELECT main.* FROM(
             GROUP BY p.cos_account_id
 
             UNION ALL
-            
-            -- SELECT acc_discount.account_id,acc_discount.memo,
-            -- 0 as cr_amount,SUM(acc_discount.dr_amount) as dr_amount
-            --  FROM
-            -- (SELECT sii.product_id,
-
-            -- (SELECT receivable_discount_account_id FROM account_integration) as account_id
-            -- ,
-            -- '' as memo,
-            -- 0 cr_amount,
-            -- SUM((sii.inv_line_total_price - sii.inv_line_total_after_global) + sii.inv_line_total_discount) as dr_amount
-
-            -- FROM `sales_invoice_items` as sii
-            -- INNER JOIN products as p ON sii.product_id=p.product_id
-            -- WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
-            -- ) as acc_discount GROUP BY acc_discount.account_id
-
 
             SELECT
             p.sd_account_id as account_id,
             '' as memo,
             0 cr_amount,
-            SUM(sii.inv_qty*sii.inv_discount) as dr_amount
+            (si.total_discount+si.total_overall_discount_amount) as dr_amount
 
             FROM `sales_invoice_items` as sii
             INNER JOIN products as p ON sii.product_id=p.product_id
+            LEFT JOIN sales_invoice si ON si.sales_invoice_id=sii.sales_invoice_id
             WHERE sii.sales_invoice_id=$sales_invoice_id AND p.sd_account_id>0
             GROUP BY p.sd_account_id
 
@@ -227,11 +211,12 @@ $sql="SELECT main.* FROM(
             SELECT
             p.income_account_id as account_id,
             '' as memo,
-            SUM(sii.inv_non_tax_amount) cr_amount,
+            (SUM(sii.inv_non_tax_amount) + si.total_discount + si.total_overall_discount_amount) cr_amount,
             0 as dr_amount
 
             FROM `sales_invoice_items` as sii
             INNER JOIN products as p ON sii.product_id=p.product_id
+            LEFT JOIN sales_invoice si ON si.sales_invoice_id=sii.sales_invoice_id
             WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
             GROUP BY p.income_account_id
 
@@ -996,15 +981,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
         si.is_active = TRUE AND
         si.is_deleted = FALSE AND
         si.is_journal_posted = FALSE
-        AND si.is_closed = FALSE
-        AND si.sales_invoice_id IN (SELECT 
-                DISTINCT li.invoice_id
-            FROM
-                loading_items li
-                LEFT JOIN loading l ON l.loading_id = li.loading_id
-                WHERE l.is_deleted = FALSE
-                AND l.is_active = TRUE
-                GROUP BY li.invoice_id)';
+        AND si.is_closed = FALSE';
 
         return $this->db->query($sql)->result();
     }

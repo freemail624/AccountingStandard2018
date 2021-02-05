@@ -269,6 +269,11 @@ class Purchases extends CORE_Controller
                     $m_purchases->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                     $m_purchases->total_after_discount=$this->get_numeric_value($this->input->post('total_after_discount',TRUE));
 
+                    $m_purchases->shipping_cost=$this->get_numeric_value($this->input->post('shipping_cost',TRUE));
+                    $m_purchases->custom_duties=$this->get_numeric_value($this->input->post('custom_duties',TRUE));
+                    $m_purchases->other_amount=$this->get_numeric_value($this->input->post('other_amount',TRUE));
+                    $m_purchases->grand_total_amount=$this->get_numeric_value($this->input->post('grand_total_amount',TRUE));
+
                     $m_purchases->save();
 
                     $po_id=$m_purchases->last_insert_id();
@@ -373,6 +378,11 @@ class Purchases extends CORE_Controller
                     $m_purchases->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
                     $m_purchases->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                     $m_purchases->total_after_discount=$this->get_numeric_value($this->input->post('total_after_discount',TRUE));
+                    $m_purchases->shipping_cost=$this->get_numeric_value($this->input->post('shipping_cost',TRUE));
+                    $m_purchases->custom_duties=$this->get_numeric_value($this->input->post('custom_duties',TRUE));
+                    $m_purchases->other_amount=$this->get_numeric_value($this->input->post('other_amount',TRUE));
+                    $m_purchases->grand_total_amount=$this->get_numeric_value($this->input->post('grand_total_amount',TRUE));
+                    
                     $m_purchases->modify($po_id);
 
 

@@ -18,7 +18,7 @@
 
     <link type="text/css" href="assets/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet">
     <link type="text/css" href="assets/plugins/datatables/dataTables.themify.css" rel="stylesheet">
-   <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
+    <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
     <!--/twitter typehead-->
     <link href="assets/plugins/twittertypehead/twitter.typehead.css" rel="stylesheet">
@@ -220,7 +220,7 @@
             <div >
                 <div class="row">
                     <div class="col-sm-5" >
-                        Department * : <br />
+                        <b class="required">*</b> Department : <br />
                         <select name="department" id="cbo_departments" data-default="<?php echo $accounts[0]->default_department_id; ?>" data-error-msg="Department is required." required>
                             <option value="0">[ Create New Department ]</option>
                             <?php foreach($departments as $department){ ?>
@@ -238,9 +238,9 @@
                         </div>
                     </div>
                     <div class="col-sm-4">
-                        Delivery Date :<br />
+                        <b class="required">*</b> Delivery Date :<br />
                         <div class="input-group">
-                            <input type="text" name="delivery_date" id="delivery_date" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Delivery Date" data-error-msg="Delivery Date is required!">
+                            <input type="text" name="delivery_date" id="delivery_date" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Delivery Date" data-error-msg="Delivery Date is required!" required>
                              <span class="input-group-addon">
                                  <i class="fa fa-calendar"></i>
                             </span>
@@ -251,7 +251,7 @@
 
                 <div class="row">
                     <div class="col-sm-5">
-                        Supplier * : <br />
+                        <b class="required">*</b> Supplier : <br />
                         <select name="supplier" id="cbo_suppliers" data-error-msg="Supplier is required." required>
                             <option value="0">[ Create New Supplier ]</option>
                             <?php foreach($suppliers as $supplier){ ?>
@@ -289,7 +289,7 @@
 
                 <div class="row">
                     <div class="col-sm-5">
-                        Deliver to Address * : <br />
+                        <b class="required">*</b> Deliver to Address : <br />
                         <textarea name="deliver_to_address" class="form-control" placeholder="Deliver to Address" data-error-msg="Deliver address is required!" required data-default="<?php echo $company->deliver_to_address_default; ?>"></textarea>
 
                     </div>
@@ -356,7 +356,7 @@
                     <tr>
                         <td colspan="7" style="height: 20px;">&nbsp;</td>
                     </tr>
-                    <tr class="hidden">
+                    <tr class="">
                         <td colspan="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount (%) :</strong></td>
                         <td align="right" colspan="1" id="" color="red">
                             <input id="txt_overall_discount" name="total_overall_discount" type="text" class="numeric form-control" value="0.00" />
@@ -368,27 +368,41 @@
                         <td align="right" colspan="2" id="td_before_tax" color="red">0.00</td>
                     </tr>
                     <tr>
-                        <td class="hidden" colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
-                        <td class="hidden" align="right" colspan="1" id="td_tax" color="red">0.00</td>
-<!--                         <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td> -->
-
-                        <td colspan="6" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Amount :</strong></td>
-
+                        <td class="" colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
+                        <td class="" align="right" colspan="1" id="td_tax" color="red">0.00</td>
+                        <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
                         <td align="right" colspan="2" id="td_after_tax" color="red">0.00</td>
                     </tr>
+                    <tr>
+                        <td colspan="5" align="right"><strong>Shipping Cost :</strong> </td>
+                        <td colspan="2">
+                            <input type="text" name="shipping_cost" id="shipping_cost" class="additional-payment numeric form-control">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" align="right"><strong>Custom Duties :</strong> </td>
+                        <td colspan="2">
+                            <input type="text" name="custom_duties" id="custom_duties" class="additional-payment numeric form-control">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" align="right"><strong>Other Amounts :</strong> </td>
+                        <td colspan="2">
+                            <input type="text" name="other_amount" id="other_amount" class="additional-payment numeric form-control">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" align="right"><strong>Total Amount :</strong> </td>
+                        <td colspan="2">
+                            <input type="text" name="grand_total_amount" id="grand_total_amount" class="numeric form-control" readonly style="font-weight: bold;">
+                        </td>
+                    </tr>
                     </tfoot>
-
-
                 </table>
             </div>
         </form>
-
-
-
     </div>
-
-<hr>
-
+    <hr>
     <br />
     <div class="row ">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -396,11 +410,6 @@
             <div class="col-lg-12" style="padding: 0%;">
                 <textarea name="remarks" class="form-control" placeholder="Remarks" data-default="<?php echo $company->purchase_remarks; ?>"></textarea>
             </div>
-
-
-
-
-
             <div class="row" style="display: none;">
                 <div class="col-lg-4 col-lg-offset-8">
                     <div class="table-responsive">
@@ -1391,6 +1400,11 @@ $(document).ready(function(){
             $('textarea[name="remarks"]').val($('textarea[name="remarks"]').data('default'));
             $('textarea[name="deliver_to_address"]').val($('textarea[name="deliver_to_address"]').data('default'));
 
+            $('#shipping_cost').val('0.00');
+            $('#custom_duties').val('0.00');
+            $('#other_amount').val('0.00');
+            reComputeTotal();
+
             $('#delivery_date').datepicker('setDate', 'today');
             //$('#cbo_prodType').select2('val',3);
             $('#typeaheadsearch').val('');
@@ -1516,7 +1530,11 @@ $(document).ready(function(){
                 var _elem=$(this);
                 $.each(data,function(name,value){
                     if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
-                        _elem.val(value);
+                        if(_elem.hasClass('numeric')){
+                            _elem.val(accounting.formatNumber(value,2));
+                        }else{
+                            _elem.val(value);
+                        }
                     }
                 });
             });
@@ -2177,7 +2195,20 @@ $(document).ready(function(){
         $('#td_tax').html(accounting.formatNumber(tax_amount,2));
         $('#td_total_after_discount').html(accounting.formatNumber(after_tax,2));
         $('#txt_overall_discount_amount').val(accounting.formatNumber((gross-discounts-after_tax),2));
+
+        var shipping_cost=parseFloat(accounting.unformat($('#shipping_cost').val()));
+        var custom_duties=parseFloat(accounting.unformat($('#custom_duties').val()));
+        var other_amount=parseFloat(accounting.unformat($('#other_amount').val()));
+
+        var grand_total_amount = after_tax + shipping_cost + custom_duties + other_amount;
+        $('#grand_total_amount').val(accounting.formatNumber(grand_total_amount,2));
+
     };
+
+    $('.additional-payment').on('keyup',function(){
+        $('.numeric').keyup();
+        reComputeTotal();
+    });
 
     _cboDepartments.on("select2:select", function (e) {
 

@@ -170,9 +170,10 @@ class Account_integration extends CORE_Controller
                 $m_integration->payable_discount_account_id=$this->input->post('payable_discount_account_id',TRUE);
                 $m_integration->payment_to_supplier_id=$this->input->post('payment_to_supplier_id',TRUE);
                 $m_integration->supplier_wtax_account_id=$this->input->post('supplier_wtax_account_id',TRUE);
-
-
-        
+                
+                $m_integration->shipping_cost_account_id=$this->input->post('shipping_cost_account_id',TRUE);
+                $m_integration->custom_duties_account_id=$this->input->post('custom_duties_account_id',TRUE);
+                $m_integration->other_expense_account_id=$this->input->post('other_expense_account_id',TRUE);
                 $m_integration->modify(1);
 
                 $response['stat']="success";

@@ -148,7 +148,6 @@
 <div class="col-md-12">
 <div id="div_user_list">
     <div class="panel panel-default" style="border: 4px solid #2980b9;">
-<!--         <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Sales Order</b></div></a> -->
         <div class="panel-body table-responsive" >
         <h2 class="h2-panel-heading">Sales Order<small> | <a href="assets/manual/sales/Sales_Order.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
             <table id="tbl_sales_order"  class="table table-striped" cellspacing="0" width="100%">
@@ -180,11 +179,22 @@
     <h2 class="h2-panel-heading">SO # : <span id="span_so_no">SO-XXXX</span></h2><hr>
     <div class="row" style="padding: 1%;margin-top: 0%;font-family: "Source Sans Pro", "Segoe UI", "Droid Sans", Tahoma, Arial, sans-serif">
         <form id="frm_sales_order" role="form" class="form-horizontal">
-            <div>
+        <div class="row">
+            <div class="col-md-4">
                 <div class="row">
-                    <div class="col-sm-5">
-
-                        <b>* </b>  Customer : <br />
+                    <div class="col-md-12">
+                        <label><b class="required">*</b> Department : </label><br />
+                        <select name="department" id="cbo_departments" data-default="<?php echo $accounts[0]->default_department_id; ?>" data-error-msg="Department is required." required>
+                            <option value="0">[ Create New Department ]</option>
+                            <?php foreach($departments as $department){ ?>
+                                <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
+                            <?php } ?>
+                        </select>                                    
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label><b class="required">*</b> Customer :</label> <br />
                         <select name="customer" id="cbo_customers" data-error-msg="Customer is required." required>
                             <option value="0">[ Create New Customer ]</option>
                             <?php $customers = $this->db->where('is_deleted',FALSE); ?>
@@ -193,41 +203,49 @@
                             <?php foreach($customers->result() as $customer){ ?>
                             <option value="<?php echo $customer->customer_id; ?>" data-customer_type="<?php echo $customer->customer_type_id; ?>"><?php echo $customer->customer_name; ?></option>
                             <?php } ?>
-                        </select>
-
-                       <div class="hidden">
-                           <b>* </b>  Department :<br />
-                            <select name="department" id="cbo_departments" data-default="<?php echo $accounts[0]->default_department_id; ?>" data-error-msg="Department is required." required>
-                                <option value="0">[ Create New Department ]</option>
-                                <?php foreach($departments as $department){ ?>
-                                    <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
-                                <?php } ?>
-                            </select>
-                            SalesPerson :<br/>
-                            <select name="salesperson_id" id="cbo_salesperson">
-                                <option value="0">[ Create New Salesperson ]</option>
-                                <?php foreach($salespersons as $salesperson){ ?>
-                                    <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->acr_name.' - '.$salesperson->fullname; ?></option>
-                                <?php } ?>
-                            </select>
-                            Customer Type :<br>
-                            <select name="customer_type_id" id="cbo_customer_type">
-                                <option value="0">None</option>
-                                <?php foreach($customer_type as $customer_type){ ?>
-                                    <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name?></option>
-                                <?php } ?>
-                            </select>
-                            SO # :<br />
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                    <i class="fa fa-code"></i>
-                                </span>
-                                <input type="text" name="slip_no" class="form-control" placeholder="SO-YYYYMMDD-XXX" readonly>
-                            </div>
-                       </div>
+                        </select>                                    
                     </div>
-                    <div class="col-sm-3 col-sm-offset-4">
-                        Order Date : <br />
+                </div>                    
+            </div>
+            <div class="col-md-4 col-md-offset-1">
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Salesperson : </label><br/>
+                        <select name="salesperson_id" id="cbo_salesperson">
+                            <option value="0">[ Create New Salesperson ]</option>
+                            <?php foreach($salespersons as $salesperson){ ?>
+                                <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->acr_name.' - '.$salesperson->fullname; ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Customer Type : </label><br>
+                        <select name="customer_type_id" id="cbo_customer_type">
+                            <option value="0">None</option>
+                            <?php foreach($customer_type as $customer_type){ ?>
+                                <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name?></option>
+                            <?php } ?>
+                        </select>                                    
+                    </div>
+                </div>                
+            </div>
+            <div class="col-md-3">
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>SO # : </label><br />
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <i class="fa fa-code"></i>
+                            </span>
+                            <input type="text" name="slip_no" class="form-control" placeholder="SO-YYYYMMDD-XXX" readonly>
+                        </div>                                    
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Order Date : </label> <br />
                         <div class="input-group">
                             <input type="text" id="order_default" name="date_order" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date Order" data-error-msg="Please set the date this items are ordered!" required>
                                 <span class="input-group-addon">
@@ -235,17 +253,21 @@
                                 </span>
                         </div>
                     </div>
-                </div>
+                </div>                
             </div>
+        </div>
         </form>
     </div>
     <hr>
-    <div class="row" style="padding: 1%;margin-top: 0px;padding-top:0px;">
-        <label class="control-label" style="font-family: Tahoma;"><strong>Enter PLU or Search Item :</strong></label>
-        <button id="refreshproducts" class="btn-primary btn pull-right" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>  Refresh</button>
-        <div id="custom-templates">
-            <input class="typeahead" id="typeaheadsearch" type="text" placeholder="Enter PLU or Search Item">
-        </div><br />
+    <div class="row">
+        <div class="col-md-12">
+            <label class="control-label" style="font-family: Tahoma;">
+                <strong>Enter PLU or Search Item :</strong>
+            </label>
+            <button id="refreshproducts" class="btn-primary btn pull-right" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>  Refresh</button>
+            <div id="custom-templates">
+                <input class="typeahead" id="typeaheadsearch" type="text" placeholder="Enter PLU or Search Item">
+            </div><br />
             <form id="frm_items">
                 <div class="table-responsive">
                         <table id="tbl_items" class="table table-striped"  cellspacing="0" width="100%" style="font-font:tahoma;">
@@ -276,28 +298,25 @@
                             <tr>
                                 <td colspan="8" style="height: 50px;">&nbsp;</td>
                             </tr>
-                            <tr class="hidden">
+                            <tr class="">
                                 <td style="text-align: right;">Discount</td>
                                 <td align="right" colspan="1" id="" color="red">
                                 <input id="txt_overall_discount" name="total_overall_discount" type="text" class="numeric form-control" value="0.00" />
-                                <input id="txt_overall_discount_amount" name="total_overall_discount_amount" type="hidden" class="numeric form-control" value="0.00" />
+                                <input id="txt_overall_discount_amount" name="total_overall_discount_amount" type="hidden" class="numeric form-control" value="0.00" / readonly>
                                 </td>
 
-                                <td>Total After Discount:</td>
-                                <td id="td_total_after_discount" style="text-align: right">0.00</td>
+                                <td class="hidden">Total After Discount:</td>
+                                <td class="hidden" id="td_total_after_discount" style="text-align: right">0.00</td>
 
-                                <td style="text-align: right;" colspan="2">Total Before Tax:</td>
+                                <td style="text-align: right;" colspan="4">Total Before Tax:</td>
                                 <td id="td_total_before_tax" style="text-align: right">0.00</td>
                                 <td></td>
                             </tr>
                             <tr>
-                                <td class="hidden" colspan="3" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
-                                <td class="hidden" align="right" colspan="1" id="td_tax" color="red">0.00</td>
+                                <td class="" colspan="3" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
+                                <td class="" align="right" colspan="1" id="td_tax" color="red">0.00</td>
 
-
-                                <td colspan="6"  style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Amount :</strong></td>
-
-                                <!-- <td colspan="2"  style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td> -->
+                                <td colspan="2"  style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
                                 <td align="right" colspan="1" id="td_after_tax" color="red">0.00</td>
                                 <td></td>
                             </tr>
@@ -305,13 +324,12 @@
                     </table>
                 </div>
             </form>
-                <div class="row">
-                        <div class="col-lg-12">
-                            <label><strong>Remarks :</strong></label><br />
-                            <textarea name="remarks" id="remarks" class="form-control" placeholder="Remarks" data-default="<?php echo $company->sales_remarks; ?>"></textarea>
-                        </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <label><strong>Remarks :</strong></label><br />
+                    <textarea name="remarks" id="remarks" class="form-control" placeholder="Remarks" data-default="<?php echo $company->sales_remarks; ?>"></textarea>
                 </div>
-            <br />
+            </div>
             <div class="row" style="display:none;">
                 <div class="col-lg-4 col-lg-offset-8">
                     <div class="table-responsive">
@@ -337,7 +355,8 @@
                         </table>
                     </div>
                 </div>
-            </div>
+            </div>    
+        </div>
     </div>
 </div>
 <div class="panel-footer">
@@ -356,9 +375,12 @@
 </div> <!-- .container-fluid -->
 </div> <!-- #page-content -->
 </div>
+
+
+
 <div id="modal_confirmation" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog modal-sm">
-        <div class="modal-content"><!---content--->
+        <div class="modal-content"><!---content-->
             <div class="modal-header">
                 <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
                 <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Confirm Deletion</h4>
@@ -370,7 +392,7 @@
                 <button id="btn_yes" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Yes</button>
                 <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">No</button>
             </div>
-        </div><!---content---->
+        </div><!---content-->
     </div>
 </div><!---modal-->
 <div id="modal_new_customer" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
@@ -519,7 +541,7 @@
                 <button id="btn_create_customer" type="button" class="btn btn-primary"  style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span> Create</button>
                 <button id="btn_close_customer" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
             </div>
-        </div><!---content---->
+        </div><!---content-->
     </div>
 </div><!---modal-->
 <div id="modal_new_salesperson" class="modal fade" tabindex="-1" role="dialog">
@@ -784,7 +806,7 @@ $(document).ready(function(){
         }();
         _cboCustomers=$("#cbo_customers").select2({
             placeholder: "Please select customer.",
-            allowClear: true
+            allowClear: false
         });
         /*_lookUpPrice = $('#cboLookupPrice').select2({
             allowClear: false
@@ -792,15 +814,15 @@ $(document).ready(function(){
         _lookUpPrice.select2('val',1);*/
         _cboDepartments=$("#cbo_departments").select2({
             placeholder: "Please select Department.",
-            allowClear: true
+            allowClear: false
         });
         _cboDepartment=$("#cbo_department").select2({
             placeholder: "Please select Department.",
-            allowClear: true
+            allowClear: false
         });
         _cboSalesperson=$("#cbo_salesperson").select2({
             placeholder: "Please select sales person.",
-            allowClear: true
+            allowClear: false
         });
         _cboSalesperson.select2('val',null);
         /*_productType = $('#cbo_prodType').select2({
@@ -1423,6 +1445,7 @@ $(document).ready(function(){
         //track every changes on numeric fields
 
         $('#txt_overall_discount').on('keyup',function(){
+            $('.trigger-keyup').keyup();
             reComputeTotal();
         });
 
@@ -1465,17 +1488,18 @@ $(document).ready(function(){
             // var line_total_discount=discount*qty; //
             // var line_total=discounted_price*qty; //
 
-
-            var line_total = price*qty; //ok
-            var line_total_discount=discount*qty;
+            var global_discount = $('#txt_overall_discount').val();
+            var line_total = price*qty; //ok not included in the output (view) and not saved in the database
+            var line_total_discount=discount*qty; 
             // var line_total_discount=line_total*(discount/100);
             var new_line_total=line_total-line_total_discount; 
-            var net_vat=new_line_total/(1+tax_rate); //  ok
-            var vat_input=new_line_total-net_vat;  //ok
+            var total_after_global = new_line_total-(new_line_total*(global_discount/100));
+            var net_vat=total_after_global/(1+tax_rate);
+            var vat_input=total_after_global-net_vat;
 
             $(oTableItems.gross,row).find('input.numeric').val(accounting.formatNumber(line_total,2));
             $(oTableItems.total_line_discount,row).find('input.numeric').val(line_total_discount); //line total discount        //5
-            $(oTableItems.total,row).find('input.numeric').val(accounting.formatNumber(new_line_total,2)); // line total amount     //7   ok
+            $(oTableItems.total,row).find('input.numeric').val(accounting.formatNumber(total_after_global,2)); // line total amount     //7   ok
             $(oTableItems.vat_input,row).find('input.numeric').val(vat_input); //vat input                                      //8   ok
             $(oTableItems.net_vat,row).find('input.numeric').val(net_vat); //net of vat                                         //9  ok
 
@@ -1773,7 +1797,7 @@ $(document).ready(function(){
         }
         return '<tr>'+
         // DISPLAY
-        '<td ><input name="so_qty[]" type="text" class="number form-control qty" value="'+accounting.formatNumber(d.so_qty,2)+'"></td>'+unit+
+        '<td ><input name="so_qty[]" type="text" class="number form-control trigger-keyup qty" value="'+accounting.formatNumber(d.so_qty,2)+'"></td>'+unit+
         '<td >'+d.product_desc+'<input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"> <input type="text" class="hidden is_basyo" value="'+d.is_basyo+'"> <input type="text" class="hidden is_product_basyo" value="'+d.is_product_basyo+'"></td>'+
         '<td ><input name="so_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.so_price,2)+'" style="text-align:right;"></td>'+
         '<td  style=""><input name="so_discount[]" type="text" class="numeric form-control discount" value="'+ accounting.formatNumber(d.so_discount,2)+'" style="text-align:right;"></td>'+
@@ -1794,9 +1818,11 @@ $(document).ready(function(){
     };
     var reComputeTotal=function(){
         var rows=$('#tbl_items > tbody tr');
-        var discounts=0; var before_tax=0; var after_tax=0; var so_tax_amount=0;
+        var discounts=0; var before_tax=0; var after_tax=0; var so_tax_amount=0; var gross=0;
         $.each(rows,function(){
             //console.log($(oTableItems.net_vat,$(this)));
+
+            gross+=parseFloat(accounting.unformat($(oTableItems.gross,$(this)).find('input.numeric').val()));
             discounts+=parseFloat(accounting.unformat($(oTableItems.total_line_discount,$(this)).find('input.numeric').val()));
             before_tax+=parseFloat(accounting.unformat($(oTableItems.net_vat,$(this)).find('input.numeric').val()));
             so_tax_amount+=parseFloat(accounting.unformat($(oTableItems.vat_input,$(this)).find('input.numeric').val()));
@@ -1815,7 +1841,7 @@ $(document).ready(function(){
         $('#td_tax').html(accounting.formatNumber(so_tax_amount,2));*/
 
 
-        $('#txt_overall_discount_amount').val(accounting.formatNumber(after_tax * ($('#txt_overall_discount').val() / 100),2));
+        $('#txt_overall_discount_amount').val(accounting.formatNumber((gross-discounts) * ($('#txt_overall_discount').val() / 100),2));
         $('#td_total_before_tax').html(accounting.formatNumber(before_tax,2)); // ok 
         $('#td_after_tax').html('<b>'+accounting.formatNumber(after_tax,2)+'</b>'); 
         $('#td_tax').html(accounting.formatNumber(so_tax_amount,2)); //ok 

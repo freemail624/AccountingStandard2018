@@ -168,7 +168,7 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                 <li><a href="#accounts_integration_setting" data-toggle="tab" style="font-family: tahoma;"> Other Accounts</a></li>
                 <li><a href="#accounts_integration_adjustment" data-toggle="tab" style="font-family: tahoma;">Adjustments</a></li>
                 <li><a href="#accounts_integration_item_transfer" data-toggle="tab" style="font-family: tahoma;">Item Transfer</a></li>
-                <li><a href="#accounts_integration_default_settings" data-toggle="tab" style="font-family: tahoma;">Default Settings</a></li>
+                <li class="hidden"><a href="#accounts_integration_default_settings" data-toggle="tab" style="font-family: tahoma;">Default Settings</a></li>
                 <!-- <li class=""><a href="#sched_expense_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-gear"></i> Expense Group (Schedule of Expense)</a></li> -->
                 <li class=""><a href="#account_year_setting" data-toggle="tab" style="font-family: tahoma;"> Accounting Period</a></li>
                 <!-- <li class=""><a href="#invoice_counter_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-code"></i> Invoice Number</a></li> -->
@@ -528,6 +528,46 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                                 <span class="help-block m-b-none">Please select the account where supplier withholding tax will be credited.</span>
                             </div>
                         </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> * Shipping Cost Account :</label>
+                            <div class="col-md-7">
+                                <select name="shipping_cost_account_id" class="cbo_accounts" data-error-msg="Shipping Cost is required." required>
+
+                                    <?php foreach($accounts as $account){ ?>
+                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->shipping_cost_account_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
+                                    <?php } ?>
+                                </select>
+                                <span class="help-block m-b-none">Please select the account where shipping cost of purchases will be credited.</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> * Custom Duties Account :</label>
+                            <div class="col-md-7">
+                                <select name="custom_duties_account_id" class="cbo_accounts" data-error-msg="Custom Duties is required." required>
+
+                                    <?php foreach($accounts as $account){ ?>
+                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->custom_duties_account_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
+                                    <?php } ?>
+                                </select>
+                                <span class="help-block m-b-none">Please select the account where custom duties will be credited.</span>
+                            </div>
+                        </div>  
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> * Other Expense Account :</label>
+                            <div class="col-md-7">
+                                <select name="other_expense_account_id" class="cbo_accounts" data-error-msg="Other Expense is required." required>
+
+                                    <?php foreach($accounts as $account){ ?>
+                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->other_expense_account_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
+                                    <?php } ?>
+                                </select>
+                                <span class="help-block m-b-none">Please select the account where other expense will be credited.</span>
+                            </div>
+                        </div>                                                
+
                         <div class="col-sm-offset-3">
                             <button id="btn_save_supplier_accounts" type="button" class="btn btn-primary" style="font-family: tahoma;text-transform: none;"><span class=""></span> Save Supplier Configuration Changes</button>
                         </div>

@@ -23,7 +23,7 @@ class Cash_invoice_model extends CORE_Model
 		,
 		'' as memo,
 		0 cr_amount,
-		SUM(cii.inv_line_total_after_global) as dr_amount
+		SUM(cii.inv_line_total_price) as dr_amount
 
 		FROM `cash_invoice_items` as cii
 		INNER JOIN products as p ON cii.product_id=p.product_id
@@ -50,10 +50,11 @@ class Cash_invoice_model extends CORE_Model
 	        p.sd_account_id as account_id,
 	        '' as memo,
 	        0 as cr_amount,
-	        SUM(cii.inv_qty*cii.inv_discount) as dr_amount
+	        (ci.total_discount + ci.total_overall_discount_amount) as dr_amount
 
 	        FROM `cash_invoice_items` as cii
 	        INNER JOIN products as p ON cii.product_id=p.product_id
+	        LEFT JOIN cash_invoice ci ON ci.cash_invoice_id=cii.cash_invoice_id
 	        WHERE cii.cash_invoice_id=$cash_invoice_id AND p.sd_account_id>0
 	        GROUP BY p.sd_account_id
 
@@ -90,11 +91,12 @@ class Cash_invoice_model extends CORE_Model
 		SELECT
 		p.income_account_id as account_id,
 		'' as memo,
-		SUM(cii.inv_non_tax_amount) cr_amount,
+		(SUM(cii.inv_non_tax_amount) + ci.total_discount + ci.total_overall_discount_amount) cr_amount,
 		0 as dr_amount
 
 		FROM `cash_invoice_items` as cii
 		INNER JOIN products as p ON cii.product_id=p.product_id
+		LEFT JOIN cash_invoice ci ON ci.cash_invoice_id=cii.cash_invoice_id
 		WHERE cii.cash_invoice_id=$cash_invoice_id AND p.income_account_id>0
 		GROUP BY p.income_account_id
 

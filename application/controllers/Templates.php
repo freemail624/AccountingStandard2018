@@ -105,6 +105,10 @@ class Templates extends CORE_Controller {
         $this->load->model('Loading_model');
         $this->load->model('Loading_item_model');
 
+        $this->load->model('Cash_request_model');
+        $this->load->model('Travel_order_model');
+        $this->load->model('Incident_report_model');
+
         $this->load->library('M_pdf');
         $this->load->library('excel');
         $this->load->model('Email_settings_model');
@@ -1108,7 +1112,7 @@ class Templates extends CORE_Controller {
 
                 }
                 if($type=='dropdown'){
-                      echo  $this->load->view('template/sales_invoice_content_standard_dropdown_1',$data,TRUE); //load the template
+                      echo  $this->load->view('template/sales_invoice_content_standard_dropdown',$data,TRUE); //load the template
                       echo  $this->load->view('template/sales_invoice_content_menus',$data,TRUE);
 
                 }
@@ -1174,6 +1178,131 @@ class Templates extends CORE_Controller {
 
                 break;
 
+            case 'cash-request':
+                $m_cash_request=$this->Cash_request_model;
+
+                $m_company_info=$this->Company_model;
+                $type=$this->input->get('type',TRUE);
+
+                $company_info=$m_company_info->get_list();
+                $data['company_info']=$company_info[0];
+
+                $data['info']=$m_cash_request->get_request_list($filter_value)[0];
+
+                //download pdf
+                if($type=='pdf'){
+                    $file_name=$data['info']->cash_request_no;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load("A4");
+                    $content=$this->load->view('template/cash_request_content',$data,TRUE); //load the template
+                    // $pdf->setFooter('{PAGENO}{nbpg}');
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output($pdfFilePath,"D");
+
+                }
+
+                if($type=='dropdown'){
+                    echo  $this->load->view('template/cash_request_dropdown',$data,TRUE); //load the template
+                    echo $this->load->view('template/cash_request_menus',$data,TRUE);
+                }
+
+                //preview on browser
+                if($type=='preview'){
+                    $file_name=$data['info']->cash_request_no;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load("A4");
+                    $content=$this->load->view('template/cash_request_content',$data,TRUE); //load the template                
+                    // $pdf->setFooter('{PAGENO}');    
+                    $pdf->WriteHTML($content);
+                    $pdf->Output();
+                }
+
+                break;
+
+            case 'travel-order':
+                $m_travel_order=$this->Travel_order_model;
+
+                $m_company_info=$this->Company_model;
+                $type=$this->input->get('type',TRUE);
+
+                $company_info=$m_company_info->get_list();
+                $data['company_info']=$company_info[0];
+
+                $data['info']=$m_travel_order->get_travel_list($filter_value)[0];
+
+                //download pdf
+                if($type=='pdf'){
+                    $file_name=$data['info']->travel_order_no;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load("A4");
+                    $content=$this->load->view('template/travel_order_content',$data,TRUE); //load the template
+                    // $pdf->setFooter('{PAGENO}{nbpg}');
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output($pdfFilePath,"D");
+
+                }
+
+                if($type=='dropdown'){
+                    echo  $this->load->view('template/travel_order_dropdown',$data,TRUE); //load the template
+                    echo $this->load->view('template/travel_order_menus',$data,TRUE);
+                }
+
+                //preview on browser
+                if($type=='preview'){
+                    $file_name=$data['info']->travel_order_no;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load("A4");
+                    $content=$this->load->view('template/travel_order_content',$data,TRUE); //load the template                
+                    // $pdf->setFooter('{PAGENO}');    
+                    $pdf->WriteHTML($content);
+                    $pdf->Output();
+                }
+
+                break;                
+
+            case 'incident-report':
+                $m_incident=$this->Incident_report_model;
+
+                $m_company_info=$this->Company_model;
+                $type=$this->input->get('type',TRUE);
+
+                $company_info=$m_company_info->get_list();
+                $data['company_info']=$company_info[0];
+
+                $data['info']=$m_incident->get_incident_list($filter_value)[0];
+
+                //download pdf
+                if($type=='pdf'){
+                    $file_name=$data['info']->incident_report_no;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load("A4");
+                    $content=$this->load->view('template/incident_report_content',$data,TRUE); //load the template
+                    // $pdf->setFooter('{PAGENO}{nbpg}');
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output($pdfFilePath,"D");
+
+                }
+
+                if($type=='dropdown'){
+                    echo  $this->load->view('template/incident_report_dropdown',$data,TRUE); //load the template
+                    echo $this->load->view('template/incident_report_menus',$data,TRUE);
+                }
+
+                //preview on browser
+                if($type=='preview'){
+                    $file_name=$data['info']->incident_report_no;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load("A4");
+                    $content=$this->load->view('template/incident_report_content',$data,TRUE); //load the template                
+                    // $pdf->setFooter('{PAGENO}');    
+                    $pdf->WriteHTML($content);
+                    $pdf->Output();
+                }
+
+                break;   
 
             case 'proforma-invoice': //proforma invoice
                 $m_proforma_invoice=$this->Proforma_invoice_model;
@@ -1275,7 +1404,7 @@ class Templates extends CORE_Controller {
                 );
 
                 if($type=='dropdown'){
-                      echo  $this->load->view('template/cash_invoice_entries_dropdown_1',$data,TRUE); //load the template
+                      echo  $this->load->view('template/cash_invoice_entries_dropdown',$data,TRUE); //load the template
                       echo  $this->load->view('template/cash_invoice_content_menus',$data,TRUE);
 
                 }
@@ -2455,7 +2584,11 @@ class Templates extends CORE_Controller {
                         'delivery_invoice.total_after_tax',
                         'delivery_invoice.total_overall_discount_amount',
                         'delivery_invoice.total_after_discount',
-                        'CONCAT_WS(" ",delivery_invoice.terms,delivery_invoice.duration)as term_description',
+                        'delivery_invoice.shipping_cost',
+                        'delivery_invoice.custom_duties',
+                        'delivery_invoice.other_amount',
+                        'delivery_invoice.grand_total_amount',
+                        'terms.term_description',
                         'DATE_FORMAT(delivery_invoice.date_delivered,"%m/%d/%Y")as date_delivered',
                         'DATE_FORMAT(delivery_invoice.date_created,"%m/%d/%Y %r")as date_created',
                         'suppliers.supplier_name',
@@ -2468,6 +2601,7 @@ class Templates extends CORE_Controller {
 
                     array(
                         array('suppliers','suppliers.supplier_id=delivery_invoice.supplier_id','left'),
+                        array('terms','terms.term_id=delivery_invoice.term_id','left'),
                         array('purchase_order','purchase_order.purchase_order_id=delivery_invoice.purchase_order_id','left'),
                         array('user_accounts','user_accounts.user_id=delivery_invoice.posted_by_user','left')
                     )
@@ -2614,6 +2748,7 @@ class Templates extends CORE_Controller {
                     array(
                         'sales_invoice_items.*',
                         'products.product_desc',
+                        'products.purchase_cost',
                         'units.unit_name'
                     ),
 
@@ -3056,6 +3191,7 @@ class Templates extends CORE_Controller {
                         'cash_invoice_items.*',
                         'products.product_code',
                         'products.product_desc',
+                        'products.purchase_cost',
                         'units.unit_id',
                         'units.unit_name'
                     ),
@@ -3146,14 +3282,15 @@ class Templates extends CORE_Controller {
                         'payable_payments_list.*',
                         'delivery_invoice.dr_invoice_no',
                          'IF(delivery_invoice.remarks = "",journal_info.remarks, delivery_invoice.remarks) as remarks',
-                        'delivery_invoice.terms',
+                        'terms.term_description',
                         'DATE_FORMAT(delivery_invoice.date_delivered,"%m/%d/%Y") as delivered_date',
                         'DATE_FORMAT(delivery_invoice.date_due,"%m/%d/%Y") as due_date',
                          'IFNULL(journal_info.ref_no, journal_info.txn_no) as dr_invoice_no'
                     ),
                     array(
                         array('journal_info','journal_info.journal_id=payable_payments_list.dr_invoice_id','left'),
-                        array('delivery_invoice','delivery_invoice.dr_invoice_no=journal_info.ref_no','left')
+                        array('delivery_invoice','delivery_invoice.dr_invoice_no=journal_info.ref_no','left'),
+                        array('terms','terms.term_id=delivery_invoice.term_id','left')
  
                     )
 
