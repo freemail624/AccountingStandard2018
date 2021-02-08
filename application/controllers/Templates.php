@@ -2111,7 +2111,7 @@ class Templates extends CORE_Controller {
 
                 $company=$m_company->get_list();
                 $data['company_info']=$company[0];
-
+                $data['num_words']=$this->convertDecimalToWords($voucher_info[0]->amount);
                 $data['voucher_info']=$voucher_info[0];
                 $data['journal_accounts']=$this->Cash_vouchers_accounts_model->get_list(
 
@@ -2146,6 +2146,15 @@ class Templates extends CORE_Controller {
                     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                     $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
                     $content=$this->load->view('template/voucher_journal_entries_content',$data,TRUE); //load the template
+                    // $pdf->setFooter('{PAGENO}');
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output();
+                }else if($type=='check_voucher'){
+                    $file_name='Check Voucher '.$voucher_info[0]->txn_no;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                    $content=$this->load->view('template/check_voucher_content',$data,TRUE); //load the template
                     // $pdf->setFooter('{PAGENO}');
                     $pdf->WriteHTML($content);
                     //download it.
@@ -2188,6 +2197,7 @@ class Templates extends CORE_Controller {
                 $data['company_info']=$company[0];
 
                 $data['journal_info']=$journal_info[0];
+                $data['num_words']=$this->convertDecimalToWords($journal_info[0]->amount);
 
                 $m_journal_accounts=$this->Journal_account_model;
                 $data['journal_accounts']=$m_journal_accounts->get_list(
@@ -2242,6 +2252,17 @@ class Templates extends CORE_Controller {
                     //download it.
                     $pdf->Output();
                 }
+
+                if($type=='check_voucher'){
+                    $file_name='Check Voucher '.$journal_info[0]->txn_no;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                    $content=$this->load->view('template/cdj_check_voucher_content',$data,TRUE); //load the template
+                    // $pdf->setFooter('{PAGENO}');
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output();
+                }  
 
                 break;
             case 'journal-spj':

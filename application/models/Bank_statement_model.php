@@ -51,8 +51,24 @@
 			            INTERVAL 1 MONTH))
 			            
 			    AND b.year = YEAR(DATE_SUB(CONCAT('".$year."-".$month_id."-01'),
-			            INTERVAL 1 MONTH))";
+			            INTERVAL 1 MONTH))
+
+			    AND b.is_deleted=FALSE";
 	        return $this->db->query($sql)->result();
     	}
+
+	    function check_statement($month_id,$year,$account_id=0){
+	        $sql="SELECT 
+			    b.opening_balance as closing_balance
+			FROM
+			    bank_statement b
+			WHERE
+				b.account_id = $account_id
+			    AND b.month_id =$month_id
+			    AND b.year = $year
+			    AND b.is_deleted=FALSE";
+	        return $this->db->query($sql)->result();
+    	}    	
+
 	}
 ?>

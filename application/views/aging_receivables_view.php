@@ -97,13 +97,13 @@
                                                 <table id="tbl_aging" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead class="">
                                                     <tr>
-                                                        <th>Tenant Code</th>
-                                                        <th>Trade Name</th>
-                                                        <th>Current</th>
-                                                        <th>30 Days</th>
-                                                        <th>45 Days</th>
-                                                        <th>60 Days</th>
-                                                        <th>Over 90 Days</th>
+                                                        <th valign="top">Tenant Code</th>
+                                                        <th valign="top">Trade Name</th>
+                                                        <th valign="top"><center>0-30 <br/>DAYS</center></th>
+                                                        <th valign="top"><center>31-60 <br/>DAYS</center></th>
+                                                        <th valign="top"><center>61-90 <br/>DAYS</center></th>
+                                                        <th valign="top"><center>90 DAYS <br/>AND <br/>ABOVE</center></th>
+                                                        <th valign="top"><center>TOTAL <br/> SECURITY <br/> DEPOSIT</center></th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>

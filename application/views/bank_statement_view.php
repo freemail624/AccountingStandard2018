@@ -222,7 +222,9 @@
                                                             <div class="col-xs-12">
                                                             <div>
                                                             <br/>
-                                                                <span style="float: left;"><strong><i class="fa fa-bars"></i> Bank Statement Entries</strong></span>
+                                                                <span style="float: left;"><strong><i class="fa fa-bars"></i> Bank Statement Entries</strong>  
+                                                                (<span class="rows-count"></span>)
+                                                                </span>
 
                                                                 <a id="btn_refresh" style="float: right;color: green;" class="disable-select">Refresh <i class="fa fa-refresh"></i> </a>
 
@@ -387,7 +389,7 @@
 
     $(document).ready(function(){
         var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboAccounttbl;
-        var _cboAccounts; var _cboMonths; var _cboYears; var _cboYeartbl;
+        var _cboAccounts; var _cboMonths; var _cboYears; var _cboYeartbl; var _editStatus=0;
 
         var oTBJournal={
             "dr" : "td:eq(3)",
@@ -509,6 +511,7 @@
                 clearFields();
                 $('#account_id').select2('val',null);
                 clearStatement();
+                reComputeRows();
                 showList(false);
             });
 
@@ -517,7 +520,7 @@
                 _selectRowObj=$(this).closest('tr');
                 var data=dt.row(_selectRowObj).data();
                 _selectedID=data.bank_statement_id;
-
+                _editStatus=1;
                 $('#account_id').select2('val',data.account_id);
                 $('#month_id').select2('val',data.month_id);
                 $('#year_id').select2('val',data.year);
@@ -534,7 +537,7 @@
                 setTimeout(function(){
                     $('#opening_balance').val(accounting.formatNumber(data.opening_balance,2));
                     $('#closing_balance').val(accounting.formatNumber(data.closing_balance,2));
-                },200);
+                },400);
 
                 $.ajax({
                     "dataType":"html",
@@ -550,9 +553,10 @@
 
                     reInitializeNumeric();
                     reInitializeDate();
+                    reComputeRows();
 
                 });
-
+                _editStatus=0;
                 showList(false);
             });
 
@@ -603,7 +607,9 @@
             });
 
         $('#account_id, #month_id, #year_id').on('change',function(){
-            get_prev_statement();
+            if(_editStatus==0){
+                get_prev_statement();
+            }
         });        
 
         var reInitializeDate = function(){
@@ -617,11 +623,20 @@
             });
         };
 
+        var reComputeRows = function(){
+            var rowCount = $('#tbl_entries tr').length;
+            $('.rows-count').html(accounting.formatNumber(rowCount-1,0));  
+        };        
+
+
         $('#tbl_entries').on('click','button.add_account',function(){
+
             var row=$('#table_hidden').find('tr');
             row.clone().insertBefore($(this).closest('tr'));
+
             reInitializeNumeric();
             reInitializeDate();
+            reComputeRows();
         });
 
         $('#tbl_entries').on('click','button.remove_account',function(){
@@ -630,6 +645,7 @@
             if(oRow.length>1){
                 $(this).closest('tr').remove();
                 recomputeStatement();
+                reComputeRows();
             }else{
                 showNotification({"title":"Error!","stat":"error","msg":"Sorry, you cannot remove all rows."});
             }

@@ -134,6 +134,11 @@
            -moz-user-select: none; /* Firefox */
            -ms-user-select: none; /* Internet Explorer/Edge */
         }
+
+        #tbl_bank_reconciliation_list_filter{
+            display: none;
+        }
+
     </style>
     <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
 
@@ -156,16 +161,72 @@
                         <li><a href="Bank_reconciliation">Bank Reconciliation</a></li>
                     </ol>
                     <div class="container-fluid">
+
+                                            <div id="div_bank_reconciliation_list">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-body table-responsive">
+                                                    <h2 class="h2-panel-heading">
+                                                        Bank Reconciliation
+                                                    </h2><hr>
+                                                    <div class="row">
+                                                            <div class="col-sm-3"><br>
+
+                                                            <button class="btn btn-primary" id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Bank Reconciliation"><i class="fa fa-plus"></i> New Bank Reconciliation</button>
+
+                                                            </div>
+                                                            <div class="col-sm-4 col-md-offset-2">
+                                                                Account:<br/>
+                                                                <select class="form-control" id="tbl_cbo_account_id" style="width: 100%;">
+                                                                    <option value="0">All Accounts</option>
+                                                                    <?php 
+                                                                        foreach($account_titles as $account){?>
+                                                                        <option value="<?php echo $account->account_id; ?>">
+                                                                            <?php echo $account->account_title; ?>
+                                                                        </option>
+                                                                    <?php }?>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-sm-3">Search:<br><input type="text" class="form-control" id="searchbox_table" class="searchbox_table"> </div>
+                                                            </div><br>
+
+                                                            <table id="tbl_bank_reconciliation_list" class="table table-striped" cellspacing="0" width="100%">
+                                                                <thead class="">
+                                                                <tr>
+                                                                    <th width="20%">Bank Reconciliation #</th>
+                                                                    <th width="20%">Account</th>
+                                                                    <th width="20%">Bank Statement Balance</th>
+                                                                    <th width="20%">Adjusted Collected Balance</th>
+                                                                    <th width="20%"><center>Action</center></th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                </tbody>
+                                                            </table>
+                                                    </div>
+                                                    <!-- <div class="panel-footer"></div> -->
+                                                </div>
+                                            </div>
+
+                                            <div id="div_bank_reconciliation_fields" style="display: none;">
+                                                
                         <div class="panel panel-default">
-                            <!-- <div class="panel-heading">
-                               <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Bank Reconciliation</b> 
-                            </div> -->
                             <div class="panel-body">
-                            <h2 class="h2-panel-heading">Bank Reconciliation</h2><hr>
+                            <h2 class="h2-panel-heading">Bank Reconciliation
+
+                            <span style="float: right;">
+                                <button type="button" class="btn btn-success" id="btn_save">Save Changes</button>
+                                <button type="button" class="btn btn-danger" id="btn_cancel">Cancel</button>
+                            </span>
+
+                            </h2>
+
+                            <hr>
+
+
                                 <div class="row">
                                     <div class="container-fluid">
                                         <ul class="nav nav-tabs">
-                                          <li class="text-center active"><a data-toggle="tab" href="#outstanding"><b>Step 1:</b> Outstanding Check</a></li>
+                                          <li id="btn_step_1" class="text-center active"><a data-toggle="tab" href="#outstanding"><b>Step 1:</b> Outstanding Check</a></li>
 
                                           <li id="btn_step_2">
                                               <a data-toggle="tab" href="#bank_statement_tab"><b>Step 2:</b> Bank Statement</a>
@@ -546,6 +607,8 @@
                                 </div>
                             </div>
                         </div>
+                                            </div>
+
                         <div class="panel panel-default">
                             <!-- <div class="panel-heading">
                                 <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Reconciliation History</b> 
@@ -579,7 +642,25 @@
         </div>
     </div>
 </div>
+ <div id="modal_confirmation" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content"><!---content-->
+            <div class="modal-header">
+                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Confirm Deletion</h4>
+            </div>
 
+            <div class="modal-body">
+                <p id="modal-body-message">Are you sure ?</p>
+            </div>
+
+            <div class="modal-footer">
+                <button id="btn_yes" type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
+                <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal">No</button>
+            </div>
+        </div><!---content-->
+    </div>
+</div><!---modal-->
 
 <?php echo $_switcher_settings; ?>
 <?php echo $_def_js_files; ?>
@@ -600,9 +681,9 @@
 <script>
 
 $(document).ready(function(){
-    var dt; var dtHistory;  var _cboAccounts;
-    var _checkNo; var dtBankReconData; var _cboMonths; var _cboYears;
-    var load_status=0;
+    var dt; var dt_bank_reconciliation; var dtHistory;  var _cboAccounts; var _cboAccountTbl;
+    var _checkNo; var dtBankReconData; var _cboMonths; var _cboYears; 
+    var load_status=0; var _txnMode; var _selectedID;
 
     var oTBJournal={
         "dr" : "td:eq(3)",
@@ -624,6 +705,14 @@ $(document).ready(function(){
             placeholder: 'Please Select Account'
         });
 
+        _cboAccountTbl=$('#tbl_cbo_account_id').select2({
+            allowClear: true,
+            placeholder: 'Please Select Account',
+            allowClear: false
+        });
+
+        _cboAccountTbl.select2('val',0);
+
         _cboMonths=$('#month_id').select2({
             placeholder: 'Please Select Month'
         });
@@ -637,6 +726,49 @@ $(document).ready(function(){
         $('input[name="current_bank_account"]').val('');
         
         _cboAccounts.select2('val',null);
+
+        dt_bank_reconciliation=$('#tbl_bank_reconciliation_list').DataTable({
+            "dom": '<"toolbar">frtip',
+            "bLengthChange":false,
+            "ajax" : {
+                "url":"Bank_reconciliation/transaction/reconciliation-list",
+                "bDestroy": true,            
+                "data": function ( d ) {
+                    return $.extend( {}, d, {
+                            "account_id":_cboAccountTbl.val()
+                        });
+                    }
+            }, 
+            oLanguage: {
+                    sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+            },
+            processing : true,
+            "columns": [
+
+                { targets:[0],data: "bank_reconciliation_no" },
+                { targets:[1],data: "account_title" },
+                { sClass:"text-right", targets:[2],data: "adjusted_collected_balance_journal",
+                    render: function (data, type, full, meta){
+                        return accounting.formatNumber(parseFloat(data),2);
+                    }
+                },
+                { sClass:"text-right", targets:[3],data: "adjusted_collected_balance_bank",
+                    render: function (data, type, full, meta){
+                        return accounting.formatNumber(parseFloat(data),2);
+                    }
+                },
+                {
+                    targets:[4],
+                    render: function (data, type, full, meta){
+                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
+                        var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
+
+                        return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
+                    }
+                }
+            ]
+        });
+
 
         reinitializeHistory();
         reinitializeDataTable();
@@ -762,6 +894,11 @@ $(document).ready(function(){
     };
 
     var bindEventHandlers=function(){
+
+        $('#tbl_cbo_account_id').on('change', function() {
+            $('#tbl_bank_reconciliation_list').DataTable().ajax.reload()
+        });
+
         _cboAccounts.on('change', function(){
             var data = _cboAccounts.select2('data');
 
@@ -798,6 +935,12 @@ $(document).ready(function(){
             });
         };
 
+        $("#searchbox_table").keyup(function(){         
+            dt_bank_reconciliation
+                .search(this.value)
+                .draw();
+        });
+
         $('.numeric').on('keyup',function(){
             reComputeTotal();
             reInitializeNumeric();
@@ -828,6 +971,90 @@ $(document).ready(function(){
             $('#closing_balance').val(accounting.formatNumber(opening_balance_amt,2));
 
         });
+
+        $('#btn_new').click(function(){
+            _txnMode="new";
+            $('input[name="start_date"]').datepicker('setDate','today');
+            $('input[name="end_date"]').datepicker('setDate','today');
+            $('#btn_step_1').click();
+            clearFields($('#frm_reconcile'));
+            $('#tbl_bank_reconciliation').DataTable().ajax.reload();
+            showList(false);
+        }); 
+
+        $('#tbl_bank_reconciliation_list tbody').on('click','button[name="edit_info"]',function(){
+            _txnMode="edit";
+            _selectRowObj=$(this).closest('tr');
+            var data=dt_bank_reconciliation.row(_selectRowObj).data();
+            _selectedID=data.bank_recon_id;
+            _editStatus=1;
+            $('#cbo_accounts').select2('val',data.account_id);
+            $('#month_id').select2('val',data.month_id);
+            $('#year').select2('val',data.year);
+
+            $('input,textarea').each(function(){
+                var _elem=$(this);
+                $.each(data,function(name,value){
+                    if(_elem.attr('name')==name){
+                        if(_elem.hasClass('numeric')){
+                            _elem.val(accounting.formatNumber(value,2));
+                        }else{
+                            _elem.val(value);
+                        }
+                    }
+                });
+            });
+
+            setTimeout(function(){
+                $('#opening_balance').val(accounting.formatNumber(data.opening_balance,2));
+                $('#closing_balance').val(accounting.formatNumber(data.closing_balance,2));
+            },400);
+
+            $.ajax({
+                "dataType":"html",
+                "type":"POST",
+                "url":"Bank_statement/transaction/items?id="+ data.bank_statement_id,
+                "beforeSend" : function(){
+                    $('#tbl_entries > tbody').html('<tr><td align="center" colspan="7"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                }
+            }).done(function(response){
+                
+                $('#tbl_entries > tbody').html("");
+                $('#tbl_entries > tbody').html(response);
+
+                reInitializeNumeric();
+                reInitializeDate();
+
+            });
+
+            _editStatus=0;
+
+            $('#tbl_bank_reconciliation').DataTable().ajax.reload();
+            reInitializeNumeric();
+            showList(false);
+        });
+
+
+        $('#btn_yes').click(function(){
+            removeBankRecon().done(function(response){
+                showNotification(response);
+                dt_bank_reconciliation.row(_selectRowObj).remove().draw();
+            });
+        });        
+
+        $('#btn_cancel').click(function(){
+            showList(true);
+        });              
+
+        var showList=function(b){
+            if(b){
+                $('#div_bank_reconciliation_list').show();
+                $('#div_bank_reconciliation_fields').hide();
+            }else{
+                $('#div_bank_reconciliation_list').hide();
+                $('#div_bank_reconciliation_fields').show();
+            }
+        };
 
         var recomputeStatement = function(){
 
@@ -1031,19 +1258,16 @@ $(document).ready(function(){
         });
 
         $('#startDate').on('change',function(){
-            dt.destroy();
-            reinitializeDataTable();
+            $('#tbl_bank_reconciliation').DataTable().ajax.reload();
         });
 
         $('#cbo_accounts').on('change',function(){
-            dt.destroy();
             get_prev_statement();
-            reinitializeDataTable();
+            $('#tbl_bank_reconciliation').DataTable().ajax.reload();
         });
 
         $('#endDate').on('change',function(){
-            dt.destroy();
-            reinitializeDataTable();
+            $('#tbl_bank_reconciliation').DataTable().ajax.reload();
         });
 
         $('#btn_process').click(function(){
@@ -1052,16 +1276,54 @@ $(document).ready(function(){
                     showNotification(response);
 
                     if(response.stat == "success"){
-                        clearFields();
+                        clearFields($('#frm_reconcile'));
                         $('#tbl_bank_reconciliation').DataTable().ajax.reload();
                         $('#tbl_history').DataTable().ajax.reload();
                         clearStatement();
+                        dt_bank_reconciliation.row(_selectRowObj).remove().draw();
+                        showList(true);
                     }
 
                 }).always(function(){
                     showSpinningProgress($('#btn_process'));
                 })
             }
+        });
+
+        $('#btn_save').click(function(){
+
+            if(validateRequiredFieldsList()){
+                if(_txnMode=="new"){
+                    createBankRecon().done(function(response){
+                        showNotification(response);
+                        if(response.stat == 'success'){
+                            dt_bank_reconciliation.row.add(response.row_added[0]).draw();
+                            clearFields($('#frm_reconcile'));
+                            showList(true);
+                        }
+                    }).always(function(){
+                        showSpinningProgress($('#btn_save'));
+                    });
+                }else{
+                    updateBankRecon().done(function(response){
+                        showNotification(response);
+                        if(response.stat == 'success'){
+                            dt_bank_reconciliation.row(_selectRowObj).data(response.row_updated[0]).draw();
+                            clearFields($('#frm_reconcile'));
+                            showList(true);
+                        }
+                    }).always(function(){
+                        showSpinningProgress($('#btn_save'));
+                    });
+                }
+            }
+        });
+
+        $('#tbl_bank_reconciliation_list tbody').on('click','button[name="remove_info"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dt_bank_reconciliation.row(_selectRowObj).data();
+            _selectedID=data.bank_recon_id;
+            $('#modal_confirmation').modal('show');
         });
 
         $('#tbl_history tbody').on( 'click', 'tr td.details-control', function () {
@@ -1125,6 +1387,23 @@ $(document).ready(function(){
         return stat;
     };
 
+    var validateRequiredFieldsList=function(){
+        var stat=true;
+        var _msg="";
+
+        if (_cboAccounts.val() == null) {
+            _msg="Account to reconcile is required";
+            showNotification({title: 'Error!', msg: _msg, stat: 'error'});
+            stat=false;
+            return false;
+        }else {
+            stat=true;
+            return true;
+        }
+
+        return stat;
+    };
+
 
 
     var reconcileChecks=function(){
@@ -1163,6 +1442,7 @@ $(document).ready(function(){
         _data.push({name: "bank_other_additions", value: $('input[name="bank_other_additions"]').val() });
         _data.push({name: "bank_other_deductions", value: $('input[name="bank_other_deductions"]').val() });
         _data.push({name: "adjusted_collected_balance_bank", value: $('input[name="adjusted_collected_balance_bank"]').val() });
+        _data.push({name: "bank_recon_id", value: _selectedID });
         
         return $.ajax({
             "dataType":"json",
@@ -1170,6 +1450,107 @@ $(document).ready(function(){
             "url":"Bank_reconciliation/transaction/reconcile-check",
             "data":_data,
             "beforeSend": showSpinningProgress($('#btn_process'))
+        });
+    };
+
+    var createBankRecon=function(){
+        var _data=$('#frm_bank_statement').serializeArray();
+
+        $('.status:checked').each(function(){
+            var $this = $(this),
+            stat = $this.val();
+
+            _data.push({name: "check_status[]", value: stat });
+        });
+
+        dt.rows().eq(0).each( function ( index ) {
+            var row = dt.row( index );
+            var data = row.data();
+            
+            _data.push({name: "journal_id[]", value: data.journal_id });
+        });
+
+        _data.push({name: "start_date", value: $('input[name="start_date"]').val() });
+        _data.push({name: "end_date", value: $('input[name="end_date"]').val() });
+        _data.push({name: "account_id", value: _cboAccounts.select2('val') });
+        _data.push({name: "account_balance", value: $('input[name="account_balance"]').val() });
+        _data.push({name: "bank_service_charge", value: $('input[name="bank_service_charge"]').val() });
+        _data.push({name: "nsf_check", value: $('input[name="nsf_check"]').val() });
+        _data.push({name: "check_printing_charge", value: $('input[name="check_printing_charge"]').val() });
+        _data.push({name: "interest_earned", value: $('input[name="interest_earned"]').val() });
+        _data.push({name: "notes_receivable", value: $('input[name="notes_receivable"]').val() });
+        _data.push({name: "journal_other_additions", value: $('input[name="journal_other_additions"]').val() });
+        _data.push({name: "journal_other_deductions", value: $('input[name="journal_other_deductions"]').val() });
+        _data.push({name: "adjusted_collected_balance_journal", value: $('input[name="adjusted_collected_balance_journal"]').val() });
+        _data.push({name: "actual_balance", value: $('input[name="actual_balance"]').val() });
+        _data.push({name: "outstanding_checks", value: $('input[name="outstanding_checks"]').val() });
+        _data.push({name: "deposit_in_transit", value: $('input[name="deposit_in_transit"]').val() });
+        _data.push({name: "bank_other_additions", value: $('input[name="bank_other_additions"]').val() });
+        _data.push({name: "bank_other_deductions", value: $('input[name="bank_other_deductions"]').val() });
+        _data.push({name: "adjusted_collected_balance_bank", value: $('input[name="adjusted_collected_balance_bank"]').val() });
+        
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Bank_reconciliation/transaction/create",
+            "data":_data,
+            "beforeSend": showSpinningProgress($('#btn_save'))
+        });
+    }; 
+
+
+    var updateBankRecon=function(){
+        var _data=$('#frm_bank_statement').serializeArray();
+
+        $('.status:checked').each(function(){
+            var $this = $(this),
+            stat = $this.val();
+
+            _data.push({name: "check_status[]", value: stat });
+        });
+
+        dt.rows().eq(0).each( function ( index ) {
+            var row = dt.row( index );
+            var data = row.data();
+            
+            _data.push({name: "journal_id[]", value: data.journal_id });
+        });
+
+        _data.push({name: "start_date", value: $('input[name="start_date"]').val() });
+        _data.push({name: "end_date", value: $('input[name="end_date"]').val() });
+        _data.push({name: "account_id", value: _cboAccounts.select2('val') });
+        _data.push({name: "account_balance", value: $('input[name="account_balance"]').val() });
+        _data.push({name: "bank_service_charge", value: $('input[name="bank_service_charge"]').val() });
+        _data.push({name: "nsf_check", value: $('input[name="nsf_check"]').val() });
+        _data.push({name: "check_printing_charge", value: $('input[name="check_printing_charge"]').val() });
+        _data.push({name: "interest_earned", value: $('input[name="interest_earned"]').val() });
+        _data.push({name: "notes_receivable", value: $('input[name="notes_receivable"]').val() });
+        _data.push({name: "journal_other_additions", value: $('input[name="journal_other_additions"]').val() });
+        _data.push({name: "journal_other_deductions", value: $('input[name="journal_other_deductions"]').val() });
+        _data.push({name: "adjusted_collected_balance_journal", value: $('input[name="adjusted_collected_balance_journal"]').val() });
+        _data.push({name: "actual_balance", value: $('input[name="actual_balance"]').val() });
+        _data.push({name: "outstanding_checks", value: $('input[name="outstanding_checks"]').val() });
+        _data.push({name: "deposit_in_transit", value: $('input[name="deposit_in_transit"]').val() });
+        _data.push({name: "bank_other_additions", value: $('input[name="bank_other_additions"]').val() });
+        _data.push({name: "bank_other_deductions", value: $('input[name="bank_other_deductions"]').val() });
+        _data.push({name: "adjusted_collected_balance_bank", value: $('input[name="adjusted_collected_balance_bank"]').val() });
+        _data.push({name: "bank_recon_id", value: _selectedID });
+        
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Bank_reconciliation/transaction/update",
+            "data":_data,
+            "beforeSend": showSpinningProgress($('#btn_save'))
+        });
+    };        
+
+    var removeBankRecon=function(){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Bank_reconciliation/transaction/delete",
+            "data":{bank_recon_id : _selectedID}
         });
     };
 
@@ -1240,6 +1621,7 @@ $(document).ready(function(){
 
     var clearFields=function(f){
         $('input[type="text"]:not(.date-picker),textarea',f).val('0.00');
+        $('.numeric').val('0.00');
         $('input[name="current_bank_account"]').val('');
         $('input[name="account_to_reconcile"]').val('');
         _cboAccounts.select2('val',null);

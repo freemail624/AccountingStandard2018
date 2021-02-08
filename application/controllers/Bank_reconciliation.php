@@ -19,7 +19,8 @@
 					'Bank_reconciliation_details_model',
 					'Months_model',
 					'Bank_statement_model',
-					'Bank_statement_item_model'
+					'Bank_statement_item_model',
+					'Trans_model'
 				)
 			);
 		}
@@ -45,6 +46,13 @@
 		function transaction($txn) 
 		{
 			switch ($txn) {
+	            case 'reconciliation-list':
+	                $m_bank_reconciliation = $this->Bank_reconciliation_model;
+	                $account_id = $this->input->get('account_id',TRUE);
+	                $response['data'] = $m_bank_reconciliation->get_bank_reconciliation_list(null,$account_id,FALSE);
+	                echo json_encode($response);
+	                break;
+
 				case 'list':
 					$m_journal=$this->Journal_info_model;
 
@@ -57,11 +65,283 @@
 					echo json_encode($response);
 					break;
 
+				case 'create':
+					$m_bankr = $this->Bank_reconciliation_model;
+					$m_bank_details = $this->Bank_reconciliation_details_model;
+					$m_bank_statement = $this->Bank_statement_model;
+					$m_bank_statement_items = $this->Bank_statement_item_model;
+
+					$month_id = $this->input->post('month_id', TRUE);
+					$account_id = $this->input->post('account_id',TRUE);
+					$year_id = $this->input->post('year',TRUE);
+
+					$bank_statement = $m_bank_statement->get_list(array('month_id'=>$month_id,'account_id'=>$account_id,'year'=>$year_id,'is_deleted'=>FALSE,'is_active'=>TRUE));
+					$bank_statement_id = 0;
+
+					if(count($bank_statement) > 0){
+						$bank_statement_id = $bank_statement[0]->bank_statement_id;
+					}
+
+					$m_bankr->begin();
+
+					// ## Saving Bank Statement Entries
+					$opening_balance = $this->input->post('opening_balance',TRUE);
+					$closing_balance = $this->input->post('closing_balance',TRUE);
+
+					$general_ledger_date = $this->input->post('general_ledger_date',TRUE);
+					$value_date = $this->input->post('value_date',TRUE);
+					$cheque_no = $this->input->post('cheque_no',TRUE);
+					$dr_amount = $this->input->post('dr_amount',TRUE);
+					$cr_amount = $this->input->post('cr_amount',TRUE);
+					$balance_amount = $this->input->post('balance_amount', TRUE);
+					$remarks = $this->input->post('memo',TRUE);
+
+					$m_bank_statement->month_id = $month_id;
+					$m_bank_statement->year = $year_id;
+					$m_bank_statement->account_id=$account_id;
+					$m_bank_statement->opening_balance = $this->get_numeric_value($opening_balance);
+					$m_bank_statement->closing_balance = $this->get_numeric_value($closing_balance);
+
+					if($bank_statement_id > 0){
+						$m_bank_statement->modify($bank_statement_id);
+						$m_bank_statement_items->delete_via_fk($bank_statement_id);
+					}else{
+						$m_bank_statement->save();
+						$bank_statement_id = $m_bank_statement->last_insert_id();
+					}
+
+					for ($i=0; $i < count($balance_amount); $i++) { 
+						$m_bank_statement_items->bank_statement_id = $bank_statement_id;
+						$m_bank_statement_items->general_ledger_date = date('Y-m-d',strtotime($general_ledger_date[$i]));
+						$m_bank_statement_items->value_date = date('Y-m-d',strtotime($value_date[$i]));
+						$m_bank_statement_items->check_no = $cheque_no[$i];
+						$m_bank_statement_items->dr_amount = $this->get_numeric_value($dr_amount[$i]);
+						$m_bank_statement_items->cr_amount = $this->get_numeric_value($cr_amount[$i]);
+						$m_bank_statement_items->balance_amount = $this->get_numeric_value($balance_amount[$i]);
+						$m_bank_statement_items->remarks = $remarks[$i];
+						$m_bank_statement_items->save();
+					}
+
+					$m_bankr->account_id=$this->input->post('account_id',TRUE);
+					$m_bankr->account_balance=$this->get_numeric_value($this->input->post('account_balance',TRUE));
+					$m_bankr->bank_service_charge=$this->get_numeric_value($this->input->post('bank_service_charge',TRUE));
+					$m_bankr->nsf_check=$this->get_numeric_value($this->input->post('nsf_check',TRUE));
+					$m_bankr->check_printing_charge=$this->get_numeric_value($this->input->post('check_printing_charge',TRUE));
+					$m_bankr->interest_earned=$this->get_numeric_value($this->input->post('interest_earned',TRUE));
+					$m_bankr->notes_receivable=$this->get_numeric_value($this->input->post('notes_receivable',TRUE));
+					$m_bankr->actual_balance=$this->get_numeric_value($this->input->post('actual_balance',TRUE));
+					$m_bankr->outstanding_checks=$this->get_numeric_value($this->input->post('outstanding_checks',TRUE));
+					$m_bankr->deposit_in_transit=$this->get_numeric_value($this->input->post('deposit_in_transit',TRUE));
+					$m_bankr->journal_adjusted_collection=$this->get_numeric_value($this->input->post('journal_adjusted_collection',TRUE));
+					$m_bankr->bank_adjusted_collection=$this->get_numeric_value($this->input->post('bank_adjusted_collection',TRUE));
+					$m_bankr->journal_other_additions=$this->get_numeric_value($this->input->post('journal_other_additions',TRUE));
+					$m_bankr->journal_other_deductions=$this->get_numeric_value($this->input->post('journal_other_deductions',TRUE));
+					$m_bankr->bank_other_additions=$this->get_numeric_value($this->input->post('bank_other_additions',TRUE));
+					$m_bankr->bank_other_deductions=$this->get_numeric_value($this->input->post('bank_other_deductions',TRUE));
+					$m_bankr->adjusted_collected_balance_journal=$this->get_numeric_value($this->input->post('adjusted_collected_balance_journal',TRUE));
+					$m_bankr->adjusted_collected_balance_bank=$this->get_numeric_value($this->input->post('adjusted_collected_balance_bank',TRUE));
+
+					$m_bankr->bank_statement_id = $bank_statement_id;
+                    $m_bankr->start_date = date('Y-m-d',strtotime($this->input->post('start_date',TRUE)));
+                    $m_bankr->end_date = date('Y-m-d',strtotime($this->input->post('end_date',TRUE)));
+					$m_bankr->save();
+
+					$bank_recon_id = $m_bankr->last_insert_id();
+
+	                //update bank recon number base on formatted last insert id
+	                $bank_reconciliation_no='BR-'.date('Ymd').'-'.$bank_recon_id;
+	                $m_bankr->bank_reconciliation_no=$bank_reconciliation_no;
+	                $m_bankr->modify($bank_recon_id);
+
+					$m_journal=$this->Journal_info_model;
+
+					$journal_id = $this->input->post('journal_id');
+					$check_status = $this->input->post('check_status');
+
+					// for($i=0;$i<count($journal_id);$i++)
+					// {
+					// 	$m_bank_details->bank_recon_id=$bank_recon_id;
+					// 	$m_bank_details->journal_id=$journal_id[$i];
+					// 	$m_bank_details->check_status=$check_status[$i];
+					// 	$m_bank_details->save();
+
+					// 	$m_journal->is_reconciled=1;
+					// 	$m_journal->modify('journal_id='.$journal_id[$i]);
+					// }
+
+					$m_bankr->commit();
+
+					if($m_bankr->status()===TRUE){
+
+	                    $m_trans=$this->Trans_model;
+	                    $m_trans->user_id=$this->session->user_id;
+	                    $m_trans->set('trans_date','NOW()');
+	                    $m_trans->trans_key_id=1; //CRUD
+	                    $m_trans->trans_type_id=76; // TRANS TYPE
+	                    $m_trans->trans_log='Created Bank reconciliation # '.$bank_reconciliation_no;
+	                    $m_trans->save();
+
+	                    $response['title'] = 'Success!';
+	                    $response['stat'] = 'success';
+	                    $response['msg'] = 'Bank Recon successfully created';
+                		$response['row_added'] = $m_bankr->get_bank_reconciliation_list($bank_recon_id,0,FALSE);
+	                    echo json_encode($response);
+	                }
+				break;
+
+				case 'update':
+					$m_bankr = $this->Bank_reconciliation_model;
+					$m_bank_details = $this->Bank_reconciliation_details_model;
+					$m_bank_statement = $this->Bank_statement_model;
+					$m_bank_statement_items = $this->Bank_statement_item_model;
+
+					$bank_recon_id = $this->input->post('bank_recon_id', TRUE);
+
+					$month_id = $this->input->post('month_id', TRUE);
+					$account_id = $this->input->post('account_id',TRUE);
+					$year_id = $this->input->post('year',TRUE);
+
+					$bank_statement = $m_bank_statement->get_list(array('month_id'=>$month_id,'account_id'=>$account_id,'year'=>$year_id,'is_deleted'=>FALSE,'is_active'=>TRUE));
+					$bank_statement_id = 0;
+
+					if(count($bank_statement) > 0){
+						$bank_statement_id = $bank_statement[0]->bank_statement_id;
+					}
+
+					$m_bankr->begin();
+
+					// ## Saving Bank Statement Entries
+					$opening_balance = $this->input->post('opening_balance',TRUE);
+					$closing_balance = $this->input->post('closing_balance',TRUE);
+
+					$general_ledger_date = $this->input->post('general_ledger_date',TRUE);
+					$value_date = $this->input->post('value_date',TRUE);
+					$cheque_no = $this->input->post('cheque_no',TRUE);
+					$dr_amount = $this->input->post('dr_amount',TRUE);
+					$cr_amount = $this->input->post('cr_amount',TRUE);
+					$balance_amount = $this->input->post('balance_amount', TRUE);
+					$remarks = $this->input->post('memo',TRUE);
+
+					$m_bank_statement->month_id = $month_id;
+					$m_bank_statement->year = $year_id;
+					$m_bank_statement->account_id=$account_id;
+					$m_bank_statement->opening_balance = $this->get_numeric_value($opening_balance);
+					$m_bank_statement->closing_balance = $this->get_numeric_value($closing_balance);
+
+					if($bank_statement_id > 0){
+						$m_bank_statement->modify($bank_statement_id);
+						$m_bank_statement_items->delete_via_fk($bank_statement_id);
+					}else{
+						$m_bank_statement->save();
+						$bank_statement_id = $m_bank_statement->last_insert_id();
+					}
+
+					for ($i=0; $i < count($balance_amount); $i++) { 
+						$m_bank_statement_items->bank_statement_id = $bank_statement_id;
+						$m_bank_statement_items->general_ledger_date = date('Y-m-d',strtotime($general_ledger_date[$i]));
+						$m_bank_statement_items->value_date = date('Y-m-d',strtotime($value_date[$i]));
+						$m_bank_statement_items->check_no = $cheque_no[$i];
+						$m_bank_statement_items->dr_amount = $this->get_numeric_value($dr_amount[$i]);
+						$m_bank_statement_items->cr_amount = $this->get_numeric_value($cr_amount[$i]);
+						$m_bank_statement_items->balance_amount = $this->get_numeric_value($balance_amount[$i]);
+						$m_bank_statement_items->remarks = $remarks[$i];
+						$m_bank_statement_items->save();
+					}
+
+					$m_bankr->account_id=$this->input->post('account_id',TRUE);
+					$m_bankr->account_balance=$this->get_numeric_value($this->input->post('account_balance',TRUE));
+					$m_bankr->bank_service_charge=$this->get_numeric_value($this->input->post('bank_service_charge',TRUE));
+					$m_bankr->nsf_check=$this->get_numeric_value($this->input->post('nsf_check',TRUE));
+					$m_bankr->check_printing_charge=$this->get_numeric_value($this->input->post('check_printing_charge',TRUE));
+					$m_bankr->interest_earned=$this->get_numeric_value($this->input->post('interest_earned',TRUE));
+					$m_bankr->notes_receivable=$this->get_numeric_value($this->input->post('notes_receivable',TRUE));
+					$m_bankr->actual_balance=$this->get_numeric_value($this->input->post('actual_balance',TRUE));
+					$m_bankr->outstanding_checks=$this->get_numeric_value($this->input->post('outstanding_checks',TRUE));
+					$m_bankr->deposit_in_transit=$this->get_numeric_value($this->input->post('deposit_in_transit',TRUE));
+					$m_bankr->journal_adjusted_collection=$this->get_numeric_value($this->input->post('journal_adjusted_collection',TRUE));
+					$m_bankr->bank_adjusted_collection=$this->get_numeric_value($this->input->post('bank_adjusted_collection',TRUE));
+					$m_bankr->journal_other_additions=$this->get_numeric_value($this->input->post('journal_other_additions',TRUE));
+					$m_bankr->journal_other_deductions=$this->get_numeric_value($this->input->post('journal_other_deductions',TRUE));
+					$m_bankr->bank_other_additions=$this->get_numeric_value($this->input->post('bank_other_additions',TRUE));
+					$m_bankr->bank_other_deductions=$this->get_numeric_value($this->input->post('bank_other_deductions',TRUE));
+					$m_bankr->bank_statement_id = $bank_statement_id;
+                    $m_bankr->start_date = date('Y-m-d',strtotime($this->input->post('start_date',TRUE)));
+                    $m_bankr->end_date = date('Y-m-d',strtotime($this->input->post('end_date',TRUE)));
+					$m_bankr->adjusted_collected_balance_journal=$this->get_numeric_value($this->input->post('adjusted_collected_balance_journal',TRUE));
+					$m_bankr->adjusted_collected_balance_bank=$this->get_numeric_value($this->input->post('adjusted_collected_balance_bank',TRUE));                    
+					$m_bankr->modify($bank_recon_id);
+
+					$m_journal=$this->Journal_info_model;
+
+					$journal_id = $this->input->post('journal_id');
+					$check_status = $this->input->post('check_status');
+
+					// for($i=0;$i<count($journal_id);$i++)
+					// {
+					// 	$m_bank_details->bank_recon_id=$bank_recon_id;
+					// 	$m_bank_details->journal_id=$journal_id[$i];
+					// 	$m_bank_details->check_status=$check_status[$i];
+					// 	$m_bank_details->save();
+
+					// 	$m_journal->is_reconciled=1;
+					// 	$m_journal->modify('journal_id='.$journal_id[$i]);
+					// }
+
+					$m_bankr->commit();
+
+					if($m_bankr->status()===TRUE){
+
+                    	$bank_reconciliation=$m_bankr->get_list($bank_recon_id,'bank_reconciliation_no');
+
+	                    $m_trans=$this->Trans_model;
+	                    $m_trans->user_id=$this->session->user_id;
+	                    $m_trans->set('trans_date','NOW()');
+	                    $m_trans->trans_key_id=2; //CRUD
+	                    $m_trans->trans_type_id=76; // TRANS TYPE
+	                    $m_trans->trans_log='Updated Bank reconciliation # '.$bank_reconciliation[0]->bank_reconciliation_no;
+	                    $m_trans->save();
+
+	                    $response['title'] = 'Success!';
+	                    $response['stat'] = 'success';
+	                    $response['msg'] = 'Bank Recon successfully updated';
+                		$response['row_updated'] = $m_bankr->get_bank_reconciliation_list($bank_recon_id,0,FALSE);
+	                    echo json_encode($response);
+	                }
+				break;
+
+
+            case 'delete':
+                $m_ban_recon=$this->Bank_reconciliation_model;
+
+                $bank_recon_id=$this->input->post('bank_recon_id',TRUE);
+                $bank_reconciliation = $m_ban_recon->get_list($bank_recon_id);
+
+                $m_ban_recon->is_deleted=1;
+                if($m_ban_recon->modify($bank_recon_id)){
+                    $response['title']='Success!';
+                    $response['stat']='success';
+                    $response['msg']='Bank Reconciliation successfully deleted.';
+
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=3; //CRUD
+                    $m_trans->trans_type_id=76; // TRANS TYPE
+                    $m_trans->trans_log='Deleted Bank reconciliation # '.$bank_reconciliation[0]->bank_reconciliation_no;
+                    $m_trans->save();
+
+                    echo json_encode($response);
+                }
+
+                break;
+
 				case 'reconcile-check':
 					$m_bankr = $this->Bank_reconciliation_model;
 					$m_bank_details = $this->Bank_reconciliation_details_model;
 					$m_bank_statement = $this->Bank_statement_model;
 					$m_bank_statement_items = $this->Bank_statement_item_model;
+
+					$bank_recon_id = $this->input->post('bank_recon_id', TRUE);
 
 					$month_id = $this->input->post('month_id', TRUE);
 					$account_id = $this->input->post('account_id',TRUE);
@@ -133,9 +413,9 @@
 					$m_bankr->bank_other_additions=$this->get_numeric_value($this->input->post('bank_other_additions',TRUE));
 					$m_bankr->bank_other_deductions=$this->get_numeric_value($this->input->post('bank_other_deductions',TRUE));
 					$m_bankr->bank_statement_id = $bank_statement_id;
-					$m_bankr->save();
+					$m_bankr->is_processed=1;
+					$m_bankr->modify($bank_recon_id);
 
-					$bank_recon_id = $m_bankr->last_insert_id();
 					$m_journal=$this->Journal_info_model;
 
 					$journal_id = $this->input->post('journal_id');
@@ -175,8 +455,14 @@
 					$year = $this->input->post('year_id',TRUE);
 
 					if($account_id == null  || ""){ $account_id=0; }
+					$statement=$m_bank_statement->check_statement($month_id,$year,$account_id);
 
-					$response['data'] = $m_bank_statement->get_prev_balance($month_id,$year,$account_id);
+					if(count($statement)>0){
+						$response['data'] = $m_bank_statement->check_statement($month_id,$year,$account_id);
+					}else{
+						$response['data'] = $m_bank_statement->get_prev_balance($month_id,$year,$account_id);	
+					}
+
 					echo json_encode($response);
 					break;
 
@@ -184,7 +470,7 @@
 					$m_bankr = $this->Bank_reconciliation_model;
 
 					$response['data'] = $m_bankr->get_list(
-						null,
+						array("is_processed"=>TRUE),
 						'bank_reconciliation.*, CONCAT(ua.user_fname," ", ua.user_lname) AS fullname,at.account_title,DATE_FORMAT(bank_reconciliation.date_reconciled,"%m/%d/%Y") as date_reconciled',
 						array(
 							array('user_accounts as ua','ua.user_id=bank_reconciliation.reconciled_by','left'),
