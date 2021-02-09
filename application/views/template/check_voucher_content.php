@@ -188,7 +188,7 @@
                 <td width="23%">Prepared By:</td>
                 <td width="23%">Certified By:</td>
 
-                <?php if($voucher_info->cancelled_by_user > 0){  ?>
+                <?php if($voucher_info->cv_status_id == 4){  ?>
                     <td width="23%">Cancelled By:</td>
                 <?php }else{?>
                     <td width="23%">Approved:</td>
@@ -200,10 +200,12 @@
                 <td><?php echo $voucher_info->posted_by ?></td>
                 <td><?php echo $voucher_info->verified_by ?></td>
                 <td>
-                <?php if($voucher_info->cancelled_by_user > 0){ 
+                <?php if($voucher_info->cv_status_id == 4){ 
                         echo $voucher_info->cancelled_by;
-                    }else{
-                        echo $voucher_info->approved_by;
+                    }
+
+                    if($voucher_info->cv_status_id == 2){
+                        echo $company_info->approved_by;
                 }?>
                 </td>
                 <td></td>

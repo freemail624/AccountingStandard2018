@@ -70,41 +70,48 @@
     <table width="100%" cellspacing="0" id="table_aging" cellpadding="5">
     	<tr>
             <td width="15%"><b>Tenant Code</b></td>
-    		<td width="30%"><b>Trade Name</b></td>
-    		<td width="15%" class="right"><b>Current</b></td>
-    		<td width="15%" class="right"><b>30 Days</b></td>
-    		<td width="15%" class="right"><b>45 Days</b></td>
-    		<td width="15%" class="right"><b>60 Days</b></td>
-    		<td width="15%" class="right"><b>Over 90 Days</b></td>
+    		<td width="30%"><b>Tenant Name</b></td>
+    		<td width="15%" class="right"><center><b>0-30 <br/> DAYS</b></center></td>
+    		<td width="15%" class="right"><center><b>31-60 <br/> DAYS</b></center></td>
+    		<td width="15%" class="right"><center><b>61-90 <br/> DAYS</b></center></td>
+    		<td width="15%" class="right"><center><b>90 DAYS <br/> AND <br/> ABOVE</b></center></td>
+            <td width="15%" class="right"><center><b>BALANCE</b></center></td>
+            <td width="15%" class="right"><center><b>TOTAL <br/> SECURITY <br/> DEPOSIT</b></center></td>
     	</tr>
     	<tbody>
-            <?php $sum_current = 0; $sum_thirty = 0; $sum_fortyfive = 0; $sum_sixty = 0; $sum_ninety = 0; ?>
+            <?php $sum_thirty = 0; $sum_sixty = 0; $sum_ninety = 0; $sum_over_ninety = 0;
+                $sum_balance = 0; $sum_security_deposit=0;
+
+             ?>
             <?php foreach($receivables as $receivable) { ?>
 
                 <tr>
                     <td><?php echo $receivable->tenant_code; ?></td>
                     <td><?php echo $receivable->trade_name; ?></td>
-                    <td align="right"><?php echo (number_format($receivable->balance_current,2) == 0 ? '' : number_format($receivable->balance_current,2)); ?></td>
                     <td align="right"><?php echo (number_format($receivable->balance_thirty_days,2) == 0 ? '' : number_format($receivable->balance_thirty_days,2)); ?></td>
-                    <td align="right"><?php echo (number_format($receivable->balance_fortyfive_days,2) == 0 ? '' : number_format($receivable->balance_fortyfive_days,2)); ?></td>
                     <td align="right"><?php echo (number_format($receivable->balance_sixty_days,2) == 0 ? '' : number_format($receivable->balance_sixty_days,2)); ?></td>
+                    <td align="right"><?php echo (number_format($receivable->balance_ninety_days,2) == 0 ? '' : number_format($receivable->balance_ninety_days,2)); ?></td>
                     <td align="right"><?php echo (number_format($receivable->balance_over_ninetydays,2) == 0 ? '' : number_format($receivable->balance_over_ninetydays,2)); ?></td>
+                    <td align="right"><?php echo (number_format($receivable->total_tenant_balance,2) == 0 ? '' : number_format($receivable->total_tenant_balance,2)); ?></td>
+                    <td align="right"><?php echo (number_format($receivable->total_security_deposit,2) == 0 ? '' : number_format($receivable->total_security_deposit,2)); ?></td>
                 </tr>
-              <?php $sum_current += $receivable->balance_current; 
-                    $sum_thirty += $receivable->balance_thirty_days;
-                    $sum_fortyfive += $receivable->balance_fortyfive_days;
+              <?php $sum_thirty += $receivable->balance_thirty_days;
                     $sum_sixty += $receivable->balance_sixty_days;
-                    $sum_ninety += $receivable->balance_over_ninetydays;
+                    $sum_ninety += $receivable->balance_ninety_days;
+                    $sum_over_ninety += $receivable->balance_over_ninetydays;
+                    $sum_balance += $receivable->total_tenant_balance;
+                    $sum_security_deposit += $receivable->total_security_deposit;
             ?>
             <?php } ?>
             <tr >
                 <td></td>
                 <td></td>
-                <td align="right"><b><?php echo number_format($sum_current,2); ?></b></td>
                 <td align="right"><b><?php echo number_format($sum_thirty,2); ?></b></td>
-                <td align="right"><b><?php echo number_format($sum_fortyfive,2); ?></b></td>
                 <td align="right"><b><?php echo number_format($sum_sixty,2); ?></b></td>
                 <td align="right"><b><?php echo number_format($sum_ninety,2); ?></b></td>
+                <td align="right"><b><?php echo number_format($sum_over_ninety,2); ?></b></td>
+                <td align="right"><b><?php echo number_format($sum_balance,2); ?></b></td>
+                <td align="right"><b><?php echo number_format($sum_security_deposit,2); ?></b></td>
             </tr>
     	</tbody>
     </table>

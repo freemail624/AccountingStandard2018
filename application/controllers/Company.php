@@ -62,6 +62,10 @@ class Company extends CORE_Controller
                 $m_company->rdo_no=$this->input->post('rdo_no',TRUE);
                 $m_company->nature_of_business=$this->input->post('nature_of_business',TRUE);
                 $m_company->industry_classification=$this->input->post('industry_classification',TRUE);
+
+                // Check Voucher Settings
+
+                $m_company->approved_by=$this->input->post('approved_by',TRUE);
                 $m_company->save();
 
                 $response['title']='Success!';

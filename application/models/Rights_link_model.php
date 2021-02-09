@@ -108,7 +108,8 @@ class Rights_link_model extends CORE_Model{
                                           (122,'17','17-4','Schedule of Creditable Input Tax'),
                                           (123,'9','9-27','Operating Expense'),
                                           (124,'11','11-2','Bank Statement'),
-                                          (125,'1','1-9','Check Summary')
+                                          (125,'1','1-9','Check Summary'),
+                                          (126,'9','9-28','AR Schedule - Tenants')
 
 
                                           ON DUPLICATE KEY UPDATE

@@ -340,7 +340,23 @@
                                                                <input type="text" name="industry_classification" class="form-control" value="<?php echo $company->industry_classification; ?>" placeholder="Industry Classification" data-error-msg="Industry Classification is required!">
                                                            </div>
                                                        </div>
-                                                   </div>                                                                                      
+                                                   </div>
+                                                  <br/>     
+                                                  <h2 class="h2-panel-heading">
+                                                    <i class="fa fa-file-o"></i> Check Voucher Settings
+                                                  </h2><hr>
+                                                  <div class="form-group">
+                                                       <label class="col-md-2 col-md-offset-1 control-label"> <strong> Approved By :</strong></label>
+                                                       <div class="col-md-7">
+                                                           <div class="input-group">
+                                                                <span class="input-group-addon">
+                                                                    <i class="fa fa-user"></i>
+                                                                </span>
+                                                               <input type="text" name="approved_by" class="form-control" value="<?php echo $company->approved_by; ?>" placeholder="Approved By" data-error-msg="Approved By is required!" required>
+                                                           </div>
+                                                       </div>
+                                                   </div>
+
                                                </form>
                                                     <br /><br />
                                             </div>

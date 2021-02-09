@@ -485,30 +485,33 @@ GROUP BY n.customer_id HAVING total_balance > 0";
         p.tenant_id,
         bt.tenant_code,
         bt.trade_name,
+        sd.total_security_deposit,
         p.total_payment,
         p.total_balance,
-        p.balance_current,
         p.balance_thirty_days,
-        p.balance_fortyfive_days,
         p.balance_sixty_days,
-        p.balance_over_ninetydays
+        p.balance_ninety_days,
+        p.balance_over_ninetydays,
+        (p.total_balance - p.total_payment) as total_tenant_balance
 
             FROM (SELECT 
                 @balance:=  IFNULL(bp.total_payment,0) as total_payment,
+
+                -- Over 90 Days
                 CONVERT( IF(@balance < (o.over_ninetydays ) , (o.over_ninetydays - @balance ), (o.over_ninetydays - o.over_ninetydays  ) )  , DECIMAL (20 , 2 ))as  balance_over_ninetydays,
-                CONVERT( IF(@balance < o.over_ninetydays , @balance := @balance-@balance , @balance:= @balance-o.over_ninetydays ), DECIMAL (20 , 2 )) as rem_after_ninety,
+                CONVERT( IF(@balance < o.over_ninetydays , @balance := @balance-@balance , @balance:= @balance-o.over_ninetydays ), DECIMAL (20 , 2 )) as rem_after_over_ninety,
                 
+                -- 90 Days
+                CONVERT( IF(@balance < (o.ninety_days ) , (o.ninety_days - @balance ), (o.ninety_days - o.ninety_days  ) )  , DECIMAL (20 , 2 ))as  balance_ninety_days,
+                CONVERT( IF(@balance < o.ninety_days , @balance := @balance-@balance , @balance:= @balance-o.ninety_days ), DECIMAL (20 , 2 )) as rem_after_ninety,
+            
+                -- 60 Days
                 CONVERT( IF(@balance < (o.sixty_days ) , (o.sixty_days - @balance ), (o.sixty_days - o.sixty_days  ) )  , DECIMAL (20 , 2 ))as  balance_sixty_days,
                 CONVERT( IF(@balance < o.sixty_days , @balance := @balance-@balance , @balance:= @balance-o.sixty_days ), DECIMAL (20 , 2 )) as rem_after_sixty,
-                
-                CONVERT( IF(@balance < (o.fortyfive_days ) , (o.fortyfive_days - @balance ), (o.fortyfive_days - o.fortyfive_days  ) )  , DECIMAL (20 , 2 ))as  balance_fortyfive_days,
-                CONVERT( IF(@balance < o.fortyfive_days , @balance := @balance-@balance , @balance:= @balance-o.fortyfive_days ), DECIMAL (20 , 2 )) as rem_after_fortyfive,
-                
+
+                -- 30 Days
                 CONVERT( IF(@balance < (o.thirty_days ) , (o.thirty_days - @balance ), (o.thirty_days - o.thirty_days  ) )  , DECIMAL (20 , 2 ))as  balance_thirty_days,
                 CONVERT( IF(@balance < o.thirty_days , @balance := @balance-@balance , @balance:= @balance-o.thirty_days ), DECIMAL (20 , 2 )) as rem_after_thirty,
-                
-                CONVERT( IF(@balance < (o.current ) , (o.current - @balance ), (o.current - o.current  ) )  , DECIMAL (20 , 2 ))as  balance_current,
-                CONVERT( IF(@balance < o.current , @balance := @balance-@balance , @balance:= @balance-o.current ), DECIMAL (20 , 2 )) as rem_after_current,
                 
                 o.*
                 
@@ -516,25 +519,22 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                     (SELECT
                     n.tenant_id, 
                     SUM(n.over_90days) over_ninetydays,
+                    SUM(n.90days) ninety_days,
                     SUM(n.60days) sixty_days,
-                    SUM(n.45days) fortyfive_days,
                     SUM(n.30days) thirty_days,
-                    SUM(n.current) current,
                     SUM(n.days) days,
-                    (IFNULL(SUM(n.current),0)+
-                    IFNULL(SUM(n.30days),0)+
-                    IFNULL(SUM(n.45days),0)+
+                    (IFNULL(SUM(n.30days),0)+
                     IFNULL(SUM(n.60days),0)+
+                    IFNULL(SUM(n.90days),0)+
                     IFNULL(SUM(n.over_90days),0)) as total_balance
                     FROM
                         (SELECT
                         m.tenant_id,
                         m.days,
-                        IF(m.days >= 0 AND m.days < 30, m.total_amount_due,'') AS current,
-                        IF(m.days >= 30 AND m.days <= 44, m.total_amount_due,'') AS 30days,
-                        IF(m.days >= 45 AND m.days <= 59, m.total_amount_due,'') AS 45days,
-                        IF(m.days >= 60 AND m.days <= 89, m.total_amount_due,'') AS 60days,
-                        IF(m.days >= 90, m.total_amount_due,'') AS over_90days
+                        IF(m.days >= 0 AND m.days < 30, m.total_amount_due,'') AS 30days,
+                        IF(m.days >= 31 AND m.days <= 60, m.total_amount_due,'') AS 60days,
+                        IF(m.days >= 61 AND m.days <= 90, m.total_amount_due,'') AS 90days,
+                        IF(m.days >= 91, m.total_amount_due,'') AS over_90days
                         FROM 
                             (SELECT main.*,
                             ABS(DATEDIFF(NOW(),main.billing_date)) AS days
@@ -560,7 +560,41 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                 GROUP BY bp.tenant_id) as bp ON bp.tenant_id = o.tenant_id
             
             ) as p
-            LEFT JOIN b_tenants as bt ON bt.tenant_id = p.tenant_id";
+            LEFT JOIN b_tenants as bt ON bt.tenant_id = p.tenant_id
+            LEFT JOIN
+                (SELECT main.tenant_id,
+                    (COALESCE(SUM(main.total_fee),0) - COALESCE(SUM(main.total_payment),0)) as total_security_deposit
+                    
+                 FROM(
+                        SELECT 
+                        cof.tenant_id,
+                        (SUM(cof.fee_credit) - SUM(cof.fee_debit)) AS total_fee,
+                        0 as total_payment
+                        FROM
+                        b_contract_other_fees cof
+                        LEFT JOIN
+                        temp_journal_info tji ON tji.fee_id = cof.fee_id
+                        WHERE tji.is_deleted = FALSE AND cof.fee_type_id = 2
+                        GROUP BY cof.tenant_id
+                        
+                    UNION ALL
+                    
+                        SELECT 
+                        cof.tenant_id,
+                        0 as total_fee,
+                        (SUM(cof.fee_debit) - SUM(cof.fee_credit)) AS total_payment
+                        FROM
+                        b_contract_other_fees cof
+                        LEFT JOIN
+                        b_payment_info pi ON pi.payment_id = cof.payment_id
+                        LEFT JOIN
+                        temp_journal_info tji ON tji.payment_id = pi.payment_id
+                        WHERE tji.is_deleted = FALSE AND cof.fee_type_id = 2
+                        GROUP BY cof.tenant_id
+                        
+                    ) as main
+                    group by main.tenant_id
+                ) as sd ON sd.tenant_id = bt.tenant_id";
 
         return $this->db->query($sql)->result();
     }

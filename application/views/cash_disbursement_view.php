@@ -1204,7 +1204,7 @@ $(document).ready(function(){
 
                 },
 
-                {sClass: "right_align_items","orderable":      false,
+                {sClass: "text-center","orderable":      false,
                     targets:[8],data:null,
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm <?php echo ($this->session->user_group_id != 1 ? 'hidden' : '')?>" name="edit_info" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
@@ -1212,13 +1212,13 @@ $(document).ready(function(){
                         var btn_voucher_print='<button class="btn btn-success btn-sm" name="print_voucher" style="text-transform: none;" data-toggle="tooltip" data-placement="top" title="Voucher"><i class="fa fa-print"></i></button>';
                         var btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="text-transform: none;" data-toggle="tooltip" data-placement="top" title="Cheque"><img src="assets/img/facheque.png"></button>';
 
-                        if(data.payment_method_id == 2){
-                        	return ''+btn_check_print+"&nbsp;"+btn_voucher_print+"&nbsp;"+btn_edit+"&nbsp;"+btn_cancel;
+                        // if(data.payment_method_id == 2){
+                        // 	return ''+btn_check_print+"&nbsp;"+btn_voucher_print+"&nbsp;"+btn_edit+"&nbsp;"+btn_cancel;
 
-                        }else{
+                        // }else{
 
                         	return ''+btn_voucher_print+"&nbsp;"+btn_edit+"&nbsp;"+btn_cancel;
-                        }
+                        // }
 
                         
                     }

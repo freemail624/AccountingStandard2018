@@ -165,110 +165,78 @@
 	                $excel->getActiveSheet()->getColumnDimension('G')->setWidth('30');
 	                	                	                
 	                $excel->getActiveSheet()
-	                        ->getStyle('C')
-	                        ->getAlignment()
-	                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-	                $excel->getActiveSheet()
-	                        ->getStyle('D')
-	                        ->getAlignment()
-	                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-	                $excel->getActiveSheet()
-	                        ->getStyle('E')
-	                        ->getAlignment()
-	                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-	                $excel->getActiveSheet()
-	                        ->getStyle('F')
-	                        ->getAlignment()
-	                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-	                $excel->getActiveSheet()
-	                        ->getStyle('G')
+	                        ->getStyle('C:H')
 	                        ->getAlignment()
 	                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);	
 
 	                $excel->getActiveSheet()->setCellValue('A8','Tenant Code')
 	                                        ->getStyle('A8')->getFont()->setBold(TRUE);
-	                $excel->getActiveSheet()->setCellValue('B8','Trade Name')
+	                $excel->getActiveSheet()->setCellValue('B8','Tenant Name')
 	                                        ->getStyle('B8')->getFont()->setBold(TRUE);
-	                $excel->getActiveSheet()->setCellValue('C8','Current')
+	                $excel->getActiveSheet()->setCellValue('C8','0-30 DAYS')
 	                                        ->getStyle('C8')->getFont()->setBold(TRUE);
-	                $excel->getActiveSheet()->setCellValue('D8','30 Days')
+	                $excel->getActiveSheet()->setCellValue('D8','31-60 DAYS')
 	                                        ->getStyle('D8')->getFont()->setBold(TRUE);
-	                $excel->getActiveSheet()->setCellValue('E8','45 Days')
+	                $excel->getActiveSheet()->setCellValue('E8','61-90 DAYS')
 	                                        ->getStyle('E8')->getFont()->setBold(TRUE);
-	                $excel->getActiveSheet()->setCellValue('F8','60 Days')
+	                $excel->getActiveSheet()->setCellValue('F8','90 DAYS AND ABOVE')
 	                                        ->getStyle('F8')->getFont()->setBold(TRUE);
-	                $excel->getActiveSheet()->setCellValue('G8','Over 90 Days')
+	                $excel->getActiveSheet()->setCellValue('G8','BALANCE')
 	                                        ->getStyle('G8')->getFont()->setBold(TRUE);
+	                $excel->getActiveSheet()->setCellValue('H8','TOTAL SECURITY DEPOSIT')
+	                                        ->getStyle('H8')->getFont()->setBold(TRUE);
 	                $i=9;
-					$sum_current = 0; $sum_thirty = 0; $sum_fortyfive = 0; $sum_sixty = 0; $sum_ninety = 0;	   
+					$sum_thirty = 0; 
+					$sum_sixty = 0;
+					$sum_ninety = 0;
+					$sum_over_ninety = 0;
+					$sum_balance = 0;
+					$sum_security_deposit = 0;  
 					
 					foreach($receivables as $receivable) {		
 		                $excel->getActiveSheet()->getColumnDimension('A')->setWidth('20');
-		                $excel->getActiveSheet()->getColumnDimension('B')->setWidth('50');
+		                $excel->getActiveSheet()->getColumnDimension('B')->setWidth('60');
 		                $excel->getActiveSheet()->getColumnDimension('C')->setWidth('20');
 		                $excel->getActiveSheet()->getColumnDimension('D')->setWidth('20');
 		                $excel->getActiveSheet()->getColumnDimension('E')->setWidth('20');
 		                $excel->getActiveSheet()->getColumnDimension('F')->setWidth('20');
 		                $excel->getActiveSheet()->getColumnDimension('G')->setWidth('20');
+		                $excel->getActiveSheet()->getColumnDimension('H')->setWidth('20');
 
 
 		                $excel->getActiveSheet()
-		                        ->getStyle('C')
-		                        ->getAlignment()
-		                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-		                $excel->getActiveSheet()
-		                        ->getStyle('D')
-		                        ->getAlignment()
-		                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-		                $excel->getActiveSheet()
-		                        ->getStyle('E')
-		                        ->getAlignment()
-		                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-		                $excel->getActiveSheet()
-		                        ->getStyle('F')
-		                        ->getAlignment()
-		                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);	
-		                $excel->getActiveSheet()
-		                        ->getStyle('G')
+		                        ->getStyle('C'.$i.':H'.$i)
 		                        ->getAlignment()
 		                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);		                        
+                    	$excel->getActiveSheet()->getStyle('C'.$i.':H'.$i)->getNumberFormat()->setFormatCode('_(* #,##0.00_);_(* (#,##0.00);_(* "-"??_);_(@_)'); 
 
 		                $excel->getActiveSheet()->setCellValue('A'.$i,$receivable->tenant_code);
-		                $excel->getActiveSheet()->setCellValue('B'.$i,$receivable->trade_name);
-                    	$excel->getActiveSheet()->getStyle('C'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		            
-		                $excel->getActiveSheet()->setCellValue('C'.$i,(number_format($receivable->balance_current,2) == 0 ? '' : number_format($receivable->balance_current,2)));
-                    	$excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                
-		                $excel->getActiveSheet()->setCellValue('D'.$i,(number_format($receivable->balance_thirty_days,2) == 0 ? '' : number_format($receivable->balance_thirty_days,2)));
-                    	$excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                
-		                $excel->getActiveSheet()->setCellValue('E'.$i,(number_format($receivable->balance_fortyfive_days,2) == 0 ? '' : number_format($receivable->balance_fortyfive_days,2)));
-                   		$excel->getActiveSheet()->getStyle('F'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                
-		                $excel->getActiveSheet()->setCellValue('F'.$i,(number_format($receivable->balance_sixty_days,2) == 0 ? '' : number_format($receivable->balance_sixty_days,2)));
-                    	$excel->getActiveSheet()->getStyle('G'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                
-		                $excel->getActiveSheet()->setCellValue('G'.$i,(number_format($receivable->balance_over_ninetydays,2) == 0 ? '' : number_format($receivable->balance_over_ninetydays,2)));
-						
-						$i++;
-	 					$sum_current += $receivable->balance_current; 
-	                    $sum_thirty += $receivable->balance_thirty_days;
-	                    $sum_fortyfive += $receivable->balance_fortyfive_days;
-	                    $sum_sixty += $receivable->balance_sixty_days;
-	                    $sum_ninety += $receivable->balance_over_ninetydays;											
-					}			         
-                    	$excel->getActiveSheet()->getStyle('C'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		            
-		                $excel->getActiveSheet()->setCellValue('C'.$i,number_format($sum_current,2));
-                    	$excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                		                
-		                $excel->getActiveSheet()->setCellValue('D'.$i,number_format($sum_thirty,2));
-                    	$excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                		                
-		                $excel->getActiveSheet()->setCellValue('E'.$i,number_format($sum_fortyfive,2));
-                   		$excel->getActiveSheet()->getStyle('F'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                		                
-		                $excel->getActiveSheet()->setCellValue('F'.$i,number_format($sum_sixty,2));
-                    	$excel->getActiveSheet()->getStyle('G'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                		                
-		                $excel->getActiveSheet()->setCellValue('G'.$i,number_format($sum_ninety,2));
+		                $excel->getActiveSheet()->setCellValue('B'.$i,$receivable->trade_name);     
+		                $excel->getActiveSheet()->setCellValue('C'.$i,$receivable->balance_thirty_days);
+		                $excel->getActiveSheet()->setCellValue('D'.$i,$receivable->balance_sixty_days);    
+		                $excel->getActiveSheet()->setCellValue('E'.$i,$receivable->balance_ninety_days);
+		                $excel->getActiveSheet()->setCellValue('F'.$i,$receivable->balance_over_ninetydays);   
+		                $excel->getActiveSheet()->setCellValue('G'.$i,$receivable->total_tenant_balance);  
+		                $excel->getActiveSheet()->setCellValue('H'.$i,$receivable->total_security_deposit);
 
-		                $excel->getActiveSheet()->getStyle('C'.$i)->getFont()->setBold(TRUE);
-		                $excel->getActiveSheet()->getStyle('D'.$i)->getFont()->setBold(TRUE);
-		                $excel->getActiveSheet()->getStyle('E'.$i)->getFont()->setBold(TRUE);
-		                $excel->getActiveSheet()->getStyle('F'.$i)->getFont()->setBold(TRUE);
-		                $excel->getActiveSheet()->getStyle('G'.$i)->getFont()->setBold(TRUE);
+						
+						$i++; 
+						$sum_thirty += $receivable->balance_thirty_days;  
+						$sum_sixty += $receivable->balance_sixty_days; 
+						$sum_ninety += $receivable->balance_ninety_days; 
+						$sum_over_ninety += $receivable->balance_over_ninetydays; 
+						$sum_balance += $receivable->total_tenant_balance; 
+						$sum_security_deposit += $receivable->total_security_deposit;   											
+					}			         
+                    	$excel->getActiveSheet()->getStyle('C'.$i.':H'.$i)->getNumberFormat()->setFormatCode('_(* #,##0.00_);_(* (#,##0.00);_(* "-"??_);_(@_)'); 
+		                $excel->getActiveSheet()->getStyle('C'.$i.':H'.$i)->getFont()->setBold(TRUE);	            
+		                $excel->getActiveSheet()->setCellValue('C'.$i,number_format($sum_thirty,2));
+		                $excel->getActiveSheet()->setCellValue('D'.$i,number_format($sum_sixty,2));
+		                $excel->getActiveSheet()->setCellValue('E'.$i,number_format($sum_ninety,2));
+		                $excel->getActiveSheet()->setCellValue('F'.$i,number_format($sum_over_ninety,2));
+		                $excel->getActiveSheet()->setCellValue('G'.$i,number_format($sum_balance,2));
+		                $excel->getActiveSheet()->setCellValue('H'.$i,number_format($sum_security_deposit,2));
+
 
 		                $i++;
 
@@ -316,7 +284,7 @@
 	                $excel->getActiveSheet()->getColumnDimensionByColumn('A4')->setWidth('30');
 
 	                //name the worksheet
-	                $excel->getActiveSheet()->setTitle("Aging of Receivables Report");
+	                $excel->getActiveSheet()->setTitle("Aging of Receivables");
 	                $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
 	                $excel->getActiveSheet()->mergeCells('A1:B1');
 	                $excel->getActiveSheet()->mergeCells('A2:B2');
@@ -329,114 +297,94 @@
 
 	                $excel->getActiveSheet()->getColumnDimensionByColumn('A6:B6')->setWidth('40');	                                        
 	                $excel->getActiveSheet()->mergeCells('A6:B6');
-                	$excel->getActiveSheet()->setCellValue('A6','AGING OF RECEIVABLES REPORT')
+                	$excel->getActiveSheet()->setCellValue('A6',"TENANTS' AGING OF RECEIVABLES REPORT")
                                         	->getStyle('A6')->getFont()->setBold(TRUE)
-                                        	->setSize(16);
+                                        	->setSize(12);
 
 	                $excel->getActiveSheet()->getColumnDimension('A')->setWidth('40');
-	                $excel->getActiveSheet()->getColumnDimension('B')->setWidth('25');
+	                $excel->getActiveSheet()->getColumnDimension('B')->setWidth('40');
 	                $excel->getActiveSheet()->getColumnDimension('C')->setWidth('25');
 	                $excel->getActiveSheet()->getColumnDimension('D')->setWidth('25');
-	                $excel->getActiveSheet()->getColumnDimension('E')->setWidth('30');
+	                $excel->getActiveSheet()->getColumnDimension('E')->setWidth('25');
 	                $excel->getActiveSheet()->getColumnDimension('F')->setWidth('30');
+	                $excel->getActiveSheet()->getColumnDimension('G')->setWidth('30');
 	                	                	                
 	                $excel->getActiveSheet()
-	                        ->getStyle('B')
-	                        ->getAlignment()
-	                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-	                $excel->getActiveSheet()
-	                        ->getStyle('C')
-	                        ->getAlignment()
-	                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-	                $excel->getActiveSheet()
-	                        ->getStyle('D')
-	                        ->getAlignment()
-	                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-	                $excel->getActiveSheet()
-	                        ->getStyle('E')
-	                        ->getAlignment()
-	                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-	                $excel->getActiveSheet()
-	                        ->getStyle('F')
+	                        ->getStyle('C:H')
 	                        ->getAlignment()
 	                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);	
 
-	                $excel->getActiveSheet()->setCellValue('A8','Customer Name')
+	                $excel->getActiveSheet()->setCellValue('A8','Tenant Code')
 	                                        ->getStyle('A8')->getFont()->setBold(TRUE);
-	                $excel->getActiveSheet()->setCellValue('B8','Current')
+	                $excel->getActiveSheet()->setCellValue('B8','Tenant Name')
 	                                        ->getStyle('B8')->getFont()->setBold(TRUE);
-	                $excel->getActiveSheet()->setCellValue('C8','30 Days')
+	                $excel->getActiveSheet()->setCellValue('C8','0-30 DAYS')
 	                                        ->getStyle('C8')->getFont()->setBold(TRUE);
-	                $excel->getActiveSheet()->setCellValue('D8','45 Days')
+	                $excel->getActiveSheet()->setCellValue('D8','31-60 DAYS')
 	                                        ->getStyle('D8')->getFont()->setBold(TRUE);
-	                $excel->getActiveSheet()->setCellValue('E8','60 Days')
+	                $excel->getActiveSheet()->setCellValue('E8','61-90 DAYS')
 	                                        ->getStyle('E8')->getFont()->setBold(TRUE);
-	                $excel->getActiveSheet()->setCellValue('F8','Over 90 Days')
+	                $excel->getActiveSheet()->setCellValue('F8','90 DAYS AND ABOVE')
 	                                        ->getStyle('F8')->getFont()->setBold(TRUE);
+	                $excel->getActiveSheet()->setCellValue('G8','BALANCE')
+	                                        ->getStyle('G8')->getFont()->setBold(TRUE);
+	                $excel->getActiveSheet()->setCellValue('H8','TOTAL SECURITY DEPOSIT')
+	                                        ->getStyle('H8')->getFont()->setBold(TRUE);
 	                $i=9;
-					$sum_current = 0; $sum_thirty = 0; $sum_fortyfive = 0; $sum_sixty = 0; $sum_ninety = 0;	   
+					$sum_thirty = 0; 
+					$sum_sixty = 0;
+					$sum_ninety = 0;
+					$sum_over_ninety = 0;
+					$sum_balance = 0;
+					$sum_security_deposit = 0;  
 					
 					foreach($receivables as $receivable) {		
-		                $excel->getActiveSheet()->getColumnDimension('A')->setWidth('40');
-		                $excel->getActiveSheet()->getColumnDimension('B')->setWidth('25');
-		                $excel->getActiveSheet()->getColumnDimension('C')->setWidth('25');
-		                $excel->getActiveSheet()->getColumnDimension('D')->setWidth('25');
-		                $excel->getActiveSheet()->getColumnDimension('E')->setWidth('30');
-		                $excel->getActiveSheet()->getColumnDimension('F')->setWidth('30');
+		                $excel->getActiveSheet()->getColumnDimension('A')->setWidth('20');
+		                $excel->getActiveSheet()->getColumnDimension('B')->setWidth('60');
+		                $excel->getActiveSheet()->getColumnDimension('C')->setWidth('20');
+		                $excel->getActiveSheet()->getColumnDimension('D')->setWidth('20');
+		                $excel->getActiveSheet()->getColumnDimension('E')->setWidth('20');
+		                $excel->getActiveSheet()->getColumnDimension('F')->setWidth('20');
+		                $excel->getActiveSheet()->getColumnDimension('G')->setWidth('20');
+		                $excel->getActiveSheet()->getColumnDimension('H')->setWidth('20');
+
 
 		                $excel->getActiveSheet()
-		                        ->getStyle('B')
+		                        ->getStyle('C'.$i.':H'.$i)
 		                        ->getAlignment()
-		                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-		                $excel->getActiveSheet()
-		                        ->getStyle('C')
-		                        ->getAlignment()
-		                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-		                $excel->getActiveSheet()
-		                        ->getStyle('D')
-		                        ->getAlignment()
-		                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-		                $excel->getActiveSheet()
-		                        ->getStyle('E')
-		                        ->getAlignment()
-		                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-		                $excel->getActiveSheet()
-		                        ->getStyle('F')
-		                        ->getAlignment()
-		                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);	
+		                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);		                        
+                    	$excel->getActiveSheet()->getStyle('C'.$i.':H'.$i)->getNumberFormat()->setFormatCode('_(* #,##0.00_);_(* (#,##0.00);_(* "-"??_);_(@_)'); 
 
-		                $excel->getActiveSheet()->setCellValue('A'.$i,$receivable->customer_name);
-                    	$excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		            
-		                $excel->getActiveSheet()->setCellValue('B'.$i,(number_format($receivable->current,2) == 0 ? '' : number_format($receivable->current,2)));
-                    	$excel->getActiveSheet()->getStyle('C'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                
-		                $excel->getActiveSheet()->setCellValue('C'.$i,(number_format($receivable->thirty_days,2) == 0 ? '' : number_format($receivable->thirty_days,2)));
-                    	$excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                
-		                $excel->getActiveSheet()->setCellValue('D'.$i,(number_format($receivable->fortyfive_days,2) == 0 ? '' : number_format($receivable->fortyfive_days,2)));
-                   		$excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                
-		                $excel->getActiveSheet()->setCellValue('E'.$i,(number_format($receivable->sixty_days,2) == 0 ? '' : number_format($receivable->sixty_days,2)));
-                    	$excel->getActiveSheet()->getStyle('F'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                
-		                $excel->getActiveSheet()->setCellValue('F'.$i,(number_format($receivable->over_ninetydays,2) == 0 ? '' : number_format($receivable->over_ninetydays,2)));
+		                $excel->getActiveSheet()->setCellValue('A'.$i,$receivable->tenant_code);
+		                $excel->getActiveSheet()->setCellValue('B'.$i,$receivable->trade_name);     
+		                $excel->getActiveSheet()->setCellValue('C'.$i,$receivable->balance_thirty_days);
+		                $excel->getActiveSheet()->setCellValue('D'.$i,$receivable->balance_sixty_days);    
+		                $excel->getActiveSheet()->setCellValue('E'.$i,$receivable->balance_ninety_days);
+		                $excel->getActiveSheet()->setCellValue('F'.$i,$receivable->balance_over_ninetydays);   
+		                $excel->getActiveSheet()->setCellValue('G'.$i,$receivable->total_tenant_balance);  
+		                $excel->getActiveSheet()->setCellValue('H'.$i,$receivable->total_security_deposit);
+
 						
-						$i++;
-	 					$sum_current += $receivable->current; 
-	                    $sum_thirty += $receivable->thirty_days;
-	                    $sum_fortyfive += $receivable->fortyfive_days;
-	                    $sum_sixty += $receivable->sixty_days;
-	                    $sum_ninety += $receivable->over_ninetydays;											
+						$i++; 
+						$sum_thirty += $receivable->balance_thirty_days;  
+						$sum_sixty += $receivable->balance_sixty_days; 
+						$sum_ninety += $receivable->balance_ninety_days; 
+						$sum_over_ninety += $receivable->balance_over_ninetydays; 
+						$sum_balance += $receivable->total_tenant_balance; 
+						$sum_security_deposit += $receivable->total_security_deposit;   											
 					}			         
-                    	$excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		            
-		                $excel->getActiveSheet()->setCellValue('B'.$i,number_format($sum_current,2));
-                    	$excel->getActiveSheet()->getStyle('C'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                		                
+                    	$excel->getActiveSheet()->getStyle('C'.$i.':H'.$i)->getNumberFormat()->setFormatCode('_(* #,##0.00_);_(* (#,##0.00);_(* "-"??_);_(@_)'); 
+		                $excel->getActiveSheet()->getStyle('C'.$i.':H'.$i)->getFont()->setBold(TRUE);	            
 		                $excel->getActiveSheet()->setCellValue('C'.$i,number_format($sum_thirty,2));
-                    	$excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                		                
-		                $excel->getActiveSheet()->setCellValue('D'.$i,number_format($sum_fortyfive,2));
-                   		$excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                		                
-		                $excel->getActiveSheet()->setCellValue('E'.$i,number_format($sum_sixty,2));
-                    	$excel->getActiveSheet()->getStyle('F'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');		                		                
-		                $excel->getActiveSheet()->setCellValue('F'.$i,number_format($sum_ninety,2));
+		                $excel->getActiveSheet()->setCellValue('D'.$i,number_format($sum_sixty,2));
+		                $excel->getActiveSheet()->setCellValue('E'.$i,number_format($sum_ninety,2));
+		                $excel->getActiveSheet()->setCellValue('F'.$i,number_format($sum_over_ninety,2));
+		                $excel->getActiveSheet()->setCellValue('G'.$i,number_format($sum_balance,2));
+		                $excel->getActiveSheet()->setCellValue('H'.$i,number_format($sum_security_deposit,2));
+
 
 		                $i++;
-
+		                
 	                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 	                header('Content-Disposition: attachment;filename='."Aging of Receivables Report.xlsx".'');
 	                header('Cache-Control: max-age=0');

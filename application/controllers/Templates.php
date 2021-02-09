@@ -113,6 +113,7 @@ class Templates extends CORE_Controller {
 
         $this->load->model('Tax_code_model');
         $this->load->model('Book_type_model');
+        $this->load->model('Account_integration_model');
 
         $this->load->model('Email_settings_model');
         $this->load->library('M_pdf');
@@ -4039,6 +4040,41 @@ class Templates extends CORE_Controller {
 
 
                 break;
+
+            case 'account-receivable-schedule-tenant':
+                $m_company_info=$this->Company_model;
+
+                $company_info=$m_company_info->get_list();
+                $data['company_info']=$company_info[0];
+
+                $m_journal_accounts=$this->Journal_account_model;
+                $m_account_integration=$this->Account_integration_model;
+
+                $ar_id=$m_account_integration->get_list();
+                $receivable_account_id=$ar_id[0]->receivable_account_id;
+
+                $date=$this->input->get('date');
+
+                $data['date']=date('Y-m-d',strtotime($date));
+                $data['ar_accounts']=$m_journal_accounts->get_account_schedule_tenants($receivable_account_id,$date);
+
+                $as_of_date=date('Y-m-d',strtotime($date));
+                $this_month_start_date=date('Y',strtotime($as_of_date)).'-'.date('m',strtotime($as_of_date))."-01";
+                $data['prev_month']=date('F j, Y',strtotime("-1 days", strtotime($this_month_start_date)));
+                $data['current_month']=date('F j, Y',strtotime($as_of_date));
+
+                if ($type == 'preview' || $type == null) {
+                    $pdf = $this->m_pdf->load("A4-L");
+                    $content=$this->load->view('template/account_receivable_sched_tenant_report',$data,TRUE);
+
+                }
+
+                // $pdf->setFooter('{PAGENO}');
+                $pdf->WriteHTML($content);
+                $pdf->Output();
+
+
+                break;                
 
 
 

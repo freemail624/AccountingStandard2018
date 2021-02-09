@@ -103,6 +103,7 @@
                                                         <th valign="top"><center>31-60 <br/>DAYS</center></th>
                                                         <th valign="top"><center>61-90 <br/>DAYS</center></th>
                                                         <th valign="top"><center>90 DAYS <br/>AND <br/>ABOVE</center></th>
+                                                        <th valign="top"><center>BALANCE</center></th>
                                                         <th valign="top"><center>TOTAL <br/> SECURITY <br/> DEPOSIT</center></th>
                                                     </tr>
                                                     </thead>
@@ -111,11 +112,12 @@
                                                     </tbody>
                                                     <tfoot>
                                                         <td colspan="2" align="right">TOTAL :</td>
-                                                        <td id="td_current" align="right">0.00</td>
                                                         <td id="td_thirty" align="right">0.00</td>
-                                                        <td id="td_forty_five" align="right">0.00</td>
                                                         <td id="td_sixty" align="right">0.00</td>
                                                         <td id="td_ninety" align="right">0.00</td>
+                                                        <td id="td_over_ninety" align="right">0.00</td>
+                                                        <td id="td_balance" align="right">0.00</td>
+                                                        <td id="td_security_deposit" align="right">0.00</td>
                                                     </tfoot>
                                                 </table>
                                             </div>
@@ -174,35 +176,42 @@
                     { targets:[1],data: "trade_name" },                    
                     {
                         class: 'text-right',
-                        targets:[2],data: "balance_current",
+                        targets:[2],data: "balance_thirty_days",
                         render:function(data,type,full,meta){
                             return (data == 0 ? '' : accounting.formatNumber(data,2));
                         }
                     },
                     { 
                         class: 'text-right',
-                        targets:[3],data: "balance_thirty_days",
+                        targets:[3],data: "balance_sixty_days",
                         render:function(data,type,full,meta){
                             return (data == 0 ? '' : accounting.formatNumber(data,2));
                         } 
                     },
                     { 
                         class: 'text-right',
-                        targets:[4],data: "balance_fortyfive_days",
+                        targets:[4],data: "balance_ninety_days",
                         render:function(data,type,full,meta){
                             return (data == 0 ? '' : accounting.formatNumber(data,2));
                         }
                     },
                     { 
                         class: 'text-right',
-                        targets:[5],data: "balance_sixty_days",
+                        targets:[5],data: "balance_over_ninetydays",
                         render:function(data,type,full,meta){
                             return (data == 0 ? '' : accounting.formatNumber(data,2));
                         }
                     },
                     { 
                         class: 'text-right',
-                        targets:[6],data: "balance_over_ninetydays",
+                        targets:[6],data: "total_tenant_balance",
+                        render:function(data,type,full,meta){
+                            return (data == 0 ? '' : accounting.formatNumber(data,2));
+                        }
+                    },
+                    { 
+                        class: 'text-right',
+                        targets:[7],data: "total_security_deposit",
                         render:function(data,type,full,meta){
                             return (data == 0 ? '' : accounting.formatNumber(data,2));
                         }
@@ -239,46 +248,54 @@
                                 i : 0;
                     };
 
-                    total_current = api
+                    total_thirty = api
                         .column( 2 )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0 );
 
-                    total_thirty = api
+                    total_sixty = api
                         .column( 3 )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0 );
 
-                    total_forty_five = api
+                    total_ninety = api
                         .column( 4 )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0 );
 
-                    total_sixty = api
+                    total_over_ninety = api
                         .column( 5 )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0 );
 
-                    total_ninety = api
+                    total_balance = api
                         .column( 6 )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0 );
 
-                    $('#td_current').html('<b>'+accounting.formatNumber(total_current,2)+'</b>');
+                    total_security_deposit = api
+                        .column( 7 )
+                        .data()
+                        .reduce( function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0 );
+
                     $('#td_thirty').html('<b>'+accounting.formatNumber(total_thirty,2)+'</b>');
-                    $('#td_forty_five').html('<b>'+accounting.formatNumber(total_forty_five,2)+'</b>');
                     $('#td_sixty').html('<b>'+accounting.formatNumber(total_sixty,2)+'</b>');
                     $('#td_ninety').html('<b>'+accounting.formatNumber(total_ninety,2)+'</b>');
+                    $('#td_over_ninety').html('<b>'+accounting.formatNumber(total_over_ninety,2)+'</b>');
+                    $('#td_balance').html('<b>'+accounting.formatNumber(total_balance,2)+'</b>');
+                    $('#td_security_deposit').html('<b>'+accounting.formatNumber(total_security_deposit,2)+'</b>');
                 }
             });
 

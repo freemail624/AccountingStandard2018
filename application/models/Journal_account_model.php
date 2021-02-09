@@ -220,11 +220,10 @@ class Journal_account_model extends CORE_Model{
 
     }
 
-
     function get_account_schedule($account_id,$as_of_date,$particular_tye='C'){
 
         $as_of_date=date('Y-m-d',strtotime($as_of_date));
-        $this_month_start_date=date('Y',strtotime($as_of_date))."-01-".date('m',strtotime($as_of_date));
+        $this_month_start_date=date('Y',strtotime($as_of_date)).'-'.date('m',strtotime($as_of_date))."-01";
         $prev_month=date('Y-m-d',strtotime("-1 days", strtotime($this_month_start_date)));
 
         if($particular_tye=='C'){
@@ -351,6 +350,219 @@ class Journal_account_model extends CORE_Model{
 
         return $this->db->query($sql)->result();
     }
+
+
+    function get_account_schedule_tenants($account_id,$as_of_date){
+
+        $as_of_date=date('Y-m-d',strtotime($as_of_date));
+        $this_month_start_date=date('Y',strtotime($as_of_date)).'-'.date('m',strtotime($as_of_date))."-01";
+        $prev_month=date('Y-m-d',strtotime("-1 days", strtotime($this_month_start_date)));
+
+        $sql="SELECT
+            m.customer_id,
+            IFNULL(c.`customer_name`,'Unknown') as customer_name,
+            MAX(m.or_details) as or_details,
+            SUM(m.previous) as previous,
+            SUM(m.current) as current,
+            SUM(m.billing) as billing,
+            SUM(m.payment) as payment,
+            SUM(m.adjustment_dr) as adjustment_dr,
+            SUM(m.adjustment_cr) as adjustment_cr,
+            (
+                (SUM(m.previous) + 
+                (SUM(m.billing) - SUM(m.adjustment_dr) - SUM(m.adjustment_cr)) +
+                SUM(m.adjustment_dr)) +
+                SUM(m.adjustment_cr)
+                - 
+                (SUM(m.payment))
+
+            ) as total
+
+            FROM
+
+            (
+            -- Previous Month
+            SELECT
+            ji.customer_id,
+            (
+                IF( ac.account_type_id=1 OR ac.account_type_id=5
+                    ,SUM(ja.dr_amount)-SUM(ja.cr_amount)
+                    ,SUM(ja.cr_amount)-SUM(ja.dr_amount)
+                )
+            ) as previous,
+            0 as current,
+            0 as billing,
+            0 as payment,
+            '' as or_details,
+            0 as adjustment_dr,
+            0 as adjustment_cr
+
+            FROM `journal_info` as ji
+
+            INNER JOIN (`journal_accounts` as ja
+            LEFT JOIN (account_titles as at
+            LEFT JOIN account_classes as ac ON ac.account_class_id=at.account_class_id
+            ) ON at.account_id=ja.account_id
+            ) ON ja.journal_id=ji.journal_id
+
+            WHERE ji.`date_txn`<='$prev_month'
+            AND ji.is_active=TRUE AND ji.is_deleted=FALSE AND ja.account_id=$account_id
+            GROUP BY ji.customer_id
+
+            -- Billing
+            UNION ALL
+
+            SELECT 
+                ji.customer_id,
+                0 as previous,
+                0 as current,
+                (
+                    IF( ac.account_type_id=1 OR ac.account_type_id=5
+                        ,SUM(ja.dr_amount)-SUM(ja.cr_amount)
+                        ,SUM(ja.cr_amount)-SUM(ja.dr_amount)
+                    )
+                ) as billing,
+                0 as payment,
+                '' as or_details,
+                0 as adjustment_dr,
+                0 as adjustment_cr
+
+            FROM
+                temp_journal_info tji 
+                LEFT JOIN journal_info ji ON ji.journal_id = tji.journal_id
+                LEFT JOIN journal_accounts ja ON ja.journal_id = tji.journal_id
+                LEFT JOIN account_titles at ON at.account_id = ja.account_id
+                LEFT JOIN account_classes ac ON ac.account_class_id = at.account_class_id
+                
+                WHERE tji.is_deleted = FALSE AND tji.is_active = TRUE
+                AND tji.is_sales = TRUE AND tji.is_journal_posted = TRUE AND tji.journal_id > 0
+                AND ji.is_deleted = FALSE AND ji.is_active = TRUE
+                AND ji.`date_txn` BETWEEN '$this_month_start_date' AND '$as_of_date'
+                AND ja.account_id = $account_id
+                GROUP BY ji.customer_id
+
+            -- Adjustment (dr)
+            UNION ALL
+
+            SELECT 
+                ji.customer_id,
+                0 as previous,
+                0 as current,
+                0 as billing,
+                0 as payment,
+                '' as or_details,
+                SUM(COALESCE(ba.billing_adjustment_line_total,0)) as adjustment_dr,
+                0 as adjustment_cr
+
+            FROM
+                temp_journal_info tji 
+                LEFT JOIN journal_info ji ON ji.journal_id = tji.journal_id
+                LEFT JOIN b_billing_info bi ON bi.billing_no = tji.ref_no
+                LEFT JOIN b_billing_adjustments ba ON ba.billing_id = bi.billing_id
+                
+                WHERE tji.is_deleted = FALSE AND tji.is_active = TRUE
+                AND tji.is_sales = TRUE AND tji.is_journal_posted = TRUE AND tji.journal_id > 0
+                AND ji.is_deleted = FALSE AND ji.is_active = TRUE
+                AND ji.`date_txn` BETWEEN '$this_month_start_date' AND '$as_of_date'
+                AND ba.billing_adjustment_type = 0
+                GROUP BY ji.customer_id            
+
+            -- Adjustment (cr)
+            UNION ALL
+
+            SELECT 
+                ji.customer_id,
+                0 as previous,
+                0 as current,
+                0 as billing,
+                0 as payment,
+                '' as or_details,
+                0 as adjustment_dr,
+                SUM(COALESCE(ba.billing_adjustment_line_total,0)) as adjustment_cr
+
+            FROM
+                temp_journal_info tji 
+                LEFT JOIN journal_info ji ON ji.journal_id = tji.journal_id
+                LEFT JOIN b_billing_info bi ON bi.billing_no = tji.ref_no
+                LEFT JOIN b_billing_adjustments ba ON ba.billing_id = bi.billing_id
+                
+                WHERE tji.is_deleted = FALSE AND tji.is_active = TRUE
+                AND tji.is_sales = TRUE AND tji.is_journal_posted = TRUE AND tji.journal_id > 0
+                AND ji.is_deleted = FALSE AND ji.is_active = TRUE
+                AND ji.`date_txn` BETWEEN '$this_month_start_date' AND '$as_of_date'
+                AND ba.billing_adjustment_type = 1
+                GROUP BY ji.customer_id            
+
+            -- Payment
+            UNION ALL
+
+            SELECT 
+                ji.customer_id,
+                0 as previous,
+                0 as current,
+                0 as billing,
+                (
+                    IF( ac.account_type_id=1 OR ac.account_type_id=5
+                        ,SUM(ja.cr_amount)-SUM(ja.dr_amount)
+                        ,SUM(ja.dr_amount)-SUM(ja.cr_amount)
+                    )
+                ) as payment,
+                group_concat(DISTINCT(ji.ref_no)) as or_details,
+                0 as adjustment_dr,
+                0 as adjustment_cr
+
+            FROM
+                temp_journal_info tji 
+                LEFT JOIN journal_info ji ON ji.journal_id = tji.journal_id
+                LEFT JOIN journal_accounts ja ON ja.journal_id = tji.journal_id
+                LEFT JOIN account_titles at ON at.account_id = ja.account_id
+                LEFT JOIN account_classes ac ON ac.account_class_id = at.account_class_id
+                
+                WHERE tji.is_deleted = FALSE AND tji.is_active = TRUE
+                AND tji.is_sales = FALSE AND tji.is_journal_posted = TRUE AND tji.journal_id > 0
+                AND tji.payment_id > 0
+                AND ji.is_deleted = FALSE AND ji.is_active = TRUE
+                AND ji.`date_txn` BETWEEN '$this_month_start_date' AND '$as_of_date'
+                AND ja.account_id = $account_id
+                GROUP BY ji.customer_id
+
+            -- Current
+            UNION ALL
+
+                SELECT
+                ji.customer_id,
+                0 as previous,
+                (
+                    IF( ac.account_type_id=1 OR ac.account_type_id=5
+                        ,SUM(ja.dr_amount)-SUM(ja.cr_amount)
+                        ,SUM(ja.cr_amount)-SUM(ja.dr_amount)
+                    )
+                ) as current,
+                0 as billing,
+                0 as payment,
+                '' as or_details,
+                0 as adjustment_dr,
+                0 as adjustment_cr
+
+                FROM `journal_info` as ji
+
+                INNER JOIN (`journal_accounts` as ja
+                LEFT JOIN (account_titles as at
+                LEFT JOIN account_classes as ac ON ac.account_class_id=at.account_class_id
+                ) ON at.account_id=ja.account_id
+                ) ON ja.journal_id=ji.journal_id
+
+                WHERE ji.`date_txn` BETWEEN '$this_month_start_date' AND '$as_of_date'
+                AND ji.is_active=TRUE AND ji.is_deleted=FALSE AND ja.account_id=$account_id
+
+                GROUP BY ji.customer_id) as m
+
+            LEFT JOIN customers as c ON c.customer_id=m.customer_id
+
+            GROUP BY m.customer_id ORDER BY IFNULL(c.`customer_name`,'Unknown')";
+
+        return $this->db->query($sql)->result();
+    }    
 
 
     function get_t_account($book,$start,$end,$dep_id){
