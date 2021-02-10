@@ -73,7 +73,11 @@ class Company extends CORE_Controller
                 $m_company->is_deliver_address_default=$this->input->post('is_deliver_address_default',TRUE);
                 $m_company->deliver_to_address_default=$this->input->post('deliver_to_address_default',TRUE);
 
-                
+                // Printer Settings
+                $m_company->printer=$this->input->post('printer',TRUE);
+                $m_company->hostname=$this->input->post('hostname',TRUE);
+                $m_company->printer_size=$this->input->post('printer_size',TRUE);
+                    
                 $m_company->save();
 
                 $response['title']='Success!';

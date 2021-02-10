@@ -127,6 +127,20 @@
         #img_user {
             padding-bottom: 15px;
         }
+        #tbl_sales_order_filter    
+        { 
+            display:none; 
+        } 
+        div.dataTables_processing{  
+        position: absolute!important;  
+        top: 0%!important;  
+        right: -45%!important;  
+        left: auto!important;  
+        width: 100%!important;  
+        height: 40px!important;  
+        background: none!important;  
+        background-color: transparent!important;  
+        }            
     </style>
 </head>
 <body class="animated-content"  style="font-family: tahoma;">
@@ -149,8 +163,48 @@
 <div id="div_user_list">
     <div class="panel panel-default" style="border: 4px solid #2980b9;">
 <!--         <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Sales Order</b></div></a> -->
-        <div class="panel-body table-responsive" >
+        <div class="panel-body table-responsive" style="width: 100%;overflow-x: hidden;">
         <h2 class="h2-panel-heading">Sales Order<small> | <a href="assets/manual/sales/Sales_Order.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
+
+            <div class="row"> 
+                <div class="col-lg-2"><br> 
+                <button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-placement="left" title="Record Order" ><i class="fa fa-plus"></i> Record Order</button> 
+                </div> 
+                <div class="col-lg-3">
+                    Customer : <br />
+                    <select id="cbo_customers_tbl">
+                        <option value="0">All Customers</option>
+                        <?php foreach($customers as $customer){ ?>
+                            <option value="<?php echo $customer->customer_id; ?>">
+                                <?php echo $customer->customer_name; ?>
+                            </option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="col-lg-2"> 
+                        From :<br /> 
+                        <div class="input-group"> 
+                            <input type="text" id="txt_start_date_sales" name="" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>"> 
+                             <span class="input-group-addon"> 
+                                    <i class="fa fa-calendar"></i> 
+                             </span> 
+                        </div> 
+                </div> 
+                <div class="col-lg-2"> 
+                        To :<br /> 
+                        <div class="input-group"> 
+                            <input type="text" id="txt_end_date_sales" name="" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>"> 
+                             <span class="input-group-addon"> 
+                                    <i class="fa fa-calendar"></i> 
+                             </span> 
+                        </div> 
+                </div> 
+                <div class="col-lg-3"> 
+                        Search :<br /> 
+                         <input type="text" id="tbl_search" class="form-control"> 
+                </div> 
+            </div> 
+            <br/>
             <table id="tbl_sales_order"  class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
                     <tr>
@@ -704,7 +758,7 @@
 <script>
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj;
-    var _cboDepartments; var _cboDepartment; var _cboSalesperson; var _cboCustomers; var _lookUpPrice; var products;
+    var _cboDepartments; var _cboDepartment; var _cboSalesperson; var _cboCustomers; var _lookUpPrice; var products; var _cboCustomersTbl;
     var _line_unit; var _cboCustomerType;
     var _cboCustomerTypeCreate;
  
@@ -752,7 +806,24 @@ $(document).ready(function(){
             "bLengthChange":false,
             "pageLength":15,
             "order": [[ 7, "desc" ]],
-            "ajax" : "Sales_order/transaction/list",
+            "ajax" : { 
+                "url":"Sales_order/transaction/list", 
+                "bDestroy": true,             
+                "data": function ( d ) { 
+                        return $.extend( {}, d, { 
+                            "customer_id":$('#cbo_customers_tbl').val(),
+                            "tsd":$('#txt_start_date_sales').val(), 
+                            "ted":$('#txt_end_date_sales').val() 
+                        }); 
+                    } 
+            },
+            "language": {
+                "searchPlaceholder":"Search Invoice"
+            },
+            oLanguage: { 
+                    sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>' 
+            }, 
+            processing : true, 
             "columns": [
                 {
                     "targets": [0],
@@ -777,11 +848,12 @@ $(document).ready(function(){
                 { targets:[7],data: "sales_order_id", visible:false}
             ]
         }); 
-        var createToolBarButton=function(){
-            var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Sales Order" >'+
-                '<i class="fa fa-plus"></i> New Sales Order</button>';
-                $("div.toolbar").html(_btnNew);
-        }();
+
+        _cboCustomersTbl=$("#cbo_customers_tbl").select2({
+            placeholder: "Please select customer.",
+            allowClear: false
+        });   
+
         _cboCustomers=$("#cbo_customers").select2({
             placeholder: "Please select customer.",
             allowClear: true
@@ -867,6 +939,20 @@ $(document).ready(function(){
             }
         });
 
+        $("#tbl_search").keyup(function(){          
+                dt 
+                        .search(this.value) 
+                        .draw(); 
+        }); 
+        $("#txt_start_date_sales").on("change", function () {         
+            $('#tbl_sales_order').DataTable().ajax.reload() 
+        }); 
+        $("#txt_end_date_sales").on("change", function () {         
+            $('#tbl_sales_order').DataTable().ajax.reload() 
+        }); 
+        $("#cbo_customers_tbl").on("change", function () {         
+            $('#tbl_sales_order').DataTable().ajax.reload() 
+        }); 
 
          $('#refreshproducts').click(function(){
             getproduct().done(function(data){

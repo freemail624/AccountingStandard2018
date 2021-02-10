@@ -9,6 +9,7 @@ class Cash_invoice extends CORE_Controller
         parent::__construct('');
         $this->validate_session();
 
+        $this->load->helper('printer_helper');
         $this->load->model('Cash_invoice_model');
         $this->load->model('Cash_invoice_items_model');
         $this->load->model('Refproduct_model');
@@ -25,6 +26,8 @@ class Cash_invoice extends CORE_Controller
         $this->load->model('Customer_type_model');
         $this->load->model('Order_source_model');
         $this->load->model('Account_integration_model');
+        $this->load->model('Receipt_model');
+
     }
 
     public function index() {
@@ -122,9 +125,16 @@ class Cash_invoice extends CORE_Controller
             
             case 'list':
             $m_pf_invoice = $this->Cash_invoice_model;
+            $customer_id = $this->input->get('customer_id');
             $tsd = date('Y-m-d',strtotime($this->input->get('tsd'))); 
             $ted = date('Y-m-d',strtotime($this->input->get('ted'))); 
-            $additional = " AND DATE(cash_invoice.date_invoice) BETWEEN '$tsd' AND '$ted'"; 
+            $filter="";
+
+            if($customer_id!=0){
+                $filter = " AND cash_invoice.customer_id = ".$customer_id;
+            }
+
+            $additional = $filter." AND DATE(cash_invoice.date_invoice) BETWEEN '$tsd' AND '$ted'"; 
             $response['data']=$this->response_rows(null,null,$additional); 
                     echo json_encode($response);
 
@@ -539,5 +549,163 @@ class Cash_invoice extends CORE_Controller
         );
     }
 
+    function new_print_receipt($invoice_id){
 
+        $m_cash_invoice = $this->Cash_invoice_model;
+        $m_cash_items = $this->Cash_invoice_items_model;
+
+        $m_company = $this->Company_model;
+        $m_receipt = $this->Receipt_model;
+        $company = $m_company->get_list(1)[0];
+
+        // Printer Settings
+        $printer = $company->printer;
+        $hostname = $company->hostname;
+        $printer_size = $company->printer_size;
+        $open_drawer = 0;
+
+        $receipt_header = $m_receipt->get_list(array('is_footer'=>FALSE));
+        $receipt_footer = $m_receipt->get_list(array('is_footer'=>TRUE));
+
+        $invoice_info = $m_cash_invoice->get_list(
+            $invoice_id, 
+            array(
+                'cash_invoice.*',
+                'DATE_FORMAT(cash_invoice.date_invoice,"%m/%d/%Y") as date_invoice',
+                'DATE_FORMAT(cash_invoice.date_due,"%m/%d/%Y") as date_due',
+                'departments.department_id',
+                'departments.department_name',
+                'customers.customer_name',
+                'cash_invoice.salesperson_id',
+                'cash_invoice.customer_type_id',
+                'cash_invoice.address',
+                'sales_order.so_no'
+            ),
+            array(
+                array('departments','departments.department_id=cash_invoice.department_id','left'),
+                array('customers','customers.customer_id=cash_invoice.customer_id','left'),
+                array('sales_order','sales_order.sales_order_id=cash_invoice.sales_order_id','left'),
+            ),
+            'cash_invoice.cash_invoice_id DESC'
+        );
+
+        $invoice_items=$m_cash_items->get_list(
+            array('cash_invoice_id'=>$invoice_id),
+            array(
+                'cash_invoice_items.*',
+                'products.product_code',
+                'products.product_desc',
+                'units.unit_id',
+                'units.unit_name',
+                'products.is_bulk',
+                'products.is_basyo',
+                'products.child_unit_id',
+                'products.parent_unit_id',
+                'products.child_unit_desc',
+                'products.discounted_price',
+                'products.dealer_price',
+                'products.distributor_price',
+                'products.public_price',
+                'products.sale_price',
+                '(CASE
+                    WHEN products.is_parent = TRUE 
+                        THEN products.bulk_unit_id
+                    ELSE products.parent_unit_id
+                END) as product_unit_id',
+                '(CASE
+                    WHEN products.is_parent = TRUE 
+                        THEN blkunit.unit_name
+                    ELSE chldunit.unit_name
+                END) as product_unit_name',                          
+                '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.parent_unit_id) as parent_unit_name',
+                '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name',
+                '(SELECT count(*) FROM account_integration WHERE basyo_product_id = products.product_id) as is_product_basyo'
+            ),
+            array(
+                array('products','products.product_id=cash_invoice_items.product_id','left'),
+                array('units','units.unit_id=cash_invoice_items.unit_id','left'),
+                array('units blkunit','blkunit.unit_id=products.bulk_unit_id','left'),
+                array('units chldunit','chldunit.unit_id=products.parent_unit_id','left'),                          
+            ),
+            'cash_invoice_items.cash_item_id ASC'
+        );
+
+
+        // for($i=0;$i<count($receipt_header);$i++){
+        //             $print[] = $receipt_header[$i]->receipt_text;
+        //         }
+
+        $total_items = 0;
+        $total_quantity = 0;
+        $sub_total = 0;
+
+        // foreach ($receipt_header as $header => $value) {
+        //     $print[] = $value->receipt_text;
+        // }
+
+        $print[] = $company->company_name;
+        $print[] = $company->company_address;
+        $print[] = $company->mobile_no;
+        $print[] = $company->landline;
+
+        $print[] = '';
+
+        $title_receipt = floor($printer_size/2);
+        $print[] = str_pad("", $title_receipt,"-").'-------------- RECEIPT --------------'.str_pad("", $title_receipt,"-");
+        $print[] = 'Date         : '.$invoice_info[0]->date_invoice.'    '.str_pad("", $printer_size," ");
+        // $print[] = 'Terminal     : '.str_pad($invoice_info[0]->terminal_name,23+$printer_size," ");
+        // $print[] = 'Cashier      : '.str_pad($invoice_info[0]->username,23+$printer_size," ");
+        $print[] = 'Invoice No.  : '.str_pad($invoice_info[0]->cash_inv_no,23+$printer_size," ");
+        $print[] = '======================================'.str_pad("", $printer_size,"=");
+        $print[] = 'Desc  Qty     Price     Disc     '.str_pad("Total", 5+$printer_size," ",STR_PAD_LEFT);
+        $print[] = '--------------------------------------'.str_pad("", $printer_size,"-");
+
+            foreach ($invoice_items as $items => $value) {
+                $s_product_desc = $value->product_desc;
+                if(strlen($value->product_desc) >= 19)
+                {
+                    $s_product_desc=substr($value->product_desc, 0,33+$printer_size).'...';
+                }
+                $print[] = str_pad($s_product_desc,38+$printer_size," ");
+                $print[] = '      '.str_pad(floor($value->inv_qty),3," ").''.str_pad(number_format($value->inv_price,2),10," ",STR_PAD_LEFT).''.str_pad(number_format($value->inv_discount,2),9," ",STR_PAD_LEFT).''.str_pad(number_format($value->inv_line_total_price,2),10+$printer_size," ",STR_PAD_LEFT);
+                $total_items++;
+                $total_quantity+=$value->inv_qty;
+                $sub_total+=$value->inv_line_total_price;
+            }
+
+            $print[] = '______________________________________'.str_pad("", $printer_size,"_");
+            $print[] = '           Total .........'.str_pad(number_format($sub_total,2),12+$printer_size," ",STR_PAD_LEFT);
+            $print[] = '           Discount ......'.str_pad(number_format(($invoice_info[0]->total_discount+$invoice_info[0]->total_overall_discount_amount),2),12+$printer_size," ",STR_PAD_LEFT);
+            $print[] = '';
+            $print[] = '           Total Item(s) ......'.str_pad($total_items,7+$printer_size," ",STR_PAD_LEFT);
+            $print[] = '           Total Quantity .....'.str_pad($total_quantity,7+$printer_size," ",STR_PAD_LEFT);
+            $print[] = '';
+            $print[] = 'Amount Due   :'.str_pad(number_format($invoice_info[0]->total_after_discount,2),23+$printer_size," ",STR_PAD_LEFT);
+            $print[] = 'Tendered     :'.str_pad(number_format($invoice_info[0]->total_tendered,2),23+$printer_size," ",STR_PAD_LEFT);
+            $print[] = 'Changed      :'.str_pad(number_format($invoice_info[0]->total_change,2),23+$printer_size," ",STR_PAD_LEFT);
+            $print[] = '======================================'.str_pad("", $printer_size,"=");
+            $print[] = 'Payment Information :                 '.str_pad("", $printer_size," ");
+
+            $print[] = '--------------------------------------'.str_pad("", $printer_size,"-");
+            $print[] = 'Payment Type : Cash                   '.str_pad("", $printer_size," ");
+            $print[] = 'Amount : '.str_pad(number_format($invoice_info[0]->total_after_tax,2),29+$printer_size," ");
+        
+            // $print[] = '======================================'.str_pad("", $printer_size,"=");
+            // $print[] = 'Vatable Sales     :'.str_pad(number_format($invoice_info[0]->total_vatable_sales,2),19+$printer_size," ",STR_PAD_LEFT);
+            // $print[] = 'VAT Amount        :'.str_pad(number_format($invoice_info[0]->total_vat_amount,2),19+$printer_size," ",STR_PAD_LEFT);
+            // $print[] = 'VAT Exempt Sales  :'.str_pad(number_format($invoice_info[0]->total_vat_exempt_sales,2),19+$printer_size," ",STR_PAD_LEFT);
+            // $print[] = 'Zero Rated Sales  :'.str_pad(number_format($invoice_info[0]->total_zero_rated_sales,2),19+$printer_size," ",STR_PAD_LEFT);
+
+            $print[] = '======================================'.str_pad("", $printer_size,"=");
+            $print[] = 'Customer : ___________________________'.str_pad("", $printer_size,"_");
+            $print[] = 'Address  : ___________________________'.str_pad("", $printer_size,"_");
+            $print[] = 'TIN No.  : ___________________________'.str_pad("", $printer_size,"_");
+            $print[] = '======================================'.str_pad("", $printer_size,"=");
+
+        // foreach ($receipt_footer as $footer => $value) {
+        //     $print[] = $value->receipt_text;
+        // }
+                    
+        print_receipt($print, $printer, $hostname, $open_drawer);
+    }
 }

@@ -13,7 +13,7 @@
             <!-- <a href="Templates/layout/sales-invoice/<?php echo $sales_info->sales_invoice_id; ?>?type=dr&category=2" target="_blank" class="btn btn-default" style="text-transform:none;font-family: tahoma;" ><i class="fa fa-print"></i> Print DR</a> -->
 <!--             <a href="Templates/layout/cash-invoice/<?php echo $info->cash_invoice_id; ?>?type=contentview" target="_blank" class="btn btn-default" style="text-transform:none;font-family: tahoma;" ><i class="fa fa-print"></i> Print Cash Invoice</a>
             <a href="Templates/layout/cash-invoice/<?php echo $info->cash_invoice_id; ?>?type=pdf" class="btn btn-default" style="text-transform:none;font-family: tahoma;" ><i class="fa fa-file-pdf-o"></i> Download as PDF </a> -->
-            <a href="Templates/layout/cash-invoice/<?php echo $info->cash_invoice_id; ?>?type=direct" target="_blank" class="btn btn-default" style="text-transform:none;font-family: tahoma;" ><i class="fa fa-print"></i> Print Direct Invoice </a>
+            <a href="Cash_invoice/new_print_receipt/<?php echo $info->cash_invoice_id; ?>" class="btn btn-default" style="text-transform:none;font-family: tahoma;" ><i class="fa fa-print"></i> Print Direct Invoice </a>
         </div>
     </div>
 

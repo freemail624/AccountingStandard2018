@@ -107,10 +107,20 @@
         .form-group {
             margin-bottom: 15px;
         }
-        #tbl_sales_invoice_filter    
+        #tbl_sales_invoice_filter, #tbl_so_list_filter  
         { 
             display:none; 
         } 
+        div.dataTables_processing{  
+        position: absolute!important;  
+        top: 0%!important;  
+        right: -45%!important;  
+        left: auto!important;  
+        width: 100%!important;  
+        height: 40px!important;  
+        background: none!important;  
+        background-color: transparent!important;  
+        }          
     </style>
     <link type="text/css" href="assets/css/light-theme.css" rel="stylesheet">
 </head>
@@ -136,23 +146,34 @@
         <!-- <div class="panel-heading">
             <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Sales Invoice</b>
         </div> -->
-        <div class="panel-body table-responsive">
+        <div class="panel-body table-responsive" style="width: 100%;overflow-x: hidden;">
         <div class="row panel-row">
         <h2 class="h2-panel-heading">Charge Invoice</h2><hr>
             <div class="row"> 
-                <div class="col-lg-3"><br> 
-                <button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Record Charge Invoice" ><i class="fa fa-plus"></i> Record Charge Invoice</button> 
+                <div class="col-lg-2"><br> 
+                <button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Record Charge Invoice" ><i class="fa fa-plus"></i> Record Invoice</button> 
                 </div> 
-                <div class="col-lg-3"> 
+                <div class="col-lg-3">
+                    Customer : <br />
+                    <select id="cbo_customers_tbl">
+                        <option value="0">All Customers</option>
+                        <?php foreach($customers as $customer){ ?>
+                            <option value="<?php echo $customer->customer_id; ?>">
+                                <?php echo $customer->customer_name; ?>
+                            </option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="col-lg-2"> 
                         From :<br /> 
                         <div class="input-group"> 
-                            <input type="text" id="txt_start_date_sales" name="" class="date-picker form-control" value="<?php echo date("m"); ?>/01/<?php echo date("Y"); ?>"> 
+                            <input type="text" id="txt_start_date_sales" name="" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>"> 
                              <span class="input-group-addon"> 
                                     <i class="fa fa-calendar"></i> 
                              </span> 
                         </div> 
                 </div> 
-                <div class="col-lg-3"> 
+                <div class="col-lg-2"> 
                         To :<br /> 
                         <div class="input-group"> 
                             <input type="text" id="txt_end_date_sales" name="" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>"> 
@@ -328,7 +349,7 @@
                             <td style="display:none;" width="10%">Item ID</td><!-- product id -->
                             <th style="display:none;" width="10%">Total after Global</th> 
 
-                            <th width="5%"><center>Action</center></th>
+                            <th width="10%"><center>Action</center></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -493,14 +514,49 @@
         </div>
     </div>
 </div>
-<div id="modal_so_list" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+<div id="modal_so_list" class="modal fade" role="dialog"><!--modal-->
     <div class="modal-dialog" style="width: 80%;">
         <div class="modal-content">
-            <div class="modal-header ">
-                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
                 <h2 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Sales Order</h2>
             </div>
             <div class="modal-body">
+                <div class="row"> 
+                    <div class="col-lg-3">
+                        Customer : <br />
+                        <select id="cbo_customers_so_tbl">
+                            <option value="0">All Customers</option>
+                            <?php foreach($customers as $customer){ ?>
+                                <option value="<?php echo $customer->customer_id; ?>">
+                                    <?php echo $customer->customer_name; ?>
+                                </option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-lg-offset-2"> 
+                            From :<br /> 
+                            <div class="input-group"> 
+                                <input type="text" id="txt_start_date_so" name="" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>"> 
+                                 <span class="input-group-addon"> 
+                                        <i class="fa fa-calendar"></i> 
+                                 </span> 
+                            </div> 
+                    </div> 
+                    <div class="col-lg-2"> 
+                            To :<br /> 
+                            <div class="input-group"> 
+                                <input type="text" id="txt_end_date_so" name="" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>"> 
+                                 <span class="input-group-addon"> 
+                                        <i class="fa fa-calendar"></i> 
+                                 </span> 
+                            </div> 
+                    </div> 
+                    <div class="col-lg-3"> 
+                            Search :<br /> 
+                             <input type="text" id="tbl_sales_invoice_so" class="form-control"> 
+                    </div> 
+                </div><br/>
                 <table id="tbl_so_list" class="table table-striped" cellspacing="0" width="100%">
                     <thead class="">
                     <tr>
@@ -953,7 +1009,7 @@
 <script>
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboDepartments; var _cboCustomers; var dt_so; var products; var changetxn; var _cboAgents;
-    var _cboCustomerType; var prodstat;
+    var _cboCustomerType; var prodstat; var _cboCustomersTbl; var _cboCustomersSoTbl;
     var _cboCustomerTypeCreate; var _cboSource;
      var _line_unit;
     var oTableItems={
@@ -981,6 +1037,7 @@ $(document).ready(function(){
         after_tax : 'tr:eq(3) > td:eq(1)'
     };
     var initializeControls=function(){
+
         dt=$('#tbl_sales_invoice').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
@@ -990,6 +1047,7 @@ $(document).ready(function(){
                 "bDestroy": true,             
                 "data": function ( d ) { 
                         return $.extend( {}, d, { 
+                            "customer_id":$('#cbo_customers_tbl').val(),
                             "tsd":$('#txt_start_date_sales').val(), 
                             "ted":$('#txt_end_date_sales').val() 
                         }); 
@@ -998,6 +1056,10 @@ $(document).ready(function(){
             "language": {
                 "searchPlaceholder":"Search Invoice"
             },
+            oLanguage: { 
+                    sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>' 
+            }, 
+            processing : true, 
             "columns": [
                 {
                     "targets": [0],
@@ -1024,8 +1086,26 @@ $(document).ready(function(){
             ]
         });
         dt_so=$('#tbl_so_list').DataTable({
+            "dom": '<"toolbar">frtip',      
             "bLengthChange":false,
-            "ajax" : "Sales_order/transaction/open",
+            "ajax" : { 
+                "url":"Sales_order/transaction/open", 
+                "bDestroy": true,             
+                "data": function ( d ) { 
+                        return $.extend( {}, d, { 
+                            "customer_id":$('#cbo_customers_so_tbl').val(),
+                            "tsd":$('#txt_start_date_so').val(), 
+                            "ted":$('#txt_end_date_so').val() 
+                        }); 
+                    } 
+            }, 
+            "language": {
+                "searchPlaceholder":"Search Order"
+            },
+            oLanguage: { 
+                    sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>' 
+            }, 
+            processing : true,            
             "columns": [
                 {
                     "targets": [0],
@@ -1050,6 +1130,18 @@ $(document).ready(function(){
         });
         $('.numeric').autoNumeric('init');
         $('#contact_no').keypress(validateNumber);
+        _cboCustomersTbl=$("#cbo_customers_tbl").select2({
+            placeholder: "Please select customer.",
+            allowClear: false
+        });   
+        _cboCustomersTbl.select2('val',0);     
+
+        _cboCustomersSoTbl=$("#cbo_customers_so_tbl").select2({
+            placeholder: "Please select customer.",
+            allowClear: false
+        });   
+        _cboCustomersSoTbl.select2('val',0);   
+
         _cboDepartments=$("#cbo_departments").select2({
             placeholder: "Please select Department.",
             allowClear: true
@@ -1210,8 +1302,12 @@ $(document).ready(function(){
                 //     retail_price = 0;
                 // }
                 retail_price = sale_price;
-                suggis_parent = suggestion.is_parent;
-                temp_inv_price = sale_price;                
+                suggis_parent = suggestion.is_parent;              
+                temp_inv_price = sale_price;
+
+                if(sameProduct(suggestion.product_id) == true){
+                    temp_inv_price = 0
+                }
 
                 // if(suggestion.primary_unit == 1){ 
                 //         suggis_parent = 1; 
@@ -1222,10 +1318,11 @@ $(document).ready(function(){
                 //     net_vat = getFloat(net_vat) / getFloat(suggestion.child_unit_desc);
                 //     vat_input = getFloat(vat_input) / getFloat(suggestion.child_unit_desc);
                 // }
-            var qty = 1;
-            if (suggestion.is_product_basyo == 1){
-                qty = TotalBasyo();
-            }
+
+                var qty = 1;
+                if (suggestion.is_product_basyo == 1){
+                    qty = TotalBasyo();
+                }
 
             changetxn = 'active';
             $('#tbl_items > tbody').append(newRowItem({
@@ -1425,6 +1522,25 @@ $(document).ready(function(){
         $("#txt_end_date_sales").on("change", function () {         
             $('#tbl_sales_invoice').DataTable().ajax.reload() 
         }); 
+        $("#cbo_customers_tbl").on("change", function () {         
+            $('#tbl_sales_invoice').DataTable().ajax.reload() 
+        }); 
+
+        $("#tbl_sales_invoice_so").keyup(function(){          
+                dt_so 
+                        .search(this.value) 
+                        .draw(); 
+        }); 
+        $("#txt_start_date_so").on("change", function () {         
+            $('#tbl_so_list').DataTable().ajax.reload() 
+        }); 
+        $("#txt_end_date_so").on("change", function () {         
+            $('#tbl_so_list').DataTable().ajax.reload() 
+        }); 
+        $("#cbo_customers_so_tbl").on("change", function () {         
+            $('#tbl_so_list').DataTable().ajax.reload() 
+        }); 
+
         //loads modal to create new department
         _cboDepartments.on('select2:select', function(){
             if (_cboDepartments.val() == 0) {
@@ -2188,6 +2304,16 @@ $(document).ready(function(){
             event.preventDefault();
             $('img[name="img_user"]').attr('src','assets/img/anonymous-icon.png');
         });
+
+        $('#tbl_items > tbody').on('click','.is_same_allowed',function(){
+
+            if($(this).is(":checked") == true){
+                $(this).closest('tr').find('input[name="is_same_allowed"]').val(1);
+            }else{
+                $(this).closest('tr').find('input[name="is_same_allowed"]').val(0); 
+            }
+        });
+
     })();
     var validateRequiredFields=function(f){
         var stat=true;
@@ -2381,8 +2507,7 @@ $(document).ready(function(){
         '<td style="display:none;"><input name="product_id[]" type="text" class="numeric form-control" value="'+ d.product_id+'" readonly></td>'+
         '<td style="display:none;"><input name="inv_line_total_after_global[]" type="text" class="numeric form-control" value="'+ d.inv_line_total_after_global+'" readonly></td>'+
 
-
-        '<td align="center"><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>'+
+        '<td align="center"><input type="checkbox" class="is_same_allowed" style="display: inline;"><input type="text" name="is_same_allowed"><button type="button" name="remove_item" class="btn btn-red" style="display: inline;"><i class="fa fa-trash"></i></button></td>'+
                 '<td  style="display:none;"><input type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.bulk_price,2)+'" readonly></td>'+
                 '<td  style="display:none;"><input type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.retail_price,2)+'" readonly></td>'+
         '</tr>';
@@ -2464,13 +2589,40 @@ $(document).ready(function(){
         var rowcheck=$('#tbl_items > tbody tr');
         $.each(rowcheck,function(){
             item = parseFloat(accounting.unformat($(oTableItems.item_id,$(this)).find('input.numeric').val()));
+            checked = $(this).find('.is_same_allowed').is(":checked");
+            
             if(check_id == item){
+
+                if(checked==true){
+                    prodstat=true;
+                    return true;
+                }
                 prodstat=false;
                 return false;
             }
         });
          return prodstat;    
     };
+
+    var sameProduct= function(check_id){
+        var prodstat=false;
+        var rowcheck=$('#tbl_items > tbody tr');
+        $.each(rowcheck,function(){
+            item = parseFloat(accounting.unformat($(oTableItems.item_id,$(this)).find('input.numeric').val()));
+            checked = $(this).find('.is_same_allowed').is(":checked");
+            
+            if(check_id == item){
+
+                if(checked==true){
+                    prodstat=true;
+                    return true;
+                }
+                prodstat=false;
+                return false;
+            }
+        });
+         return prodstat;    
+    };    
 
     setInterval(function(){
     //console.log('test');

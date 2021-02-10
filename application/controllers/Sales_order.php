@@ -107,10 +107,23 @@ class Sales_order extends CORE_Controller
         switch ($txn){
             case 'list':  //this returns JSON of Issuance to be rendered on Datatable
                 $m_sales_order=$this->Sales_order_model;
+
+                $customer_id = $this->input->get('customer_id');
+                $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
+                $ted = date('Y-m-d',strtotime($this->input->get('ted')));
+                $filter="";
+
+                if($customer_id!=0){
+                    $filter = " AND sales_order.customer_id = ".$customer_id;
+                }
+
                 $response['data']=$this->response_rows(
-                    'sales_order.is_active=TRUE AND sales_order.is_deleted=FALSE'.($id_filter==null?'':' AND sales_order.sales_order_id='.$id_filter),
+                    'sales_order.is_active=TRUE AND sales_order.is_deleted=FALSE AND
+                    DATE(sales_order.date_order) BETWEEN "'.$tsd.'" AND "'.$ted.'"
+                    '.($id_filter==null?'':' AND sales_order.sales_order_id='.$id_filter).' '.$filter,
                     'sales_order.sales_order_id DESC'
                 );
+
                 echo json_encode($response);
                 break;
 
@@ -118,9 +131,19 @@ class Sales_order extends CORE_Controller
             case 'open':  //this returns PO that are already approved
                 $m_sales_order=$this->Sales_order_model;
                 //$where_filter=null,$select_list=null,$join_array=null,$order_by=null,$group_by=null,$auto_select_escape=TRUE,$custom_where_filter=null
+
+                $customer_id = $this->input->get('customer_id');
+                $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
+                $ted = date('Y-m-d',strtotime($this->input->get('ted')));
+                $filter="";
+
+                if($customer_id!=0){
+                    $filter = " AND sales_order.customer_id = ".$customer_id;
+                }
+
                 $response['data']= $m_sales_order->get_list(
 
-                    'sales_order.is_deleted=FALSE AND sales_order.is_active=TRUE AND (sales_order.order_status_id=1 OR sales_order.order_status_id=3)',
+                    'sales_order.is_deleted=FALSE AND sales_order.is_active=TRUE AND (sales_order.order_status_id=1 OR sales_order.order_status_id=3) AND DATE(sales_order.date_order) BETWEEN "'.$tsd.'" AND "'.$ted.'" '.$filter,
 
                     array(
                         'sales_order.*',

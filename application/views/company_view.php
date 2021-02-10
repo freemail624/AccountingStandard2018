@@ -424,7 +424,45 @@
                                                             </strong>
                                                           </label>
                                                        </div>
-                                                   </div>          
+                                                   </div>  
+                                                   <br/>
+                                                   <h2 class="h2-panel-heading">
+                                                  <i class="fa fa-cog"></i> Printer Settings (Cash Invoice)</h2><hr>
+                                                  <div class="form-group">
+                                                         <label class="col-md-2 col-md-offset-1 control-label"> <strong> Printer :</strong></label>
+                                                         <div class="col-md-7">
+                                                             <div class="input-group">
+                                                                  <span class="input-group-addon">
+                                                                      <i class="fa fa-code"></i>
+                                                                  </span>
+                                                                 <input type="text" name="printer" class="form-control" value="<?php echo $company->printer; ?>" placeholder="Printer" data-error-msg="Printer is required!" required>
+                                                             </div>
+                                                         </div>
+                                                     </div>         
+
+                                                  <div class="form-group">
+                                                       <label class="col-md-2 col-md-offset-1 control-label"> <strong> Hostname :</strong></label>
+                                                       <div class="col-md-7">
+                                                           <div class="input-group">
+                                                                <span class="input-group-addon">
+                                                                    <i class="fa fa-code"></i>
+                                                                </span>
+                                                               <input type="text" name="hostname" class="form-control" value="<?php echo $company->hostname; ?>" placeholder="Hostname" data-error-msg="Hostname is required!">
+                                                           </div>
+                                                       </div>
+                                                   </div> 
+
+                                                    <div class="form-group">
+                                                       <label class="col-md-2 col-md-offset-1 control-label"> <strong> Printer Size :</strong></label>
+                                                       <div class="col-md-7">
+                                                           <div class="input-group">
+                                                                <span class="input-group-addon">
+                                                                    <i class="fa fa-code"></i>
+                                                                </span>
+                                                               <input type="text" name="printer_size" class="form-control" value="<?php echo $company->printer_size; ?>" placeholder="Printer Size" data-error-msg="Printer Size is required!" required>
+                                                           </div>
+                                                       </div>
+                                                   </div>                                                    
 
                                                </form>
                                                     <br /><br />

@@ -151,9 +151,16 @@ class Sales_invoice extends CORE_Controller
 
             case 'list':  //this returns JSON of Issuance to be rendered on Datatable
                 $m_invoice=$this->Sales_invoice_model;
+                $customer_id = $this->input->get('customer_id');
                 $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
                 $ted = date('Y-m-d',strtotime($this->input->get('ted')));
-                $additional = " AND DATE(sales_invoice.date_invoice) BETWEEN '$tsd' AND '$ted'";
+                $filter="";
+
+                if($customer_id!=0){
+                    $filter = " AND sales_invoice.customer_id = ".$customer_id;
+                }
+
+                $additional = $filter." AND DATE(sales_invoice.date_invoice) BETWEEN '$tsd' AND '$ted'";
                 $response['data']=$this->response_rows($id_filter,$additional);
                 echo json_encode($response);
                 break;
@@ -317,7 +324,7 @@ class Sales_invoice extends CORE_Controller
                 $batch_no=$this->input->post('batch_no',TRUE);
                 $cost_upon_invoice=$this->input->post('cost_upon_invoice',TRUE);
                 $is_parent=$this->input->post('is_parent',TRUE);
-                
+                $is_same_allowed=$this->input->post('is_same_allowed',TRUE);
 
                 $m_products=$this->Products_model;
 
@@ -351,7 +358,7 @@ class Sales_invoice extends CORE_Controller
                     }   
 
                     //$on_hand=$m_products->get_product_current_qty($batch_no[$i], $prod_id[$i], date('Y-m-d', strtotime($exp_date[$i])));
-
+                    $m_invoice_items->is_same_allowed = $this->get_numeric_value($is_same_allowed[$i]);
                     $m_invoice_items->save();
                     $m_products->on_hand=$m_products->get_product_qty($this->get_numeric_value($prod_id[$i]));
                     $m_products->modify($this->get_numeric_value($prod_id[$i]));
@@ -479,6 +486,7 @@ class Sales_invoice extends CORE_Controller
                     $orig_so_price=$this->input->post('orig_so_price',TRUE);
                     $cost_upon_invoice=$this->input->post('cost_upon_invoice',TRUE);
                     $is_parent=$this->input->post('is_parent',TRUE);
+                    $is_same_allowed=$this->input->post('is_same_allowed',TRUE);
 
                     $m_products=$this->Products_model;
 
@@ -500,6 +508,7 @@ class Sales_invoice extends CORE_Controller
                         //$m_invoice_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
                         $m_invoice_items->orig_so_price=$this->get_numeric_value($orig_so_price[$i]);
                         //$m_invoice_items->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
+                        $m_invoice_items->is_same_allowed = $this->get_numeric_value($is_same_allowed[$i]);
 
                         //unit id retrieval is change, because of TRIGGER restriction
                         $m_invoice_items->is_parent=$this->get_numeric_value($is_parent[$i]);
