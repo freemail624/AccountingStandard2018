@@ -120,6 +120,7 @@
                                 <li class="<?php echo (in_array('6-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Account_titles">Setup Chart of Accounts</a></li>
                                 <li class="<?php echo (in_array('6-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Account_integration">General Configuration</a></li>
                                 <li class="<?php echo (in_array('6-14',$this->session->user_rights)?'':'hidden'); ?>"><a href="Soa_settings">SOA Settings</a></li>
+                                <li class="<?php echo (in_array('6-18',$this->session->user_rights)?'':'hidden'); ?>"><a href="Receivable_settings">Receivable Settings</a></li>
                                 <li class="<?php echo (in_array('6-16',$this->session->user_rights)?'':'hidden'); ?>"><a href="Asset_settings">Fixed Asset Settings</a></li>
                                 <li class="<?php echo (in_array('6-17',$this->session->user_rights)?'':'hidden'); ?>"><a href="Cash_flow_settings">Cash Flow Settings</a></li>
                                 <li class="<?php echo (in_array('6-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="User_groups">Setup User Rights</a></li>

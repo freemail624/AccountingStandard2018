@@ -136,7 +136,7 @@
                                                     <h2 class="h2-panel-heading">Accounts Receivable - Tenants</h2><hr>
                                                         <div style="">
                                                             <div class="row">
-                                                                <div class="col-lg-6">
+                                                                <div class="col-lg-4">
                                                                 <br/>
                                                                 <button class="btn btn-primary" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Print">
                                                                     <i class="fa fa-print"></i> Print Report</button>
@@ -151,6 +151,14 @@
                                                                     <i class="fa fa-refresh"></i></button>  
                                                                 </div>
                                                                 <div class="col-lg-3">
+                                                                    Account * : <br />
+                                                                    <select id="cbo_accounts" class="form-control">
+                                                                        <?php foreach($accounts as $account){ ?>
+                                                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($ar_account==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
+                                                                        <?php } ?>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-lg-2">
                                                                     As of Date * :<br />
                                                                     <div class="input-group">
                                                                         <input type="text" id="txt_date" name="date_txn" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>">
@@ -292,8 +300,8 @@
         var initializeControls=function(){
             initializeHeaderTable();
             _cboAccounts=$("#cbo_accounts").select2({
-                placeholder: "Please select customer.",
-                allowClear: true
+                placeholder: "Please select an account.",
+                allowClear: false
             });
 
             $('.date-picker').datepicker({
@@ -315,6 +323,7 @@
                     "bDestroy": true,
                     "data": function ( d ) {
                         return $.extend( {}, d, {
+                            "account_id":$('#cbo_accounts').val(),
                             "date":$('#txt_date').val()
                         });
                     }
@@ -393,18 +402,22 @@
                 $('#tbl_accounts_receivable').DataTable().ajax.reload();
             });
 
+            $('#cbo_accounts').on('change',function(){
+                $('#tbl_accounts_receivable').DataTable().ajax.reload();
+            });
+
             $("#searchbox").keyup(function(){         
                 dt
                     .search(this.value)
                     .draw();
             });            
-
+            
             $(document).on('click','#btn_print',function(){
-                window.open('Templates/layout/account-receivable-schedule-tenant?type=preview&date='+$('#txt_date').val());
+                window.open('Templates/layout/account-receivable-schedule-tenant?type=preview&account_id='+_cboAccounts.select2('val')+'&date='+$('#txt_date').val());
             });
 
             $(document).on('click','#btn_export',function(){
-                window.open('Accounts_receivable_tenants/transaction/account-receivable-schedule-tenant-export?type=preview&date='+$('#txt_date').val());
+                window.open('Accounts_receivable_tenants/transaction/account-receivable-schedule-tenant-export?type=preview&account_id='+_cboAccounts.select2('val')+'&date='+$('#txt_date').val());
 
             });
 
@@ -416,7 +429,7 @@
                 $.ajax({
                     "dataType":"json",
                     "type":"POST",
-                    "url":"Accounts_receivable_tenants/transaction/account-receivable-schedule-tenant-email?type=preview&date="+$('#txt_date').val(),
+                    "url":"Accounts_receivable_tenants/transaction/account-receivable-schedule-tenant-email?type=preview&account_id="+_cboAccounts.select2('val')+'&date='+$('#txt_date').val(),
                     "beforeSend": showSpinningProgress(btn)
                 }).done(function(response){
                     showNotification(response);
@@ -424,6 +437,8 @@
 
                 });
             });
+
+
 
             $(document).on('click','#btn_refresh',function(){
                 $('#tbl_accounts_receivable').DataTable().ajax.reload();

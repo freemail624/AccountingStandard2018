@@ -4049,14 +4049,12 @@ class Templates extends CORE_Controller {
 
                 $m_journal_accounts=$this->Journal_account_model;
                 $m_account_integration=$this->Account_integration_model;
-
-                $ar_id=$m_account_integration->get_list();
-                $receivable_account_id=$ar_id[0]->receivable_account_id;
-
+                
+                $account_id=$this->input->get('account_id');
                 $date=$this->input->get('date');
 
                 $data['date']=date('Y-m-d',strtotime($date));
-                $data['ar_accounts']=$m_journal_accounts->get_account_schedule_tenants($receivable_account_id,$date);
+                $data['ar_accounts']=$m_journal_accounts->get_account_schedule_tenants($account_id,$date);
 
                 $as_of_date=date('Y-m-d',strtotime($date));
                 $this_month_start_date=date('Y',strtotime($as_of_date)).'-'.date('m',strtotime($as_of_date))."-01";

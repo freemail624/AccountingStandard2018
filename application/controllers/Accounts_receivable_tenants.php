@@ -17,7 +17,8 @@ class Accounts_receivable_tenants extends CORE_Controller
                 'Users_model',
                 'Account_integration_model',
                 'Company_model',
-                'Email_settings_model'
+                'Email_settings_model',
+                'Receivable_settings_model'
             )
         );
 
@@ -37,6 +38,7 @@ class Accounts_receivable_tenants extends CORE_Controller
         $m_account_integration=$this->Account_integration_model;
         $ar_id=$m_account_integration->get_list();
         $data['ar_account']=$ar_id[0]->receivable_account_id;
+        $data['accounts']=$this->Receivable_settings_model->get_receivable_accounts();
 
         (in_array('9-28',$this->session->user_rights)? 
         $this->load->view('accounts_receivable_tenants_view', $data)
@@ -50,11 +52,10 @@ class Accounts_receivable_tenants extends CORE_Controller
                 $m_journal_accounts=$this->Journal_account_model;
                 $m_account_integration=$this->Account_integration_model;
 
-                $ar_id=$m_account_integration->get_list();
-                $receivable_account_id=$ar_id[0]->receivable_account_id;
+                $account_id=$this->input->post('account_id');
                 $date=$this->input->post('date');
 
-                $response['data']=$m_journal_accounts->get_account_schedule_tenants($receivable_account_id,$date);
+                $response['data']=$m_journal_accounts->get_account_schedule_tenants($account_id,$date);
                 echo json_encode($response);
 
                 break;
@@ -71,8 +72,7 @@ class Accounts_receivable_tenants extends CORE_Controller
 
                 $m_journal_accounts=$this->Journal_account_model;
 
-                $ar_id=$m_account_integration->get_list();
-                $receivable_account_id=$ar_id[0]->receivable_account_id;
+                $account_id=$this->input->get('account_id');
                 $date=$this->input->get('date');
 
                 $as_of_date=date('Y-m-d',strtotime($date));
@@ -80,7 +80,7 @@ class Accounts_receivable_tenants extends CORE_Controller
                 $prev_month=date('F j, Y',strtotime("-1 days", strtotime($this_month_start_date)));
                 $current_month=date('F j, Y',strtotime($as_of_date));
 
-                $ar_accounts=$m_journal_accounts->get_account_schedule_tenants($receivable_account_id,$date);
+                $ar_accounts=$m_journal_accounts->get_account_schedule_tenants($account_id,$date);
 
                 $excel->setActiveSheetIndex(0);
 
@@ -224,8 +224,7 @@ class Accounts_receivable_tenants extends CORE_Controller
 
                 $m_journal_accounts=$this->Journal_account_model;
 
-                $ar_id=$m_account_integration->get_list();
-                $receivable_account_id=$ar_id[0]->receivable_account_id;
+                $account_id=$this->input->get('account_id');
                 $date=$this->input->get('date');
 
                 $as_of_date=date('Y-m-d',strtotime($date));
@@ -233,7 +232,7 @@ class Accounts_receivable_tenants extends CORE_Controller
                 $prev_month=date('F j, Y',strtotime("-1 days", strtotime($this_month_start_date)));
                 $current_month=date('F j, Y',strtotime($as_of_date));
 
-                $ar_accounts=$m_journal_accounts->get_account_schedule_tenants($receivable_account_id,$date);
+                $ar_accounts=$m_journal_accounts->get_account_schedule_tenants($account_id,$date);
 
                 ob_start();
                 $excel->setActiveSheetIndex(0);
