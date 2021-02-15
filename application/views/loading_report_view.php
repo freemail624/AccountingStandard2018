@@ -159,7 +159,7 @@
                 <div class="col-lg-3"> 
                         From :<br /> 
                         <div class="input-group"> 
-                            <input type="text" id="txt_start_date_sales" name="" class="date-picker form-control" value="<?php echo date("m"); ?>/01/<?php echo date("Y"); ?>"> 
+                            <input type="text" id="txt_start_date_sales" name="" class="date-picker form-control" value="<?php echo date("m/d"); ?>/2000"> 
                              <span class="input-group-addon"> 
                                     <i class="fa fa-calendar"></i> 
                              </span> 
@@ -301,7 +301,7 @@
                         <th>Address</th>
                         <th class="text-right">Order OIL/ BASYO QTY</th>
                         <th class="text-right">Invoice Amount</th>
-                        <th width="5%"><center>Action</center></th>
+                        <th width="20%"><center>Action</center></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -489,6 +489,37 @@
     </div>
 </div>
 
+
+<div id="modal_transfer_invoice_items" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background: #2ecc71">
+                 <h2 id="department_title" class="modal-title" style="color:white;">Transfer Invoice</h2>
+            </div>
+            <div class="modal-body">
+                <form id="frm_transfer" role="form" class="form-horizontal">
+                    <div class="row" style="margin: 1%;">
+                        <div class="col-lg-12">
+                            <b class="required">*</b> <label> Loading # :</label> <br />
+                            <select name="transfer_loading_id" id="transfer_loading_id" data-error-msg="Loading No is required!" required>
+                                <?php foreach($loadings as $loading){ ?>
+                                    <option value="<?php echo $loading->loading_id; ?>">
+                                        <?php echo $loading->loading_no; ?>
+                                    </option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="btn_transfer_invoice" class="btn btn-primary">Transfer</button>
+                <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 </div>
 <footer role="contentinfo">
     <div class="clearfix">
@@ -530,7 +561,7 @@
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _selectRowObjSI; 
     var dt_si; var products; var changetxn;
-    var prodstat; var is_switch;
+    var prodstat; var is_switch; var _cboLoadingNo;
     var _line_unit; var _cboAgents; var _cboAgentsTransfer;
 
     var oTableItems={
@@ -648,6 +679,13 @@ $(document).ready(function(){
 
         $('.numeric').autoNumeric('init');
         $('.number').autoNumeric('init', {"mDec": '0'});
+
+        _cboLoadingNo=$("#transfer_loading_id").select2({
+            placeholder: "Please select Loading No.",
+            allowClear: false
+        });
+
+        _cboLoadingNo.select2('val', null);
 
         _cboAgents=$("#cbo_agents").select2({
             placeholder: "Please select truck.",
@@ -828,6 +866,10 @@ $(document).ready(function(){
                     var rows=response.data;
                     $('#tbl_items > tbody').html('');
                     $.each(rows,function(i,value){
+                        var classhidden="hidden";
+                        if(_txnMode=="edit"){
+                            classhidden = "";
+                        }
 
                         $('#tbl_items > tbody').prepend(newRowItem({
                             invoice_id : value.sales_invoice_id,
@@ -837,7 +879,8 @@ $(document).ready(function(){
                             address: value.address,
                             total_after_discount : value.total_after_discount,
                             total_inv_qty : value.total_inv_qty,
-                            btnclass : ""
+                            btnclass : "",
+                            btnclasshidden : classhidden
                         })); 
 
                     });
@@ -897,6 +940,26 @@ $(document).ready(function(){
             $('#transfer-details-panel').show();
             $('#modal_transfer_invoice').modal('hide');
             getInvoices(1);
+        });
+
+        $('#btn_transfer_invoice').on('click', function(){
+
+            var transfer_id = $('#transfer_loading_id').val();
+            if(transfer_id==null){
+                showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Please select a loading no to transfer invoice."});
+                    return;
+            }
+
+            _selectRowObjTransfer.find('input.transfer_id').val(invoice_id);
+            _selectRowObjTransfer.find('input.for_transfer').val(1);
+            _selectRowObjTransfer.find('.btn_for_transfer').removeClass('btn-orange');
+            _selectRowObjTransfer.find('.btn_for_transfer').addClass('btn-green');
+            _selectRowObjTransfer.find('.btn_for_transfer').find('i').removeClass();
+            _selectRowObjTransfer.find('.btn_for_transfer').find('i').addClass('fa fa-times-circle');
+            _selectRowObjTransfer.find('.btn-red').hide();
+            _selectRowObjTransfer.find('.for_transfer_panel').html('(FOR TRANSFER)');
+
+            $('#modal_transfer_invoice_items').modal('hide');
         });
 
         $('#btn_cancel_switch').on('click', function(){
@@ -984,6 +1047,11 @@ $(document).ready(function(){
                 return;
             }
 
+            var classhidden="hidden";
+            if(_txnMode=="edit"){
+                classhidden = "";
+            }
+
             $('#tbl_items > tbody').prepend(newRowItem({
                 invoice_id : data.sales_invoice_id,
                 sales_inv_no : data.sales_inv_no,
@@ -992,7 +1060,8 @@ $(document).ready(function(){
                 address: data.address,
                 total_after_discount : data.total_after_discount,
                 total_inv_qty : data.total_inv_qty,
-                btnclass : ""
+                btnclass : "",
+                btnclasshidden : classhidden
             }));
 
             _selectRowObjSI.remove();
@@ -1045,6 +1114,11 @@ $(document).ready(function(){
                             attr = "hidden";
                          }
 
+                        var classhidden="hidden";
+                        if(_txnMode=="edit"){
+                            classhidden = "";
+                        }
+
                         $('#tbl_items > tbody').append(newRowItem({
                             invoice_id : value.invoice_id,
                             sales_inv_no : value.sales_inv_no,
@@ -1053,7 +1127,9 @@ $(document).ready(function(){
                             address: value.address,
                             total_after_discount : value.total_after_discount,
                             total_inv_qty : value.total_inv_qty,
-                            btnclass : attr
+                            btnclass : attr,
+                            btnclasshidden : classhidden
+
                         }));
                     });
 
@@ -1136,6 +1212,31 @@ $(document).ready(function(){
             recomputeTotalInvoices();
         });
 
+        $('#tbl_items > tbody').on('click','button[name="transfer_item"]',function(){
+            var invoice_id = $(this).closest('tr').find('input.invoice_id').val();
+            var for_transfer = $(this).closest('tr').find('input.for_transfer').val();
+            _cboLoadingNo.select2('val', null);
+            _selectRowObjTransfer=$(this).closest('tr');
+
+            if (for_transfer <= 0){
+                $('#modal_transfer_invoice_items').modal('show');
+
+            }else{
+                $(this).closest('tr').find('input.transfer_id').val(0);
+                $(this).closest('tr').find('input.for_transfer').val(0);
+                $(this).closest('tr').find('.btn_for_transfer').removeClass('btn-green');
+                $(this).closest('tr').find('.btn_for_transfer').addClass('btn-orange');
+                $(this).closest('tr').find('.btn_for_transfer').find('i').removeClass();
+                $(this).closest('tr').find('.btn_for_transfer').find('i').addClass('fa fa-share-square-o');
+                $(this).closest('tr').find('.btn-red').show();
+                $(this).closest('tr').find('.for_transfer_panel').html('');
+            }
+
+            // reComputeTotal();
+            // recomputeTotalInvoices();
+
+        });
+
     })();
 
     var validateRequiredFields=function(f){
@@ -1199,22 +1300,21 @@ $(document).ready(function(){
     };
 
     var updateLoading=function(){
-        alert();
-        // var _data=$('#frm_loading,#frm_items').serializeArray();
-        // _data.push({name : "remarks", value : $('textarea[name="remarks"]').val()});
-        // _data.push({name : "grand_total_amount", value: $('#td_grand_total_amount').text()});
-        // _data.push({name : "grand_total_inv_qty", value: $('#td_grand_total_inv_qty').text()});
-        // _data.push({name : "loading_id" ,value : _selectedID});
+        var _data=$('#frm_loading,#frm_items').serializeArray();
+        _data.push({name : "remarks", value : $('textarea[name="remarks"]').val()});
+        _data.push({name : "grand_total_amount", value: $('#td_grand_total_amount').text()});
+        _data.push({name : "grand_total_inv_qty", value: $('#td_grand_total_inv_qty').text()});
+        _data.push({name : "loading_id" ,value : _selectedID});
 
-        // // $('input[name="is_auto_print"]').prop("checked") ?  _data.push({name : "is_auto_print" , value : '1'   }) : _data.push({name : "is_auto_print" , value : '0'   });
+        // $('input[name="is_auto_print"]').prop("checked") ?  _data.push({name : "is_auto_print" , value : '1'   }) : _data.push({name : "is_auto_print" , value : '0'   });
 
-        // return $.ajax({
-        //     "dataType":"json",
-        //     "type":"POST",
-        //     "url":"Loading/transaction/update",
-        //     "data":_data,
-        //     "beforeSend": showSpinningProgress($('#btn_save'))
-        // });
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Loading/transaction/update",
+            "data":_data,
+            "beforeSend": showSpinningProgress($('#btn_save'))
+        });
     };
 
     var removeLoading=function(){
@@ -1273,13 +1373,13 @@ $(document).ready(function(){
 
         return '<tr>'+
         //DISPLAY
-        '<td class="hidden"><input name="invoice_id[]" type="text" class="numeric form-control" value="'+d.invoice_id+'"></td>'+
+        '<td class="hidden"><input name="transfer_id[]" type="text" class="form-control transfer_id" value=""><input name="for_transfer[]" type="text" class="form-control for_transfer" value=""><input name="invoice_id[]" type="text" class="form-control invoice_id" value="'+d.invoice_id+'"></td>'+
         '<td width="15%">'+d.sales_inv_no+'</td>'+
-        '<td width="20%">'+d.customer_name+'</td>'+
-        '<td width="30%">'+d.address+'</td>'+
+        '<td width="20%">'+d.customer_name+' <span style="color: red;" class="for_transfer_panel"></span></td>'+
+        '<td width="20%">'+d.address+'</td>'+
         '<td width="15%" class="text-right"><input type="text" name="total_inv_qty[]" class="form-control numeric text-right" readonly value="'+accounting.formatNumber(d.total_inv_qty,2)+'"></td>'+
         '<td width="15%" class="text-right"><input type="text" name="total_after_discount[]" class="form-control numeric text-right" readonly value="'+accounting.formatNumber(d.total_after_discount,2)+'"></td>'+
-        '<td width="5%" align="center"><button type="button" name="remove_item" class="btn btn-red '+d.btnclass+'"><i class="fa fa-trash"></i></button></td>'+
+        '<td width="15%" align="center"><button type="button" name="transfer_item" class="btn btn-orange btn-sm btn_for_transfer '+d.btnclasshidden+'" style="margin-right: 10px;"><i class="fa fa-share-square-o"></i></button><button type="button" name="remove_item" class="btn btn-red btn-sm '+d.btnclass+'"><i class="fa fa-trash"></i></button></td>'+
         '<td class="hidden"><input name="customer_id[]" type="text" class="form-control" value="'+d.customer_id+'" readonly></td>'+
         '<td class="hidden"><input name="address[]" type="text" class="form-control" value="'+d.address+'" readonly></td>'+
         '</tr>';

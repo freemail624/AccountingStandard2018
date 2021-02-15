@@ -91,7 +91,7 @@
                                                                 <div class="col-xs-12 col-lg-4">
                                                                     Period Start * :<br />
                                                                     <div class="input-group">
-                                                                        <input type="text" id="txt_date_start" name="date_from" class="date-picker form-control date_filter" value="01/01/<?php echo date("Y"); ?>">
+                                                                        <input type="text" id="txt_date_start" name="date_from" class="date-picker form-control date_filter" value="<?php echo date("m/d/Y"); ?>">
                                                                          <span class="input-group-addon">
                                                                                 <i class="fa fa-calendar"></i>
                                                                          </span>

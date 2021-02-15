@@ -70,6 +70,7 @@ class Loading extends CORE_Controller
 
         $data['agents']=$this->Agent_model->get_list(array('is_deleted'=>FALSE));
         $data['accounts']=$this->Account_integration_model->get_list(1);
+        $data['loadings']=$this->Loading_model->get_list(array("is_deleted"=>FALSE));
 
         $tax_rate=$this->Company_model->get_list(
             null,

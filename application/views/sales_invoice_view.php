@@ -1352,7 +1352,9 @@ $(document).ready(function(){
                 a:a,
                 primary_unit:suggestion.primary_unit,
                 is_basyo:suggestion.is_basyo,
-                is_product_basyo:suggestion.is_product_basyo
+                is_product_basyo:suggestion.is_product_basyo,
+                is_checked:"",
+                is_same_allowed:0               
 
             }));
 
@@ -1906,7 +1908,9 @@ $(document).ready(function(){
                             retail_price: retail_price,
                             a:a,
                             is_basyo:value.is_basyo,
-                            is_product_basyo:value.is_product_basyo
+                            is_product_basyo:value.is_product_basyo,
+                            is_checked:"",
+                            is_same_allowed:0                            
                         }));
                         _line_unit=$('.line_unit'+a).select2({
                             minimumResultsForSearch: -1
@@ -2014,6 +2018,13 @@ $(document).ready(function(){
                                 retail_price = 0;
                             }
 
+                        var checked_status;
+                        if(value.is_same_allowed == 1){
+                            checked_status = "checked";
+                        }else{
+                            checked_status = "";
+                        }
+
                         $('#tbl_items > tbody').append(newRowItem({
                             inv_qty : value.inv_qty,
                             product_code : value.product_code,
@@ -2042,7 +2053,10 @@ $(document).ready(function(){
                             retail_price: retail_price,
                             a:a,
                             is_basyo:value.is_basyo,
-                            is_product_basyo:value.is_product_basyo
+                            is_product_basyo:value.is_product_basyo,
+                            is_checked:checked_status,
+                            is_same_allowed:value.is_same_allowed
+
                         }));
                         changetxn = 'inactive';
                           _line_unit=$('.line_unit'+a).select2({
@@ -2050,6 +2064,7 @@ $(document).ready(function(){
                             });
                             _line_unit.select2('val',value.unit_id);
                             a++;
+
                     });
                     changetxn = 'active';
                     reComputeTotal();
@@ -2308,9 +2323,9 @@ $(document).ready(function(){
         $('#tbl_items > tbody').on('click','.is_same_allowed',function(){
 
             if($(this).is(":checked") == true){
-                $(this).closest('tr').find('input[name="is_same_allowed"]').val(1);
+                $(this).closest('tr').find('input[name="is_same_allowed[]"]').val(1);
             }else{
-                $(this).closest('tr').find('input[name="is_same_allowed"]').val(0); 
+                $(this).closest('tr').find('input[name="is_same_allowed[]"]').val(0); 
             }
         });
 
@@ -2507,7 +2522,7 @@ $(document).ready(function(){
         '<td style="display:none;"><input name="product_id[]" type="text" class="numeric form-control" value="'+ d.product_id+'" readonly></td>'+
         '<td style="display:none;"><input name="inv_line_total_after_global[]" type="text" class="numeric form-control" value="'+ d.inv_line_total_after_global+'" readonly></td>'+
 
-        '<td align="center"><input type="checkbox" class="is_same_allowed" style="display: inline;"><input type="text" name="is_same_allowed"><button type="button" name="remove_item" class="btn btn-red" style="display: inline;"><i class="fa fa-trash"></i></button></td>'+
+        '<td align="center"><input type="checkbox" class="is_same_allowed" style="display: inline;" '+d.is_checked+'><input type="hidden" name="is_same_allowed[]" value="'+d.is_same_allowed+'"><button type="button" name="remove_item" class="btn btn-red" style="display: inline;"><i class="fa fa-trash"></i></button></td>'+
                 '<td  style="display:none;"><input type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.bulk_price,2)+'" readonly></td>'+
                 '<td  style="display:none;"><input type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.retail_price,2)+'" readonly></td>'+
         '</tr>';

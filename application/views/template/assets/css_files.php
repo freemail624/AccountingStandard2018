@@ -46,6 +46,7 @@
         color:#f44336;
 
     }
+
     .panel {
         border-top-width: 0!important;
         border-radius: 0;
