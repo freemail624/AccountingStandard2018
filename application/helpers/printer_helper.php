@@ -19,7 +19,7 @@
 		    /* Print a "Hello world" receipt" */
 		    $printer = new Printer($connector);
 		    $printer -> setJustification(Printer::JUSTIFY_CENTER);
-		    $printer -> setFont(Printer::FONT_A);
+		    $printer -> setFont(Printer::FONT_B);
 
 		    if($open_drawer){
 		    	$printer -> pulse();

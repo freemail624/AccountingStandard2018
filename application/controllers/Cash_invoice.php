@@ -573,18 +573,21 @@ class Cash_invoice extends CORE_Controller
                 'cash_invoice.*',
                 'DATE_FORMAT(cash_invoice.date_invoice,"%m/%d/%Y") as date_invoice',
                 'DATE_FORMAT(cash_invoice.date_due,"%m/%d/%Y") as date_due',
+                'DATE_FORMAT(cash_invoice.date_created,"%m/%d/%Y %h:%i %p") as date_created',
                 'departments.department_id',
                 'departments.department_name',
                 'customers.customer_name',
                 'cash_invoice.salesperson_id',
                 'cash_invoice.customer_type_id',
                 'cash_invoice.address',
-                'sales_order.so_no'
+                'sales_order.so_no',
+                'CONCAT_WS(" ", user_accounts.user_fname,user_accounts.user_mname,user_accounts.user_lname) as user'
             ),
             array(
                 array('departments','departments.department_id=cash_invoice.department_id','left'),
                 array('customers','customers.customer_id=cash_invoice.customer_id','left'),
                 array('sales_order','sales_order.sales_order_id=cash_invoice.sales_order_id','left'),
+                array('user_accounts','user_accounts.user_id=cash_invoice.posted_by_user','left'),
             ),
             'cash_invoice.cash_invoice_id DESC'
         );
@@ -632,29 +635,29 @@ class Cash_invoice extends CORE_Controller
 
 
         // for($i=0;$i<count($receipt_header);$i++){
-        //             $print[] = $receipt_header[$i]->receipt_text;
-        //         }
+        //     $print[] = $receipt_header[$i]->receipt_text;
+        // }
 
         $total_items = 0;
         $total_quantity = 0;
         $sub_total = 0;
 
-        // foreach ($receipt_header as $header => $value) {
-        //     $print[] = $value->receipt_text;
-        // }
+        foreach ($receipt_header as $header => $value) {
+            $print[] = $value->receipt_text;
+        }
 
-        $print[] = $company->company_name;
-        $print[] = $company->company_address;
-        $print[] = $company->mobile_no;
-        $print[] = $company->landline;
+        // $print[] = $company->company_name;
+        // $print[] = $company->company_address;
+        // $print[] = $company->mobile_no;
+        // $print[] = $company->landline;
 
         $print[] = '';
 
         $title_receipt = floor($printer_size/2);
-        $print[] = str_pad("", $title_receipt,"-").'-------------- RECEIPT --------------'.str_pad("", $title_receipt,"-");
-        $print[] = 'Date         : '.$invoice_info[0]->date_invoice.'    '.str_pad("", $printer_size," ");
+        $print[] = str_pad("", $title_receipt,"-").'---------- BILLING STATEMENT ---------'.str_pad("", $title_receipt,"-");
+        $print[] = 'Date         : '.$invoice_info[0]->date_created.'    '.str_pad("", $printer_size," ");
         // $print[] = 'Terminal     : '.str_pad($invoice_info[0]->terminal_name,23+$printer_size," ");
-        // $print[] = 'Cashier      : '.str_pad($invoice_info[0]->username,23+$printer_size," ");
+        $print[] = 'Cashier      : '.str_pad($invoice_info[0]->user,23+$printer_size," ");
         $print[] = 'Invoice No.  : '.str_pad($invoice_info[0]->cash_inv_no,23+$printer_size," ");
         $print[] = '======================================'.str_pad("", $printer_size,"=");
         $print[] = 'Desc  Qty     Price     Disc     '.str_pad("Total", 5+$printer_size," ",STR_PAD_LEFT);
@@ -690,22 +693,22 @@ class Cash_invoice extends CORE_Controller
             $print[] = 'Payment Type : Cash                   '.str_pad("", $printer_size," ");
             $print[] = 'Amount : '.str_pad(number_format($invoice_info[0]->total_after_tax,2),29+$printer_size," ");
         
-            // $print[] = '======================================'.str_pad("", $printer_size,"=");
+            $print[] = '======================================'.str_pad("", $printer_size,"=");
             // $print[] = 'Vatable Sales     :'.str_pad(number_format($invoice_info[0]->total_vatable_sales,2),19+$printer_size," ",STR_PAD_LEFT);
             // $print[] = 'VAT Amount        :'.str_pad(number_format($invoice_info[0]->total_vat_amount,2),19+$printer_size," ",STR_PAD_LEFT);
             // $print[] = 'VAT Exempt Sales  :'.str_pad(number_format($invoice_info[0]->total_vat_exempt_sales,2),19+$printer_size," ",STR_PAD_LEFT);
             // $print[] = 'Zero Rated Sales  :'.str_pad(number_format($invoice_info[0]->total_zero_rated_sales,2),19+$printer_size," ",STR_PAD_LEFT);
 
-            $print[] = '======================================'.str_pad("", $printer_size,"=");
-            $print[] = 'Customer : ___________________________'.str_pad("", $printer_size,"_");
-            $print[] = 'Address  : ___________________________'.str_pad("", $printer_size,"_");
-            $print[] = 'TIN No.  : ___________________________'.str_pad("", $printer_size,"_");
-            $print[] = '======================================'.str_pad("", $printer_size,"=");
+            // $print[] = '======================================'.str_pad("", $printer_size,"=");
+            // $print[] = 'Customer : ___________________________'.str_pad("", $printer_size,"_");
+            // $print[] = 'Address  : ___________________________'.str_pad("", $printer_size,"_");
+            // $print[] = 'TIN No.  : ___________________________'.str_pad("", $printer_size,"_");
+            // $print[] = '======================================'.str_pad("", $printer_size,"=");
 
-        // foreach ($receipt_footer as $footer => $value) {
-        //     $print[] = $value->receipt_text;
-        // }
-                    
+            // foreach ($receipt_footer as $footer => $value) {
+            //     $print[] = $value->receipt_text;
+            // }                
+
         print_receipt($print, $printer, $hostname, $open_drawer);
     }
 }
