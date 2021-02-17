@@ -186,6 +186,7 @@
 <!--                                             <div class="panel-heading">
                                                 <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Products</b>
                                             </div> -->
+                                            <input type="hidden" id="product_costing" class="form-control" value="<?php echo (in_array("5-6",$this->session->user_rights)?"1":"0")?>">
                                             <div class="panel-body table-responsive" id="product_list_panel">
                                             <h2 class="h2-panel-heading">Products<small> | <a href="assets/manual/masterfiles/Product_Management.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                                 <button class="btn btn-primary" id="btn_new" style="float: left; text-transform: capitalize;font-family: Tahoma, Georgia, Serif;margin-bottom: 0px !important;" data-toggle="modal" data-target="" data-placement="left" title="Create New product" ><i class="fa fa-plus"></i> Create New Product</button>
@@ -300,25 +301,13 @@
                                                                 </select> 
                                                             </div> 
 
-                                                            <div class="form-group" style="margin-bottom:0px;">
-                                                                    <label class=""><b class="required">*</b> Inventory type :</label>
+                                                            <div class="form-group" style="margin-bottom:0px; vertical-align: middle;text-align: left;"><br>
+                                                            <label  for="is_tax_exempt" style="text-align: left;vertical-align: middle;"><input type="checkbox" name="is_tax_exempt" class="" id="is_tax_exempt" style="transform: scale(2.0);">  &nbsp;&nbsp;Tax Exempt ?</label>
 
-                                                                    <select name="item_type_id" id="cbo_item_type" data-error-msg="Inverntory type is required." required>
-                                                                        <option value="">None</option>
-                                                                        <?php foreach($item_types as $item_type){ ?>
-                                                                            <option value="<?php echo $item_type->item_type_id ?>"><?php echo $item_type->item_type; ?></option>
-                                                                        <?php } ?>
-                                                                    </select>
+                                                            <label  class="hidden" for="is_parent" style="text-align: left;vertical-align: middle;margin-left: 20px;">
+                                                            <input type="checkbox" name="is_parent" class="" id="is_parent" style="transform: scale(2.0);">  &nbsp;&nbsp;Is Parent ?</label>
 
-                                                                </div>
-
-                                                                    <div class="form-group" style="margin-bottom:0px; vertical-align: middle;text-align: left;"><br>
-                                                                    <label  for="is_tax_exempt" style="text-align: left;vertical-align: middle;"><input type="checkbox" name="is_tax_exempt" class="" id="is_tax_exempt" style="transform: scale(2.0);">  &nbsp;&nbsp;Tax Exempt ?</label>
-
-                                                                    <label  for="is_parent" style="text-align: left;vertical-align: middle;margin-left: 20px;">
-                                                                    <input type="checkbox" name="is_parent" class="" id="is_parent" style="transform: scale(2.0);">  &nbsp;&nbsp;Is Parent ?</label>
-
-                                                                    <label  for="is_nonsalable" style="text-align: left;float:right;vertical-align: middle;"><input type="checkbox" name="is_nonsalable" class="" id="is_nonsalable" style="transform: scale(2.0);">  &nbsp;&nbsp;Nonsalable ?</label>
+                                                            <label  for="is_nonsalable" style="text-align: left;float:right;vertical-align: middle;"><input type="checkbox" name="is_nonsalable" class="" id="is_nonsalable" style="transform: scale(2.0);">  &nbsp;&nbsp;Nonsalable ?</label>
 
                                                                 </div>
 
@@ -331,12 +320,25 @@
                                                                 <div class="col-lg-6" style="margin:0px;">
                                                                 
                                                                 <div class="form-group" style="margin-bottom:0px;">
+                                                                    <label class=""><b class="required">*</b> Inventory type :</label>
+
+                                                                    <select name="item_type_id" id="cbo_item_type" data-error-msg="Inverntory type is required." required>
+                                                                        <option value="">None</option>
+                                                                        <?php foreach($item_types as $item_type){ ?>
+                                                                            <option value="<?php echo $item_type->item_type_id ?>"><?php echo $item_type->item_type; ?></option>
+                                                                        <?php } ?>
+                                                                    </select>
+
+                                                                </div>
+
+
+                                                                <div class="form-group" style="margin-bottom:0px;">
                                                                     <label class="">Purchase Cost :</label>
                                                                     <div class="input-group">
                                                                             <span class="input-group-addon">
                                                                                 <i class="fa fa-toggle-off"></i>
                                                                             </span>
-                                                                        <input type="text" name="purchase_cost" id="purchase_cost" class="form-control numeric">
+                                                                        <input type="text" name="purchase_cost" id="purchase_cost" class="form-control numeric product_costing">
                                                                     </div>
 
                                                                 </div>
@@ -347,11 +349,11 @@
                                                                             <span class="input-group-addon">
                                                                                 <i class="fa fa-toggle-off"></i>
                                                                             </span>
-                                                                        <input type="text" name="sale_price" id="sale_price" class="form-control numeric">
+                                                                        <input type="text" name="sale_price" id="sale_price" class="form-control numeric product_costing">
                                                                     </div>
                                                                 </div>
 
-                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                <div class="hidden form-group" style="margin-bottom:0px;">
                                                                     <label><b class="required elem_parent"></b> Bulk Unit :</label>
                                                                     <select class="form-control" name="bulk_unit_id" id="bulk_unit_id" data-error-msg="Bulk Unit is required.">
                                                                         <option value="unt">[ Create New Unit ]</option>
@@ -362,7 +364,7 @@
                                                                         <?php }?>
                                                                     </select>
                                                                 </div>
-                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                <div class="hidden form-group" style="margin-bottom:0px;">
                                                                     <label><b class="required elem_parent"></b> Bulk Conversion Rate: </label>
                                                                     <div class="input-group">
                                                                             <span class="input-group-addon">
@@ -371,7 +373,7 @@
                                                                         <input type="text" name="bulk_conversion_rate" id="bulk_conversion_rate" class="form-control numeric5" data-error-msg="Bulk conversion rate is required.">
                                                                     </div>
                                                                 </div>
-                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                <div class="hidden form-group" style="margin-bottom:0px;">
                                                                     <label><b class="required elem_child"></b> Parent :</label>
                                                                     <select class="form-control" name="parent_id" id="parent_id" data-error-msg="Parent Product is required.">
                                                                         <option value="0">None</option>
@@ -382,7 +384,7 @@
                                                                         <?php }?>
                                                                     </select>
                                                                 </div>
-                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                <div class="hidden form-group" style="margin-bottom:0px;">
                                                                     <label>Conversion Rate: </label>
                                                                     <div class="input-group">
                                                                             <span class="input-group-addon">
@@ -398,7 +400,7 @@
                                                                             <span class="input-group-addon">
                                                                                 <i class="fa fa-toggle-off"></i>
                                                                             </span>
-                                                                        <input type="text" name="public_price" id="public_price" class="form-control numeric">
+                                                                        <input type="text" name="public_price" id="public_price" class="form-control numeric product_costing">
                                                                     </div>
                                                                 </div>
 
@@ -408,7 +410,7 @@
                                                                             <span class="input-group-addon">
                                                                                 <i class="fa fa-toggle-off"></i>
                                                                             </span>
-                                                                        <input type="text" name="discounted_price" id="discounted_price" class="form-control numeric">
+                                                                        <input type="text" name="discounted_price" id="discounted_price" class="form-control numeric product_costing">
                                                                     </div>
                                                                 </div>
 
@@ -420,7 +422,7 @@
                                                                             <span class="input-group-addon">
                                                                                 <i class="fa fa-toggle-off"></i>
                                                                             </span>
-                                                                        <input type="text" name="dealer_price" id="dealer_price" class="form-control numeric">
+                                                                        <input type="text" name="dealer_price" id="dealer_price" class="form-control numeric product_costing">
                                                                     </div>
                                                                 </div>
 
@@ -432,13 +434,30 @@
                                                                             <span class="input-group-addon">
                                                                                 <i class="fa fa-toggle-off"></i>
                                                                             </span>
-                                                                        <input type="text" name="distributor_price" id="distributor_price" class="form-control numeric">
+                                                                        <input type="text" name="distributor_price" id="distributor_price" class="form-control numeric product_costing">
                                                                     </div>
                                                                 </div>
 
-                                                                
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    <label class="">Warning Quantity (Minimum Stock):</label>
+                                                                    <div class="input-group">
+                                                                            <span class="input-group-addon">
+                                                                                <i class="fa fa-toggle-off"></i>
+                                                                            </span>
+                                                                        <input type="text" name="product_warn" id="product_warn" class="form-control numeric">
+                                                                    </div>
+                                                                </div>
 
 
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    <label class="">Ideal Quantity (Maximum Stock):</label>
+                                                                    <div class="input-group">
+                                                                            <span class="input-group-addon">
+                                                                                <i class="fa fa-toggle-off"></i>
+                                                                            </span>
+                                                                        <input type="text" name="product_ideal" id="product_ideal" class="form-control numeric">
+                                                                    </div>
+                                                                </div>
                                                                 
 
 
@@ -496,27 +515,6 @@
                                                                     ?>
                                                                 </select> 
                                                             </div> -->
-
-                                                                <div class="form-group" style="margin-bottom:0px;">
-                                                                    <label class="">Warning Quantity (Minimum Stock):</label>
-                                                                    <div class="input-group">
-                                                                            <span class="input-group-addon">
-                                                                                <i class="fa fa-toggle-off"></i>
-                                                                            </span>
-                                                                        <input type="text" name="product_warn" id="product_warn" class="form-control numeric">
-                                                                    </div>
-                                                                </div>
-
-
-                                                                <div class="form-group" style="margin-bottom:0px;">
-                                                                    <label class="">Ideal Quantity (Maximum Stock):</label>
-                                                                    <div class="input-group">
-                                                                            <span class="input-group-addon">
-                                                                                <i class="fa fa-toggle-off"></i>
-                                                                            </span>
-                                                                        <input type="text" name="product_ideal" id="product_ideal" class="form-control numeric">
-                                                                    </div>
-                                                                </div>
 
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                             <label class="">Link to Credit Account (For Sales Journal):</label>
@@ -2018,6 +2016,12 @@ $(document).ready(function(){
             $('#is_nonsalable').attr('checked', false);
             $('#is_basyo').attr('checked', false);
 
+            if($('#product_costing').val()== 1){
+                $('.product_costing').prop('readonly',false);
+            }else if($('#product_costing').val()== 0){
+                $('.product_costing').prop('readonly',true);
+            }
+
             showPanelActive('entry');
             setParentPanel(false);
         });
@@ -2096,6 +2100,12 @@ $(document).ready(function(){
             } else{
                 $('#child_unit_desc').prop('required',false);
                 $('#child_unit_id').prop('required',false);
+            }
+
+            if($('#product_costing').val()== 1){
+                $('.product_costing').prop('readonly',false);
+            }else if($('#product_costing').val()== 0){
+                $('.product_costing').prop('readonly',true);
             }
 
             $('.numeric').autoNumeric('init',{mDec:2});

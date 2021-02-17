@@ -115,6 +115,7 @@ class Deliveries extends CORE_Controller
                     array('dr_invoice_id'=>$id_filter),
                     array(
                         'delivery_invoice_items.*',
+                        'DATE_FORMAT(delivery_invoice_items.exp_date,"%m/%d/%Y") as exp_date',
                         'products.product_code',
                         'products.product_desc',    
                         'products.purchase_cost',
@@ -231,7 +232,7 @@ class Deliveries extends CORE_Controller
                 $dr_tax_amount=$this->input->post('dr_tax_amount',TRUE);
                 $dr_non_tax_amount=$this->input->post('dr_non_tax_amount',TRUE);
                 $exp_date= $this->input->post('exp_date',TRUE);
-                $batch_code= $this->input->post('batch_code',TRUE);
+                $batch_no= $this->input->post('batch_no',TRUE);
                 $is_parent=$this->input->post('is_parent',TRUE);
                 $m_products=$this->Products_model;
 
@@ -249,7 +250,7 @@ class Deliveries extends CORE_Controller
                     $m_dr_items->dr_non_tax_amount=$this->get_numeric_value($dr_non_tax_amount[$i]);
                     $m_dr_items->dr_line_total_after_global=$this->get_numeric_value($dr_line_total_after_global[$i]);
                     $m_dr_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
-                    $m_dr_items->batch_no=$batch_code[$i];
+                    $m_dr_items->batch_no=$batch_no[$i];
 
                     /*if($exp_date[$i]==null||$exp_date[$i]==""){
                         $response['title'] = 'Invalid Expiration!';
@@ -377,7 +378,7 @@ class Deliveries extends CORE_Controller
                 $dr_tax_amount=$this->input->post('dr_tax_amount',TRUE);
                 $dr_non_tax_amount=$this->input->post('dr_non_tax_amount',TRUE);
                 $exp_date = $this->input->post('exp_date',TRUE);
-                $batch_code= $this->input->post('batch_code',TRUE);
+                $batch_no= $this->input->post('batch_no',TRUE);
                 $is_parent=$this->input->post('is_parent',TRUE);
 
                 $m_products=$this->Products_model;
@@ -395,7 +396,7 @@ class Deliveries extends CORE_Controller
                     $m_dr_items->dr_non_tax_amount=$this->get_numeric_value($dr_non_tax_amount[$i]);
                     $m_dr_items->dr_line_total_after_global=$this->get_numeric_value($dr_line_total_after_global[$i]);
                     $m_dr_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
-                    $m_dr_items->batch_no=$batch_code[$i];
+                    $m_dr_items->batch_no=$batch_no[$i];
                     //$m_dr_items->set('unit_id','(SELECT unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
                     //unit id retrieval is change, because of TRIGGER restriction
 

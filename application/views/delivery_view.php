@@ -377,72 +377,77 @@
                 <table id="tbl_items" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
                 <thead class="">
                 <tr>
-                    <th width="5%">Qty</th>
+                    <th width="8%">Qty</th>
                     <th width="10%" style="">UM</th>
-                    <!-- DISPLAY -->
                     <th width="15%">Item</th>
                     <th width="10%" style="text-align: right;">Unit Price</th>
                     <th width="10%" style="text-align: right;">Discount</th>
-                    <!-- display: none; -->
-                    <th width="5%" style="display: none;">T.D</th> <!-- total discount -->
-                    <th width="2%" style="display: none;">Tax %</th>
-                    <!--  DISPLAY -->
-                    <th width="15%" colspan="3" style="text-align: right;"">Total</th>
-                    <!-- display: none; -->
-                    <th width="5%" style="display: none;">V.I</th> <!-- vat input -->
-                    <th width="5%" style="display: none;">N.V</th> <!-- net of vat -->
-                    <td style="display: none;">Item ID</td><!-- product id -->
-                    <td style="display: none;">Total After Global</td>
+                    <th class="hidden">Total Discount</th>
+                    <th class="hidden">Tax %</th>
+                    <th width="13%" style="text-align: right;">Total</th> <!-- TOTAL AFTER GLOBAL --> 
+                    <th width="10%">Expiration Date</th>
+                    <th width="10%">LOT#</th>
+                    <th class="hidden">V.I</th>
+                    <th class="hidden">N.V</th>
+                    <td class="hidden">Item ID</td>
+                    <td class="hidden">Total</td>
                     <th width="5%" ><center><strong>Action</strong></center></td>
                 </tr>
                 </thead>
                 <tbody>
                 <tr class="test"></tr>
                 </tbody>
-
                 <tfoot>
                     <tr>
                         <td colspan="9" style="height: 20px;">&nbsp;</td>
                     </tr>
                     <tr class="">
-                        <td colspan="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount :</strong></td>
-                        <td align="right" colspan="1" id="" color="red">
-                        <input id="txt_overall_discount" name="total_overall_discount" type="text" class="numeric form-control" value="0.00" />
-                        <input id="txt_overall_discount_amount" name="total_overall_discount_amount" type="hidden" class="numeric form-control" value="0.00" readonly />
-                            
+                        <td colspan="2" align="right">
+                            <strong><i class="glyph-icon icon-star"></i> Discount :</strong>
                         </td>
-                        <td style="text-align: right;"><strong><i class="glyph-icon icon-star"></i></strong></td>
-                        <td id="td_total_after_discount" style="text-align: right;display: none;"><strong>0.00</strong></td><td style="border-right: none;"></td>
-                        <td style="text-align: right;border-left: none;"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
-                        <td align="right" colspan="4" id="td_before_tax" color="red">0.00</td>
+                        <td align="right" color="red">
+                            <input id="txt_overall_discount" name="total_overall_discount" type="text" class="numeric form-control" value="0.00" />
+                            <input id="txt_overall_discount_amount" name="total_overall_discount_amount" type="hidden" class="numeric form-control" value="0.00" readonly />
+                        </td>
+                        <td id="td_total_after_discount" style="text-align: right;display: none;">
+                            <strong>0.00</strong>
+                        </td>
+                        <td style="border-left: none;" colspan="4" align="right">
+                            <strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong>
+                        </td>
+                        <td align="right" colspan="2" id="td_before_tax" color="red">0.00</td>
                     </tr>
                     <tr>
-                        <td class="" colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
-                        <td class="" align="right" colspan="1" id="td_tax" color="red">0.00</td>
-                        <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
-                        <td align="right" colspan="4" id="td_after_tax" color="red">0.00</td>
+                        <td colspan="2" align="right">
+                            <strong><i class="glyph-icon icon-star"></i> Tax :</strong>
+                        </td>
+                        <td align="right" id="td_tax" color="red">0.00</td>
+                        <td colspan="4" align="right">
+                            <strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong>
+                        </td>
+                        <td align="right" colspan="2" id="td_after_tax" color="red">0.00</td>
                     </tr>
                     <tr>
-                        <td colspan="5" align="right"><strong>Shipping Cost :</strong> </td>
-                        <td colspan="4">
+                        <td colspan="7" align="right"><strong>Shipping Cost :</strong> </td>
+                        <td colspan="2">
                             <input type="text" name="shipping_cost" id="shipping_cost" class="additional-payment numeric form-control">
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="5" align="right"><strong>Custom Duties :</strong> </td>
-                        <td colspan="5">
+                        <td colspan="7" align="right"><strong>Custom Duties :</strong> </td>
+                        <td colspan="2">
                             <input type="text" name="custom_duties" id="custom_duties" class="additional-payment numeric form-control">
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="5" align="right"><strong>Other Amounts :</strong> </td>
-                        <td colspan="4">
+                        <td colspan="7" align="right"><strong>Other Amounts :</strong> </td>
+                        <td colspan="2">
                             <input type="text" name="other_amount" id="other_amount" class="additional-payment numeric form-control">
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="5" align="right"><strong>Total Amount :</strong> </td>
-                        <td colspan="4">
+                        <td colspan="7" align="right"><strong>Total Amount :</strong> </td>
+                        <td colspan="2">
                             <input type="text" name="grand_total_amount" id="grand_total_amount" class="numeric form-control" readonly style="font-weight: bold;">
                         </td>
                     </tr>                    
@@ -451,15 +456,12 @@
             </table>
             </div>
         </form>
-
         <div class="row">
             <div class="col-md-12">
                 Remarks :<br />
                 <textarea name="remarks" id="remarks" class="form-control" data-default="<?php echo $company->purchase_remarks; ?>" placeholder="Remarks"></textarea><br />
             </div>
         </div>
-
-
         <div class="row" style="display: none;">
             <div class="col-lg-4 col-lg-offset-8">
                 <table id="tbl_delivery_summary" class="table invoice-total">
@@ -950,13 +952,15 @@ $(document).ready(function(){
         discount : 'td:eq(4)',
         total_line_discount : 'td:eq(5)',
         tax : 'td:eq(6)',
-        total : 'td:eq(7)',
-        vat_input : 'td:eq(8)',
-        net_vat : 'td:eq(9)',
-        total_after_global : 'td:eq(11)',
-        item_id : 'td:eq(10)',
-        bulk_price : 'td:eq(13)',
-        retail_price : 'td:eq(14)'
+        total_after_global : 'td:eq(7)',
+        exp_date : 'td:eq(8)',
+        batch_no : 'td:eq(9)',
+        vat_input : 'td:eq(10)',
+        net_vat : 'td:eq(11)',
+        item_id : 'td:eq(12)',
+        total: 'td:eq(13)',
+        bulk_price : 'td:eq(15)',
+        retail_price : 'td:eq(16)'
 
     };
 
@@ -1079,19 +1083,19 @@ $(document).ready(function(){
 
         _cboSuppliers=$("#cbo_suppliers").select2({
             placeholder: "Please select supplier.",
-            allowClear: true
+            allowClear: false
         });
 
         _cboSuppliers.select2('val',null);
 
         _cboTaxType=$('#cbo_tax_type').select2({
             placeholder: "Please select tax type.",
-            allopwClear: true
+            allopwClear: false
         });
 
         var _cboTaxGroup=$('#cbo_tax_group').select2({
             placeholder: "Please select tax type.",
-            allopwClear: true,
+            allopwClear: false,
             dropdownParent: "#modal_new_supplier"
         });
 
@@ -1213,6 +1217,8 @@ $(document).ready(function(){
                 //     vat_input = getFloat(vat_input) / getFloat(suggestion.child_unit_desc);
                 // }
 
+                var exp_date = <?php echo json_encode(date("m/d/Y")); ?>;
+
                 $('#tbl_items > tbody').append(newRowItem({
                     //dr_qty : value.dr_qty,
                     dr_qty : "1",
@@ -1240,12 +1246,15 @@ $(document).ready(function(){
                     parent_unit_name : suggestion.product_unit_name,
                     is_parent: suggis_parent ,
                     primary_unit:suggestion.primary_unit,
+                    exp_date:exp_date,
+                    batch_no:"",
                     a:a
                 }));
                 _line_unit=$('.line_unit'+a).select2({
                      minimumResultsForSearch: -1
                 });
                 reInitializeNumeric();
+                reInitializeExpireDate();
                 reComputeTotal();
 
                 $('.qty').focus();
@@ -1516,6 +1525,9 @@ $(document).ready(function(){
                             retail_price = 0;
                         }
                         changetxn ='inactive';
+
+                        var exp_date = <?php echo json_encode(date("m/d/Y")); ?>;
+
                         $('#tbl_items > tbody').append(newRowItem({
                             dr_qty : value.po_qty,
                             product_code : value.product_code,
@@ -1538,7 +1550,7 @@ $(document).ready(function(){
                             child_unit_name:value.child_unit_name,
                             parent_unit_id : value.product_unit_id,
                             parent_unit_name: value.product_unit_name,
-                            // exp_date: exp_date,
+                            exp_date: exp_date,
                             total_after_global : value.po_line_total_after_global,
                             batch_no:"",
                             a:a
@@ -1558,6 +1570,7 @@ $(document).ready(function(){
                     changetxn = 'active';
                     $('#txt_overall_discount').val(accounting.formatNumber($('#txt_overall_discount').val(),2));
                     reInitializeNumeric();
+                    reInitializeExpireDate();
                     reComputeTotal();
                    
                 }
@@ -1726,7 +1739,7 @@ $(document).ready(function(){
                     processData : false,
                     contentType : false,
                     beforeSend : function(){
-                        $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                        $('#tbl_items > tbody').html('<tr><td align="center" colspan="9"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
                     },
                     success : function(response){
                         var rows=response.data;
@@ -1775,6 +1788,8 @@ $(document).ready(function(){
                                 is_parent : value.is_parent,
                                 bulk_price: value.purchase_cost,
                                 retail_price: retail_price,
+                                exp_date : value.exp_date,
+                                batch_no : value.batch_no,
                                 a:a
                             }));
                             changetxn = 'inactive';
@@ -1793,7 +1808,7 @@ $(document).ready(function(){
                         });
                          changetxn = 'active';
                         reInitializeNumeric();
-                        // reInitializeExpireDate();
+                        reInitializeExpireDate();
                         //write summary details
                         /*var tbl_summary=$('#tbl_delivery_summary');
                         tbl_summary.find(oTableDetails.discount).html(accounting.formatNumber(total_discount,4));
@@ -2257,24 +2272,57 @@ $(document).ready(function(){
             unit  = '<td ><select class="line_unit'+d.a+'" name="unit_id[]" ><option value="'+d.parent_unit_id+'" data-unit-identifier="1" '+parent+'>'+d.parent_unit_name+'</option></select></td>';
         }
         return '<tr>'+
-        '<td ><input name="dr_qty[]" type="text" class="numeric form-control trigger-keyup qty" value="'+ d.dr_qty +'"></td>'+unit+
-        '<td >'+d.product_desc+'<input type="text" style="display: none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
+        // 1. QTY
+        '<td ><input name="dr_qty[]" type="text" class="numeric form-control trigger-keyup qty" value="'+ d.dr_qty +'"></td>'+
+
+        // 2. UM 
+        unit +
+
+        // 3. ITEM
+        '<td>'+d.product_desc+'<input type="text" style="display: none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
+
+        // 4. UNIT PRICE
         '<td ><input name="dr_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.dr_price,2)+'" style="text-align:right;"></td>'+
+
+        // 5. DISCOUNT
         '<td ><input name="dr_discount[]" type="text" class="numeric form-control discount" value="'+ accounting.formatNumber(d.dr_discount,2)+'" style="text-align:right;"></td>'+
-        // display: none;
+
+        // 5. TOTAL DISCOUNT
         '<td  style="display: none;"><input name="dr_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_line_total_discount,2)+'" readonly></td>'+
+
+        // 7. TAX %
         '<td  style="display: none;"><input name="dr_tax_rate[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_tax_rate,2)+'"></td>'+
-        //display
-        '<td colspan="3"  align="right" style="display: none;"><input name="dr_line_total_price[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_line_total_price,2)+'" readonly></td>'+
-        //display: none;
+
+        // 8. TOTAL AFTER GLOBAL
+        '<td><input name="dr_line_total_after_global[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.total_after_global,2)+'" readonly></td>'+         
+
+        // 9. EXPIRATION DATE
+        '<td align="right"><input name="exp_date[]" type="text" class="date-picker form-control" value="'+d.exp_date+'"></td>'+
+
+        // 10. BATCH NO
+        '<td align="right"><input name="batch_no[]" type="text" class="form-control" value="'+d.batch_no+'"></td>'+
+
+        // 11. VAT INPUT
         '<td  style="display: none;"><input name="dr_tax_amount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_tax_amount,2)+'" readonly></td>'+
+
+        // 12. NON VAT
         '<td  style="display: none;"><input name="dr_non_tax_amount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_non_tax_amount,2)+'" readonly></td>'+
+
+        // 13. PRODUCT ID
         '<td  style="display: none;" ><input name="product_id[]" type="text" class="numeric form-control" value="'+ d.product_id+'" readonly></td>'+
-        '<td  style="" colspan="3"><input name="dr_line_total_after_global[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.total_after_global,2)+'" readonly></td>'+
-        //display
+
+        // 14. TOTAL
+        '<td style="display: none;" align="right"><input name="dr_line_total_price[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_line_total_price,2)+'" readonly></td>'+
+
+        // 15. ACTION
         '<td  align="center"><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>'+
+
+        // 16. BULK PRICE
         '<td  style="display: none;" ><input type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.bulk_price,2)+'" readonly></td>'+
+
+        // 17. RETAIL PRICE
         '<td  style="display: none;" ><input type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.retail_price,2)+'" readonly></td>'+
+
         '</tr>';
     };
 
@@ -2329,6 +2377,18 @@ $(document).ready(function(){
 
     var reInitializeNumeric=function(){
         $('.numeric').autoNumeric('init',{mDec: 2});
+    };
+
+
+    var reInitializeExpireDate=function(){
+        $('.date-picker').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: true,
+            autoclose: true
+
+        });    
     };
 
     var resetSummary=function(){

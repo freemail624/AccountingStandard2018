@@ -113,7 +113,8 @@ class Rights_link_model extends CORE_Model{
                                           (105,'17','17-1','Cash Request'),
                                           (106,'17','17-2','Travel Orders'),
                                           (107,'17','17-3','Incident Report'),
-                                          (108,'17','17-4','Accomplishment Report')
+                                          (108,'17','17-4','Accomplishment Report'),
+                                          (109,'5','5-6','Edit Product Costing')
 
 
                                           ON DUPLICATE KEY UPDATE
