@@ -231,7 +231,7 @@
                             </select>
                         </div>
                         <div class="col-sm-4">
-                            <label>Contact Person :</label><br/>
+                            <label><b class="required">*</b> Contact Person :</label><br/>
                             <input type="text" name="contact_person" id="contact_person" class="form-control" required data-error-msg="Contact Person is required!" placeholder="Contact Person">
                         </div>
 
