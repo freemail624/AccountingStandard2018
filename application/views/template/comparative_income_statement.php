@@ -45,7 +45,7 @@
         <center>
             <span style="font-size: 12pt;font-family:calibri; font-weight: bolder;text-transform: uppercase;"><?php echo $departments; ?></span><br>
             <span style="font-size: 12pt;font-family:calibri; font-weight: bolder;text-transform: uppercase;">COMPARATIVE INCOME STATEMENT</span><br>
-            <span style="font-size: 12pt;font-family:calibri; font-weight: bolder;text-transform: uppercase;"><strong>FOR THE PERIOD ENDED <?php echo date('F d, Y', strtotime($end)); ?> & <?php echo date('F d, Y', strtotime($end.' -1 year')); ?></strong></h3></span> <br /><br />
+            <span style="font-size: 12pt;font-family:calibri; font-weight: bolder;text-transform: uppercase;"><strong>FOR THE PERIOD ENDED <?php echo date('F d, Y', strtotime($end)); ?> &amp; <?php echo date('F d, Y', strtotime($end.' -1 year')); ?></strong></h3></span> <br /><br />
         </center>
     </td>
 </table>
@@ -174,7 +174,12 @@
                         $total_curr_net_income=$total_income-$total_expense;
                         $total_prev_net_income=$total_prev_income-$total_prev_expense;
                         $total_net_change_amount=$total_change_amount-$total_change_amount_expense;
-                        $total_net_percentage_change = (($total_curr_net_income-$total_prev_net_income) / ($total_prev_net_income)) * 100;
+                        
+                        if($total_prev_net_income > 0){
+                            $total_net_percentage_change = (($total_curr_net_income-$total_prev_net_income) / ($total_prev_net_income)) * 100;
+                        }else{
+                            $total_net_percentage_change = 100;
+                        }
 
                         } ?>
                     <tr>
