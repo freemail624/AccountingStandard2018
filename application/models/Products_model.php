@@ -1882,6 +1882,136 @@ Product Pick List
 
 
 */
+    
+    function products_for_sales($criteria=""){
+        
+        $sql="SELECT rc.*,p.*,u.unit_name as product_unit_name,
+
+                IFNULL(tt.tax_rate,0) as tax_rate,FORMAT(sale_price,4) as srp
+                ,IFNULL(sinv.out_qty,0) as out_qty,
+
+                FORMAT(dealer_price,4) as srp_dealer,
+                FORMAT(distributor_price,4) as srp_distributor,
+                FORMAT(public_price,4) as srp_public,
+                FORMAT(discounted_price,4) as srp_discounted,
+                FORMAT(rc.item_cost,4) as srp_cost,
+                (rc.in_qty-IFNULL(sinv.out_qty,0)-IFNULL(iss.out_qty,0)-IFNULL(aoQ.out_qty,0)) as on_hand_per_batch
+
+                    FROM
+
+                    (
+
+                        SELECT inQ.*,inQ.product_item_cost as item_cost,SUM(inQ.receive_qty)as in_qty
+
+                        FROM
+                        /**to get the recent cost of each batch, derive query is created to ORDER DESC by date_created**/
+                        (
+
+                            /*******************************************/
+                            SELECT dii.product_id,dii.batch_no,dii.exp_date,
+                            CONCAT_WS('-',dii.batch_no,dii.product_id,dii.exp_date)as unq_id,
+                            dii.dr_qty as receive_qty,dii.product_item_cost
+
+                            FROM
+
+                            (
+
+
+
+                                SELECT dii.product_id,dii.batch_no,dii.exp_date,
+                                CONCAT_WS('-',dii.batch_no,dii.product_id,dii.exp_date)as unq_id,
+                                dii.dr_qty,dii.dr_price as product_item_cost,di.date_created
+                                FROM delivery_invoice_items as dii
+                                INNER JOIN delivery_invoice as di
+                                ON dii.dr_invoice_id=di.dr_invoice_id
+                                WHERE di.is_active=TRUE AND di.is_deleted=FALSE
+
+
+                                UNION ALL
+
+
+                                SELECT aii.product_id,aii.batch_no,aii.exp_date,
+                                CONCAT_WS('-',aii.batch_no,aii.product_id,aii.exp_date)as unq_id,
+                                aii.adjust_qty as receive_qty,aii.adjust_price as product_item_cost,ai.date_created
+                                FROM adjustment_items as aii
+                                INNER JOIN adjustment_info as ai
+                                ON aii.adjustment_id=ai.adjustment_id
+                                WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+
+                            )as dii ORDER BY dii.date_created DESC
+
+
+                        /*******************************************/
+                        ) as inQ
+
+                        GROUP By inQ.product_id,inQ.batch_no,inQ.exp_date
+
+
+
+
+                    )as rc
+
+
+                    LEFT JOIN
+
+
+                    (SELECT sii.product_id,
+                    CONCAT_WS('-',sii.batch_no,sii.product_id,sii.exp_date)as unq_id,
+                    SUM(sii.inv_qty) as out_qty
+                    FROM sales_invoice_items as sii
+                    INNER JOIN sales_invoice as si ON sii.sales_invoice_id=si.sales_invoice_id
+                    WHERE si.is_active=TRUE AND si.is_deleted=FALSE
+                    GROUP BY sii.product_id,sii.batch_no,sii.exp_date) as sinv
+
+                    ON rc.unq_id=sinv.unq_id
+
+                    LEFT JOIN
+
+                    (  SELECT iss.product_id,
+                    CONCAT_WS('-',iss.batch_no,iss.product_id,iss.exp_date)as unq_id,
+                    SUM(iss.issue_qty) as out_qty
+                    FROM issuance_items as iss INNER JOIN issuance_info as iin ON iin.issuance_id=iss.issuance_id
+                    WHERE iin.is_active=TRUE AND iin.is_deleted=FALSE
+                    GROUP BY iss.product_id,iss.batch_no,iss.exp_date)as iss
+
+                    ON rc.unq_id=iss.unq_id
+
+                    LEFT JOIN
+
+                    (
+                    SELECT aii.product_id,aii.batch_no,aii.exp_date,
+                    CONCAT_WS('-',aii.batch_no,aii.product_id,aii.exp_date)as unq_id,
+                    SUM(aii.adjust_qty) as out_qty
+                    FROM adjustment_items as aii
+                    INNER JOIN adjustment_info as ai
+                    ON aii.adjustment_id=ai.adjustment_id
+                    WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+
+                    GROUP BY aii.product_id,aii.batch_no,aii.exp_date
+                    )as aoQ
+
+                    ON rc.unq_id=aoQ.unq_id
+
+
+
+                    LEFT JOIN
+
+                    (SELECT * FROM products where is_active = true and is_deleted = false) as p ON rc.product_id=p.product_id
+
+                    LEFT JOIN tax_types as tt ON p.tax_type_id=tt.tax_type_id
+                    LEFT JOIN units as u ON p.parent_unit_id=u.unit_id
+
+
+                    WHERE   
+                        p.is_nonsalable = FALSE AND
+                        (p.product_desc LIKE '%".$criteria."%' OR p.product_code LIKE '%".$criteria."%' OR p.product_desc1 LIKE '%".$criteria."%' OR CAST(p.product_id AS CHAR) LIKE '%".$criteria."%') 
+
+                        HAVING on_hand_per_batch>0";
+        return $this->db->query($sql)->result();
+    }
+
+    
+
 
 function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=null,$category_id=null,$item_type_id=null,$pick_list=null,$depid=null,$account_cii,$account_dis=null,$CurrentQtyCount=null,$is_parent=null,$is_nonsalable=null){
     $sql="SELECT

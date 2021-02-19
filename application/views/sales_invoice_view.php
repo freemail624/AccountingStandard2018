@@ -330,26 +330,29 @@
                 <div class="table-responsive">
                     <table id="tbl_items" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
                         <thead class="">    
-                        <tr>
-                            <th width="10%">Qty</th><!-- 10% -->
-                            <th width="10%">UM</th> <!-- 10% -->
-                            <th width="25%">Item</th> <!-- 25% -->
-                            <th width="15%" style="text-align: right;">Unit Price</th> <!-- 15% -->
-                            <th width="10%" style="text-align: right;">Discount</th>
-                            <!-- DISPLAY NONE  -->
-                            <th style="display:none;"" width="10%">Total Discount</th> <!-- total discount -->
-                            <th style="display: none;" width="10%">Tax %</th>
-                            <!-- DISPLAY -->
-                            <th width="15%" style="text-align: right;">Gross</th>
-                            <th width="15%" style="text-align: right;">Net Total</th>
-                            <!-- DISPLAY NONE  -->
-                            <th style="display:none;" width="10%">Vat Input(Total Line Tax)</th> <!-- vat input -->
-                            <th style="display:none;" width="10%">Net of Vat (Price w/out Tax)</th> <!-- net of vat -->
-                            <td style="display:none;" width="10%">Item ID</td><!-- product id -->
-                            <th style="display:none;" width="10%">Total after Global</th> 
-
-                            <th width="5%"><center>Action</center></th>
-                        </tr>
+                            <tr>
+                                <th width="9%">Qty</th>
+                                <th width="8%">UM</th>
+                                <th width="15%">Item</th>
+                                <th width="10%" style="text-align: right;">Unit Price</th>
+                                <th width="8%" style="text-align: right;">Discount</th>
+                                <!-- DISPLAY NONE  -->
+                                <th class="hidden">Total Discount</th>
+                                <th class="hidden">Tax %</th>
+                                <!-- DISPLAY -->
+                                <th width="10%" style="text-align: right;">Gross</th>
+                                <th width="10%" style="text-align: right;">Net Total</th>
+                                <!-- Expiration and LOT# -->
+                                <th width="10%">Expiration</th>
+                                <th width="10%">LOT#</th>
+                                <th class="hidden">Cost Upon Invoice</th>
+                                <!-- DISPLAY NONE  -->
+                                <th class="hidden">Vat Input(Total Line Tax)</th>
+                                <th class="hidden">Net of Vat (Price w/out Tax)</th>
+                                <td class="hidden">Item ID</td>
+                                <th class="hidden">Total after Global</th> 
+                                <th width="10%"><center>Action</center></th>
+                            </tr>
                         </thead>
                         <tbody>
                         <!--<tr>
@@ -374,27 +377,30 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="8" style="height: 50px;">&nbsp;</td>
+                                <td colspan="10" style="height: 50px;">&nbsp;</td>
                             </tr>
                             <tr class="">
                                 <td style="text-align: right;">Discount:</td>
-                                <td align="right" colspan="1" id="" color="red">
-                                <input id="txt_overall_discount" name="total_overall_discount" type="text" class="numeric form-control" value="0.00" />
-                                <input type="hidden" id="txt_overall_discount_amount" name="total_overall_discount_amount" class="numeric form-control" value="0.00" readonly></td>
+                                <td align="right" color="red">
+                                    <input id="txt_overall_discount" name="total_overall_discount" type="text" class="numeric form-control" value="0.00" />
+                                    <input type="hidden" id="txt_overall_discount_amount" name="total_overall_discount_amount" class="numeric form-control" value="0.00" readonly>
+                                </td>
 
                                 <td style="text-align: right;" class="hidden">Total After Discount:</td>
                                 <td id="td_total_after_discount" style="text-align: right" class="hidden">0.00</td>
 
-                                <td style="text-align: right;" colspan="4">Total before tax:</td>
+                                <td style="text-align: right;" colspan="7">Total before tax:</td>
                                 <td id="td_total_before_tax" style="text-align: right">0.00</td>
-                                <td></td>
                             </tr>
                             <tr>
-                                <td colspan="2" class="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
-                                <td align="right" class="" colspan="2" id="td_tax" color="red">0.00</td>
-                                <td colspan="2"  style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
+                                <td class="" style="text-align: right;">
+                                    <strong><i class="glyph-icon icon-star"></i> Tax :</strong>
+                                </td>
+                                <td align="right" id="td_tax" color="red">0.00</td>
+                                <td colspan="7" style="text-align: right;">
+                                    <strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong>
+                                </td>
                                 <td align="right" colspan="1" id="td_after_tax" color="red">0.00</td>
-                                <td></td>
                             </tr>
                         </tfoot>
 <!--                         <tfoot>
@@ -771,7 +777,7 @@
                                 <div class="form-group">
                                     <label class="col-xs-12 col-md-4 control-label "><strong>TIN Number:</strong></label>
                                     <div class="col-xs-12 col-md-8">
-                                        <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="TIN Number">
+                                        <input type="text" name="tin_no" id="tin_no_1" class="form-control" placeholder="TIN Number">
                                     </div>
                                 </div>
                             </div>
@@ -941,12 +947,15 @@ $(document).ready(function(){
         tax : 'td:eq(6)',
         gross : 'td:eq(7)',
         total : 'td:eq(8)',
-        vat_input : 'td:eq(9)',
-        net_vat : 'td:eq(10)',
-        item_id : 'td:eq(11)',
-        total_after_global :' td:eq(12)',
-        bulk_price : 'td:eq(14)',
-        retail_price : 'td:eq(15)'
+        exp_date : 'td:eq(9)',
+        batch_no : 'td:eq(10)',
+        cost_upon_invoice : 'td:eq(11)',
+        vat_input : 'td:eq(12)',
+        net_vat : 'td:eq(13)',
+        item_id : 'td:eq(14)',
+        total_after_global :' td:eq(15)',
+        bulk_price : 'td:eq(17)',
+        retail_price : 'td:eq(18)'
  
     };
     var oTableDetails={
@@ -1083,9 +1092,23 @@ $(document).ready(function(){
         source: products,
         templates: {
             header: [
-                '<table class="tt-head"><tr><td width=15%" style="padding-left: 1%;"><b>PLU</b></td><td width="20%" align="left"><b>Description</b></td><td width="5%" align="left"><b>Unit</b></td><td width="10%"  style="padding-right: 2%;text-align:right;"><b>SRP</b></td></tr></table>'
+                '<table class="tt-head"><tr>'+
+                '<td width=15%" style="padding-left: 1%;"><b>PLU</b></td>'+
+                '<td width="25%" align="left"><b>Description</b></td>'+
+                '<td width="20%" align="left"><b>Expiration</b></td>'+
+                '<td width="10%" align="left"><b>LOT#</b></td>'+
+                '<td width="17%" align="right"><b>On Hand</b></td>'+
+                '<td width="13%" align="right" style="padding-right: 1%;"><b>SRP</b></td>'+
+                '</tr></table>'
             ].join('\n'),
-            suggestion: Handlebars.compile('<table class="tt-items"><tr><td width="15%" style="padding-left: 1%;">{{product_code}}</td><td width="20%" align="left">{{product_desc}}</td><td width="5%" align="left">{{product_unit_name}}</td><td width="10%" align="right" style="padding-right: 2%;">{{sale_price}}</td></tr></table>')
+            suggestion: Handlebars.compile('<table class="tt-items"><tr>'+
+                '<td width="15%" style="padding-left: 1%;">{{product_code}}</td>'+
+                '<td width="25%" align="left">{{product_desc}}</td>'+
+                '<td width="20%" align="left">{{exp_date}}</td>'+
+                '<td width="10%" align="left">{{batch_no}}</td>'+
+                '<td width="17%" align="right">{{on_hand_per_batch}}</td>'+
+                '<td width="13%" align="right" style="padding-right: 1%;">{{srp}}</td>'+
+                '</tr></table>')
         }
         }).on('keyup', this, function (event) {
             if (_objTypeHead.typeahead('val') == '') {
@@ -1100,10 +1123,10 @@ $(document).ready(function(){
         }).bind('typeahead:select', function(ev, suggestion) {
 
 
-            if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
-                showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
-                return;
-            }
+            // if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
+            //     showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
+            //     return;
+            // }
 
             var product_id = 0;
             var conversion_rate = 0;
@@ -1114,28 +1137,28 @@ $(document).ready(function(){
                 product_id = suggestion.parent_id;
             }
 
-            getInvetory(product_id).done(function(response){
-                data = response.data[0];
-                var CurrentQty = data.CurrentQty;
-                var CurrentQtyTotal = 0;
+            // getInvetory(product_id).done(function(response){
+            //     data = response.data[0];
+            //     var CurrentQty = data.CurrentQty;
+            //     var CurrentQtyTotal = 0;
 
-                if(suggestion.is_parent == 1){
-                    CurrentQtyTotal = (CurrentQty / suggestion.bulk_conversion_rate);
-                }
-                else if(suggestion.is_parent <= 0 && suggestion.parent_id <= 0){
-                    CurrentQtyTotal = CurrentQty;
-                }
-                else{
-                    CurrentQtyTotal = (CurrentQty / suggestion.conversion_rate);
-                }
+            //     if(suggestion.is_parent == 1){
+            //         CurrentQtyTotal = (CurrentQty / suggestion.bulk_conversion_rate);
+            //     }
+            //     else if(suggestion.is_parent <= 0 && suggestion.parent_id <= 0){
+            //         CurrentQtyTotal = CurrentQty;
+            //     }
+            //     else{
+            //         CurrentQtyTotal = (CurrentQty / suggestion.conversion_rate);
+            //     }
 
-                if(getFloat(CurrentQtyTotal) <= 0){
-                    showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
-                }else if(getFloat(CurrentQtyTotal) <= getFloat(suggestion.product_warn) ){
-                    showNotification({title: suggestion.product_desc ,stat:"info",msg:"This item has low stock remaining.<br>It might result to negative inventory."});
-                }
+            //     if(getFloat(CurrentQtyTotal) <= 0){
+            //         showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
+            //     }else if(getFloat(CurrentQtyTotal) <= getFloat(suggestion.product_warn) ){
+            //         showNotification({title: suggestion.product_desc ,stat:"info",msg:"This item has low stock remaining.<br>It might result to negative inventory."});
+            //     }
 
-            });
+            // });
 
 
             var tax_rate=suggestion.tax_rate; //base on the tax rate set to current product
@@ -1224,7 +1247,10 @@ $(document).ready(function(){
                 a:a,
                 primary_unit:suggestion.primary_unit,
                 is_basyo:suggestion.is_basyo,
-                is_product_basyo:suggestion.is_product_basyo
+                is_product_basyo:suggestion.is_product_basyo,
+                exp_date : suggestion.exp_date,
+                batch_no : suggestion.batch_no,
+                cost_upon_invoice : suggestion.srp_cost
 
             }));
 
@@ -1603,20 +1629,22 @@ $(document).ready(function(){
             $('#txt_overall_discount_amount').val('0.00'); 
             $('#invoice_default').datepicker('setDate', 'today');
             $('#due_default').datepicker('setDate', 'today');
-            $('#typeaheadsearch').val('');
             $('input[id="checkcheck"]').prop('checked', false);
             $('#for_dispatching').val('0');
             $('textarea[name="remarks"]').val($('textarea[name="remarks"]').data('default'));
+
             getproduct().done(function(data){
                 products.clear();
                 products.local = data.data;
                 products.initialize(true);
                 countproducts = data.data.length;
-                    if(countproducts > 100){
-                    showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-                    }
+                if(countproducts > 100){
+                showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
+                }
+            }).always(function(){ 
+                $('#typeaheadsearch').val('');
+            });
 
-            }).always(function(){  });
 
             /*$('#cbo_prodType').select2('val', 3);
             $('#cboLookupPrice').select2('val', 1);*/
@@ -1708,11 +1736,8 @@ $(document).ready(function(){
                             inv_line_total_price : value.so_line_total,
                             inv_non_tax_amount: value.non_tax_amount,
                             inv_tax_amount:value.tax_amount,
-                            /*batch_no : value.batch_no,
-                            exp_date : value.exp_date,*/
                             orig_so_price : value.so_price,
                             inv_line_total_after_global: 0.00,
-                            cost_upon_invoice : value.purchase_cost,
                             child_unit_id : value.child_unit_id,
                             child_unit_name : value.child_unit_name,
                             parent_unit_name : value.product_unit_name,
@@ -1723,7 +1748,11 @@ $(document).ready(function(){
                             retail_price: retail_price,
                             a:a,
                             is_basyo:value.is_basyo,
-                            is_product_basyo:value.is_product_basyo
+                            is_product_basyo:value.is_product_basyo,
+                            exp_date : '',
+                            batch_no : '',
+                            cost_upon_invoice : value.purchase_cost
+
                         }));
                         _line_unit=$('.line_unit'+a).select2({
                             minimumResultsForSearch: -1
@@ -1757,13 +1786,12 @@ $(document).ready(function(){
                 products.local = data.data;
                 products.initialize(true);
                 countproducts = data.data.length;
-
                 if(countproducts > 100){
                 showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
                 }
-
-            }).always(function(){ });
+            }).always(function(){ 
                 $('#typeaheadsearch').val('');
+            });
 
             _txnMode="edit";
             $('.sales_invoice_title').html('Edit Sales Invoice');                
@@ -1860,7 +1888,11 @@ $(document).ready(function(){
                             retail_price: retail_price,
                             a:a,
                             is_basyo:value.is_basyo,
-                            is_product_basyo:value.is_product_basyo
+                            is_product_basyo:value.is_product_basyo,
+                            exp_date : value.exp_date,
+                            batch_no : value.batch_no,
+                            cost_upon_invoice : value.cost_upon_invoice
+
                         }));
                         changetxn = 'inactive';
                           _line_unit=$('.line_unit'+a).select2({
@@ -2096,6 +2128,62 @@ $(document).ready(function(){
             reComputeTotalBasyo();
             reComputeTotal();
         });
+
+        $('#tbl_items > tbody').on('click','button[name="search_item"]',function(){
+            _selectRowTblItems=$(this).closest('tr');
+            global_item_desc=_selectRowTblItems.find(oTableItems.item_desc).text();
+            var _data=[];
+            _data.push({name : "type", value :$('#cbo_prodType').select2('val') });
+            _data.push({name : "description", value : global_item_desc });
+
+
+            $.ajax({
+                url : 'Sales_invoice/transaction/current-items-search',
+                "dataType":"json",
+                "type":"POST",
+                cache : false,
+                dataType : 'json',
+                "data":_data,
+                beforeSend : function(){
+                    $('#tbl_search_list > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                },
+                success : function(response){
+                    var rows=response.data;
+                    if(rows.length == 0){
+                        showNotification({
+                            title: "<b style='color:white;display: inline;'>No Stocks!</b>",
+                            stat : "error",
+                            msg : "There are no stocks available for the item."
+                        });
+
+                    }else{
+                        $('#tbl_search_list > tbody').html('');
+                        $.each(rows,function(i,value){
+                            $('#tbl_search_list > tbody').append('<tr class="row-item">'+
+                            '<td >'+value.product_code+'</td>'+
+                            '<td >'+value.product_desc+'</td>'+
+                            '<td >'+value.batch_no+'</td>'+
+                            '<td >'+value.exp_date+'</td>'+
+                            '<td >'+value.on_hand_per_batch+'</td>'+
+                            '<td >'+value.srp+'</td>'+
+                            '<td >'+value.srp_dealer+'</td>'+
+                            '<td >'+value.srp_distributor+'</td>'+
+                            '<td >'+value.srp_discounted+'</td>'+
+                            '<td >'+value.srp_public+'</td>'+
+                            '<td >'+value.srp_cost+'</td>'+
+                            '<td ><button type="button" name="accept_search" class="btn btn-success"><i class="fa fa-check"></i></button> </td>'+
+                            '<tr></tr>'
+                            );
+                        });
+                        $("#modal_search_list").modal('show');
+                    }
+
+
+                }
+            });
+        });        
+
+
         $('#btn_browse').click(function(event){
             event.preventDefault();
             $('input[name="file_upload[]"]').click();
@@ -2156,7 +2244,7 @@ $(document).ready(function(){
        return $.ajax({
            "dataType":"json",
            "type":"POST",
-           "url":"products/transaction/sales-list",
+           "url":"products/transaction/current-items",
            "beforeSend": function(){
                 countproducts = products.local.length;
                 if(countproducts > 100){
@@ -2302,27 +2390,78 @@ $(document).ready(function(){
             unit  = '<td ><select class="line_unit'+d.a+'" name="unit_id[]" ><option value="'+d.parent_unit_id+'" data-unit-identifier="1" '+parent+'>'+d.parent_unit_name+'</option></select></td>';
         }
         return '<tr>'+
-        //DISPLAY
-        '<td ><input name="inv_qty[]" type="text" class="numeric form-control trigger-keyup qty" value="'+accounting.formatNumber(d.inv_qty,2)+'"></td>'+unit+
-        '<td ">'+d.product_desc+'<input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"> <input type="text" class="hidden is_basyo" value="'+d.is_basyo+'"> <input type="text" class="hidden is_product_basyo" value="'+d.is_product_basyo+'"> </td>'+
-        '<td ><input name="inv_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.inv_price,2)+'" style="text-align:right;"></td>'+
-        '<td  style=""><input name="inv_discount[]" type="text" class="numeric form-control discount" value="'+ accounting.formatNumber(d.inv_discount,2)+'" style="text-align:right;"></td>'+
-        // DISPLAY NONE
-        '<td style="display:none;" ><input name="inv_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_line_total_discount,2)+'" readonly></td>'+
-        '<td  style="display:none;"><input name="inv_tax_rate[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_tax_rate,2)+'"></td>'+
-        // DISPLAY AGAIN 10%
-        '<td  style=""><input name="inv_gross[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_gross,2)+'" readonly></td>'+
-        '<td  align="right"><input name="inv_line_total_price[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_line_total_price,2)+'" readonly></td>'+
-        // DISPLAY NONE AGAIN
-        '<td style="display:none;"><input name="inv_tax_amount[]" type="text" class="numeric form-control" value="'+ d.inv_tax_amount+'" readonly></td>'+
-        '<td style="display:none;"><input name="inv_non_tax_amount[]" type="text" class="numeric form-control" value="'+ d.inv_non_tax_amount+'" readonly></td>'+
-        '<td style="display:none;"><input name="product_id[]" type="text" class="numeric form-control" value="'+ d.product_id+'" readonly></td>'+
-        '<td style="display:none;"><input name="inv_line_total_after_global[]" type="text" class="numeric form-control" value="'+ d.inv_line_total_after_global+'" readonly></td>'+
-
-
-        '<td align="center"><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>'+
-                '<td  style="display:none;"><input type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.bulk_price,2)+'" readonly></td>'+
-                '<td  style="display:none;"><input type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.retail_price,2)+'" readonly></td>'+
+            // [0] QTY
+            '<td>'+
+                '<input name="inv_qty[]" type="text" class="numeric form-control trigger-keyup qty" value="'+accounting.formatNumber(d.inv_qty,2)+'">'+
+            '</td>'+
+            // [1] Unit
+            unit+
+            // [2] Item
+            '<td>'+
+                d.product_desc+
+                '<input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'">'+
+                '<input type="text" class="hidden is_basyo" value="'+d.is_basyo+'">'+
+                '<input type="text" class="hidden is_product_basyo" value="'+d.is_product_basyo+'">'+
+            '</td>'+
+            // [3] Unit Price
+            '<td>'+
+                '<input name="inv_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.inv_price,2)+'" style="text-align:right;">'+
+            '</td>'+
+            // [4] Discount
+            '<td  style=""><input name="inv_discount[]" type="text" class="numeric form-control discount" value="'+ accounting.formatNumber(d.inv_discount,2)+'" style="text-align:right;">'+
+            '</td>'+
+            // [5] Total Discount
+            '<td class="hidden">'+
+                '<input name="inv_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_line_total_discount,2)+'" readonly>'+
+            '</td>'+
+            // [6] Tax Rate
+            '<td class="hidden"><input name="inv_tax_rate[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_tax_rate,2)+'">'+
+            '</td>'+
+            // [7] Gross
+            '<td><input name="inv_gross[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_gross,2)+'" readonly>'+
+            '</td>'+
+            // [8] Net Total
+            '<td  align="right"><input name="inv_line_total_price[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_line_total_price,2)+'" readonly>'+
+            '</td>'+
+            // [9] Expiration
+            '<td>'+
+                '<input name="exp_date[]" type="text" class="form-control" value="'+ d.exp_date +'" readonly>'+
+            '</td>'+
+            // [10] Batch #
+            '<td>'+
+                '<input name="batch_no[]" type="text" class="form-control" value="'+ d.batch_no +'" readonly>'+
+            '</td>'+
+            // [11] Cost Upon Invoice
+            '<td class="hidden"><input name="cost_upon_invoice[]" type="text" class="numeric form-control" value="'+ d.cost_upon_invoice+'" readonly>'+
+            '</td>'+
+            // [12] Vat Input
+            '<td class="hidden">'+
+                '<input name="inv_tax_amount[]" type="text" class="numeric form-control" value="'+ d.inv_tax_amount+'" readonly>'+
+            '</td>'+
+            // [13] Net of Vat
+            '<td class="hidden">'+
+                '<input name="inv_non_tax_amount[]" type="text" class="numeric form-control" value="'+ d.inv_non_tax_amount+'" readonly>'+
+            '</td>'+
+            // [14] Product ID
+            '<td class="hidden">'+
+                '<input name="product_id[]" type="text" class="numeric form-control" value="'+ d.product_id+'" readonly>'+
+            '</td>'+
+            // [15] Total After Global
+            '<td class="hidden"><input name="inv_line_total_after_global[]" type="text" class="numeric form-control" value="'+ d.inv_line_total_after_global+'" readonly>'+
+            '</td>'+
+            // [16] Action
+            '<td align="center">'+
+                '<button type="button" name="search_item" class="btn btn-warning" style="margin-right: 5px;"><i class="fa fa-search"></i></button>'+
+                '<button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button>'+
+            '</td>'+
+            // [17] Bulk Price
+            '<td class="hidden">'+
+                '<input type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.bulk_price,2)+'" readonly>'+
+            '</td>'+
+            // [18] Retail Price
+            '<td class="hidden">'+
+                '<input type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.retail_price,2)+'" readonly>'+
+            '</td>'+
         '</tr>';
     };
     var reComputeTotal=function(){

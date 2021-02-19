@@ -7142,6 +7142,15 @@ button[name="remove_item"] {
     padding-left: 10px!important;
 }
 
+button[name="search_item"] {
+    font-size: 15px!important;
+    padding-top: 6px!important;
+    padding-right: 10px!important;
+    padding-bottom: 6px!important;
+    padding-left: 10px!important;
+}
+
+
 #btn_login {
     font-size: 15px!important;
     padding-top: 6px!important;

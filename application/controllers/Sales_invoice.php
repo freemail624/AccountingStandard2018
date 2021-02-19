@@ -336,9 +336,9 @@ class Sales_invoice extends CORE_Controller
                     $m_invoice_items->inv_tax_amount=$this->get_numeric_value($inv_tax_amount[$i]);
                     $m_invoice_items->inv_non_tax_amount=$this->get_numeric_value($inv_non_tax_amount[$i]);
                     //$m_invoice_items->dr_invoice_id=$dr_invoice_id[$i];
-                    //$m_invoice_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
-                    //$m_invoice_items->batch_no=$batch_no[$i];
-                    //$m_invoice_items->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
+                    $m_invoice_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
+                    $m_invoice_items->batch_no=$batch_no[$i];
+                    $m_invoice_items->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
 
                     //unit id retrieval is change, because of TRIGGER restriction
                     $m_invoice_items->is_parent=$this->get_numeric_value($is_parent[$i]);
@@ -496,10 +496,10 @@ class Sales_invoice extends CORE_Controller
                         $m_invoice_items->inv_line_total_price=$this->get_numeric_value($inv_line_total_price[$i]);
                         $m_invoice_items->inv_tax_amount=$this->get_numeric_value($inv_tax_amount[$i]);
                         $m_invoice_items->inv_non_tax_amount=$this->get_numeric_value($inv_non_tax_amount[$i]);
-                        //$m_invoice_items->batch_no=$batch_no[$i];
-                        //$m_invoice_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
                         $m_invoice_items->orig_so_price=$this->get_numeric_value($orig_so_price[$i]);
-                        //$m_invoice_items->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
+                        $m_invoice_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
+                        $m_invoice_items->batch_no=$batch_no[$i];
+                        $m_invoice_items->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
 
                         //unit id retrieval is change, because of TRIGGER restriction
                         $m_invoice_items->is_parent=$this->get_numeric_value($is_parent[$i]);

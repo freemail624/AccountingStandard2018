@@ -1173,10 +1173,10 @@ $(document).ready(function(){
                 }
             }).bind('typeahead:select', function(ev, suggestion) {
 
-            if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
-                showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
-                return;
-            }
+            // if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
+            //     showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
+            //     return;
+            // }
                 var tax_rate=suggestion.tax_rate; 
                 var total=getFloat(suggestion.purchase_cost);
                 var net_vat=0;

@@ -97,6 +97,12 @@ class Products extends CORE_Controller
                 // $response['data']=$this->response_rows(array('products.is_deleted'=>FALSE));
                 echo json_encode($response);
                 break;  
+
+            case 'current-items':
+                $m_products = $this->Products_model;
+                $response['data']=$m_products->products_for_sales();
+                echo json_encode($response);
+                break;
                 
             case 'product-inventory':
                 $m_products = $this->Products_model;
