@@ -231,6 +231,15 @@ class Sales_invoice extends CORE_Controller
                 echo json_encode($response);
                 break;
 
+
+            case 'current-items-search':
+                $m_sales_invoice=$this->Sales_invoice_model;
+                $description=trim($this->input->post('description'));
+                $response['data']= $this->Products_model->get_current_item_list($description);
+                echo json_encode($response);
+                break;    
+
+
             //***************************************create new Items************************************************
 
             
@@ -251,13 +260,13 @@ class Sales_invoice extends CORE_Controller
                 $date_due = date('Y-m-d',strtotime($this->input->post('date_due',TRUE)));
                 $data=$m_invoice->checkCustomerInvoice($customer_id,$date_due,null);
                 
-                if(count($data) > 0){
-                    $response['title'] = 'Error!';
-                    $response['stat'] = 'error';
-                    $response['msg'] = 'Invoice is already existing for '.$data[0]->customer_name.' with due date of '.$data[0]->date_due.' in invoice # : '.$data[0]->sales_inv_no;
-                    echo json_encode($response);
-                    exit;
-                }
+                // if(count($data) > 0){
+                //     $response['title'] = 'Error!';
+                //     $response['stat'] = 'error';
+                //     $response['msg'] = 'Invoice is already existing for '.$data[0]->customer_name.' with due date of '.$data[0]->date_due.' in invoice # : '.$data[0]->sales_inv_no;
+                //     echo json_encode($response);
+                //     exit;
+                // }
 
                 //get sales order id base on SO number
                 $m_so=$this->Sales_order_model;
@@ -411,13 +420,13 @@ class Sales_invoice extends CORE_Controller
                 $date_due = date('Y-m-d',strtotime($this->input->post('date_due',TRUE)));
                 $data=$m_invoice->checkCustomerInvoice($customer_id,$date_due,$sales_invoice_id);
                 
-                if(count($data) > 0){
-                    $response['title'] = 'Error!';
-                    $response['stat'] = 'error';
-                    $response['msg'] = 'Invoice is already existing for '.$data[0]->customer_name.' with due date of '.$data[0]->date_due.' in invoice # : '.$data[0]->sales_inv_no;
-                    echo json_encode($response);
-                    exit;
-                }
+                // if(count($data) > 0){
+                //     $response['title'] = 'Error!';
+                //     $response['stat'] = 'error';
+                //     $response['msg'] = 'Invoice is already existing for '.$data[0]->customer_name.' with due date of '.$data[0]->date_due.' in invoice # : '.$data[0]->sales_inv_no;
+                //     echo json_encode($response);
+                //     exit;
+                // }
 
                 //if  valid invoice no.
                 //if($this->validate_record($sales_inv_no)){

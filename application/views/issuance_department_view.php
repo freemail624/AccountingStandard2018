@@ -592,9 +592,23 @@ dt_si = $('#tbl_si_list').DataTable({
             source: products,
             templates: {
                 header: [
-                    '<table class="tt-head"><tr><td width=20%" style="padding-left: 1%;"><b>PLU</b></td><td width="30%" align="left"><b>Description 1</b></td><td width="20%" align="left"><b>Unit</b></td><td width="10%" align="right" style="padding-right: 2%;"><b>Cost</b></td></tr></table>'
+                    '<table class="tt-head"><tr>'+
+                    '<td width=15%" style="padding-left: 1%;"><b>PLU</b></td>'+
+                    '<td width="25%" align="left"><b>Description</b></td>'+
+                    '<td width="20%" align="left"><b>Expiration</b></td>'+
+                    '<td width="10%" align="left"><b>LOT#</b></td>'+
+                    '<td width="17%" align="right"><b>On Hand</b></td>'+
+                    '<td width="13%" align="right" style="padding-right: 1%;"><b>SRP</b></td>'+
+                    '</tr></table>'
                 ].join('\n'),
-                suggestion: Handlebars.compile('<table class="tt-items"><tr><td width="20%" style="padding-left: 1%">{{product_code}}</td><td width="30%" align="left">{{product_desc}}</td><td width="20%" align="left">{{product_unit_name}}</td><td width="10%" align="right" style="padding-right: 2%;">{{purchase_cost}}</td></tr></table>')
+                suggestion: Handlebars.compile('<table class="tt-items"><tr>'+
+                    '<td width="15%" style="padding-left: 1%;">{{product_code}}</td>'+
+                    '<td width="25%" align="left">{{product_desc}}</td>'+
+                    '<td width="20%" align="left">{{exp_date}}</td>'+
+                    '<td width="10%" align="left">{{batch_no}}</td>'+
+                    '<td width="17%" align="right">{{on_hand_per_batch}}</td>'+
+                    '<td width="13%" align="right" style="padding-right: 1%;">{{srp}}</td>'+
+                    '</tr></table>')
             }
         }).on('keyup', this, function (event) {
             if (_objTypeHead.typeahead('val') == '') {
@@ -608,10 +622,10 @@ dt_si = $('#tbl_si_list').DataTable({
         }).bind('typeahead:select', function(ev, suggestion) {
             //console.log(suggestion);
 
-            if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
-                showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
-                return;
-            }
+            // if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
+            //     showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
+            //     return;
+            // }
 
             var product_id = 0;
             var conversion_rate = 0;
@@ -622,28 +636,28 @@ dt_si = $('#tbl_si_list').DataTable({
                 product_id = suggestion.parent_id;
             }
 
-            getInvetory(product_id).done(function(response){
-                data = response.data[0];
-                var CurrentQty = data.CurrentQty;
-                var CurrentQtyTotal = 0;
+            // getInvetory(product_id).done(function(response){
+            //     data = response.data[0];
+            //     var CurrentQty = data.CurrentQty;
+            //     var CurrentQtyTotal = 0;
 
-                if(suggestion.is_parent == 1){
-                    CurrentQtyTotal = (CurrentQty / suggestion.bulk_conversion_rate);
-                }
-                else if(suggestion.is_parent <= 0 && suggestion.parent_id <= 0){
-                    CurrentQtyTotal = CurrentQty;
-                }
-                else{
-                    CurrentQtyTotal = (CurrentQty / suggestion.conversion_rate);
-                }
+            //     if(suggestion.is_parent == 1){
+            //         CurrentQtyTotal = (CurrentQty / suggestion.bulk_conversion_rate);
+            //     }
+            //     else if(suggestion.is_parent <= 0 && suggestion.parent_id <= 0){
+            //         CurrentQtyTotal = CurrentQty;
+            //     }
+            //     else{
+            //         CurrentQtyTotal = (CurrentQty / suggestion.conversion_rate);
+            //     }
 
-                if(getFloat(CurrentQtyTotal) <= 0){
-                    showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
-                }else if(getFloat(CurrentQtyTotal) <= getFloat(suggestion.product_warn) ){
-                    showNotification({title: suggestion.product_desc ,stat:"info",msg:"This item has low stock remaining.<br>It might result to negative inventory."});
-                }
+            //     if(getFloat(CurrentQtyTotal) <= 0){
+            //         showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
+            //     }else if(getFloat(CurrentQtyTotal) <= getFloat(suggestion.product_warn) ){
+            //         showNotification({title: suggestion.product_desc ,stat:"info",msg:"This item has low stock remaining.<br>It might result to negative inventory."});
+            //     }
 
-            });
+            // });
 
 
             var tax_rate=getFloat(suggestion.tax_rate);
@@ -705,8 +719,10 @@ dt_si = $('#tbl_si_list').DataTable({
                 primary_unit:suggestion.primary_unit,
                 a:a,
                 is_basyo:suggestion.is_basyo,
-                is_product_basyo:suggestion.is_product_basyo
- 
+                is_product_basyo:suggestion.is_product_basyo,
+                exp_date : suggestion.exp_date,
+                batch_no : suggestion.batch_no,
+                cost_upon_invoice : suggestion.srp_cost
             }));
             _line_unit=$('.line_unit'+a).select2({
             minimumResultsForSearch: -1
@@ -837,7 +853,7 @@ dt_si = $('#tbl_si_list').DataTable({
             clearFields($('#frm_issuances'));
             $('#cbo_departments').select2('val', $('#cbo_departments').data('default'));
             $('#cbo_departments_to').select2('val', null);
-            $('#typeaheadsearch').val('');
+            
             getproduct().done(function(data){
                 products.clear();
                 products.local = data.data;
@@ -847,7 +863,9 @@ dt_si = $('#tbl_si_list').DataTable({
                     showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
                     }
 
-            }).always(function(){  });
+            }).always(function(){ 
+                $('#typeaheadsearch').val('');
+            });
             showList(false);
             $('#cbo_departments_to').select2('open');
             reComputeTotal();
@@ -879,17 +897,18 @@ dt_si = $('#tbl_si_list').DataTable({
                 return;
             }
 
-                getproduct().done(function(data){
-                    products.clear();
-                    products.local = data.data;
-                    products.initialize(true);
-                    countproducts = data.data.length;
-                        if(countproducts > 100){
-                        showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-                        }
+            getproduct().done(function(data){
+                products.clear();
+                products.local = data.data;
+                products.initialize(true);
+                countproducts = data.data.length;
+                    if(countproducts > 100){
+                    showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
+                    }
 
-                }).always(function(){ });
+            }).always(function(){ 
                 $('#typeaheadsearch').val('');
+            });
 
             $('input,textarea').each(function(){
                 var _elem=$(this);
@@ -942,7 +961,6 @@ dt_si = $('#tbl_si_list').DataTable({
                             issue_line_total_price : value.issue_line_total_price,
                             issue_non_tax_amount: value.issue_non_tax_amount,
                             issue_tax_amount:value.issue_tax_amount,
-                            exp_date: value.exp_date,
                             child_unit_id : value.child_unit_id,
                             child_unit_name : value.child_unit_name,
                             parent_unit_name : value.product_unit_name,
@@ -953,7 +971,10 @@ dt_si = $('#tbl_si_list').DataTable({
                             retail_price: retail_price,
                             a:a,
                             is_basyo:value.is_basyo,
-                            is_product_basyo:value.is_product_basyo
+                            is_product_basyo:value.is_product_basyo,
+                            exp_date : value.exp_date,
+                            batch_no : value.batch_no,
+                            cost_upon_invoice : value.cost_upon_invoice                            
  
                         }));    
                             changetxn = 'inactive';
@@ -1098,7 +1119,8 @@ dt_si = $('#tbl_si_list').DataTable({
                 products.initialize(true);
                     showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
             }).always(function(){
-                });
+                $('#typeaheadsearch').val('');
+            });
          });
         $('#btn_save').click(function(){ 
             if(_cboDepartments.val() == _cboDepartmentsTo.val()){ // DEPARTMENT FROM AND TO MUST NOT BE THE SAME
@@ -1265,19 +1287,75 @@ dt_si = $('#tbl_si_list').DataTable({
             unit  = '<td ><select class="line_unit'+d.a+'" name="unit_id[]" ><option value="'+d.parent_unit_id+'" data-unit-identifier="1" '+parent+'>'+d.parent_unit_name+'</option></select></td>';
         }
         return '<tr>'+
-        '<td width="10%"><input name="issue_qty[]" type="text" class="numeric form-control trigger-number qty" value="'+ d.issue_qty+'"></td>'+unit+
-        '<td width="30%">'+d.product_desc+'<input type="text" style="display: none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"> <input type="text" class="hidden is_basyo" value="'+d.is_basyo+'"> <input type="text" class="hidden is_product_basyo" value="'+d.is_product_basyo+'"> </td>'+
-        '<td width="11%"><input name="issue_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.issue_price,2)+'" style="text-align:right;"></td>'+
-        '<td width="11%" style="display: none;"><input name="issue_discount[]" type="text" class="numeric form-control discount" value="'+ accounting.formatNumber(d.issue_discount,2)+'" style="text-align:right;"></td>'+
-        '<td style="display: none;" width="11%"><input name="issue_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.issue_line_total_discount,2)+'" readonly></td>'+
-        '<td width="11%" style="display: none;"><input name="issue_tax_rate[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.issue_tax_rate,2)+'"></td>'+
-        '<td width="11%" align="right"><input name="issue_line_total_price[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.issue_line_total_price,2)+'" readonly></td>'+
-        '<td style="display: none;"><input name="issue_tax_amount[]" type="text" class="numeric form-control" value="'+ d.issue_tax_amount+'" readonly></td>'+
-        '<td style="display: none;"><input name="issue_non_tax_amount[]" type="text" class="numeric form-control" value="'+ d.issue_non_tax_amount+'" readonly></td>'+
-        '<td style="display: none;"><input name="product_id[]" type="text" class="numeric form-control" value="'+ d.product_id+'" readonly></td>'+
-        '<td align="center"><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>'+
-        '<td style="display: none;"  width="5%"><input type="text" class="numeric form-control" value="'+ d.bulk_price+'" readonly></td>'+
-        '<td style="display: none;"  width="5%"><input type="text" class="numeric form-control" value="'+ d.retail_price+'" readonly></td>'+
+            // [0] QTY
+            '<td>'+
+                '<input name="issue_qty[]" type="text" class="numeric form-control trigger-number qty" value="'+d.issue_qty+'">'+
+            '</td>'+
+            // [1] Unit 
+            unit+
+            // [2] Item
+            '<td>'+
+                d.product_desc+
+                '<input type="text" style="display: none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'">'+
+                '<input type="text" class="hidden is_basyo" value="'+d.is_basyo+'">'+
+                '<input type="text" class="hidden is_product_basyo" value="'+d.is_product_basyo+'">'+
+            '</td>'+
+            // [3] Unit Price
+            '<td>'+
+                '<input name="issue_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.issue_price,2)+'" style="text-align:right;">'+
+            '</td>'+
+            // [4] Discount
+            '<td class="hidden">'+
+                '<input name="issue_discount[]" type="text" class="numeric form-control discount" value="'+ accounting.formatNumber(d.issue_discount,2)+'" style="text-align:right;">'+
+            '</td>'+
+            // [5] Total Discount
+            '<td class="hidden">'+
+                '<input name="issue_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.issue_line_total_discount,2)+'" readonly>'+
+            '</td>'+
+            // [6] Tax Rate
+            '<td class="hidden">'+
+                '<input name="issue_tax_rate[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.issue_tax_rate,2)+'">'+
+            '</td>'+
+            // [7] Net Total
+            '<td align="right">'+
+                '<input name="issue_line_total_price[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.issue_line_total_price,2)+'" readonly>'+
+            '</td>'+
+            // [8] Expiration
+            '<td>'+
+                '<input name="exp_date[]" type="text" class="form-control" value="'+ d.exp_date +'" readonly>'+
+            '</td>'+
+            // [9] Batch #
+            '<td>'+
+                '<input name="batch_no[]" type="text" class="form-control" value="'+ d.batch_no +'" readonly>'+
+            '</td>'+
+            // [10] Cost Upon Invoice
+            '<td class="hidden"><input name="cost_upon_invoice[]" type="text" class="numeric form-control" value="'+ d.cost_upon_invoice+'" readonly>'+
+            '</td>'+
+            // [11] Vat Input
+            '<td class="hidden">'+
+                '<input name="issue_tax_amount[]" type="text" class="numeric form-control" value="'+ d.issue_tax_amount+'" readonly>'+
+            '</td>'+
+            // [12] Net of Vat
+            '<td class="hidden">'+
+                '<input name="issue_non_tax_amount[]" type="text" class="numeric form-control" value="'+ d.issue_non_tax_amount+'" readonly>'+
+            '</td>'+
+            // [13] Product ID
+            '<td class="hidden">'+
+                '<input name="product_id[]" type="text" class="numeric form-control" value="'+ d.product_id+'" readonly>'+
+            '</td>'+
+            // [14] Action
+            '<td align="center">'+
+                '<button type="button" name="search_item" class="btn btn-warning" style="margin-right: 5px;"><i class="fa fa-search"></i></button>'+
+                '<button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button>'+
+            '</td>'+
+            // [15] Bulk Price
+            '<td class="hidden">'+
+                '<input type="text" class="numeric form-control" value="'+ d.bulk_price+'" readonly>'+
+            '</td>'+
+            // [16] Retail Price
+            '<td class="hidden">'+
+                '<input type="text" class="numeric form-control" value="'+ d.retail_price+'" readonly>'+
+            '</td>'+
         '</tr>';
     };
     var reComputeTotal=function(){
@@ -1340,7 +1418,7 @@ dt_si = $('#tbl_si_list').DataTable({
        return $.ajax({
            "dataType":"json",
            "type":"POST",
-           "url":"products/transaction/list",
+           "url":"products/transaction/current-items",
            "beforeSend": function(){
                 countproducts = products.local.length;
                 if(countproducts > 100){

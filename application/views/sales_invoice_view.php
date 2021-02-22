@@ -176,7 +176,7 @@
                     <th>Customer</th>
                     <th>Department</th>
                     <th style="width: 20%">Remarks</th>
-                    <th><center>Action</center></th>
+                    <th width="20%"><center>Action</center></th>
                     <th>Invoice #</th>
                 </tr>
                 </thead>
@@ -895,6 +895,45 @@
         </div>
     </div>
 </div>
+
+<div id="modal_search_list" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+    <div class="modal-dialog" style="width: 90%;">
+        <div class="modal-content">
+            <div class="modal-header ">
+                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                <h2 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Choose Item</h2>
+            </div>
+
+            <div class="modal-body">
+            <div class="row">
+                <table id="tbl_search_list" class="table table-striped table-bordered table-responsive" cellspacing="0" width="100%">
+                    <thead class="">
+                    <tr>
+                        <th>PLU</th>
+                        <th>Description</th>
+                        <th>Batch</th>
+                        <th>Expiration</th>
+                        <th>On Hand</th>
+                        <th>SRP</th>
+                        <th>Cost</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Sales Order Content -->
+                    </tbody>
+                </table>
+            </div>
+            </div>
+            <div class="modal-footer">
+                <!-- <button id="btn_accept" type="button" class="btn btn-green" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Receive this Order</button> -->
+                <button id="cancel_modal" class="btn btn-default" data-dismiss="modal" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Cancel</button>
+            </div>
+        </div><!---content-->
+    </div>
+</div><!---modal-->
+
+
 <footer role="contentinfo">
     <div class="clearfix">
         <ul class="list-unstyled list-inline pull-left">
@@ -935,7 +974,7 @@ $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboDepartments; var _cboCustomers; var dt_so; var products; var changetxn;
     var _cboCustomerType; var prodstat;
     var _cboCustomerTypeCreate; var _cboSource;
-    var _line_unit;
+    var _line_unit; var global_item_desc = ''; var _selectRowTblItems;
 
     var oTableItems={
         qty : 'td:eq(0)',
@@ -956,7 +995,11 @@ $(document).ready(function(){
         total_after_global :' td:eq(15)',
         bulk_price : 'td:eq(17)',
         retail_price : 'td:eq(18)'
- 
+    };
+    var oTableSearch={
+        sBatch : 'td:eq(2)',
+        sExpDate : 'td:eq(3)',
+        sCost : 'td:eq(6)',
     };
     var oTableDetails={
         discount : 'tr:eq(0) > td:eq(1)',
@@ -1519,7 +1562,7 @@ $(document).ready(function(){
                     showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
             }).always(function(){
                 $('#typeaheadsearch').val('');
-                });
+            });
          });
 
         //create new department
@@ -2131,9 +2174,9 @@ $(document).ready(function(){
 
         $('#tbl_items > tbody').on('click','button[name="search_item"]',function(){
             _selectRowTblItems=$(this).closest('tr');
-            global_item_desc=_selectRowTblItems.find(oTableItems.item_desc).text();
+            global_item_desc=_selectRowTblItems.find(oTableItems.unit_identifier).find($('#product_desc')).val();
+            
             var _data=[];
-            _data.push({name : "type", value :$('#cbo_prodType').select2('val') });
             _data.push({name : "description", value : global_item_desc });
 
 
@@ -2166,10 +2209,6 @@ $(document).ready(function(){
                             '<td >'+value.exp_date+'</td>'+
                             '<td >'+value.on_hand_per_batch+'</td>'+
                             '<td >'+value.srp+'</td>'+
-                            '<td >'+value.srp_dealer+'</td>'+
-                            '<td >'+value.srp_distributor+'</td>'+
-                            '<td >'+value.srp_discounted+'</td>'+
-                            '<td >'+value.srp_public+'</td>'+
                             '<td >'+value.srp_cost+'</td>'+
                             '<td ><button type="button" name="accept_search" class="btn btn-success"><i class="fa fa-check"></i></button> </td>'+
                             '<tr></tr>'
@@ -2183,6 +2222,16 @@ $(document).ready(function(){
             });
         });        
 
+        $('#tbl_search_list > tbody').on('click','button[name="accept_search"]',function(){
+            var row=$(this).closest('tr');
+            _selectRowTblItems.find(oTableItems.exp_date).find('input').val(row.find(oTableSearch.sExpDate).text());
+            _selectRowTblItems.find(oTableItems.batch_no).find('input').val(row.find(oTableSearch.sBatch).text());
+            _selectRowTblItems.find(oTableItems.cost_upon_invoice).find('input').val(row.find(oTableSearch.sCost).text());
+
+            showNotification({title:"Success!",stat:"success",msg:'The item you selected was updated.'});
+
+            $('#modal_search_list').modal('hide');
+        });
 
         $('#btn_browse').click(function(event){
             event.preventDefault();
@@ -2399,7 +2448,9 @@ $(document).ready(function(){
             // [2] Item
             '<td>'+
                 d.product_desc+
-                '<input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'">'+
+
+                '<input type="text" class="hidden" id="product_desc" value="'+d.product_desc+'">'+
+                '<input type="text" class="hidden" class="form-control" name="is_parent[]" value="'+d.is_parent+'">'+
                 '<input type="text" class="hidden is_basyo" value="'+d.is_basyo+'">'+
                 '<input type="text" class="hidden is_product_basyo" value="'+d.is_product_basyo+'">'+
             '</td>'+

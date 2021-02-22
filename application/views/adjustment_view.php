@@ -782,7 +782,7 @@ $(document).ready(function(){
             placeholder: "Please select type of adjustment."
         });
 
-        _cboAdjustments.select2('val',null);
+        _cboAdjustments.select2('val','IN');
 
         _cboDepartments.select2('val',null);
 

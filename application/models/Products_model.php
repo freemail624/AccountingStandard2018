@@ -1309,8 +1309,7 @@ function get_product_history_with_child1($product_id,$depid=0,$as_of_date=null,$
     }
 
 
-
-    function get_current_item_list($criteria="",$type=3){
+ function get_current_item_list($criteria=""){
 
 
             //adjusted 1/3/2017
@@ -1326,50 +1325,69 @@ function get_product_history_with_child1($product_id,$depid=0,$as_of_date=null,$
                 FORMAT(distributor_price,4) as srp_distributor,
                 FORMAT(public_price,4) as srp_public,
                 FORMAT(discounted_price,4) as srp_discounted,
-                FORMAT(purchase_cost,4) as srp_cost,
-                (rc.in_qty-IFNULL(sinv.out_qty,0)-IFNULL(iss.out_qty,0)-IFNULL(aoQ.out_qty,0)) as on_hand_per_batch
+                FORMAT(rc.item_cost,4) as srp_cost,
+                (
+                    rc.in_qty
+                    -IFNULL(sinv.out_qty,0)
+                    -IFNULL(cinv.out_qty,0)
+                    -IFNULL(iss.out_qty,0)
+                    -IFNULL(aoQ.out_qty,0)
+
+                ) as on_hand_per_batch
 
                     FROM
 
                     (
 
-                    SELECT inQ.*,SUM(inQ.receive_qty)as in_qty
+                        SELECT inQ.*,inQ.product_item_cost as item_cost,SUM(inQ.receive_qty)as in_qty
 
-                    FROM
+                        FROM
+                        /**to get the recent cost of each batch, derive query is created to ORDER DESC by date_created**/
+                        (
 
-                    (SELECT dii.product_id,dii.batch_no,dii.exp_date,
-                    CONCAT_WS('-',dii.batch_no,dii.product_id,dii.exp_date)as unq_id,
-                    SUM(dii.dr_qty) as receive_qty
-                    FROM delivery_invoice_items as dii
-                    INNER JOIN delivery_invoice as di
-                    ON dii.dr_invoice_id=di.dr_invoice_id
-                    WHERE di.is_active=TRUE AND di.is_deleted=FALSE
-                    GROUP BY dii.product_id,dii.`batch_no`,dii.exp_date
+                            /*******************************************/
+                            SELECT dii.product_id,dii.batch_no,dii.exp_date,
+                            CONCAT_WS('-',dii.batch_no,dii.product_id,dii.exp_date)as unq_id,
+                            dii.dr_qty as receive_qty,dii.product_item_cost
 
+                            FROM
 
-                    UNION ALL
-
-
-                    SELECT aii.product_id,aii.batch_no,aii.exp_date,
-                    CONCAT_WS('-',aii.batch_no,aii.product_id,aii.exp_date)as unq_id,
-                    SUM(aii.adjust_qty) as receive_qty
-                    FROM adjustment_items as aii
-                    INNER JOIN adjustment_info as ai
-                    ON aii.adjustment_id=ai.adjustment_id
-                    WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
-
-                    GROUP BY aii.product_id,aii.batch_no,aii.exp_date) as inQ
-
-                    GROUP By inQ.product_id,inQ.batch_no,inQ.exp_date
+                            (
 
 
+                                /** DELIVERY INVOICE **/
+                                SELECT dii.product_id,dii.batch_no,dii.exp_date,
+                                CONCAT_WS('-',dii.batch_no,dii.product_id,dii.exp_date)as unq_id,
+                                dii.dr_qty,dii.dr_price as product_item_cost,di.date_created
+                                FROM delivery_invoice_items as dii
+                                INNER JOIN delivery_invoice as di
+                                ON dii.dr_invoice_id=di.dr_invoice_id
+                                WHERE di.is_active=TRUE AND di.is_deleted=FALSE
 
+
+                                UNION ALL
+
+                                /** ADJUSTMENT IN **/
+                                SELECT aii.product_id,aii.batch_no,aii.exp_date,
+                                CONCAT_WS('-',aii.batch_no,aii.product_id,aii.exp_date)as unq_id,
+                                aii.adjust_qty as receive_qty,aii.adjust_price as product_item_cost,ai.date_created
+                                FROM adjustment_items as aii
+                                INNER JOIN adjustment_info as ai
+                                ON aii.adjustment_id=ai.adjustment_id
+                                WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+
+                            )as dii ORDER BY dii.date_created DESC
+
+
+                        /*******************************************/
+                        ) as inQ
+
+                        GROUP By inQ.product_id,inQ.batch_no,inQ.exp_date
 
                     )as rc
 
-
+                    /** SALES INVOICE **/
                     LEFT JOIN
-
 
                     (SELECT sii.product_id,
                     CONCAT_WS('-',sii.batch_no,sii.product_id,sii.exp_date)as unq_id,
@@ -1381,6 +1399,21 @@ function get_product_history_with_child1($product_id,$depid=0,$as_of_date=null,$
 
                     ON rc.unq_id=sinv.unq_id
 
+
+                    /** CASH INVOICE **/
+                    LEFT JOIN
+
+                    (SELECT cii.product_id,
+                    CONCAT_WS('-',cii.batch_no,cii.product_id,cii.exp_date)as unq_id,
+                    SUM(cii.inv_qty) as out_qty
+                    FROM cash_invoice_items as cii
+                    INNER JOIN cash_invoice as ci ON cii.cash_invoice_id=ci.cash_invoice_id
+                    WHERE ci.is_active=TRUE AND ci.is_deleted=FALSE
+                    GROUP BY cii.product_id,cii.batch_no,cii.exp_date) as cinv
+
+                    ON rc.unq_id=cinv.unq_id
+
+                    /** ISSUANCE **/
                     LEFT JOIN
 
                     (  SELECT iss.product_id,
@@ -1392,6 +1425,7 @@ function get_product_history_with_child1($product_id,$depid=0,$as_of_date=null,$
 
                     ON rc.unq_id=iss.unq_id
 
+                    /** ADJUSTMENT OUT **/
                     LEFT JOIN
 
                     (
@@ -1412,18 +1446,19 @@ function get_product_history_with_child1($product_id,$depid=0,$as_of_date=null,$
 
                     LEFT JOIN
 
-                    products as p ON rc.product_id=p.product_id
+                    (SELECT * FROM products where is_active = true and is_deleted = false) as p ON rc.product_id=p.product_id
 
                     LEFT JOIN tax_types as tt ON p.tax_type_id=tt.tax_type_id
-                    LEFT JOIN units as u ON p.unit_id=u.unit_id
+                    LEFT JOIN units as u ON p.parent_unit_id=u.unit_id
 
 
-                    WHERE ".($type==3?"":" p.refproduct_id=".$type." AND ")." (p.product_desc LIKE '%".$criteria."%' OR p.product_code LIKE '%".$criteria."%' OR p.product_desc1 LIKE '%".$criteria."%' OR CAST(p.product_id AS CHAR) LIKE '%".$criteria."%') HAVING on_hand_per_batch>0";
+                    WHERE 
+                        p.is_nonsalable = FALSE AND
+                        (p.product_desc LIKE '%".$criteria."%' OR p.product_code LIKE '%".$criteria."%' OR p.product_desc1 LIKE '%".$criteria."%' OR CAST(p.product_id AS CHAR) LIKE '%".$criteria."%') HAVING on_hand_per_batch>0";
 
 
         return $this->db->query($sql)->result();
     }
-
 
     //per expiration inventory report
     function get_all_items_inventory($date){
@@ -1895,7 +1930,14 @@ Product Pick List
                 FORMAT(public_price,4) as srp_public,
                 FORMAT(discounted_price,4) as srp_discounted,
                 FORMAT(rc.item_cost,4) as srp_cost,
-                (rc.in_qty-IFNULL(sinv.out_qty,0)-IFNULL(iss.out_qty,0)-IFNULL(aoQ.out_qty,0)) as on_hand_per_batch
+                (
+                    rc.in_qty
+                    -IFNULL(sinv.out_qty,0)
+                    -IFNULL(cinv.out_qty,0)
+                    -IFNULL(iss.out_qty,0)
+                    -IFNULL(aoQ.out_qty,0)
+
+                ) as on_hand_per_batch
 
                     FROM
 
@@ -1964,6 +2006,19 @@ Product Pick List
                     GROUP BY sii.product_id,sii.batch_no,sii.exp_date) as sinv
 
                     ON rc.unq_id=sinv.unq_id
+
+                    LEFT JOIN
+
+                    (SELECT cii.product_id,
+                    CONCAT_WS('-',cii.batch_no,cii.product_id,cii.exp_date)as unq_id,
+                    SUM(cii.inv_qty) as out_qty
+                    FROM cash_invoice_items as cii
+                    INNER JOIN cash_invoice as ci ON cii.cash_invoice_id=ci.cash_invoice_id
+                    WHERE ci.is_active=TRUE AND ci.is_deleted=FALSE
+                    GROUP BY cii.product_id,cii.batch_no,cii.exp_date) as cinv
+
+                    ON rc.unq_id=cinv.unq_id
+
 
                     LEFT JOIN
 
