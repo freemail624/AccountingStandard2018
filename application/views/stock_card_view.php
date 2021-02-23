@@ -158,7 +158,7 @@
                                         <th style="width: 8%;text-align: right;font-weight: bold;">IN</th>
                                         <th style="width: 8%;text-align: right;font-weight: bold;">OUT</th>
                                         <th style="width: 12%;text-align: right;font-weight: bold;">Balance</th>
-                                        <th style="width: 12%;text-align: right;font-weight: bold;">Bulk Balance</th>
+                                        <th class="hidden" style="width: 12%;text-align: right;font-weight: bold;">Bulk Balance</th>
                                         <th style="text-align: left;width: 10%;">Location</th>
                                         <th style="text-align: left;width: 20%">Remarks</th>
                                     </tr>
@@ -285,7 +285,7 @@ $(document).ready(function(){
                             '<td align="right">'+accounting.formatNumber(value.parent_in_qty,2)+'</td>'+
                             '<td align="right">'+accounting.formatNumber(value.parent_out_qty,2)+'</td>'+
                             '<td align="right">'+accounting.formatNumber(value.parent_balance,2)+' '+response.product_info.parent_unit_name+'</td>'+
-                            '<td align="right">'+accounting.formatNumber(value.parent_bulk_balance,2)+' '+response.product_info.product_unit_name+'</td>'+
+                            '<td class="hidden" align="right">'+accounting.formatNumber(value.parent_bulk_balance,2)+' '+response.product_info.product_unit_name+'</td>'+
                             '<td>'+value.department_name+'</td>'+
                             '<td>'+value.remarks+'</td>'+
                         '</tr>'

@@ -205,10 +205,10 @@ class Inventory extends CORE_Controller
                 $excel->getActiveSheet()->getColumnDimension('C')->setWidth('25');
                 $excel->getActiveSheet()->getColumnDimension('D')->setWidth('25');
                 $excel->getActiveSheet()->getColumnDimension('E')->setWidth('25');
-                $excel->getActiveSheet()->getColumnDimension('F')->setWidth('25');
+                // $excel->getActiveSheet()->getColumnDimension('F')->setWidth('25');
     
                 $excel->getActiveSheet()
-                        ->getStyle('C9:F9')
+                        ->getStyle('C9:E9')
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
@@ -224,7 +224,7 @@ class Inventory extends CORE_Controller
                 );
 
 
-                $excel->getActiveSheet()->getStyle('A9:F9')->applyFromArray( $style_header );
+                $excel->getActiveSheet()->getStyle('A9:E9')->applyFromArray( $style_header );
 
                 $excel->getActiveSheet()->setCellValue('A9','PLU')
                                         ->getStyle('A9')->getFont()->setBold(TRUE);
@@ -236,8 +236,8 @@ class Inventory extends CORE_Controller
                                         ->getStyle('D9')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('E9','Balance')
                                         ->getStyle('E9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('F9','Bulk Balance')
-                                        ->getStyle('F9')->getFont()->setBold(TRUE);
+                // $excel->getActiveSheet()->setCellValue('F9','Bulk Balance')
+                //                         ->getStyle('F9')->getFont()->setBold(TRUE);
 
                 $i=10;
 
@@ -247,7 +247,7 @@ class Inventory extends CORE_Controller
                         $excel->getActiveSheet()->getColumnDimension('C')->setWidth('20');
                         $excel->getActiveSheet()->getColumnDimension('D')->setWidth('20');
                         $excel->getActiveSheet()->getColumnDimension('E')->setWidth('20');
-                        $excel->getActiveSheet()->getColumnDimension('F')->setWidth('20');
+                        // $excel->getActiveSheet()->getColumnDimension('F')->setWidth('20');
 
             
                         $excel->getActiveSheet()
@@ -268,7 +268,7 @@ class Inventory extends CORE_Controller
                         $excel->getActiveSheet()->setCellValue('C'.$i,number_format($product->quantity_in,2));
                         $excel->getActiveSheet()->setCellValue('D'.$i,number_format($product->quantity_out,2));
                         $excel->getActiveSheet()->setCellValue('E'.$i,number_format($product->total_qty_balance,2).' '.$product->parent_unit_name);
-                        $excel->getActiveSheet()->setCellValue('F'.$i,number_format($product->total_qty_bulk,2).' '.$product->product_unit_name);
+                        // $excel->getActiveSheet()->setCellValue('F'.$i,number_format($product->total_qty_bulk,2).' '.$product->product_unit_name);
                         $i++;                  
                 }
                 if(count($products)==0){
@@ -277,7 +277,7 @@ class Inventory extends CORE_Controller
 
                 }
 
-                $excel->getActiveSheet()->getStyle('A'.$i.':'.'F'.$i)->applyFromArray( $style_header );
+                $excel->getActiveSheet()->getStyle('A'.$i.':'.'E'.$i)->applyFromArray( $style_header );
 
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 header('Content-Disposition: attachment;filename="Inventory Report '.date('M-d-Y',NOW()).'.xlsx"');
@@ -570,10 +570,10 @@ class Inventory extends CORE_Controller
                 $excel->getActiveSheet()->getColumnDimension('C')->setWidth('25');
                 $excel->getActiveSheet()->getColumnDimension('D')->setWidth('25');
                 $excel->getActiveSheet()->getColumnDimension('E')->setWidth('25');
-                $excel->getActiveSheet()->getColumnDimension('F')->setWidth('25');
+                // $excel->getActiveSheet()->getColumnDimension('F')->setWidth('25');
     
                 $excel->getActiveSheet()
-                        ->getStyle('C9:F9')
+                        ->getStyle('C9:E9')
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
@@ -601,8 +601,8 @@ class Inventory extends CORE_Controller
                                         ->getStyle('D9')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('E9','Balance')
                                         ->getStyle('E9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('F9','Bulk Balance')
-                                        ->getStyle('F9')->getFont()->setBold(TRUE);
+                // $excel->getActiveSheet()->setCellValue('F9','Bulk Balance')
+                //                         ->getStyle('F9')->getFont()->setBold(TRUE);
 
                 $i=10;
 
@@ -612,7 +612,7 @@ class Inventory extends CORE_Controller
                         $excel->getActiveSheet()->getColumnDimension('C')->setWidth('20');
                         $excel->getActiveSheet()->getColumnDimension('D')->setWidth('20');
                         $excel->getActiveSheet()->getColumnDimension('E')->setWidth('20');
-                        $excel->getActiveSheet()->getColumnDimension('F')->setWidth('20');
+                        // $excel->getActiveSheet()->getColumnDimension('F')->setWidth('20');
 
             
                         $excel->getActiveSheet()
@@ -621,7 +621,7 @@ class Inventory extends CORE_Controller
                                 ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 
                         $excel->getActiveSheet()
-                                ->getStyle('C'.$i.':F'.$i)
+                                ->getStyle('C'.$i.':E'.$i)
                                 ->getAlignment()
                                 ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
@@ -633,7 +633,7 @@ class Inventory extends CORE_Controller
                         $excel->getActiveSheet()->setCellValue('C'.$i,number_format($product->quantity_in,2));
                         $excel->getActiveSheet()->setCellValue('D'.$i,number_format($product->quantity_out,2));
                         $excel->getActiveSheet()->setCellValue('E'.$i,number_format($product->total_qty_balance,2).' '.$product->parent_unit_name);
-                        $excel->getActiveSheet()->setCellValue('F'.$i,number_format($product->total_qty_bulk,2).' '.$product->product_unit_name);
+                        // $excel->getActiveSheet()->setCellValue('F'.$i,number_format($product->total_qty_bulk,2).' '.$product->product_unit_name);
                         $i++;                  
                 }
                 if(count($products)==0){
@@ -642,7 +642,7 @@ class Inventory extends CORE_Controller
 
                 }
 
-                $excel->getActiveSheet()->getStyle('A'.$i.':'.'F'.$i)->applyFromArray( $style_header );
+                $excel->getActiveSheet()->getStyle('A'.$i.':'.'E'.$i)->applyFromArray( $style_header );
 
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 header('Content-Disposition: attachment;filename="Inventory Report '.date('M-d-Y',NOW()).'.xlsx"');

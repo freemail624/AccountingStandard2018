@@ -58,6 +58,11 @@
             background-color: dodgerblue;
         }
 
+        #tbl_issuances_filter    
+        { 
+            display:none; 
+        }         
+
         @keyframes spin {
             from { transform: scale(1) rotate(0deg); }
             to { transform: scale(1) rotate(360deg); }
@@ -148,8 +153,23 @@
             <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Adjustment</b>
         </div> -->
         <div class="panel-body table-responsive">
-        <h2 class="h2-panel-heading">Adjustment</h2><hr>
-        <button class="btn btn-primary"  id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Adjust Inventory" ><i class="fa fa-plus"></i> Record item adjustment</button>
+            <h2 class="h2-panel-heading">Adjustment</h2><hr>
+            <div class="row">
+                <div class="col-md-3">
+                    <br>
+                    <button class="btn btn-primary"  id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Adjust Inventory" >
+                        <i class="fa fa-plus"></i> Record item adjustment
+                    </button>
+                </div>
+                <div class="col-md-6">
+                    
+                </div>
+                <div class="col-md-3">
+                    Search :<br /> 
+                    <input type="text" id="tbl_search" class="form-control"> 
+                </div>
+            </div>
+            <br/>
             <table id="tbl_issuances" class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
                 <tr>
@@ -201,17 +221,17 @@
 
                             <b class="required">*</b>  Adjustment type : <br />
                             <select name="adjustment_type" id="cbo_adjustments" data-error-msg="Adjustment Type is required" required>
-                                <option value="IN" selected>Adjustment IN</option>
-                                <option value="OUT">Adjustment OUT</option>
+                                <option value="IN" selected data-type="1">Adjustment IN</option>
+                                <option value="OUT" data-type="2">Adjustment OUT</option>
                             </select>                                
                         </div>
                         <div class="col-sm-3">
                             
-                            <input type="checkbox" name="accounting[]" value="is_adjustment" id="is_adjustment" class="css-checkbox" style="font-size: 12px!important;"><label class="css-label " for="is_adjustment" style="font-size: 12px!important;">Adjustment</label><br>
+                            <input type="checkbox" name="accounting[]" data-type="1" value="is_adjustment" id="is_adjustment" class="css-checkbox transaction" style="font-size: 12px!important;"><label class="css-label " for="is_adjustment" style="font-size: 12px!important;">Adjustment</label><br>
                             
-                            <input type="checkbox" name="accounting[]" value="is_returns" id="is_returns" class="css-checkbox" style="font-size: 12px!important;"><label class="css-label " for="is_returns" style="font-size: 12px!important;">Sales Return</label><br>
+                            <input type="checkbox" name="accounting[]" data-type="2" value="is_returns" id="is_returns" class="css-checkbox transaction" style="font-size: 12px!important;"><label class="css-label " for="is_returns" style="font-size: 12px!important;">Sales Return</label><br>
                             <input type="hidden" name="adjustment_is_return" id="adjustment_is_return" class="form-control">
-                            <input type="checkbox" name="accounting[]" value="is_dr_returns" id="is_dr_returns" class="css-checkbox" style="font-size: 12px!important;"><label class="css-label " for="is_dr_returns" style="font-size: 12px!important;">Purchase Return</label><br>
+                            <input type="checkbox" name="accounting[]" data-type="3" value="is_dr_returns" id="is_dr_returns" class="css-checkbox transaction" style="font-size: 12px!important;"><label class="css-label " for="is_dr_returns" style="font-size: 12px!important;">Purchase Return</label><br>
                             <input type="hidden" name="adjustment_is_dr_return" id="adjustment_is_dr_return" class="form-control"> <br>                            
 
                         </div>
@@ -303,20 +323,22 @@
                             <tr>
                                 <th width="10%">Qty</th>
                                 <th width="10%">UM</th>
-                                <th width="30%">Item</th>
-                                <th width="20%" style="text-align: right">Unit Price</th>
-                                <th width="12%" style="text-align: right;display: none;">Discount</th>
-                                <th style="display: none;">T.D</th> <!-- total discount -->
-                                <th style="display:none;">Tax %</th>
-                                <th width="20%" style="text-align: right">Total</th>
-                                <th style="display: none;">V.I</th> <!-- vat input -->
-                                <th style="display: none;">N.V</th> <!-- net of vat -->
-                                <td style="display: none;">Item ID</td><!-- product id -->
-                                <th colspan="3"><center>Action</center></th>
+                                <th width="20%">Description</th>
+                                <th width="15%" style="text-align: right">Unit Price</th>
+                                <th class="hidden" style="text-align: right;">Discount</th>
+                                <th class="hidden">T.D</th> <!-- total discount -->
+                                <th class="hidden">Tax %</th>
+                                <th width="15%" style="text-align: right">Total</th>
+                                <th width="10%">Expiration</th>
+                                <th width="10%">LOT#</th>
+                                <th class="hidden">Cost Upon Invoice</th>
+                                <th class="hidden">V.I</th> <!-- vat input -->
+                                <th class="hidden">N.V</th> <!-- net of vat -->
+                                <td class="hidden">Item ID</td><!-- product id -->
+                                <th width="10%"><center>Action</center></th>
                             </tr>
                             </thead>
                             <tbody>
-
                             </tbody>
 
                             <tfoot>
@@ -325,7 +347,7 @@
                             </tr>
                             <tr>
                                 <td colspan="3" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount :</strong></td>
-                                <td align="right" colspan="1" id="td_discount color="red">0.00</td>
+                                <td align="right" id="td_discount color="red">0.00</td>
                                 <td colspan="3" id="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
                                 <td align="right" colspan="1" id="td_before_tax" color="red">0.00</td>
                             </tr>
@@ -498,6 +520,8 @@
                         <th></th>
                         <th>Invoice #</th>
                         <th>Item</th>
+                        <th>Expiration</th>
+                        <th>LOT#</th>
                         <th>Qty</th>
                         <th>Unit</th>
                         <th><center>Action</center></th>
@@ -531,6 +555,8 @@
                         <th></th>
                         <th>Invoice #</th>
                         <th>Item</th>
+                        <th>Expiration</th>
+                        <th>LOT#</th>
                         <th>Qty</th>
                         <th>Unit</th>
                         <th><center>Action</center></th>
@@ -548,6 +574,43 @@
         </div>
     </div>
 <div class="clearfix"></div>
+</div><!---modal-->
+
+<div id="modal_search_list" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+    <div class="modal-dialog" style="width: 90%;">
+        <div class="modal-content">
+            <div class="modal-header ">
+                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                <h2 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Choose Item</h2>
+            </div>
+
+            <div class="modal-body">
+            <div class="row">
+                <table id="tbl_search_list" class="table table-striped table-bordered table-responsive" cellspacing="0" width="100%">
+                    <thead class="">
+                    <tr>
+                        <th>PLU</th>
+                        <th>Description</th>
+                        <th>Batch</th>
+                        <th>Expiration</th>
+                        <th style="text-align: right;">On Hand</th>
+                        <th style="text-align: right;">SRP</th>
+                        <th style="text-align: right;">Cost</th>
+                        <th><center>Action</center></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Sales Order Content -->
+                    </tbody>
+                </table>
+            </div>
+            </div>
+            <div class="modal-footer">
+                <!-- <button id="btn_accept" type="button" class="btn btn-green" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Receive this Order</button> -->
+                <button id="cancel_modal" class="btn btn-default" data-dismiss="modal" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Cancel</button>
+            </div>
+        </div><!---content-->
+    </div>
 </div><!---modal-->
 
 
@@ -613,7 +676,8 @@
 
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboAdjustments; var products; var _cboCustomers; var _cboSuppliers; var dtCustomer; var dtSupplier; var _selectedInvTypeId;
-    var _line_unit; var changetxn;
+    var _line_unit; var changetxn; var global_item_desc = ''; var _selectRowTblItems;
+
     var oTableItems={
         qty : 'td:eq(0)',
         unit_value: 'td:eq(1)',
@@ -623,13 +687,21 @@ $(document).ready(function(){
         total_line_discount : 'td:eq(5)',
         tax : 'td:eq(6)',
         total : 'td:eq(7)',
-        vat_input : 'td:eq(8)',
-        net_vat : 'td:eq(9)',
-        item_id : 'td:eq(10)',
-        bulk_price : 'td:eq(12)',
-        retail_price : 'td:eq(13)'
+        exp_date : 'td:eq(8)',
+        batch_no : 'td:eq(9)',
+        cost_upon_invoice : 'td:eq(10)',
+        vat_input : 'td:eq(11)',
+        net_vat : 'td:eq(12)',
+        item_id : 'td:eq(13)',
+        bulk_price : 'td:eq(15)',
+        retail_price : 'td:eq(16)'
     };
 
+    var oTableSearch={
+        sBatch : 'td:eq(2)',
+        sExpDate : 'td:eq(3)',
+        sCost : 'td:eq(6)',
+    };
 
     var oTableDetails={
         discount : 'tr:eq(0) > td:eq(1)',
@@ -677,13 +749,15 @@ $(document).ready(function(){
                 { visible:false,targets:[0],data: "product_id" },
                 { targets:[1],data: "inv_no" },
                 { targets:[2],data: "product_desc" },
-                { targets:[3],data:null,
+                { targets:[3],data: "exp_date" },
+                { targets:[4],data: "batch_no" },
+                { targets:[5],data:null,
                     render: function (data, type, full, meta){
                         return accounting.formatNumber(data.inv_qty,2);
                     }
                 },
-                { targets:[4],data: "unit_name" },
-                {  targets:[5],
+                { targets:[6],data: "unit_name" },
+                {  targets:[7],
                     render: function (data, type, full, meta){
                         var btn_accept='<button class="btn btn-success btn-sm" name="accept_item"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Accept"><i class="fa fa-check"></i> </button>';
                         return '<center>'+btn_accept+'</center>';
@@ -709,13 +783,15 @@ $(document).ready(function(){
                 { visible:false,targets:[0],data: "product_id" },
                 { targets:[1],data: "dr_invoice_no" },
                 { targets:[2],data: "product_desc" },
-                { targets:[3],data:null,
+                { targets:[3],data: "exp_date" },
+                { targets:[4],data: "batch_no" },
+                { sClass:"text-right", targets:[5],data:null,
                     render: function (data, type, full, meta){
                         return accounting.formatNumber(data.dr_qty,2);
                     }
                 },
-                { targets:[4],data: "unit_name" },
-                {  targets:[5],
+                { targets:[6],data: "unit_name" },
+                {  targets:[7],
                     render: function (data, type, full, meta){
                         var btn_accept='<button class="btn btn-success btn-sm" name="accept_item"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Accept"><i class="fa fa-check"></i> </button>';
                         return '<center>'+btn_accept+'</center>';
@@ -782,8 +858,6 @@ $(document).ready(function(){
             placeholder: "Please select type of adjustment."
         });
 
-        _cboAdjustments.select2('val','IN');
-
         _cboDepartments.select2('val',null);
 
 
@@ -817,10 +891,27 @@ $(document).ready(function(){
             source: products,
             templates: {
                 header: [
-                    '<table class="tt-head"><tr><td width=20%" style="padding-left: 1%;"><b>PLU</b></td><td width="30%" align="left"><b>Description 1</b></td><td width="20%" align="left"><b>Unit</b></td><td width="10%" align="right" style="padding-right: 2%;"><b>Cost</b></td></tr></table>'
+                    '<table class="tt-head"><tr>'+
+                    '<td width=15%" style="padding-left: 1%;"><b>PLU</b></td>'+
+                    '<td class="hidden"><b>UniqID</b></td>'+
+                    '<td width="25%" align="left"><b>Description</b></td>'+
+                    '<td width="20%" align="left"><b>Expiration</b></td>'+
+                    '<td width="10%" align="left"><b>LOT#</b></td>'+
+                    '<td width="10%" align="right"><b>On Hand</b></td>'+
+                    '<td width="10%" align="right"><b>SRP</b></td>'+
+                    '<td width="10%" align="right" style="padding-right: 1%;"><b>Cost Price</b></td>'+
+                    '</tr></table>'
                 ].join('\n'),
-
-                suggestion: Handlebars.compile('<table class="tt-items"><tr><td width="20%" style="padding-left: 1%">{{product_code}}</td><td width="30%" align="left">{{product_desc}}</td><td width="20%" align="left">{{product_unit_name}}</td><td width="10%" align="right" style="padding-right: 2%;">{{purchase_cost}}</td></tr></table>')
+                suggestion: Handlebars.compile('<table class="tt-items"><tr>'+
+                    '<td width="15%" style="padding-left: 1%;">{{product_code}}</td>'+
+                    '<td class="hidden">{{unq_id}}</td>'+
+                    '<td width="25%" align="left">{{product_desc}}</td>'+
+                    '<td width="20%" align="left">{{exp_date}}</td>'+
+                    '<td width="10%" align="left">{{batch_no}}</td>'+
+                    '<td width="10%" align="right">{{on_hand_per_batch}}</td>'+
+                    '<td width="10%" align="right">{{srp}}</td>'+
+                    '<td width="10%" align="right" style="padding-right: 1%;">{{srp_cost}}</td>'+
+                    '</tr></table>')
 
             }
         }).on('keyup', this, function (event) {
@@ -828,13 +919,14 @@ $(document).ready(function(){
                 // $('.tt-suggestion:first').click();
                 _objTypeHead.typeahead('close');
                 _objTypeHead.typeahead('val','');
+                alert();
             }
         }).bind('typeahead:select', function(ev, suggestion) {
 
-            if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
-                showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
-                return;
-            }
+            // if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
+            //     showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
+            //     return;
+            // }
 
             var product_id = 0;
             var conversion_rate = 0;
@@ -845,28 +937,28 @@ $(document).ready(function(){
                 product_id = suggestion.parent_id;
             }
 
-            getInvetory(product_id).done(function(response){
-                data = response.data[0];
-                var CurrentQty = data.CurrentQty;
-                var CurrentQtyTotal = 0;
+            // getInvetory(product_id).done(function(response){
+            //     data = response.data[0];
+            //     var CurrentQty = data.CurrentQty;
+            //     var CurrentQtyTotal = 0;
 
-                if(suggestion.is_parent == 1){
-                    CurrentQtyTotal = (CurrentQty / suggestion.bulk_conversion_rate);
-                }
-                else if(suggestion.is_parent <= 0 && suggestion.parent_id <= 0){
-                    CurrentQtyTotal = CurrentQty;
-                }
-                else{
-                    CurrentQtyTotal = (CurrentQty / suggestion.conversion_rate);
-                }
+            //     if(suggestion.is_parent == 1){
+            //         CurrentQtyTotal = (CurrentQty / suggestion.bulk_conversion_rate);
+            //     }
+            //     else if(suggestion.is_parent <= 0 && suggestion.parent_id <= 0){
+            //         CurrentQtyTotal = CurrentQty;
+            //     }
+            //     else{
+            //         CurrentQtyTotal = (CurrentQty / suggestion.conversion_rate);
+            //     }
 
-                if(getFloat(CurrentQtyTotal) <= 0 && _cboAdjustments.val() == "OUT"){
-                    showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
-                }else if(getFloat(CurrentQtyTotal) <= getFloat(suggestion.product_warn) && _cboAdjustments.val() == "OUT"){
-                    showNotification({title: suggestion.product_desc ,stat:"info",msg:"This item has low stock remaining.<br>It might result to negative inventory."});
-                }
+            //     if(getFloat(CurrentQtyTotal) <= 0 && _cboAdjustments.val() == "OUT"){
+            //         showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
+            //     }else if(getFloat(CurrentQtyTotal) <= getFloat(suggestion.product_warn) && _cboAdjustments.val() == "OUT"){
+            //         showNotification({title: suggestion.product_desc ,stat:"info",msg:"This item has low stock remaining.<br>It might result to negative inventory."});
+            //     }
 
-            });
+            // });
 
             var tax_rate=suggestion.tax_rate;
 
@@ -897,6 +989,26 @@ $(document).ready(function(){
             // }
             // if(suggestion.primary_unit == 1){ suggis_parent = 1;}else{ suggis_parent = 0;}
 
+             readonlyAttr = "";
+             hideAttr = "";
+             dateAttr = "";
+             exp_date = "";
+             batch_no = "";
+
+            if(getAdjustmentStatus() == 1){
+                readonlyAttr = "";
+                dateAttr = "date-picker";
+                hideAttr = "hidden";
+                exp_date = <?php echo json_encode(date("m/d/Y")); ?>;
+                batch_no = "";
+            }else{
+                readonlyAttr = "readonly";
+                dateAttr = "";
+                hideAttr = "";
+                exp_date = suggestion.exp_date;
+                batch_no = suggestion.batch_no;
+            }
+
             $('#tbl_items > tbody').prepend(newRowItem({
                 adjust_qty : "1",
                 product_code : suggestion.product_code,
@@ -920,7 +1032,13 @@ $(document).ready(function(){
                 parent_unit_name : suggestion.product_unit_name,
                 is_parent: suggis_parent ,// INITIALLY , UNIT USED IS THE PARENT , 1 for PARENT 0 for CHILD
                 primary_unit:suggestion.primary_unit,
-                a:a
+                a:a,
+                readonlyAttr : readonlyAttr,
+                hideAttr : hideAttr,
+                dateAttr : dateAttr,
+                exp_date : exp_date,
+                batch_no : batch_no,
+                cost_upon_invoice : suggestion.srp_cost,
             }));
 
                 changetxn ='active';
@@ -929,6 +1047,7 @@ $(document).ready(function(){
                 });
 
             reInitializeNumeric();
+            reInitializeExpireDate();
             reComputeTotal();
 
             //alert("dd")
@@ -1045,7 +1164,6 @@ $(document).ready(function(){
                     $('input[id="is_returns"]').prop('checked', false);
                     $('input[id="is_dr_returns"]').prop('checked', false);
 
-
                     $("#cbo_customers").prop('required',false);
                     $("#inv_no").prop('required',false);
                     $("#cbo_suppliers").prop('required',false);
@@ -1116,14 +1234,22 @@ $(document).ready(function(){
         });
 
          $('#refreshproducts').click(function(){
-            getproduct().done(function(data){
+            getproduct(getAdjustmentStatus()).done(function(data){
                 products.clear();
                 products.local = data.data;
                 products.initialize(true);
                     showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
                     $('#typeaheadsearch').val('');
             }).always(function(){
-                });
+                $('#typeaheadsearch').val('');
+            });
+            $('#typeaheadsearch').val('');
+         });
+
+
+         $('#cbo_adjustments').on("change", function(){
+            $('#refreshproducts').trigger('click');
+            $('#typeaheadsearch').val('');
          });
 
         //create new department
@@ -1185,14 +1311,16 @@ $(document).ready(function(){
         $('#btn_new').click(function(){
             _txnMode="new";
             //$('.toggle-fullscreen').click();
-            _cboAdjustments.select2('val',null);
+            clearFields($('#frm_adjustments'));
+
             _cboDepartments.select2('val',null);
             _cboCustomers.select2('val',null);
             _cboSuppliers.select2('val',null);
-            clearFields($('#frm_adjustments'));
+            _cboAdjustments.select2('val','IN');
+
             $('#tbl_items > tbody').html('');
             $('#cbo_departments').select2('val', $('#cbo_departments').data('default') );
-            $('#typeaheadsearch').val('');
+            
             // REMOVE CHECKED ATTRIBUTE FOR BOTH
             $('input[id="is_returns"]').prop('checked', false);
             $('input[id="is_dr_returns"]').prop('checked', false);
@@ -1207,7 +1335,8 @@ $(document).ready(function(){
             $("#dr_invoice_no").prop('required',false);
             $('#note').text('');
             $('#dr_note').text('');
-            getproduct().done(function(data){
+
+            getproduct(getAdjustmentStatus()).done(function(data){
                 products.clear();
                 products.local = data.data;
                 products.initialize(true);
@@ -1216,11 +1345,19 @@ $(document).ready(function(){
                     showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
                     }
 
-            }).always(function(){  });
+            }).always(function(){
+                $('#typeaheadsearch').val('');
+            });
 
             showList(false);
             reComputeTotal();
         });
+
+         $("#tbl_search").keyup(function(){          
+                dt 
+                        .search(this.value) 
+                        .draw(); 
+        }); 
 
         $('#btn_browse').click(function(event){
             event.preventDefault();
@@ -1255,6 +1392,19 @@ $(document).ready(function(){
                             retail_price = 0;
                         }
                     
+                        readonlyAttr = "";
+                        hideAttr = "";
+                        dateAttr = "";
+                        if(getAdjustmentStatus() == 1){
+                            readonlyAttr = "";
+                            dateAttr = "date-picker";
+                            hideAttr = "hidden";
+                        }else{
+                            readonlyAttr = "readonly";
+                            dateAttr = "";
+                            hideAttr = "";
+                        }
+                        
                         $('#tbl_items > tbody').prepend(newRowItem({
                             adjust_qty : value.inv_qty,
                             product_code : value.product_code,
@@ -1277,7 +1427,13 @@ $(document).ready(function(){
                             is_parent : value.is_parent,
                             bulk_price: value.sale_price,
                             retail_price: retail_price,
-                            a:a
+                            a:a,
+                            readonlyAttr : readonlyAttr,
+                            hideAttr : hideAttr,
+                            dateAttr : dateAttr,
+                            exp_date : value.exp_date,
+                            batch_no : value.batch_no,
+                            cost_upon_invoice : value.cost_upon_invoice                                
                         }));
                         changetxn = 'inactive';
                         _line_unit=$('.line_unit'+a).select2({
@@ -1286,6 +1442,7 @@ $(document).ready(function(){
                         _line_unit.select2('val',value.unit_id);
                         a++;
                     reComputeTotal();
+                    reInitializeExpireDate();
                     changetxn = 'active';
 
                     showNotification({title:"Successful !",stat:"success",msg: value.product_desc+' has been chosen'});
@@ -1313,7 +1470,20 @@ $(document).ready(function(){
             }else if (value.is_bulk == 0){
                 retail_price = 0;
             }
-        
+
+            readonlyAttr = "";
+            hideAttr = "";
+            dateAttr = "";
+            if(getAdjustmentStatus() == 1){
+                readonlyAttr = "";
+                dateAttr = "date-picker";
+                hideAttr = "hidden";
+            }else{
+                readonlyAttr = "readonly";
+                dateAttr = "";
+                hideAttr = "";
+            }
+
             $('#tbl_items > tbody').prepend(newRowItem({
                 adjust_qty : value.dr_qty,
                 product_code : value.product_code,
@@ -1336,7 +1506,13 @@ $(document).ready(function(){
                 is_parent : value.is_parent,
                 bulk_price: value.sale_price,
                 retail_price: retail_price,
-                a:a
+                a:a,
+                readonlyAttr : readonlyAttr,
+                hideAttr : hideAttr,
+                dateAttr : dateAttr,
+                exp_date : value.exp_date,
+                batch_no : value.batch_no,
+                cost_upon_invoice : value.cost_upon_invoice        
             }));
             changetxn = 'inactive';
             _line_unit=$('.line_unit'+a).select2({
@@ -1346,6 +1522,7 @@ $(document).ready(function(){
             a++;
             reInitializeNumeric();
             reComputeTotal();
+            reInitializeExpireDate();
             changetxn = 'active';
 
             showNotification({title:"Successful !",stat:"success",msg: value.product_desc+' has been chosen'});
@@ -1366,22 +1543,8 @@ $(document).ready(function(){
                 showNotification({title:"<b style='color:white;'> Error!</b>",stat:"error",msg:"Cannot Edit: Invoice is already Posted in General Journal."});
             }else{
 
-
-
             $('#span_invoice_no').html(data.adjustment_code);
-
-            getproduct().done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                countproducts = data.data.length;
-                    if(countproducts > 100){
-                    showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-                    }
-
-            }).always(function(){ });
-            $('#typeaheadsearch').val('');
-
+            
             $('input,textarea').each(function(){
                 var _elem=$(this);
                 $.each(data,function(name,value){
@@ -1415,6 +1578,18 @@ $(document).ready(function(){
             $('#cbo_customers').select2('val',data.customer_id);
             $('#cbo_suppliers').select2('val',data.supplier_id);
 
+            // getproduct(getAdjustmentStatus()).done(function(data){
+            //     products.clear();
+            //     products.local = data.data;
+            //     products.initialize(true);
+            //     countproducts = data.data.length;
+            //     // if(countproducts > 100){
+            //     // showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
+            //     // }
+
+            // }).always(function(){ $('#typeaheadsearch').val(''); });
+
+
             $.ajax({
                 url : 'Adjustments/transaction/items/'+data.adjustment_id,
                 type : "GET",
@@ -1436,7 +1611,20 @@ $(document).ready(function(){
                         }else if (value.is_bulk == 0){
                             retail_price = 0;
                         }
- 
+
+                        readonlyAttr = "";
+                        hideAttr = "";
+                        dateAttr = "";
+                        if(getAdjustmentStatus() == 1){
+                            readonlyAttr = "";
+                            dateAttr = "date-picker";
+                            hideAttr = "hidden";
+                        }else{
+                            readonlyAttr = "readonly";
+                            dateAttr = "";
+                            hideAttr = "";
+                        }
+
                         $('#tbl_items > tbody').prepend(newRowItem({
                             adjust_qty : value.adjust_qty,
                             product_code : value.product_code,
@@ -1459,7 +1647,13 @@ $(document).ready(function(){
                             is_parent : value.is_parent,
                             bulk_price: value.purchase_cost,
                             retail_price: retail_price,
-                            a:a
+                            a:a,
+                            readonlyAttr : readonlyAttr,
+                            hideAttr : hideAttr,
+                            dateAttr : dateAttr,
+                            exp_date : value.exp_date,
+                            batch_no : value.batch_no,
+                            cost_upon_invoice : value.cost_upon_invoice                          
                         }));
                         changetxn = 'inactive';
                         _line_unit=$('.line_unit'+a).select2({
@@ -1470,6 +1664,7 @@ $(document).ready(function(){
                     });
 
                     reComputeTotal();
+                    reInitializeExpireDate();
                     changetxn = 'active';
                 }
             });
@@ -1637,16 +1832,99 @@ $(document).ready(function(){
 
         });
 
-
-
         $('#tbl_items > tbody').on('click','button[name="remove_item"]',function(){
             $(this).closest('tr').remove();
             reComputeTotal();
         });
 
+        $('#tbl_items > tbody').on('click','button[name="search_item"]',function(){
+            _selectRowTblItems=$(this).closest('tr');
+            global_item_desc=_selectRowTblItems.find(oTableItems.unit_identifier).find($('.product_desc')).val();
+
+            var _data=[];
+            _data.push({name : "description", value : global_item_desc });
+
+
+            $.ajax({
+                url : 'Sales_invoice/transaction/current-items-search',
+                "dataType":"json",
+                "type":"POST",
+                cache : false,
+                dataType : 'json',
+                "data":_data,
+                beforeSend : function(){
+                    $('#tbl_search_list > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                },
+                success : function(response){
+                    var rows=response.data;
+                    if(rows.length == 0){
+                        showNotification({
+                            title: "<b style='color:white;display: inline;'>No Stocks!</b>",
+                            stat : "error",
+                            msg : "There are no stocks available for the item."
+                        });
+
+                    }else{
+                        $('#tbl_search_list > tbody').html('');
+                        $.each(rows,function(i,value){
+                            $('#tbl_search_list > tbody').append('<tr class="row-item">'+
+                            '<td >'+value.product_code+'</td>'+
+                            '<td >'+value.product_desc+'</td>'+
+                            '<td >'+value.batch_no+'</td>'+
+                            '<td >'+value.exp_date+'</td>'+
+                            '<td align="right">'+value.on_hand_per_batch+'</td>'+
+                            '<td align="right">'+value.srp+'</td>'+
+                            '<td align="right">'+value.srp_cost+'</td>'+
+                            '<td><center><button type="button" name="accept_search" class="btn btn-success"><i class="fa fa-check"></i></button></center></td>'+
+                            '<tr></tr>'
+                            );
+                        });
+                        $("#modal_search_list").modal('show');
+                    }
+
+
+                }
+            });
+        });        
+
+        $('#tbl_search_list > tbody').on('click','button[name="accept_search"]',function(){
+            var row=$(this).closest('tr');
+            _selectRowTblItems.find(oTableItems.exp_date).find('input').val(row.find(oTableSearch.sExpDate).text());
+            _selectRowTblItems.find(oTableItems.batch_no).find('input').val(row.find(oTableSearch.sBatch).text());
+            _selectRowTblItems.find(oTableItems.cost_upon_invoice).find('input').val(row.find(oTableSearch.sCost).text());
+
+            showNotification({title:"Success!",stat:"success",msg:'The item you selected was updated.'});
+
+            $('#modal_search_list').modal('hide');
+        });
 
     })();
 
+
+    var getAdjustmentStatus=function(){
+        var type = $('#cbo_adjustments').find(':selected').data('type');
+        var status;
+        var trans_type = 1;
+        $( '.transaction' ).each(function( index ) {
+            if($(this).is(':checked') == true){
+                trans_type = $(this).data('type');
+            }
+        });
+
+        if (trans_type == 1){
+            if(type == 1){
+                status = 1;
+            }else{
+                status = 2;
+            }
+        }else if(trans_type == 2){
+            status = 2;          
+        }else if(trans_type == 3){
+            status = 2;
+        }
+
+        return status;
+    }
 
     var validateRequiredFields=function(f){
         var stat=true;
@@ -1679,11 +1957,11 @@ $(document).ready(function(){
         return stat;
     };
 
-    var getproduct=function(){
+    var getproduct=function(type){
        return $.ajax({
            "dataType":"json",
            "type":"POST",
-           "url":"products/transaction/list",
+           "url":"products/transaction/current-items-for-adjustment/"+type,
            "beforeSend": function(){
                 countproducts = products.local.length;
                 if(countproducts > 100){
@@ -1807,19 +2085,75 @@ $(document).ready(function(){
             unit  = '<td ><select class="line_unit'+d.a+'" name="unit_id[]" ><option value="'+d.parent_unit_id+'" data-unit-identifier="1" '+parent+'>'+d.parent_unit_name+'</option></select></td>';
         }
         return '<tr>'+
-        '<td width="10%"><input name="adjust_qty[]" type="text" class="numeric form-control trigger-change" value="'+ d.adjust_qty+'"></td>'+unit+
-        '<td width="30%">'+d.product_desc+'<input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
-        '<td width="11%"><input name="adjust_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.adjust_price,2)+'" style="text-align:right;"></td>'+
-        '<td width="11%" style="display:none;"><input name="adjust_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.adjust_discount,2)+'" style="text-align:right;"></td>'+
-        '<td style="display: none;" width="11%"><input name="adjust_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.adjust_line_total_discount,2)+'" readonly></td>'+
-        '<td width="11%" style="display:none;"><input name="adjust_tax_rate[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.adjust_tax_rate,2)+'"></td>'+
-        '<td width="11%" align="right"><input name="adjust_line_total_price[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.adjust_line_total_price,2)+'" readonly></td>'+
-        '<td style="display: none;"><input name="adjust_tax_amount[]" type="text" class="numeric form-control" value="'+ d.adjust_tax_amount+'" readonly></td>'+
-        '<td style="display: none;"><input name="adjust_non_tax_amount[]" type="text" class="numeric form-control" value="'+ d.adjust_non_tax_amount+'" readonly></td>'+
-        '<td style="display: none;"><input name="product_id[]" type="text" class="numeric form-control" value="'+ d.product_id+'" readonly></td>'+
-        '<td align="center" colspan="3"><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>'+
-        '<td style="display: none;"  width="5%"><input type="text" class="numeric form-control" value="'+ d.bulk_price+'" readonly></td>'+
-        '<td style="display: none;"  width="5%"><input type="text" class="numeric form-control" value="'+ d.retail_price+'" readonly></td>'+
+            // [0] Qty
+            '<td>'+
+                '<input name="adjust_qty[]" type="text" class="numeric form-control trigger-change" value="'+ d.adjust_qty+'">'+
+            '</td>'+
+            // [1] UM
+            unit+
+            // [2] Item
+            '<td>'+
+                d.product_desc+
+                '<input type="hidden" class="product_desc" value="'+d.product_desc+'">'+
+                '<input type="hidden" class="form-control" name="is_parent[]" value="'+d.is_parent+'">'+
+            '</td>'+
+            // [3] Unit Price
+            '<td>'+
+                '<input name="adjust_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.adjust_price,2)+'" style="text-align:right;">'+
+            '</td>'+
+            // [4] Discount
+            '<td class="hidden">'+
+                '<input name="adjust_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.adjust_discount,2)+'" style="text-align:right;">'+
+            '</td>'+
+            // [5] Total Discount
+            '<td class="hidden">'+
+                '<input name="adjust_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.adjust_line_total_discount,2)+'" readonly>'+
+            '</td>'+
+            // [6] Tax
+            '<td class="hidden">'+
+                '<input name="adjust_tax_rate[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.adjust_tax_rate,2)+'">'+
+            '</td>'+
+            // [7] Total
+            '<td align="right">'+
+                '<input name="adjust_line_total_price[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.adjust_line_total_price,2)+'" readonly>'+
+            '</td>'+
+            // [8] Expiration
+            '<td>'+
+                '<input name="exp_date[]" type="text" class="'+dateAttr+' form-control" value="'+ d.exp_date +'" '+readonlyAttr+'>'+
+            '</td>'+
+            // [9] Batch #
+            '<td>'+
+                '<input name="batch_no[]" type="text" class="form-control" value="'+ d.batch_no +'" '+readonlyAttr+'>'+
+            '</td>'+
+            // [10] Cost Upon Invoice
+            '<td class="hidden">'+
+                '<input name="cost_upon_invoice[]" type="text" class="numeric form-control" value="'+ d.cost_upon_invoice+'" readonly>'+
+            '</td>'+
+            // [11] Vat Input
+            '<td class="hidden">'+
+                '<input name="adjust_tax_amount[]" type="text" class="numeric form-control" value="'+ d.adjust_tax_amount+'" readonly>'+
+            '</td>'+
+            // [12] Net of Vat
+            '<td class="hidden">'+
+                '<input name="adjust_non_tax_amount[]" type="text" class="numeric form-control" value="'+ d.adjust_non_tax_amount+'" readonly>'+
+            '</td>'+
+            // [13] Product ID
+            '<td class="hidden">'+
+                '<input name="product_id[]" type="text" class="numeric form-control" value="'+ d.product_id+'" readonly>'+
+            '</td>'+
+            // [14] Action
+            '<td align="center">'+
+                '<button type="button" name="search_item" class="btn btn-warning '+hideAttr+'" style="margin-right: 5px;"><i class="fa fa-search"></i></button>'+
+                '<button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button>'+
+            '</td>'+
+            // [15] Bulk Price
+            '<td class="hidden">'+
+                '<input type="text" class="numeric form-control" value="'+ d.bulk_price+'" readonly>'+
+            '</td>'+
+            // [16] Retail Price
+            '<td class="hidden">'+
+                '<input type="text" class="numeric form-control" value="'+ d.retail_price+'" readonly>'+
+            '</td>'+
         '</tr>';
     };
 
@@ -1863,9 +2197,21 @@ $(document).ready(function(){
             }
         });
          return prodstat;    
-    };   
+    };  
+
+    var reInitializeExpireDate=function(){
+        $('.date-picker').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: true,
+            autoclose: true
+
+        });    
+    };
+
     var reInitializeNumeric=function(){
-        $('.numeric').autoNumeric('init', {'mDec': 5});
+        $('.numeric').autoNumeric('init', {'mDec': 2});
     };
 
 

@@ -171,6 +171,8 @@ class Issuance_department extends CORE_Controller
                 $batch_no=$this->input->post('batch_no',TRUE);
                 $exp_date=$this->input->post('exp_date',TRUE);
                 $is_parent=$this->input->post('is_parent',TRUE);
+
+
                 for($i=0;$i<count($prod_id);$i++){
                     $m_issue_items->issuance_department_id=$issuance_department_id;
                     $m_issue_items->product_id=$this->get_numeric_value($prod_id[$i]);
@@ -182,8 +184,8 @@ class Issuance_department extends CORE_Controller
                     $m_issue_items->issue_line_total_price=$this->get_numeric_value($issue_line_total_price[$i]);
                     $m_issue_items->issue_tax_amount=$this->get_numeric_value($issue_tax_amount[$i]);
                     $m_issue_items->issue_non_tax_amount=$this->get_numeric_value($issue_non_tax_amount[$i]);
-                    // $m_issue_items->batch_no=$batch_no[$i];
-                    // $m_issue_items->exp_date=date('Y-m-d',strtotime($exp_date[$i]));
+                    $m_issue_items->batch_no=$batch_no[$i];
+                    $m_issue_items->exp_date=date('Y-m-d',strtotime($exp_date[$i]));
                     //unit id retrieval is change, because of TRIGGER restriction
                         $m_issue_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                         if($is_parent[$i] == '1'){
@@ -246,6 +248,8 @@ class Issuance_department extends CORE_Controller
                 $issue_line_total_price=$this->input->post('issue_line_total_price',TRUE);
                 $issue_tax_amount=$this->input->post('issue_tax_amount',TRUE);
                 $issue_non_tax_amount=$this->input->post('issue_non_tax_amount',TRUE);
+                $batch_no=$this->input->post('batch_no',TRUE);
+                $exp_date=$this->input->post('exp_date',TRUE);
                 $is_parent=$this->input->post('is_parent',TRUE);
 
                 for($i=0;$i<count($prod_id);$i++){
@@ -259,13 +263,16 @@ class Issuance_department extends CORE_Controller
                     $m_issue_items->issue_line_total_price=$this->get_numeric_value($issue_line_total_price[$i]);
                     $m_issue_items->issue_tax_amount=$this->get_numeric_value($issue_tax_amount[$i]);
                     $m_issue_items->issue_non_tax_amount=$this->get_numeric_value($issue_non_tax_amount[$i]);
+                    $m_issue_items->batch_no=$batch_no[$i];
+                    $m_issue_items->exp_date=date('Y-m-d',strtotime($exp_date[$i]));                    
+                    $m_issue_items->is_parent=$this->get_numeric_value($is_parent[$i]);
 
-                        $m_issue_items->is_parent=$this->get_numeric_value($is_parent[$i]);
-                        if($is_parent[$i] == '1'){
-                            $m_issue_items->set('unit_id','(SELECT bulk_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
-                        }else{
-                             $m_issue_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
-                        } 
+                    if($is_parent[$i] == '1'){
+                        $m_issue_items->set('unit_id','(SELECT bulk_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
+                    }else{
+                         $m_issue_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
+                    } 
+                        
                     $m_issue_items->save();
                 }
 

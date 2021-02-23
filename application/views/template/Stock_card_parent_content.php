@@ -20,6 +20,9 @@
       @page { margin: 0; size: landscape; }
       body { margin: 1.0cm; }
 }
+  .hidden{
+    display: none;
+  }
   </style>
   <script>
     (function(){
@@ -70,7 +73,7 @@
                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>In</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>Out</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>Balance</b></td>
-                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>Bulk Balance</b></td>
+                    <td class="hidden" style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>Bulk Balance</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;"><b>Department</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;"><b>Remarks</b></td>
 
@@ -95,7 +98,7 @@
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_in_qty,2); ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_out_qty,2); ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_balance,2).' '.$info[0]->parent_unit_name; ?></td>
-                   <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_bulk_balance,2).' '.$info[0]->bulk_unit_name; ?></td>
+                   <td class="hidden" style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_bulk_balance,2).' '.$info[0]->bulk_unit_name; ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: left;"><?php echo $product->department_name ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: left;"><?php echo $product->remarks; ?></td>
                </tr>

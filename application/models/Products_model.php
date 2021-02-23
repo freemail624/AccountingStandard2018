@@ -320,7 +320,9 @@ class Products_model extends CORE_Model {
                 AND iit.product_id=$product_id ".($as_of_date==null?"":" AND ii.date_issued<='".$as_of_date."'")."
 
 
-                ) as m ORDER BY m.txn_date ASC) as n  LEFT JOIN products as p ON n.product_id=p.product_id";
+                ) as m ORDER BY m.txn_date ASC) as n  LEFT JOIN products as p ON n.product_id=p.product_id
+
+                WHERE p.item_type_id = 1";
 
         return $this->db->query($sql)->result();
     }
@@ -2070,7 +2072,7 @@ Product Pick List
 
 function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=null,$category_id=null,$item_type_id=null,$pick_list=null,$depid=null,$account_cii,$account_dis=null,$CurrentQtyCount=null,$is_parent=null,$is_nonsalable=null){
     $sql="SELECT
-            productmain.*
+            productmain.*, FORMAT(productmain.total_qty_balance,2) as on_hand_per_batch
         FROM
         (SELECT main.*,
             (main.quantity_in - main.quantity_out) as total_qty_balance,
@@ -2149,7 +2151,10 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 FROM
 
                 (SELECT p.*,blkunit.unit_name as bulk_unit_name,c.category_name,
-
+                    FORMAT(p.sale_price,4) as srp, 
+                    FORMAT(p.purchase_cost,4) as srp_cost,
+                    'N/A' as exp_date,
+                    'N/A' as batch_no, 
                 (CASE
                     WHEN p.is_parent = TRUE 
                         THEN p.bulk_unit_id

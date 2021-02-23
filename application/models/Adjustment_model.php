@@ -310,7 +310,10 @@ parent::__construct();
 			IF(si.is_journal_posted = TRUE, 'Note: Invoice is posted in Accounting', 'Note: Invoice is not yet posted in Accounting') as note,
 			(SELECT units.unit_name  FROM units WHERE  units.unit_id = p.parent_unit_id) as parent_unit_name,
 			(SELECT units.unit_name  FROM units WHERE  units.unit_id = p.child_unit_id) as child_unit_name,
-			sii.* FROM sales_invoice_items sii
+			sii.*,
+			DATE_FORMAT(sii.exp_date,'%m/%d/%Y') as exp_date
+
+			FROM sales_invoice_items sii
 
 			LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
 			LEFT JOIN products p ON p.product_id = sii.product_id
@@ -349,7 +352,10 @@ parent::__construct();
 			IF(ci.is_journal_posted = TRUE, 'Invoice is posted in Accounting', 'Invoice is not yet posted in Accounting') as note,
 			(SELECT units.unit_name  FROM units WHERE  units.unit_id = p.parent_unit_id) as parent_unit_name,
 			(SELECT units.unit_name  FROM units WHERE  units.unit_id = p.child_unit_id) as child_unit_name,
-			cii.* FROM cash_invoice_items cii
+			cii.*,
+			DATE_FORMAT(cii.exp_date,'%m/%d/%Y') as exp_date
+
+			FROM cash_invoice_items cii
 			LEFT JOIN cash_invoice ci ON ci.cash_invoice_id = cii.cash_invoice_id
 			LEFT JOIN products p ON p.product_id = cii.product_id
 			LEFT JOIN units u ON u.unit_id = cii.unit_id
@@ -391,7 +397,9 @@ parent::__construct();
 			        'Note: Invoice is not yet posted in Accounting') AS note,
 			    (SELECT units.unit_name FROM units WHERE units.unit_id = p.parent_unit_id) AS parent_unit_name,
 			    (SELECT units.unit_name FROM units WHERE units.unit_id = p.child_unit_id) AS child_unit_name,
-			    dii.*
+			    dii.*,
+			    DATE_FORMAT(dii.exp_date,'%m/%d/%Y') as exp_date,
+			    dii.dr_price as cost_upon_invoice
 			FROM
 			    delivery_invoice_items dii
 			        LEFT JOIN

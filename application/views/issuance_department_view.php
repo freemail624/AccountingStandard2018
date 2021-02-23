@@ -218,26 +218,28 @@ echo $_side_bar_navigation;
                             <table id="tbl_items" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
                                 <thead class="">
                                     <tr>
-                                        <th width="5%">Qty</th>
+                                        <th width="10%">Qty</th>
                                         <th width="10%">UM</th>
-                                        <th width="15%">Item</th>
-                                        <th width="20%" style="text-align: right;">Unit Price</th>
-                                        <th width="12%" style="text-align: right; display: none;">Discount</th>
-                                        <th style="display: none;">T.D</th> <!-- total discount -->
-                                        <th style="display: none;">Tax %</th>
-                                        <th width="20%" style="text-align: right;">Total</th>
-                                        <th style="display: none;">V.I</th> <!-- vat input -->
-                                        <th style="display: none;">N.V</th> <!-- net of vat -->
-                                        <th style="display: none;">Item ID</td><!-- product id -->
-                                        <th><center>Action</center></th>
+                                        <th width="25%">Description</th>
+                                        <th width="10%" style="text-align: right;">Unit Price</th>
+                                        <th class="hidden">Discount</th>
+                                        <th class="hidden">T.D</th>
+                                        <th class="hidden">Tax %</th>
+                                        <th width="15%" style="text-align: right;">Total</th>
+                                        <th width="10%">Expiration</th>
+                                        <th width="10%">Batch #</th>
+                                        <th class="hidden">Cost Upon Invoice</th>
+                                        <th class="hidden">V.I</th> <!-- vat input -->
+                                        <th class="hidden">N.V</th> <!-- net of vat -->
+                                        <th class="hidden">Item ID</td><!-- product id -->
+                                        <th width="10%"><center>Action</center></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <td colspan="6" style="height: 50px;">&nbsp;</td>
+                                        <td colspan="8" style="height: 50px;">&nbsp;</td>
                                     </tr>
                                     <tr class="hidden">
                                         <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount :</strong></td>
@@ -248,8 +250,8 @@ echo $_side_bar_navigation;
                                     <tr>
                                         <td class="hidden" colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
                                         <td class="hidden" align="right" colspan="1" id="td_tax" color="red">0.00</td>
-                                        <td colspan="5" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Amount :</strong></td>
-                                        <td align="right" colspan="1" id="td_after_tax" color="red">0.00</td>
+                                        <td colspan="7" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Amount :</strong></td>
+                                        <td align="right" id="td_after_tax" color="red">0.00</td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -367,6 +369,42 @@ echo $_side_bar_navigation;
     </div>
 </div><!---modal-->
 
+<div id="modal_search_list" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+    <div class="modal-dialog" style="width: 90%;">
+        <div class="modal-content">
+            <div class="modal-header ">
+                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                <h2 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Choose Item</h2>
+            </div>
+
+            <div class="modal-body">
+            <div class="row">
+                <table id="tbl_search_list" class="table table-striped table-bordered table-responsive" cellspacing="0" width="100%">
+                    <thead class="">
+                    <tr>
+                        <th>PLU</th>
+                        <th>Description</th>
+                        <th>Batch</th>
+                        <th>Expiration</th>
+                        <th style="text-align: right;">On Hand</th>
+                        <th style="text-align: right;">SRP</th>
+                        <th style="text-align: right;">Cost</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Sales Order Content -->
+                    </tbody>
+                </table>
+            </div>
+            </div>
+            <div class="modal-footer">
+                <!-- <button id="btn_accept" type="button" class="btn btn-green" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Receive this Order</button> -->
+                <button id="cancel_modal" class="btn btn-default" data-dismiss="modal" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Cancel</button>
+            </div>
+        </div><!---content-->
+    </div>
+</div><!---modal-->
 
 
 <footer role="contentinfo">
@@ -417,7 +455,8 @@ $(document).ready(function(){
     var _productType;
     var _line_unit;
     var _cboDepartmentactive;
-
+    var global_item_desc = '';
+    var _selectRowTblItems;
 
     var oTableItems={
         qty : 'td:eq(0)',
@@ -428,12 +467,22 @@ $(document).ready(function(){
         total_line_discount : 'td:eq(5)',
         tax : 'td:eq(6)',
         total : 'td:eq(7)',
-        vat_input : 'td:eq(8)',
-        net_vat : 'td:eq(9)',
-        item_id : 'td:eq(10)',
-        bulk_price : 'td:eq(12)',
-        retail_price : 'td:eq(13)'
+        exp_date : 'td:eq(8)',
+        batch_no : 'td:eq(9)',
+        cost_upon_invoice : 'td:eq(10)',
+        vat_input : 'td:eq(11)',
+        net_vat : 'td:eq(12)',
+        item_id : 'td:eq(13)',
+        bulk_price : 'td:eq(15)',
+        retail_price : 'td:eq(16)'
     };
+
+    var oTableSearch={
+        sBatch : 'td:eq(2)',
+        sExpDate : 'td:eq(3)',
+        sCost : 'td:eq(6)',
+    };
+
     $('#tbl_si_list > tbody').on('click','button[name="accept_si"]',function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt_si.row(_selectRowObj).data();
@@ -594,20 +643,22 @@ dt_si = $('#tbl_si_list').DataTable({
                 header: [
                     '<table class="tt-head"><tr>'+
                     '<td width=15%" style="padding-left: 1%;"><b>PLU</b></td>'+
+                    '<td class="hidden"><b>UniqID</b></td>'+
                     '<td width="25%" align="left"><b>Description</b></td>'+
                     '<td width="20%" align="left"><b>Expiration</b></td>'+
                     '<td width="10%" align="left"><b>LOT#</b></td>'+
                     '<td width="17%" align="right"><b>On Hand</b></td>'+
-                    '<td width="13%" align="right" style="padding-right: 1%;"><b>SRP</b></td>'+
+                    '<td width="13%" align="right" style="padding-right: 1%;"><b>Cost Price</b></td>'+
                     '</tr></table>'
                 ].join('\n'),
                 suggestion: Handlebars.compile('<table class="tt-items"><tr>'+
                     '<td width="15%" style="padding-left: 1%;">{{product_code}}</td>'+
+                    '<td class="hidden">{{unq_id}}</td>'+
                     '<td width="25%" align="left">{{product_desc}}</td>'+
                     '<td width="20%" align="left">{{exp_date}}</td>'+
                     '<td width="10%" align="left">{{batch_no}}</td>'+
                     '<td width="17%" align="right">{{on_hand_per_batch}}</td>'+
-                    '<td width="13%" align="right" style="padding-right: 1%;">{{srp}}</td>'+
+                    '<td width="13%" align="right" style="padding-right: 1%;">{{purchase_cost}}</td>'+
                     '</tr></table>')
             }
         }).on('keyup', this, function (event) {
@@ -1160,6 +1211,69 @@ dt_si = $('#tbl_si_list').DataTable({
             reComputeTotalBasyo();
             reComputeTotal();
         });
+
+        $('#tbl_items > tbody').on('click','button[name="search_item"]',function(){
+            _selectRowTblItems=$(this).closest('tr');
+            global_item_desc=_selectRowTblItems.find(oTableItems.unit_identifier).find($('.product_desc')).val();
+            
+            var _data=[];
+            _data.push({name : "description", value : global_item_desc });
+
+
+            $.ajax({
+                url : 'Sales_invoice/transaction/current-items-search',
+                "dataType":"json",
+                "type":"POST",
+                cache : false,
+                dataType : 'json',
+                "data":_data,
+                beforeSend : function(){
+                    $('#tbl_search_list > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                },
+                success : function(response){
+                    var rows=response.data;
+                    if(rows.length == 0){
+                        showNotification({
+                            title: "<b style='color:white;display: inline;'>No Stocks!</b>",
+                            stat : "error",
+                            msg : "There are no stocks available for the item."
+                        });
+
+                    }else{
+                        $('#tbl_search_list > tbody').html('');
+                        $.each(rows,function(i,value){
+                            $('#tbl_search_list > tbody').append('<tr class="row-item">'+
+                            '<td >'+value.product_code+'</td>'+
+                            '<td >'+value.product_desc+'</td>'+
+                            '<td >'+value.batch_no+'</td>'+
+                            '<td >'+value.exp_date+'</td>'+
+                            '<td align="right">'+value.on_hand_per_batch+'</td>'+
+                            '<td align="right">'+value.srp+'</td>'+
+                            '<td align="right">'+value.srp_cost+'</td>'+
+                            '<td><center><button type="button" name="accept_search" class="btn btn-success"><i class="fa fa-check"></i></button></center></td>'+
+                            '<tr></tr>'
+                            );
+                        });
+                        $("#modal_search_list").modal('show');
+                    }
+
+
+                }
+            });
+        });        
+
+        $('#tbl_search_list > tbody').on('click','button[name="accept_search"]',function(){
+            var row=$(this).closest('tr');
+            _selectRowTblItems.find(oTableItems.exp_date).find('input').val(row.find(oTableSearch.sExpDate).text());
+            _selectRowTblItems.find(oTableItems.batch_no).find('input').val(row.find(oTableSearch.sBatch).text());
+            _selectRowTblItems.find(oTableItems.cost_upon_invoice).find('input').val(row.find(oTableSearch.sCost).text());
+
+            showNotification({title:"Success!",stat:"success",msg:'The item you selected was updated.'});
+
+            $('#modal_search_list').modal('hide');
+        });
+
+
     })();
     var validateRequiredFields=function(f){
         var stat=true;
@@ -1296,6 +1410,7 @@ dt_si = $('#tbl_si_list').DataTable({
             // [2] Item
             '<td>'+
                 d.product_desc+
+                '<input type="text" class="hidden product_desc" value="'+d.product_desc+'">'+
                 '<input type="text" style="display: none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'">'+
                 '<input type="text" class="hidden is_basyo" value="'+d.is_basyo+'">'+
                 '<input type="text" class="hidden is_product_basyo" value="'+d.is_product_basyo+'">'+

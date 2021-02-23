@@ -14,7 +14,7 @@
                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>In</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>Out</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>Balance</b></td>
-                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>Bulk Balance</b></td>
+                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;" class="hidden"><b>Bulk Balance</b></td>
                 </tr>
 
            </thead>
@@ -35,7 +35,7 @@
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_in_qty,2); ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_out_qty,2); ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;font-weight: bolder;"><?php echo number_format($product->parent_balance,2); ?></td>
-                   <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;font-weight: bolder;">
+                   <td class="hidden" style="border: 1px solid lightgrey;padding: 5px;text-align: right;font-weight: bolder;">
                     <?php 
                         echo number_format($product->parent_bulk_balance,2);
                      ?></td>

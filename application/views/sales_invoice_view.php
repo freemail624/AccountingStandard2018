@@ -913,9 +913,9 @@
                         <th>Description</th>
                         <th>Batch</th>
                         <th>Expiration</th>
-                        <th>On Hand</th>
-                        <th>SRP</th>
-                        <th>Cost</th>
+                        <th style="text-align: right;">On Hand</th>
+                        <th style="text-align: right;">SRP</th>
+                        <th style="text-align: right;">Cost</th>
                         <th>Action</th>
                     </tr>
                     </thead>
@@ -1124,7 +1124,7 @@ $(document).ready(function(){
         });
 
         products = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name'),
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name','unq_id'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             local : products
         });
@@ -1137,6 +1137,7 @@ $(document).ready(function(){
             header: [
                 '<table class="tt-head"><tr>'+
                 '<td width=15%" style="padding-left: 1%;"><b>PLU</b></td>'+
+                '<td class="hidden"><b>UniqID</b></td>'+
                 '<td width="25%" align="left"><b>Description</b></td>'+
                 '<td width="20%" align="left"><b>Expiration</b></td>'+
                 '<td width="10%" align="left"><b>LOT#</b></td>'+
@@ -1146,6 +1147,7 @@ $(document).ready(function(){
             ].join('\n'),
             suggestion: Handlebars.compile('<table class="tt-items"><tr>'+
                 '<td width="15%" style="padding-left: 1%;">{{product_code}}</td>'+
+                '<td class="hidden">{{unq_id}}</td>'+
                 '<td width="25%" align="left">{{product_desc}}</td>'+
                 '<td width="20%" align="left">{{exp_date}}</td>'+
                 '<td width="10%" align="left">{{batch_no}}</td>'+
@@ -2174,8 +2176,8 @@ $(document).ready(function(){
 
         $('#tbl_items > tbody').on('click','button[name="search_item"]',function(){
             _selectRowTblItems=$(this).closest('tr');
-            global_item_desc=_selectRowTblItems.find(oTableItems.unit_identifier).find($('#product_desc')).val();
-            
+            global_item_desc=_selectRowTblItems.find(oTableItems.unit_identifier).find($('.product_desc')).val();
+
             var _data=[];
             _data.push({name : "description", value : global_item_desc });
 
@@ -2207,10 +2209,10 @@ $(document).ready(function(){
                             '<td >'+value.product_desc+'</td>'+
                             '<td >'+value.batch_no+'</td>'+
                             '<td >'+value.exp_date+'</td>'+
-                            '<td >'+value.on_hand_per_batch+'</td>'+
-                            '<td >'+value.srp+'</td>'+
-                            '<td >'+value.srp_cost+'</td>'+
-                            '<td ><button type="button" name="accept_search" class="btn btn-success"><i class="fa fa-check"></i></button> </td>'+
+                            '<td align="right">'+value.on_hand_per_batch+'</td>'+
+                            '<td align="right">'+value.srp+'</td>'+
+                            '<td align="right">'+value.srp_cost+'</td>'+
+                            '<td><center><button type="button" name="accept_search" class="btn btn-success"><i class="fa fa-check"></i></button></center></td>'+
                             '<tr></tr>'
                             );
                         });
@@ -2448,8 +2450,7 @@ $(document).ready(function(){
             // [2] Item
             '<td>'+
                 d.product_desc+
-
-                '<input type="text" class="hidden" id="product_desc" value="'+d.product_desc+'">'+
+                '<input type="text" class="hidden product_desc" value="'+d.product_desc+'">'+
                 '<input type="text" class="hidden" class="form-control" name="is_parent[]" value="'+d.is_parent+'">'+
                 '<input type="text" class="hidden is_basyo" value="'+d.is_basyo+'">'+
                 '<input type="text" class="hidden is_product_basyo" value="'+d.is_product_basyo+'">'+

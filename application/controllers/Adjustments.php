@@ -154,7 +154,7 @@ class Adjustments extends CORE_Controller
                         'adjustment_items.*',
                         'products.product_code',
                         'products.product_desc',
-                        'DATE_FORMAT(adjustment_items.exp_date,"%m/%d/%Y")as expiration',                            
+                        'DATE_FORMAT(adjustment_items.exp_date,"%m/%d/%Y") as exp_date',                            
                         'products.purchase_cost',
                         'products.is_bulk',
                         'products.child_unit_id',
@@ -237,6 +237,9 @@ class Adjustments extends CORE_Controller
                 $adjust_line_total_price=$this->input->post('adjust_line_total_price',TRUE);
                 $adjust_tax_amount=$this->input->post('adjust_tax_amount',TRUE);
                 $adjust_non_tax_amount=$this->input->post('adjust_non_tax_amount',TRUE);
+                $exp_date=$this->input->post('exp_date',TRUE);
+                $batch_no=$this->input->post('batch_no',TRUE);
+                $cost_upon_invoice=$this->input->post('cost_upon_invoice',TRUE);
                 $is_parent=$this->input->post('is_parent',TRUE);
 
                 for($i=0;$i<count($prod_id);$i++){
@@ -251,8 +254,11 @@ class Adjustments extends CORE_Controller
                     $m_adjustment_items->adjust_line_total_price=$this->get_numeric_value($adjust_line_total_price[$i]);
                     $m_adjustment_items->adjust_tax_amount=$this->get_numeric_value($adjust_tax_amount[$i]);
                     $m_adjustment_items->adjust_non_tax_amount=$this->get_numeric_value($adjust_non_tax_amount[$i]);
+                    $m_adjustment_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
+                    $m_adjustment_items->batch_no=$batch_no[$i];
+                    $m_adjustment_items->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
+                    $m_adjustment_items->is_parent=$this->get_numeric_value($is_parent[$i]);
 
-                        $m_adjustment_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                         if($is_parent[$i] == '1'){
                             $m_adjustment_items->set('unit_id','(SELECT bulk_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
                         }else{
@@ -332,6 +338,9 @@ class Adjustments extends CORE_Controller
                 $adjust_line_total_price=$this->input->post('adjust_line_total_price',TRUE);
                 $adjust_tax_amount=$this->input->post('adjust_tax_amount',TRUE);
                 $adjust_non_tax_amount=$this->input->post('adjust_non_tax_amount',TRUE);
+                $exp_date=$this->input->post('exp_date',TRUE);
+                $batch_no=$this->input->post('batch_no',TRUE);
+                $cost_upon_invoice=$this->input->post('cost_upon_invoice',TRUE);              
                 $is_parent=$this->input->post('is_parent',TRUE);
 
                 for($i=0;$i<count($prod_id);$i++){
@@ -346,7 +355,9 @@ class Adjustments extends CORE_Controller
                     $m_adjustment_items->adjust_line_total_price=$this->get_numeric_value($adjust_line_total_price[$i]);
                     $m_adjustment_items->adjust_tax_amount=$this->get_numeric_value($adjust_tax_amount[$i]);
                     $m_adjustment_items->adjust_non_tax_amount=$this->get_numeric_value($adjust_non_tax_amount[$i]);
-
+                    $m_adjustment_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
+                    $m_adjustment_items->batch_no=$batch_no[$i];
+                    $m_adjustment_items->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
                     //$m_adjustment_items->set('unit_id','(SELECT unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
 
                     $m_adjustment_items->is_parent=$this->get_numeric_value($is_parent[$i]);

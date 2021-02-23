@@ -73,7 +73,7 @@ class Products extends CORE_Controller
         }
     }
 
-    function transaction($txn = null) {
+    function transaction($txn = null,$filter_value=null) {
         switch ($txn) {
                 // Products List, All Sales and Cash Invoices are included in the computation. 
                 //Inventory Report is the only report where Cash and Sales invoice inclusion is optional
@@ -103,6 +103,22 @@ class Products extends CORE_Controller
                 $response['data']=$m_products->products_for_sales();
                 echo json_encode($response);
                 break;
+
+            case 'current-items-for-adjustment':
+                $m_products = $this->Products_model;
+                $type = $filter_value;
+
+                // IN
+                if($type == 1){ 
+                    $response['data']=$m_products->product_list(1,null,null,null,null,null,null,null,1,null,null,1);
+                }
+                // OUT
+                else{
+                    $response['data']=$m_products->products_for_sales();
+                }
+
+                echo json_encode($response);
+                break;                
                 
             case 'product-inventory':
                 $m_products = $this->Products_model;
@@ -953,11 +969,11 @@ function Export_Stock(){
                   ->getActiveSheet()->setCellValue('D12','IN')->getStyle('D12')->getFont()->setBold(TRUE)
                   ->getActiveSheet()->setCellValue('E12','OUT')->getStyle('E12')->getFont()->setBold(TRUE)
                   ->getActiveSheet()->setCellValue('F12','Balance')->getStyle('F12')->getFont()->setBold(TRUE)
-                  ->getActiveSheet()->setCellValue('G12','Bulk Balance')->getStyle('G12')->getFont()->setBold(TRUE)
-                  ->getActiveSheet()->setCellValue('H12','Department')->getStyle('H12')->getFont()->setBold(TRUE)
-                  ->getActiveSheet()->setCellValue('I12','Remarks')->getStyle('I12')->getFont()->setBold(TRUE);
+                  // ->getActiveSheet()->setCellValue('G12','Bulk Balance')->getStyle('G12')->getFont()->setBold(TRUE)
+                  ->getActiveSheet()->setCellValue('G12','Department')->getStyle('H12')->getFont()->setBold(TRUE)
+                  ->getActiveSheet()->setCellValue('H12','Remarks')->getStyle('I12')->getFont()->setBold(TRUE);
 
-            $excel->getActiveSheet()->getStyle('D12:G12')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+            $excel->getActiveSheet()->getStyle('D12:H12')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
           $i = 12;  foreach ($products_parent as $parent) {
                                 $i++;
@@ -970,18 +986,18 @@ function Export_Stock(){
                                 $excel->getActiveSheet()->setCellValue('D'.$i,number_format($parent->parent_in_qty,2));
                                 $excel->getActiveSheet()->setCellValue('E'.$i,number_format($parent->parent_out_qty,2));
                                 $excel->getActiveSheet()->setCellValue('F'.$i,number_format($parent->parent_balance,2).' '.$product_info->parent_unit_name);
-                                $excel->getActiveSheet()->setCellValue('G'.$i,number_format($parent->parent_bulk_balance,2).' '.$product_info->bulk_unit_name);
-                                $excel->getActiveSheet()->setCellValue('H'.$i,$parent->department_name);
-                                $excel->getActiveSheet()->setCellValue('I'.$i,$parent->remarks);
+                                // $excel->getActiveSheet()->setCellValue('G'.$i,number_format($parent->parent_bulk_balance,2).' '.$product_info->bulk_unit_name);
+                                $excel->getActiveSheet()->setCellValue('G'.$i,$parent->department_name);
+                                $excel->getActiveSheet()->setCellValue('H'.$i,$parent->remarks);
 
                                 // STYLE
-                                 $excel->getActiveSheet()->getStyle('D'.$i.':G'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                                 $excel->getActiveSheet()->getStyle('D'.$i.':F'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                             }
 
 
 
 
-            foreach(range('A','I') as $columnID) {
+            foreach(range('A','H') as $columnID) {
                 $excel->getActiveSheet()->getColumnDimension($columnID)
                     ->setAutoSize(true);
             }
