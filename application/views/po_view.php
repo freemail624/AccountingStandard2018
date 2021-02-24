@@ -331,7 +331,7 @@
                     <tr>
                         <th width="5%">Qty</th>
                         <th width="10%">UM</th>
-                        <th width="15%">Item</th>
+                        <th width="15%">Description</th>
                         <th width="10%" style="text-align: right;">Unit Price</th>
                         <th width="10%" style="text-align: right;">Discount</th>
 

@@ -342,7 +342,7 @@
                             <tr>
                                 <th width="9%">Qty</th>
                                 <th width="8%">UM</th>
-                                <th width="15%">Item</th>
+                                <th width="15%">Description</th>
                                 <th width="10%" style="text-align: right;">Unit Price</th>
                                 <th width="8%" style="text-align: right;">Discount</th>
                                 <!-- DISPLAY NONE  -->
@@ -919,7 +919,7 @@
                         <th style="text-align: right;">On Hand</th>
                         <th style="text-align: right;">SRP</th>
                         <th style="text-align: right;">Cost</th>
-                        <th>Action</th>
+                        <th><center>Action</center></th>
                     </tr>
                     </thead>
                     <tbody>

@@ -86,7 +86,7 @@
         <table width="100%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11">
             <thead>
             <tr>
-                <th width="50%" class="bottom left " style="text-align: left;height: 30px;padding: 6px;">Item</th>
+                <th width="50%" class="bottom left " style="text-align: left;height: 30px;padding: 6px;">Description</th>
                 <th width="12%" class="bottom left" style="text-align: center;height: 30px;padding: 6px;">Qty</th>
                 <th width="12%" class="bottom left" style="text-align: center;height: 30px;padding: 6px;">UM</th>
                 <th width="12%" class="bottom left" style="text-align: right;height: 30px;padding: 6px;">Price</th>

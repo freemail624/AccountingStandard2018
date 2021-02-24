@@ -12,7 +12,6 @@
     <meta name="description" content="Avenxo Admin Theme">
     <meta name="author" content="">
 
-
     <?php echo $_def_css_files; ?>
 
     <link rel="stylesheet" href="assets/plugins/spinner/dist/ladda-themeless.min.css">

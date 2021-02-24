@@ -2,59 +2,6 @@
 <body>
 <style>
 
-
-
-    #issuance tr {
-        background: transparent !important;
-    }
-
-    #report_footer th {
-/*        background: #303030 !important;
-*/    }
-    .report{
-
-    border-bottom: 1px solid gray;
-
-    border-right: none;
-    border-left:none;
-    border-top:none;
-
-}
-    td{
-
-    }
-    tr {
-/*        border: none!important;*/
-    }
-
-    tr:nth-child(even){
-/*        background: #414141 !important;*/
-/*        border: none!important;*/
-    }
-
-/*    tr:hover {
-        transition: .4s;
-        background: #414141 !important;
-        color: white;
-    }
-    
-*/
-    th{
-        background-color: transparent!important;
-    }
-/*    tr:hover .btn {
-        border-color: #494949!important;
-        border-radius: 0!important;
-        -webkit-box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
-        -moz-box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
-        box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
-    }
-*/
-       body {
-        font-family: 'Calibri',sans-serif;
-        font-size: 12px;
-    }
-
     .align-right {
         text-align: right;
     }
@@ -69,9 +16,6 @@
 
     .report-header {
         font-weight: bolder;
-    }
-       table{
-        /*border:none!important;*/
     }
           
       </style>
@@ -112,14 +56,14 @@
         </tr>
     </tbody>
 </table><br>
-<table width="100%" style="font-family:tahoma;" cellspacing="0" style="border:none!important;">
+<table width="100%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11;background-color: transparent!important;border:none!important;" class="nohover">
     <thead>
         <tr >
             <th style="width:35%;text-align:left;border-bottom: 1px solid gray;">Description</th>
             <th style="width:10%;text-align:center;border-bottom: 1px solid gray;">Quantity</th>
             <th style="width:15%;text-align:center;border-bottom: 1px solid gray;">Unit</th>
-            <th style="width:20%;text-align:center;border-bottom: 1px solid gray;">Unit Price</th>
-            <th style="width:20%;text-align:center;border-bottom: 1px solid gray;">Amount</th>
+            <th style="width:20%;text-align:right;border-bottom: 1px solid gray;">Unit Price</th>
+            <th style="width:20%;text-align:right;border-bottom: 1px solid gray;">Amount</th>
         </tr>
     </thead>
     <tbody>
@@ -132,14 +76,14 @@
                     <td style="border-bottom: 1px solid gray;"><?php echo $item->product_desc; ?></td>
                     <td style="text-align:center; border-bottom: 1px solid gray;"><?php echo number_format($item->issue_qty,0); ?></td>
                     <td style="text-align:center; border-bottom: 1px solid gray;"><?php echo $item->unit_name; ?></td>
-                    <td style="text-align:center;border-bottom: 1px solid gray;"><?php echo number_format($item->issue_price,2); ?></td>
-                    <td style="text-align:center;border-bottom: 1px solid gray;"><?php echo number_format($item->issue_line_total_price,2); ?></td>
+                    <td style="border-bottom: 1px solid gray;" align="right"><?php echo number_format($item->issue_price,2); ?></td>
+                    <td style="border-bottom: 1px solid gray;" align="right"><?php echo number_format($item->issue_line_total_price,2); ?></td>
                 </tr>
             <?php } ?>
             <tr>
             <td colspan="3"></td>
-                <td  style="text-align:left;font-weight:bold;  border-bottom: 1px solid gray;">Grand Total</td>
-                <td style="text-align:center;font-weight:bold; border-bottom: 1px solid gray;"><?php echo number_format($grandtotal,2); ?></td>
+                <td style="font-weight:bold;" align="right">Grand Total</td>
+                <td style="font-weight:bold;" align="right"><?php echo number_format($grandtotal,2); ?></td>
             </tr>
     </tbody>
 </table>

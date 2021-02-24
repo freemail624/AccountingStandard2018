@@ -349,7 +349,7 @@
                 reloadList();
             });
             $(document).on('click','#btn_print',function(){
-                window.open('Inventory/transaction/preview-inventory?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val()+'&ccf='+$('#cbo_current_count').val());
+                window.open('Templates/layout/inventory-report?type=preview&depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val()+'&ccf='+$('#cbo_current_count').val());
             });
 
             $(document).on('click','#btn_print_detailed',function(){

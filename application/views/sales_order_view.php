@@ -276,7 +276,7 @@
                             <!-- DISPLAY -->
                             <th width="10%">Qty </th>
                             <th width="10%">UM </th>
-                            <th width="25%">Item </th>
+                            <th width="25%">Description</th>
                             <th width="15%" style="text-align: right;">Unit Price </th>
                             <th width="10%" style="text-align: right;">Discount </th>
                             <!-- display:none; -->

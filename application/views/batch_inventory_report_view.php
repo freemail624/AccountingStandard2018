@@ -218,12 +218,6 @@
                                                             <button class="btn btn-green" id="btn_refresh" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Reload" >
                                                                 <i class="fa fa-refresh"></i></button>
 
-
-                                                            <button class="btn btn-primary hidden <?php echo (in_array('7-2',$this->session->user_rights)?'':'hidden'); ?>" id="btn_print_detailed" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Print" >
-                                                                <i class="fa fa-print"></i> Print Detailed</button>
-
-                                                            <button class="btn btn-success hidden <?php echo (in_array('7-2',$this->session->user_rights)?'':'hidden'); ?>" id="btn_export_detailed" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Export" >
-                                                                <i class="fa fa-file-excel-o"></i> Export Detailed</button>
                                                         <br />
 
                                                         <div >
@@ -231,22 +225,19 @@
                                                                 <thead class="">
                                                                 <tr>
                                                                     <th width="5%"></th>
-                                                                    <th width="20%">PLU</th>
-                                                                    <th width="25%">Product</th>
-                                                                    <th width="10%" style="text-align: right">Quantity In</th>
-                                                                    <th width="10%" style="text-align: right">Quantity Out</th>
-                                                                    <th width="15%" style="text-align: right">Balance</th>
-                                                                    <th width="15%" class="hidden" style="text-align: right">Bulk Balance</th>
+                                                                    <th width="15%">PLU</th>
+                                                                    <th width="20%">Description</th>
+                                                                    <th width="12%">Expiration</th>
+                                                                    <th width="13%">Lot#</th>
+                                                                    <th width="10%" style="text-align: right">QTY In</th>
+                                                                    <th width="10%" style="text-align: right">QTY Out</th>
+                                                                    <th width="15%" style="text-align: right">On Hand</th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
-
                                                                 </tbody>
                                                             </table>
-
                                                         </div>
-
-
                                                     </div>
                                                 </div>
                                             </div>
@@ -372,19 +363,11 @@
                 reloadList();
             });
             $(document).on('click','#btn_print',function(){
-                window.open('Inventory/transaction/preview-inventory?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val()+'&ccf='+$('#cbo_current_count').val());
-            });
-
-            $(document).on('click','#btn_print_detailed',function(){
-                window.open('Inventory/transaction/preview-inventory-with-total?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val()+'&ccf='+$('#cbo_current_count').val());
-            });
-            
-            $(document).on('click','#btn_export_detailed',function(){
-                window.open('Inventory/transaction/export-inventory-with-total?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val()+'&ccf='+$('#cbo_current_count').val());
+                window.open('Templates/layout/batch-inventory?type=preview&product_id='+$('#cbo_product').val()+'&depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val()+'&ccf='+$('#cbo_current_count').val());
             });
 
             $(document).on('click','#btn_export',function(){
-                window.open('Inventory/transaction/export-inventory?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val()+'&ccf='+$('#cbo_current_count').val());
+                window.open('Batch_inventory/transaction/export-batch-inventory?type=export&product_id='+$('#cbo_product').val()+'&depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val()+'&ccf='+$('#cbo_current_count').val());
             });
 
             $(document).on('click','#btn_email',function(){
@@ -395,7 +378,7 @@
                 $.ajax({
                     "dataType":"json",
                     "type":"POST",
-                    "url":'Inventory/transaction/email-inventory?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val()+'&ccf='+$('#cbo_current_count').val(),
+                    "url":'Batch_inventory/transaction/email-batch-inventory?type=export&product_id='+$('#cbo_product').val()+'&depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val()+'&ccf='+$('#cbo_current_count').val(),
                     "beforeSend": showSpinningProgress(btn)
                 }).done(function(response){
                     showNotification(response);
@@ -432,7 +415,7 @@
                     $.ajax({
                         "dataType":"html",
                         "type":"POST",
-                        "url":"Products/transaction/product-history?id="+ d.product_id+"&depid="+$('#cbo_department').val()+"&date="+$('#txt_date').val(),
+                        "url":"Batch_inventory/transaction/product-batch-history?uniq_id="+ d.unq_id+"&depid="+$('#cbo_department').val()+"&date="+$('#txt_date').val(),
                         "beforeSend" : function(){
                             row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
                         }
@@ -473,11 +456,12 @@
                 "bLengthChange":false,
                 "bPaginate":false,
                 "ajax": {
-                    "url": "Inventory/transaction/get-inventory",
+                    "url": "Batch_inventory/transaction/get-inventory",
                     "type": "POST",
                     "bDestroy": true,
                     "data": function ( d ) {
                         return $.extend( {}, d, {
+                            "product_id": $('#cbo_product').val(),
                             "depid": $('#cbo_department').val(),
                             "date" : $('#txt_date').val(),
                             "ccf" : $('#cbo_current_count').val()
@@ -495,38 +479,32 @@
                     },
                     { targets:[1],data: "product_code" },
                     { targets:[2],data: "product_desc" },
-                    {
-                        targets:[3], sClass:'right-align',
-                        data: "quantity_in",
-                        render: function(data, type, full, meta){
-                            return accounting.formatNumber(data,2);
-                        }
-
-                    },
-                    {
-                        targets:[4], sClass:'right-align',
-                        data: "quantity_out",
-                        render: function(data, type, full, meta){
-                            return accounting.formatNumber(data,2);
-                        }
-
-                    },
+                    { targets:[3],data: "exp_date" },
+                    { targets:[4],data: "batch_no" },
                     {
                         targets:[5], sClass:'right-align',
-                        data: null,
+                        data: "qty_in",
                         render: function(data, type, full, meta){
-                            return accounting.formatNumber(data.total_qty_balance,2)+' '+data.parent_unit_name;
+                            return accounting.formatNumber(data,2);
                         }
 
                     },
                     {
-                        visible:false, targets:[6], sClass:'right-align',
-                        data: null,
+                        targets:[6], sClass:'right-align',
+                        data: "qty_out",
                         render: function(data, type, full, meta){
-                            return accounting.formatNumber(data.total_qty_bulk,2)+' '+data.product_unit_name;
+                            return accounting.formatNumber(data,2);
                         }
 
-                    }                                                      
+                    },
+                    {
+                        targets:[7], sClass:'right-align',
+                        data: null,
+                        render: function(data, type, full, meta){
+                            return accounting.formatNumber(data.on_hand_per_batch,2);
+                        }
+
+                    }                                                    
 
                 ]
 

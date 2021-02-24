@@ -72,7 +72,7 @@
         <table width="100%" cellpadding="10" cellspacing="0" class="table-border" border="1">
             <thead>
                 <tr>
-                    <th width="30%" class="table-cellpadding tbl-border-si tbl-center" style="padding: 0;">PRODUCT</th>
+                    <th width="30%" class="table-cellpadding tbl-border-si tbl-center" style="padding: 0;">DESCRIPTION</th>
                     <th width="10%" class="table-cellpadding tbl-border-si tbl-center" style="padding: 0;">QTY</th>
                     <th width="10%" class="table-cellpadding tbl-border-si tbl-center" style="padding: 0;">PACK SIZE</th>
                     <th width="10%" class="table-cellpadding tbl-border-si tbl-center" style="padding: 0;">UNIT PRICE</th>

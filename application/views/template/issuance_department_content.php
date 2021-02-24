@@ -1,187 +1,149 @@
-<head>  <title>Issuance Report</title></head>
+<head>  
+    <title>Item Transfer</title>
+</head>
 <body>
-<style>
+    <style type="text/css">
+        body {
+            font-family: 'Calibri',sans-serif;
+            font-size: 12px;
+        }
 
+        .border{
+            border: 1px solid black!important; 
+        }
 
+        .default-color{
+            color:#2d419b;
+            font-weight: bold; 
+            font-size: 9pt;
+        }
+        .top{
+            border-top: 1px solid black;
+        }
+        .bottom{
+            border-bottom: 1px solid black;
+        }
+        .left{
+            border-left: 1px solid black;
+        }
+        .right{
+            border-right: 1px solid black;
+        }
+        .bold{
+            font-weight: bold;
+        }
+        table{
+            border-collapse: collapse;
+        }
+    </style>
+<div>
+    <table width="100%">
+        <tr class="">
+            <td width="50%" valign="top">
+                <img src="<?php echo base_url().$company_info->logo_path; ?>" style="height: 70px; width: 300px;"> 
+                <br/><br/>
 
-    #issuance tr {
-        background: transparent !important;
-    }
-
-    #report_footer th {
-/*        background: #303030 !important;
-*/    }
-    .report{
-
-    border-bottom: 1px solid gray;
-
-    border-right: none;
-    border-left:none;
-    border-top:none;
-
-}
-    td{
-
-    }
-    tr {
-/*        border: none!important;*/
-    }
-
-    tr:nth-child(even){
-/*        background: #414141 !important;*/
-/*        border: none!important;*/
-    }
-
-/*    tr:hover {
-        transition: .4s;
-        background: #414141 !important;
-        color: white;
-    }
-    
-*/
-    th{
-        background-color: transparent!important;
-    }
-/*    tr:hover .btn {
-        border-color: #494949!important;
-        border-radius: 0!important;
-        -webkit-box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
-        -moz-box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
-        box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
-    }
-*/
-       body {
-        font-family: 'Calibri',sans-serif;
-        font-size: 12px;
-    }
-
-    .align-right {
-        text-align: right;
-    }
-
-    .align-left {
-        text-align: left;
-    }
-
-    .align-center {
-        text-align: center;
-    }
-
-    .report-header {
-        font-weight: bolder;
-    }
-       table{
-        /*border:none!important;*/
-    }
-          
-      </style>
-
-<div style="width:100%">
-<table width="100%" style="border:none!important;">
-        <tr>
-            <td width="10%" style="border:none!important; object-fit: cover;"><img src="<?php echo $company_info->logo_path; ?>" style="height: 90px; width: 90px; text-align: left;"></td>
-            <td width="90%" style="border:none!important;" class="">
-                <h1 class="report-header"><strong><?php echo $company_info->company_name; ?></strong></h1>
                 <p><?php echo $company_info->company_address; ?></p>
-                <p><?php echo $company_info->landline.'/'.$company_info->mobile_no; ?></p>
-                <span><?php echo $company_info->email_address; ?></span><br>
+                <p><?php echo $company_info->company_address_2; ?></p>
+                <span>Email : <?php echo $company_info->email_address; ?></span>
+                <p>Tel and Fax no.: <?php echo $company_info->landline.' &nbsp;'.$company_info->mobile_no; ?></p>
+            </td>
+            <td width="50%" style="text-align: right;" valign="top">
+                <h1><b>ITEM TRANSFER REPORT</b></h1><br/>
+                <table width="100%" class="table table-striped" style="border-collapse: collapse;">
+                    <tr>
+                        <td width="65%">&nbsp;</td>
+                        <td width="35%" class="border default-color" align="center">
+                            <b>TRANSFER NO</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td class="border" style="padding: 5px 0px 5px 0px;" align="center"><?php echo $issuance_info->trn_no; ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><br/></td>
+                    </tr>
+                    <tr>
+                        <td width="65%">&nbsp;</td>
+                        <td width="35%" class="border default-color" align="center">
+                            <b>DATE</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td class="border" style="padding: 5px 0px 5px 0px;" align="center">
+                            <?php echo date('M d,Y',strtotime($issuance_info->date_issued));?>
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
-    </table><hr>
-<table style="font-family:tahoma;width: 100%;border:none!important;" id="report_header">
-    <tbody>
+    </table>
+    <br><br>
+    <table width="100%" cellpadding="5" class="table table-striped">
         <tr>
-            <td style="width:75%;font-size:18px;font-weight:bold;border:none!important;">ITEM TRANSFER REPORT</td>
-            <td style="width:25%;font-size:18px;font-weight:bold;border:none!important;text-align: right;"><?php echo $issuance_info->trn_no; ?></td>
+            <td width="35%" class="border" valign="top" style="padding: 10px;">
+                <span class="default-color">FROM DEPARTMENT : </span><br/><br/>
+                <span style="font-size: 10pt;"><b><?php echo $issuance_info->from_department_name; ?></b></span><br/>
+            </td>
+            <td width="35%" class="border" valign="top" style="padding: 10px;">
+                <span class="default-color">TO DEPARTMENT : </span><br/><br/>
+                <span style="font-size: 10pt;"><b><?php echo $issuance_info->to_department_name; ?></b></span><br/>
+            </td>
+            <td width="30%" class="border" valign="top" style="padding: 10px;">
+                <span class="default-color">TERMS : </span><br/><br/>
+                <span style="font-size: 10pt;"><b><?php echo $issuance_info->terms; ?></b></span><br/>
+            </td>            
         </tr>
-
-    </tbody>
-</table>
-
-<table width="100%" id="issuance" style="border:none!important;">
-    <thead>
-    </thead>
-    <tbody>
+    </table>
+    <br/><br/>
+<table width="100%" cellpadding="6" class="table table-striped">
         <tr>
-            <td style="width:20%;text-align:left;font-weight:bold;border:none!important;">From Department:</td>
-            <td style="width:20%;text-align:center;" class="report"><?php echo $issuance_info->from_department_name; ?></td>
-            <td style="width:10%;border:none!important;"></td>
-            <td style="width:10%;border:none!important;"></td>
-            <td style="width:20%;text-align:right;font-weight:bold;border:none!important;">Date:</td>
-            <td style="width:20%;text-align:center;" class="report"><?php echo  date_format(new DateTime($issuance_info->date_issued),"m/d/Y"); ?></td>
+            <td width="15%" class="default-color border" valign="top">QTY</td>
+            <td width="25%" class="default-color border" valign="top">DESCRIPTION</td>
+            <td width="15%" class="default-color border" valign="top">EXPIRATION</td>
+            <td width="15%" class="default-color border" valign="top">LOT#</td>
+            <td width="15%" class="default-color border" valign="top" align="right">UNIT PRICE</td>
+            <td width="15%" class="default-color border" valign="top" align="right">TOTAL</td>
         </tr>
-        <tr>
-
-
-            <td style="width:20%;text-align:left;font-weight:bold;border:none!important;">To Department:</td>
-            <td style="width:20%;text-align:center;" class="report"><?php echo $issuance_info->to_department_name; ?></td>
-            <td style="width:10%;border:none!important;"></td>
-
-            <td style="width:10%;border: none!important;"></td>
-            <td style="text-align:right;font-weight:bold;border:none!important;">Terms:</td>
-            <td style="width:20%;text-align:center;" class="report"> <?php echo $issuance_info->terms; ?></td>
-        </tr>
-    </tbody>
-</table><br>
-<table width="100%" style="font-family:tahoma;" cellspacing="0" style="border:none!important;">
-    <thead>
-        <tr >
-            <th style="width:35%;text-align:left;border-bottom: 1px solid gray;">Description</th>
-            <th style="width:10%;text-align:center;border-bottom: 1px solid gray;">Quantity</th>
-            <th style="width:15%;text-align:center;border-bottom: 1px solid gray;">Unit</th>
-            <th style="width:20%;text-align:center;border-bottom: 1px solid gray;">Unit Price</th>
-            <th style="width:20%;text-align:center;border-bottom: 1px solid gray;">Amount</th>
-        </tr>
-    </thead>
-    <tbody>
-       <?php 
+        <?php 
             $grandtotal=0;
             foreach($issue_items as $item){
-            $grandtotal+=$item->issue_line_total_price;
-             ?>
-                <tr>
-                    <td style="border-bottom: 1px solid gray;"><?php echo $item->product_desc; ?></td>
-                    <td style="text-align:center; border-bottom: 1px solid gray;"><?php echo number_format($item->issue_qty,0); ?></td>
-                    <td style="text-align:center; border-bottom: 1px solid gray;"><?php echo $item->unit_name; ?></td>
-                    <td style="text-align:center;border-bottom: 1px solid gray;"><?php echo number_format($item->issue_price,2); ?></td>
-                    <td style="text-align:center;border-bottom: 1px solid gray;"><?php echo number_format($item->issue_line_total_price,2); ?></td>
-                </tr>
-            <?php } ?>
-            <tr>
-            <td colspan="3"></td>
-                <td  style="text-align:left;font-weight:bold;  border-bottom: 1px solid gray;">Grand Total</td>
-                <td style="text-align:center;font-weight:bold; border-bottom: 1px solid gray;"><?php echo number_format($grandtotal,2); ?></td>
-            </tr>
-    </tbody>
-</table>
-<br><br><br>
-<table id="report_footer" style="width: 100%;border:none!important;">
-    <tbody>
-<!--         <tr >
-            <th style="width:35%;text-align:center;"><br></th>
-            <th style="width:10%;text-align:center;"></th>
-            <th style="width:10%;text-align:center;"></th>
-            <th style="width:22%;text-align:center;"></th>
-            <th style="width:23%;text-align:center;"></th>
-        </tr>
-        <tr style="background-color: transparent!important;">
-            <th style="width:35%;text-align:center;border-top:1px solid black;">Authorized Signature</th>
-            <th style="width:10%;text-align:center;"></th>
-            <th style="width:10%;text-align:center;"></th>
-            <th style="width:22%;text-align:center;"></th>
-            <th style="width:23%;text-align:center;border-top:1px solid black;">Customer's Signature</th>
-        </tr> -->
+            $grandtotal+=$item->issue_line_total_price; ?>
         <tr>
-        <td style="border:none!important;">
-            <th style="width: 10%;"></th><th style="width:30%;text-align:center;border-top:1px solid black;">Authorized Signature</th><th style="width: 10%;"></th>
-        </td>
-        <td style="border:none!important;">
-        <th style="width: 10%;"></th><th style="width:30%;text-align:center;border-top:1px solid black;">Customer's Signature</th><th style="width: 10%;"></th>
-        </td>
+            <td class="left right"><?php echo number_format($item->issue_qty,2); ?></td>
+            <td class="left right"><?php echo $item->product_desc; ?></td>
+            <td class="left right"><?php echo $item->exp_date; ?></td>
+            <td class="left right"><?php echo $item->batch_no; ?></td>
+            <td class="left right" align="right"><?php echo number_format($item->issue_price,2); ?></td>
+            <td class="left right" align="right"><?php echo number_format($item->issue_line_total_price,2); ?></td>
         </tr>
-    </tbody>
-</table>
+        <?php }?>
+        <tr>
+            <td class="border" align="right" colspan="5"><b>TOTAL AMOUNT DUE</b></td>
+            <td class="border" align="right">
+                <?php echo number_format($grandtotal,2); ?>
+            </td>
+        </tr>
+    </table>
+
+    <br/><br/><br/><br/>
+
+    <?php include 'po_report_footer.php'; ?> 
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

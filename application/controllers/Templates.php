@@ -552,6 +552,110 @@ class Templates extends CORE_Controller {
                         break;
                 break;
 
+            case 'inventory-report':
+                $account_integration =$this->Account_integration_model;
+                $a_i=$account_integration->get_list();
+                $account =$a_i[0]->sales_invoice_inventory;
+                $ci_account =$a_i[0]->cash_invoice_inventory;
+                $account_dis =$a_i[0]->dispatching_invoice_inventory;
+
+                $m_products = $this->Products_model;
+                $m_department = $this->Departments_model;
+
+                $type = $this->input->get('type',TRUE);
+                $date = date('Y-m-d',strtotime($this->input->get('date',TRUE)));
+                $depid = $this->input->get('depid',TRUE);
+                $info = $m_department->get_department_list($depid);
+                $currentcountfilter = $this->input->get('ccf',TRUE);
+                // Current Quantity Current Count Filter , 1 for ALL, 2 for Greater than 0, 3 for Less than Zero
+                if($currentcountfilter  == 1){ $ccf = null; }else if ($currentcountfilter  == 2) { $ccf = ' > 0'; }
+                else if($currentcountfilter  == 3){ $ccf = ' < 0'; }else if($currentcountfilter  == 4){ $ccf = ' = 0';}
+
+                $data['products']=$m_products->product_list($account,$date,null,null,null,1,null,$depid,$ci_account,$account_dis, $ccf, 1);
+                // $data['products'] = $m_products->get_product_list_inventory($date,$depid,$account);
+                $data['date'] = date('m/d/Y',strtotime($date));
+
+                if(isset($info[0])){
+                    $data['department'] =$info[0]->department_name;
+                }else{
+                    $data['department'] = 'All';
+                }
+
+                $m_company_info=$this->Company_model;
+                $company_info=$m_company_info->get_list();
+                $data['company_info']=$company_info[0];
+
+                //preview on browser
+                if($type=='preview'){
+                    $file_name='Hello';
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                    $content=$this->load->view('template/batch_inventory_report',$data,TRUE); //load the template
+                    // $pdf->setFooter('{PAGENO}');
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output();
+                }
+
+                break;
+
+            case 'batch-inventory':
+
+                $m_products = $this->Products_model;
+                $m_department = $this->Departments_model;
+
+                $ccf = null;
+                $type = $this->input->get('type',TRUE);
+                $product_id = $this->input->get('product_id',TRUE);
+                $depid = $this->input->get('depid',TRUE);
+                $currentcountfilter = $this->input->get('ccf',TRUE);
+                $date = date('Y-m-d',strtotime($this->input->get('date',TRUE)));
+
+                // Current Quantity Current Count Filter , 1 for ALL, 2 for Greater than 0, 3 for Less than Zero
+                if($currentcountfilter == 1){ 
+                    $ccf = null; 
+                }else if ($currentcountfilter == 2) { 
+                    $ccf = ' > 0'; 
+                }else if($currentcountfilter == 3){ 
+                    $ccf = ' < 0'; 
+                }else if($currentcountfilter == 4){ 
+                    $ccf = ' = 0';
+                }
+
+                $info=$m_department->get_list($depid);
+                $data['date'] = date('m/d/Y',strtotime($date));
+                $data['batches']=$m_products->batch_inventory($product_id,$depid,$ccf,$date);
+
+                if(isset($info[0])){
+                    $data['department'] =$info[0]->department_name;
+                }else{
+                    $data['department'] = 'All';
+                }
+
+                if($product_id==0){
+                    $data['product']='All';
+                }else{
+                    $data['product']=$m_products->get_list($product_id)[0]->product_desc;
+                }
+
+                $m_company_info=$this->Company_model;
+                $company_info=$m_company_info->get_list();
+                $data['company_info']=$company_info[0];
+
+                //preview on browser
+                if($type=='preview'){
+                    $file_name='Hello';
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                    $content=$this->load->view('template/inventory_report_batch',$data,TRUE); //load the template
+                    // $pdf->setFooter('{PAGENO}');
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output();
+                }
+
+
+                break;
 
             //****************************************************
 
@@ -798,7 +902,7 @@ class Templates extends CORE_Controller {
                     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                     $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
                     $content=$this->load->view('template/issuance_department_content',$data,TRUE); //load the template
-                    $pdf->setFooter('{PAGENO}');
+                    // $pdf->setFooter('{PAGENO}');
                     $pdf->WriteHTML($content);
                     //download it.
                     $pdf->Output($pdfFilePath,"D");
@@ -811,7 +915,7 @@ class Templates extends CORE_Controller {
                     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                     $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
                     $content=$this->load->view('template/issuance_department_content',$data,TRUE); //load the template
-                    $pdf->setFooter('{PAGENO}');
+                    // $pdf->setFooter('{PAGENO}');
                     $pdf->WriteHTML($content);
                     //download it.
                     $pdf->Output();
@@ -819,44 +923,8 @@ class Templates extends CORE_Controller {
 
                 break;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             //****************************************************
+
             case 'adjustments': //delivery invoice
                 $m_adjustment=$this->Adjustment_model;
                 $m_adjustment_items=$this->Adjustment_item_model;
@@ -865,7 +933,15 @@ class Templates extends CORE_Controller {
 
                 $info=$m_adjustment->get_list(
                     $filter_value,
-                    'adjustment_info.*,departments.department_name',
+                    'adjustment_info.*,departments.department_name,
+                    (CASE
+                        WHEN adjustment_info.is_returns = TRUE
+                            THEN "SALES RETURN"
+                        WHEN adjustment_info.is_dr_return = TRUE 
+                            THEN "PURCHASE RETURN"
+                        ELSE 
+                            CONCAT("ADJUSTMENT ",adjustment_info.adjustment_type)
+                    END) as adjustment_type',
                     array(
                         array('departments','departments.department_id=adjustment_info.department_id','left')
                     )
@@ -883,8 +959,6 @@ class Templates extends CORE_Controller {
                         array('units','units.unit_id=adjustment_items.unit_id','left')
                     )
                 );
-
-
 
                 //show only inside grid with menu button
                 if($type=='fullview'||$type==null){
@@ -904,7 +978,7 @@ class Templates extends CORE_Controller {
                     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                     $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
                     $content=$this->load->view('template/adjustment_content',$data,TRUE); //load the template
-                    $pdf->setFooter('{PAGENO}');
+                    // $pdf->setFooter('{PAGENO}');
                     $pdf->WriteHTML($content);
                     //download it.
                     $pdf->Output($pdfFilePath,"D");
@@ -917,7 +991,7 @@ class Templates extends CORE_Controller {
                     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                     $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
                     $content=$this->load->view('template/adjustment_content',$data,TRUE); //load the template
-                    $pdf->setFooter('{PAGENO}');
+                    // $pdf->setFooter('{PAGENO}');
                     $pdf->WriteHTML($content);
                     //download it.
                     $pdf->Output();

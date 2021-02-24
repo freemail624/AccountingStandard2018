@@ -69,7 +69,7 @@
         <table width="100%" cellpadding="10" cellspacing="0" class="table-border" border="1">
             <thead>
                 <tr>
-                    <th width="30%" class="table-cellpadding tbl-border-si tbl-center" style="padding: 0;"><strong>PRODUCT</strong></th>
+                    <th width="30%" class="table-cellpadding tbl-border-si tbl-center" style="padding: 0;"><strong>DESCRIPTION</strong></th>
                     <th width="10%" class="table-cellpadding tbl-border-si tbl-center" style="padding: 0;"><strong>QTY</strong></th>
                     <th width="10%" class="table-cellpadding tbl-border-si tbl-center" style="padding: 0;"><strong>PACK SIZE</strong></th>
                     <th width="10%" class="table-cellpadding tbl-border-si tbl-center" style="padding: 0;"><strong>UNIT PRICE</strong></th>

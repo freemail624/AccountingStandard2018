@@ -71,40 +71,6 @@ class Inventory extends CORE_Controller
                 echo json_encode($response);
                 break;
 
-            case 'preview-inventory':
-                $account_integration =$this->Account_integration_model;
-                $a_i=$account_integration->get_list();
-                $account =$a_i[0]->sales_invoice_inventory;
-                $ci_account =$a_i[0]->cash_invoice_inventory;
-                $account_dis =$a_i[0]->dispatching_invoice_inventory;
-
-                $m_products = $this->Products_model;
-                $m_department = $this->Departments_model;
-
-                $date = date('Y-m-d',strtotime($this->input->get('date',TRUE)));
-                $depid = $this->input->get('depid',TRUE);
-                $info = $m_department->get_department_list($depid);
-                $currentcountfilter = $this->input->get('ccf',TRUE);
-                // Current Quantity Current Count Filter , 1 for ALL, 2 for Greater than 0, 3 for Less than Zero
-                if($currentcountfilter  == 1){ $ccf = null; }else if ($currentcountfilter  == 2) { $ccf = ' > 0'; }
-                else if($currentcountfilter  == 3){ $ccf = ' < 0'; }else if($currentcountfilter  == 4){ $ccf = ' = 0';}
-
-                $data['products']=$m_products->product_list($account,$date,null,null,null,1,null,$depid,$ci_account,$account_dis, $ccf, 1);
-                // $data['products'] = $m_products->get_product_list_inventory($date,$depid,$account);
-                $data['date'] = date('m/d/Y',strtotime($date));
-
-                if(isset($info[0])){
-                    $data['department'] =$info[0]->department_name;
-                }else{
-                    $data['department'] = 'All';
-                }
-
-                $m_company_info=$this->Company_model;
-                $company_info=$m_company_info->get_list();
-                $data['company_info']=$company_info[0];
-                $this->load->view('template/batch_inventory_report',$data);
-                break;
-
             case 'preview-inventory-with-total':
                 $account_integration =$this->Account_integration_model;
                 $a_i=$account_integration->get_list();

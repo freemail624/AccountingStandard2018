@@ -69,7 +69,7 @@
         <table width="95%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11;background-color: transparent!important;border:none!important;" class="nohover" >
             <thead style="background-color: transparent!important ;">
             <tr style="background-color: transparent!important ;">
-                <th width="50%" style="text-align: left;height: 15px;padding: 6px;border-bottom: 1px solid gray;" >Item</th>
+                <th width="50%" style="text-align: left;height: 15px;padding: 6px;border-bottom: 1px solid gray;" >Description</th>
                 <th width="12%" style="text-align: right;height: 15px;padding: 6px;border-bottom: 1px solid gray;">Qty</th>
                 <th width="12%" style="text-align: center;height: 15px;padding: 6px;border-bottom: 1px solid gray;">UM</th>
                 <th width="12%" style="text-align: right;height: 15px;padding: 6px;border-bottom: 1px solid gray;">Price</th>
