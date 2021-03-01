@@ -101,6 +101,7 @@
                                 <li class="<?php echo (in_array('15-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Inventory">Inventory</a></li>
                                 <li class="<?php echo (in_array('15-7',$this->session->user_rights)?'':'hidden'); ?>"><a href="Batch_inventory">Batch Inventory</a></li>
                                 <li class="<?php echo (in_array('15-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Stock_card">Stock Card</a></li>
+                                <li class="<?php echo (in_array('15-8',$this->session->user_rights)?'':'hidden'); ?>"><a href="Barcode_generator">Barcode Generator</a></li>
                             </ul>
                         </li>
                         <li class="<?php echo (in_array('4',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-view-list-alt"></i><span>References</span></a>

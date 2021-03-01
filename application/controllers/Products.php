@@ -31,6 +31,7 @@ class Products extends CORE_Controller
         $this->load->model('Company_model');
         $this->load->model('Trans_model');
         $this->load->model('Brands_model');
+        $this->load->library('M_pdf');
     }
 
     public function index() {
@@ -540,11 +541,21 @@ class Products extends CORE_Controller
                         echo json_encode($data);
                 }else if($type == 'stockcard_print'){
                     // if($cat == 'bulk'){
-                        $this->load->view('template/Stock_card_parent_content',$data);
+                        // $this->load->view('template/Stock_card_parent_content',$data);
                     // }else if ($cat == 'retail'){
                     //     $this->load->view('template/Stock_card_child_content',$data);
 
                     // }
+
+                    $file_name=$data['info'][0]->product_desc;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load("A4-L");
+                    $content=$this->load->view('template/Stock_card_parent_content',$data,TRUE); //load the template
+                    // $pdf->setFooter('{PAGENO}');
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output();
+
                 }
                 break;
 

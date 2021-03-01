@@ -37,7 +37,7 @@ class Cash_invoice_model extends CORE_Model
         p.cos_account_id as account_id,
         '' as memo,
         0 as cr_amount,
-        SUM(cii.inv_qty * p.purchase_cost) as dr_amount
+        SUM(cii.inv_qty * cii.cost_upon_invoice) as dr_amount
         FROM `cash_invoice_items` as cii
         INNER JOIN products as p ON cii.product_id=p.product_id
         WHERE cii.cash_invoice_id=$cash_invoice_id AND p.cos_account_id >0
@@ -63,7 +63,7 @@ class Cash_invoice_model extends CORE_Model
         SELECT
         p.expense_account_id as account_id,
         '' as memo,
-        SUM(cii.inv_qty * p.purchase_cost) cr_amount,
+        SUM(cii.inv_qty * cii.cost_upon_invoice) cr_amount,
         0 as dr_amount
 
         FROM `cash_invoice_items` as cii

@@ -115,7 +115,8 @@ class Rights_link_model extends CORE_Model{
                                           (107,'17','17-3','Incident Report'),
                                           (108,'17','17-4','Accomplishment Report'),
                                           (109,'5','5-6','Edit Product Costing'),
-                                          (110,'15','15-7','Batch Inventory')
+                                          (110,'15','15-7','Batch Inventory'),
+                                          (111,'15','15-8','Barcode Generator')
 
 
                                           ON DUPLICATE KEY UPDATE

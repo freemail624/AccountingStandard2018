@@ -29,6 +29,10 @@
 <script type="text/javascript" src="assets/plugins/notify/pnotify.nonblock.js"></script>
 <script type="text/javascript" src="assets/plugins/shortcut/shortcut.js"></script>
 
+<!-- Barcode -->
+<script src="assets/plugins/barcode/JsBarcode.all.js"></script>
+<script type="text/javascript" src="assets/plugins/barcode/download.js"></script>
+<script type="text/javascript" src="assets/plugins/barcode/printThis.js"></script>
 
 
 

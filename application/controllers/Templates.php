@@ -941,7 +941,16 @@ class Templates extends CORE_Controller {
                             THEN "PURCHASE RETURN"
                         ELSE 
                             CONCAT("ADJUSTMENT ",adjustment_info.adjustment_type)
-                    END) as adjustment_type',
+                    END) as adjustment_type,
+
+                    (CASE
+                        WHEN adjustment_info.is_returns = TRUE
+                            THEN adjustment_info.inv_no
+                        WHEN adjustment_info.is_dr_return = TRUE 
+                            THEN adjustment_info.dr_invoice_no
+                        ELSE 
+                            ""
+                    END) as return_no',
                     array(
                         array('departments','departments.department_id=adjustment_info.department_id','left')
                     )
@@ -3038,8 +3047,24 @@ class Templates extends CORE_Controller {
                     $this->load->view('template/income_statement_report',$data);
                 }
 
+                break;
 
+            case 'barcode-generator':
+                $data['unq_id'] = $this->input->get('unq_id', TRUE);
+                $data['qty'] = $this->input->get('qty', TRUE);
 
+                $data['_def_css_files'] = $this->load->view('template/assets/css_files', '', true);
+                $data['_def_js_files'] = $this->load->view('template/assets/js_files', '', true);
+                
+                $this->load->view('template/barcode_generate_content',$data);
+                // $file_name=date('Y-m-d');
+                // $pdfFilePath = $data['unq_id'].".pdf"; //generate filename base on id
+                // $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                // $content=$this->load->view('template/barcode_generate_content',$data,TRUE);
+                // // $pdf->setFooter('{PAGENO}');
+                // $pdf->WriteHTML($content);
+                // //download it.
+                // $pdf->Output();
 
                 break;
 

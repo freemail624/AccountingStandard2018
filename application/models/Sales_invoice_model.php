@@ -173,7 +173,7 @@ $sql="SELECT main.* FROM(
             p.cos_account_id as account_id,
             '' as memo,
             0 as cr_amount,
-            SUM(sii.inv_qty * p.purchase_cost) as dr_amount
+            SUM(sii.inv_qty * sii.cost_upon_invoice) as dr_amount
             FROM `sales_invoice_items` as sii
             INNER JOIN products as p ON sii.product_id=p.product_id
             WHERE sii.sales_invoice_id=$sales_invoice_id AND p.cos_account_id >0
@@ -198,7 +198,7 @@ $sql="SELECT main.* FROM(
             SELECT
             p.expense_account_id as account_id,
             '' as memo,
-            SUM(sii.inv_qty * p.purchase_cost) cr_amount,
+            SUM(sii.inv_qty * sii.cost_upon_invoice) cr_amount,
             0 as dr_amount
 
             FROM `sales_invoice_items` as sii

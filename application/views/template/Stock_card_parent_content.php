@@ -1,67 +1,90 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Product History</title>
-  <style>
-    body {
-      font-family: 'Segoe UI',sans-serif;
-      font-size: 12px;
-    }
-    table, th, td { border-color: white; }
-    tr { border-bottom: none !important; }
-
-    .report-header {
-      font-size: 22px;
-    }
-        .right-align{
-            text-align: right;
+    <title>Product History</title>
+    <style type="text/css">
+        body {
+            font-family: 'Calibri',sans-serif;
+            font-size: 12px;
         }
-        @media print {
-      @page { margin: 0; size: landscape; }
-      body { margin: 1.0cm; }
-}
-  .hidden{
-    display: none;
-  }
-  </style>
-  <script>
-    (function(){
-      window.print();
-    })();
-  </script>
+
+        .border{
+            border: 1px solid black!important; 
+        }
+
+        .default-color{
+            color:#2d419b;
+            font-weight: bold; 
+            font-size: 9pt;
+        }
+        .top{
+            border-top: 1px solid black;
+        }
+        .bottom{
+            border-bottom: 1px solid black;
+        }
+        .left{
+            border-left: 1px solid black;
+        }
+        .right{
+            border-right: 1px solid black;
+        }
+        table{
+            border-collapse: collapse;
+        }
+    </style>
 </head>
 <body>
-       <table width="100%">
-        <tr>
-            <td width="10%"><img src="<?php echo base_url().$company_info->logo_path; ?>" style="height: 90px; width: 120px; text-align: left;"></td>
-            <td width="90%" class="">
-                <span style="font-size: 20px;" class="report-header"><strong><?php echo $company_info->company_name; ?></strong></span><br>
-                <span><?php echo $company_info->company_address; ?></span><br>
-                <span><?php echo $company_info->landline.'/'.$company_info->mobile_no; ?></span><br>
-                <span><?php echo $company_info->email_address; ?></span>
+
+    <table width="100%">
+        <tr class="">
+            <td width="50%" valign="top">
+                <img src="<?php echo $company_info->logo_path; ?>" style="height: 70px; width: 300px;"> 
+                <br/><br/>
+
+                <p><?php echo $company_info->company_address; ?></p>
+                <p><?php echo $company_info->company_address_2; ?></p>
+                <span>Email : <?php echo $company_info->email_address; ?></span>
+                <p>Tel and Fax no.: <?php echo $company_info->landline.' &nbsp;'.$company_info->mobile_no; ?></p>
+            </td>
+            <td width="50%" valign="top">
+                <table width="100%" class="table table-striped" style="border-collapse: collapse;">
+                  <tr>
+                    <td width="100%" align="right">
+                      <h1>
+                          <b>
+                            STOCK CARD / BIN CARD
+                          </b>
+                      </h1><br/>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td align="right" style="font-size: 14pt;">
+                      <b class="default-color">PRODUCT DESCRIPTION</b> : <br/>
+                      <?php echo $info[0]->product_desc; ?>
+                    </td> 
+                  </tr>
+                </table>
             </td>
         </tr>
-    </table><hr>
-    <div>
-        <h3><strong>Stock Card / Bin Card</strong></h3>
-    </div>
-<b>Unit of Measurement :</b> <?php echo $info[0]->bulk_unit_name?> <br><br>
+    </table>
+    <br/><br/>
 
-<table style="width: 100%" class="table table-striped">
-    <tr>
-        <td style="width: 15%;" class="class-title">Product Code</td>
-        <td style="width: 35%;" id="product_code"><?php echo $info[0]->product_code?></td>
-        <td  style="width: 15%;" class="class-title">Purchase Cost</td>
-        <td  style="width: 35%;" id="purchase_cost"><?php echo number_format($info[0]->purchase_cost,2); ?></td>
-    </tr>
-    <tr>
-        <td style="width: 15%;" class="class-title">Product Description</td>
-        <td style="width: 35%;" id="product_desc"><?php echo $info[0]->product_desc?></td>
+    <table style="width: 100%" class="table table-striped">
+        <tr>
+            <td style="width: 15%;" class="class-title">Product Code</td>
+            <td style="width: 35%;" id="product_code"><?php echo $info[0]->product_code?></td>
+            <td  style="width: 15%;" class="class-title">Purchase Cost</td>
+            <td  style="width: 35%;" id="purchase_cost"><?php echo number_format($info[0]->purchase_cost,2); ?></td>
+        </tr>
+        <tr>
+            <td style="width: 15%;" class="class-title">Product Description</td>
+            <td style="width: 35%;" id="product_desc"><?php echo $info[0]->product_desc?></td>
 
-        <td  style="width: 15%;" class="class-title">Suggested Retail Price</td>
-        <td  style="width: 35%;" id="sale_price"><?php echo number_format($info[0]->sale_price,2)  ?></td>
-    </tr>
-</table>
+            <td  style="width: 15%;" class="class-title">Suggested Retail Price</td>
+            <td  style="width: 35%;" id="sale_price"><?php echo number_format($info[0]->sale_price,2)  ?></td>
+        </tr>
+    </table>
 <br/>
    <center>
        <table width="100%"  style="border-collapse: collapse;">
@@ -70,10 +93,9 @@
                     <td style="border: 1px solid lightgrey;padding: 5px;"><b>Txn Date</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;"><b>Reference</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;"><b>Packaging</b></td>
-                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>In</b></td>
-                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>Out</b></td>
-                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>Balance</b></td>
-                    <td class="hidden" style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>Bulk Balance</b></td>
+                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>QTY In</b></td>
+                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>QTY Out</b></td>
+                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>On Hand</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;"><b>Department</b></td>
                     <td style="border: 1px solid lightgrey;padding: 5px;"><b>Remarks</b></td>
 
@@ -98,7 +120,6 @@
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_in_qty,2); ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_out_qty,2); ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_balance,2).' '.$info[0]->parent_unit_name; ?></td>
-                   <td class="hidden" style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_bulk_balance,2).' '.$info[0]->bulk_unit_name; ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: left;"><?php echo $product->department_name ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: left;"><?php echo $product->remarks; ?></td>
                </tr>

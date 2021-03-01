@@ -287,6 +287,8 @@ parent::__construct();
         $sql="SELECT 
 			si.sales_inv_no as inv_no,
 			si.is_journal_posted,
+			si.total_overall_discount,
+			((sii.inv_gross - sii.inv_line_total_discount)*(si.total_overall_discount/100)) as global_discount_amount,
 			'1' as inv_type_id,
 			p.product_code,
 			p.product_desc,
@@ -329,6 +331,8 @@ parent::__construct();
 			SELECT
 			ci.cash_inv_no as inv_no,
 			ci.is_journal_posted,
+			ci.total_overall_discount,
+			((cii.inv_gross - cii.inv_line_total_discount)*(ci.total_overall_discount/100)) as global_discount_amount,
 			'2' as inv_type_id,
 			p.product_code,
 			p.product_desc,
@@ -399,7 +403,10 @@ parent::__construct();
 			    (SELECT units.unit_name FROM units WHERE units.unit_id = p.child_unit_id) AS child_unit_name,
 			    dii.*,
 			    DATE_FORMAT(dii.exp_date,'%m/%d/%Y') as exp_date,
-			    dii.dr_price as cost_upon_invoice
+			    dii.dr_price as cost_upon_invoice,
+			    di.total_overall_discount,
+				(((dii.dr_qty*dii.dr_price) - dii.dr_line_total_discount)*(di.total_overall_discount/100)) as global_discount_amount
+
 			FROM
 			    delivery_invoice_items dii
 			        LEFT JOIN

@@ -84,10 +84,16 @@
     <br/><br/>
     <table width="100%" cellpadding="5" class="table table-striped">
         <tr>
-            <td width="100%" valign="top" style="padding: 10px;">
+            <td width="50%" valign="top">
                 <span class="default-color">DEPARTMENT : </span>
                 <span style="font-size: 10pt;"><b><?php echo $adjustment_info->department_name; ?></b></span><br/>
-            </td>           
+            </td>   
+            <td width="50%" valign="top" align="right">
+                <?php if($adjustment_info->return_no != null || ""){?>
+                    <span class="default-color">RETURN # : </span>
+                    <span style="font-size: 10pt;"><b><?php echo $adjustment_info->return_no; ?></b></span><br/>
+                <?php }?>
+            </td>                       
         </tr>
     </table>
     <br/>
@@ -106,7 +112,7 @@
             $gross_total = 0;
             foreach($adjustment_items as $item){
             $total_tax_amount+=$item->adjust_tax_amount;
-            $total_discount+=$item->adjust_discount+$item->adjust_line_total_discount;
+            $total_discount+=$item->adjust_line_total_discount+$item->global_discount_amount;
             $gross_total+=$item->adjust_price*$item->adjust_qty; ?>
         <tr>
             <td class="left right"><?php echo number_format($item->adjust_qty,2); ?></td>
@@ -114,7 +120,7 @@
             <td class="left right"><?php echo $item->exp_date; ?></td>
             <td class="left right"><?php echo $item->batch_no; ?></td>
             <td class="left right" align="right"><?php echo number_format($item->adjust_price,2); ?></td>
-            <td class="left right" align="right"><?php echo number_format($item->adjust_line_total_price,2); ?></td>
+            <td class="left right" align="right"><?php echo number_format($item->adjust_price*$item->adjust_qty,2); ?></td>
         </tr>
         <?php }?>
         <tr>
