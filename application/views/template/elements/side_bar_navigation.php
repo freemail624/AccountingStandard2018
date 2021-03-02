@@ -68,12 +68,11 @@
                                 <li class="<?php echo (in_array('3-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Sales_invoice">Charge Invoice</a></li>
                                 <li class="<?php echo (in_array('3-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Cash_invoice">Cash Invoice</a></li>
                                 <!-- <li class="<?php echo (in_array('3-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Dispatching">Warehouse Dispatching</a></li> -->
-
                                 <li class="<?php echo (in_array('3-8',$this->session->user_rights)?'':'hidden'); ?>"><a href="Loading">Loading Report</a></li>
-
+                                <li class="<?php echo (in_array('3-9',$this->session->user_rights)?'':'hidden'); ?>"><a href="X_reading_report">(POS) X-Reading</a></li>
+                                <li class="<?php echo (in_array('3-10',$this->session->user_rights)?'':'hidden'); ?>"><a href="Sales_returns">(POS) Sales Returns Report</a></li>
                                 <li class="<?php echo (in_array('3-7',$this->session->user_rights)?'':'hidden'); ?>"><a href="Customer_sale_history">Customer Sales History</a></li>
                                 <li class="<?php echo (in_array('3-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Sales_history">Sales/Cash Invoice History</a></li>
-
                                 <!-- <li><a href="Sales_invoice_other">Other Sales Invoice</a></li> -->
                                 <li class="<?php echo (in_array('3-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Receivable_payments">Collection Entry</a></li>
                             </ul>

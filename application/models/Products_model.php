@@ -195,6 +195,8 @@ class Products_model extends CORE_Model {
                 (SELECT m.*
 
                 FROM
+
+                /*Adjustment IN*/
                 (SELECT
 
                 (ai.date_adjusted) as txn_date,
@@ -218,7 +220,7 @@ class Products_model extends CORE_Model {
 
                 UNION ALL
 
-
+                /*Adjustment OUT*/
                 SELECT
 
                 (ai.date_adjusted) as txn_date,
@@ -243,7 +245,7 @@ class Products_model extends CORE_Model {
                 UNION ALL
 
 
-
+                /*Delivery Invoice*/
                 SELECT
 
                 di.date_delivered as txn_date,
@@ -269,8 +271,9 @@ class Products_model extends CORE_Model {
                 ".($account==TRUE?" 
 
 
-                 UNION ALL
+                UNION ALL
                 
+                /*Sales Invoice*/
                 SELECT 
                 si.date_invoice as txn_date,
                 si.sales_inv_no as ref_no,
@@ -282,7 +285,7 @@ class Products_model extends CORE_Model {
                 d.department_name,
                 si.remarks
 
-                 FROM 
+                FROM 
                 (sales_invoice as si
                 LEFT JOIN customers c ON c.customer_id=si.customer_id)
                                 
@@ -300,7 +303,7 @@ class Products_model extends CORE_Model {
 
                 UNION ALL
 
-
+                /*Issuance*/
                 SELECT
 
                 ii.date_issued as txn_date,
@@ -339,6 +342,7 @@ class Products_model extends CORE_Model {
 
              FROM 
 
+             /*Parent - Adjustment IN*/
             (SELECT
             (ai.date_adjusted) as txn_date,
             ai.date_created,
@@ -355,6 +359,7 @@ class Products_model extends CORE_Model {
             0 as child_in_qty,
             0 as parent_out_qty,
             0 as child_out_qty,
+            d.department_id,
             d.department_name,
             ai.remarks,
             (CASE
@@ -374,6 +379,7 @@ class Products_model extends CORE_Model {
 
             UNION ALL
 
+            /*Child - Adjustment IN*/
             SELECT
             
             (ai.date_adjusted) as txn_date,
@@ -387,6 +393,7 @@ class Products_model extends CORE_Model {
             0 as child_in_qty,
             0 as parent_out_qty,
             0 as child_out_qty,
+            d.department_id,
             d.department_name,
             ai.remarks,
             (CASE
@@ -406,10 +413,89 @@ class Products_model extends CORE_Model {
             ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
             GROUP BY ai.adjustment_id
 
+            UNION ALL
+            /*Parent - (POS) Sales Return*/
+            SELECT posrin.* FROM
+
+            (SELECT
+            DATE_FORMAT(pir.start_datetime,'%Y-%m-%d') as txn_date,
+            DATE_FORMAT(pir.start_datetime,'%Y-%m-%d') as date_created,
+            pir.invoice_no as ref_no,
+            '(POS) Sales Return' as type,
+            'WALK-IN (Customer)' as Description,
+            pir.product_id,
+            'Bulk' AS identifier,  
+            (CASE
+                WHEN p.is_parent = 1 THEN (IFNULL(pir.product_quantity, 0) * p.bulk_conversion_rate)
+                WHEN p.is_parent = 0 AND p.parent_id = 0 THEN IFNULL(pir.product_quantity, 0)
+                ELSE 0
+            END) as parent_in_qty,
+            0 as child_in_qty,
+            0 as parent_out_qty,
+            0 as child_out_qty,
+            (SELECT default_department_id FROM account_integration ai) as department_id,
+            (SELECT d.department_name
+                FROM account_integration ai
+                LEFT JOIN departments d ON d.department_id = ai.default_department_id
+            ) as department_name,
+            '' as remarks,
+            (CASE
+                WHEN p.is_parent = 1 THEN p.bulk_conversion_rate
+                ELSE 1
+            END) as bulk_conversion_rate
+
+
+            FROM pos_item_returns as pir
+            
+            LEFT JOIN products p on p.product_id = pir.product_id
+            WHERE pir.is_active=TRUE AND pir.is_deleted=FALSE
+            AND pir.product_id=$product_id
+            ".($as_of_date==null?"":" AND DATE_FORMAT(pir.start_datetime,'%Y-%m-%d')<='".$as_of_date."'")."
+            ) as posrin
+            ".($depid==0?"":" WHERE posrin.department_id=".$depid)."
+                
+            UNION ALL
+            /*Child - POS (Sales Return)*/
+
+            SELECT chldposrin.* FROM
+
+             (SELECT
+            
+            DATE_FORMAT(pir.start_datetime,'%Y-%m-%d') as txn_date,
+            DATE_FORMAT(pir.start_datetime,'%Y-%m-%d') as date_created,
+            pir.invoice_no as ref_no,
+            '(POS) Sales Return' as type,
+            'WALK-IN (Customer)' as Description,
+            pir.product_id,
+            'Retail' as identifier,
+            SUM(IFNULL(pir.product_quantity,0) * p.conversion_rate) as parent_in_qty,
+            0 as child_in_qty,
+            0 as parent_out_qty,
+            0 as child_out_qty,
+            (SELECT default_department_id FROM account_integration ai) as department_id,
+            (SELECT d.department_name
+                FROM account_integration ai
+                LEFT JOIN departments d ON d.department_id = ai.default_department_id
+            ) as department_name,
+            '' as remarks,
+            (CASE
+                WHEN bulk.is_parent = 1 THEN bulk.bulk_conversion_rate
+                ELSE 1
+            END) as bulk_conversion_rate
+
+            FROM pos_item_returns as pir
+            
+            LEFT JOIN products p on p.product_id = pir.product_id
+            LEFT JOIN products bulk ON bulk.product_id = p.parent_id
+            WHERE pir.is_active=TRUE AND pir.is_deleted=FALSE
+            AND p.parent_id = $product_id
+            ".($as_of_date==null?"":" AND DATE_FORMAT(pir.start_datetime,'%Y-%m-%d')<='".$as_of_date."'")."
+            GROUP BY pir.invoice_id) as chldposrin
+            ".($depid==0?"":" WHERE chldposrin.department_id=".$depid)."
 
             UNION ALL
 
-
+            /*Parent - Adjustment OUT*/
             SELECT
 
             (ai.date_adjusted) as txn_date,
@@ -427,6 +513,7 @@ class Products_model extends CORE_Model {
                 ELSE 0
             END) as parent_out_qty,
             0 as child_out_qty,
+            d.department_id,
             d.department_name,
             ai.remarks,
             (CASE
@@ -446,7 +533,7 @@ class Products_model extends CORE_Model {
 
             UNION ALL
 
-
+            /*Child - Adjustment OUT*/
             SELECT
 
             (ai.date_adjusted) as txn_date,
@@ -460,6 +547,7 @@ class Products_model extends CORE_Model {
             0 as child_in_qty,
             SUM(IFNULL(aii.adjust_qty,0) * p.conversion_rate) as parent_out_qty,
             0 as child_out_qty,
+            d.department_id,
             d.department_name,
             ai.remarks,
             (CASE
@@ -483,6 +571,7 @@ class Products_model extends CORE_Model {
 
             UNION ALL
 
+            /*Parent - Delivery Invoice*/
             SELECT
             di.date_delivered as txn_date,
             di.date_created,
@@ -499,6 +588,7 @@ class Products_model extends CORE_Model {
             0 as child_in_qty,
             0 as parent_out_qty,
             0 as child_out_qty,
+            d.department_id,
             d.department_name,
             di.remarks,
             (CASE
@@ -521,6 +611,7 @@ class Products_model extends CORE_Model {
 
             UNION ALL
 
+            /*Child - Delivery Invoice*/
             SELECT
             di.date_delivered as txn_date,
             di.date_created,
@@ -533,6 +624,7 @@ class Products_model extends CORE_Model {
             0 as child_in_qty,
             0 as parent_out_qty,
             0 as child_out_qty,
+            d.department_id,
             d.department_name,
             di.remarks,
             (CASE
@@ -556,6 +648,7 @@ class Products_model extends CORE_Model {
 
             UNION ALL
 
+            /*Parent - Issuance*/
             SELECT
             ii.date_issued as txn_date,
             ii.date_created ,
@@ -572,6 +665,7 @@ class Products_model extends CORE_Model {
                 ELSE 0
             END) as parent_out_qty,
             0 as child_out_qty,
+            d.department_id,
             d.department_name,
             ii.remarks,
             (CASE
@@ -590,6 +684,7 @@ class Products_model extends CORE_Model {
 
             UNION ALL
 
+            /*Child - Issuance*/
             SELECT
             ii.date_issued as txn_date,
             ii.date_created ,
@@ -602,6 +697,7 @@ class Products_model extends CORE_Model {
             0 as child_in_qty,
             SUM(IFNULL(iit.issue_qty,0) * p.conversion_rate) as parent_out_qty,
             0 as child_out_qty,
+            d.department_id,
             d.department_name,
             ii.remarks,
             (CASE
@@ -622,6 +718,7 @@ class Products_model extends CORE_Model {
 
             UNION ALL
 
+            /*Parent - Transfer From*/
             SELECT
             ii.date_issued as txn_date,
             ii.date_created ,
@@ -638,6 +735,7 @@ class Products_model extends CORE_Model {
                 ELSE 0
             END) as parent_out_qty,
             0 as child_out_qty,
+            d.department_id,
             d.department_name,
             ii.remarks,
             (CASE
@@ -653,11 +751,10 @@ class Products_model extends CORE_Model {
             WHERE ii.is_active=TRUE AND ii.is_deleted=FALSE
             ".($depid==0?"":" AND ii.from_department_id=".$depid)."
             AND iit.product_id=$product_id ".($as_of_date==null?"":" AND ii.date_issued<='".$as_of_date."'")."
-            
-
-
+        
             UNION ALL
 
+            /*Child - Adjustment From*/
             SELECT
             ii.date_issued as txn_date,
             ii.date_created ,
@@ -670,6 +767,7 @@ class Products_model extends CORE_Model {
             0 as child_in_qty,
             SUM(IFNULL(iit.issue_qty,0) * p.conversion_rate) as parent_out_qty,
             0 as child_out_qty,
+            d.department_id,
             d.department_name,
             ii.remarks,
             (CASE
@@ -689,10 +787,9 @@ class Products_model extends CORE_Model {
             ".($as_of_date==null?"":" AND ii.date_issued<='".$as_of_date."'")."
             GROUP BY ii.issuance_department_id
 
-
-
             UNION ALL
 
+            /*Parent - Transfer To*/
             SELECT
             ii.date_issued as txn_date,
             ii.date_created ,
@@ -709,6 +806,7 @@ class Products_model extends CORE_Model {
             0 as child_in_qty, 
             0 as parent_out_qty,
             0 as child_out_qty,
+            d.department_id,
             d.department_name,
             ii.remarks,
             (CASE
@@ -729,6 +827,7 @@ class Products_model extends CORE_Model {
 
             UNION ALL
 
+            /*Child - Transfer To*/
             SELECT
             ii.date_issued as txn_date,
             ii.date_created ,
@@ -741,6 +840,7 @@ class Products_model extends CORE_Model {
             0 as child_in_qty, 
             0 as parent_out_qty,
             0 as child_out_qty,
+            d.department_id,
             d.department_name,
             ii.remarks,
             (CASE
@@ -764,6 +864,8 @@ class Products_model extends CORE_Model {
             ".($account==TRUE?" 
             
             UNION ALL  
+
+            /*Parent - Sales Invoice*/
             SELECT 
             si.date_invoice as txn_date,
             si.date_created as date_created,
@@ -780,6 +882,7 @@ class Products_model extends CORE_Model {
                 ELSE 0
             END) as parent_out_qty,
             0 as child_out_qty,
+            d.department_id,
             d.department_name,
             si.remarks,
             (CASE
@@ -802,6 +905,7 @@ class Products_model extends CORE_Model {
                 
             UNION ALL
 
+            /*Child - Sales Invoice*/
             SELECT 
             si.date_invoice as txn_date,
             si.date_created as date_created,
@@ -814,6 +918,7 @@ class Products_model extends CORE_Model {
             0 as child_in_qty,
             SUM((IFNULL(sii.inv_qty,0) * p.conversion_rate)) as parent_out_qty,
             0 as child_out_qty,
+            d.department_id,
             d.department_name,
             si.remarks,
             (CASE
@@ -843,6 +948,7 @@ class Products_model extends CORE_Model {
             
             UNION  ALL                
             
+            /*Parent - Cash Invoice*/
             SELECT 
             (ci.date_invoice) as txn_date,
             ci.date_created,
@@ -859,6 +965,7 @@ class Products_model extends CORE_Model {
                 ELSE 0
             END) as parent_out_qty,
             0 as child_out_qty,
+            d.department_id,
             d.department_name,
             ci.remarks,
             (CASE
@@ -882,6 +989,7 @@ class Products_model extends CORE_Model {
 
             UNION  ALL                
             
+            /*Child - Cash Invoice*/
             SELECT 
             (ci.date_invoice) as txn_date,
             ci.date_created,
@@ -894,6 +1002,7 @@ class Products_model extends CORE_Model {
             0 as child_in_qty,    
             SUM(IFNULL(cii.inv_qty,0) * p.conversion_rate) as parent_out_qty,
             0 as child_out_qty,
+            d.department_id,
             d.department_name,
             ci.remarks,
             (CASE
@@ -916,12 +1025,92 @@ class Products_model extends CORE_Model {
             ".($as_of_date==null?"":" AND ci.date_invoice<='".$as_of_date."'")."
             GROUP BY ci.cash_invoice_id
 
-            ":" ")."
+            UNION ALL
+            /*Parent - (POS) Sales Invoice*/
 
+            SELECT posout.* FROM
+
+            (SELECT 
+            DATE_FORMAT(pis.start_datetime,'%Y-%m-%d') as txn_date,
+            DATE_FORMAT(pis.start_datetime,'%Y-%m-%d') as date_created,
+            pis.invoice_no as ref_no,
+            '(POS) Sales Invoice' as type,
+            'WALK-IN (Customer)' as Description,
+            pis.product_id,
+            'Bulk' AS identifier,
+            0 as parent_in_qty,
+            0 as child_in_qty,
+            (CASE
+                WHEN p.is_parent = 1 THEN (IFNULL(pis.product_quantity, 0) * p.bulk_conversion_rate)
+                WHEN p.is_parent = 0 AND p.parent_id = 0 THEN IFNULL(pis.product_quantity, 0)
+                ELSE 0
+            END) as parent_out_qty,
+            0 as child_out_qty,
+            (SELECT default_department_id FROM account_integration ai) as department_id,
+            (SELECT d.department_name
+                FROM account_integration ai
+                LEFT JOIN departments d ON d.department_id = ai.default_department_id
+            ) as department_name,
+            '' as remarks,
+            (CASE
+                WHEN p.is_parent = 1 THEN p.bulk_conversion_rate
+                ELSE 1
+            END) as bulk_conversion_rate
+
+            FROM pos_item_sales as pis
+        
+            LEFT JOIN products p on p.product_id = pis.product_id
+            WHERE pis.is_active = TRUE AND pis.is_deleted = FALSE
+            AND pis.product_id = $product_id
+            ".($as_of_date==null?"":" AND DATE_FORMAT(pis.start_datetime,'%Y-%m-%d')<='".$as_of_date."'")."
+            ) as posout
+            ".($depid==0?"":" WHERE posout.department_id=".$depid)."
+            
+
+            UNION ALL
+            /*Child - (POS) Sales Invoice*/
+
+            SELECT chldposout.* FROM
+            (SELECT 
+            DATE_FORMAT(pis.start_datetime,'%Y-%m-%d') as txn_date,
+            DATE_FORMAT(pis.start_datetime,'%Y-%m-%d') as date_created,
+            pis.invoice_no as ref_no,
+            '(POS) Sales Invoice' as type,
+            'WALK-IN (Customer)' as Description,
+            pis.product_id,
+            'Retail' AS identifier,
+            0 as parent_in_qty,
+            0 as child_in_qty,  
+            SUM(IFNULL(pis.product_quantity,0) * p.conversion_rate) as parent_out_qty,
+            0 as child_out_qty,
+            (SELECT default_department_id FROM account_integration ai) as department_id,
+            (SELECT d.department_name
+                FROM account_integration ai
+                LEFT JOIN departments d ON d.department_id = ai.default_department_id
+            ) as department_name,
+            '' as remarks,
+            (CASE
+                WHEN bulk.is_parent = 1 THEN bulk.bulk_conversion_rate
+                ELSE 1
+            END) as bulk_conversion_rate
+
+            FROM pos_item_sales as pis
+            
+            LEFT JOIN products p on p.product_id = pis.product_id
+            LEFT JOIN products bulk ON bulk.product_id = p.parent_id
+            WHERE pis.is_active = TRUE AND pis.is_deleted = FALSE
+            AND p.parent_id = $product_id
+            ".($as_of_date==null?"":" AND DATE_FORMAT(pis.start_datetime,'%Y-%m-%d')<='".$as_of_date."'")."
+            GROUP BY pis.invoice_id) as chldposout
+            ".($depid==0?"":" WHERE chldposout.department_id=".$depid)."
+
+            ":" ")."
 
             ".($disaccount==TRUE?" 
 
             UNION ALL
+
+            /*Parent - Dispatching Invoice*/
             SELECT 
             dis.date_invoice as txn_date,
             dis.date_created,
@@ -938,6 +1127,7 @@ class Products_model extends CORE_Model {
                 ELSE 0
             END) as parent_out_qty,
             0 as child_out_qty,
+            d.department_id,
             d.department_name,
             dis.remarks,
             (CASE
@@ -956,9 +1146,9 @@ class Products_model extends CORE_Model {
             AND dii.product_id=$product_id
             ".($as_of_date==null?"":" AND dis.date_invoice<='".$as_of_date."'")."
 
-
-
             UNION ALL
+
+            /*Child - Dispatching Invoice*/
             SELECT 
             dis.date_invoice as txn_date,
             dis.date_created,
@@ -971,6 +1161,7 @@ class Products_model extends CORE_Model {
             0 as child_in_qty,
             SUM(IFNULL(dii.inv_qty,0) * p.conversion_rate) as parent_out_qty,
             0 as child_out_qty,
+            d.department_id,
             d.department_name,
             dis.remarks,
             (CASE
@@ -1920,7 +2111,9 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                     ReceiveQtyP+
                     ReceiveQtyC+
                     AdjustInQtyP+
-                    AdjustInQtyC
+                    AdjustInQtyC+
+                    POSRQtyP+
+                    POSRQtyC
                     ".($depid==0?"":"+IssueToInvInP")."
                     ".($depid==0?"":"+IssueToInvInC")."),2) as quantity_in,
 
@@ -1933,6 +2126,8 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                     ".($account==TRUE?"+SalesOUtQtyC":"")."
                     ".($account_cii==TRUE?"+CInvOutP":"")."
                     ".($account_cii==TRUE?"+CInvOutC":"")."
+                    ".($account_cii==TRUE?"+POSQtyP":"")."
+                    ".($account_cii==TRUE?"+POSQtyC":"")."
                     ".($account_dis==TRUE?"+DInvOutP":"")."
                     ".($account_dis==TRUE?"+DInvOutC":"")."
                     ".($depid==0?"":"+IssueFromInvOutC")."
@@ -1959,7 +2154,11 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 IFNULL(issuefromout.parent_out_qty,0) as IssueFromInvOutP,
                 IFNULL(chldissuefromout.child_out_qty,0) as IssueFromInvOutC,
                 IFNULL(issuetoin.parent_in_qty,0) as IssueToInvInP,
-                IFNULL(chldissuetoin.child_in_qty,0) as IssueToInvInC
+                IFNULL(chldissuetoin.child_in_qty,0) as IssueToInvInC,
+                IFNULL(posout.parent_out_qty,0) as POSQtyP,
+                IFNULL(chldposout.child_out_qty,0) as POSQtyC,
+                IFNULL(posrin.parent_in_qty,0) as POSRQtyP,
+                IFNULL(chldposin.child_in_qty,0) as POSRQtyC           
 
                 FROM
 
@@ -1989,7 +2188,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 ".($is_nonsalable==NULL?"":" AND p.is_nonsalable = FALSE")."
                  )as pQ
 
-
+                 /*Parent - Adjustment IN*/
                 LEFT JOIN
                 (SELECT 
                     aii.product_id,
@@ -2009,6 +2208,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 ".($depid==null||$depid==0?"":" AND ai.department_id=".$depid)."
                 GROUP BY aii.product_id) as aiin ON aiin.product_id = pQ.product_id
 
+                 /*Child - Adjustment IN*/
                 LEFT JOIN
                 (SELECT 
                     chldp.parent_id,
@@ -2024,7 +2224,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                     ".($depid==null||$depid==0?"":" AND chldai.department_id=".$depid)."
                 GROUP BY chldp.parent_id) AS chldaiin ON chldaiin.parent_id = pQ.product_id
 
-
+                 /*Parent - Delivery Invoice*/
                 LEFT JOIN
                 (SELECT dii.product_id,
                         (CASE
@@ -2043,7 +2243,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 ".($depid==null||$depid==0?"":" AND di.department_id=".$depid)."
                 GROUP BY dii.product_id) as di ON di.product_id = pQ.product_id
 
-
+                 /*Child - Delivery Invoice*/
                 LEFT JOIN
                 (SELECT 
                         chldp.parent_id,
@@ -2059,6 +2259,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                             ".($depid==null||$depid==0?"":" AND chlddi.department_id=".$depid)."
                     GROUP BY chldp.parent_id) AS chlddi ON chlddi.parent_id = pQ.product_id
 
+                 /*Parent - Sales Invoice*/
                 LEFT JOIN
                 (SELECT 
                     sii.product_id,
@@ -2075,6 +2276,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 ".($depid==null||$depid==0?"":" AND si.department_id=".$depid)."
                 GROUP BY sii.product_id) as si on si.product_id = pQ.product_id
 
+                 /*Child - Sales Invoice*/
                 LEFT JOIN
                 (SELECT 
                     chldp.parent_id,
@@ -2089,7 +2291,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                     ".($depid==null||$depid==0?"":" AND chldsi.department_id=".$depid)."
                 GROUP BY chldp.parent_id) AS chldsi ON chldsi.parent_id = pQ.product_id
 
-
+                 /*Parent - Issuance*/
                 LEFT JOIN
                 (SELECT 
                     iii.product_id,
@@ -2106,6 +2308,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 ".($depid==null||$depid==0?"":" AND ii.issued_department_id=".$depid)."
                 GROUP BY iii.product_id) as ii ON ii.product_id = pQ.product_id
 
+                 /*Child - Issuance*/
                 LEFT JOIN
                 (SELECT 
                     chldp.parent_id,
@@ -2120,7 +2323,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                     ".($depid==null||$depid==0?"":" AND chldii.issued_department_id=".$depid)."                            
                 GROUP BY chldp.parent_id) AS chldii ON chldii.parent_id = pQ.product_id
 
-
+                 /*Parent - Transfer Item (From)*/
                 LEFT JOIN
                 (SELECT 
                     iii.product_id,
@@ -2138,6 +2341,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 ".($depid==null||$depid==0?"":" AND ii.from_department_id=".$depid)."
                 GROUP BY iii.product_id) as issuefromout ON issuefromout.product_id = pQ.product_id
 
+                 /*Child - Transfer Item (From)*/
                 LEFT JOIN
                 (SELECT 
                         chldp.parent_id,
@@ -2152,7 +2356,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                         ".($depid==null||$depid==0?"":" AND chldii.from_department_id=".$depid)."                                
                     GROUP BY chldp.parent_id) AS chldissuefromout ON chldissuefromout.parent_id = pQ.product_id
 
-
+                 /*Parent - Transfer Item (To)*/
                 LEFT JOIN
                 (SELECT 
                     iii.product_id,
@@ -2170,6 +2374,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 ".($depid==null||$depid==0?"":" AND ii.to_department_id=".$depid)."
                 GROUP BY iii.product_id) as issuetoin ON issuetoin.product_id = pQ.product_id
 
+                 /*Child - Transfer Item (To)*/
                 LEFT JOIN
                 (SELECT 
                     chldp.parent_id,
@@ -2184,7 +2389,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                     ".($depid==null||$depid==0?"":" AND chldii.to_department_id=".$depid)."
                 GROUP BY chldp.parent_id) AS chldissuetoin ON chldissuetoin.parent_id = pQ.product_id
 
-
+                 /*Parent - Adjustment OUT*/
                 LEFT JOIN
                 (SELECT
                     aii.product_id,
@@ -2203,6 +2408,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 ".($depid==null||$depid==0?"":" AND ai.department_id=".$depid)."
                 GROUP BY aii.product_id) as aiout ON aiout.product_id = pQ.product_id
 
+                 /*Child - Adjustment OUT*/
                 LEFT JOIN
                 (SELECT 
                         chldp.parent_id,
@@ -2218,7 +2424,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                             ".($depid==null||$depid==0?"":" AND chldai.department_id=".$depid)."
                     GROUP BY chldp.parent_id) AS chldaiout ON chldaiout.parent_id = pQ.product_id
 
-
+                 /*Parent - Cash Invoice*/
                 LEFT JOIN
                 (SELECT 
                     cii.product_id,
@@ -2237,6 +2443,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 ".($depid==null||$depid==0?"":" AND ci.department_id=".$depid)."
                 GROUP BY cii.product_id) as ciout ON ciout.product_id = pQ.product_id
 
+                 /*Child - Cash Invoice*/
                 LEFT JOIN
                 (SELECT 
                         chldp.parent_id,
@@ -2252,7 +2459,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                             ".($depid==null||$depid==0?"":" AND chldci.department_id=".$depid)."
                     GROUP BY chldp.parent_id) AS chldciout ON chldciout.parent_id = pQ.product_id                
 
-
+                 /*Parent - Dispatching Invoice*/
                 LEFT JOIN
                 (SELECT 
                     dii.product_id,
@@ -2272,6 +2479,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                     ".($depid==null||$depid==0?"":" AND di.department_id=".$depid)."
                 GROUP BY dii.product_id) as disout ON disout.product_id = pQ.product_id
 
+                 /*Child - Dispatching Invoice*/
                 LEFT JOIN
                 (SELECT     
                         chldp.parent_id,
@@ -2287,6 +2495,82 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                         ".($depid==null||$depid==0?"":" AND chlddi.department_id=".$depid)."
                     GROUP BY chldp.parent_id) AS chlddisout ON chlddisout.parent_id = pQ.product_id
 
+
+                /*Parent - POS (Sales Invoice)*/
+                LEFT JOIN
+                (SELECT m_pos_out.* FROM (SELECT 
+                        pis.product_id,
+                        (CASE
+                            WHEN p.is_parent = 1 THEN COALESCE(SUM(IFNULL(pis.product_quantity, 0)),0) * p.bulk_conversion_rate
+                            WHEN p.is_parent = 0 AND p.parent_id = 0 THEN COALESCE(SUM(IFNULL(pis.product_quantity, 0)),0)
+                            ELSE 0
+                        END) as parent_out_qty,
+                        (SELECT default_department_id FROM account_integration) as department_id
+                    FROM
+                        pos_item_sales pis
+                            LEFT JOIN products p ON p.product_id = pis.product_id       
+                    WHERE
+                        pis.is_deleted=0
+                        AND pis.is_active=1
+                        ".($as_of_date==null?"":" AND DATE_FORMAT(pis.start_datetime,'%Y-%m-%d') <='".$as_of_date."'")."
+                        GROUP BY pis.product_id) as m_pos_out
+                        ".($depid==null||$depid==0?"":" WHERE m_pos_out.department_id=".$depid)."
+                    ) AS posout ON posout.product_id = pQ.product_id
+
+                /*Child - POS (Sales Invoice)*/
+                LEFT JOIN
+                (SELECT c_pos_out.* FROM (SELECT     
+                            chldp.parent_id,
+                            SUM(pis.product_quantity * chldp.conversion_rate) AS child_out_qty,
+                            (SELECT default_department_id FROM account_integration) as department_id
+                        FROM
+                            pos_item_sales pis
+                        LEFT JOIN products chldp ON chldp.product_id = pis.product_id
+                        WHERE
+                            pis.is_deleted = 0
+                            AND pis.is_active=1  
+                            ".($as_of_date==null?"":" AND DATE_FORMAT(pis.start_datetime,'%Y-%m-%d') <='".$as_of_date."'")."
+                        GROUP BY chldp.parent_id) as c_pos_out
+                        ".($depid==null||$depid==0?"":" WHERE c_pos_out.department_id=".$depid)."
+                    ) AS chldposout ON chldposout.parent_id = pQ.product_id
+
+                /*Parent - POS (Sales Return)*/
+                LEFT JOIN
+                (SELECT m_pos_in.* FROM (SELECT 
+                        pir.product_id,
+                        (CASE
+                            WHEN p.is_parent = 1 THEN COALESCE(SUM(IFNULL(pir.product_quantity, 0)),0) * p.bulk_conversion_rate
+                            WHEN p.is_parent = 0 AND p.parent_id = 0 THEN COALESCE(SUM(IFNULL(pir.product_quantity, 0)),0)
+                            ELSE 0
+                        END) as parent_in_qty,
+                        (SELECT default_department_id FROM account_integration) as department_id
+                    FROM
+                        pos_item_returns pir
+                            LEFT JOIN products p ON p.product_id = pir.product_id       
+                    WHERE
+                        pir.is_deleted=0
+                        AND pir.is_active=1
+                        ".($as_of_date==null?"":" AND DATE_FORMAT(pir.start_datetime,'%Y-%m-%d') <='".$as_of_date."'")."
+                        GROUP BY pir.product_id) as m_pos_in
+                        ".($depid==null||$depid==0?"":" WHERE m_pos_in.department_id=".$depid)."
+                    ) AS posrin ON posrin.product_id = pQ.product_id
+
+                /*Child - POS (Sales Return)*/
+                LEFT JOIN
+                (SELECT c_pos_in.* FROM (SELECT     
+                            chldp.parent_id,
+                            SUM(pir.product_quantity * chldp.conversion_rate) AS child_in_qty,
+                            (SELECT default_department_id FROM account_integration) as department_id
+                        FROM
+                            pos_item_returns pir
+                        LEFT JOIN products chldp ON chldp.product_id = pir.product_id
+                        WHERE
+                            pir.is_deleted = 0
+                            AND pir.is_active=1  
+                            ".($as_of_date==null?"":" AND DATE_FORMAT(pir.start_datetime,'%Y-%m-%d') <='".$as_of_date."'")."
+                        GROUP BY chldp.parent_id) as c_pos_in
+                        ".($depid==null||$depid==0?"":" WHERE c_pos_in.department_id=".$depid)."
+                    ) AS chldposin ON chldposin.parent_id = pQ.product_id
 
                 )as core 
                 
