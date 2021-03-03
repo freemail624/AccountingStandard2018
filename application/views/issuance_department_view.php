@@ -630,7 +630,7 @@ dt_si = $('#tbl_si_list').DataTable({
         });
         
          products = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name'),
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name','unq_id'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             local : products
         });

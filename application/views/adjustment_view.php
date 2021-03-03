@@ -879,7 +879,7 @@ $(document).ready(function(){
         _cboSuppliers.select2('val',null);        
 
         products = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name'),
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name','unq_id'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             local : products
         });

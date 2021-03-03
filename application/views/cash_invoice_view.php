@@ -1127,7 +1127,7 @@ $(document).ready(function(){
         });
 
         products = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name'),
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name','unq_id'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             local : products
         });
@@ -1140,7 +1140,7 @@ $(document).ready(function(){
             header: [
                 '<table class="tt-head"><tr>'+
                 '<td width=15%" style="padding-left: 1%;"><b>PLU</b></td>'+
-                '<td class="hidden"><b>UniqID</b></td>'+
+                '<td class=""><b>UniqID</b></td>'+
                 '<td width="25%" align="left"><b>Description</b></td>'+
                 '<td width="20%" align="left"><b>Expiration</b></td>'+
                 '<td width="10%" align="left"><b>LOT#</b></td>'+
@@ -1150,7 +1150,7 @@ $(document).ready(function(){
             ].join('\n'),
             suggestion: Handlebars.compile('<table class="tt-items"><tr>'+
                 '<td width="15%" style="padding-left: 1%;">{{product_code}}</td>'+
-                '<td class="hidden">{{unq_id}}</td>'+
+                '<td class="">{{unq_id}}</td>'+
                 '<td width="25%" align="left">{{product_desc}}</td>'+
                 '<td width="20%" align="left">{{exp_date}}</td>'+
                 '<td width="10%" align="left">{{batch_no}}</td>'+
