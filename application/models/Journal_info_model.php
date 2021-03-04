@@ -131,6 +131,7 @@ class Journal_info_model extends CORE_Model{
         FROM
         (SELECT
         ji.journal_id,
+        ji.book_type,
             date_txn,
             DATE_FORMAT(ji.date_created, '%Y-%m-%d') AS date_created,
             txn_no,

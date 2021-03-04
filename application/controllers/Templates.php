@@ -2082,33 +2082,33 @@ class Templates extends CORE_Controller {
                 $type=$this->input->get('type',TRUE);
 
                 $voucher_info= $this->Cash_vouchers_model->get_list($cv_id,
-                array(
-                    'cv_info.*',
-                    'DATE_FORMAT(cv_info.date_txn,"%m/%d/%Y")as date_txn',
-                    'DATE_FORMAT(cv_info.check_date,"%m/%d/%Y") as check_date',
-                    'payment_methods.payment_method',
-                    'suppliers.supplier_name as particular',
-                    'departments.department_name',
-                    'b_refchecktype.check_type_desc',
-                    'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by',
-                    'CONCAT_WS(" ",vbu.user_fname,vbu.user_lname)as verified_by',
-                    'CONCAT_WS(" ",abu.user_fname,abu.user_lname)as approved_by',
-                    'CONCAT_WS(" ",cbu.user_fname,cbu.user_lname)as cancelled_by',
-                    'dr.dr_invoice_no'
-                ),
-                array(
-                    array('suppliers','suppliers.supplier_id=cv_info.supplier_id','left'),
-                    array('departments','departments.department_id=cv_info.department_id','left'),
-                    array('user_accounts','user_accounts.user_id=cv_info.created_by_user','left'),
-                    array('user_accounts vbu','vbu.user_id=cv_info.verified_by_user','left'),
-                    array('user_accounts abu','abu.user_id=cv_info.approved_by_user','left'),
-                    array('user_accounts cbu','cbu.user_id=cv_info.cancelled_by_user','left'),
-                    array('payment_methods','payment_methods.payment_method_id=cv_info.payment_method_id','left'),
-                    array('b_refchecktype','b_refchecktype.check_type_id=cv_info.check_type_id','left'),
-                    array('delivery_invoice dr','dr.dr_invoice_id=cv_info.dr_invoice_id','left')
-                ),
-                'cv_info.cv_id DESC'
-            );
+                    array(
+                        'cv_info.*',
+                        'DATE_FORMAT(cv_info.date_txn,"%m/%d/%Y")as date_txn',
+                        'DATE_FORMAT(cv_info.check_date,"%m/%d/%Y") as check_date',
+                        'payment_methods.payment_method',
+                        'suppliers.supplier_name as particular',
+                        'departments.department_name',
+                        'b_refchecktype.check_type_desc',
+                        'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by',
+                        'CONCAT_WS(" ",vbu.user_fname,vbu.user_lname)as verified_by',
+                        'CONCAT_WS(" ",abu.user_fname,abu.user_lname)as approved_by',
+                        'CONCAT_WS(" ",cbu.user_fname,cbu.user_lname)as cancelled_by',
+                        'dr.dr_invoice_no'
+                    ),
+                    array(
+                        array('suppliers','suppliers.supplier_id=cv_info.supplier_id','left'),
+                        array('departments','departments.department_id=cv_info.department_id','left'),
+                        array('user_accounts','user_accounts.user_id=cv_info.created_by_user','left'),
+                        array('user_accounts vbu','vbu.user_id=cv_info.verified_by_user','left'),
+                        array('user_accounts abu','abu.user_id=cv_info.approved_by_user','left'),
+                        array('user_accounts cbu','cbu.user_id=cv_info.cancelled_by_user','left'),
+                        array('payment_methods','payment_methods.payment_method_id=cv_info.payment_method_id','left'),
+                        array('b_refchecktype','b_refchecktype.check_type_id=cv_info.check_type_id','left'),
+                        array('delivery_invoice dr','dr.dr_invoice_id=cv_info.dr_invoice_id','left')
+                    ),
+                    'cv_info.cv_id DESC'
+                );
 
                 $company=$m_company->get_list();
                 $data['company_info']=$company[0];

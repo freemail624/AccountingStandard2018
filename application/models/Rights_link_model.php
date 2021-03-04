@@ -110,8 +110,16 @@ class Rights_link_model extends CORE_Model{
                                           (124,'11','11-2','Bank Statement'),
                                           (125,'1','1-9','Check Summary'),
                                           (126,'9','9-28','AR Schedule - Tenants'),
-                                          (127,'6','6-18','Receivable Settings')
-
+                                          (127,'6','6-18','Receivable Settings'),
+                                          
+                                          (128,'100','100-1','Dashboard (Accounts Receivable)'),
+                                          (129,'100','100-2','Dashboard (Accounts Payable)'),
+                                          (130,'100','100-3','Dashboard (Customers)'),
+                                          (131,'100','100-4','Dashboard (Suppliers)'),
+                                          (132,'100','100-5','Dashboard Graph (Income (Last Year) vs Income (Current Year)) '),
+                                          (133,'100','100-6','Dashboard Graph (Income vs Expense (Current Year)) '),
+                                          (134,'100','100-7','Dashboard Graph (Sales Report)'),
+                                          (135,'100','100-8','Dashboard Graph (Expense Graph)')
 
                                           ON DUPLICATE KEY UPDATE
                                           rights_links.parent_code=VALUES(rights_links.parent_code),

@@ -66,7 +66,11 @@
             </td>
         </tr>
     </table><hr>
-    <td><h4>TENANTS' AGING OF RECEIVABLES REPORT</h4></td>
+    <h4>
+        TENANTS' AGING OF RECEIVABLES REPORT <br/>
+        Department : <?php echo $department_name; ?>
+    </h4>
+
     <table width="100%" cellspacing="0" id="table_aging" cellpadding="5">
     	<tr>
             <td width="15%"><b>Tenant Code</b></td>

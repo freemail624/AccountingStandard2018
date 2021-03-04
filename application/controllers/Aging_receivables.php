@@ -12,7 +12,8 @@
 					'Sales_invoice_model',
 					'Users_model',
 					'Soa_settings_model',
-					'Company_model'
+					'Company_model',
+					'Departments_model'
 				)
 			);
 			$this->load->library('M_pdf');
@@ -31,6 +32,7 @@
 	        $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
 	        $data['title'] = "Aging of Receivables";
 
+	        $data['departments'] = $this->Departments_model->get_list(array("is_deleted"=>FALSE));
 	        $this->load->view('aging_receivables_view',$data);
 		}
 
@@ -53,8 +55,8 @@
 				// NEW VERSION - BILLING VERSION 
 				case 'list': 
 					$m_sales = $this->Sales_invoice_model;
-
-					$response['data'] = $m_sales->get_aging_receivables_billing();
+					$department_id = $this->input->get('id', TRUE);
+					$response['data'] = $m_sales->get_aging_receivables_billing($department_id);
 
 					echo json_encode($response);
 					break;		
@@ -90,16 +92,22 @@
 				// 	break;							
 
 				case 'print': // BILLING VERSION
-
 					$m_sales = $this->Sales_invoice_model;
+					$m_department = $this->Departments_model;
 					$m_company = $this->Company_model;
 
 					$company_info = $m_company->get_list();
 
 					$data['company_info'] = $company_info[0];
 
+					$department_id = $this->input->get('id', TRUE);
+					$data['receivables'] = $m_sales->get_aging_receivables_billing($department_id);
 
-					$data['receivables'] = $m_sales->get_aging_receivables_billing();
+					if($department_id == 0){
+						$data['department_name'] = "All Departments";
+					}else{
+						$data['department_name'] = $m_department->get_list($department_id)[0]->department_name;
+					}
 
                     $file_name='Aging of Receivables';
                     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
@@ -123,13 +131,21 @@
           
                 	$excel=$this->excel;
 					$m_sales = $this->Sales_invoice_model;
+					$m_department = $this->Departments_model;
 					$m_company = $this->Company_model;
 
 					$company_info = $m_company->get_list();
 
 					$data['company_info'] = $company_info[0];
 
-					$receivables = $m_sales->get_aging_receivables_billing();
+					$department_id = $this->input->get('id', TRUE);
+					$receivables = $m_sales->get_aging_receivables_billing($department_id);
+
+					if($department_id == 0){
+						$department_name = "All Departments";
+					}else{
+						$department_name = $m_department->get_list($department_id)[0]->department_name;
+					}
 
 	                $excel->setActiveSheetIndex(0);
 
@@ -155,6 +171,11 @@
                 	$excel->getActiveSheet()->setCellValue('A6',"TENANTS' AGING OF RECEIVABLES REPORT")
                                         	->getStyle('A6')->getFont()->setBold(TRUE)
                                         	->setSize(12);
+
+                	$excel->getActiveSheet()->setCellValue('A7',"Department : ".$department_name)
+                                        	->getStyle('A7')->getFont()->setBold(TRUE)
+                                        	->setSize(12);
+
 
 	                $excel->getActiveSheet()->getColumnDimension('A')->setWidth('40');
 	                $excel->getActiveSheet()->getColumnDimension('B')->setWidth('40');

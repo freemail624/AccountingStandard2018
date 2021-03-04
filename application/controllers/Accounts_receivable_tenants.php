@@ -115,9 +115,10 @@ class Accounts_receivable_tenants extends CORE_Controller
                 $excel->getActiveSheet()->getColumnDimension('F')->setWidth('20');
                 $excel->getActiveSheet()->getColumnDimension('G')->setWidth('20');
                 $excel->getActiveSheet()->getColumnDimension('H')->setWidth('20');
+                $excel->getActiveSheet()->getColumnDimension('I')->setWidth('20');
 
                 $excel->getActiveSheet()
-                        ->getStyle('B:H')
+                        ->getStyle('B:I')
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
@@ -125,22 +126,25 @@ class Accounts_receivable_tenants extends CORE_Controller
                                         ->getStyle('A9')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('B9','As of '.$prev_month)
                                         ->getStyle('B9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('C9','Billed')
+                $excel->getActiveSheet()->setCellValue('C9','2307')
                                         ->getStyle('C9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('D9','OR Detail')
+                $excel->getActiveSheet()->setCellValue('D9','Billed')
                                         ->getStyle('D9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('E9','Payments')
+                $excel->getActiveSheet()->setCellValue('E9','OR Detail')
                                         ->getStyle('E9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('F9','Adjustment (Dr)')
+                $excel->getActiveSheet()->setCellValue('F9','Payments')
                                         ->getStyle('F9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('G9','Adjustment (Cr)')
+                $excel->getActiveSheet()->setCellValue('G9','Adjustment (Dr)')
                                         ->getStyle('G9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('H9','As of '.$current_month)
+                $excel->getActiveSheet()->setCellValue('H9','Adjustment (Cr)')
                                         ->getStyle('H9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('I9','As of '.$current_month)
+                                        ->getStyle('I9')->getFont()->setBold(TRUE);
 
                 $i=10;
 
                 $total_previous=0;
+                $total_2307=0;
                 $total_billing=0;
                 $total_payment=0;
                 $total_adjustment_dr=0;
@@ -155,15 +159,17 @@ class Accounts_receivable_tenants extends CORE_Controller
 
                     $excel->getActiveSheet()->setCellValue('A'.$i,$ar->customer_name);
                     $excel->getActiveSheet()->setCellValue('B'.$i,$ar->previous);
-                    $excel->getActiveSheet()->setCellValue('C'.$i,$ar->billing);
-                    $excel->getActiveSheet()->setCellValue('D'.$i,$ar->or_details);
-                    $excel->getActiveSheet()->setCellValue('E'.$i,$ar->payment);
-                    $excel->getActiveSheet()->setCellValue('F'.$i,$ar->adjustment_dr);
-                    $excel->getActiveSheet()->setCellValue('G'.$i,$ar->adjustment_cr);
-                    $excel->getActiveSheet()->setCellValue('H'.$i,$ar->total);
+                    $excel->getActiveSheet()->setCellValue('C'.$i,$ar->wtax_expanded);
+                    $excel->getActiveSheet()->setCellValue('D'.$i,$ar->billing);
+                    $excel->getActiveSheet()->setCellValue('E'.$i,$ar->or_details);
+                    $excel->getActiveSheet()->setCellValue('F'.$i,$ar->payment);
+                    $excel->getActiveSheet()->setCellValue('G'.$i,$ar->adjustment_dr);
+                    $excel->getActiveSheet()->setCellValue('H'.$i,$ar->adjustment_cr);
+                    $excel->getActiveSheet()->setCellValue('I'.$i,$ar->total);
 
                     $i++;
                     $total_previous+=$ar->previous;
+                    $total_2307+=$ar->wtax_expanded;
                     $total_billing+=$ar->billing;
                     $total_payment+=$ar->payment;
                     $total_adjustment_dr+=$ar->adjustment_dr;
@@ -180,16 +186,18 @@ class Accounts_receivable_tenants extends CORE_Controller
                                             ->getStyle('A'.$i)->getFont()->setBold(TRUE);
                     $excel->getActiveSheet()->setCellValue('B'.$i,$total_previous)
                                             ->getStyle('B'.$i)->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('C'.$i,$total_billing)
+                    $excel->getActiveSheet()->setCellValue('C'.$i,$total_2307)
                                             ->getStyle('C'.$i)->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('E'.$i,$total_payment)
+                    $excel->getActiveSheet()->setCellValue('E'.$i,$total_billing)
                                             ->getStyle('E'.$i)->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('F'.$i,$total_adjustment_dr)
+                    $excel->getActiveSheet()->setCellValue('F'.$i,$total_payment)
                                             ->getStyle('F'.$i)->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('G'.$i,$total_adjustment_cr)
+                    $excel->getActiveSheet()->setCellValue('G'.$i,$total_adjustment_dr)
                                             ->getStyle('G'.$i)->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('H'.$i,$total)
+                    $excel->getActiveSheet()->setCellValue('H'.$i,$total_adjustment_cr)
                                             ->getStyle('H'.$i)->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('I'.$i,$total)
+                                            ->getStyle('I'.$i)->getFont()->setBold(TRUE);
 
                     $i++;
 
@@ -237,6 +245,7 @@ class Accounts_receivable_tenants extends CORE_Controller
                 ob_start();
                 $excel->setActiveSheetIndex(0);
 
+               
                 $excel->getActiveSheet()->getColumnDimensionByColumn('A1')->setWidth('50');
                 $excel->getActiveSheet()->getColumnDimensionByColumn('A2:B2')->setWidth('50');
                 $excel->getActiveSheet()->getColumnDimensionByColumn('A3')->setWidth('50');
@@ -268,9 +277,10 @@ class Accounts_receivable_tenants extends CORE_Controller
                 $excel->getActiveSheet()->getColumnDimension('F')->setWidth('20');
                 $excel->getActiveSheet()->getColumnDimension('G')->setWidth('20');
                 $excel->getActiveSheet()->getColumnDimension('H')->setWidth('20');
+                $excel->getActiveSheet()->getColumnDimension('I')->setWidth('20');
 
                 $excel->getActiveSheet()
-                        ->getStyle('B:H')
+                        ->getStyle('B:I')
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
@@ -278,22 +288,25 @@ class Accounts_receivable_tenants extends CORE_Controller
                                         ->getStyle('A9')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('B9','As of '.$prev_month)
                                         ->getStyle('B9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('C9','Billed')
+                $excel->getActiveSheet()->setCellValue('C9','2307')
                                         ->getStyle('C9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('D9','OR Detail')
+                $excel->getActiveSheet()->setCellValue('D9','Billed')
                                         ->getStyle('D9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('E9','Payments')
+                $excel->getActiveSheet()->setCellValue('E9','OR Detail')
                                         ->getStyle('E9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('F9','Adjustment (Dr)')
+                $excel->getActiveSheet()->setCellValue('F9','Payments')
                                         ->getStyle('F9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('G9','Adjustment (Cr)')
+                $excel->getActiveSheet()->setCellValue('G9','Adjustment (Dr)')
                                         ->getStyle('G9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('H9','As of '.$current_month)
+                $excel->getActiveSheet()->setCellValue('H9','Adjustment (Cr)')
                                         ->getStyle('H9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('I9','As of '.$current_month)
+                                        ->getStyle('I9')->getFont()->setBold(TRUE);
 
                 $i=10;
 
                 $total_previous=0;
+                $total_2307=0;
                 $total_billing=0;
                 $total_payment=0;
                 $total_adjustment_dr=0;
@@ -308,15 +321,17 @@ class Accounts_receivable_tenants extends CORE_Controller
 
                     $excel->getActiveSheet()->setCellValue('A'.$i,$ar->customer_name);
                     $excel->getActiveSheet()->setCellValue('B'.$i,$ar->previous);
-                    $excel->getActiveSheet()->setCellValue('C'.$i,$ar->billing);
-                    $excel->getActiveSheet()->setCellValue('D'.$i,$ar->or_details);
-                    $excel->getActiveSheet()->setCellValue('E'.$i,$ar->payment);
-                    $excel->getActiveSheet()->setCellValue('F'.$i,$ar->adjustment_dr);
-                    $excel->getActiveSheet()->setCellValue('G'.$i,$ar->adjustment_cr);
-                    $excel->getActiveSheet()->setCellValue('H'.$i,$ar->total);
+                    $excel->getActiveSheet()->setCellValue('C'.$i,$ar->wtax_expanded);
+                    $excel->getActiveSheet()->setCellValue('D'.$i,$ar->billing);
+                    $excel->getActiveSheet()->setCellValue('E'.$i,$ar->or_details);
+                    $excel->getActiveSheet()->setCellValue('F'.$i,$ar->payment);
+                    $excel->getActiveSheet()->setCellValue('G'.$i,$ar->adjustment_dr);
+                    $excel->getActiveSheet()->setCellValue('H'.$i,$ar->adjustment_cr);
+                    $excel->getActiveSheet()->setCellValue('I'.$i,$ar->total);
 
                     $i++;
                     $total_previous+=$ar->previous;
+                    $total_2307+=$ar->wtax_expanded;
                     $total_billing+=$ar->billing;
                     $total_payment+=$ar->payment;
                     $total_adjustment_dr+=$ar->adjustment_dr;
@@ -333,16 +348,18 @@ class Accounts_receivable_tenants extends CORE_Controller
                                             ->getStyle('A'.$i)->getFont()->setBold(TRUE);
                     $excel->getActiveSheet()->setCellValue('B'.$i,$total_previous)
                                             ->getStyle('B'.$i)->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('C'.$i,$total_billing)
+                    $excel->getActiveSheet()->setCellValue('C'.$i,$total_2307)
                                             ->getStyle('C'.$i)->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('E'.$i,$total_payment)
+                    $excel->getActiveSheet()->setCellValue('E'.$i,$total_billing)
                                             ->getStyle('E'.$i)->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('F'.$i,$total_adjustment_dr)
+                    $excel->getActiveSheet()->setCellValue('F'.$i,$total_payment)
                                             ->getStyle('F'.$i)->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('G'.$i,$total_adjustment_cr)
+                    $excel->getActiveSheet()->setCellValue('G'.$i,$total_adjustment_dr)
                                             ->getStyle('G'.$i)->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('H'.$i,$total)
+                    $excel->getActiveSheet()->setCellValue('H'.$i,$total_adjustment_cr)
                                             ->getStyle('H'.$i)->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('I'.$i,$total)
+                                            ->getStyle('I'.$i)->getFont()->setBold(TRUE);
 
                     $i++;
 

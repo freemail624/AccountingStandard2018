@@ -58,7 +58,19 @@
                 from { -webkit-transform: rotate(0deg); }
                 to { -webkit-transform: rotate(360deg); }
             }
-
+            #tbl_aging_filter{
+                display: none;
+            }
+             div.dataTables_processing{ 
+            position: absolute!important; 
+            top: 0%!important; 
+            right: -45%!important; 
+            left: auto!important; 
+            width: 100%!important; 
+            height: 40px!important; 
+            background: none!important; 
+            background-color: transparent!important; 
+            } 
         </style>
 
     </head>
@@ -94,6 +106,29 @@
                                             </div> -->
                                             <div class="panel-body table-responsive">
                                             <h2 class="h2-panel-heading">Aging of Receivables</h2><hr>
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                &nbsp;<br>
+                                                    <button class="btn btn-primary" id="btn_print" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Print Aging Receivables" ><i class="fa fa-print"></i> Print Report</button>
+
+                                                    <button class="btn btn-success" id="btn_export" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Export Aging Receivables" >'<i class="fa fa-file-excel-o"></i> Export</button>
+
+                                                    <button class="btn btn-success hidden" id="btn_email" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Email Aging Receivables" ><i class="fa fa-share"></i> Email</button>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                        Department :<br />
+                                                        <select id="cbo_departments" class="selectpicker show-tick form-control" data-live-search="true">
+                                                                <option value="0"> All Departments</option>
+                                                            <?php foreach($departments as $department){ ?>
+                                                                <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
+                                                            <?php } ?>
+                                                        </select>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                        Search :<br />
+                                                         <input type="text" id="searchbox" class="form-control">
+                                                </div>
+                                            </div><br/>
                                                 <table id="tbl_aging" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead class="">
                                                     <tr>
@@ -108,7 +143,6 @@
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-
                                                     </tbody>
                                                     <tfoot>
                                                         <td colspan="2" align="right">TOTAL :</td>
@@ -165,12 +199,32 @@
 
     $(document).ready(function() {
         var dt; var _txnMode; var _selectedID; var _selectRowObj; var _taxTypeGroup;
+        var _cboDepartment;
 
         var initializeControls=function() {
+
+            _cboDepartment=$("#cbo_departments").select2({
+                placeholder: "Please Select Department.",
+                allowClear: false
+            });
+
             dt=$('#tbl_aging').DataTable({
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
-                "ajax" : "Aging_receivables/transaction/list",
+                "order": [[ 1, "asc" ]],
+                oLanguage: {
+                        sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+                },
+                processing : true,
+                "ajax" : {
+                    "url" : "Aging_receivables/transaction/list",
+                    "bDestroy": true,            
+                    "data": function ( d ) {
+                            return $.extend( {}, d, {
+                                "id": _cboDepartment.val()
+                            });
+                        }
+                }, 
                 "columns": [
                     { targets:[0],data: "tenant_code" },
                     { targets:[1],data: "trade_name" },                    
@@ -298,29 +352,29 @@
                     $('#td_security_deposit').html('<b>'+accounting.formatNumber(total_security_deposit,2)+'</b>');
                 }
             });
-
-            var createToolBarButton=function() {
-                var _btnPrint='<button class="btn btn-primary" id="btn_print" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Print Aging Receivables" >'+
-                    '<i class="fa fa-print"></i> Print Report</button>';
-
-                var _btnExport='<button class="btn btn-success" id="btn_export" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Export Aging Receivables" >'+
-                    '<i class="fa fa-file-excel-o"></i> Export</button>';
-
-                var _btnEmail='<button class="btn btn-success" id="btn_email" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Email Aging Receivables" >'+
-                    '<i class="fa fa-share"></i> Email</button>';
-
-                $("div.toolbar").html(_btnPrint+"&nbsp;"+_btnExport);
-            }();
         }();
 
 
         var bindEventHandlers=function(){
+
+            _cboDepartment.on("select2:select", function (e) {
+                $('#tbl_aging').DataTable().ajax.reload();
+           });
+
+            $("#searchbox").keyup(function(){         
+                dt
+                    .search(this.value)
+                    .draw();
+            });
+
             $('#btn_print').click(function(){
-                window.open('Aging_receivables/transaction/print');   
+                var id = $('#cbo_departments').val();
+                window.open('Aging_receivables/transaction/print?id='+id);   
             });
 
             $('#btn_export').click(function(){
-                window.open('Aging_receivables/transaction/export');   
+                var id = $('#cbo_departments').val();
+                window.open('Aging_receivables/transaction/export?id='+id);   
             });
 
             $('#btn_email').click(function(){

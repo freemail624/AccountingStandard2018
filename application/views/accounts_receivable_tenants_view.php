@@ -178,18 +178,18 @@
                                                         <div style="">
                                                             <table id="tbl_accounts_receivable" class="table table-striped" cellspacing="0" width="100%">
                                                                 <thead class="">
-                                                                <tr>
-                                                                    <th width="30%">Tenants</th>
-                                                                    <th class="text-right">As of <br/><span class="previous_month"></span></th>
-                                                                    <th class="text-right">Billed</th>
-                                                                    <th class="text-right">OR Detail</th>
-                                                                    <th class="text-right">Payments</th>
-                                                                    <th class="text-right">Adjustments (Dr)</th>
-                                                                    <th class="text-right">Adjusments (Cr)</th>
-                                                                    <th class="text-right">As of <br/><span class="current_month"></span></th>
-                                                                    <th class="text-right">Current</th>
-
-                                                                </tr>
+                                                                    <tr>
+                                                                        <th width="30%">Tenants</th>
+                                                                        <th class="text-right">As of <br/><span class="previous_month"></span></th>
+                                                                        <th class="text-right">2307</th>
+                                                                        <th class="text-right">Billed</th>
+                                                                        <th class="text-right">OR Detail</th>
+                                                                        <th class="text-right">Payments</th>
+                                                                        <th class="text-right">Adjustments (Dr)</th>
+                                                                        <th class="text-right">Adjusments (Cr)</th>
+                                                                        <th class="text-right">As of <br/><span class="current_month"></span></th>
+                                                                        <th class="text-right">Current</th>
+                                                                    </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                 </tbody>
@@ -339,42 +339,49 @@
                     },
                     {
                         sClass:"text-right", targets:[2],
+                        data: "wtax_expanded",
+                        render: function(data, type, full, meta){
+                            return accounting.formatNumber(data,2);
+                        }
+                    },                    
+                    {
+                        sClass:"text-right", targets:[3],
                         data: "billing",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }
                     },
-                    { sClass:"text-center", targets:[3], data: "or_details" },
+                    { sClass:"text-center", targets:[4], data: "or_details" },
                     {
-                        sClass:"text-right", targets:[4],
+                        sClass:"text-right", targets:[5],
                         data: "payment",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }
                     },
                     {
-                        sClass:"text-right", targets:[5],
+                        sClass:"text-right", targets:[6],
                         data: "adjustment_dr",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }
                     },
                     {
-                        sClass:"text-right", targets:[6],
+                        sClass:"text-right", targets:[7],
                         data: "adjustment_cr",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }
                     },
                     {
-                        sClass:"text-right", targets:[7],
+                        sClass:"text-right", targets:[8],
                         data: "total",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }
                     },
                     {
-                        visible: false, sClass:"text-right", targets:[7],
+                        visible: false, sClass:"text-right", targets:[9],
                         data: "current",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);

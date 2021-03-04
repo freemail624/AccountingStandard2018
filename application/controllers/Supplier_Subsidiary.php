@@ -271,13 +271,14 @@
                                             ->getStyle('E10')->getFont()->setBold(TRUE);
 
                     $excel->getActiveSheet()->getColumnDimension('A')->setWidth('25');
-                    $excel->getActiveSheet()->getColumnDimension('B')->setWidth('30');
-                    $excel->getActiveSheet()->getColumnDimension('C')->setWidth('40');
+                    $excel->getActiveSheet()->getColumnDimension('B')->setWidth('10');
+                    $excel->getActiveSheet()->getColumnDimension('C')->setWidth('30');
                     $excel->getActiveSheet()->getColumnDimension('D')->setWidth('40');
                     $excel->getActiveSheet()->getColumnDimension('E')->setWidth('40');
-                    $excel->getActiveSheet()->getColumnDimension('F')->setWidth('20');
+                    $excel->getActiveSheet()->getColumnDimension('F')->setWidth('40');
                     $excel->getActiveSheet()->getColumnDimension('G')->setWidth('20');
                     $excel->getActiveSheet()->getColumnDimension('H')->setWidth('20');
+                    $excel->getActiveSheet()->getColumnDimension('I')->setWidth('20');
 
                     $excel->getActiveSheet()
                             ->getStyle('A12')
@@ -286,11 +287,11 @@
                      $excel->getActiveSheet()
                             ->getStyle('B12')
                             ->getAlignment()
-                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);                                                           
-                    $excel->getActiveSheet()
-                            ->getStyle('F')
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);                  
+                     $excel->getActiveSheet()
+                            ->getStyle('C12')
                             ->getAlignment()
-                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);                                                           
                     $excel->getActiveSheet()
                             ->getStyle('G')
                             ->getAlignment()
@@ -298,41 +299,48 @@
                     $excel->getActiveSheet()
                             ->getStyle('H')
                             ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                    $excel->getActiveSheet()
+                            ->getStyle('I')
+                            ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);    
 
                     $excel->getActiveSheet()->setCellValue('A12','Txn Date')
                                             ->getStyle('A12')->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('B12','Txn #')
+                    $excel->getActiveSheet()->setCellValue('B12','Book')
                                             ->getStyle('B12')->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('C12','Memo')
+                    $excel->getActiveSheet()->setCellValue('C12','Txn #')
                                             ->getStyle('C12')->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('D12','Remarks')
+                    $excel->getActiveSheet()->setCellValue('D12','Memo')
                                             ->getStyle('D12')->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('E12','Posted by')
+                    $excel->getActiveSheet()->setCellValue('E12','Remarks')
                                             ->getStyle('E12')->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('F12','Debit')
+                    $excel->getActiveSheet()->setCellValue('F12','Posted by')
                                             ->getStyle('F12')->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('G12','Credit')
+                    $excel->getActiveSheet()->setCellValue('G12','Debit')
                                             ->getStyle('G12')->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('H12','Balance')
+                    $excel->getActiveSheet()->setCellValue('H12','Credit')
                                             ->getStyle('H12')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('I12','Balance')
+                                            ->getStyle('I12')->getFont()->setBold(TRUE);
 
                     $i=13;
 
                     foreach($supplier_subsidiary as $items){
                         $excel->getActiveSheet()->setCellValue('A'.$i,$items->date_txn);
-                        $excel->getActiveSheet()->setCellValue('B'.$i,$items->txn_no);
-                        $excel->getActiveSheet()->setCellValue('C'.$i,$items->memo);
-                        $excel->getActiveSheet()->setCellValue('D'.$i,$items->remarks);
-                        $excel->getActiveSheet()->setCellValue('E'.$i,$items->posted_by);
-                        $excel->getActiveSheet()->getStyle('F'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                        $excel->getActiveSheet()->setCellValue('F'.$i,number_format($items->debit,2));
+                        $excel->getActiveSheet()->setCellValue('B'.$i,$items->book_type);
+                        $excel->getActiveSheet()->setCellValue('C'.$i,$items->txn_no);
+                        $excel->getActiveSheet()->setCellValue('D'.$i,$items->memo);
+                        $excel->getActiveSheet()->setCellValue('E'.$i,$items->remarks);
+                        $excel->getActiveSheet()->setCellValue('F'.$i,$items->posted_by);
                         $excel->getActiveSheet()->getStyle('G'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                        $excel->getActiveSheet()->setCellValue('G'.$i,number_format($items->credit,2));
+                        $excel->getActiveSheet()->setCellValue('G'.$i,number_format($items->debit,2));
                         $excel->getActiveSheet()->getStyle('H'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                        $excel->getActiveSheet()->setCellValue('H'.$i,number_format($items->balance,2));
+                        $excel->getActiveSheet()->setCellValue('H'.$i,number_format($items->credit,2));
+                        $excel->getActiveSheet()->getStyle('I'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                        $excel->getActiveSheet()->setCellValue('I'.$i,number_format($items->balance,2));
                         $i++;
-                        }
+                    }
 
                     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                     header('Content-Disposition: attachment;filename='."SUPPLIER SUBSIDIARY REPORT.xlsx".'');
@@ -425,26 +433,27 @@
                                             ->getStyle('E10')->getFont()->setBold(TRUE);
 
                     $excel->getActiveSheet()->getColumnDimension('A')->setWidth('25');
-                    $excel->getActiveSheet()->getColumnDimension('B')->setWidth('30');
-                    $excel->getActiveSheet()->getColumnDimension('C')->setWidth('40');
+                    $excel->getActiveSheet()->getColumnDimension('B')->setWidth('10');
+                    $excel->getActiveSheet()->getColumnDimension('C')->setWidth('30');
                     $excel->getActiveSheet()->getColumnDimension('D')->setWidth('40');
                     $excel->getActiveSheet()->getColumnDimension('E')->setWidth('40');
-                    $excel->getActiveSheet()->getColumnDimension('F')->setWidth('20');
+                    $excel->getActiveSheet()->getColumnDimension('F')->setWidth('40');
                     $excel->getActiveSheet()->getColumnDimension('G')->setWidth('20');
                     $excel->getActiveSheet()->getColumnDimension('H')->setWidth('20');
+                    $excel->getActiveSheet()->getColumnDimension('I')->setWidth('20');
 
                     $excel->getActiveSheet()
                             ->getStyle('A12')
                             ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);                   
-                    $excel->getActiveSheet()
+                     $excel->getActiveSheet()
                             ->getStyle('B12')
                             ->getAlignment()
-                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);                                                           
-                    $excel->getActiveSheet()
-                            ->getStyle('F')
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);                  
+                     $excel->getActiveSheet()
+                            ->getStyle('C12')
                             ->getAlignment()
-                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);                                                           
                     $excel->getActiveSheet()
                             ->getStyle('G')
                             ->getAlignment()
@@ -452,41 +461,48 @@
                     $excel->getActiveSheet()
                             ->getStyle('H')
                             ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                    $excel->getActiveSheet()
+                            ->getStyle('I')
+                            ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);    
 
                     $excel->getActiveSheet()->setCellValue('A12','Txn Date')
                                             ->getStyle('A12')->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('B12','Txn #')
+                    $excel->getActiveSheet()->setCellValue('B12','Book')
                                             ->getStyle('B12')->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('C12','Memo')
+                    $excel->getActiveSheet()->setCellValue('C12','Txn #')
                                             ->getStyle('C12')->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('D12','Remarks')
+                    $excel->getActiveSheet()->setCellValue('D12','Memo')
                                             ->getStyle('D12')->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('E12','Posted by')
+                    $excel->getActiveSheet()->setCellValue('E12','Remarks')
                                             ->getStyle('E12')->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('F12','Debit')
+                    $excel->getActiveSheet()->setCellValue('F12','Posted by')
                                             ->getStyle('F12')->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('G12','Credit')
+                    $excel->getActiveSheet()->setCellValue('G12','Debit')
                                             ->getStyle('G12')->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('H12','Balance')
+                    $excel->getActiveSheet()->setCellValue('H12','Credit')
                                             ->getStyle('H12')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('I12','Balance')
+                                            ->getStyle('I12')->getFont()->setBold(TRUE);
 
                     $i=13;
 
                     foreach($supplier_subsidiary as $items){
                         $excel->getActiveSheet()->setCellValue('A'.$i,$items->date_txn);
-                        $excel->getActiveSheet()->setCellValue('B'.$i,$items->txn_no);
-                        $excel->getActiveSheet()->setCellValue('C'.$i,$items->memo);
-                        $excel->getActiveSheet()->setCellValue('D'.$i,$items->remarks);
-                        $excel->getActiveSheet()->setCellValue('E'.$i,$items->posted_by);
-                        $excel->getActiveSheet()->getStyle('F'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                        $excel->getActiveSheet()->setCellValue('F'.$i,number_format($items->debit,2));
+                        $excel->getActiveSheet()->setCellValue('B'.$i,$items->book_type);
+                        $excel->getActiveSheet()->setCellValue('C'.$i,$items->txn_no);
+                        $excel->getActiveSheet()->setCellValue('D'.$i,$items->memo);
+                        $excel->getActiveSheet()->setCellValue('E'.$i,$items->remarks);
+                        $excel->getActiveSheet()->setCellValue('F'.$i,$items->posted_by);
                         $excel->getActiveSheet()->getStyle('G'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                        $excel->getActiveSheet()->setCellValue('G'.$i,number_format($items->credit,2));
+                        $excel->getActiveSheet()->setCellValue('G'.$i,number_format($items->debit,2));
                         $excel->getActiveSheet()->getStyle('H'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                        $excel->getActiveSheet()->setCellValue('H'.$i,number_format($items->balance,2));
+                        $excel->getActiveSheet()->setCellValue('H'.$i,number_format($items->credit,2));
+                        $excel->getActiveSheet()->getStyle('I'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                        $excel->getActiveSheet()->setCellValue('I'.$i,number_format($items->balance,2));
                         $i++;
-                        }
+                    }
 
                     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                     header('Content-Disposition: attachment;filename='."SUPPLIER SUBSIDIARY REPORT.xlsx".'');

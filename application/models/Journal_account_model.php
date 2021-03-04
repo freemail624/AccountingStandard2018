@@ -368,6 +368,7 @@ class Journal_account_model extends CORE_Model{
             SUM(m.payment) as payment,
             SUM(m.adjustment_dr) as adjustment_dr,
             SUM(m.adjustment_cr) as adjustment_cr,
+            SUM(m.wtax_expanded) as wtax_expanded,
             (
                 (SUM(m.previous) + 
                 (SUM(m.billing) - SUM(m.adjustment_dr) - SUM(m.adjustment_cr)) +
@@ -377,6 +378,7 @@ class Journal_account_model extends CORE_Model{
                 (SUM(m.payment))
 
             ) as total
+
 
             FROM
 
@@ -395,7 +397,8 @@ class Journal_account_model extends CORE_Model{
             0 as payment,
             '' as or_details,
             0 as adjustment_dr,
-            0 as adjustment_cr
+            0 as adjustment_cr,
+            0 as wtax_expanded
 
             FROM `journal_info` as ji
 
@@ -425,7 +428,8 @@ class Journal_account_model extends CORE_Model{
                 0 as payment,
                 '' as or_details,
                 0 as adjustment_dr,
-                0 as adjustment_cr
+                0 as adjustment_cr,
+                0 as wtax_expanded
 
             FROM
                 temp_journal_info tji 
@@ -452,7 +456,8 @@ class Journal_account_model extends CORE_Model{
                 0 as payment,
                 '' as or_details,
                 SUM(COALESCE(ba.billing_adjustment_line_total,0)) as adjustment_dr,
-                0 as adjustment_cr
+                0 as adjustment_cr,
+                0 as wtax_expanded
 
             FROM
                 temp_journal_info tji 
@@ -478,7 +483,8 @@ class Journal_account_model extends CORE_Model{
                 0 as payment,
                 '' as or_details,
                 0 as adjustment_dr,
-                SUM(COALESCE(ba.billing_adjustment_line_total,0)) as adjustment_cr
+                SUM(COALESCE(ba.billing_adjustment_line_total,0)) as adjustment_cr,
+                0 as wtax_expanded
 
             FROM
                 temp_journal_info tji 
@@ -509,7 +515,8 @@ class Journal_account_model extends CORE_Model{
                 ) as payment,
                 group_concat(DISTINCT(ji.ref_no)) as or_details,
                 0 as adjustment_dr,
-                0 as adjustment_cr
+                0 as adjustment_cr,
+                0 as wtax_expanded
 
             FROM
                 temp_journal_info tji 
@@ -542,7 +549,8 @@ class Journal_account_model extends CORE_Model{
                 0 as payment,
                 '' as or_details,
                 0 as adjustment_dr,
-                0 as adjustment_cr
+                0 as adjustment_cr,
+                0 as wtax_expanded
 
                 FROM `journal_info` as ji
 
@@ -555,7 +563,33 @@ class Journal_account_model extends CORE_Model{
                 WHERE ji.`date_txn` BETWEEN '$this_month_start_date' AND '$as_of_date'
                 AND ji.is_active=TRUE AND ji.is_deleted=FALSE AND ja.account_id=$account_id
 
-                GROUP BY ji.customer_id) as m
+                GROUP BY ji.customer_id
+
+            -- 2307 (Withholding Tax (Expanded) Payable) 
+
+            UNION ALL
+                SELECT 
+                    ji.customer_id,
+                    0 as previous,
+                    0 as current,
+                    0 as billing,
+                    0 as payment,
+                    '' as or_details,
+                    0 as adjustment_dr,
+                    0 as adjustment_cr,
+                    (SUM(ja.dr_amount) + SUM(ja.cr_amount)) as wtax_expanded
+                FROM
+                    journal_accounts ja
+                    LEFT JOIN journal_info ji ON ji.journal_id = ja.journal_id
+                    WHERE ji.`date_txn` BETWEEN '$this_month_start_date' AND '$as_of_date'
+                    AND ji.is_active=TRUE AND ji.is_deleted=FALSE AND ja.account_id=
+                    (SELECT supplier_wtax_account_id FROM account_integration)
+                    
+                    GROUP BY ji.customer_id
+
+
+
+            ) as m
 
             LEFT JOIN customers as c ON c.customer_id=m.customer_id
 

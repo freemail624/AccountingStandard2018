@@ -449,7 +449,5 @@ class Inventory extends CORE_Controller
 
         }
     }
-
-
 }
 ?>

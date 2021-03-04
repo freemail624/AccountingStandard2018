@@ -176,7 +176,8 @@
                     <th></th>
                     <th>Adjustment #</th>
                     <th>Adjustment Type</th>
-                    <th>Tenant</th>
+                    <th>Department</th>
+                    <th width="30%">Tenant</th>
                     <th>Billing Period</th>
                     <th>Charge</th>
                     <th><center>Action</center></th>
@@ -353,11 +354,12 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "adjustment_no" },
                 { targets:[2],data: "adjustment_type" },
-                { targets:[3],data: "trade_name" },
-                { targets:[4],data: "period_desc" },
-                { targets:[5],data: "charge_desc" },
+                { targets:[3],data: "department_name" },
+                { targets:[4],data: "trade_name" },
+                { targets:[5],data: "period_desc" },
+                { targets:[6],data: "charge_desc" },
                 {
-                    targets:[6],
+                    targets:[7],
                     render: function (data, type, full, meta){
                         //alert(full.purchase_order_id);
 

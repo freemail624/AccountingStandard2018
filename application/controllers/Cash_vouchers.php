@@ -416,7 +416,7 @@ class Cash_vouchers extends CORE_Controller
                 $response['data']=$this->Delivery_invoice_model->get_dr_balance_qty($dr_invoice_id);
                 echo json_encode($response);
                 break;
-        };
+        }
     }
 
 

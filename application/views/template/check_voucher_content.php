@@ -218,7 +218,7 @@
             </tr>
         </table>
     </center>  
-<!-- 
+
     <br/><br/><br/><br/>
 
     <table width="100%" cellpadding="5" cellspacing="5">
@@ -240,7 +240,7 @@
             <td>*** <?php echo $num_words; ?> ***</td>
             <td align="right"></td>
         </tr>        
-    </table> -->
+    </table>
 </body>
 </html>
 

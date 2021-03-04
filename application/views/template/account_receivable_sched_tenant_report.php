@@ -53,10 +53,11 @@
 <table width="100%" border="1" cellspacing="-1">
     <thead>
         <tr>
-            <th width="30%" style="border: 1px solid black;padding: 3px;text-align: left;padding-left: 5px;">Tenant</th>
+            <th width="20%" style="border: 1px solid black;padding: 3px;text-align: left;padding-left: 5px;">Tenant</th>
             <th width="10%" style="border: 1px solid black;padding: 3px;text-align: right;padding-right: 5px;">
             As of <br/> <?php echo $prev_month; ?>
             </th>
+            <th width="10%" style="border: 1px solid black;padding: 3px;text-align: right;padding-right: 5px;">2307</th>
             <th width="10%" style="border: 1px solid black;padding: 3px;text-align: right;padding-right: 5px;">Billed</th>
             <th width="10%" style="border: 1px solid black;padding: 3px;text-align: center;">OR Detail</th>
             <th width="10%" style="border: 1px solid black;padding: 3px;text-align: right;padding-right: 5px;">Payments</th>
@@ -70,6 +71,7 @@
     <tbody>
         <?php 
             $total_previous=0;
+            $total_2307=0;
             $total_billing=0;
             $total_payment=0;
             $total_adjustment_dr=0;
@@ -78,8 +80,9 @@
 
             foreach($ar_accounts as $ar){ ?>
             <tr>
-                <td width="30%" style="padding-left: 5px;"><?php echo $ar->customer_name; ?></td>
+                <td width="20%" style="padding-left: 5px;"><?php echo $ar->customer_name; ?></td>
                 <td width="10%" align="right" style="padding-right: 5px;"><?php echo number_format($ar->previous,2); ?></td>
+                <td width="10%" align="right" style="padding-right: 5px;"><?php echo number_format($ar->wtax_expanded,2); ?></td>
                 <td width="10%" align="right" style="padding-right: 5px;"><?php echo number_format($ar->billing,2); ?></td>
                 <td width="10%" align="right" style="padding-right: 5px;"><?php echo $ar->or_details; ?></td>
                 <td width="10%" align="right" style="padding-right: 5px;"><?php echo number_format($ar->payment,2); ?></td>
@@ -89,6 +92,7 @@
             </tr>
         <?php 
             $total_previous+=$ar->previous;
+            $total_2307+=$ar->wtax_expanded;
             $total_billing+=$ar->billing;
             $total_payment+=$ar->payment;
             $total_adjustment_dr+=$ar->adjustment_dr;
@@ -100,6 +104,7 @@
     <tr>
         <td align="right"><b>Total : </b></td>
         <td align="right" style="padding-right: 5px;"><b><?php echo number_format($total_previous,2); ?></b></td>
+        <td align="right" style="padding-right: 5px;"><b><?php echo number_format($total_2307,2); ?></b></td>
         <td align="right" style="padding-right: 5px;"><b><?php echo number_format($total_billing,2); ?></b></td>
         <td align="right" style="padding-right: 5px;"></td>
         <td align="right" style="padding-right: 5px;"><b><?php echo number_format($total_payment,2); ?></b></td>
