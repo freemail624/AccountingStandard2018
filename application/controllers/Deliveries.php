@@ -21,6 +21,7 @@ class Deliveries extends CORE_Controller
         $this->load->model('Trans_model'); 
         $this->load->model('Company_model');    
         $this->load->model('Account_integration_model');  
+        $this->load->model('Sync_references_model');
 
     }
 
@@ -450,6 +451,7 @@ class Deliveries extends CORE_Controller
                     $product_id = $dr_products[$i]->product_id;
                     $product=$m_products->product_list(1,null,$product_id,null,null,null,null,null,1,null,null,1);
                     $on_hand_stock = $product[0]->total_qty_bulk;
+                    $purchase_cost = $product[0]->purchase_cost;
 
                     $cost = $m_delivery_invoice->get_ave_cost($product_id,$dr_invoice_id,$on_hand_stock);
                     $average_cost = $cost[0]->ave_cost;
@@ -457,13 +459,29 @@ class Deliveries extends CORE_Controller
                     $m_products->purchase_cost = $this->get_numeric_value($average_cost);
                     $m_products->modify($product_id);
 
+                    if($average_cost != $purchase_cost){
+                        $m_sync=$this->Sync_references_model;
+                        $m_sync->reference_id=$this->get_numeric_value($product_id);
+                        $m_sync->reference_type = 0;
+                        $m_sync->save();
+                    }
+
                     // Updating the average cost of Child Products
                     $child_products = $m_delivery_invoice->get_child_ave_cost($product_id);
 
                     for ($a=0; $a < count($child_products); $a++) { 
                         $m_products->purchase_cost = $this->get_numeric_value($child_products[$a]->child_ave_cost);
                         $m_products->modify($child_products[$a]->child_product_id);
+
+                        if($child_products[$a]->child_ave_cost != $child_products[$a]->child_purchase_cost){
+                            $m_sync=$this->Sync_references_model;
+                            $m_sync->reference_id=$this->get_numeric_value($child_products[$a]->child_product_id);
+                            $m_sync->reference_type = 0;
+                            $m_sync->save();
+                        }
+
                     }
+
                 }
 
                 $m_delivery_invoice->set('date_finalized','NOW()'); //treat NOW() as function and not string,set deletion date

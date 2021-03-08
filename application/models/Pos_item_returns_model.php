@@ -34,50 +34,90 @@ class Pos_item_returns_model extends CORE_Model {
     }
 
     function get_journal_entries($x_reading_id) {
-        $sql="SELECT * FROM(SELECT 
-        p.income_account_id as account_id,
-        '' as memo,
+        $sql="SELECT main.* FROM (
+
+        /* Sales Return */
+        SELECT 
+        p.sales_return_account_id as account_id,
         SUM(pir.item_total - pir.vat_amount) as dr_amount,
-        0 as cr_amount
-
+        0 as cr_amount,
+        '' as memo
         FROM pos_item_returns pir
         LEFT JOIN products p ON p.product_id = pir.product_id
-        WHERE pir.x_reading_id = $x_reading_id  AND p.income_account_id > 0
-        GROUP BY p.income_account_id
+        WHERE pir.x_reading_id = $x_reading_id  AND p.sales_return_account_id > 0
+        GROUP BY p.sales_return_account_id
 
+        /* Inventory */
         UNION ALL
 
-        SELECT 
-        (SELECT receivable_discount_account_id FROM account_integration) as account_id,
-        '' as memo,
+        SELECT
+        p.expense_account_id as account_id,
+        SUM(pir.product_quantity * p.purchase_cost) as dr_amount,
+        0 as cr_amount,
+        '' as memo
+        FROM pos_item_returns pir
+        INNER JOIN products p ON p.product_id = pir.product_id
+        WHERE pir.x_reading_id = $x_reading_id  AND p.expense_account_id > 0
+        GROUP BY p.expense_account_id
+
+        -- Output Tax
+        UNION ALL
+        
+        SELECT output_tax.* FROM(
+            SELECT
+            (SELECT output_tax_account_id FROM account_integration) as account_id,
+            SUM(pir.vat_amount) as dr_amount,
+            0 as cr_amount,
+            '' as memo
+            FROM pos_item_returns pir
+            LEFT JOIN products p ON p.product_id = pir.product_id
+            WHERE pir.x_reading_id = $x_reading_id
+        ) as output_tax
+        WHERE output_tax.account_id > 0
+        GROUP BY output_tax.account_id
+
+        /* CASH */
+        UNION ALL
+
+        SELECT cash.* FROM(
+            SELECT
+            (SELECT payment_from_customer_id FROM account_integration) as account_id,
+            0 as dr_amount,
+            SUM(pir.item_total - pir.discount_amount) as cr_amount,
+            '' as memo
+            FROM pos_item_returns pir
+            LEFT JOIN products p ON p.product_id = pir.product_id
+            WHERE pir.x_reading_id = $x_reading_id
+        ) as cash
+        WHERE cash.account_id > 0
+        GROUP BY cash.account_id
+
+        /* Cost of Sales */
+        UNION ALL
+
+        SELECT
+        p.cos_account_id as account_id,
         0 as dr_amount,
-        SUM(pir.discount_amount) as cr_amount
+        SUM(pir.product_quantity * p.purchase_cost) as cr_amount,
+        '' as memo
         FROM pos_item_returns pir
-        LEFT JOIN products p ON p.product_id = pir.product_id
-        WHERE pir.x_reading_id = $x_reading_id  AND p.income_account_id > 0
+        INNER JOIN products p ON p.product_id = pir.product_id
+        WHERE pir.x_reading_id = $x_reading_id  AND p.cos_account_id > 0
+        GROUP BY p.cos_account_id
 
-        
+        /* Discount */
         UNION ALL
-        
-        SELECT 
-        (SELECT output_tax_account_id FROM account_integration) as account_id,
-        '' as memo,
-        SUM(pir.vat_amount) as dr_amount,
-        0 as cr_amount
 
-        FROM pos_item_returns pir
-        LEFT JOIN products p ON p.product_id = pir.product_id
-        WHERE pir.x_reading_id = $x_reading_id  AND p.income_account_id > 0
-
-        UNION ALL
-        
-        SELECT (SELECT payment_from_customer_id FROM account_integration) as account_id,
-        '' as memo,
+        SELECT
+        p.sd_account_id as account_id,
         0 as dr_amount,
-        SUM(pir.item_total - pir.discount_amount) as cr_amount
+        SUM(pir.discount_amount) as cr_amount,
+        '' as memo
         FROM pos_item_returns pir
-        LEFT JOIN products p ON p.product_id = pir.product_id
-        WHERE pir.x_reading_id = $x_reading_id  AND p.income_account_id > 0) 
+        INNER JOIN products p ON p.product_id = pir.product_id
+        WHERE pir.x_reading_id = $x_reading_id  AND p.sd_account_id > 0
+        GROUP BY p.sd_account_id)
+
         as main WHERE main.dr_amount > 0 or main.cr_amount > 0";
         return $this->db->query($sql)->result();
     }

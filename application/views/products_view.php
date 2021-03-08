@@ -602,6 +602,8 @@
 
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                 <br>
+                                                                    <label  for="is_manual_price" style="text-align: left;vertical-align: middle;"><input type="checkbox" name="is_manual_price" class="" id="is_manual_price" style="transform: scale(2.0);">  &nbsp;&nbsp;Is Manual Price ?</label>
+
                                                                     <label  for="is_basyo" style="text-align: left;float:right;vertical-align: middle;"><input type="checkbox" name="is_basyo" class="" id="is_basyo" style="transform: scale(2.0);">  &nbsp;&nbsp;For Basyo ?</label>
                                                                 </div>                                                                       
                                                             </div>
@@ -2017,6 +2019,7 @@ $(document).ready(function(){
             $('#is_bulk').attr('checked', false);
             $('#is_nonsalable').attr('checked', false);
             $('#is_basyo').attr('checked', false);
+            $('#is_manual_price').attr('checked', false);
 
             showPanelActive('entry');
             setParentPanel(false);
@@ -2089,6 +2092,7 @@ $(document).ready(function(){
             $('#is_bulk').prop('checked', (data.is_bulk==1?true:false));
             $('#is_nonsalable').prop('checked', (data.is_nonsalable==1?true:false));
             $('#is_basyo').prop('checked', (data.is_basyo==1?true:false));
+            $('#is_manual_price').prop('checked', (data.is_manual_price==1?true:false));
 
             if(data.is_bulk == true){
                 $('#child_unit_desc').prop('required',true);
@@ -2228,13 +2232,13 @@ $(document).ready(function(){
     var createProduct=function(){
         var _data=$('#frm_product').serializeArray();
        // _data.push({name : "is_tax_exempt" ,value : _isTaxExempt});
-$('#is_tax_exempt').prop("checked") ?  _data.push({name : "is_tax_exempt" , value : '1'   }) : _data.push({name : "is_tax_exempt" , value : '0'   });
-$('#is_bulk').prop("checked") ?  _data.push({name : "is_bulk" , value : '1'   }) : _data.push({name : "is_bulk" , value : '0'   });
-$('#is_parent').prop("checked") ?  _data.push({name : "is_parent" , value : '1'   }) : _data.push({name : "is_parent" , value : '0'   });
+        $('#is_tax_exempt').prop("checked") ?  _data.push({name : "is_tax_exempt" , value : '1'   }) : _data.push({name : "is_tax_exempt" , value : '0'   });
+        $('#is_bulk').prop("checked") ?  _data.push({name : "is_bulk" , value : '1'   }) : _data.push({name : "is_bulk" , value : '0'   });
+        $('#is_parent').prop("checked") ?  _data.push({name : "is_parent" , value : '1'   }) : _data.push({name : "is_parent" , value : '0'   });
 
-$('#is_nonsalable').prop("checked") ?  _data.push({name : "is_nonsalable" , value : '1'   }) : _data.push({name : "is_nonsalable" , value : '0'   });
-$('#is_basyo').prop("checked") ?  _data.push({name : "is_basyo" , value : '1'   }) : _data.push({name : "is_basyo" , value : '0'   });
-
+        $('#is_nonsalable').prop("checked") ?  _data.push({name : "is_nonsalable" , value : '1'   }) : _data.push({name : "is_nonsalable" , value : '0'   });
+        $('#is_basyo').prop("checked") ?  _data.push({name : "is_basyo" , value : '1'   }) : _data.push({name : "is_basyo" , value : '0'   });
+        $('#is_manual_price').prop("checked") ?  _data.push({name : "is_manual_price" , value : '1'   }) : _data.push({name : "is_manual_price" , value : '0'   });
 
         return $.ajax({
             "dataType":"json",
@@ -2247,14 +2251,13 @@ $('#is_basyo').prop("checked") ?  _data.push({name : "is_basyo" , value : '1'   
 
     var updateProduct=function(){
         var _data=$('#frm_product').serializeArray();
-$('#is_tax_exempt').prop("checked") ?  _data.push({name : "is_tax_exempt" , value : '1'   }) : _data.push({name : "is_tax_exempt" , value : '0'   });
-$('#is_bulk').prop("checked") ?  _data.push({name : "is_bulk" , value : '1'   }) : _data.push({name : "is_bulk" , value : '0'   });
-        _data.push({name : "product_id" ,value : _selectedID});
-$('#is_parent').prop("checked") ?  _data.push({name : "is_parent" , value : '1'   }) : _data.push({name : "is_parent" , value : '0'   });
-$('#is_nonsalable').prop("checked") ?  _data.push({name : "is_nonsalable" , value : '1'   }) : _data.push({name : "is_nonsalable" , value : '0'   });
-
-$('#is_basyo').prop("checked") ?  _data.push({name : "is_basyo" , value : '1'   }) : _data.push({name : "is_basyo" , value : '0'   });
-
+        $('#is_tax_exempt').prop("checked") ?  _data.push({name : "is_tax_exempt" , value : '1'   }) : _data.push({name : "is_tax_exempt" , value : '0'   });
+        $('#is_bulk').prop("checked") ?  _data.push({name : "is_bulk" , value : '1'   }) : _data.push({name : "is_bulk" , value : '0'   });
+                _data.push({name : "product_id" ,value : _selectedID});
+        $('#is_parent').prop("checked") ?  _data.push({name : "is_parent" , value : '1'   }) : _data.push({name : "is_parent" , value : '0'   });
+        $('#is_nonsalable').prop("checked") ?  _data.push({name : "is_nonsalable" , value : '1'   }) : _data.push({name : "is_nonsalable" , value : '0'   });
+        $('#is_basyo').prop("checked") ?  _data.push({name : "is_basyo" , value : '1'   }) : _data.push({name : "is_basyo" , value : '0'   });
+        $('#is_manual_price').prop("checked") ?  _data.push({name : "is_manual_price" , value : '1'   }) : _data.push({name : "is_manual_price" , value : '0'   });
 
         return $.ajax({ 
             "dataType":"json",

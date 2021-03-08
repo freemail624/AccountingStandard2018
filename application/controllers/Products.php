@@ -31,6 +31,8 @@ class Products extends CORE_Controller
         $this->load->model('Company_model');
         $this->load->model('Trans_model');
         $this->load->model('Brands_model');
+        $this->load->model('Sync_references_model');
+        $this->load->model('Pos_item_sales_model');
     }
 
     public function index() {
@@ -188,6 +190,7 @@ class Products extends CORE_Controller
                 $m_products->primary_unit = $this->get_numeric_value($this->input->post('is_parent', TRUE));
                 $m_products->is_nonsalable = $this->get_numeric_value($this->input->post('is_nonsalable', TRUE));
                 $m_products->is_basyo = $this->get_numeric_value($this->input->post('is_basyo', TRUE));
+                $m_products->is_manual_price = $this->get_numeric_value($this->input->post('is_manual_price', TRUE));
 
                 $m_products->save();
 
@@ -205,6 +208,11 @@ class Products extends CORE_Controller
                 $m_trans->trans_type_id=50; // TRANS TYPE
                 $m_trans->trans_log='Created a new Product: '.$this->input->post('product_desc', TRUE);
                 $m_trans->save();
+
+                $m_sync=$this->Sync_references_model;
+                $m_sync->reference_id=$product_id;
+                $m_sync->reference_type = 0;
+                $m_sync->save();
 
                 echo json_encode($response);
 
@@ -275,12 +283,18 @@ class Products extends CORE_Controller
                 $m_products->primary_unit = $this->get_numeric_value($this->input->post('is_parent', TRUE));
                 $m_products->is_nonsalable = $this->get_numeric_value($this->input->post('is_nonsalable', TRUE));
                 $m_products->is_basyo = $this->get_numeric_value($this->input->post('is_basyo', TRUE));
+                $m_products->is_manual_price = $this->get_numeric_value($this->input->post('is_manual_price', TRUE));
                 $m_products->modify($product_id);
 
                 $response['title']='Success!';
                 $response['stat']='success';
                 $response['msg']='Product information successfully updated.';
                 $response['row_updated']=$m_products->product_list(1,null,$product_id,null,null,null,null,null,1);
+
+                $m_sync=$this->Sync_references_model;
+                $m_sync->reference_id=$product_id;
+                $m_sync->reference_type = 0;
+                $m_sync->save();
 
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
@@ -310,6 +324,21 @@ class Products extends CORE_Controller
                 $m_deliver_items=$this->Delivery_invoice_item_model;
 
                 $product_id=$this->input->post('product_id',TRUE);
+
+                if(count(
+                        $this->Pos_item_sales_model->get_list(
+                            array(
+                                'pos_item_sales.product_id'=>$product_id,
+                            )
+                        )
+                    )>0
+                ) {
+                    $response['title']="Error!";
+                    $response['stat']="error";
+                    $response['msg']="This product still has an active transaction in POS.";
+                    echo json_encode($response);
+                    exit;
+                }
 
                 if(count($m_purchase_items->get_list(
 
@@ -417,6 +446,10 @@ class Products extends CORE_Controller
                         $response['stat']='success';
                         $response['msg']='Product information successfully deleted.';
 
+                    $m_sync=$this->Sync_references_model;
+                    $m_sync->reference_id=$product_id;
+                    $m_sync->reference_type = 0;
+                    $m_sync->save();
 
                     $product_desc= $m_products->get_list($product_id,'product_desc');
                     $m_trans=$this->Trans_model;

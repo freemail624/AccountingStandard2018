@@ -102,6 +102,9 @@ class Templates extends CORE_Controller {
         $this->load->model('Loading_model');
         $this->load->model('Loading_item_model');
 
+        $this->load->model('Pos_item_sales_model');
+        $this->load->model('Pos_item_returns_model');
+
         $this->load->library('M_pdf');
         $this->load->library('excel');
         $this->load->model('Email_settings_model');
@@ -829,6 +832,42 @@ class Templates extends CORE_Controller {
 
                 break;
 
+
+            case 'pos-returns-for-review':
+                $x_reading_id=$this->input->get('id',TRUE);
+
+                $m_suppliers=$this->Suppliers_model;
+                $m_accounts=$this->Account_title_model;
+                $m_departments=$this->Departments_model;
+                $m_customers=$this->Customers_model;
+                $m_pos_returns =  $this->Pos_item_returns_model;
+                $info=$m_pos_returns->get_list(array('x_reading_id'=>$x_reading_id),
+                '*, DATE_FORMAT(start_datetime,"%m/%d/%Y")as trans_date'
+                );
+                $data['return_info']=$info[0];
+                $data['customers']=$m_customers->get_list(
+                    array(
+                        'customers.is_active'=>TRUE,
+                        'customers.is_deleted'=>FALSE
+                    ),
+
+                    array(
+                        'customers.customer_id',
+                        'customers.customer_name'
+                    )
+                );
+                $data['departments']=$m_departments->get_list('is_active=TRUE AND is_deleted=FALSE');
+
+                $data['suppliers']=$m_suppliers->get_list(
+                    array('suppliers.is_active'=>TRUE,'suppliers.is_deleted'=>FALSE),
+                    array('suppliers.supplier_id','suppliers.supplier_name'));
+                $data['entries']=$m_pos_returns->get_journal_entries($x_reading_id);
+                $data['accounts']=$m_accounts->get_list(array('account_titles.is_active'=>TRUE,'account_titles.is_deleted'=>FALSE));
+
+                echo $this->load->view('template/pos_returns_for_review',$data,TRUE); //details of the journal
+
+
+                break;
 
             //****************************************************
             case 'dispatching-invoice': //delivery invoice

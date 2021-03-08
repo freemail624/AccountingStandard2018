@@ -144,6 +144,29 @@
 <div class="col-md-12">
 
 <div id="div_payable_list">
+
+    <div class="panel panel-default">
+        <div class="panel-body table-responsive" style="">
+            <h2 class="h2-panel-heading">Review General Journal (POS - Sales Returns)</h2><hr>
+            <div class="row-panel">
+                <table id="tbl_sales_return" class="table table-striped" cellspacing="0" width="100%">
+                    <thead class="">
+                    <tr>
+                        <th></th>
+                        <th>X Reading #</th>
+                        <th>Transaction Date</th>
+                        <th>Total Amount</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
  <div class="panel panel-default">
 <!--                 <div class="panel-heading">
                     <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; General Journal </b>
@@ -940,7 +963,7 @@
 $(document).ready(function(){
     var _txnMode; var _cboParticulars; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode;
     var dtReview; var _cboDepartments; var _option; var _optGroup;
-    var dtReviewAdjustment;
+    var dtReviewAdjustment; var dtReviewReturns;
     var _cboCustomerType;
  
     var oTBJournal={
@@ -1081,6 +1104,27 @@ $(document).ready(function(){
                 { targets:[5],data: "department_name" }
             ]
         });
+
+        dtReviewReturns=$('#tbl_sales_return').DataTable({
+            "bLengthChange":false,
+                // "order": [[ 1, "desc" ]],
+            "ajax" : "Sales_returns/transaction/pos-returns-for-review",
+            "columns": [
+                {
+                    "targets": [0],
+                    "class":          "details-control",
+                    "orderable":      false,
+                    "data":           null,
+                    "defaultContent": ""
+                },
+                { targets:[1],data: "x_reading_desc" },
+                { targets:[2],data: "trans_date" },
+                { sClass:"right_align",targets:[4],data: "trans_total",
+                     render: function(data,type,full,meta){
+                        return accounting.formatNumber(data,2);
+                } }
+            ]
+        });        
 
         $('#cbo_particular').select2();
 
@@ -1344,6 +1388,58 @@ $(document).ready(function(){
                         reInitializeDropDownAccounts(tbl);
                         reInitializeChildEntriesTableAdjustment(tbl);
                         reInitializeChildElementsAdjustment(parent_tab_pane);
+
+                        // Add to the 'open' array
+                        if ( idx === -1 ) {
+                            detailRows.push( tr.attr('id') );
+                        }
+
+
+                    });
+
+
+
+
+                }
+            } );
+
+            $('#tbl_sales_return tbody').on( 'click', 'tr td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = dtReviewReturns.row( tr );
+                var idx = $.inArray( tr.attr('id'), detailRows );
+
+                if ( row.child.isShown() ) {
+                    tr.removeClass( 'details' );
+                    row.child.hide();
+
+                    // Remove from the 'open' array
+                    detailRows.splice( idx, 1 );
+                }
+                else {
+                    tr.addClass( 'details' );
+                    //console.log(row.data());
+                    var d=row.data();
+                    // alert();
+                    $.ajax({
+                        "dataType":"html",
+                        "type":"POST",
+                        "url":"Templates/layout/pos-returns-for-review?id="+ d.x_reading_id,
+                        "beforeSend" : function(){
+                            row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                        }
+                    }).done(function(response){
+                        row.child( response,'no-padding' ).show();
+
+                        reInitializeSpecificDropDown($('.cbo_supplier_list'));
+                        reInitializeSpecificDropDown($('.cbo_department_list'));
+
+                        reInitializeNumeric();
+
+                        var tbl=$('#tbl_entries_for_review_adj'+ d.x_reading_id);
+                        var parent_tab_pane=$('#journal_review_'+ d.x_reading_id);
+                        reInitializeDropDownAccounts(tbl);
+                        reInitializeChildEntriesTableReturns(tbl);
+                        reInitializeChildElementsReturns(parent_tab_pane);
 
                         // Add to the 'open' array
                         if ( idx === -1 ) {

@@ -485,6 +485,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
     function get_child_ave_cost($product_id){
         $sql="SELECT 
             p.product_id as child_product_id,
+            p.purchase_cost as child_purchase_cost,
             parent.product_id,
             ((parent.purchase_cost / parent.bulk_conversion_rate) * p.conversion_rate) AS child_ave_cost
         FROM

@@ -10,6 +10,7 @@ class Categories extends CORE_Controller
         $this->load->model('Categories_model');
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
+        $this->load->model('Sync_references_model');
     }
 
     public function index() {
@@ -51,6 +52,11 @@ class Categories extends CORE_Controller
                 $m_trans->trans_log='Created Category: '.$this->input->post('category_name', TRUE);
                 $m_trans->save();
 
+                $m_sync=$this->Sync_references_model;
+                $m_sync->reference_id=$category_id;
+                $m_sync->reference_type = 1;
+                $m_sync->save();
+
                 $response['title'] = 'Success!';
                 $response['stat'] = 'success';
                 $response['msg'] = 'category information successfully created.';
@@ -78,6 +84,11 @@ class Categories extends CORE_Controller
                     $m_trans->trans_log='Deleted Category: '.$category_name[0]->category_name;
                     $m_trans->save();
 
+                    $m_sync=$this->Sync_references_model;
+                    $m_sync->reference_id=$category_id;
+                    $m_sync->reference_type = 1;
+                    $m_sync->save();
+
                     echo json_encode($response);
                 }
 
@@ -99,6 +110,11 @@ class Categories extends CORE_Controller
                 $m_trans->trans_type_id=45; // TRANS TYPE
                 $m_trans->trans_log='Updated Category: '.$this->input->post('category_name',TRUE).' ID('.$category_id.')';
                 $m_trans->save();
+
+                $m_sync=$this->Sync_references_model;
+                $m_sync->reference_id=$category_id;
+                $m_sync->reference_type = 1;
+                $m_sync->save();
 
                 $response['title']='Success!';
                 $response['stat']='success';
