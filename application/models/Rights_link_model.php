@@ -110,13 +110,13 @@ class Rights_link_model extends CORE_Model{
                                           (102,'2','2-9','Purchase Request'),
                                           (103,'12','12-8','Open Purchase Requests'),
                                           (104,'4','4-9','Term Management'),
-                                          (105,'17','17-1','Cash Request'),
-                                          (106,'17','17-2','Travel Orders'),
-                                          (107,'17','17-3','Incident Report'),
-                                          (108,'17','17-4','Accomplishment Report'),
-                                          (109,'5','5-6','Edit Product Costing'),
-                                          (110,'15','15-7','Batch Inventory'),
-                                          (111,'15','15-8','Barcode Generator')
+                                          -- (105,'17','17-1','Cash Request'),
+                                          -- (106,'17','17-2','Travel Orders'),
+                                          -- (107,'17','17-3','Incident Report'),
+                                          -- (108,'17','17-4','Accomplishment Report'),
+                                          (109,'5','5-6','Edit Product Costing')
+                                          -- (110,'15','15-7','Batch Inventory'),
+                                          -- (111,'15','15-8','Barcode Generator')
 
 
                                           ON DUPLICATE KEY UPDATE
