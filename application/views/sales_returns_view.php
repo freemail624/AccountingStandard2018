@@ -87,6 +87,11 @@
                                                                         <?php } ?>
                                                                     </select>
                                                                 </div>
+                                                                <div class="col-sm-4">
+                                                                    <br/>
+                                                                    <button class="btn btn-success pull-left" id="btn_export_returns" title="Export to Excel" style="padding: 7px 7px!important;">
+                                                                    <i class="fa fa-file-excel-o"></i> Export </button>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                         <br />
@@ -211,11 +216,10 @@
                 autoclose: true
             });
 
-        _cboXReading=$('#cbo_xreading').select2({
-            placeholder: "Please Select an X Reading.",
-            allowClear: false
-        });
-
+            _cboXReading=$('#cbo_xreading').select2({
+                placeholder: "Please Select an X Reading.",
+                allowClear: false
+            });
             initializeDataTable();
         }();
 
@@ -439,6 +443,12 @@
                 initializeDataTable();
 
             });
+            
+            $('#btn_export_returns').on('click', function(){
+                var cbo_xreading = $('#cbo_xreading').val();
+                window.open('Sales_returns/transaction/export?id='+cbo_xreading);
+            });
+
         }();
         var showSpinningProgress=function(e){
             $(e).toggleClass('disabled');

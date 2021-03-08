@@ -13,7 +13,11 @@ class Pos_item_returns_model extends CORE_Model {
         return $this->db->query($sql)->result();
     }
 
-
+    function get_xreading_filter($x_reading_id) {
+        $sql="SELECT distinct x_reading_id,DATE_FORMAT(CAST(start_datetime as DATE),'%b %d %Y') as trans_date, terminal_id FROM pos_item_returns WHERE x_reading_id = $x_reading_id";
+        return $this->db->query($sql)->result();
+    }
+    
     function get_pos_returns_for_review() {
         $sql="SELECT 
 			DATE_FORMAT(CAST(start_datetime as DATE),'%m/%d/%Y')  as trans_date,
