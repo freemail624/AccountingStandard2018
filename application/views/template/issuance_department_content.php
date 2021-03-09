@@ -102,8 +102,8 @@
         <tr>
             <td width="15%" class="default-color border" valign="top">QTY</td>
             <td width="25%" class="default-color border" valign="top">DESCRIPTION</td>
-            <td width="15%" class="default-color border" valign="top">EXPIRATION</td>
-            <td width="15%" class="default-color border" valign="top">LOT#</td>
+<!--             <td width="15%" class="default-color border" valign="top" >EXPIRATION</td>
+            <td width="15%" class="default-color border" valign="top" >LOT#</td> -->
             <td width="15%" class="default-color border" valign="top" align="right">UNIT PRICE</td>
             <td width="15%" class="default-color border" valign="top" align="right">TOTAL</td>
         </tr>
@@ -114,14 +114,14 @@
         <tr>
             <td class="left right"><?php echo number_format($item->issue_qty,2); ?></td>
             <td class="left right"><?php echo $item->product_desc; ?></td>
-            <td class="left right"><?php echo $item->exp_date; ?></td>
-            <td class="left right"><?php echo $item->batch_no; ?></td>
+<!--             <td class="left right"><?php echo $item->exp_date; ?></td>
+            <td class="left right"><?php echo $item->batch_no; ?></td> -->
             <td class="left right" align="right"><?php echo number_format($item->issue_price,2); ?></td>
             <td class="left right" align="right"><?php echo number_format($item->issue_line_total_price,2); ?></td>
         </tr>
         <?php }?>
         <tr>
-            <td class="border" align="right" colspan="5"><b>TOTAL AMOUNT DUE</b></td>
+            <td class="border" align="right" colspan="3"><b>TOTAL AMOUNT DUE</b></td>
             <td class="border" align="right">
                 <?php echo number_format($grandtotal,2); ?>
             </td>

@@ -261,7 +261,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label>Contact Person :</label><br/>
-                                <input type="text" name="contact_person" id="contact_person" class="form-control" required data-error-msg="Contact Person is required!" placeholder="Contact Person">                 
+                                <input type="text" name="contact_person" id="contact_person" class="form-control" data-error-msg="Contact Person is required!" placeholder="Contact Person">                 
                             </div>
                         </div>
                         <div class="row">
@@ -343,8 +343,8 @@
                                 <th width="10%" style="text-align: right;">Gross</th>
                                 <th width="10%" style="text-align: right;">Net Total</th>
                                 <!-- Expiration and LOT# -->
-                                <th width="10%">Expiration</th>
-                                <th width="10%">LOT#</th>
+                                <th width="10%" class="hidden">Expiration</th>
+                                <th width="10%" class="hidden">LOT#</th>
                                 <th class="hidden">Cost Upon Invoice</th>
                                 <!-- DISPLAY NONE  -->
                                 <th class="hidden">Vat Input(Total Line Tax)</th>
@@ -377,7 +377,7 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="10" style="height: 50px;">&nbsp;</td>
+                                <td colspan="8" style="height: 50px;">&nbsp;</td>
                             </tr>
                             <tr class="">
                                 <td style="text-align: right;">Discount:</td>
@@ -389,7 +389,7 @@
                                 <td style="text-align: right;" class="hidden">Total After Discount:</td>
                                 <td id="td_total_after_discount" style="text-align: right" class="hidden">0.00</td>
 
-                                <td style="text-align: right;" colspan="7">Total before tax:</td>
+                                <td style="text-align: right;" colspan="5">Total before tax:</td>
                                 <td id="td_total_before_tax" style="text-align: right">0.00</td>
                             </tr>
                             <tr>
@@ -397,7 +397,7 @@
                                     <strong><i class="glyph-icon icon-star"></i> Tax :</strong>
                                 </td>
                                 <td align="right" id="td_tax" color="red">0.00</td>
-                                <td colspan="7" style="text-align: right;">
+                                <td colspan="5" style="text-align: right;">
                                     <strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong>
                                 </td>
                                 <td align="right" colspan="1" id="td_after_tax" color="red">0.00</td>
@@ -1139,8 +1139,8 @@ $(document).ready(function(){
                 '<td width=15%" style="padding-left: 1%;"><b>PLU</b></td>'+
                 '<td class="hidden"><b>UniqID</b></td>'+
                 '<td width="25%" align="left"><b>Description</b></td>'+
-                '<td width="20%" align="left"><b>Expiration</b></td>'+
-                '<td width="10%" align="left"><b>LOT#</b></td>'+
+                '<td width="20%" class="hidden" align="left"><b>Expiration</b></td>'+
+                '<td width="10%" class="hidden" align="left"><b>LOT#</b></td>'+
                 '<td width="17%" align="right"><b>On Hand</b></td>'+
                 '<td width="13%" align="right" style="padding-right: 1%;"><b>SRP</b></td>'+
                 '</tr></table>'
@@ -1149,8 +1149,8 @@ $(document).ready(function(){
                 '<td width="15%" style="padding-left: 1%;">{{product_code}}</td>'+
                 '<td class="hidden">{{unq_id}}</td>'+
                 '<td width="25%" align="left">{{product_desc}}</td>'+
-                '<td width="20%" align="left">{{exp_date}}</td>'+
-                '<td width="10%" align="left">{{batch_no}}</td>'+
+                '<td width="20%" class="hidden" align="left">{{exp_date}}</td>'+
+                '<td width="10%" class="hidden" align="left">{{batch_no}}</td>'+
                 '<td width="17%" align="right">{{on_hand_per_batch}}</td>'+
                 '<td width="13%" align="right" style="padding-right: 1%;">{{srp}}</td>'+
                 '</tr></table>')
@@ -1162,16 +1162,15 @@ $(document).ready(function(){
             if (event.keyCode == 13) {
              
                 // $('.tt-suggestion:first').click();
-    _objTypeHead.typeahead('close');           //     -- changed due to barcode scan not working
-    _objTypeHead.typeahead('val','');         //  -- changed due to barcode scan not working
+            _objTypeHead.typeahead('close');           //     -- changed due to barcode scan not working
+            _objTypeHead.typeahead('val','');         //  -- changed due to barcode scan not working
             }
         }).bind('typeahead:select', function(ev, suggestion) {
 
-
-            // if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
-            //     showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
-            //     return;
-            // }
+            if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
+                showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
+                return;
+            }
 
             var product_id = 0;
             var conversion_rate = 0;
@@ -1221,9 +1220,14 @@ $(document).ready(function(){
                 sale_price=suggestion.distributor_price;
             }else if(_customer_type_ == '4' ){ // PUBLIC CUSTOMER TYPE
                 sale_price=suggestion.public_price;
+            }else if(_customer_type_ == '5' ){ // SHOPEE
+                sale_price=suggestion.shopee_price;
+            }else if(_customer_type_ == '6' ){ // LAZADA
+                sale_price=suggestion.lazada_price;
             }else{
                 sale_price=suggestion.sale_price;
             }
+
             var total=getFloat(sale_price);
             var net_vat=0;
             var vat_input=0;
@@ -2476,11 +2480,11 @@ $(document).ready(function(){
             '<td  align="right"><input name="inv_line_total_price[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_line_total_price,2)+'" readonly>'+
             '</td>'+
             // [9] Expiration
-            '<td>'+
+            '<td class="hidden">'+
                 '<input name="exp_date[]" type="text" class="form-control" value="'+ d.exp_date +'" readonly>'+
             '</td>'+
             // [10] Batch #
-            '<td>'+
+            '<td class="hidden">'+
                 '<input name="batch_no[]" type="text" class="form-control" value="'+ d.batch_no +'" readonly>'+
             '</td>'+
             // [11] Cost Upon Invoice
@@ -2503,7 +2507,7 @@ $(document).ready(function(){
             '</td>'+
             // [16] Action
             '<td align="center">'+
-                '<button type="button" name="search_item" class="btn btn-warning" style="margin-right: 5px;"><i class="fa fa-search"></i></button>'+
+                '<button type="button" name="search_item" class="hidden btn btn-warning" style="margin-right: 5px;"><i class="fa fa-search"></i></button>'+
                 '<button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button>'+
             '</td>'+
             // [17] Bulk Price

@@ -301,10 +301,22 @@
                                                                 </select> 
                                                             </div> 
 
+                                                            <div class="form-group" style="margin-bottom:0px;">
+                                                                <label class=""><b class="required">*</b> Inventory type :</label>
+
+                                                                <select name="item_type_id" id="cbo_item_type" data-error-msg="Inverntory type is required." required>
+                                                                    <option value="">None</option>
+                                                                    <?php foreach($item_types as $item_type){ ?>
+                                                                        <option value="<?php echo $item_type->item_type_id ?>"><?php echo $item_type->item_type; ?></option>
+                                                                    <?php } ?>
+                                                                </select>
+
+                                                            </div>
+
                                                             <div class="form-group" style="margin-bottom:0px; vertical-align: middle;text-align: left;"><br>
                                                             <label  for="is_tax_exempt" style="text-align: left;vertical-align: middle;"><input type="checkbox" name="is_tax_exempt" class="" id="is_tax_exempt" style="transform: scale(2.0);">  &nbsp;&nbsp;Tax Exempt ?</label>
 
-                                                            <label  class="hidden" for="is_parent" style="text-align: left;vertical-align: middle;margin-left: 20px;">
+                                                            <label  class="" for="is_parent" style="text-align: left;vertical-align: middle;margin-left: 20px;">
                                                             <input type="checkbox" name="is_parent" class="" id="is_parent" style="transform: scale(2.0);">  &nbsp;&nbsp;Is Parent ?</label>
 
                                                             <label  for="is_nonsalable" style="text-align: left;float:right;vertical-align: middle;"><input type="checkbox" name="is_nonsalable" class="" id="is_nonsalable" style="transform: scale(2.0);">  &nbsp;&nbsp;Nonsalable ?</label>
@@ -319,19 +331,6 @@
                                                             <div class="col-lg-12">
                                                                 <div class="col-lg-6" style="margin:0px;">
                                                                 
-                                                                <div class="form-group" style="margin-bottom:0px;">
-                                                                    <label class=""><b class="required">*</b> Inventory type :</label>
-
-                                                                    <select name="item_type_id" id="cbo_item_type" data-error-msg="Inverntory type is required." required>
-                                                                        <option value="">None</option>
-                                                                        <?php foreach($item_types as $item_type){ ?>
-                                                                            <option value="<?php echo $item_type->item_type_id ?>"><?php echo $item_type->item_type; ?></option>
-                                                                        <?php } ?>
-                                                                    </select>
-
-                                                                </div>
-
-
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                     <label class="">Purchase Cost :</label>
                                                                     <div class="input-group">
@@ -353,7 +352,7 @@
                                                                     </div>
                                                                 </div>
 
-                                                                <div class="hidden form-group" style="margin-bottom:0px;">
+                                                                <div class="form-group" style="margin-bottom:0px;">
                                                                     <label><b class="required elem_parent"></b> Bulk Unit :</label>
                                                                     <select class="form-control" name="bulk_unit_id" id="bulk_unit_id" data-error-msg="Bulk Unit is required.">
                                                                         <option value="unt">[ Create New Unit ]</option>
@@ -364,7 +363,7 @@
                                                                         <?php }?>
                                                                     </select>
                                                                 </div>
-                                                                <div class="hidden form-group" style="margin-bottom:0px;">
+                                                                <div class="form-group" style="margin-bottom:0px;">
                                                                     <label><b class="required elem_parent"></b> Bulk Conversion Rate: </label>
                                                                     <div class="input-group">
                                                                             <span class="input-group-addon">
@@ -373,7 +372,7 @@
                                                                         <input type="text" name="bulk_conversion_rate" id="bulk_conversion_rate" class="form-control numeric5" data-error-msg="Bulk conversion rate is required.">
                                                                     </div>
                                                                 </div>
-                                                                <div class="hidden form-group" style="margin-bottom:0px;">
+                                                                <div class="form-group" style="margin-bottom:0px;">
                                                                     <label><b class="required elem_child"></b> Parent :</label>
                                                                     <select class="form-control" name="parent_id" id="parent_id" data-error-msg="Parent Product is required.">
                                                                         <option value="0">None</option>
@@ -384,7 +383,7 @@
                                                                         <?php }?>
                                                                     </select>
                                                                 </div>
-                                                                <div class="hidden form-group" style="margin-bottom:0px;">
+                                                                <div class="form-group" style="margin-bottom:0px;">
                                                                     <label>Conversion Rate: </label>
                                                                     <div class="input-group">
                                                                             <span class="input-group-addon">
@@ -437,29 +436,6 @@
                                                                         <input type="text" name="distributor_price" id="distributor_price" class="form-control numeric product_costing">
                                                                     </div>
                                                                 </div>
-
-                                                                <div class="form-group" style="margin-bottom:0px;">
-                                                                    <label class="">Warning Quantity (Minimum Stock):</label>
-                                                                    <div class="input-group">
-                                                                            <span class="input-group-addon">
-                                                                                <i class="fa fa-toggle-off"></i>
-                                                                            </span>
-                                                                        <input type="text" name="product_warn" id="product_warn" class="form-control numeric">
-                                                                    </div>
-                                                                </div>
-
-
-                                                                <div class="form-group" style="margin-bottom:0px;">
-                                                                    <label class="">Ideal Quantity (Maximum Stock):</label>
-                                                                    <div class="input-group">
-                                                                            <span class="input-group-addon">
-                                                                                <i class="fa fa-toggle-off"></i>
-                                                                            </span>
-                                                                        <input type="text" name="product_ideal" id="product_ideal" class="form-control numeric">
-                                                                    </div>
-                                                                </div>
-                                                                
-
 
                                                             </div>
 
@@ -515,7 +491,47 @@
                                                                     ?>
                                                                 </select> 
                                                             </div> -->
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    <label class="">Shoppe Price :</label>
+                                                                    <div class="input-group">
+                                                                            <span class="input-group-addon">
+                                                                                <i class="fa fa-toggle-off"></i>
+                                                                            </span>
+                                                                        <input type="text" name="shopee_price" id="shopee_price" class="form-control numeric product_costing">
+                                                                    </div>
+                                                                </div>
 
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    <label class="">Lazada Price :</label>
+                                                                    <div class="input-group">
+                                                                            <span class="input-group-addon">
+                                                                                <i class="fa fa-toggle-off"></i>
+                                                                            </span>
+                                                                        <input type="text" name="lazada_price" id="lazada_price" class="form-control numeric product_costing">
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    <label class="">Warning Quantity (Minimum Stock):</label>
+                                                                    <div class="input-group">
+                                                                            <span class="input-group-addon">
+                                                                                <i class="fa fa-toggle-off"></i>
+                                                                            </span>
+                                                                        <input type="text" name="product_warn" id="product_warn" class="form-control numeric">
+                                                                    </div>
+                                                                </div>
+
+
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    <label class="">Ideal Quantity (Maximum Stock):</label>
+                                                                    <div class="input-group">
+                                                                            <span class="input-group-addon">
+                                                                                <i class="fa fa-toggle-off"></i>
+                                                                            </span>
+                                                                        <input type="text" name="product_ideal" id="product_ideal" class="form-control numeric">
+                                                                    </div>
+                                                                </div>
+                                                                
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                             <label class="">Link to Credit Account (For Sales Journal):</label>
 
@@ -1346,6 +1362,7 @@ $(document).ready(function(){
             placeholder: "Please select parent.",
             allowClear: false
         });       
+        _cboParentId.select2('val', 0);
 
         // _cboPrimaryUnit=$('#primary_unit').select2({
         //     allowClear: false,
@@ -1944,7 +1961,7 @@ $(document).ready(function(){
         var setParentPanel= function(b){
 
             _cboBulkUnitId.select2('val',null);
-            _cboParentId.select2('val',null);
+            _cboParentId.select2('val',0);
 
             $('#conversion_rate').val("");
             $('#bulk_conversion_rate').val("");
@@ -1999,7 +2016,10 @@ $(document).ready(function(){
             _cboInventory.select2('val',null);
             _cboMeasurement.select2('val',null);
             _cboBulkUnitId.select2('val',null);
-            _cboParentId.select2('val',null);
+            _cboParentId.select2('val',0);
+
+
+
             // _child_unit_id.select2('val',null);
             _cboCredit.select2('val',0);
             _cboDebit.select2('val',0);

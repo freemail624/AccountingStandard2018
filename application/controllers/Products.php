@@ -201,7 +201,8 @@ class Products extends CORE_Controller
                 $m_products->dealer_price =$this->get_numeric_value($this->input->post('dealer_price', TRUE));
                 $m_products->distributor_price =$this->get_numeric_value($this->input->post('distributor_price', TRUE));
                 $m_products->public_price =$this->get_numeric_value($this->input->post('public_price', TRUE));
-
+                $m_products->shopee_price =$this->get_numeric_value($this->input->post('shopee_price', TRUE));
+                $m_products->lazada_price =$this->get_numeric_value($this->input->post('lazada_price', TRUE));
                 // For Bulk Unit and Conversions
                 $m_products->is_parent = $this->get_numeric_value($this->input->post('is_parent', TRUE));
                 $m_products->bulk_unit_id = $this->get_numeric_value($this->input->post('bulk_unit_id', TRUE));
@@ -288,7 +289,8 @@ class Products extends CORE_Controller
                 $m_products->dealer_price =$this->get_numeric_value($this->input->post('dealer_price', TRUE));
                 $m_products->distributor_price =$this->get_numeric_value($this->input->post('distributor_price', TRUE));
                 $m_products->public_price =$this->get_numeric_value($this->input->post('public_price', TRUE));
-
+                $m_products->shopee_price =$this->get_numeric_value($this->input->post('shopee_price', TRUE));
+                $m_products->lazada_price =$this->get_numeric_value($this->input->post('lazada_price', TRUE));
                 // For Bulk Unit and Conversions
                 $m_products->is_parent = $this->get_numeric_value($this->input->post('is_parent', TRUE));
                 $m_products->bulk_unit_id = $this->get_numeric_value($this->input->post('bulk_unit_id', TRUE));

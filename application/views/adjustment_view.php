@@ -328,8 +328,8 @@
                                 <th class="hidden">T.D</th> <!-- total discount -->
                                 <th class="hidden">Tax %</th>
                                 <th width="15%" style="text-align: right">Total</th>
-                                <th width="10%">Expiration</th>
-                                <th width="10%">LOT#</th>
+                                <th width="10%" class="hidden">Expiration</th>
+                                <th width="10%" class="hidden">LOT#</th>
                                 <th class="hidden">Cost Upon Invoice</th>
                                 <th class="hidden">V.I</th> <!-- vat input -->
                                 <th class="hidden">N.V</th> <!-- net of vat -->
@@ -342,20 +342,20 @@
 
                             <tfoot>
                             <tr>
-                                <td colspan="8" style="height: 50px;">&nbsp;</td>
+                                <td colspan="6" style="height: 50px;">&nbsp;</td>
                             </tr>
                             <tr>
                                 <td colspan="3" style="text-align: right;">
                                     <strong><i class="glyph-icon icon-star"></i> Discount :</strong>
                                 </td>
                                 <td align="right" id="td_discount color="red">0.00</td>
-                                <td colspan="3" id="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
+                                <td colspan="1" id="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
                                 <td align="right" colspan="1" id="td_before_tax" color="red">0.00</td>
                             </tr>
                             <tr>
                                 <td colspan="3" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
                                 <td align="right" colspan="1" id="td_tax" color="red">0.00</td>
-                                <td colspan="3" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
+                                <td colspan="1" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
                                 <td align="right" colspan="1" id="td_after_tax" color="red">0.00</td>
                             </tr>
                             </tfoot>
@@ -896,8 +896,8 @@ $(document).ready(function(){
                     '<td width=15%" style="padding-left: 1%;"><b>PLU</b></td>'+
                     '<td class="hidden"><b>UniqID</b></td>'+
                     '<td width="25%" align="left"><b>Description</b></td>'+
-                    '<td width="20%" align="left"><b>Expiration</b></td>'+
-                    '<td width="10%" align="left"><b>LOT#</b></td>'+
+                    '<td width="20%" class="hidden" align="left"><b>Expiration</b></td>'+
+                    '<td width="10%" class="hidden" align="left"><b>LOT#</b></td>'+
                     '<td width="10%" align="right"><b>On Hand</b></td>'+
                     '<td width="10%" align="right"><b>SRP</b></td>'+
                     '<td width="10%" align="right" style="padding-right: 1%;"><b>Cost Price</b></td>'+
@@ -907,8 +907,8 @@ $(document).ready(function(){
                     '<td width="15%" style="padding-left: 1%;">{{product_code}}</td>'+
                     '<td class="hidden">{{unq_id}}</td>'+
                     '<td width="25%" align="left">{{product_desc}}</td>'+
-                    '<td width="20%" align="left">{{exp_date}}</td>'+
-                    '<td width="10%" align="left">{{batch_no}}</td>'+
+                    '<td width="20%" class="hidden" align="left">{{exp_date}}</td>'+
+                    '<td width="10%" class="hidden" align="left">{{batch_no}}</td>'+
                     '<td width="10%" align="right">{{on_hand_per_batch}}</td>'+
                     '<td width="10%" align="right">{{srp}}</td>'+
                     '<td width="10%" align="right" style="padding-right: 1%;">{{srp_cost}}</td>'+
@@ -923,10 +923,10 @@ $(document).ready(function(){
             }
         }).bind('typeahead:select', function(ev, suggestion) {
 
-            // if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
-            //     showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
-            //     return;
-            // }
+            if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
+                showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
+                return;
+            }
 
             var product_id = 0;
             var conversion_rate = 0;
@@ -2137,11 +2137,11 @@ $(document).ready(function(){
                 '<input name="adjust_line_total_price[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.adjust_line_total_price,2)+'" readonly>'+
             '</td>'+
             // [8] Expiration
-            '<td>'+
+            '<td class="hidden">'+
                 '<input name="exp_date[]" type="text" class="'+dateAttr+' form-control" value="'+ d.exp_date +'" '+readonlyAttr+'>'+
             '</td>'+
             // [9] Batch #
-            '<td>'+
+            '<td class="hidden">'+
                 '<input name="batch_no[]" type="text" class="form-control" value="'+ d.batch_no +'" '+readonlyAttr+'>'+
             '</td>'+
             // [10] Cost Upon Invoice
@@ -2162,7 +2162,7 @@ $(document).ready(function(){
             '</td>'+
             // [14] Action
             '<td align="center">'+
-                '<button type="button" name="search_item" class="btn btn-warning '+hideAttr+'" style="margin-right: 5px;"><i class="fa fa-search"></i></button>'+
+                '<button type="button" name="search_item" class="hidden btn btn-warning '+hideAttr+'" style="margin-right: 5px;"><i class="fa fa-search"></i></button>'+
                 '<button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button>'+
             '</td>'+
             // [15] Bulk Price
