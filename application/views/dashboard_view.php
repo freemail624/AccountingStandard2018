@@ -404,19 +404,16 @@
                                                     
 
                                                 </div>
-                                                <div class="row hidden" style="margin-top: 20px;">
-                                                    <div class="col-xs-12 col-sm-8 <?php echo (in_array('7-1',$this->session->user_rights)?'':'hidden'); ?>">
+                                                <div class="row" style="margin-top: 20px;">
+                                                    <div class="col-xs-12 col-sm-8 <?php echo (in_array('2-4',$this->session->user_rights)?'':'hidden'); ?>">
                                                       <div class="data-container table-responsive" style="padding: 20px 15px 20px 15px; min-height: 700px; max-height: 700px;">
-                                                            <h6 class="visible-xs hidden-sm hidden-md hidden-lg po_title" style="position: absolute; top: 5px"><i class="fa fa-file-text-o"></i> <span >PURCHASE ORDER</span></h6>
-                                                            <h3 class="hidden-xs po_title" style="position: absolute; top: 5px"><i class="fa fa-file-text-o"  style="color: #067cb2;"></i> <span >PURCHASE ORDER FOR APPROVAL</span></h2>
-                                                            <table id="tbl_po_list" class="table table-striped" cellspacing="0" width="100%">
+                                                            <h6 class="visible-xs hidden-sm hidden-md hidden-lg po_title" style="position: absolute; top: 5px"><i class="fa fa-file-text-o"></i> <span >PURCHASE REQUEST</span></h6>
+                                                            <h3 class="hidden-xs po_title" style="position: absolute; top: 5px"><i class="fa fa-file-text-o"  style="color: #067cb2;"></i> <span >PURCHASE REQUEST FOR APPROVAL</span></h2>
+                                                            <table id="tbl_pr_list" class="table table-striped" cellspacing="0" width="100%">
                                                                 <thead>
                                                                     <th></th>
-                                                                    <th>PO #</th>
-                                                                    <th>Vendor</th>
-                                                                    <th>Terms </th>
+                                                                    <th>PR #</th>
                                                                     <th>Posted by </th>
-                                                                    <th style="text-align: center;"> <i class="fa fa-paperclip"></i></th>
                                                                     <th style="width: 15%!important;"><center>Action</center></th>
                                                                 </thead>
                                                                 <tbody>
@@ -745,10 +742,9 @@ Chart.defaults.global.defaultFontColor = "#000000";
 <script>
 
     $(document).ready(function(){
-        var dt; var _selectedID; var _selectRowObj;
+        var dt; var dt_pr; var _selectedID; var _selectRowObj;
 
         var initializeControls=(function(){
-
 
             dt=$('#tbl_po_list').DataTable({
                 "dom": '<"toolbar">frtip',
@@ -790,6 +786,35 @@ Chart.defaults.global.defaultFontColor = "#000000";
                     }
                 ]
             });
+
+            dt_pr=$('#tbl_pr_list').DataTable({
+                "dom": '<"toolbar">frtip',
+                "bLengthChange":false,
+                "ajax" : "Purchase_request/transaction/pr-for-approved",
+                "language": {
+                  "searchPlaceholder":"Search Purchase Request"
+                },
+                "columns": [
+                    {
+                        "targets": [0],
+                        "class":          "details-control",
+                        "orderable":      false,
+                        "data":           null,
+                        "defaultContent": ""
+                    },
+                    { targets:[1],data: "pr_no" },
+                    { targets:[2],data: "posted_by" },
+                    {
+                        targets:[3],
+                        render: function (data, type, full, meta){
+
+                            var btn_approved='<button class="btn btn-success btn-sm" name="approve_pr"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Approve this PR"><i class="fa fa-check" style="color: white;"></i> <span class=""></span></button>';
+                            return '<center>'+btn_approved+'</center>';
+                        }
+                    }
+                ]
+            });
+
 
              $('div.dataTables_filter input').addClass('dash_search_field');
         })();
@@ -839,6 +864,44 @@ Chart.defaults.global.defaultFontColor = "#000000";
                 }
             } );
 
+            $('#tbl_pr_list tbody').on( 'click', 'tr td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = dt_pr.row( tr );
+                var idx = $.inArray( tr.attr('id'), detailRows );
+
+                if ( row.child.isShown() ) {
+                    tr.removeClass( 'details' );
+                    row.child.hide();
+
+                    // Remove from the 'open' array
+                    detailRows.splice( idx, 1 );
+                }
+                else {
+                    tr.addClass( 'details' );
+                    //console.log(row.data());
+                    var d=row.data();
+
+                    $.ajax({
+                        "dataType":"html",
+                        "type":"POST",
+                        "url":"Templates/layout/pr/"+ d.purchase_request_id+'?type=approval',
+                        "beforeSend" : function(){
+                            row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                        }
+                    }).done(function(response){
+                        row.child( response,'no-padding' ).show();
+                        // Add to the 'open' array
+                        if ( idx === -1 ) {
+                            detailRows.push( tr.attr('id') );
+                        }
+                    });
+
+
+
+
+                }
+            } );            
+
 
             //*****************************************************************************************
             $('#tbl_po_list > tbody').on('click','button[name="approve_po"]',function(){
@@ -857,6 +920,23 @@ Chart.defaults.global.defaultFontColor = "#000000";
                 });
             });
 
+            $('#tbl_pr_list > tbody').on('click','button[name="approve_pr"]',function(){
+            // showNotification({title:"Approving PO and Sending Email!",stat:"info",msg:"Please wait for a few seconds."});
+                _selectRowObj=$(this).closest('tr'); //hold dom of tr which is selected
+
+                var data=dt_pr.row(_selectRowObj).data();
+                _selectedID=data.purchase_request_id;
+
+                 approvePurchaseRequest().done(function(response){
+                    showNotification(response);
+                    if(response.stat=="success"){
+                        dt_pr.row(_selectRowObj).remove().draw();
+                    }
+
+                });
+            });
+
+
 
             //****************************************************************************************
             $('#tbl_po_list > tbody').on('click','button[name="mark_as_approved"]',function(){
@@ -864,6 +944,13 @@ Chart.defaults.global.defaultFontColor = "#000000";
                 _selectRowObj.find('button[name="approve_po"]').click();
                 showSpinningProgress($(this));
             });
+
+            $('#tbl_pr_list > tbody').on('click','button[name="mark_as_approved"]',function(){
+                _selectRowObj=$(this).parents('tr').prev();
+                _selectRowObj.find('button[name="approve_pr"]').click();
+                showSpinningProgress($(this));
+            });
+
 
 
             //****************************************************************************************
@@ -890,6 +977,16 @@ Chart.defaults.global.defaultFontColor = "#000000";
                 "type":"POST",
                 "url":"Purchases/transaction/mark-approved",
                 "data":{purchase_order_id : _selectedID}
+
+            });
+        };
+
+        var approvePurchaseRequest=function(){
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Purchase_request/transaction/mark-approved",
+                "data":{purchase_request_id : _selectedID}
 
             });
         };

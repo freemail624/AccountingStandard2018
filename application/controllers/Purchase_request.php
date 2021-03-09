@@ -149,27 +149,24 @@ class Purchase_request extends CORE_Controller
                     );
                     break;
 
-                case 'po-for-approved':  //is called on DASHBOARD, returns PO list for approval
+                case 'pr-for-approved':  //is called on DASHBOARD, returns PO list for approval
                     //approval id 2 are those pending
                     $m_requests=$this->Purchase_request_model;
                     $response['data']=$m_requests->get_list(
                         //filter
-                        'purchase_order.is_active=TRUE AND purchase_order.is_deleted=FALSE AND purchase_order.approval_id=2',
+                        'purchase_request.is_active=TRUE AND purchase_request.is_deleted=FALSE AND purchase_request.approval_id=2',
                         //fields
-                        'purchase_order.*,suppliers.supplier_name,COUNT(po_attachments.po_attachment_id) as attachment,
-                        CONCAT_WS(" ",purchase_order.terms,purchase_order.duration)As term_description,
+                        'purchase_request.*,
                         CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by',
                         //joins
                         array(
-                            array('suppliers','suppliers.supplier_id=purchase_order.supplier_id','left'),
-                            array('user_accounts','user_accounts.user_id=purchase_order.posted_by_user','left'),
-                            array('po_attachments','po_attachments.purchase_request_id=purchase_order.purchase_request_id','left')
+                            array('user_accounts','user_accounts.user_id=purchase_request.posted_by_user','left')
                         ),
 
                         //order by
-                        'purchase_order.purchase_request_id DESC',
+                        'purchase_request.purchase_request_id DESC',
                         //group by
-                        'purchase_order.purchase_request_id'
+                        'purchase_request.purchase_request_id'
                     );
                     echo json_encode($response);
                     break;
@@ -271,7 +268,7 @@ class Purchase_request extends CORE_Controller
                     $m_requests->department_id=$this->input->post('department',TRUE);
                     $m_requests->remarks=$this->input->post('remarks',TRUE);
                     $m_requests->tax_type_id=$this->input->post('tax_type',TRUE);
-                    $m_requests->approval_id=1;
+                    $m_requests->approval_id=2;
                     $m_requests->posted_by_user=$this->session->user_id;
                     $m_requests->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                     $m_requests->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
@@ -571,10 +568,10 @@ class Purchase_request extends CORE_Controller
                             $purchase_request_id,
                             array(
                                 'user_accounts.user_email',
-                                'purchase_order.po_no'
+                                'purchase_request.pr_no'
                             ),
                             array(
-                                array('user_accounts','user_accounts.user_id=purchase_order.posted_by_user','left')
+                                array('user_accounts','user_accounts.user_id=purchase_request.posted_by_user','left')
                             )
                         );
 
@@ -618,7 +615,7 @@ class Purchase_request extends CORE_Controller
 
                         $response['title']='Success!';
                         $response['stat']='success';
-                        $response['msg']='Purchase order successfully approved.';
+                        $response['msg']='Purchase request successfully approved.';
                         echo json_encode($response);
                     }
                     break;
