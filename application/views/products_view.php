@@ -1944,7 +1944,7 @@ $(document).ready(function(){
         var setParentPanel= function(b){
 
             _cboBulkUnitId.select2('val',null);
-            _cboParentId.select2('val',null);
+            _cboParentId.select2('val',0);
 
             $('#conversion_rate').val("");
             $('#bulk_conversion_rate').val("");
