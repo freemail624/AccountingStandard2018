@@ -366,13 +366,11 @@
 													        )
 													    )
 													);	
-	                		$excel->getActiveSheet()->setCellValue('C'.$i,number_format($report_item->debit,2))
-	                								->getStyle('C'.$i)
-	                								->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+	                		$excel->getActiveSheet()->setCellValue('C'.$i,$report_item->debit);
+	                		$excel->getActiveSheet()->setCellValue('D'.$i,$report_item->credit);
 
-	                		$excel->getActiveSheet()->setCellValue('D'.$i,number_format($report_item->credit,2))
-	                								->getStyle('D'.$i)
-	                								->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+		                    $excel->getActiveSheet()->getStyle('C'.$i.':D'.$i)->getNumberFormat()
+		                                            ->setFormatCode('###,##0.00;(###,##0.00)');
 
 	                		$excel->getActiveSheet()->getStyle('C'.$i)
 	                								->applyFromArray(
@@ -413,7 +411,7 @@
 		                		->getAlignment()
 						        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                		$excel->getActiveSheet()->setCellValue('C'.$i,number_format($total_dr,2))
+                		$excel->getActiveSheet()->setCellValue('C'.$i,$total_dr)
                 						->getStyle('C'.$i)->applyFromArray(
 				                            array(
 				                                'fill' => array(
@@ -424,7 +422,7 @@
 				                        )->getFont()
                                         ->setBold(TRUE);
 
-                		$excel->getActiveSheet()->setCellValue('D'.$i,number_format($total_dr,2))
+                		$excel->getActiveSheet()->setCellValue('D'.$i,$total_cr)
                 						->getStyle('D'.$i)->applyFromArray(
 				                            array(
 				                                'fill' => array(
@@ -435,6 +433,8 @@
 				                        )->getFont()
                                         ->setBold(TRUE);
 
+	                    $excel->getActiveSheet()->getStyle('C'.$i.':D'.$i)->getNumberFormat()
+	                                            ->setFormatCode('###,##0.00;(###,##0.00)');
 
 						$excel->getActiveSheet()->getStyle('A'.$i.':'.'B'.$i)
 	                								->applyFromArray(
@@ -559,6 +559,7 @@
 					
 					ob_start();
 	                $excel->setActiveSheetIndex(0);
+
 	                $excel->getActiveSheet()->getColumnDimension('A')
 	                                        ->setAutoSize(false)
 	                                        ->setWidth('15');
@@ -826,13 +827,11 @@
 													        )
 													    )
 													);	
-	                		$excel->getActiveSheet()->setCellValue('C'.$i,number_format($report_item->debit,2))
-	                								->getStyle('C'.$i)
-	                								->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+	                		$excel->getActiveSheet()->setCellValue('C'.$i,$report_item->debit);
+	                		$excel->getActiveSheet()->setCellValue('D'.$i,$report_item->credit);
 
-	                		$excel->getActiveSheet()->setCellValue('D'.$i,number_format($report_item->credit,2))
-	                								->getStyle('D'.$i)
-	                								->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+		                    $excel->getActiveSheet()->getStyle('C'.$i.':D'.$i)->getNumberFormat()
+		                                            ->setFormatCode('###,##0.00;(###,##0.00)');
 
 	                		$excel->getActiveSheet()->getStyle('C'.$i)
 	                								->applyFromArray(
@@ -873,7 +872,7 @@
 		                		->getAlignment()
 						        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                		$excel->getActiveSheet()->setCellValue('C'.$i,number_format($total_dr,2))
+                		$excel->getActiveSheet()->setCellValue('C'.$i,$total_dr)
                 						->getStyle('C'.$i)->applyFromArray(
 				                            array(
 				                                'fill' => array(
@@ -884,7 +883,7 @@
 				                        )->getFont()
                                         ->setBold(TRUE);
 
-                		$excel->getActiveSheet()->setCellValue('D'.$i,number_format($total_dr,2))
+                		$excel->getActiveSheet()->setCellValue('D'.$i,$total_cr)
                 						->getStyle('D'.$i)->applyFromArray(
 				                            array(
 				                                'fill' => array(
@@ -895,6 +894,8 @@
 				                        )->getFont()
                                         ->setBold(TRUE);
 
+	                    $excel->getActiveSheet()->getStyle('C'.$i.':D'.$i)->getNumberFormat()
+	                                            ->setFormatCode('###,##0.00;(###,##0.00)');
 
 						$excel->getActiveSheet()->getStyle('A'.$i.':'.'B'.$i)
 	                								->applyFromArray(
@@ -978,7 +979,6 @@
 
 	                }
 	                $i++;
-
 
 	                // Redirect output to a client’s web browser (Excel2007)
 	                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');

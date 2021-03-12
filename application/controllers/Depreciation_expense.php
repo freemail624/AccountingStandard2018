@@ -197,17 +197,15 @@
 	                	$excel->getActiveSheet()->setCellValue('A'.$i,$depreciation_expense->asset_code);
 	                	$excel->getActiveSheet()->setCellValue('B'.$i,$depreciation_expense->asset_description);
 	                	$excel->getActiveSheet()->setCellValue('C'.$i,date('F d,Y', strtotime($depreciation_expense->date_acquired)));
-	                	$excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-	                	$excel->getActiveSheet()->setCellValue('D'.$i,number_format($depreciation_expense->acquisition_cost,2));
+	                	$excel->getActiveSheet()->setCellValue('D'.$i,$depreciation_expense->acquisition_cost);
 	                	$excel->getActiveSheet()->setCellValue('E'.$i,$depreciation_expense->life_years);
-	                	$excel->getActiveSheet()->getStyle('F'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-	                	$excel->getActiveSheet()->setCellValue('F'.$i,number_format($depreciation_expense->salvage_value,2));
-	                	$excel->getActiveSheet()->getStyle('G'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-	                	$excel->getActiveSheet()->setCellValue('G'.$i,number_format($depreciation_expense->depreciation_expense,2));
-	                	$excel->getActiveSheet()->getStyle('H'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-	                	$excel->getActiveSheet()->setCellValue('H'.$i,number_format($depreciation_expense->accu_dep,2));
-	                	$excel->getActiveSheet()->getStyle('I'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');                	
-	                	$excel->getActiveSheet()->setCellValue('I'.$i,number_format($depreciation_expense->book_value,2));
+	                	$excel->getActiveSheet()->setCellValue('F'.$i,$depreciation_expense->salvage_value);
+	                	$excel->getActiveSheet()->setCellValue('G'.$i,$depreciation_expense->depreciation_expense);
+	                	$excel->getActiveSheet()->setCellValue('H'.$i,$depreciation_expense->accu_dep);          	
+	                	$excel->getActiveSheet()->setCellValue('I'.$i,$depreciation_expense->book_value);
+
+	                	$excel->getActiveSheet()->getStyle('D'.$i.':I'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+
 	                	$i++;
 
 						$totalacquisition += $depreciation_expense->acquisition_cost;
@@ -216,24 +214,36 @@
 						$totalaccumulative += $depreciation_expense->accu_dep ;
 						$totalbook += $depreciation_expense->book_value ;
 					}	
+
+						$lastrow = count($depreciation_expenses) + 5;
+
 	                	$excel->getActiveSheet()->mergeCells('A'.$i.':'.'B'.$i);					
 	                	$excel->getActiveSheet()->setCellValue('C'.$i,'TOTAL:')
                                         		->getStyle('C'.$i)->getFont()->setBold(TRUE);
-	                	$excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');                	
-	                	$excel->getActiveSheet()->setCellValue('D'.$i,number_format($totalacquisition,2))
-                                        		->getStyle('D'.$i)->getFont()->setBold(TRUE);
-	                	$excel->getActiveSheet()->getStyle('F'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');                	
-	                	$excel->getActiveSheet()->setCellValue('F'.$i,number_format($totalsalvage,2))
-                                        		->getStyle('F'.$i)->getFont()->setBold(TRUE);
-	                	$excel->getActiveSheet()->getStyle('G'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');                	
-	                	$excel->getActiveSheet()->setCellValue('G'.$i,number_format($totaldepreciation,2))
-                                        		->getStyle('G'.$i)->getFont()->setBold(TRUE);
-	                	$excel->getActiveSheet()->getStyle('H'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');                	
-	                	$excel->getActiveSheet()->setCellValue('H'.$i,number_format($totalaccumulative,2))
-                                        		->getStyle('H'.$i)->getFont()->setBold(TRUE);
-	                	$excel->getActiveSheet()->getStyle('I'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');                	
-	                	$excel->getActiveSheet()->setCellValue('I'.$i,number_format($totalbook,2))
-                                        		->getStyle('I'.$i)->getFont()->setBold(TRUE);
+
+	                	// $excel->getActiveSheet()->setCellValue('D'.$i,$totalacquisition)
+                  //                       		->getStyle('D'.$i)->getFont()->setBold(TRUE);
+	                	// $excel->getActiveSheet()->setCellValue('F'.$i,$totalsalvage)
+                  //                       		->getStyle('F'.$i)->getFont()->setBold(TRUE);
+	                	// $excel->getActiveSheet()->setCellValue('G'.$i,$totaldepreciation)
+                  //                       		->getStyle('G'.$i)->getFont()->setBold(TRUE);
+	                	// $excel->getActiveSheet()->setCellValue('H'.$i,$totalaccumulative)
+                  //                       		->getStyle('H'.$i)->getFont()->setBold(TRUE);
+	                	// $excel->getActiveSheet()->setCellValue('I'.$i,$totalbook)
+                  //                       		->getStyle('I'.$i)->getFont()->setBold(TRUE);
+
+                        $excel->getActiveSheet()->setCellValue('D'.$i, "=SUM(D6:D".$lastrow.")")
+                        						->getStyle('D'.$i)->getFont()->setBold(TRUE); 
+                        $excel->getActiveSheet()->setCellValue('F'.$i, "=SUM(F6:F".$lastrow.")")
+                        						->getStyle('F'.$i)->getFont()->setBold(TRUE); 
+                        $excel->getActiveSheet()->setCellValue('G'.$i, "=SUM(G6:G".$lastrow.")")
+                        						->getStyle('G'.$i)->getFont()->setBold(TRUE); 
+                        $excel->getActiveSheet()->setCellValue('H'.$i, "=SUM(H6:H".$lastrow.")")
+                        						->getStyle('H'.$i)->getFont()->setBold(TRUE); 
+                        $excel->getActiveSheet()->setCellValue('I'.$i, "=SUM(I6:I".$lastrow.")")
+                        						->getStyle('I'.$i)->getFont()->setBold(TRUE);                                         		
+	                	$excel->getActiveSheet()->getStyle('D'.$i.':I'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+
 
 	                	$i++;
 
@@ -266,6 +276,7 @@
 					$depreciation_expenses=$m_fixed_asset->get_depreciation_expense($month, $year);
 
 					ob_start();
+                	
                 	$excel->setActiveSheetIndex(0);
 
 	                $excel->getActiveSheet()->getColumnDimensionByColumn('A1:I1')->setWidth('50');
@@ -375,17 +386,15 @@
 	                	$excel->getActiveSheet()->setCellValue('A'.$i,$depreciation_expense->asset_code);
 	                	$excel->getActiveSheet()->setCellValue('B'.$i,$depreciation_expense->asset_description);
 	                	$excel->getActiveSheet()->setCellValue('C'.$i,date('F d,Y', strtotime($depreciation_expense->date_acquired)));
-	                	$excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-	                	$excel->getActiveSheet()->setCellValue('D'.$i,number_format($depreciation_expense->acquisition_cost,2));
+	                	$excel->getActiveSheet()->setCellValue('D'.$i,$depreciation_expense->acquisition_cost);
 	                	$excel->getActiveSheet()->setCellValue('E'.$i,$depreciation_expense->life_years);
-	                	$excel->getActiveSheet()->getStyle('F'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-	                	$excel->getActiveSheet()->setCellValue('F'.$i,number_format($depreciation_expense->salvage_value,2));
-	                	$excel->getActiveSheet()->getStyle('G'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-	                	$excel->getActiveSheet()->setCellValue('G'.$i,number_format($depreciation_expense->depreciation_expense,2));
-	                	$excel->getActiveSheet()->getStyle('H'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-	                	$excel->getActiveSheet()->setCellValue('H'.$i,number_format($depreciation_expense->accu_dep,2));
-	                	$excel->getActiveSheet()->getStyle('I'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');                	
-	                	$excel->getActiveSheet()->setCellValue('I'.$i,number_format($depreciation_expense->book_value,2));
+	                	$excel->getActiveSheet()->setCellValue('F'.$i,$depreciation_expense->salvage_value);
+	                	$excel->getActiveSheet()->setCellValue('G'.$i,$depreciation_expense->depreciation_expense);
+	                	$excel->getActiveSheet()->setCellValue('H'.$i,$depreciation_expense->accu_dep);          	
+	                	$excel->getActiveSheet()->setCellValue('I'.$i,$depreciation_expense->book_value);
+
+	                	$excel->getActiveSheet()->getStyle('D'.$i.':I'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+
 	                	$i++;
 
 						$totalacquisition += $depreciation_expense->acquisition_cost;
@@ -394,24 +403,36 @@
 						$totalaccumulative += $depreciation_expense->accu_dep ;
 						$totalbook += $depreciation_expense->book_value ;
 					}	
+
+						$lastrow = count($depreciation_expenses) + 5;
+
 	                	$excel->getActiveSheet()->mergeCells('A'.$i.':'.'B'.$i);					
 	                	$excel->getActiveSheet()->setCellValue('C'.$i,'TOTAL:')
                                         		->getStyle('C'.$i)->getFont()->setBold(TRUE);
-	                	$excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');                	
-	                	$excel->getActiveSheet()->setCellValue('D'.$i,number_format($totalacquisition,2))
-                                        		->getStyle('D'.$i)->getFont()->setBold(TRUE);
-	                	$excel->getActiveSheet()->getStyle('F'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');                	
-	                	$excel->getActiveSheet()->setCellValue('F'.$i,number_format($totalsalvage,2))
-                                        		->getStyle('F'.$i)->getFont()->setBold(TRUE);
-	                	$excel->getActiveSheet()->getStyle('G'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');                	
-	                	$excel->getActiveSheet()->setCellValue('G'.$i,number_format($totaldepreciation,2))
-                                        		->getStyle('G'.$i)->getFont()->setBold(TRUE);
-	                	$excel->getActiveSheet()->getStyle('H'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');                	
-	                	$excel->getActiveSheet()->setCellValue('H'.$i,number_format($totalaccumulative,2))
-                                        		->getStyle('H'.$i)->getFont()->setBold(TRUE);
-	                	$excel->getActiveSheet()->getStyle('I'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');                	
-	                	$excel->getActiveSheet()->setCellValue('I'.$i,number_format($totalbook,2))
-                                        		->getStyle('I'.$i)->getFont()->setBold(TRUE);
+
+	                	// $excel->getActiveSheet()->setCellValue('D'.$i,$totalacquisition)
+                  //                       		->getStyle('D'.$i)->getFont()->setBold(TRUE);
+	                	// $excel->getActiveSheet()->setCellValue('F'.$i,$totalsalvage)
+                  //                       		->getStyle('F'.$i)->getFont()->setBold(TRUE);
+	                	// $excel->getActiveSheet()->setCellValue('G'.$i,$totaldepreciation)
+                  //                       		->getStyle('G'.$i)->getFont()->setBold(TRUE);
+	                	// $excel->getActiveSheet()->setCellValue('H'.$i,$totalaccumulative)
+                  //                       		->getStyle('H'.$i)->getFont()->setBold(TRUE);
+	                	// $excel->getActiveSheet()->setCellValue('I'.$i,$totalbook)
+                  //                       		->getStyle('I'.$i)->getFont()->setBold(TRUE);
+
+                        $excel->getActiveSheet()->setCellValue('D'.$i, "=SUM(D6:D".$lastrow.")")
+                        						->getStyle('D'.$i)->getFont()->setBold(TRUE); 
+                        $excel->getActiveSheet()->setCellValue('F'.$i, "=SUM(F6:F".$lastrow.")")
+                        						->getStyle('F'.$i)->getFont()->setBold(TRUE); 
+                        $excel->getActiveSheet()->setCellValue('G'.$i, "=SUM(G6:G".$lastrow.")")
+                        						->getStyle('G'.$i)->getFont()->setBold(TRUE); 
+                        $excel->getActiveSheet()->setCellValue('H'.$i, "=SUM(H6:H".$lastrow.")")
+                        						->getStyle('H'.$i)->getFont()->setBold(TRUE); 
+                        $excel->getActiveSheet()->setCellValue('I'.$i, "=SUM(I6:I".$lastrow.")")
+                        						->getStyle('I'.$i)->getFont()->setBold(TRUE);                                         		
+	                	$excel->getActiveSheet()->getStyle('D'.$i.':I'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+
 
 	                	$i++;
 

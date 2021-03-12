@@ -292,8 +292,12 @@ class Balance_sheet extends CORE_Controller
                             if($class->account_class_id==$account->account_class_id){
                                 $excel->Align_right('E',$i);
                                 $excel->getActiveSheet()->setCellValue('C'.$i,$account->account_title);
-                                $excel->getActiveSheet()->setCellValue('E'.$i,$this->format_display($account->balance));
+                                $excel->getActiveSheet()->setCellValue('E'.$i,$account->balance);
                                 $total_balance+=$account->balance; $total_type+=$account->balance;
+
+                                $excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()
+                                                        ->setFormatCode('###,##0.00;(###,##0.00)');
+
                                 $i++;
                                }
                            }
@@ -307,7 +311,10 @@ class Balance_sheet extends CORE_Controller
                   $excel->getActiveSheet()->getStyle('D'.$i)->getFont()->setItalic(true);
                   $excel->getActiveSheet()->setCellValue('D'.$i,'Total '.$class->account_class);
                   $excel->getActiveSheet()->getStyle('E'.$i)->applyFromArray($single_underline);
-                  $excel->getActiveSheet()->setCellValue('E'.$i,$this->format_display($total_balance));
+                  $excel->getActiveSheet()->setCellValue('E'.$i,$total_balance);
+                  $excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()
+                                          ->setFormatCode('###,##0.00;(###,##0.00)');
+
                   $i+=2;
 
                   // TOTAL ASSETS
@@ -317,7 +324,9 @@ class Balance_sheet extends CORE_Controller
                   $excel->Align_right('E',$i);
                   $excel->getActiveSheet()->getStyle('E'.$i)->applyFromArray($double_underline);
                   $excel->getActiveSheet()->setCellValue('D'.$i,'Total Assets');
-                  $excel->getActiveSheet()->setCellValue('E'.$i, $this->format_display($total_type));
+                  $excel->getActiveSheet()->setCellValue('E'.$i, $total_type);
+                  $excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()
+                                          ->setFormatCode('###,##0.00;(###,##0.00)');
 
                     }
                  } 
@@ -339,7 +348,10 @@ class Balance_sheet extends CORE_Controller
                             if($class->account_class_id==$account->account_class_id){
                                 $excel->Align_right('E',$i);
                                 $excel->getActiveSheet()->setCellValue('C'.$i,$account->account_title);
-                                $excel->getActiveSheet()->setCellValue('E'.$i,$this->format_display($account->balance));
+                                $excel->getActiveSheet()->setCellValue('E'.$i,$account->balance);
+                                $excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()
+                                                        ->setFormatCode('###,##0.00;(###,##0.00)');
+
                                 $total_balance+=$account->balance; $total_type+=$account->balance;
                                 $i++;
                                }
@@ -355,7 +367,9 @@ class Balance_sheet extends CORE_Controller
                   $excel->getActiveSheet()->getStyle('D'.$i)->getFont()->setItalic(true);
                   
                   $excel->getActiveSheet()->setCellValue('D'.$i,'Total '.$class->account_class);
-                  $excel->getActiveSheet()->setCellValue('E'.$i,$this->format_display($total_balance));
+                  $excel->getActiveSheet()->setCellValue('E'.$i,$total_balance);
+                  $excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()
+                                                        ->setFormatCode('###,##0.00;(###,##0.00)');
                   $i++;
 
                   $excel->Set_bold('E',$i);
@@ -363,7 +377,9 @@ class Balance_sheet extends CORE_Controller
                   $excel->getActiveSheet()->getStyle('D'.$i)->getFont()->setItalic(true);
                   $excel->getActiveSheet()->getStyle('E'.$i)->applyFromArray($single_underline);
                   $excel->getActiveSheet()->setCellValue('D'.$i,'Retained Earnings (forwarded previous net income)');
-                  $excel->getActiveSheet()->setCellValue('E'.$i,$this->format_display($prev_net_income));
+                  $excel->getActiveSheet()->setCellValue('E'.$i,$prev_net_income);
+                  $excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()
+                                                        ->setFormatCode('###,##0.00;(###,##0.00)');
                   $i++;
 
                   $excel->Set_bold('E',$i);
@@ -371,7 +387,9 @@ class Balance_sheet extends CORE_Controller
                   $excel->getActiveSheet()->getStyle('D'.$i)->getFont()->setItalic(true);
                   $excel->getActiveSheet()->getStyle('E'.$i)->applyFromArray($single_underline);
                   $excel->getActiveSheet()->setCellValue('D'.$i,'Current Period Earnings ('.$net_period.')');
-                  $excel->getActiveSheet()->setCellValue('E'.$i,$this->format_display($current_year_earnings));
+                  $excel->getActiveSheet()->setCellValue('E'.$i,$current_year_earnings);
+                  $excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()
+                                                        ->setFormatCode('###,##0.00;(###,##0.00)');
 
 
                   $i+=2;
@@ -380,12 +398,14 @@ class Balance_sheet extends CORE_Controller
                   $excel->Set_bold('D',$i);
                   $excel->getActiveSheet()->setCellValue('D'.$i,'Total Liabilites and Equities');
                   $excel->getActiveSheet()->getStyle('E'.$i)->applyFromArray($double_underline);
-                  $excel->getActiveSheet()->setCellValue('E'.$i,$this->format_display($total_type+$current_year_earnings+$prev_net_income));
+                  $excel->getActiveSheet()->setCellValue('E'.$i,$total_type+$current_year_earnings+$prev_net_income);
+                  $excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()
+                                                        ->setFormatCode('###,##0.00;(###,##0.00)');
                     }
                  } 
 
 
-
+                
                 // Redirect output to a client’s web browser (Excel2007)
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 header('Content-Disposition: attachment;filename="Balance Sheet.xlsx"');
@@ -675,8 +695,12 @@ function export_excel() {
                             if($class->account_class_id==$account->account_class_id){
                                 $excel->Align_right('E',$i);
                                 $excel->getActiveSheet()->setCellValue('C'.$i,$account->account_title);
-                                $excel->getActiveSheet()->setCellValue('E'.$i,$this->format_display($account->balance));
+                                $excel->getActiveSheet()->setCellValue('E'.$i,$account->balance);
                                 $total_balance+=$account->balance; $total_type+=$account->balance;
+
+                                $excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()
+                                                        ->setFormatCode('###,##0.00;(###,##0.00)');
+
                                 $i++;
                                }
                            }
@@ -690,7 +714,10 @@ function export_excel() {
                   $excel->getActiveSheet()->getStyle('D'.$i)->getFont()->setItalic(true);
                   $excel->getActiveSheet()->setCellValue('D'.$i,'Total '.$class->account_class);
                   $excel->getActiveSheet()->getStyle('E'.$i)->applyFromArray($single_underline);
-                  $excel->getActiveSheet()->setCellValue('E'.$i,$this->format_display($total_balance));
+                  $excel->getActiveSheet()->setCellValue('E'.$i,$total_balance);
+                  $excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()
+                                          ->setFormatCode('###,##0.00;(###,##0.00)');
+
                   $i+=2;
 
                   // TOTAL ASSETS
@@ -700,7 +727,9 @@ function export_excel() {
                   $excel->Align_right('E',$i);
                   $excel->getActiveSheet()->getStyle('E'.$i)->applyFromArray($double_underline);
                   $excel->getActiveSheet()->setCellValue('D'.$i,'Total Assets');
-                  $excel->getActiveSheet()->setCellValue('E'.$i, $this->format_display($total_type));
+                  $excel->getActiveSheet()->setCellValue('E'.$i, $total_type);
+                  $excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()
+                                          ->setFormatCode('###,##0.00;(###,##0.00)');
 
                     }
                  } 
@@ -722,7 +751,10 @@ function export_excel() {
                             if($class->account_class_id==$account->account_class_id){
                                 $excel->Align_right('E',$i);
                                 $excel->getActiveSheet()->setCellValue('C'.$i,$account->account_title);
-                                $excel->getActiveSheet()->setCellValue('E'.$i,$this->format_display($account->balance));
+                                $excel->getActiveSheet()->setCellValue('E'.$i,$account->balance);
+                                $excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()
+                                                        ->setFormatCode('###,##0.00;(###,##0.00)');
+
                                 $total_balance+=$account->balance; $total_type+=$account->balance;
                                 $i++;
                                }
@@ -738,7 +770,9 @@ function export_excel() {
                   $excel->getActiveSheet()->getStyle('D'.$i)->getFont()->setItalic(true);
                   
                   $excel->getActiveSheet()->setCellValue('D'.$i,'Total '.$class->account_class);
-                  $excel->getActiveSheet()->setCellValue('E'.$i,$this->format_display($total_balance));
+                  $excel->getActiveSheet()->setCellValue('E'.$i,$total_balance);
+                  $excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()
+                                                        ->setFormatCode('###,##0.00;(###,##0.00)');
                   $i++;
 
                   $excel->Set_bold('E',$i);
@@ -746,7 +780,9 @@ function export_excel() {
                   $excel->getActiveSheet()->getStyle('D'.$i)->getFont()->setItalic(true);
                   $excel->getActiveSheet()->getStyle('E'.$i)->applyFromArray($single_underline);
                   $excel->getActiveSheet()->setCellValue('D'.$i,'Retained Earnings (forwarded previous net income)');
-                  $excel->getActiveSheet()->setCellValue('E'.$i,$this->format_display($prev_net_income));
+                  $excel->getActiveSheet()->setCellValue('E'.$i,$prev_net_income);
+                  $excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()
+                                                        ->setFormatCode('###,##0.00;(###,##0.00)');
                   $i++;
 
                   $excel->Set_bold('E',$i);
@@ -754,7 +790,9 @@ function export_excel() {
                   $excel->getActiveSheet()->getStyle('D'.$i)->getFont()->setItalic(true);
                   $excel->getActiveSheet()->getStyle('E'.$i)->applyFromArray($single_underline);
                   $excel->getActiveSheet()->setCellValue('D'.$i,'Current Period Earnings ('.$net_period.')');
-                  $excel->getActiveSheet()->setCellValue('E'.$i,$this->format_display($current_year_earnings));
+                  $excel->getActiveSheet()->setCellValue('E'.$i,$current_year_earnings);
+                  $excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()
+                                                        ->setFormatCode('###,##0.00;(###,##0.00)');
 
 
                   $i+=2;
@@ -763,7 +801,9 @@ function export_excel() {
                   $excel->Set_bold('D',$i);
                   $excel->getActiveSheet()->setCellValue('D'.$i,'Total Liabilites and Equities');
                   $excel->getActiveSheet()->getStyle('E'.$i)->applyFromArray($double_underline);
-                  $excel->getActiveSheet()->setCellValue('E'.$i,$this->format_display($total_type+$current_year_earnings+$prev_net_income));
+                  $excel->getActiveSheet()->setCellValue('E'.$i,$total_type+$current_year_earnings+$prev_net_income);
+                  $excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()
+                                                        ->setFormatCode('###,##0.00;(###,##0.00)');
                     }
                  } 
 

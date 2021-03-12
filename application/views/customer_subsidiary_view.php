@@ -127,7 +127,10 @@
                                                                 <thead class="">
                                                                 <tr>
                                                                     <th>Date</th>
+                                                                    <th>Book</th>
                                                                     <th>Txn #</th>
+                                                                    <th>AR/OR#</th>
+                                                                    <th>Period</th>
                                                                     <th>Memo</th>
                                                                     <th>Remarks</th>
                                                                     <th>Posted by</th>
@@ -352,26 +355,27 @@
                 },
                 "columns": [
                     { targets:[0],data: "date_txn" },
-                    { targets:[1],data: "txn_no" },
-                    { targets:[2],data: "memo" },
-                    { targets:[3],data: "remarks" },
-                    { targets:[4],data: "posted_by" },
-
-
+                    { targets:[1],data: "book_type" },
+                    { targets:[2],data: "txn_no" },
+                    { targets:[3],data: "or_no" },
+                    { targets:[4],data: "billing_period" },
+                    { targets:[5],data: "memo" },
+                    { targets:[6],data: "remarks" },
+                    { targets:[7],data: "posted_by" },
                     {
-                        targets:[5],data: "debit",
+                        targets:[8],data: "debit",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }
                     },
                     {
-                        targets:[6],data: "credit",
+                        targets:[9],data: "credit",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }
                     },
                     {
-                        targets:[7],data: "balance",
+                        targets:[10],data: "balance",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }}

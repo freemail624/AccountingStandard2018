@@ -99,23 +99,13 @@ class Account_receivable_schedule extends CORE_Controller
                                         ->getStyle('A7')->getFont()->setBold(TRUE);
 
 
-                $excel->getActiveSheet()->getColumnDimension('A')->setWidth('20');
+                $excel->getActiveSheet()->getColumnDimension('A')->setWidth('40');
                 $excel->getActiveSheet()->getColumnDimension('B')->setWidth('30');
                 $excel->getActiveSheet()->getColumnDimension('C')->setWidth('40');
                 $excel->getActiveSheet()->getColumnDimension('D')->setWidth('50');
 
                 $excel->getActiveSheet()
-                        ->getStyle('B')
-                        ->getAlignment()
-                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-
-                $excel->getActiveSheet()
-                        ->getStyle('C')
-                        ->getAlignment()
-                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-
-                $excel->getActiveSheet()
-                        ->getStyle('D')
+                        ->getStyle('B:D')
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
@@ -132,32 +122,22 @@ class Account_receivable_schedule extends CORE_Controller
                 $total = 0.00;
 
                 foreach($ar_accounts as $ar){
-                    $excel->getActiveSheet()
-                            ->getStyle('B')
-                            ->getAlignment()
-                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-
-                    $excel->getActiveSheet()
-                            ->getStyle('C')
-                            ->getAlignment()
-                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-
-                    $excel->getActiveSheet()
-                            ->getStyle('D')
-                            ->getAlignment()
-                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
                     $excel->getActiveSheet()->setCellValue('A'.$i,$ar->customer_name);
-                    $excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                    $excel->getActiveSheet()->setCellValue('B'.$i,number_format($ar->previous,2));
-                    $excel->getActiveSheet()->getStyle('C'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                    $excel->getActiveSheet()->setCellValue('C'.$i,number_format($ar->current,2));
-                    $excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                    $excel->getActiveSheet()->setCellValue('D'.$i,number_format($ar->total,2));
+                    $excel->getActiveSheet()->setCellValue('B'.$i,$ar->previous);
+                    $excel->getActiveSheet()->setCellValue('C'.$i,$ar->current);
+                    // $excel->getActiveSheet()->setCellValue('D'.$i,$ar->total);
+
+                    $excel->getActiveSheet()->setCellValue('D'.$i, "=SUM(B".$i."+C".$i.")");
+
+                    $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
 
                     $i++;
                     $total+=$ar->total;                    
                 }
+
+
+                    $lastrow = count($ar_accounts) + 9;
 
                     $excel->getActiveSheet()
                             ->getStyle('A')
@@ -167,9 +147,15 @@ class Account_receivable_schedule extends CORE_Controller
                     $excel->getActiveSheet()->mergeCells('A'.$i.':'.'C'.$i);
                     $excel->getActiveSheet()->setCellValue('A'.$i,'Total:')
                                             ->getStyle('A'.$i)->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');                            
-                    $excel->getActiveSheet()->setCellValue('D'.$i,number_format($total,2))
-                                            ->getStyle('D'.$i)->getFont()->setBold(TRUE);
+
+                    // $excel->getActiveSheet()->setCellValue('D'.$i,number_format($total,2))
+                    //                         ->getStyle('D'.$i)->getFont()->setBold(TRUE);
+
+                    $excel->getActiveSheet()->setCellValue('D'.$i, "=SUM(D9:D".$lastrow.")")
+                                            ->getStyle('D'.$i)->getFont()->setBold(TRUE);                   
+                    $excel->getActiveSheet()->getStyle('D'.$i.':I'.$i)->getNumberFormat()
+                                            ->setFormatCode('###,##0.00;(###,##0.00)');
+                                             
 
                     $i++;
 
@@ -233,23 +219,13 @@ class Account_receivable_schedule extends CORE_Controller
                                         ->getStyle('A7')->getFont()->setBold(TRUE);
 
 
-                $excel->getActiveSheet()->getColumnDimension('A')->setWidth('20');
+                $excel->getActiveSheet()->getColumnDimension('A')->setWidth('40');
                 $excel->getActiveSheet()->getColumnDimension('B')->setWidth('30');
                 $excel->getActiveSheet()->getColumnDimension('C')->setWidth('40');
                 $excel->getActiveSheet()->getColumnDimension('D')->setWidth('50');
 
                 $excel->getActiveSheet()
-                        ->getStyle('B')
-                        ->getAlignment()
-                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-
-                $excel->getActiveSheet()
-                        ->getStyle('C')
-                        ->getAlignment()
-                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-
-                $excel->getActiveSheet()
-                        ->getStyle('D')
+                        ->getStyle('B:D')
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
@@ -266,32 +242,22 @@ class Account_receivable_schedule extends CORE_Controller
                 $total = 0.00;
 
                 foreach($ar_accounts as $ar){
-                    $excel->getActiveSheet()
-                            ->getStyle('B')
-                            ->getAlignment()
-                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-
-                    $excel->getActiveSheet()
-                            ->getStyle('C')
-                            ->getAlignment()
-                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-
-                    $excel->getActiveSheet()
-                            ->getStyle('D')
-                            ->getAlignment()
-                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
                     $excel->getActiveSheet()->setCellValue('A'.$i,$ar->customer_name);
-                    $excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                    $excel->getActiveSheet()->setCellValue('B'.$i,number_format($ar->previous,2));
-                    $excel->getActiveSheet()->getStyle('C'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                    $excel->getActiveSheet()->setCellValue('C'.$i,number_format($ar->current,2));
-                    $excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                    $excel->getActiveSheet()->setCellValue('D'.$i,number_format($ar->total,2));
+                    $excel->getActiveSheet()->setCellValue('B'.$i,$ar->previous);
+                    $excel->getActiveSheet()->setCellValue('C'.$i,$ar->current);
+                    // $excel->getActiveSheet()->setCellValue('D'.$i,$ar->total);
+
+                    $excel->getActiveSheet()->setCellValue('D'.$i, "=SUM(B".$i."+C".$i.")");
+
+                    $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
 
                     $i++;
                     $total+=$ar->total;                    
                 }
+
+
+                    $lastrow = count($ar_accounts) + 9;
 
                     $excel->getActiveSheet()
                             ->getStyle('A')
@@ -301,9 +267,15 @@ class Account_receivable_schedule extends CORE_Controller
                     $excel->getActiveSheet()->mergeCells('A'.$i.':'.'C'.$i);
                     $excel->getActiveSheet()->setCellValue('A'.$i,'Total:')
                                             ->getStyle('A'.$i)->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');                            
-                    $excel->getActiveSheet()->setCellValue('D'.$i,number_format($total,2))
-                                            ->getStyle('D'.$i)->getFont()->setBold(TRUE);
+
+                    // $excel->getActiveSheet()->setCellValue('D'.$i,number_format($total,2))
+                    //                         ->getStyle('D'.$i)->getFont()->setBold(TRUE);
+
+                    $excel->getActiveSheet()->setCellValue('D'.$i, "=SUM(D10:D".$lastrow.")")
+                                            ->getStyle('D'.$i)->getFont()->setBold(TRUE);                   
+                    $excel->getActiveSheet()->getStyle('D'.$i.':I'.$i)->getNumberFormat()
+                                            ->setFormatCode('###,##0.00;(###,##0.00)');
+                                             
 
                     $i++;
 

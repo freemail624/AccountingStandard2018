@@ -241,8 +241,10 @@
 	                			$excel->getActiveSheet()->setCellValue('A'.$i,$replenishment->txn_no);
 	                			$excel->getActiveSheet()->setCellValue('B'.$i,$replenishment->supplier_name);
 	                			$excel->getActiveSheet()->setCellValue('C'.$i,$replenishment->remarks);
-	                			$excel->getActiveSheet()->setCellValue('D'.$i,number_format($replenishment->amount,2))
-                                      					->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+	                			$excel->getActiveSheet()->setCellValue('D'.$i,$replenishment->amount);
+
+				                $excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()
+				                                        ->setFormatCode('###,##0.00;(###,##0.00)');
 
     							$sum_replenish_amount += $replenishment->amount; 
 
@@ -262,8 +264,10 @@
 
 	                		$excel->getActiveSheet()->setCellValue('A'.$i,'Total:')
                 									->mergeCells('A'.$i.':'.'C'.$i);
-                			$excel->getActiveSheet()->setCellValue('D'.$i,number_format($sum_replenish_amount,2))
-                                  					->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                			$excel->getActiveSheet()->setCellValue('D'.$i,$sum_replenish_amount);
+
+			                $excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()
+			                                        ->setFormatCode('###,##0.00;(###,##0.00)');
                             $i++;
 	                }
 

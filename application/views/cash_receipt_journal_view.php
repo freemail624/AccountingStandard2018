@@ -1829,7 +1829,6 @@ $(document).ready(function(){
             $('#date_txn').datepicker('setDate','today');
             $('#check_date').datepicker('setDate','today');
 
-
             $('#cbo_particulars').select2('val',null);
             $('#cbo_departments').select2('val',null);
             $('#cbo_payment_method').select2('val',null);

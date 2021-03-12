@@ -333,12 +333,13 @@
                         $excel->getActiveSheet()->setCellValue('D'.$i,$items->memo);
                         $excel->getActiveSheet()->setCellValue('E'.$i,$items->remarks);
                         $excel->getActiveSheet()->setCellValue('F'.$i,$items->posted_by);
-                        $excel->getActiveSheet()->getStyle('G'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                        $excel->getActiveSheet()->setCellValue('G'.$i,number_format($items->debit,2));
-                        $excel->getActiveSheet()->getStyle('H'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                        $excel->getActiveSheet()->setCellValue('H'.$i,number_format($items->credit,2));
-                        $excel->getActiveSheet()->getStyle('I'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                        $excel->getActiveSheet()->setCellValue('I'.$i,number_format($items->balance,2));
+                        $excel->getActiveSheet()->setCellValue('G'.$i,$items->debit);
+                        $excel->getActiveSheet()->setCellValue('H'.$i,$items->credit);
+                        $excel->getActiveSheet()->setCellValue('I'.$i,$items->balance);
+
+                        $excel->getActiveSheet()->getStyle('G'.$i.':I'.$i)->getNumberFormat()
+                                            ->setFormatCode('###,##0.00;(###,##0.00)');
+
                         $i++;
                     }
 
@@ -495,12 +496,12 @@
                         $excel->getActiveSheet()->setCellValue('D'.$i,$items->memo);
                         $excel->getActiveSheet()->setCellValue('E'.$i,$items->remarks);
                         $excel->getActiveSheet()->setCellValue('F'.$i,$items->posted_by);
-                        $excel->getActiveSheet()->getStyle('G'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                        $excel->getActiveSheet()->setCellValue('G'.$i,number_format($items->debit,2));
-                        $excel->getActiveSheet()->getStyle('H'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                        $excel->getActiveSheet()->setCellValue('H'.$i,number_format($items->credit,2));
-                        $excel->getActiveSheet()->getStyle('I'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                        $excel->getActiveSheet()->setCellValue('I'.$i,number_format($items->balance,2));
+                        $excel->getActiveSheet()->setCellValue('G'.$i,$items->debit);
+                        $excel->getActiveSheet()->setCellValue('H'.$i,$items->credit);
+                        $excel->getActiveSheet()->setCellValue('I'.$i,$items->balance);
+                        
+                        $excel->getActiveSheet()->getStyle('G'.$i.':I'.$i)->getNumberFormat()
+                                            ->setFormatCode('###,##0.00;(###,##0.00)');
                         $i++;
                     }
 

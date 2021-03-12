@@ -248,16 +248,26 @@
 						$sum_over_ninety += $receivable->balance_over_ninetydays; 
 						$sum_balance += $receivable->total_tenant_balance; 
 						$sum_security_deposit += $receivable->total_security_deposit;   											
-					}			         
+					}			  
+
+                    	$lastrow = count($receivables) + 8;
+
                     	$excel->getActiveSheet()->getStyle('C'.$i.':H'.$i)->getNumberFormat()->setFormatCode('_(* #,##0.00_);_(* (#,##0.00);_(* "-"??_);_(@_)'); 
 		                $excel->getActiveSheet()->getStyle('C'.$i.':H'.$i)->getFont()->setBold(TRUE);	            
-		                $excel->getActiveSheet()->setCellValue('C'.$i,number_format($sum_thirty,2));
-		                $excel->getActiveSheet()->setCellValue('D'.$i,number_format($sum_sixty,2));
-		                $excel->getActiveSheet()->setCellValue('E'.$i,number_format($sum_ninety,2));
-		                $excel->getActiveSheet()->setCellValue('F'.$i,number_format($sum_over_ninety,2));
-		                $excel->getActiveSheet()->setCellValue('G'.$i,number_format($sum_balance,2));
-		                $excel->getActiveSheet()->setCellValue('H'.$i,number_format($sum_security_deposit,2));
+		                // $excel->getActiveSheet()->setCellValue('C'.$i,$sum_thirty);
+		                // $excel->getActiveSheet()->setCellValue('D'.$i,$sum_sixty);
+		                // $excel->getActiveSheet()->setCellValue('E'.$i,$sum_ninety);
+		                // $excel->getActiveSheet()->setCellValue('F'.$i,$sum_over_ninety);
+		                // $excel->getActiveSheet()->setCellValue('G'.$i,$sum_balance);
+		                // $excel->getActiveSheet()->setCellValue('H'.$i,$sum_security_deposit);
 
+                    	$excel->getActiveSheet()->setCellValue('C'.$i, "=SUM(C9:C".$lastrow.")");
+                    	$excel->getActiveSheet()->setCellValue('D'.$i, "=SUM(D9:D".$lastrow.")");
+                    	$excel->getActiveSheet()->setCellValue('E'.$i, "=SUM(E9:E".$lastrow.")");
+                    	$excel->getActiveSheet()->setCellValue('F'.$i, "=SUM(F9:F".$lastrow.")");
+                    	$excel->getActiveSheet()->setCellValue('G'.$i, "=SUM(G9:G".$lastrow.")");
+                    	$excel->getActiveSheet()->setCellValue('H'.$i, "=SUM(H9:H".$lastrow.")");
+		                
 
 		                $i++;
 
@@ -297,6 +307,7 @@
 					$receivables = $m_sales->get_aging_receivables($filter_accounts);
 
 					ob_start();
+
 	                $excel->setActiveSheetIndex(0);
 
 	                $excel->getActiveSheet()->getColumnDimensionByColumn('A1:B1')->setWidth('30');
@@ -321,6 +332,11 @@
                 	$excel->getActiveSheet()->setCellValue('A6',"TENANTS' AGING OF RECEIVABLES REPORT")
                                         	->getStyle('A6')->getFont()->setBold(TRUE)
                                         	->setSize(12);
+
+                	$excel->getActiveSheet()->setCellValue('A7',"Department : ".$department_name)
+                                        	->getStyle('A7')->getFont()->setBold(TRUE)
+                                        	->setSize(12);
+
 
 	                $excel->getActiveSheet()->getColumnDimension('A')->setWidth('40');
 	                $excel->getActiveSheet()->getColumnDimension('B')->setWidth('40');
@@ -393,16 +409,26 @@
 						$sum_over_ninety += $receivable->balance_over_ninetydays; 
 						$sum_balance += $receivable->total_tenant_balance; 
 						$sum_security_deposit += $receivable->total_security_deposit;   											
-					}			         
+					}			  
+
+                    	$lastrow = count($receivables) + 8;
+
                     	$excel->getActiveSheet()->getStyle('C'.$i.':H'.$i)->getNumberFormat()->setFormatCode('_(* #,##0.00_);_(* (#,##0.00);_(* "-"??_);_(@_)'); 
 		                $excel->getActiveSheet()->getStyle('C'.$i.':H'.$i)->getFont()->setBold(TRUE);	            
-		                $excel->getActiveSheet()->setCellValue('C'.$i,number_format($sum_thirty,2));
-		                $excel->getActiveSheet()->setCellValue('D'.$i,number_format($sum_sixty,2));
-		                $excel->getActiveSheet()->setCellValue('E'.$i,number_format($sum_ninety,2));
-		                $excel->getActiveSheet()->setCellValue('F'.$i,number_format($sum_over_ninety,2));
-		                $excel->getActiveSheet()->setCellValue('G'.$i,number_format($sum_balance,2));
-		                $excel->getActiveSheet()->setCellValue('H'.$i,number_format($sum_security_deposit,2));
+		                // $excel->getActiveSheet()->setCellValue('C'.$i,$sum_thirty);
+		                // $excel->getActiveSheet()->setCellValue('D'.$i,$sum_sixty);
+		                // $excel->getActiveSheet()->setCellValue('E'.$i,$sum_ninety);
+		                // $excel->getActiveSheet()->setCellValue('F'.$i,$sum_over_ninety);
+		                // $excel->getActiveSheet()->setCellValue('G'.$i,$sum_balance);
+		                // $excel->getActiveSheet()->setCellValue('H'.$i,$sum_security_deposit);
 
+                    	$excel->getActiveSheet()->setCellValue('C'.$i, "=SUM(C9:C".$lastrow.")");
+                    	$excel->getActiveSheet()->setCellValue('D'.$i, "=SUM(D9:D".$lastrow.")");
+                    	$excel->getActiveSheet()->setCellValue('E'.$i, "=SUM(E9:E".$lastrow.")");
+                    	$excel->getActiveSheet()->setCellValue('F'.$i, "=SUM(F9:F".$lastrow.")");
+                    	$excel->getActiveSheet()->setCellValue('G'.$i, "=SUM(G9:G".$lastrow.")");
+                    	$excel->getActiveSheet()->setCellValue('H'.$i, "=SUM(H9:H".$lastrow.")");
+		                
 
 		                $i++;
 		                

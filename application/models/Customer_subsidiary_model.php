@@ -21,6 +21,8 @@
 			FROM
 			(SELECT 
 				ji.journal_id,
+				ji.book_type,
+				ji.or_no,
 			    date_txn,
 			    DATE_FORMAT(ji.date_created, '%Y-%m-%d') AS date_created,
 			    txn_no,
@@ -33,7 +35,8 @@
 			    customer_name,
 			    CONCAT(user_fname,' ',user_mname,' ',user_lname) AS posted_by,
 			    ja.dr_amount AS debit,
-			    ja.cr_amount AS credit
+			    ja.cr_amount AS credit,
+			    period.billing_period
 			FROM
 			    journal_accounts AS ja
 			        LEFT JOIN
@@ -48,6 +51,18 @@
 			    user_accounts AS ua ON ua.user_id = ji.created_by_user
 			        LEFT JOIN
 			    customers AS c ON c.customer_id = ji.customer_id 
+			    	LEFT JOIN
+			    (SELECT 
+					tji.journal_id,
+				    COALESCE((CONCAT(m.month_name,' ',billing.app_year)),'') as billing_period
+				FROM
+				    temp_journal_info tji
+				        LEFT JOIN
+				    b_billing_info billing ON billing.billing_no = tji.ref_no
+				        LEFT JOIN
+				    months m ON m.month_id = billing.month_id
+				    GROUP BY tji.journal_id) as period ON period.journal_id = ji.journal_id
+			    	
 			    WHERE ji.is_active=TRUE AND ji.is_deleted=FALSE AND ji.customer_id=$customer_id AND ja.account_id=$account_id
 			    AND date_txn BETWEEN '$startDate' AND '$endDate'
 			    ORDER BY date_txn,journal_id ASC) as m";

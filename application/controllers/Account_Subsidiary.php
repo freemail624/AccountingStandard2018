@@ -161,12 +161,13 @@
 	                $excel->getActiveSheet()->setCellValue('F'.$i,$items->memo);
 	                $excel->getActiveSheet()->setCellValue('G'.$i,$items->remarks);
 	                $excel->getActiveSheet()->setCellValue('H'.$i,$items->posted_by);
-	                $excel->getActiveSheet()->setCellValue('I'.$i,number_format($items->debit,2));
-	                $excel->getActiveSheet()->setCellValue('J'.$i,number_format($items->credit,2));
-	                $excel->getActiveSheet()->setCellValue('K'.$i,number_format($items->balance,2))
+	                $excel->getActiveSheet()->setCellValue('I'.$i,$items->debit);
+	                $excel->getActiveSheet()->setCellValue('J'.$i,$items->credit);
+	                $excel->getActiveSheet()->setCellValue('K'.$i,$items->balance)
 	                                        ->getStyle('K'.$i)->getFont()->setBold(TRUE);
 
-	                $excel->getActiveSheet()->getStyle('I'.$i.':K'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+               		$excel->getActiveSheet()->getStyle('I'.$i.':K'.$i)->getNumberFormat()
+                                        	->setFormatCode('###,##0.00;(###,##0.00)');
 
 	                $i++;
 	                }
@@ -219,9 +220,10 @@
                 $supplier_subsidiary=$m_journal_info->get_account_subsidiary($account_Id,$start_Date,$end_Date);
 
                 ob_start();
-                $excel->setActiveSheetIndex(0);
 
-                $excel->getActiveSheet()->getColumnDimensionByColumn('A1')->setWidth('50');
+	                $excel->setActiveSheetIndex(0);
+
+	                $excel->getActiveSheet()->getColumnDimensionByColumn('A1')->setWidth('50');
 	                $excel->getActiveSheet()->getColumnDimensionByColumn('A2:B2')->setWidth('50');
 	                $excel->getActiveSheet()->getColumnDimensionByColumn('A3')->setWidth('50');
 	                $excel->getActiveSheet()->getColumnDimensionByColumn('A4')->setWidth('50');
@@ -296,15 +298,17 @@
 	                $excel->getActiveSheet()->setCellValue('F'.$i,$items->memo);
 	                $excel->getActiveSheet()->setCellValue('G'.$i,$items->remarks);
 	                $excel->getActiveSheet()->setCellValue('H'.$i,$items->posted_by);
-	                $excel->getActiveSheet()->setCellValue('I'.$i,number_format($items->debit,2));
-	                $excel->getActiveSheet()->setCellValue('J'.$i,number_format($items->credit,2));
-	                $excel->getActiveSheet()->setCellValue('K'.$i,number_format($items->balance,2))
+	                $excel->getActiveSheet()->setCellValue('I'.$i,$items->debit);
+	                $excel->getActiveSheet()->setCellValue('J'.$i,$items->credit);
+	                $excel->getActiveSheet()->setCellValue('K'.$i,$items->balance)
 	                                        ->getStyle('K'.$i)->getFont()->setBold(TRUE);
 
-	                $excel->getActiveSheet()->getStyle('I'.$i.':K'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+               		$excel->getActiveSheet()->getStyle('I'.$i.':K'.$i)->getNumberFormat()
+                                        	->setFormatCode('###,##0.00;(###,##0.00)');
 
 	                $i++;
-	            }
+	                }
+
 
 
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');

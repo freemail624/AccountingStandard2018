@@ -60,7 +60,10 @@
     	<thead>
             <tr>
                 <th style="border: 1px solid black;text-align: center;height: 30px;padding: 6px;">Txn Date</th>
+                <th style="border: 1px solid black;text-align: center;height: 30px;padding: 6px;">Book</th>
                 <th style="border: 1px solid black;text-align: center;height: 30px;padding: 6px;">Txn #</th>
+                <th style="border: 1px solid black;text-align: left;height: 30px;padding: 6px;">AR/OR#</th>
+                <th style="border: 1px solid black;text-align: left;height: 30px;padding: 6px;">Period</th>
                 <th style="border: 1px solid black;text-align: left;height: 30px;padding: 6px;">Memo</th>
                 <th style="border: 1px solid black;text-align: left;height: 30px;padding: 6px;">Remarks</th>
                 <th style="border: 1px solid black;text-align: left;height: 30px;padding: 6px;">Posted by</th>
@@ -73,7 +76,10 @@
         	<?php foreach($customer_subsidiary as $items) { ?>
         	<tr>
         		<td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->date_txn; ?></td>
+                <td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->book_type; ?></td>
         		<td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->txn_no; ?></td>
+                <td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->or_no; ?></td>
+                <td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->billing_period; ?></td>
         		<td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->memo; ?></td>
         		<td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->remarks; ?></td>
         		<td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->posted_by; ?></td>

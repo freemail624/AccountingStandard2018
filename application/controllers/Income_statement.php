@@ -111,16 +111,22 @@ class Income_statement extends CORE_Controller
                     $i++;
 
                     $excel->getActiveSheet()->setCellValue('A'.$i,$income_account->account_title);
-                    $excel->getActiveSheet()->setCellValue('B'.$i,number_format($income_account->account_balance,2))
+                    $excel->getActiveSheet()->setCellValue('B'.$i,$income_account->account_balance)
                             ->getStyle('B'.$i)
                             ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                    $excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()
+                                            ->setFormatCode('###,##0.00;(###,##0.00)');
 
                     $income_total+=$income_account->account_balance;
 
                 }
 
                 $i++;
+
+                $lastrow_income = count($income_accounts) + 9;
+
                 $excel->getActiveSheet()->setCellValue('A'.$i,'Total Income:')
                                         ->getStyle('A'.$i)
                                         ->getFont()
@@ -130,7 +136,7 @@ class Income_statement extends CORE_Controller
                                         ->getAlignment()
                                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                $excel->getActiveSheet()->setCellValue('B'.$i,number_format($income_total,2))
+                $excel->getActiveSheet()->setCellValue('B'.$i,"=SUM(B10:B".$lastrow_income.")")
                                         ->getStyle('B'.$i)
                                         ->getFont()
                                         ->setBold(TRUE)
@@ -138,8 +144,14 @@ class Income_statement extends CORE_Controller
                                         ->getStyle('B'.$i)
                                         ->getAlignment()
                                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                
+                $excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()
+                                        ->setFormatCode('###,##0.00;(###,##0.00)'); 
 
+                $total_income_row = 'B'.$i;                                        
                 $i+=2;
+
+                $first_row_expense = $i+1;
 
                 $excel->getActiveSheet()
                         ->mergeCells('A'.$i.':'.'B'.$i)
@@ -164,15 +176,21 @@ class Income_statement extends CORE_Controller
                             ->setCellValue('A'.$i,$expense_account->account_title);
 
                     $excel->getActiveSheet()
-                            ->setCellValue('B'.$i,number_format($expense_account->account_balance,2))
+                            ->setCellValue('B'.$i,$expense_account->account_balance)
                             ->getStyle('B'.$i)
                             ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
                     $expense_total+=$expense_account->account_balance;
+
+                    $excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()
+                                            ->setFormatCode('###,##0.00;(###,##0.00)');
                 }
 
                 $i++;
+
+                $lastrow_expense = (count($expense_accounts) + $first_row_expense) - 1;
+
                 $excel->getActiveSheet()->setCellValue('A'.$i,'Total Expense:')
                                         ->getStyle('A'.$i)
                                         ->getFont()
@@ -182,7 +200,7 @@ class Income_statement extends CORE_Controller
                                         ->getAlignment()
                                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                $excel->getActiveSheet()->setCellValue('B'.$i,number_format($expense_total,2))
+                $excel->getActiveSheet()->setCellValue('B'.$i,"=SUM(B".$first_row_expense.":B".$lastrow_expense.")")
                                         ->getStyle('B'.$i)
                                         ->getFont()
                                         ->setBold(TRUE)
@@ -191,8 +209,13 @@ class Income_statement extends CORE_Controller
                                         ->getAlignment()
                                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
+
+                $excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()
+                                        ->setFormatCode('###,##0.00;(###,##0.00)');
+
                 $total_net = $income_total - $expense_total;
 
+                $total_expense_row = 'B'.$i;
                 $i++;
                 $excel->getActiveSheet()->setCellValue('A'.$i, 'NET INCOME:')
                                         ->getStyle('A'.$i)
@@ -203,7 +226,7 @@ class Income_statement extends CORE_Controller
                                         ->getAlignment()
                                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                $excel->getActiveSheet()->setCellValue('B'.$i, number_format($total_net,2))
+                $excel->getActiveSheet()->setCellValue('B'.$i, "=SUM(".$total_income_row."-".$total_expense_row.")")
                                         ->getStyle('B'.$i)
                                         ->getFont()
                                         ->setBold(TRUE)
@@ -212,6 +235,8 @@ class Income_statement extends CORE_Controller
                                         ->getAlignment()
                                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
+                $excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()
+                                        ->setFormatCode('###,##0.00;(###,##0.00)');
 
                 // Redirect output to a client’s web browser (Excel2007)
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -311,16 +336,22 @@ class Income_statement extends CORE_Controller
                     $i++;
 
                     $excel->getActiveSheet()->setCellValue('A'.$i,$income_account->account_title);
-                    $excel->getActiveSheet()->setCellValue('B'.$i,number_format($income_account->account_balance,2))
+                    $excel->getActiveSheet()->setCellValue('B'.$i,$income_account->account_balance)
                             ->getStyle('B'.$i)
                             ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                    $excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()
+                                            ->setFormatCode('###,##0.00;(###,##0.00)');
 
                     $income_total+=$income_account->account_balance;
 
                 }
 
                 $i++;
+
+                $lastrow_income = count($income_accounts) + 9;
+
                 $excel->getActiveSheet()->setCellValue('A'.$i,'Total Income:')
                                         ->getStyle('A'.$i)
                                         ->getFont()
@@ -330,7 +361,7 @@ class Income_statement extends CORE_Controller
                                         ->getAlignment()
                                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                $excel->getActiveSheet()->setCellValue('B'.$i,number_format($income_total,2))
+                $excel->getActiveSheet()->setCellValue('B'.$i,"=SUM(B10:B".$lastrow_income.")")
                                         ->getStyle('B'.$i)
                                         ->getFont()
                                         ->setBold(TRUE)
@@ -339,7 +370,13 @@ class Income_statement extends CORE_Controller
                                         ->getAlignment()
                                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
+                $excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()
+                                        ->setFormatCode('###,##0.00;(###,##0.00)');
+
+                $total_income_row = 'B'.$i;   
                 $i+=2;
+
+                $first_row_expense = $i+1;
 
                 $excel->getActiveSheet()
                         ->mergeCells('A'.$i.':'.'B'.$i)
@@ -364,15 +401,21 @@ class Income_statement extends CORE_Controller
                             ->setCellValue('A'.$i,$expense_account->account_title);
 
                     $excel->getActiveSheet()
-                            ->setCellValue('B'.$i,number_format($expense_account->account_balance,2))
+                            ->setCellValue('B'.$i,$expense_account->account_balance)
                             ->getStyle('B'.$i)
                             ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                    $excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()
+                                            ->setFormatCode('###,##0.00;(###,##0.00)');
 
                     $expense_total+=$expense_account->account_balance;
                 }
 
                 $i++;
+
+                $lastrow_expense = (count($expense_accounts) + $first_row_expense) - 1;
+
                 $excel->getActiveSheet()->setCellValue('A'.$i,'Total Expense:')
                                         ->getStyle('A'.$i)
                                         ->getFont()
@@ -382,7 +425,7 @@ class Income_statement extends CORE_Controller
                                         ->getAlignment()
                                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                $excel->getActiveSheet()->setCellValue('B'.$i,number_format($expense_total,2))
+                $excel->getActiveSheet()->setCellValue('B'.$i,"=SUM(B".$first_row_expense.":B".$lastrow_expense.")")
                                         ->getStyle('B'.$i)
                                         ->getFont()
                                         ->setBold(TRUE)
@@ -391,7 +434,11 @@ class Income_statement extends CORE_Controller
                                         ->getAlignment()
                                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
+                $excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()
+                                        ->setFormatCode('###,##0.00;(###,##0.00)');
+
                 $total_net = $income_total - $expense_total;
+                $total_expense_row = 'B'.$i;  
 
                 $i++;
                 $excel->getActiveSheet()->setCellValue('A'.$i, 'NET INCOME:')
@@ -403,7 +450,7 @@ class Income_statement extends CORE_Controller
                                         ->getAlignment()
                                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                $excel->getActiveSheet()->setCellValue('B'.$i, number_format($total_net,2))
+                $excel->getActiveSheet()->setCellValue('B'.$i, "=SUM(".$total_income_row."+".$total_expense_row.")")
                                         ->getStyle('B'.$i)
                                         ->getFont()
                                         ->setBold(TRUE)
@@ -412,6 +459,8 @@ class Income_statement extends CORE_Controller
                                         ->getAlignment()
                                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
+                $excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()
+                                        ->setFormatCode('###,##0.00;(###,##0.00)');
 
 
                 $a = 'c';  
@@ -447,18 +496,23 @@ class Income_statement extends CORE_Controller
                             foreach($income_accounts as $income_account)
                             {
                                 $i++;
-                                $excel->getActiveSheet()->setCellValue($a.''.$i,number_format($income_account->account_balance,2))
+                                $excel->getActiveSheet()->setCellValue($a.''.$i,$income_account->account_balance)
                                         ->getStyle($a.''.$i)
                                         ->getAlignment()
                                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                                $excel->getActiveSheet()->getStyle($a.''.$i)->getNumberFormat()
+                                                        ->setFormatCode('###,##0.00;(###,##0.00)');
 
                                 $income_total+=$income_account->account_balance;
 
                             }
 
                             $i++;
-
-                            $excel->getActiveSheet()->setCellValue($a.''.$i,number_format($income_total,2))
+                            
+                            $lastrow_income = count($income_accounts) + 9;
+                            
+                            $excel->getActiveSheet()->setCellValue($a.''.$i,"=SUM(".$a."10:".$a.$lastrow_income.")")
                                                     ->getStyle($a.''.$i)
                                                     ->getFont()
                                                     ->setBold(TRUE)
@@ -467,8 +521,15 @@ class Income_statement extends CORE_Controller
                                                     ->getAlignment()
                                                     ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
+                            $excel->getActiveSheet()->getStyle($a.''.$i)->getNumberFormat()
+                                                    ->setFormatCode('###,##0.00;(###,##0.00)');
+
+                            $total_income_row = $a.$i;
+
                             $i+=2;
-                            
+
+                            $first_row_expense = $i+1;
+
                             $excel->getActiveSheet()
                                     ->setCellValue($a.''.$i, '')
                                     ->getStyle($a.''.$i)->applyFromArray(
@@ -487,17 +548,22 @@ class Income_statement extends CORE_Controller
                                 $i++;
 
                                 $excel->getActiveSheet()
-                                        ->setCellValue($a.''.$i,number_format($expense_account->account_balance,2))
+                                        ->setCellValue($a.''.$i,$expense_account->account_balance)
                                         ->getStyle($a.''.$i)
                                         ->getAlignment()
                                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                                $excel->getActiveSheet()->getStyle($a.''.$i)->getNumberFormat()
+                                                        ->setFormatCode('###,##0.00;(###,##0.00)');
 
                                 $expense_total+=$expense_account->account_balance;
                             }
 
                             $i++;
 
-                            $excel->getActiveSheet()->setCellValue($a.''.$i,number_format($expense_total,2))
+                            $lastrow_expense = (count($expense_accounts) + $first_row_expense) - 1;
+
+                            $excel->getActiveSheet()->setCellValue($a.''.$i,"=SUM(".$a.$first_row_expense.":".$a.$lastrow_expense.")")
                                                     ->getStyle($a.''.$i)
                                                     ->getFont()
                                                     ->setBold(TRUE)
@@ -508,9 +574,15 @@ class Income_statement extends CORE_Controller
 
                             $total_net = $income_total - $expense_total;
 
+                            $excel->getActiveSheet()->getStyle($a.''.$i)->getNumberFormat()
+                                                    ->setFormatCode('###,##0.00;(###,##0.00)');
+
+                            $total_expense_row = $a.$i;  
+                            
                             $i++;
 
-                            $excel->getActiveSheet()->setCellValue($a.''.$i, number_format($total_net,2))
+                            $excel->getActiveSheet()->setCellValue($a.''.$i, "=SUM(".$total_income_row."+".$total_expense_row.")"
+)
                                                     ->getStyle($a.''.$i)
                                                     ->getFont()
                                                     ->setBold(TRUE)
@@ -518,6 +590,9 @@ class Income_statement extends CORE_Controller
                                                     ->getStyle($a.''.$i)
                                                     ->getAlignment()
                                                     ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                            
+                            $excel->getActiveSheet()->getStyle($a.''.$i)->getNumberFormat()
+                                                    ->setFormatCode('###,##0.00;(###,##0.00)');                                                    
                 $a++;
                 }
 
@@ -570,7 +645,7 @@ class Income_statement extends CORE_Controller
                                         ->setAutoSize(false)
                                         ->setWidth('25');
 
-                $excel->getActiveSheet()->setTitle('Income Statement');
+                $excel->getActiveSheet()->setTitle('Income Statement'.$dep_id);
 
                 $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
                                         ->setCellValue('A2',$company_info[0]->company_address)
@@ -595,7 +670,7 @@ class Income_statement extends CORE_Controller
 
                 $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
 
-                $excel->getActiveSheet()->setCellValue('A6','INCOME STATEMENT')
+                $excel->getActiveSheet()->setCellValue('A6','INCOME STATEMENT - '.$department_name)
                                         ->setCellValue('A7',$start.' to '.$end);
 
                 $excel->getActiveSheet()->getStyle('A6')->getFont()->setBold(TRUE);
@@ -610,16 +685,22 @@ class Income_statement extends CORE_Controller
                     $i++;
 
                     $excel->getActiveSheet()->setCellValue('A'.$i,$income_account->account_title);
-                    $excel->getActiveSheet()->setCellValue('B'.$i,number_format($income_account->account_balance,2))
+                    $excel->getActiveSheet()->setCellValue('B'.$i,$income_account->account_balance)
                             ->getStyle('B'.$i)
                             ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                    $excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()
+                                            ->setFormatCode('###,##0.00;(###,##0.00)');
 
                     $income_total+=$income_account->account_balance;
 
                 }
 
                 $i++;
+
+                $lastrow_income = count($income_accounts) + 9;
+
                 $excel->getActiveSheet()->setCellValue('A'.$i,'Total Income:')
                                         ->getStyle('A'.$i)
                                         ->getFont()
@@ -629,7 +710,7 @@ class Income_statement extends CORE_Controller
                                         ->getAlignment()
                                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                $excel->getActiveSheet()->setCellValue('B'.$i,number_format($income_total,2))
+                $excel->getActiveSheet()->setCellValue('B'.$i,"=SUM(B10:B".$lastrow_income.")")
                                         ->getStyle('B'.$i)
                                         ->getFont()
                                         ->setBold(TRUE)
@@ -637,8 +718,14 @@ class Income_statement extends CORE_Controller
                                         ->getStyle('B'.$i)
                                         ->getAlignment()
                                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                
+                $excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()
+                                        ->setFormatCode('###,##0.00;(###,##0.00)'); 
 
+                $total_income_row = 'B'.$i;                                        
                 $i+=2;
+
+                $first_row_expense = $i+1;
 
                 $excel->getActiveSheet()
                         ->mergeCells('A'.$i.':'.'B'.$i)
@@ -663,15 +750,21 @@ class Income_statement extends CORE_Controller
                             ->setCellValue('A'.$i,$expense_account->account_title);
 
                     $excel->getActiveSheet()
-                            ->setCellValue('B'.$i,number_format($expense_account->account_balance,2))
+                            ->setCellValue('B'.$i,$expense_account->account_balance)
                             ->getStyle('B'.$i)
                             ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
                     $expense_total+=$expense_account->account_balance;
+
+                    $excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()
+                                            ->setFormatCode('###,##0.00;(###,##0.00)');
                 }
 
                 $i++;
+
+                $lastrow_expense = (count($expense_accounts) + $first_row_expense) - 1;
+
                 $excel->getActiveSheet()->setCellValue('A'.$i,'Total Expense:')
                                         ->getStyle('A'.$i)
                                         ->getFont()
@@ -681,7 +774,7 @@ class Income_statement extends CORE_Controller
                                         ->getAlignment()
                                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                $excel->getActiveSheet()->setCellValue('B'.$i,number_format($expense_total,2))
+                $excel->getActiveSheet()->setCellValue('B'.$i,"=SUM(B".$first_row_expense.":B".$lastrow_expense.")")
                                         ->getStyle('B'.$i)
                                         ->getFont()
                                         ->setBold(TRUE)
@@ -690,8 +783,13 @@ class Income_statement extends CORE_Controller
                                         ->getAlignment()
                                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
+
+                $excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()
+                                        ->setFormatCode('###,##0.00;(###,##0.00)');
+
                 $total_net = $income_total - $expense_total;
 
+                $total_expense_row = 'B'.$i;
                 $i++;
                 $excel->getActiveSheet()->setCellValue('A'.$i, 'NET INCOME:')
                                         ->getStyle('A'.$i)
@@ -702,7 +800,7 @@ class Income_statement extends CORE_Controller
                                         ->getAlignment()
                                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                $excel->getActiveSheet()->setCellValue('B'.$i, number_format($total_net,2))
+                $excel->getActiveSheet()->setCellValue('B'.$i, "=SUM(".$total_income_row."-".$total_expense_row.")")
                                         ->getStyle('B'.$i)
                                         ->getFont()
                                         ->setBold(TRUE)
@@ -711,6 +809,8 @@ class Income_statement extends CORE_Controller
                                         ->getAlignment()
                                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
+                $excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()
+                                        ->setFormatCode('###,##0.00;(###,##0.00)');
 
                 // Redirect output to a client’s web browser (Excel2007)
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
