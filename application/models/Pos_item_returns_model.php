@@ -17,7 +17,15 @@ class Pos_item_returns_model extends CORE_Model {
         $sql="SELECT distinct x_reading_id,DATE_FORMAT(CAST(start_datetime as DATE),'%b %d %Y') as trans_date, terminal_id FROM pos_item_returns WHERE x_reading_id = $x_reading_id";
         return $this->db->query($sql)->result();
     }
-    
+
+    function get_sales_returns_from_date($start,$end) {
+        $sql="SELECT pir.*, p.product_desc, CONCAT('Terminal ', pir.terminal_id) as terminal FROM
+            pos_item_returns pir
+            LEFT JOIN products p ON p.product_id = pir.product_id
+            WHERE DATE_FORMAT(CAST(pir.start_datetime as DATE),'%Y-%m-%d') BETWEEN '".$start."' AND '".$end."' ";
+        return $this->db->query($sql)->result();
+    }
+
     function get_pos_returns_for_review() {
         $sql="SELECT 
 			DATE_FORMAT(CAST(start_datetime as DATE),'%m/%d/%Y')  as trans_date,

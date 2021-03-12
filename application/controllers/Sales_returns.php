@@ -49,6 +49,16 @@
 
                 break;
 
+                case 'returns-list':
+                    $m_returns=$this->Pos_item_returns_model;
+
+                    $start=date("Y-m-d",strtotime($this->input->get('startDate',TRUE)));
+                    $end=date("Y-m-d",strtotime($this->input->get('endDate',TRUE)));
+
+                    $response['data']=$m_returns->get_sales_returns_from_date($start,$end);
+                    echo json_encode($response);                    
+
+                break;
 
                 case 'pos-returns-for-review':
                 $m_xreading=$this->Pos_item_returns_model;
@@ -57,7 +67,6 @@
 
                 break;
 
-            
                 case 'export':
 
                 $x_id=$this->input->get('id',TRUE);

@@ -34,13 +34,35 @@ class Pos_item_sales_model extends CORE_Model {
         return $this->db->query($sql)->result();
     }
 
+    function get_net_sales_from_date($start,$end){
+        $sql="SELECT 
+            SUM(main.sales) AS total_sales,
+            SUM(main.sales_returns) AS total_returns,
+            (SUM(main.sales) - SUM(main.sales_returns)) AS net_sales
+        FROM
+            (SELECT 
+                COALESCE(SUM(pis.item_total), 0) AS sales,
+                    0 AS sales_returns
+            FROM
+                pos_item_sales pis
+            WHERE
+                DATE_FORMAT(CAST(pis.start_datetime as DATE),'%Y-%m-%d') BETWEEN '".$start."' AND '".$end."' UNION ALL SELECT 
+                0 AS sales,
+                    COALESCE(SUM(pir.item_total), 0) AS sales_returns
+            FROM
+                pos_item_returns pir
+            WHERE
+                DATE_FORMAT(CAST(pir.start_datetime as DATE),'%Y-%m-%d') BETWEEN '".$start."' AND '".$end."') AS main";
+        return $this->db->query($sql)->result();
+    }
+
     function get_sales_from_date($start,$end) {
         $sql="SELECT *,
                 IF(m.CurrentQty < m.product_quantity, 'Yes','') as critical,
                 m.supplier_name
                  FROM (SELECT  core.product_id,core.product_desc,core.product_code,core.purchase_cost,core.sale_price, core.supplier_name,
                 core.product_quantity,
-                core.item_total,
+                core.item_total,COALESCE(total_returns,0) as total_returns,
                 ROUND((ReceiveQtyP+AdjustInQtyP-SalesOUtQtyP-POSInvOutP+POSInvInP-CInvOutP-AdjustOutP-IssueFromInvOutP+IssueToInvInP),2) as CurrentQty
 
                  FROM 
@@ -48,6 +70,7 @@ class Pos_item_sales_model extends CORE_Model {
                 (
 
                 SELECT core.*,
+                sales_returns.total_returns,
                 p.product_desc,
                 p.product_code,
                 p.purchase_cost,
@@ -73,6 +96,16 @@ class Pos_item_sales_model extends CORE_Model {
 
                 LEFT JOIN products p On p.product_id = core.product_id
                 LEFT JOIN suppliers sup ON sup.supplier_id = p.supplier_id
+
+                LEFT JOIN 
+
+                (SELECT 
+                    pir.product_id,
+                    COALESCE(SUM(item_total),0) AS total_returns
+                FROM
+                    pos_item_returns pir
+                    WHERE CAST(pir.start_datetime as DATE) BETWEEN '$start' AND '$end' 
+                GROUP BY pir.product_id) as sales_returns ON sales_returns.product_id = p.product_id
                         
                 LEFT JOIN 
 

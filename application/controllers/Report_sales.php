@@ -46,15 +46,24 @@
 					$response['data']=$m_xreading->get_sales_from_date($start,$end);
 					echo json_encode($response);
 
-                break;
-
+                    break;
 
                 case 'pos-sales-for-review':
-                $m_xreading=$this->Pos_item_sales_model;
+                    $m_xreading=$this->Pos_item_sales_model;
                     $response['data']=$m_xreading->get_pos_sales_for_review();
                     echo json_encode($response);
 
-                break;
+                    break;
+
+                case 'net_sales':
+
+                    $start=date("Y-m-d",strtotime($this->input->post('startDate',TRUE)));
+                    $end=date("Y-m-d",strtotime($this->input->post('endDate',TRUE)));
+                    $m_xreading=$this->Pos_item_sales_model;
+                    $response['data']=$m_xreading->get_net_sales_from_date($start,$end);
+                    echo json_encode($response);
+
+                    break;
 
                 case 'export':
 
@@ -105,13 +114,13 @@
                     //                         ->getStyle('A5:G5')->applyFromArray($border_bottom);
 
                     $excel->getActiveSheet()
-                            ->getStyle('A5:H5')
+                            ->getStyle('A5:I5')
                             ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
                     $excel->getActiveSheet()->setCellValue('A5','Sales Report')
-                                            ->mergeCells('A5:H5')
-                                            ->getStyle('A5:H5')->getFont()->setBold(True)
+                                            ->mergeCells('A5:I5')
+                                            ->getStyle('A5:I5')->getFont()->setBold(True)
                                             ->setSize(12);
 
                 $i=6;
@@ -129,46 +138,111 @@
                                         ->getStyle('E'.$i)->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('F'.$i,'Invoice Total')
                                         ->getStyle('F'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('G'.$i,'On Hand Stocks')
+                $excel->getActiveSheet()->setCellValue('G'.$i,'Returns')
                                         ->getStyle('G'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('H'.$i,'Critical')
+                $excel->getActiveSheet()->setCellValue('H'.$i,'On Hand Stocks')
                                         ->getStyle('H'.$i)->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('I'.$i,'Critical')
+                                        ->getStyle('I'.$i)->getFont()->setBold(TRUE);
                             $excel->getActiveSheet()
-                            ->getStyle('C'.$i.':'.'H'.$i)
+                            ->getStyle('C'.$i.':'.'I'.$i)
                             ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                 $i++;
 
                 $total_sales = 0;
+                $total_returns = 0;
+
                 foreach ($report_info  as $value) {
-                            $excel->getActiveSheet()
-                            ->getStyle('C'.$i.':'.'H'.$i)
-                            ->getAlignment()
-                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                $excel->getActiveSheet()->getStyle('C'.$i.':'.'I'.$i)
+                                        ->getAlignment()
+                                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                $excel->getActiveSheet()->getStyle('D'.$i.':I'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+
                 $excel->getActiveSheet()->setCellValue('A'.$i,$value->product_code);
                 $excel->getActiveSheet()->setCellValue('B'.$i,$value->product_desc);
-                $excel->getActiveSheet()->setCellValue('C'.$i,number_format($value->product_quantity,0))->getStyle('C'.$i);
-                $excel->getActiveSheet()->setCellValue('D'.$i,number_format($value->purchase_cost,2))->getStyle('D'.$i)->getNumberFormat()->setFormatCode('0.00');
-                $excel->getActiveSheet()->setCellValue('E'.$i,number_format($value->sale_price,2))->getStyle('E'.$i)->getNumberFormat()->setFormatCode('0.00');
-                $excel->getActiveSheet()->setCellValue('F'.$i,number_format($value->item_total,2))->getStyle('F'.$i)->getNumberFormat()->setFormatCode('0.00');
-                $excel->getActiveSheet()->setCellValue('G'.$i,number_format($value->CurrentQty,2))->getStyle('G'.$i)->getNumberFormat()->setFormatCode('0.00');
-                $excel->getActiveSheet()->setCellValue('H'.$i,$value->critical,2);
+                $excel->getActiveSheet()->setCellValue('C'.$i,$value->product_quantity);
+                $excel->getActiveSheet()->setCellValue('D'.$i,$value->purchase_cost);
+                $excel->getActiveSheet()->setCellValue('E'.$i,$value->sale_price);
+                $excel->getActiveSheet()->setCellValue('F'.$i,$value->item_total);
+                $excel->getActiveSheet()->setCellValue('G'.$i,$value->total_returns);
+                $excel->getActiveSheet()->setCellValue('H'.$i,$value->CurrentQty);
+                $excel->getActiveSheet()->setCellValue('I'.$i,$value->critical);
+
                 $total_sales += $value->item_total;
+                $total_returns += $value->total_returns;
+
                 $i++;
                 }
 
                 $excel->getActiveSheet()
-                ->getStyle('D'.$i.':'.'H'.$i)
+                ->getStyle('A'.$i.':'.'I'.$i)
                 ->getAlignment()
                 ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
                 $excel->getActiveSheet()
-                ->getStyle('A'.$i.':'.'H'.$i)
+                ->getStyle('A'.$i.':'.'I'.$i)
                 ->getFont()->setBold(TRUE);
 
-                $excel->getActiveSheet()->setCellValue('A'.$i,'TOTAL');
-                $excel->getActiveSheet()->setCellValue('F'.$i,number_format($total_sales,2))->getStyle('D'.$i)->getNumberFormat()->setFormatCode('0.00');
+                $excel->getActiveSheet()->setCellValue('A'.$i,'TOTAL')
+                                        ->mergeCells('A'.$i.':E'.$i);
 
+                $excel->getActiveSheet()->setCellValue('A'.$i,'TOTAL');
+                $excel->getActiveSheet()->setCellValue('F'.$i, $total_sales);
+                $excel->getActiveSheet()->setCellValue('G'.$i, $total_returns);
+
+                $excel->getActiveSheet()->getStyle('F'.$i.':G'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+
+                $i++;
+
+                $excel->getActiveSheet()
+                ->getStyle('A'.$i.':'.'I'.$i)
+                ->getFont()->setBold(TRUE);
+
+                $excel->getActiveSheet()
+                ->getStyle('A'.$i.':'.'I'.$i)
+                ->getAlignment()
+                ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                $excel->getActiveSheet()->setCellValue('B'.$i,'Total Sales');
+                $excel->getActiveSheet()->setCellValue('C'.$i, $total_sales);
+
+                $excel->getActiveSheet()->getStyle('C'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+
+                $i++;
+
+                $excel->getActiveSheet()
+                ->getStyle('A'.$i.':'.'I'.$i)
+                ->getFont()->setBold(TRUE);
+
+                $excel->getActiveSheet()
+                ->getStyle('A'.$i.':'.'I'.$i)
+                ->getAlignment()
+                ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                $excel->getActiveSheet()->setCellValue('B'.$i,'Total Returns');
+                $excel->getActiveSheet()->setCellValue('C'.$i, $total_returns);
+
+                $excel->getActiveSheet()->getStyle('C'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+
+                $i++;
+
+                $excel->getActiveSheet()
+                ->getStyle('A'.$i.':'.'I'.$i)
+                ->getFont()->setBold(TRUE);
+
+                $excel->getActiveSheet()
+                ->getStyle('A'.$i.':'.'I'.$i)
+                ->getAlignment()
+                ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                $net_sales = $total_sales - $total_returns;
+
+                $excel->getActiveSheet()->setCellValue('B'.$i,'Net Sales');
+                $excel->getActiveSheet()->setCellValue('C'.$i, $net_sales);                        
+
+                $excel->getActiveSheet()->getStyle('C'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
 
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 header('Content-Disposition: attachment;filename='."Sales Report ".$start.' to '.$end.".xlsx");
