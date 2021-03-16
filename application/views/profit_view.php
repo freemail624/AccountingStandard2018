@@ -189,7 +189,7 @@
 
         <h2 class="h2-panel-heading">Profit Report</h2><hr>
             <div class="row">
-                <div class="col-sm-3">
+                <div class="col-sm-2">
                    <b>*</b> Invoice Type :<br />
                     <select name="invoice_type" id="invoice_type">
                         <option value="1">All Invoices</option>
@@ -197,7 +197,7 @@
                         <option value="3">Cash Invoice</option>
                     </select>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-2">
                    <b>* </b> Report Type :<br />
                     <select name="report_type" id="report_type">
                         <option value="1">By Product</option>
@@ -205,7 +205,18 @@
                         <option value="3">By Invoice (Summary)</option>
                     </select>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-4">
+                   <b>* </b> Customer:<br />
+                    <select name="customer_id" id="cbo_customer">
+                        <option value="0">All Customers</option>
+                        <?php foreach($customers as $customer){ ?>
+                            <option value="<?php echo $customer->customer_id; ?>">
+                                <?php echo $customer->customer_name; ?>
+                            </option>
+                        <?php }?>
+                    </select>
+                </div>
+                <div class="col-sm-2">
                         From :<br />
                         <div class="input-group">
                             <input type="text" id="txt_start_date" name="" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>">
@@ -214,7 +225,7 @@
                              </span>
                         </div>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-2">
                         To :<br />
                         <div class="input-group">
                             <input type="text" id="txt_end_date" name="" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>">
@@ -225,7 +236,7 @@
                 </div> 
             </div>
             <div class="row">
-                <div class="col-sm-3">
+                <div class="col-sm-4">
                     <div class="truck_panel" style="display: none;">
                         Truck : <br />
                         <select name="agent_id" id="cbo_agents" data-error-msg="Agent is required." required style="width: 100%;">
@@ -236,7 +247,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-sm-9">
+                <div class="col-sm-8">
                     <br>
                     <div style="float: right;">
                         <button class="btn btn-primary pull-left" style="margin-right: 5px; margin-top: 0; margin-bottom: 10px;" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif; ">
@@ -328,7 +339,7 @@
 
 
 $(document).ready(function(){
-    var dt;  var _cboReportType; var _cboTrucks; var _cboInvoiceType;
+    var dt;  var _cboReportType; var _cboTrucks; var _cboInvoiceType; var _cboCustomers;
 
     var initializeControls=function(){
         _cboReportType=$("#report_type").select2({
@@ -342,6 +353,11 @@ $(document).ready(function(){
         _cboTrucks=$("#cbo_agents").select2({
             placeholder: "Please select truck."
         });
+
+        _cboCustomers=$("#cbo_customer").select2({
+            placeholder: "Please select customer."
+        });
+
 
         $('#txt_end_date').datepicker({
             todayBtn: "linked",
@@ -453,8 +469,9 @@ $(document).ready(function(){
             dataType : 'json',
             "data":data,
             success : function(response){
-                    p_qty = 0;
-                    p_gross= 0;
+                    p_qty=0;
+                    p_gross=0;
+                    p_net_cost=0;
                     p_net=0;
                     $('#tbl_delivery_invoice').html('');
                     $('#tbl_delivery_invoice').append(
@@ -468,6 +485,7 @@ $(document).ready(function(){
                     '<th class="right-align">SRP</th>'+
                     '<th class="right-align">Unit Cost</th>'+
                     '<th class="right-align">Gross</th>'+
+                    '<th class="right-align">Net Cost</th>'+
                     '<th class="right-align">Net Profit</th>'+
                     
                     '</thead>'+
@@ -486,11 +504,13 @@ $(document).ready(function(){
                         '<td class="right-align">'+accounting.formatNumber(value.srp,2)+'</td>'+
                         '<td class="right-align">'+accounting.formatNumber(value.purchase_cost,2)+'</td>'+
                         '<td class="right-align">'+accounting.formatNumber(value.gross,2)+'</td>'+
+                        '<td class="right-align">'+accounting.formatNumber(value.net_cost,2)+'</td>'+
                         '<td class="right-align">'+accounting.formatNumber(value.net_profit,2)+'</td>'+
                         '</tr>'
                     );
                     p_qty +=getFloat(value.qty_sold);
                     p_gross += getFloat(value.gross);
+                    p_net_cost += getFloat(value.net_cost);
                     p_net +=getFloat(value.net_profit);
                  });
 
@@ -503,6 +523,7 @@ $(document).ready(function(){
                         '<td class="right-align"></td>'+
                         '<td class="right-align"></td>'+
                         '<td class="right-align"><strong>'+accounting.formatNumber(p_gross,2)+'</strong></td>'+
+                        '<td class="right-align"><strong>'+accounting.formatNumber(p_net_cost,2)+'</strong></td>'+
                         '<td class="right-align"><strong>'+accounting.formatNumber(p_net,2)+'</strong></td>'+
                         '</tr>'
                     );
@@ -533,10 +554,11 @@ $(document).ready(function(){
                     $('#tbl_delivery_invoice').append('<h4>Profit Report by Invoice (Detailed)</h4><br>');
                     detailed_grand_qty= 0;
                     detailed_grand_gross= 0;
+                    detailed_grand_net= 0;
                     detailed_grand_profit= 0;
                  $.each(response.distinct, function(index,value){
                     $('#tbl_delivery_invoice').append(
-                    '<h4>'+value.inv_no+'</h4>'+
+                    '<h4><span style="float: left;">Customer : '+value.customer_name+'</span><span style="float: right;">'+value.inv_no+'</span></h4>  <br/><br/>'+
                     '<table style="width:100%" class="table table-striped" id="'+value.identifier+'_'+value.invoice_id+'">'+
                     '<thead>'+
                     '<th>Item Code</th>'+
@@ -546,6 +568,7 @@ $(document).ready(function(){
                     '<th class="right-align">SRP</th>'+
                     '<th class="right-align">Unit Cost</th>'+
                     '<th class="right-align">Gross</th>'+
+                    '<th class="right-align">Net Cost</th>'+
                     '<th class="right-align">Net Profit</th>'+
                     
                     '</thead>'+
@@ -566,6 +589,7 @@ $(document).ready(function(){
                         '<td class="right-align">'+accounting.formatNumber(value.srp,2)+'</td>'+
                         '<td class="right-align">'+accounting.formatNumber(value.purchase_cost,2)+'</td>'+
                         '<td class="right-align">'+accounting.formatNumber(value.inv_gross,2)+'</td>'+
+                        '<td class="right-align">'+accounting.formatNumber(value.net_cost,2)+'</td>'+
                         '<td class="right-align">'+accounting.formatNumber(value.net_profit,2)+'</td>'+
                         '</tr>'
                     );
@@ -581,12 +605,14 @@ $(document).ready(function(){
                         '<td class="right-align"></td>'+
                         '<td class="right-align"></td>'+
                         '<td class="right-align"><strong>'+accounting.formatNumber(value.gross_total,2)+'</strong></td>'+
+                        '<td class="right-align"><strong>'+accounting.formatNumber(value.net_cost_total,2)+'</strong></td>'+
                         '<td class="right-align"><strong>'+accounting.formatNumber(value.profit_total,2)+'</strong></td>'+
                         '</tr>'
                     );
 
                     detailed_grand_qty += getFloat(value.qty_total);
                     detailed_grand_gross += getFloat(value.gross_total);
+                    detailed_grand_net += getFloat(value.net_cost_total);
                     detailed_grand_profit += getFloat(value.profit_total);
                  });
 
@@ -599,6 +625,9 @@ $(document).ready(function(){
                     '</tr>'+
                     '<tr style="font-size:18px;font-weight:bold;float:right;padding-right:10px;"><tr>'+
                         '<td style="width:70%;"> </td><td style="width:15%;">Total Gross: </td><td  style="width:15%;text-align:right;">&nbsp;'+accounting.formatNumber(detailed_grand_gross,2)+'</td>'+
+                    '</tr>'+
+                    '<tr style="font-size:18px;font-weight:bold;float:right;padding-right:10px;"><tr>'+
+                        '<td style="width:70%;"> </td><td style="width:15%;">Total Net: </td><td  style="width:15%;text-align:right;">&nbsp;'+accounting.formatNumber(detailed_grand_net,2)+'</td>'+
                     '</tr>'+
                     '<tr style="font-size:18px;font-weight:bold;float:right;padding-right:10px;"><tr>'+
                         '<td style="width:70%;"> </td><td style="width:15%;">Total Profit: </td><td  style="width:15%;text-align:right;">&nbsp;'+accounting.formatNumber(detailed_grand_profit,2)+'</td>'+

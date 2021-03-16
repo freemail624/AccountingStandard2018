@@ -15,6 +15,7 @@ class Profit extends CORE_Controller
         $this->load->model('Email_settings_model');
         $this->load->model('Order_source_model');
         $this->load->model('Agent_model');
+        $this->load->model('Customers_model');
     }
 
     public function index() {
@@ -27,6 +28,8 @@ class Profit extends CORE_Controller
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
 
         $data['trucks']=$this->Agent_model->get_list(array('is_deleted'=>FALSE));
+        $data['customers']=$this->Customers_model->get_list(array('is_deleted'=>FALSE));
+
         $data['title'] = 'Profit Report';
         $this->load->view('profit_view', $data);
         (in_array('8-6',$this->session->user_rights)? 
@@ -200,6 +203,7 @@ class Profit extends CORE_Controller
                 $excel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
                 $excel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
                 $excel->getActiveSheet()->getColumnDimension('I')->setWidth(20);
+                $excel->getActiveSheet()->getColumnDimension('J')->setWidth(20);
 
                 $rettotal = 0;
                 $gtotal = 0;
@@ -257,33 +261,38 @@ class Profit extends CORE_Controller
                                         ->getStyle('F'.$i)->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('G'.$i,'Gross')
                                         ->getStyle('G'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('H'.$i,'Net Profit')
+                $excel->getActiveSheet()->setCellValue('H'.$i,'Net Cost')
                                         ->getStyle('H'.$i)->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('I'.$i,'Net Profit')
+                                        ->getStyle('I'.$i)->getFont()->setBold(TRUE);
 
 
                 $i++;
 
                 $p_qty = 0;
                 $p_gross = 0;
+                $p_net_cost = 0;
                 $p_net = 0;
 
 
 
                 foreach ($items  as $value) {
                             $excel->getActiveSheet()
-                            ->getStyle('D'.$i.':'.'H'.$i)
+                            ->getStyle('D'.$i.':'.'I'.$i)
                             ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                 $excel->getActiveSheet()->setCellValue('A'.$i,$value->product_code);
                 $excel->getActiveSheet()->setCellValue('B'.$i,$value->product_desc);
                 $excel->getActiveSheet()->setCellValue('C'.$i,$value->unit_name);
-                $excel->getActiveSheet()->setCellValue('D'.$i,number_format($value->qty_sold,2))->getStyle('D'.$i)->getNumberFormat()->setFormatCode('0.00');
-                $excel->getActiveSheet()->setCellValue('E'.$i,number_format($value->srp,2))->getStyle('E'.$i)->getNumberFormat()->setFormatCode('0.00');
-                $excel->getActiveSheet()->setCellValue('F'.$i,number_format($value->purchase_cost,2))->getStyle('F'.$i)->getNumberFormat()->setFormatCode('0.00');
-                $excel->getActiveSheet()->setCellValue('G'.$i,number_format($value->gross,2))->getStyle('G'.$i)->getNumberFormat()->setFormatCode('0.00');
-                $excel->getActiveSheet()->setCellValue('H'.$i,number_format($value->net_profit,2))->getStyle('H'.$i)->getNumberFormat()->setFormatCode('0.00');
+                $excel->getActiveSheet()->setCellValue('D'.$i,$value->qty_sold)->getStyle('D'.$i)->getNumberFormat()->setFormatCode('0.00');
+                $excel->getActiveSheet()->setCellValue('E'.$i,$value->srp)->getStyle('E'.$i)->getNumberFormat()->setFormatCode('0.00');
+                $excel->getActiveSheet()->setCellValue('F'.$i,$value->purchase_cost)->getStyle('F'.$i)->getNumberFormat()->setFormatCode('0.00');
+                $excel->getActiveSheet()->setCellValue('G'.$i,$value->gross)->getStyle('G'.$i)->getNumberFormat()->setFormatCode('0.00');
+                $excel->getActiveSheet()->setCellValue('H'.$i,$value->net_cost)->getStyle('H'.$i)->getNumberFormat()->setFormatCode('0.00');
+                $excel->getActiveSheet()->setCellValue('I'.$i,$value->net_profit)->getStyle('I'.$i)->getNumberFormat()->setFormatCode('0.00');
                 $p_qty+=$value->qty_sold;
                 $p_gross+=$value->gross;
+                $p_net_cost+=$value->net_cost;
                 $p_net+=$value->net_profit;
                 $i++;
 
@@ -291,18 +300,19 @@ class Profit extends CORE_Controller
                 }
 
                 $excel->getActiveSheet()
-                ->getStyle('D'.$i.':'.'H'.$i)
+                ->getStyle('D'.$i.':'.'I'.$i)
                 ->getAlignment()
                 ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
                 $excel->getActiveSheet()
-                ->getStyle('A'.$i.':'.'H'.$i)
+                ->getStyle('A'.$i.':'.'I'.$i)
                 ->getFont()->setBold(TRUE);
 
                 $excel->getActiveSheet()->setCellValue('A'.$i,'TOTAL');
-                $excel->getActiveSheet()->setCellValue('D'.$i,number_format($p_qty,2))->getStyle('D'.$i)->getNumberFormat()->setFormatCode('0.00');
-                $excel->getActiveSheet()->setCellValue('G'.$i,number_format($p_gross,2))->getStyle('G'.$i)->getNumberFormat()->setFormatCode('0.00');
-                $excel->getActiveSheet()->setCellValue('H'.$i,number_format($p_net,2))->getStyle('H'.$i)->getNumberFormat()->setFormatCode('0.00');
+                $excel->getActiveSheet()->setCellValue('D'.$i,$p_qty)->getStyle('D'.$i)->getNumberFormat()->setFormatCode('0.00');
+                $excel->getActiveSheet()->setCellValue('G'.$i,$p_gross)->getStyle('G'.$i)->getNumberFormat()->setFormatCode('0.00');
+                $excel->getActiveSheet()->setCellValue('H'.$i,$p_gross)->getStyle('H'.$i)->getNumberFormat()->setFormatCode('0.00');
+                $excel->getActiveSheet()->setCellValue('I'.$i,$p_net)->getStyle('I'.$i)->getNumberFormat()->setFormatCode('0.00');
 
 
 

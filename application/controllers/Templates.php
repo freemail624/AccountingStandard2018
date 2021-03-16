@@ -1433,19 +1433,25 @@ class Templates extends CORE_Controller {
 
             //****************************************************
             case 'sales-order': //sales order
-            $m_company_info=$this->Company_model;
+                $m_company_info=$this->Company_model;
                 $company_info=$m_company_info->get_list();
                 $data['company_info']=$company_info[0];
                 $m_sales_order=$this->Sales_order_model;
                 $m_sales_order_items=$this->Sales_order_item_model;
+                $m_accounts=$this->Account_integration_model;
                 $type=$this->input->get('type',TRUE);
 
                 $info=$m_sales_order->get_list(
                     $filter_value,
-                    'sales_order.*,departments.department_name,customers.customer_name',
+                    'sales_order.*,departments.department_name,customers.customer_name, customers.address,
+                    CONCAT_WS(" ", user_accounts.user_fname,user_accounts.user_mname,user_accounts.user_lname) as encoded_by
+
+                    ',
                     array(
                         array('departments','departments.department_id=sales_order.department_id','left'),
-                        array('customers','customers.customer_id=sales_order.customer_id','left')
+                        array('customers','customers.customer_id=sales_order.customer_id','left'),
+                        array('user_accounts','user_accounts.user_id=sales_order.posted_by_user','left')
+
                     )
                 );
 
@@ -1453,12 +1459,13 @@ class Templates extends CORE_Controller {
                 $data['sales_order']=$info[0];
                 $data['sales_order_items']=$m_sales_order_items->get_list(
                     array('sales_order_items.sales_order_id'=>$filter_value),
-                    'sales_order_items.*,products.product_desc,units.unit_name',
+                    'sales_order_items.*,products.product_desc,units.unit_name,units.unit_code',
                     array(
                         array('products','products.product_id=sales_order_items.product_id','left'),
                         array('units','units.unit_id=sales_order_items.unit_id','left')
                     )
                 );
+                $data['is_basyo']=$m_accounts->get_list(1)[0];
 
 
 
@@ -1472,6 +1479,16 @@ class Templates extends CORE_Controller {
                 if($type=='contentview'){
                     echo $this->load->view('template/so_content',$data,TRUE);
                 }
+
+                if($type=='dropdown'){
+                      echo  $this->load->view('template/so_content_dropdown',$data,TRUE); //load the template
+                      echo  $this->load->view('template/so_content_menus',$data,TRUE);
+                }
+
+                if($type=='direct'){
+                    // echo $this->load->view('template/sales_invoice_direct_content',$data,TRUE);
+                    echo $this->load->view('template/so_content_direct_continuous_paper',$data,TRUE);
+                }                
 
 
                 //download pdf

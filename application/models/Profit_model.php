@@ -21,6 +21,7 @@ class Profit_model extends CORE_Model
                 SUM(main.inv_qty) as qty_sold,
                 p.sale_price as srp,
                 SUM(main.inv_gross) as gross,
+                (SUM(main.inv_qty) * p.purchase_cost) as gross_cost,
                 p.purchase_cost,
                 (SUM(main.inv_qty)  * IFNULL(p.purchase_cost,0)) as net_cost,
                 (SUM(main.inv_gross) - (SUM(main.inv_qty)  * IFNULL(p.purchase_cost,0))) as net_profit
@@ -30,6 +31,7 @@ class Profit_model extends CORE_Model
                 sii.product_id,
                 SUM(sii.inv_qty) as inv_qty,
                 SUM(sii.inv_line_total_price) as inv_gross
+
 
                 FROM 
                 sales_invoice_items sii
@@ -79,6 +81,7 @@ class Profit_model extends CORE_Model
                 SUM(main.inv_qty) as qty_sold,
                 p.sale_price as srp,
                 SUM(main.inv_gross) as gross,
+                (SUM(main.inv_qty) * p.purchase_cost) as gross_cost,
                 p.purchase_cost,
                 (SUM(main.inv_qty)  * IFNULL(p.purchase_cost,0)) as net_cost,
                 (SUM(main.inv_gross) - (SUM(main.inv_qty)  * IFNULL(p.purchase_cost,0))) as net_profit
@@ -126,6 +129,7 @@ class Profit_model extends CORE_Model
                 SUM(main.inv_qty) as qty_sold,
                 p.sale_price as srp,
                 SUM(main.inv_gross) as gross,
+                (SUM(main.inv_qty) * p.purchase_cost) as gross_cost,
                 p.purchase_cost,
                 (SUM(main.inv_qty)  * IFNULL(p.purchase_cost,0)) as net_cost,
                 (SUM(main.inv_gross) - (SUM(main.inv_qty)  * IFNULL(p.purchase_cost,0))) as net_profit
@@ -163,8 +167,8 @@ class Profit_model extends CORE_Model
 
 
         $sql="
-             ".($distinct==TRUE?" SELECT DISTINCT n.identifier,n.invoice_id,n.inv_no FROM (":" ")."
-             ".($subtotal==TRUE?" SELECT n.identifier,n.invoice_id,n.inv_no,c.customer_name,n.date_invoice,SUM(n.inv_qty) as qty_total,SUM(n.inv_gross) as gross_total,SUM(n.net_profit) as profit_total FROM( ":" ")."
+             ".($distinct==TRUE?" SELECT DISTINCT n.identifier,n.invoice_id,n.inv_no,c.customer_name FROM (":" ")."
+             ".($subtotal==TRUE?" SELECT n.identifier,n.invoice_id,n.inv_no,c.customer_name,n.date_invoice,SUM(n.inv_qty) as qty_total,SUM(n.inv_gross) as gross_total,SUM(n.net_profit) as profit_total, SUM(n.net_cost) as net_cost_total  FROM( ":" ")."
 
         SELECT
             main.identifier,
@@ -224,7 +228,9 @@ class Profit_model extends CORE_Model
 
             ORDER BY main.identifier ASC, main.invoice_id ASC
 
-             ".($distinct==TRUE?") as n ORDER BY n.identifier ASC, n.invoice_id ASC":" ")."
+             ".($distinct==TRUE?") as n 
+                LEFT JOIN customers c ON c.customer_id = n.customer_id
+                ORDER BY n.identifier ASC, n.invoice_id ASC":" ")."
              ".($subtotal==TRUE?" ) as n
 
             LEFT JOIN customers c ON c.customer_id = n.customer_id
@@ -243,8 +249,8 @@ class Profit_model extends CORE_Model
 
 
         $sql="
-             ".($distinct==TRUE?" SELECT DISTINCT n.identifier,n.invoice_id,n.inv_no FROM (":" ")."
-             ".($subtotal==TRUE?" SELECT n.identifier,n.invoice_id,n.inv_no,c.customer_name,n.date_invoice,SUM(n.inv_qty) as qty_total,SUM(n.inv_gross) as gross_total,SUM(n.net_profit) as profit_total FROM( ":" ")."
+             ".($distinct==TRUE?" SELECT DISTINCT n.identifier,n.invoice_id,n.inv_no,c.customer_name FROM (":" ")."
+             ".($subtotal==TRUE?" SELECT n.identifier,n.invoice_id,n.inv_no,c.customer_name,n.date_invoice,SUM(n.inv_qty) as qty_total,SUM(n.inv_gross) as gross_total,SUM(n.net_profit) as profit_total, SUM(n.net_cost) as net_cost_total FROM( ":" ")."
 
         SELECT
             main.identifier,
@@ -288,7 +294,9 @@ class Profit_model extends CORE_Model
 
             ORDER BY main.identifier ASC, main.invoice_id ASC
 
-             ".($distinct==TRUE?") as n ORDER BY n.identifier ASC, n.invoice_id ASC":" ")."
+             ".($distinct==TRUE?") as n 
+            LEFT JOIN customers c ON c.customer_id = n.customer_id
+            ORDER BY n.identifier ASC, n.invoice_id ASC":" ")."
              ".($subtotal==TRUE?" ) as n
 
             LEFT JOIN customers c ON c.customer_id = n.customer_id
@@ -305,8 +313,8 @@ class Profit_model extends CORE_Model
 
 
         $sql="
-             ".($distinct==TRUE?" SELECT DISTINCT n.identifier,n.invoice_id,n.inv_no FROM (":" ")."
-             ".($subtotal==TRUE?" SELECT n.identifier,n.invoice_id,n.inv_no,c.customer_name,n.date_invoice,SUM(n.inv_qty) as qty_total,SUM(n.inv_gross) as gross_total,SUM(n.net_profit) as profit_total FROM( ":" ")."
+             ".($distinct==TRUE?" SELECT DISTINCT n.identifier,n.invoice_id,n.inv_no,c.customer_name FROM (":" ")."
+             ".($subtotal==TRUE?" SELECT n.identifier,n.invoice_id,n.inv_no,c.customer_name,n.date_invoice,SUM(n.inv_qty) as qty_total,SUM(n.inv_gross) as gross_total,SUM(n.net_profit) as profit_total, SUM(n.net_cost) as net_cost_total FROM( ":" ")."
 
         SELECT
             main.identifier,
@@ -347,7 +355,9 @@ class Profit_model extends CORE_Model
 
             ORDER BY main.identifier ASC, main.invoice_id ASC
 
-             ".($distinct==TRUE?") as n ORDER BY n.identifier ASC, n.invoice_id ASC":" ")."
+             ".($distinct==TRUE?") as n 
+            LEFT JOIN customers c ON c.customer_id = n.customer_id
+            ORDER BY n.identifier ASC, n.invoice_id ASC":" ")."
              ".($subtotal==TRUE?" ) as n
 
             LEFT JOIN customers c ON c.customer_id = n.customer_id

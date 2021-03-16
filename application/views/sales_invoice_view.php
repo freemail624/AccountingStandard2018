@@ -2477,7 +2477,7 @@ $(document).ready(function(){
     };
     var clearFields=function(f){
         $('input,textarea,select,input:not(.date-picker)',f).val('');
-        $('#remarks').val('');
+        $('#remarks', f).val('');
         $(f).find('input:first').focus();
     };
     function format ( d ) {

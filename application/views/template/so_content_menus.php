@@ -10,8 +10,9 @@
 <div class="row" >
     <div class="col-lg-12">
         <div class="title-action" style="margin-left: 3%;">
-            <a href="Templates/layout/sales-order/<?php echo $sales_order->sales_order_id; ?>?type=preview" target="_blank" class="btn btn-default" style="text-transform:none;font-family: tahoma;" ><i class="fa fa-print"></i> Print </a>
-            <a href="Templates/layout/sales-order/<?php echo $sales_order->sales_order_id; ?>?type=pdf" class="btn btn-default" style="text-transform:none;font-family: tahoma;" ><i class="fa fa-file-pdf-o"></i> Download as PDF </a>
+<!--             <a href="Templates/layout/sales-order/<?php //echo $sales_order->sales_order_id; ?>?type=preview" target="_blank" class="btn btn-default" style="text-transform:none;font-family: tahoma;" ><i class="fa fa-print"></i> Print </a>
+            <a href="Templates/layout/sales-order/<?php //echo $sales_order->sales_order_id; ?>?type=pdf" class="btn btn-default" style="text-transform:none;font-family: tahoma;" ><i class="fa fa-file-pdf-o"></i> Download as PDF </a> -->
+            <a href="Templates/layout/sales-order/<?php echo $sales_order->sales_order_id; ?>?type=direct" target="_blank" class="btn btn-default" style="text-transform:none;font-family: tahoma;" ><i class="fa fa-print"></i> Print </a>            
         </div>
     </div>
 

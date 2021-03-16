@@ -68,7 +68,7 @@ class Loading_model extends CORE_Model{
         $sql="SELECT 
             c.customer_name,
             SUM(li.total_after_discount) AS total_payment,
-            (SELECT 
+            COALESCE((SELECT 
                     SUM(sii.inv_qty) AS inv_qty
                 FROM
                     sales_invoice_items sii
@@ -84,7 +84,7 @@ class Loading_model extends CORE_Model{
                         AND si.is_active = TRUE
                         AND li.loading_id = l.loading_id
                         AND si.customer_id = c.customer_id
-                GROUP BY li.loading_id , si.customer_id) AS total_qty
+                GROUP BY li.loading_id , si.customer_id),0) AS total_qty
         FROM
             loading_items li
                 LEFT JOIN
@@ -95,7 +95,8 @@ class Loading_model extends CORE_Model{
             l.is_deleted = FALSE
                 AND l.is_active = TRUE
                 AND l.loading_id = $loading_id
-        GROUP BY li.customer_id";
+        GROUP BY li.invoice_id
+        ORDER BY c.customer_name ASC";
         return $this->db->query($sql)->result();                
     }
 

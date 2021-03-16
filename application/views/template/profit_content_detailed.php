@@ -59,11 +59,19 @@
 	</tr>
 </table>
                     <h4>Profit Report by Invoice (Detailed)</h4>
-<?php $detailed_grand_qty=0;
-$detailed_grand_gross=0;
-$detailed_grand_profit=0; ?>
-<?php foreach ($distinct as $inv) { ?>
-                    <h4><?php echo $inv->inv_no ?></h4>
+                    <?php 
+                        $detailed_grand_qty=0;
+                        $detailed_grand_gross=0;
+                        $detailed_grand_net=0;
+                        $detailed_grand_profit=0; 
+                    ?>
+
+                <?php foreach ($distinct as $inv) { ?>
+                    <h4>
+                        <span style="float: left;">Customer : <?php echo $inv->customer_name; ?></span>
+                        <span style="float: right;"><?php echo $inv->inv_no ?></span>
+                    </h4> 
+                    <br/><br/>
                     <table style="width:100%" class="table table-striped" id="">
                     <thead>
                     <th>Item Code</th>
@@ -73,6 +81,7 @@ $detailed_grand_profit=0; ?>
                     <th class="right-align">SRP</th>
                     <th class="right-align">Unit Cost</th>
                     <th class="right-align">Gross</th>
+                    <th class="right-align">Net Cost</th>
                     <th class="right-align">Net Profit</th>
                    
                     </thead>
@@ -88,6 +97,7 @@ $detailed_grand_profit=0; ?>
                         <td class="right-align"><?php echo number_format($item->srp,2); ?></td>
                         <td class="right-align"><?php echo number_format($item->purchase_cost,2); ?></td>
                         <td class="right-align"><?php echo number_format($item->inv_gross,2); ?></td>
+                        <td class="right-align"><?php echo number_format($item->net_cost,2); ?></td>
                         <td class="right-align"><?php echo number_format($item->net_profit,2); ?></td>
                         </tr>
                         <?php } ?>
@@ -104,11 +114,13 @@ $detailed_grand_profit=0; ?>
                         <td class="right-align"></td>
                         <td class="right-align"></td>
                         <td class="right-align"><strong><?php echo number_format($sub->gross_total,2); ?></strong></td>
+                        <td class="right-align"><strong><?php echo number_format($sub->net_cost_total,2); ?></strong></td>
                         <td class="right-align"><strong><?php echo number_format($sub->profit_total,2); ?></strong></td>
                         </tr>
                         <?php                         
                         $detailed_grand_qty +=$sub->qty_total;
 						$detailed_grand_gross +=$sub->gross_total;
+                        $detailed_grand_net +=$sub->net_cost_total;
 						$detailed_grand_profit +=$sub->profit_total;
 						} ?>
                         <?php } ?>
@@ -126,6 +138,9 @@ $detailed_grand_profit=0; ?>
 </tr>
 <tr style="font-size:18px;font-weight:bold;float:right;padding-right:10px;"><tr>
     <td style="width:70%;"> </td><td style="width:15%;">Total Gross: </td><td  style="width:15%;text-align:right;">&nbsp;<?php echo number_format($detailed_grand_gross,2);?></td>
+</tr>
+<tr style="font-size:18px;font-weight:bold;float:right;padding-right:10px;"><tr>
+    <td style="width:70%;"> </td><td style="width:15%;">Total Net: </td><td  style="width:15%;text-align:right;">&nbsp;<?php echo number_format($detailed_grand_net,2);?></td>
 </tr>
 <tr style="font-size:18px;font-weight:bold;float:right;padding-right:10px;"><tr>
     <td style="width:70%;"> </td><td style="width:15%;">Total Profit: </td><td  style="width:15%;text-align:right;">&nbsp;<?php echo number_format($detailed_grand_profit,2);?></td>
