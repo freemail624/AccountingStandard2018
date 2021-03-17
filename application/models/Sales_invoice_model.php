@@ -114,7 +114,8 @@ class Sales_invoice_model extends CORE_Model
     function get_open_sales_invoice_list_date($start_date=null,$end_date=null){
         $sql="SELECT 
             si.*, c.customer_name, COALESCE(sii.total_inv_qty,0) as total_inv_qty,
-            COALESCE(loading.loading_no,'') as loading_no
+            COALESCE(loading.loading_no,'') as loading_no,
+            COALESCE(loading.agent_name,'') as agent_name
         FROM
             sales_invoice si
                 LEFT JOIN
@@ -132,11 +133,14 @@ class Sales_invoice_model extends CORE_Model
             (
                 SELECT 
                     l.loading_no,
-                    li.invoice_id
+                    li.invoice_id,
+                    agent.agent_name
                 FROM
                     loading_items li
                         LEFT JOIN
                     loading l ON l.loading_id = li.loading_id
+                        LEFT JOIN
+                    agent ON agent.agent_id = l.agent_id
                     WHERE l.is_deleted = FALSE AND l.is_active = TRUE
             ) as loading ON loading.invoice_id = si.sales_invoice_id
 

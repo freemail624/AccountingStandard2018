@@ -46,13 +46,14 @@ class Profit extends CORE_Controller
                 $end = date('Y-m-d',strtotime($this->input->get('end')));
                 $invoice_type = $this->input->get('invoice_type');
                 $agent_id = $this->input->get('agent_id');
+                $customer_id = $this->input->get('customer_id');
 
                 if($invoice_type == 1){//All Invoices
-                    $response['data']=$m_sales->get_profit_by_product($start,$end); 
+                    $response['data']=$m_sales->get_profit_by_product($start,$end,$customer_id); 
                 }else if($invoice_type == 2){//Charge Invoices
-                    $response['data']=$m_sales->get_profit_by_product_charge($start,$end,$agent_id); 
+                    $response['data']=$m_sales->get_profit_by_product_charge($start,$end,$agent_id,$customer_id); 
                 }else{//Cash Invoices
-                    $response['data']=$m_sales->get_profit_by_product_cash($start,$end); //Cash Invoice
+                    $response['data']=$m_sales->get_profit_by_product_cash($start,$end,$customer_id); //Cash Invoice
                 }
 
                 echo json_encode($response);
@@ -65,24 +66,25 @@ class Profit extends CORE_Controller
                 $end = date('Y-m-d',strtotime($this->input->get('end')));
                 $invoice_type = $this->input->get('invoice_type');
                 $agent_id = $this->input->get('agent_id');
+                $customer_id = $this->input->get('customer_id');
 
                 if($invoice_type == 1){ //All Invoices
 
-                    $response['data']=$m_sales->get_profit_by_invoice_detailed($start,$end);
-                    $response['distinct']=$m_sales->get_profit_by_invoice_detailed($start,$end,TRUE);
-                    $response['subtotal']=$m_sales->get_profit_by_invoice_detailed($start,$end,FALSE,TRUE);
+                    $response['data']=$m_sales->get_profit_by_invoice_detailed($start,$end,FALSE,FALSE,$customer_id);
+                    $response['distinct']=$m_sales->get_profit_by_invoice_detailed($start,$end,TRUE,FALSE,$customer_id);
+                    $response['subtotal']=$m_sales->get_profit_by_invoice_detailed($start,$end,FALSE,TRUE,$customer_id);
 
                 }else if($invoice_type == 2){ //Charge Invoices
  
-                    $response['data']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,FALSE,$agent_id);
-                    $response['distinct']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,TRUE,FALSE,$agent_id);
-                    $response['subtotal']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,TRUE,$agent_id);
+                    $response['data']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,FALSE,$agent_id,$customer_id);
+                    $response['distinct']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,TRUE,FALSE,$agent_id,$customer_id);
+                    $response['subtotal']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,TRUE,$agent_id,$customer_id);
 
                 }else{ //Cash Invoices
 
-                    $response['data']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end);
-                    $response['distinct']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,TRUE);
-                    $response['subtotal']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,FALSE,TRUE);
+                    $response['data']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,FALSE,FALSE,$customer_id);
+                    $response['distinct']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,TRUE,FALSE,$customer_id);
+                    $response['subtotal']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,FALSE,TRUE,$customer_id);
 
                 }
 
@@ -96,13 +98,14 @@ class Profit extends CORE_Controller
                 $end = date('Y-m-d',strtotime($this->input->get('end')));
                 $invoice_type = $this->input->get('invoice_type');
                 $agent_id = $this->input->get('agent_id');
+                $customer_id = $this->input->get('customer_id');
 
                 if($invoice_type == 1){//All Invoices
-                    $response['summary']=$m_sales->get_profit_by_invoice_detailed($start,$end,FALSE,TRUE);
+                    $response['summary']=$m_sales->get_profit_by_invoice_detailed($start,$end,FALSE,TRUE,$customer_id);
                 }else if($invoice_type == 2){//Charge Invoices
-                    $response['summary']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,TRUE,$agent_id); 
+                    $response['summary']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,TRUE,$agent_id,$customer_id); 
                 }else{//Cash Invoices
-                   $response['summary']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,FALSE,TRUE);
+                   $response['summary']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,FALSE,TRUE,$customer_id);
                 }
 
                     echo json_encode($response);
@@ -111,6 +114,8 @@ class Profit extends CORE_Controller
 
                 case'print-by-product';                
                 $m_company=$this->Company_model;
+                $m_customer=$this->Customers_model;
+
                 $company_info=$m_company->get_list();
                 $data['company_info']=$company_info[0];
 
@@ -120,14 +125,23 @@ class Profit extends CORE_Controller
                 $end = date('Y-m-d',strtotime($this->input->get('end')));
                 $invoice_type = $this->input->get('invoice_type');
                 $agent_id = $this->input->get('agent_id');
+                $customer_id = $this->input->get('customer_id');
+
 
                 if($type=='1'){
+
+                    if($customer_id==0){
+                        $data['customer_name'] = 'All Customers';
+                    }else{
+                        $data['customer_name'] = $m_customer->get_list($customer_id)[0]->customer_name;
+                    }
+
                     if($invoice_type == 1){//All Invoices
-                        $data['items']=$m_sales->get_profit_by_product($start,$end); 
+                        $data['items']=$m_sales->get_profit_by_product($start,$end,$customer_id); 
                     }else if($invoice_type == 2){//Charge Invoices
-                        $data['items']=$m_sales->get_profit_by_product_charge($start,$end,$agent_id); 
+                        $data['items']=$m_sales->get_profit_by_product_charge($start,$end,$agent_id,$customer_id); 
                     }else{//Cash Invoices
-                        $data['items']=$m_sales->get_profit_by_product_cash($start,$end); //Cash Invoice
+                        $data['items']=$m_sales->get_profit_by_product_cash($start,$end,$customer_id); //Cash Invoice
                     }
                     $this->load->view('template/profit_content',$data);
                 }
@@ -136,21 +150,21 @@ class Profit extends CORE_Controller
                 
                     if($invoice_type == 1){ //All Invoices
 
-                        $data['items']=$m_sales->get_profit_by_invoice_detailed($start,$end);
-                        $data['distinct']=$m_sales->get_profit_by_invoice_detailed($start,$end,TRUE);
-                        $data['subtotal']=$m_sales->get_profit_by_invoice_detailed($start,$end,FALSE,TRUE);
+                        $data['items']=$m_sales->get_profit_by_invoice_detailed($start,$end,FALSE,FALSE,$customer_id);
+                        $data['distinct']=$m_sales->get_profit_by_invoice_detailed($start,$end,TRUE,FALSE,$customer_id);
+                        $data['subtotal']=$m_sales->get_profit_by_invoice_detailed($start,$end,FALSE,TRUE,$customer_id);
 
                     }else if($invoice_type == 2){ //Charge Invoices
      
-                        $data['items']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,FALSE,$agent_id);
-                        $data['distinct']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,TRUE,FALSE,$agent_id);
-                        $data['subtotal']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,TRUE,$agent_id);
+                        $data['items']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,FALSE,$agent_id,$customer_id);
+                        $data['distinct']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,TRUE,FALSE,$agent_id,$customer_id);
+                        $data['subtotal']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,TRUE,$agent_id,$customer_id);
 
                     }else{ //Cash Invoices
 
-                        $data['items']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end);
-                        $data['distinct']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,TRUE);
-                        $data['subtotal']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,FALSE,TRUE);
+                        $data['items']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,FALSE,FALSE,$customer_id);
+                        $data['distinct']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,TRUE,FALSE,$customer_id);
+                        $data['subtotal']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,FALSE,TRUE,$customer_id);
 
                     }
 
@@ -159,11 +173,11 @@ class Profit extends CORE_Controller
                 if($type=='3'){
 
                     if($invoice_type == 1){//All Invoices
-                        $data['summary']=$m_sales->get_profit_by_invoice_detailed($start,$end,FALSE,TRUE);
+                        $data['summary']=$m_sales->get_profit_by_invoice_detailed($start,$end,FALSE,TRUE,$customer_id);
                     }else if($invoice_type == 2){//Charge Invoices
-                        $data['summary']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,TRUE,$agent_id); 
+                        $data['summary']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,TRUE,$agent_id,$customer_id); 
                     }else{//Cash Invoices
-                       $data['summary']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,FALSE,TRUE);
+                       $data['summary']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,FALSE,TRUE,$customer_id);
                     }
 
                     $this->load->view('template/profit_content_summary',$data);
@@ -175,21 +189,30 @@ class Profit extends CORE_Controller
                 case'export-by-product';
                 $excel = $this->excel;
                 $m_company=$this->Company_model;
+                $m_customer=$this->Customers_model;
+
                 $company_info=$m_company->get_list();
                 $company_info=$company_info[0];
                 $start = date('Y-m-d',strtotime($this->input->get('start')));
                 $end = date('Y-m-d',strtotime($this->input->get('end')));
                 $invoice_type = $this->input->get('invoice_type');
                 $agent_id = $this->input->get('agent_id');
+                $customer_id = $this->input->get('customer_id');
+
+                if($customer_id==0){
+                    $customer_name = 'All Customers';
+                }else{
+                    $customer_name = $m_customer->get_list($customer_id)[0]->customer_name;
+                }
 
                 $m_sales=$this->Profit_model;
 
                 if($invoice_type == 1){//All Invoices
-                    $items = $m_sales->get_profit_by_product($start,$end);
+                    $items = $m_sales->get_profit_by_product($start,$end,$customer_id);
                 }else if($invoice_type == 2){//Charge Invoices
-                    $items = $m_sales->get_profit_by_product_charge($start,$end,$agent_id); 
+                    $items = $m_sales->get_profit_by_product_charge($start,$end,$agent_id,$customer_id); 
                 }else{//Cash Invoices
-                    $items = $m_sales->get_profit_by_product_cash($start,$end);
+                    $items = $m_sales->get_profit_by_product_cash($start,$end,$customer_id);
                 }
 
                 $excel->setActiveSheetIndex(0);
@@ -203,7 +226,6 @@ class Profit extends CORE_Controller
                 $excel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
                 $excel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
                 $excel->getActiveSheet()->getColumnDimension('I')->setWidth(20);
-                $excel->getActiveSheet()->getColumnDimension('J')->setWidth(20);
 
                 $rettotal = 0;
                 $gtotal = 0;
@@ -230,20 +252,24 @@ class Profit extends CORE_Controller
                     //                         ->getStyle('A5:G5')->applyFromArray($border_bottom);
 
                     $excel->getActiveSheet()
-                            ->getStyle('A6:G6')
+                            ->getStyle('A6:I6')
                             ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
                     $excel->getActiveSheet()->setCellValue('A6','Profit Report by Product')
-                                            ->mergeCells('A6:G6')
-                                            ->getStyle('A6:G6')->getFont()->setBold(True)
+                                            ->mergeCells('A6:I6')
+                                            ->getStyle('A6:I6')->getFont()->setBold(True)
                                             ->setSize(14);
+
+                    $excel->getActiveSheet()->setCellValue('A7','Customer : ')
+                                            ->setCellValue('B7',$customer_name)
+                                            ->getStyle('A7:B7')->getFont()->setBold(True);
 
                 $i=8;
                 $excel->getActiveSheet()->setCellValue('A'.$i,'Period : '.$start.' - '.$end); $i++;
 
                             $excel->getActiveSheet()
-                            ->getStyle('D'.$i.':'.'H'.$i)
+                            ->getStyle('D'.$i.':'.'I'.$i)
                             ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
@@ -311,7 +337,7 @@ class Profit extends CORE_Controller
                 $excel->getActiveSheet()->setCellValue('A'.$i,'TOTAL');
                 $excel->getActiveSheet()->setCellValue('D'.$i,$p_qty)->getStyle('D'.$i)->getNumberFormat()->setFormatCode('0.00');
                 $excel->getActiveSheet()->setCellValue('G'.$i,$p_gross)->getStyle('G'.$i)->getNumberFormat()->setFormatCode('0.00');
-                $excel->getActiveSheet()->setCellValue('H'.$i,$p_gross)->getStyle('H'.$i)->getNumberFormat()->setFormatCode('0.00');
+                $excel->getActiveSheet()->setCellValue('H'.$i,$p_net_cost)->getStyle('H'.$i)->getNumberFormat()->setFormatCode('0.00');
                 $excel->getActiveSheet()->setCellValue('I'.$i,$p_net)->getStyle('I'.$i)->getNumberFormat()->setFormatCode('0.00');
 
 
@@ -347,26 +373,27 @@ class Profit extends CORE_Controller
                 $end = date('Y-m-d',strtotime($this->input->get('end')));
                 $invoice_type = $this->input->get('invoice_type');
                 $agent_id = $this->input->get('agent_id');
+                $customer_id = $this->input->get('customer_id');
 
                 $m_sales=$this->Profit_model;
 
                 if($invoice_type == 1){ //All Invoices
 
-                    $data=$m_sales->get_profit_by_invoice_detailed($start,$end);
-                    $distinct=$m_sales->get_profit_by_invoice_detailed($start,$end,TRUE);
-                    $subtotal=$m_sales->get_profit_by_invoice_detailed($start,$end,FALSE,TRUE);
+                    $data=$m_sales->get_profit_by_invoice_detailed($start,$end,FALSE,FALSE,$customer_id);
+                    $distinct=$m_sales->get_profit_by_invoice_detailed($start,$end,TRUE,FALSE,$customer_id);
+                    $subtotal=$m_sales->get_profit_by_invoice_detailed($start,$end,FALSE,TRUE,$customer_id);
 
                 }else if($invoice_type == 2){ //Charge Invoices
  
-                    $data=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,FALSE,$agent_id);
-                    $distinct=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,TRUE,FALSE,$agent_id);
-                    $subtotal=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,TRUE,$agent_id);
+                    $data=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,FALSE,$agent_id,$customer_id);
+                    $distinct=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,TRUE,FALSE,$agent_id,$customer_id);
+                    $subtotal=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,TRUE,$agent_id,$customer_id);
 
                 }else{ //Cash Invoices
 
-                    $data=$m_sales->get_profit_by_invoice_detailed_cash($start,$end);
-                    $distinct=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,TRUE);
-                    $subtotal=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,FALSE,TRUE);
+                    $data=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,FALSE,FALSE,$customer_id);
+                    $distinct=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,TRUE,FALSE,$customer_id);
+                    $subtotal=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,FALSE,TRUE,$customer_id);
 
                 }
 
@@ -380,6 +407,7 @@ class Profit extends CORE_Controller
                 $excel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
                 $excel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
                 $excel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
+                $excel->getActiveSheet()->getColumnDimension('I')->setWidth(20);
                 $excel->getActiveSheet()->getColumnDimension('I')->setWidth(20);
 
                 $rettotal = 0;
@@ -407,13 +435,13 @@ class Profit extends CORE_Controller
                     //                         ->getStyle('A5:G5')->applyFromArray($border_bottom);
 
                     $excel->getActiveSheet()
-                            ->getStyle('A6:G6')
+                            ->getStyle('A6:I6')
                             ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
                     $excel->getActiveSheet()->setCellValue('A6','Profit Report by Invoice (Detailed)')
-                                            ->mergeCells('A6:G6')
-                                            ->getStyle('A6:G6')->getFont()->setBold(True)
+                                            ->mergeCells('A6:I6')
+                                            ->getStyle('A6:I6')->getFont()->setBold(True)
                                             ->setSize(14);
 
                 $i=8;
@@ -422,25 +450,26 @@ class Profit extends CORE_Controller
 
                 $p_qty = 0;
                 $p_gross = 0;
+                $p_net_cost = 0;
                 $p_net = 0;
 
                 foreach ($distinct as $inv) {
 
                 $excel->getActiveSheet()
-                    ->getStyle('A'.$i.':'.'H'.$i)
+                    ->getStyle('A'.$i.':'.'I'.$i)
                     ->getFill()
                     ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                     ->getStartColor()
                     ->setARGB('99ffff');
 
-                $excel->getActiveSheet()->mergeCells('A'.$i.':'.'H'.$i);
+                $excel->getActiveSheet()->mergeCells('A'.$i.':'.'I'.$i);
                 $excel->getActiveSheet()->setCellValue('A'.$i,$inv->inv_no)
                                         ->getStyle('A'.$i)->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->getStyle('A'.$i.':'.'I'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                 $i++;
 
                 $excel->getActiveSheet()
-                            ->getStyle('D'.$i.':'.'H'.$i)
+                            ->getStyle('D'.$i.':'.'I'.$i)
                             ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
@@ -458,8 +487,10 @@ class Profit extends CORE_Controller
                                         ->getStyle('F'.$i)->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('G'.$i,'Gross')
                                         ->getStyle('G'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('H'.$i,'Net Profit')
+                $excel->getActiveSheet()->setCellValue('H'.$i,'Net Cost')
                                         ->getStyle('H'.$i)->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('I'.$i,'Net Profit')
+                                        ->getStyle('I'.$i)->getFont()->setBold(TRUE);
 
                 $i++;
 
@@ -469,13 +500,16 @@ class Profit extends CORE_Controller
                                 $excel->getActiveSheet()->setCellValue('A'.$i,$value->product_code);
                                 $excel->getActiveSheet()->setCellValue('B'.$i,$value->product_desc);
                                 $excel->getActiveSheet()->setCellValue('C'.$i,$value->unit_name);
-                                $excel->getActiveSheet()->setCellValue('D'.$i,number_format($value->inv_qty,2))->getStyle('D'.$i)->getNumberFormat()->setFormatCode('0.00');
-                                $excel->getActiveSheet()->setCellValue('E'.$i,number_format($value->srp,2))->getStyle('E'.$i)->getNumberFormat()->setFormatCode('0.00');
-                                $excel->getActiveSheet()->setCellValue('F'.$i,number_format($value->purchase_cost,2))->getStyle('F'.$i)->getNumberFormat()->setFormatCode('0.00');
-                                $excel->getActiveSheet()->setCellValue('G'.$i,number_format($value->inv_gross,2))->getStyle('G'.$i)->getNumberFormat()->setFormatCode('0.00');
-                                $excel->getActiveSheet()->setCellValue('H'.$i,number_format($value->net_profit,2))->getStyle('H'.$i)->getNumberFormat()->setFormatCode('0.00');
+
+                                $excel->getActiveSheet()->setCellValue('D'.$i,$value->inv_qty)->getStyle('D'.$i)->getNumberFormat()->setFormatCode('0.00');
+                                $excel->getActiveSheet()->setCellValue('E'.$i,$value->srp)->getStyle('E'.$i)->getNumberFormat()->setFormatCode('0.00');
+                                $excel->getActiveSheet()->setCellValue('F'.$i,$value->purchase_cost)->getStyle('F'.$i)->getNumberFormat()->setFormatCode('0.00');
+                                $excel->getActiveSheet()->setCellValue('G'.$i,$value->inv_gross)->getStyle('G'.$i)->getNumberFormat()->setFormatCode('0.00');
+                                $excel->getActiveSheet()->setCellValue('H'.$i,$value->net_cost)->getStyle('H'.$i)->getNumberFormat()->setFormatCode('0.00');
+                                $excel->getActiveSheet()->setCellValue('I'.$i,$value->net_profit)->getStyle('I'.$i)->getNumberFormat()->setFormatCode('0.00');
                                 $p_qty+=$value->inv_qty;
                                 $p_gross+=$value->inv_gross;
+                                $p_net_cost+=$value->net_cost;
                                 $p_net+=$value->net_profit;
                         $i++;
                     }
@@ -485,17 +519,18 @@ class Profit extends CORE_Controller
                 foreach ($subtotal as $sub) {
                     if($sub->identifier == $inv->identifier && $sub->invoice_id == $inv->invoice_id ){
                         $excel->getActiveSheet()
-                        ->getStyle('D'.$i.':'.'H'.$i)
+                        ->getStyle('D'.$i.':'.'I'.$i)
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
                         $excel->getActiveSheet()
-                        ->getStyle('A'.$i.':'.'H'.$i)
+                        ->getStyle('A'.$i.':'.'I'.$i)
                         ->getFont()->setBold(TRUE);
                         $excel->getActiveSheet()->setCellValue('A'.$i,'TOTAL ('.$sub->inv_no.')');
-                        $excel->getActiveSheet()->setCellValue('D'.$i,number_format($sub->qty_total,2))->getStyle('D'.$i)->getNumberFormat()->setFormatCode('0.00');
-                        $excel->getActiveSheet()->setCellValue('G'.$i,number_format($sub->gross_total,2))->getStyle('G'.$i)->getNumberFormat()->setFormatCode('0.00');
-                        $excel->getActiveSheet()->setCellValue('H'.$i,number_format($sub->profit_total,2))->getStyle('H'.$i)->getNumberFormat()->setFormatCode('0.00');
+                        $excel->getActiveSheet()->setCellValue('D'.$i,$sub->qty_total)->getStyle('D'.$i)->getNumberFormat()->setFormatCode('0.00');
+                        $excel->getActiveSheet()->setCellValue('G'.$i,$sub->gross_total)->getStyle('G'.$i)->getNumberFormat()->setFormatCode('0.00');
+                        $excel->getActiveSheet()->setCellValue('H'.$i,$sub->net_cost_total)->getStyle('H'.$i)->getNumberFormat()->setFormatCode('0.00');
+                        $excel->getActiveSheet()->setCellValue('I'.$i,$sub->profit_total)->getStyle('I'.$i)->getNumberFormat()->setFormatCode('0.00');
                         $i++;
                     }
                 }
@@ -511,18 +546,19 @@ class Profit extends CORE_Controller
 
 
                 $excel->getActiveSheet()
-                ->getStyle('D'.$i.':'.'H'.$i)
+                ->getStyle('D'.$i.':'.'I'.$i)
                 ->getAlignment()
                 ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
                 $excel->getActiveSheet()
-                ->getStyle('A'.$i.':'.'H'.$i)
+                ->getStyle('A'.$i.':'.'I'.$i)
                 ->getFont()->setBold(TRUE);
 
                 $excel->getActiveSheet()->setCellValue('A'.$i,'GRAND TOTAL');
-                $excel->getActiveSheet()->setCellValue('D'.$i,number_format($p_qty,2))->getStyle('D'.$i)->getNumberFormat()->setFormatCode('0.00');
-                $excel->getActiveSheet()->setCellValue('G'.$i,number_format($p_gross,2))->getStyle('G'.$i)->getNumberFormat()->setFormatCode('0.00');
-                $excel->getActiveSheet()->setCellValue('H'.$i,number_format($p_net,2))->getStyle('H'.$i)->getNumberFormat()->setFormatCode('0.00');
+                $excel->getActiveSheet()->setCellValue('D'.$i,$p_qty)->getStyle('D'.$i)->getNumberFormat()->setFormatCode('0.00');
+                $excel->getActiveSheet()->setCellValue('G'.$i,$p_gross)->getStyle('G'.$i)->getNumberFormat()->setFormatCode('0.00');
+                $excel->getActiveSheet()->setCellValue('H'.$i,$p_net_cost)->getStyle('H'.$i)->getNumberFormat()->setFormatCode('0.00');
+                $excel->getActiveSheet()->setCellValue('I'.$i,$p_net)->getStyle('I'.$i)->getNumberFormat()->setFormatCode('0.00');
 
 
 
@@ -555,15 +591,16 @@ class Profit extends CORE_Controller
                 $end = date('Y-m-d',strtotime($this->input->get('end')));
                 $invoice_type = $this->input->get('invoice_type');
                 $agent_id = $this->input->get('agent_id');
+                $customer_id = $this->input->get('customer_id');
 
                 $m_sales=$this->Profit_model;
 
                 if($invoice_type == 1){//All Invoices
-                    $summary=$m_sales->get_profit_by_invoice_detailed($start,$end,FALSE,TRUE);
+                    $summary=$m_sales->get_profit_by_invoice_detailed($start,$end,FALSE,TRUE,$customer_id);
                 }else if($invoice_type == 2){//Charge Invoices
-                    $summary=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,TRUE,$agent_id); 
+                    $summary=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,TRUE,$agent_id,$customer_id); 
                 }else{//Cash Invoices
-                   $summary=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,FALSE,TRUE);
+                   $summary=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,FALSE,TRUE,$customer_id);
                 }
 
                 $excel->setActiveSheetIndex(0);
@@ -618,6 +655,7 @@ class Profit extends CORE_Controller
 
                 $p_qty = 0;
                 $p_gross = 0;
+                $p_net_cost = 0;
                 $p_net = 0;
 
                 $excel->getActiveSheet()
@@ -631,12 +669,14 @@ class Profit extends CORE_Controller
                                         ->getStyle('B'.$i)->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('C'.$i,'Date')
                                         ->getStyle('C'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('D'.$i,'Date')
+                $excel->getActiveSheet()->setCellValue('D'.$i,'Qty Sold')
                                         ->getStyle('D'.$i)->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('E'.$i,'Gross')
                                         ->getStyle('E'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('F'.$i,'Net Profit')
+                $excel->getActiveSheet()->setCellValue('F'.$i,'Net Cost')
                                         ->getStyle('F'.$i)->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('G'.$i,'Net Profit')
+                                        ->getStyle('G'.$i)->getFont()->setBold(TRUE);
 
                 $i++;
 
@@ -645,11 +685,14 @@ class Profit extends CORE_Controller
                                 $excel->getActiveSheet()->setCellValue('A'.$i,$value->inv_no);
                                 $excel->getActiveSheet()->setCellValue('B'.$i,$value->customer_name);
                                 $excel->getActiveSheet()->setCellValue('C'.$i,$value->date_invoice);
-                                $excel->getActiveSheet()->setCellValue('D'.$i,number_format($value->qty_total,2))->getStyle('C'.$i)->getNumberFormat()->setFormatCode('0.00');
-                                $excel->getActiveSheet()->setCellValue('E'.$i,number_format($value->gross_total,2))->getStyle('D'.$i)->getNumberFormat()->setFormatCode('0.00');
-                                $excel->getActiveSheet()->setCellValue('F'.$i,number_format($value->profit_total,2))->getStyle('E'.$i)->getNumberFormat()->setFormatCode('0.00');
+                                $excel->getActiveSheet()->setCellValue('D'.$i,$value->qty_total)->getStyle('D'.$i)->getNumberFormat()->setFormatCode('0.00');
+                                $excel->getActiveSheet()->setCellValue('E'.$i,$value->gross_total)->getStyle('E'.$i)->getNumberFormat()->setFormatCode('0.00');
+                                $excel->getActiveSheet()->setCellValue('F'.$i,$value->net_cost_total)->getStyle('F'.$i)->getNumberFormat()->setFormatCode('0.00');
+                                $excel->getActiveSheet()->setCellValue('G'.$i,$value->profit_total)->getStyle('G'.$i)->getNumberFormat()->setFormatCode('0.00');
+
                                 $p_qty+=$value->qty_total;
                                 $p_gross+=$value->gross_total;
+                                $p_net_cost+=$value->net_cost_total;
                                 $p_net+=$value->profit_total;
                         $i++;
                 }
@@ -666,9 +709,10 @@ class Profit extends CORE_Controller
                 ->getFont()->setBold(TRUE);
 
                 $excel->getActiveSheet()->setCellValue('A'.$i,'GRAND TOTAL');
-                $excel->getActiveSheet()->setCellValue('D'.$i,number_format($p_qty,2))->getStyle('D'.$i)->getNumberFormat()->setFormatCode('0.00');
-                $excel->getActiveSheet()->setCellValue('E'.$i,number_format($p_gross,2))->getStyle('F'.$i)->getNumberFormat()->setFormatCode('0.00');
-                $excel->getActiveSheet()->setCellValue('F'.$i,number_format($p_net,2))->getStyle('H'.$i)->getNumberFormat()->setFormatCode('0.00');
+                $excel->getActiveSheet()->setCellValue('D'.$i,$p_qty)->getStyle('D'.$i)->getNumberFormat()->setFormatCode('0.00');
+                $excel->getActiveSheet()->setCellValue('E'.$i,$p_gross)->getStyle('E'.$i)->getNumberFormat()->setFormatCode('0.00');
+                $excel->getActiveSheet()->setCellValue('F'.$i,$p_net_cost)->getStyle('F'.$i)->getNumberFormat()->setFormatCode('0.00');
+                $excel->getActiveSheet()->setCellValue('G'.$i,$p_net)->getStyle('G'.$i)->getNumberFormat()->setFormatCode('0.00');
 
 
 

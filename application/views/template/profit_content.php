@@ -56,6 +56,8 @@
 	</tr>
 </table>
                     <h4>Profit Report by Products</h4>
+                    Customer : <?php echo $customer_name; ?> <br/><br/>
+
                     <table style="width:100%" class="table table-striped" id="tbl_products">
                     <thead>
                     <th>Item Code</th>

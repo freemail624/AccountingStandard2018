@@ -70,7 +70,7 @@ class Loading extends CORE_Controller
 
         $data['agents']=$this->Agent_model->get_list(array('is_deleted'=>FALSE));
         $data['accounts']=$this->Account_integration_model->get_list(1);
-        $data['loadings']=$this->Loading_model->get_list(array("is_deleted"=>FALSE));
+        $data['loadings']=$this->Loading_model->get_loading();
 
         $tax_rate=$this->Company_model->get_list(
             null,
@@ -256,6 +256,8 @@ class Loading extends CORE_Controller
                 $m_loading->modified_by_user=$this->session->user_id;
                 $m_loading->modify($loading_id);
 
+                $for_transfer=$this->input->post('for_transfer',TRUE);
+                $transfer_id=$this->input->post('transfer_id',TRUE);
                 $invoice_id=$this->input->post('invoice_id',TRUE);
                 $customer_id=$this->input->post('customer_id',TRUE);
                 $address=$this->input->post('address',TRUE);
@@ -267,13 +269,19 @@ class Loading extends CORE_Controller
                 for($i=0;$i<count($invoice_id);$i++){
                     
                     // For Transfer of product to other loading report
-                    $loading = $m_loading->check_invoice_loading($this->get_numeric_value($invoice_id[$i]));
-                    if(count($loading) > 0){
-                        $m_loading_items->delete_via_pk($loading[0]->loading_item_id);
+                    if($this->get_numeric_value($for_transfer[$i]) >= 1){
+                        $m_loading_items->loading_id=$this->get_numeric_value($transfer_id[$i]);
+                    }else{
+                        
+                        $loading = $m_loading->check_invoice_loading($this->get_numeric_value($invoice_id[$i]));
+                        if(count($loading) > 0){
+                            $m_loading_items->delete_via_pk($loading[0]->loading_item_id);
+                        }
+
+                        $m_loading_items->loading_id=$loading_id;
                     }
 
                     $m_loading_items->invoice_id=$this->get_numeric_value($invoice_id[$i]);
-                    $m_loading_items->loading_id=$loading_id;
                     $m_loading_items->invoice_type_id=1; // Sales Invoice Type
                     $m_loading_items->customer_id=$this->get_numeric_value($customer_id[$i]);
                     $m_loading_items->address=$address[$i];

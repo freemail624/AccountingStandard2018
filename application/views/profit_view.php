@@ -382,7 +382,7 @@ $(document).ready(function(){
        var bindEventHandlers=function(){
 
         $('#btn_print').click(function(){
-            window.open('Profit/transaction/print-by-product?type='+_cboReportType.val()+'&start='+$('#txt_start_date').val()+'&end='+$('#txt_end_date').val()+'&invoice_type='+$('#invoice_type').val()+'&agent_id='+$('#cbo_agents').val());
+            window.open('Profit/transaction/print-by-product?type='+_cboReportType.val()+'&start='+$('#txt_start_date').val()+'&end='+$('#txt_end_date').val()+'&invoice_type='+$('#invoice_type').val()+'&agent_id='+$('#cbo_agents').val()+'&customer_id='+$('#cbo_customer').val());
         });
 
         _cboReportType.on("select2:select", function (e) {
@@ -393,7 +393,12 @@ $(document).ready(function(){
         _cboTrucks.on("select2:select", function (e) {
             type = _cboReportType.val();
             if(type == '1'){ reportProducts();}else if(type == '2'){ reportInvoiceDetailed();}else if(type == '3'){ reportInvoiceSummary(); }
-        });        
+        });  
+
+        _cboCustomers.on("select2:select", function (e) {
+            type = _cboReportType.val();
+            if(type == '1'){ reportProducts();}else if(type == '2'){ reportInvoiceDetailed();}else if(type == '3'){ reportInvoiceSummary(); }
+        });
 
         _cboInvoiceType.on("select2:select", function (e) {
             type = _cboReportType.val();
@@ -422,11 +427,11 @@ $(document).ready(function(){
         $('#btn_export').on('click', function() {
             type = _cboReportType.val();
             if(type == '1'){
-                window.open('Profit/transaction/export-by-product?type='+_cboReportType.val()+'&start='+$('#txt_start_date').val()+'&end='+$('#txt_end_date').val()+'&invoice_type='+$('#invoice_type').val()+'&agent_id='+$('#cbo_agents').val(),'_self');
+                window.open('Profit/transaction/export-by-product?type='+_cboReportType.val()+'&start='+$('#txt_start_date').val()+'&end='+$('#txt_end_date').val()+'&invoice_type='+$('#invoice_type').val()+'&agent_id='+$('#cbo_agents').val()+'&customer_id='+$('#cbo_customer').val(),'_self');
             }else if(type == '2'){
-                window.open('Profit/transaction/export-by-invoice-detailed?type='+_cboReportType.val()+'&start='+$('#txt_start_date').val()+'&end='+$('#txt_end_date').val()+'&invoice_type='+$('#invoice_type').val()+'&agent_id='+$('#cbo_agents').val(),'_self');
+                window.open('Profit/transaction/export-by-invoice-detailed?type='+_cboReportType.val()+'&start='+$('#txt_start_date').val()+'&end='+$('#txt_end_date').val()+'&invoice_type='+$('#invoice_type').val()+'&agent_id='+$('#cbo_agents').val()+'&customer_id='+$('#cbo_customer').val(),'_self');
             }else if(type == '3'){
-                window.open('Profit/transaction/export-by-invoice-summary?type='+_cboReportType.val()+'&start='+$('#txt_start_date').val()+'&end='+$('#txt_end_date').val()+'&invoice_type='+$('#invoice_type').val()+'&agent_id='+$('#cbo_agents').val(),'_self');
+                window.open('Profit/transaction/export-by-invoice-summary?type='+_cboReportType.val()+'&start='+$('#txt_start_date').val()+'&end='+$('#txt_end_date').val()+'&invoice_type='+$('#invoice_type').val()+'&agent_id='+$('#cbo_agents').val()+'&customer_id='+$('#cbo_customer').val(),'_self');
             }
                
         });
@@ -461,6 +466,7 @@ $(document).ready(function(){
          data.push({name : "start" ,value : $('#txt_start_date').val()});
          data.push({name : "end" ,value : $('#txt_end_date').val()});
          data.push({name : "invoice_type" ,value : $('#invoice_type').val()});
+         data.push({name : "customer_id" ,value : $('#cbo_customer').val()});
 
         $.ajax({
             url : 'Profit/transaction/report-by-product',
@@ -476,6 +482,7 @@ $(document).ready(function(){
                     $('#tbl_delivery_invoice').html('');
                     $('#tbl_delivery_invoice').append(
                     '<h4>Profit Report by Products</h4>'+
+                    '<span>Customer : '+$('#cbo_customer option:selected').text()+'</span><br/><br/>'+
                     '<table style="width:100%" class="table table-striped" id="tbl_products">'+
                     '<thead>'+
                     '<th>Item Code</th>'+
@@ -540,6 +547,7 @@ $(document).ready(function(){
          data.push({name : "start" ,value : $('#txt_start_date').val()});
          data.push({name : "end" ,value : $('#txt_end_date').val()});
          data.push({name : "invoice_type" ,value : $('#invoice_type').val()});
+         data.push({name : "customer_id" ,value : $('#cbo_customer').val()});
 
         $.ajax({
             url : 'Profit/transaction/report-by-invoice-detailed',
@@ -646,6 +654,7 @@ $(document).ready(function(){
          data.push({name : "start" ,value : $('#txt_start_date').val()});
          data.push({name : "end" ,value : $('#txt_end_date').val()});
          data.push({name : "invoice_type" ,value : $('#invoice_type').val()});
+         data.push({name : "customer_id" ,value : $('#cbo_customer').val()});
 
         $.ajax({
             url : 'Profit/transaction/report-by-invoice-summary',

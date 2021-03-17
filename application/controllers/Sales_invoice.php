@@ -240,7 +240,15 @@ class Sales_invoice extends CORE_Controller
 
             //***************************************create new Items************************************************
 
-            
+            case 'checkCustomerInvoice':    
+
+                $m_invoice=$this->Sales_invoice_model;
+                $customer_id = $this->input->post('customer_id',true);
+                $date_due = date('Y-m-d',strtotime($this->input->post('date_due',TRUE)));
+                $response['data']=$m_invoice->checkCustomerInvoice($customer_id,$date_due,null);            
+                echo json_encode($response);
+                break;
+
             case 'create':
                 $m_invoice=$this->Sales_invoice_model;
                 $m_customers=$this->Customers_model;

@@ -248,13 +248,6 @@
                                         <option value="<?php echo $order_source->order_source_id; ?>"><?php echo $order_source->order_source_name; ?></option>
                                     <?php } ?>
                                 </select>
-                                <label>Sales person :</label><br/>
-                                <select name="salesperson_id" id="cbo_salesperson" >
-                                    <option value="0">[ Create New Salesperson ]</option>
-                                    <?php foreach($salespersons as $salesperson){ ?>
-                                        <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->acr_name.' - '.$salesperson->fullname; ?></option>
-                                    <?php } ?>
-                                </select>
                                 <label>Customer Type :</label><br/>
                                 <select name="customer_type_id" id="cbo_customer_type">
                                     <option value="0">Walk In</option>
@@ -302,9 +295,18 @@
                             </select>
                         </div>
 
-                        <div class="col-sm-8">
+                        <div class="col-sm-4">
                             <label>Address :</label><br>
                             <input class="form-control" id="txt_address" type="text" name="address" placeholder="Customer Address">
+                        </div>
+                        <div class="col-sm-4">
+                            <label>Sales person :</label><br/>
+                            <select name="salesperson_id" id="cbo_salesperson" >
+                                <option value="0">[ Create New Salesperson ]</option>
+                                <?php foreach($salespersons as $salesperson){ ?>
+                                    <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->fullname; ?></option>
+                                <?php } ?>
+                            </select>
                         </div>
                         <div class="col-sm-2">
                             <b class="required">*</b><label> Due Date :</label> <br />
@@ -514,6 +516,35 @@
         </div>
     </div>
 </div>
+<div id="modal_multiple_invoice" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false"><!--modal-->
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+<!--             <div class="modal-header">
+                <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Allow Multiple Invoice</h4>
+            </div> -->
+            <div class="modal-body" style="padding: 50px;">
+                <p id="modal-body-message" style="font-size: 20px;">
+                    <center>
+                        <div style="font-size: 20px;" id="mulple_notice"></div>
+                        <br/>
+                        <span style="font-size: 20px;">Are you sure you still want to save this invoice?</span>
+                    </center>
+                </p>
+                <br/><br/>
+                <div class="row">
+                    <div class="col-md-6">
+                        <button id="btn_yes_allow" type="button" class="btn btn-success" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;width: 100%;padding: 40px;">Yes</button>
+                    </div>
+                    <div class="col-md-6">
+                        <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;width: 100%;padding: 40px;">Cancel</button>  
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="modal_so_list" class="modal fade" role="dialog"><!--modal-->
     <div class="modal-dialog" style="width: 80%;">
         <div class="modal-content">
@@ -1165,11 +1196,11 @@ $(document).ready(function(){
 
         _cboSalesperson=$("#cbo_salesperson").select2({
             placeholder: "Please select sales person.",
-            allowClear: true
+            allowClear: false
         });
         _cboSource=$("#cbo_order_source").select2({
             placeholder: "Please select Order Source.",
-            allowClear: true
+            allowClear: false
         });
         _cboSalesperson.select2('val',null);
         _cboDepartments.select2('val', null);
@@ -1960,7 +1991,7 @@ $(document).ready(function(){
                 $('input[id="checkcheck"]').prop('checked', false);
                 $('#for_dispatching').val('0');
             }
-            
+        
             $('input,textarea').each(function(){
                 var _elem=$(this);
                 $.each(data,function(name,value){
@@ -2215,37 +2246,115 @@ $(document).ready(function(){
             //$('#modal_so_list').modal('hide');
             showList(true);
         });
+
+        var allowMultiple = function(){
+            PNotify.removeAll(); //remove all notifications
+            if(_txnMode=="new"){
+                createSalesInvoice().done(function(response){
+                    showNotification(response);
+                    if(response.stat == 'success'){
+                        dt.row.add(response.row_added[0]).draw();
+                        clearFields($('#frm_sales_invoice'));
+                        showList(true);
+                        if(response.is_auto_print == 1){
+                            window.open('Templates/layout/sales-invoice/'+ response.row_added[0].sales_invoice_id +'?type=direct');
+                        }
+                    }
+                }).always(function(){
+                    $('#modal_multiple_invoice').modal('hide');
+                    showSpinningProgress($('#btn_save'));
+                });
+            }else{
+                updateSalesInvoice().done(function(response){
+                    showNotification(response);
+                    if(response.stat == 'success'){
+                        dt.row(_selectRowObj).data(response.row_updated[0]).draw();
+                        clearFields($('#frm_sales_invoice'));
+                        showList(true);
+                         if(response.is_auto_print == 1){
+                            window.open('Templates/layout/sales-invoice/'+ response.row_updated[0].sales_invoice_id +'?type=direct');
+                        }
+                    }
+                }).always(function(){
+                    $('#modal_multiple_invoice').modal('hide');
+                    showSpinningProgress($('#btn_save'));
+                });
+            }
+        };
+
+
+            $('#btn_yes_allow').click(function(){
+                allowMultiple();
+            });
+
+            $(document).on('keypress',function(e) {
+                if(e.which == 13) {
+                    var multiple = $('#modal_multiple_invoice').hasClass('in');
+                    if(multiple == true){
+                        allowMultiple();
+                    }
+                }
+            });
+
+            $(document).on('keyup',function(evt) {
+                if(evt.keyCode == 27) {
+                    var multiple = $('#modal_multiple_invoice').hasClass('in');
+                    if(multiple == true){
+                        $('#modal_multiple_invoice').modal('hide');
+                    }
+                }
+
+            });
+
         $('#btn_save').click(function(){
             if(validateRequiredFields($('#frm_sales_invoice'))){
-                if(_txnMode=="new"){
-                    createSalesInvoice().done(function(response){
-                        showNotification(response);
-                        if(response.stat == 'success'){
-                            dt.row.add(response.row_added[0]).draw();
-                            clearFields($('#frm_sales_invoice'));
-                            showList(true);
-                            if(response.is_auto_print == 1){
-                                window.open('Templates/layout/sales-invoice/'+ response.row_added[0].sales_invoice_id +'?type=direct');
-                            }
+                checkCustomerInvoice().done(function(response){
+
+                    var crow = response.data; 
+
+                    if(crow.length >= 1){
+
+                        var customer_name = $('#cbo_customers option:selected').text();
+                        var date_due = $('#due_default').val();
+
+                        $('#modal_multiple_invoice').modal('show');
+                        $('#mulple_notice').html('Invoice for <b>'+customer_name+'</b> with date of : <b>'+date_due+'</b> is already existing!');
+
+                    }else{
+
+                        if(_txnMode=="new"){
+                            createSalesInvoice().done(function(response){
+                                showNotification(response);
+                                if(response.stat == 'success'){
+                                    dt.row.add(response.row_added[0]).draw();
+                                    clearFields($('#frm_sales_invoice'));
+                                    showList(true);
+                                    if(response.is_auto_print == 1){
+                                        window.open('Templates/layout/sales-invoice/'+ response.row_added[0].sales_invoice_id +'?type=direct');
+                                    }
+                                }
+                            }).always(function(){
+                                showSpinningProgress($('#btn_save'));
+                            });
+                        }else{
+                            updateSalesInvoice().done(function(response){
+                                showNotification(response);
+                                if(response.stat == 'success'){
+                                    dt.row(_selectRowObj).data(response.row_updated[0]).draw();
+                                    clearFields($('#frm_sales_invoice'));
+                                    showList(true);
+                                     if(response.is_auto_print == 1){
+                                        window.open('Templates/layout/sales-invoice/'+ response.row_updated[0].sales_invoice_id +'?type=direct');
+                                    }
+                                }
+                            }).always(function(){
+                                showSpinningProgress($('#btn_save'));
+                            });
                         }
-                    }).always(function(){
-                        showSpinningProgress($('#btn_save'));
-                    });
-                }else{
-                    updateSalesInvoice().done(function(response){
-                        showNotification(response);
-                        if(response.stat == 'success'){
-                            dt.row(_selectRowObj).data(response.row_updated[0]).draw();
-                            clearFields($('#frm_sales_invoice'));
-                            showList(true);
-                             if(response.is_auto_print == 1){
-                                window.open('Templates/layout/sales-invoice/'+ response.row_updated[0].sales_invoice_id +'?type=direct');
-                            }
-                        }
-                    }).always(function(){
-                        showSpinningProgress($('#btn_save'));
-                    });
-                }
+
+                    }
+
+                });
             }
         });
         /*$('#btn_save').click(function(){
@@ -2380,6 +2489,20 @@ $(document).ready(function(){
             "beforeSend": showSpinningProgress($('#btn_create_customer'))
         });
     };
+
+    var checkCustomerInvoice=function(){
+        var _data=$('#').serializeArray();
+        _data.push({name : "customer_id" ,value : $('#cbo_customers').val() });
+        _data.push({name : "date_due" ,value : $('#due_default').val() });
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Sales_invoice/transaction/checkCustomerInvoice",
+            "data":_data
+        });
+    };    
+
     var createSalesInvoice=function(){
         var _data=$('#frm_sales_invoice,#frm_items').serializeArray();
         var tbl_summary=$('#tbl_sales_invoice_summary');

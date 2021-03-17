@@ -7,7 +7,7 @@ class Profit_model extends CORE_Model
     {
         parent::__construct();
     }
-    function get_profit_by_product($start,$end){
+    function get_profit_by_product($start,$end,$customer_id=0){
         $sql="SELECT
 
                 main.product_id,
@@ -37,6 +37,7 @@ class Profit_model extends CORE_Model
                 sales_invoice_items sii
                 LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
                 WHERE (si.date_invoice BETWEEN '$start' AND '$end') AND si.is_active = TRUE AND si.is_deleted = FALSE
+                ".($customer_id==0?"":" AND si.customer_id='".$customer_id."'")."
                 GROUP BY sii.product_id
 
                 UNION ALL
@@ -50,6 +51,8 @@ class Profit_model extends CORE_Model
                 cash_invoice_items cii
                 LEFT JOIN cash_invoice ci ON ci.cash_invoice_id = cii.cash_invoice_id
                 WHERE (ci.date_invoice BETWEEN '$start' AND '$end') AND ci.is_active = TRUE AND ci.is_deleted = FALSE
+
+                ".($customer_id==0?"":" AND ci.customer_id='".$customer_id."'")."
                 GROUP BY cii.product_id) as main
 
                 LEFT JOIN products p ON p.product_id = main.product_id
@@ -67,7 +70,7 @@ class Profit_model extends CORE_Model
         return $this->db->query($sql)->result();
     }
 
-    function get_profit_by_product_charge($start,$end,$agent_id){
+    function get_profit_by_product_charge($start,$end,$agent_id,$customer_id=0){
         $sql="SELECT
 
                 main.product_id,
@@ -97,7 +100,9 @@ class Profit_model extends CORE_Model
                 LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
                 WHERE (si.date_invoice BETWEEN '$start' AND '$end') AND si.is_active = TRUE AND si.is_deleted = FALSE
 
+                ".($customer_id==0?"":" AND si.customer_id='".$customer_id."'")."
                 ".($agent_id==0?"":" AND si.agent_id='".$agent_id."'")."
+
                 GROUP BY sii.product_id) as main
 
                 LEFT JOIN products p ON p.product_id = main.product_id
@@ -115,7 +120,7 @@ class Profit_model extends CORE_Model
         return $this->db->query($sql)->result();
     }
 
-    function get_profit_by_product_cash($start,$end){
+    function get_profit_by_product_cash($start,$end,$customer_id=0){
         $sql="SELECT
 
                 main.product_id,
@@ -145,6 +150,8 @@ class Profit_model extends CORE_Model
                 cash_invoice_items cii
                 LEFT JOIN cash_invoice ci ON ci.cash_invoice_id = cii.cash_invoice_id
                 WHERE (ci.date_invoice BETWEEN '$start' AND '$end') AND ci.is_active = TRUE AND ci.is_deleted = FALSE
+
+                ".($customer_id==0?"":" AND ci.customer_id='".$customer_id."'")."                
                 GROUP BY cii.product_id) as main
 
                 LEFT JOIN products p ON p.product_id = main.product_id
@@ -163,7 +170,7 @@ class Profit_model extends CORE_Model
     }
 
 
-    function get_profit_by_invoice_detailed($start,$end,$distinct=false,$subtotal=false){
+    function get_profit_by_invoice_detailed($start,$end,$distinct=false,$subtotal=false,$customer_id=0){
 
 
         $sql="
@@ -202,9 +209,9 @@ class Profit_model extends CORE_Model
             FROM sales_invoice_items sii
             LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
             WHERE (si.date_invoice BETWEEN '$start' AND '$end') AND si.is_active = TRUE AND si.is_deleted = FALSE
+
+            ".($customer_id==0?"":" AND si.customer_id='".$customer_id."'")."
             
-
-
             UNION ALL
 
             SELECT 
@@ -221,7 +228,11 @@ class Profit_model extends CORE_Model
 
             FROM cash_invoice_items cii
             LEFT JOIN cash_invoice ci ON ci.cash_invoice_id = cii.cash_invoice_id
-            WHERE (ci.date_invoice BETWEEN '$start' AND '$end') AND ci.is_active = TRUE AND ci.is_deleted = FALSE) as main
+            WHERE (ci.date_invoice BETWEEN '$start' AND '$end') AND ci.is_active = TRUE AND ci.is_deleted = FALSE
+
+            ".($customer_id==0?"":" AND ci.customer_id='".$customer_id."'")."
+
+            ) as main
 
             LEFT JOIN products p ON p.product_id = main.product_id
             LEFT JOIN units u ON u.unit_id = main.unit_id
@@ -245,7 +256,7 @@ class Profit_model extends CORE_Model
     }
 
 
-    function get_profit_by_invoice_detailed_charge($start,$end,$distinct=false,$subtotal=false,$agent_id){
+    function get_profit_by_invoice_detailed_charge($start,$end,$distinct=false,$subtotal=false,$agent_id,$customer_id=0){
 
 
         $sql="
@@ -285,6 +296,7 @@ class Profit_model extends CORE_Model
             LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
             WHERE (si.date_invoice BETWEEN '$start' AND '$end') AND si.is_active = TRUE AND si.is_deleted = FALSE
 
+            ".($customer_id==0?"":" AND si.customer_id='".$customer_id."'")."
             ".($agent_id==0?"":" AND si.agent_id='".$agent_id."'")."
             
             ) as main
@@ -309,7 +321,7 @@ class Profit_model extends CORE_Model
         return $this->db->query($sql)->result();
     }
 
-    function get_profit_by_invoice_detailed_cash($start,$end,$distinct=false,$subtotal=false){
+    function get_profit_by_invoice_detailed_cash($start,$end,$distinct=false,$subtotal=false,$customer_id=0){
 
 
         $sql="
@@ -348,7 +360,11 @@ class Profit_model extends CORE_Model
 
             FROM cash_invoice_items cii
             LEFT JOIN cash_invoice ci ON ci.cash_invoice_id = cii.cash_invoice_id
-            WHERE (ci.date_invoice BETWEEN '$start' AND '$end') AND ci.is_active = TRUE AND ci.is_deleted = FALSE) as main
+            WHERE (ci.date_invoice BETWEEN '$start' AND '$end') AND ci.is_active = TRUE AND ci.is_deleted = FALSE
+
+            ".($customer_id==0?"":" AND ci.customer_id='".$customer_id."'")."
+
+            ) as main
 
             LEFT JOIN products p ON p.product_id = main.product_id
             LEFT JOIN units u ON u.unit_id = main.unit_id

@@ -243,13 +243,6 @@
                                         <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
                                     <?php } ?>
                                 </select>
-                                <label>Salesperson :</label><br/>
-                                <select name="salesperson_id" id="cbo_salesperson" >
-                                    <option value="0">[ Create New Salesperson ]</option>
-                                    <?php foreach($salespersons as $salesperson){ ?>
-                                        <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->acr_name.' - '.$salesperson->fullname; ?></option>
-                                    <?php } ?>
-                                </select>
                                 <label>Customer Type :</label><br/>
                                 <select name="customer_type_id" id="cbo_customer_type">
                                     <option value="0">Walk In</option>
@@ -290,9 +283,18 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-8 col-sm-offset-2">
+                        <div class="col-sm-4 col-sm-offset-2">
                             <label>Address :</label><br>
                             <input class="form-control" id="txt_address" type="text" name="address" placeholder="Customer Address">
+                        </div>
+                        <div class="col-sm-4">
+                            <label>Salesperson :</label><br/>
+                            <select name="salesperson_id" id="cbo_salesperson" >
+                                <option value="0">[ Create New Salesperson ]</option>
+                                <?php foreach($salespersons as $salesperson){ ?>
+                                    <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->fullname; ?></option>
+                                <?php } ?>
+                            </select>
                         </div>
                         <div class="col-sm-2">
                             <b class="required">*</b><label> Due Date :</label> <br />
@@ -1086,11 +1088,11 @@ $(document).ready(function(){
 
         _cboDepartments=$("#cbo_departments").select2({
             placeholder: "Please select Department.",
-            allowClear: true
+            allowClear: false
         });
         _cboDepartment=$("#cbo_department").select2({
             placeholder: "Please select Department.",
-            allowClear: true
+            allowClear: false
         });
         _cboCustomers=$("#cbo_customers").select2({
             placeholder: "Please select customer.",
@@ -1098,14 +1100,14 @@ $(document).ready(function(){
         });
         _cboSalesperson=$("#cbo_salesperson").select2({
             placeholder: "Please select sales person.",
-            allowClear: true
+            allowClear: false
         });
         _cboCustomerTypeCreate=$("#cbo_customer_type_create").select2({
             allowClear: false
         });
         _cboSource=$("#cbo_order_source").select2({
             placeholder: "Please select Order Source.",
-            allowClear: true
+            allowClear: false
         });
         _cboSalesperson.select2('val',null);
         _cboDepartments.select2('val', null);

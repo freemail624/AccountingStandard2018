@@ -159,7 +159,7 @@
                 <div class="col-lg-3"> 
                         From :<br /> 
                         <div class="input-group"> 
-                            <input type="text" id="txt_start_date_sales" name="" class="date-picker form-control" value="<?php echo date("m/d"); ?>/2000"> 
+                            <input type="text" id="txt_start_date_sales" name="" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>"> 
                              <span class="input-group-addon"> 
                                     <i class="fa fa-calendar"></i> 
                              </span> 
@@ -382,7 +382,7 @@
                     <div class="col-lg-3"> 
                             From :<br /> 
                             <div class="input-group"> 
-                                <input type="text" id="txt_start_date_si" name="" class="date-picker form-control date_filter" value="<?php echo date("m"); ?>/01/<?php echo date("Y"); ?>"> 
+                                <input type="text" id="txt_start_date_si" name="" class="date-picker form-control date_filter" value="<?php echo date("m/d/Y"); ?>"> 
                                  <span class="input-group-addon"> 
                                         <i class="fa fa-calendar"></i> 
                                  </span> 
@@ -410,6 +410,7 @@
                         <th>Customer</th>
                         <th>Address</th>
                         <th>Loading#</th>
+                        <th>Truck</th>
                         <th>Amount</th>
                         <th><center>Action</center></th>
                         <th>Sales Invoice ID</th>
@@ -503,8 +504,8 @@
                             <b class="required">*</b> <label> Loading # :</label> <br />
                             <select name="transfer_loading_id" id="transfer_loading_id" data-error-msg="Loading No is required!" required>
                                 <?php foreach($loadings as $loading){ ?>
-                                    <option value="<?php echo $loading->loading_id; ?>">
-                                        <?php echo $loading->loading_no; ?>
+                                    <option value="<?php echo $loading->loading_id; ?>" data-loading-no="<?php echo $loading->loading_no; ?>">
+                                        <?php echo $loading->loading_no.' - '.$loading->agent_name; ?>
                                     </option>
                                 <?php } ?>
                             </select>
@@ -560,7 +561,7 @@
 
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _selectRowObjSI; 
-    var dt_si; var products; var changetxn;
+    var dt_si; var products; var changetxn; var invoice_id;
     var prodstat; var is_switch; var _cboLoadingNo;
     var _line_unit; var _cboAgents; var _cboAgentsTransfer;
 
@@ -661,19 +662,24 @@ $(document).ready(function(){
                         return '<span style="color: red;">'+data+'</span>';
                     }
                 },
-                { sClass:"text-right", targets:[5],data: null,
+                { targets:[5],data: "agent_name",
+                    render: function (data, type, full, meta){
+                        return '<span style="color: red;">'+data+'</span>';
+                    }
+                },
+                { sClass:"text-right", targets:[6],data: null,
                     render: function (data, type, full, meta){
                         return accounting.formatNumber(data.total_after_discount,2);
                     }
                 },
                 {
-                    targets:[6],
+                    targets:[7],
                     render: function (data, type, full, meta){
                         var btn_accept='<button class="btn btn-success btn-sm" name="accept_si"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Accrpt SI"><i class="fa fa-check"></i> Accept SI</button>';
                         return '<center>'+btn_accept+'</center>';
                     }
                 },
-                { targets:[7],data: "sales_invoice_id", visible:false }
+                { targets:[8],data: "sales_invoice_id", visible:false }
             ]
         });
 
@@ -917,7 +923,21 @@ $(document).ready(function(){
                 $('#btn_switch_invoice').prop('disabled', false);
             }
 
-        });        
+        });       
+
+        _cboLoadingNo.on('select2:select', function(){
+
+            var loading_id = $(this).val();
+
+            if(_selectedID == loading_id){
+                showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Loading # must not be the same with the loading you will transfer."});
+                $('#btn_transfer_invoice').prop('disabled', true);
+                return;
+            }else{
+                $('#btn_transfer_invoice').prop('disabled', false);
+            }
+
+        });                
 
         $('#btn_switch_invoice').on('click', function(){
 
@@ -945,19 +965,21 @@ $(document).ready(function(){
         $('#btn_transfer_invoice').on('click', function(){
 
             var transfer_id = $('#transfer_loading_id').val();
+            var loading_no = $('#transfer_loading_id option:selected').data('loading-no');
+
             if(transfer_id==null){
                 showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Please select a loading no to transfer invoice."});
                     return;
-            }
+            }   
 
-            _selectRowObjTransfer.find('input.transfer_id').val(invoice_id);
+            _selectRowObjTransfer.find('input.transfer_id').val(transfer_id);
             _selectRowObjTransfer.find('input.for_transfer').val(1);
             _selectRowObjTransfer.find('.btn_for_transfer').removeClass('btn-orange');
             _selectRowObjTransfer.find('.btn_for_transfer').addClass('btn-green');
             _selectRowObjTransfer.find('.btn_for_transfer').find('i').removeClass();
             _selectRowObjTransfer.find('.btn_for_transfer').find('i').addClass('fa fa-times-circle');
             _selectRowObjTransfer.find('.btn-red').hide();
-            _selectRowObjTransfer.find('.for_transfer_panel').html('(FOR TRANSFER)');
+            _selectRowObjTransfer.find('.for_transfer_panel').html('(TRANSFER TO <b>'+loading_no+'</b>)');
 
             $('#modal_transfer_invoice_items').modal('hide');
         });
@@ -1213,7 +1235,7 @@ $(document).ready(function(){
         });
 
         $('#tbl_items > tbody').on('click','button[name="transfer_item"]',function(){
-            var invoice_id = $(this).closest('tr').find('input.invoice_id').val();
+            invoice_id = $(this).closest('tr').find('input.invoice_id').val();
             var for_transfer = $(this).closest('tr').find('input.for_transfer').val();
             _cboLoadingNo.select2('val', null);
             _selectRowObjTransfer=$(this).closest('tr');
