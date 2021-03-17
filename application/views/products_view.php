@@ -1180,6 +1180,7 @@
     <script src="assets/plugins/formatter/autoNumeric.js" type="text/javascript"></script>
     <script src="assets/plugins/formatter/accounting.js" type="text/javascript"></script>
 
+    <script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
     <script>
 
 $(document).ready(function(){
@@ -1219,7 +1220,7 @@ $(document).ready(function(){
                     "defaultContent": ""
                 },
                 { targets:[1],data: "product_code" },
-                { targets:[2],data: "product_desc" },
+                { targets:[2],data: "product_desc" ,render: $.fn.dataTable.render.ellipsis(60) },
                 { targets:[3],data: "product_unit_name" },
                 { targets:[4],data: "category_name" },
                 {
@@ -1234,7 +1235,7 @@ $(document).ready(function(){
                         return  accounting.formatNumber(parseFloat(data),2);
                     }                    
                 },                
-                {   targets:[7],data: null,
+                {   visible:false,targets:[7],data: null,
                     render: function (data, type, full, meta){
                         var _attribute='';
                         //console.log(data.is_email_sent);
