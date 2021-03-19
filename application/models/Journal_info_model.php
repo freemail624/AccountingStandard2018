@@ -914,7 +914,7 @@ class Journal_info_model extends CORE_Model{
 
             WHERE ji.is_active=TRUE AND ji.is_deleted=FALSE
             AND ac.account_type_id=$type_id
-            ".($depid!=null?" AND ji.department_id=$depid":"")."
+            ".($depid!=null?" AND ja.department_id=$depid":"")."
             ".($start!=null&&$end!=null?" AND ji.date_txn BETWEEN '$start' AND '$end'":"")."
 
             GROUP BY at.grand_parent_id)as main LEFT JOIN account_titles as att ON main.grand_parent_id=att.account_id";

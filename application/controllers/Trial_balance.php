@@ -18,7 +18,8 @@ class Trial_balance extends CORE_Controller
                 'Account_title_model',
                 'Departments_model',
                 'Users_model',
-                'Company_model'
+                'Company_model',
+                'Months_model'
             )
         );
         $this->load->model('Email_settings_model');
@@ -53,16 +54,14 @@ class Trial_balance extends CORE_Controller
                 $m_types=$this->Account_type_model;
                 $m_titles=$this->Account_title_model;
                 $m_company=$this->Company_model;
+                $m_months=$this->Months_model;
 
                 $company_info=$m_company->get_list();
                 $start=$this->input->get('start',TRUE);
                 $end=$this->input->get('end',TRUE);
                 $classes=$m_class->get_account_class_on_account_titles();
 
-                $titles=$m_titles->get_account_titles_balance(
-                    date('Y-m-d',strtotime($start)),
-                    date('Y-m-d',strtotime($end))
-                );
+                $date_filters = $m_months->get_between_dates(date('Y-m-d',strtotime($start)),date('Y-m-d',strtotime($end)));
 
                 $excel=$this->excel;
 
@@ -126,27 +125,40 @@ class Trial_balance extends CORE_Controller
 
                         $first_row = $i+1;
 
-                        foreach($titles as $title){
-                            if($types->account_type_id==$title->account_type_id&&$title->account_class_id==$class->account_class_id){
-                                $i++;
+                        $column = 'B';
 
-                                $excel->getActiveSheet()->setCellValue('A'.$i,'               '.$title->account_title);
-                                $excel->getActiveSheet()->setCellValue('B'.$i,$title->dr_amount);
-                                $excel->getActiveSheet()->setCellValue('C'.$i,$title->cr_amount);
-                                $excel->getActiveSheet()->setCellValue('D'.$i,"=SUM(B".$i."-C".$i.")");
+                        foreach($date_filters as $date_filter){
 
-                                $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                            $titles=$m_titles->get_account_titles_balance(
+                                date('Y-m-d',strtotime($date_filter->start_date)),
+                                date('Y-m-d',strtotime($date_filter->end_date))
+                            );
 
-                                $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                            foreach($titles as $title){
+                                if($types->account_type_id==$title->account_type_id&&$title->account_class_id==$class->account_class_id){
+                                    $i++;
 
-                                $c_dr_amount+=$title->dr_amount;
-                                $c_cr_amount+=$title->cr_amount;
-                                $c_total+=$title->balance;
+                                    $excel->getActiveSheet()->setCellValue('A'.$i,'               '.$title->account_title);
+                                    $excel->getActiveSheet()->setCellValue('B'.$i,$title->dr_amount);
+                                    $excel->getActiveSheet()->setCellValue('C'.$i,$title->cr_amount);
+                                    $excel->getActiveSheet()->setCellValue('D'.$i,"=SUM(B".$i."-C".$i.")");
 
-                                $dr_amount+=$title->dr_amount;
-                                $cr_amount+=$title->cr_amount;
+                                    $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
+                                    $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+
+                                    $c_dr_amount+=$title->dr_amount;
+                                    $c_cr_amount+=$title->cr_amount;
+                                    $c_total+=$title->balance;
+
+                                    $dr_amount+=$title->dr_amount;
+                                    $cr_amount+=$title->cr_amount;
+
+                                }
                             }
+
+
+
                         }
 
                         $last_row = $i;
@@ -391,6 +403,7 @@ class Trial_balance extends CORE_Controller
                 $excel->getActiveSheet()->getColumnDimension('B')->setAutoSize(TRUE);
                 $excel->getActiveSheet()->getColumnDimension('C')->setAutoSize(TRUE);
                 $excel->getActiveSheet()->getColumnDimension('D')->setAutoSize(TRUE);
+
 
                 //merge cell A1 until D1
                 //$excel->getActiveSheet()->mergeCells('A1:D1');
