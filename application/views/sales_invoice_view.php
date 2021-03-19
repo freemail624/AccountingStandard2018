@@ -1351,6 +1351,7 @@ $(document).ready(function(){
                 // }
 
                 var qty = 1;
+
                 if (suggestion.is_product_basyo == 1){
                     qty = TotalBasyo();
                 }
@@ -1385,7 +1386,8 @@ $(document).ready(function(){
                 is_basyo:suggestion.is_basyo,
                 is_product_basyo:suggestion.is_product_basyo,
                 is_checked:"",
-                is_same_allowed:0               
+                is_same_allowed:0,
+                cost_upon_invoice : suggestion.purchase_cost
 
             }));
 
@@ -2086,7 +2088,8 @@ $(document).ready(function(){
                             is_basyo:value.is_basyo,
                             is_product_basyo:value.is_product_basyo,
                             is_checked:checked_status,
-                            is_same_allowed:value.is_same_allowed
+                            is_same_allowed:value.is_same_allowed,
+                            cost_upon_invoice : value.cost_upon_invoice
 
                         }));
                         changetxn = 'inactive';
@@ -2630,7 +2633,7 @@ $(document).ready(function(){
         return '<tr>'+
         //DISPLAY
         '<td ><input name="inv_qty[]" type="text" class="numeric form-control trigger-keyup qty" value="'+accounting.formatNumber(d.inv_qty,2)+'"></td>'+unit+
-        '<td ">'+d.product_desc+'<input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"> <input type="text" class="hidden is_basyo" value="'+d.is_basyo+'"> <input type="text" class="hidden is_product_basyo" value="'+d.is_product_basyo+'"> </td>'+
+        '<td>'+d.product_desc+'<input type="text" class="hidden numeric form-control" name="cost_upon_invoice[]" value="'+d.cost_upon_invoice+'"> <input type="text" class="hidden is_product_basyo" value="'+d.is_product_basyo+'"> <input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"> <input type="text" class="hidden is_basyo" value="'+d.is_basyo+'"> <input type="text" class="hidden is_product_basyo" value="'+d.is_product_basyo+'"> </td>'+
         '<td ><input name="inv_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.inv_price,2)+'" style="text-align:right;"></td>'+
         '<td  style=""><input name="inv_discount[]" type="text" class="numeric form-control discount" value="'+ accounting.formatNumber(d.inv_discount,2)+'" style="text-align:right;"></td>'+
         // DISPLAY NONE
@@ -2646,8 +2649,8 @@ $(document).ready(function(){
         '<td style="display:none;"><input name="inv_line_total_after_global[]" type="text" class="numeric form-control" value="'+ d.inv_line_total_after_global+'" readonly></td>'+
 
         '<td align="center"><input type="checkbox" class="is_same_allowed" style="display: inline;" '+d.is_checked+'><input type="hidden" name="is_same_allowed[]" value="'+d.is_same_allowed+'"><button type="button" name="remove_item" class="btn btn-red" style="display: inline;"><i class="fa fa-trash"></i></button></td>'+
-                '<td  style="display:none;"><input type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.bulk_price,2)+'" readonly></td>'+
-                '<td  style="display:none;"><input type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.retail_price,2)+'" readonly></td>'+
+        '<td  style="display:none;"><input type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.bulk_price,2)+'" readonly></td>'+
+        '<td  style="display:none;"><input type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.retail_price,2)+'" readonly></td>'+
         '</tr>';
     };
     var reComputeTotal=function(){

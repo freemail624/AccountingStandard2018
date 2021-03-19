@@ -664,9 +664,11 @@ $(document).ready(function(){
             "data":data,
             success : function(response){
 
-                summary_grand_qty= 0;
-                summary_grand_gross= 0;
-                summary_grand_profit= 0;
+                    summary_grand_qty= 0;
+                    summary_grand_gross= 0;
+                    summary_grand_net= 0;
+                    summary_grand_profit= 0;
+
                     $('#tbl_delivery_invoice').html('');
                     $('#tbl_delivery_invoice').append(
                     '<h4>Profit Report by Invoice (Summary)</h4><br>'+
@@ -677,6 +679,7 @@ $(document).ready(function(){
                     '<th>Date</th>'+
                     '<th class="right-align">QTY Sold</th>'+
                     '<th class="right-align">Gross</th>'+
+                    '<th class="right-align">Net Cost</th>'+
                     '<th class="right-align">Net Profit</th>'+
                     
                     '</thead>'+
@@ -692,11 +695,14 @@ $(document).ready(function(){
                         '<td>'+value.date_invoice+'</td>'+
                         '<td class="right-align">'+value.qty_total+'</td>'+
                         '<td class="right-align">'+accounting.formatNumber(value.gross_total,2)+'</td>'+
+                        '<td class="right-align">'+accounting.formatNumber(value.net_cost_total,2)+'</td>'+
                         '<td class="right-align">'+accounting.formatNumber(value.profit_total,2)+'</td>'+
                         '</tr>'
                     );
+                    
                     summary_grand_qty += getFloat(value.qty_total);
                     summary_grand_gross += getFloat(value.gross_total);
+                    summary_grand_net += getFloat(value.net_cost_total);
                     summary_grand_profit += getFloat(value.profit_total);
         
                  });
@@ -708,6 +714,7 @@ $(document).ready(function(){
                         '<td></td>'+
                         '<td class="right-align"><strong>'+accounting.formatNumber(summary_grand_qty,2)+'</strong></td>'+
                         '<td class="right-align"><strong>'+accounting.formatNumber(summary_grand_gross,2)+'</strong></td>'+
+                        '<td class="right-align"><strong>'+accounting.formatNumber(summary_grand_net,2)+'</strong></td>'+
                         '<td class="right-align"><strong>'+accounting.formatNumber(summary_grand_profit,2)+'</strong></td>'+
                         '</tr>'
                     );

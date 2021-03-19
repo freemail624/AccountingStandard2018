@@ -21,16 +21,16 @@ class Profit_model extends CORE_Model
                 SUM(main.inv_qty) as qty_sold,
                 p.sale_price as srp,
                 SUM(main.inv_gross) as gross,
-                (SUM(main.inv_qty) * p.purchase_cost) as gross_cost,
                 p.purchase_cost,
-                (SUM(main.inv_qty)  * IFNULL(p.purchase_cost,0)) as net_cost,
-                (SUM(main.inv_gross) - (SUM(main.inv_qty)  * IFNULL(p.purchase_cost,0))) as net_profit
+                SUM(main.net_cost) as net_cost,
+                (SUM(main.inv_gross) - SUM(main.net_cost)) as net_profit
 
                 FROM(
                 SELECT 
                 sii.product_id,
                 SUM(sii.inv_qty) as inv_qty,
-                SUM(sii.inv_line_total_price) as inv_gross
+                SUM(sii.inv_line_total_price) as inv_gross,
+                SUM(sii.inv_qty * sii.cost_upon_invoice) as net_cost
 
 
                 FROM 
@@ -45,7 +45,8 @@ class Profit_model extends CORE_Model
                 SELECT 
                 cii.product_id,
                 SUM(cii.inv_qty) as inv_qty,
-                SUM(cii.inv_line_total_price) as inv_gross
+                SUM(cii.inv_line_total_price) as inv_gross,
+                SUM(cii.inv_qty * cii.cost_upon_invoice) as net_cost
 
                 FROM 
                 cash_invoice_items cii
@@ -84,16 +85,16 @@ class Profit_model extends CORE_Model
                 SUM(main.inv_qty) as qty_sold,
                 p.sale_price as srp,
                 SUM(main.inv_gross) as gross,
-                (SUM(main.inv_qty) * p.purchase_cost) as gross_cost,
                 p.purchase_cost,
-                (SUM(main.inv_qty)  * IFNULL(p.purchase_cost,0)) as net_cost,
-                (SUM(main.inv_gross) - (SUM(main.inv_qty)  * IFNULL(p.purchase_cost,0))) as net_profit
+                SUM(main.net_cost) as net_cost,
+                (SUM(main.inv_gross) - SUM(main.net_cost)) as net_profit
 
                 FROM(
                 SELECT 
                 sii.product_id,
                 SUM(sii.inv_qty) as inv_qty,
-                SUM(sii.inv_line_total_price) as inv_gross
+                SUM(sii.inv_line_total_price) as inv_gross,
+                SUM(sii.inv_qty * sii.cost_upon_invoice) as net_cost
 
                 FROM 
                 sales_invoice_items sii
@@ -134,17 +135,17 @@ class Profit_model extends CORE_Model
                 SUM(main.inv_qty) as qty_sold,
                 p.sale_price as srp,
                 SUM(main.inv_gross) as gross,
-                (SUM(main.inv_qty) * p.purchase_cost) as gross_cost,
                 p.purchase_cost,
-                (SUM(main.inv_qty)  * IFNULL(p.purchase_cost,0)) as net_cost,
-                (SUM(main.inv_gross) - (SUM(main.inv_qty)  * IFNULL(p.purchase_cost,0))) as net_profit
+                SUM(main.net_cost) as net_cost,
+                (SUM(main.inv_gross) - SUM(main.net_cost)) as net_profit
 
                 FROM(
 
                 SELECT 
                 cii.product_id,
                 SUM(cii.inv_qty) as inv_qty,
-                SUM(cii.inv_line_total_price) as inv_gross
+                SUM(cii.inv_line_total_price) as inv_gross,
+                SUM(cii.inv_qty * cii.cost_upon_invoice) as net_cost
 
                 FROM 
                 cash_invoice_items cii
@@ -188,10 +189,10 @@ class Profit_model extends CORE_Model
             u.unit_name,
             main.inv_qty,
             main.inv_gross,
+            main.net_cost,
             main.srp,
-            p.purchase_cost,
-            (main.inv_qty*p.purchase_cost) as net_cost,
-            (main.inv_gross - (main.inv_qty*p.purchase_cost)) as net_profit
+            main.cost_upon_invoice as purchase_cost,
+            (main.inv_gross - main.net_cost) as net_profit
              FROM
              
             (SELECT 
@@ -203,8 +204,10 @@ class Profit_model extends CORE_Model
             sii.product_id,
             sii.unit_id,
             sii.inv_qty,
+            sii.cost_upon_invoice,
             sii.inv_line_total_price as inv_gross,
-            (sii.inv_price - sii.inv_discount) as srp
+            (sii.inv_price - sii.inv_discount) as srp,
+            (sii.inv_qty * sii.cost_upon_invoice) as net_cost
 
             FROM sales_invoice_items sii
             LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
@@ -223,8 +226,10 @@ class Profit_model extends CORE_Model
             cii.product_id,
             cii.unit_id,
             cii.inv_qty,
+            cii.cost_upon_invoice,
             cii.inv_line_total_price as inv_gross,
-            (cii.inv_price - cii.inv_discount) as srp
+            (cii.inv_price - cii.inv_discount) as srp,
+            (cii.inv_qty * cii.cost_upon_invoice) as net_cost
 
             FROM cash_invoice_items cii
             LEFT JOIN cash_invoice ci ON ci.cash_invoice_id = cii.cash_invoice_id
@@ -273,11 +278,11 @@ class Profit_model extends CORE_Model
             p.product_desc,
             u.unit_name,
             main.inv_qty,
-            main.inv_gross,
             main.srp,
-            p.purchase_cost,
-            (main.inv_qty*p.purchase_cost) as net_cost,
-            (main.inv_gross - (main.inv_qty*p.purchase_cost)) as net_profit
+            main.cost_upon_invoice as purchase_cost,
+            main.inv_gross,
+            main.net_cost,
+            (main.inv_gross - main.net_cost) as net_profit
              FROM
              
             (SELECT 
@@ -289,8 +294,10 @@ class Profit_model extends CORE_Model
             sii.product_id,
             sii.unit_id,
             sii.inv_qty,
+            sii.cost_upon_invoice,
             sii.inv_line_total_price as inv_gross,
-            (sii.inv_price - sii.inv_discount) as srp
+            (sii.inv_price - sii.inv_discount) as srp,
+            (sii.inv_qty * sii.cost_upon_invoice) as net_cost
 
             FROM sales_invoice_items sii
             LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
@@ -338,11 +345,11 @@ class Profit_model extends CORE_Model
             p.product_desc,
             u.unit_name,
             main.inv_qty,
-            main.inv_gross,
             main.srp,
-            p.purchase_cost,
-            (main.inv_qty*p.purchase_cost) as net_cost,
-            (main.inv_gross - (main.inv_qty*p.purchase_cost)) as net_profit
+            main.cost_upon_invoice as purchase_cost,
+            main.inv_gross,
+            main.net_cost,
+            (main.inv_gross - main.net_cost) as net_profit
              FROM
              
             (
@@ -355,8 +362,10 @@ class Profit_model extends CORE_Model
             cii.product_id,
             cii.unit_id,
             cii.inv_qty,
+            cii.cost_upon_invoice,
             cii.inv_line_total_price as inv_gross,
-            (cii.inv_price - cii.inv_discount) as srp
+            (cii.inv_price - cii.inv_discount) as srp,
+            (cii.inv_qty * cii.cost_upon_invoice) as net_cost
 
             FROM cash_invoice_items cii
             LEFT JOIN cash_invoice ci ON ci.cash_invoice_id = cii.cash_invoice_id

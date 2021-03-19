@@ -60,10 +60,32 @@ class Loading_model extends CORE_Model{
             loading.is_deleted = FALSE AND loading.is_active = TRUE
             ".($loading_id==null?"":" AND loading.loading_id='".$loading_id."'")."
             ".($tsd==null?"":" AND loading.loading_date BETWEEN '".$tsd."' AND '".$ted."'")."
+            ORDER BY loading.loading_id DESC
+
             ";
         return $this->db->query($sql)->result();
     }
 
+    function get_loading_customers($loading_id){
+        $sql="SELECT 
+            c.customer_name,
+            SUM(li.total_after_discount) AS total_payment,
+            li.total_inv_qty as total_qty
+        FROM
+            loading_items li
+                LEFT JOIN
+            loading l ON l.loading_id = li.loading_id
+                LEFT JOIN
+            customers c ON c.customer_id = li.customer_id
+        WHERE
+            l.is_deleted = FALSE
+                AND l.is_active = TRUE
+                AND l.loading_id = $loading_id
+        GROUP BY li.invoice_id
+        ORDER BY c.customer_name ASC";
+        return $this->db->query($sql)->result();                
+    }
+/*
     function get_loading_customers($loading_id){
         $sql="SELECT 
             c.customer_name,
@@ -99,7 +121,7 @@ class Loading_model extends CORE_Model{
         ORDER BY c.customer_name ASC";
         return $this->db->query($sql)->result();                
     }
-
+*/
     function get_loading_total($loading_id){
         $sql="SELECT 
             SUM(li.total_after_discount) AS total_amount,

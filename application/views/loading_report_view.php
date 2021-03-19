@@ -635,7 +635,7 @@ $(document).ready(function(){
 
         dt_si=$('#tbl_si_list').DataTable({
             "bLengthChange":false,
-            "order": [[ 7, "asc" ]],
+            "order": [[ 8, "asc" ]],
             "ajax" : { 
                 "url":"Sales_invoice/transaction/open", 
                 "bDestroy": true,             
@@ -679,7 +679,7 @@ $(document).ready(function(){
                         return '<center>'+btn_accept+'</center>';
                     }
                 },
-                { targets:[8],data: "sales_invoice_id", visible:false }
+                { visible:false,targets:[8],data: "sales_invoice_id" }
             ]
         });
 
@@ -836,7 +836,7 @@ $(document).ready(function(){
 
         var getInvoices=function(switch_id){
 
-            $('#tbl_si_list tbody').html('<tr><td colspan="6"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
+            $('#tbl_si_list tbody').html('<tr><td colspan="8"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
             dt_si.ajax.reload( null, false ); 
 
             var loading_date = $('input[name="loading_date"]').val();
@@ -1000,7 +1000,9 @@ $(document).ready(function(){
         });       
 
         $('input[name="loading_date"]').on('change',function(){
-            getInvoices(0);
+            if(_txnMode == "new"){
+                getInvoices(0);
+            }
         });
 
         //create new agent
@@ -1033,13 +1035,13 @@ $(document).ready(function(){
             var loading_date = $('#invoice_default').val();
             $('.date_filter').val(loading_date);
 
-            $('#tbl_si_list tbody').html('<tr><td colspan="6"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
+            $('#tbl_si_list tbody').html('<tr><td colspan="8"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
             dt_si.ajax.reload( null, false );
             $('#modal_si_list').modal('show');
         });
 
         $('.date_filter').on("change", function(){
-            $('#tbl_si_list tbody').html('<tr><td colspan="6"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
+            $('#tbl_si_list tbody').html('<tr><td colspan="8"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
             dt_si.ajax.reload( null, false );
         }); 
 
@@ -1435,8 +1437,9 @@ $(document).ready(function(){
     var checkInvoice= function(check_id){
         var prodstat=true;
         var rowcheck=$('#tbl_items > tbody tr');
+
         $.each(rowcheck,function(){
-            item = parseFloat(accounting.unformat($(oTableItems.invoice_id,$(this)).find('input.numeric').val()));
+            item = parseFloat(accounting.unformat($(oTableItems.invoice_id,$(this)).find('input.invoice_id').val()));
             if(check_id == item){
                 prodstat=false;
                 return false;

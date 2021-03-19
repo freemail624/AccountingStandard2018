@@ -273,7 +273,7 @@ class Cash_invoice extends CORE_Controller
                     $m_invoice_items->inv_line_total_price=$this->get_numeric_value($inv_line_total_price[$i]);
                     $m_invoice_items->inv_tax_amount=$this->get_numeric_value($inv_tax_amount[$i]);
                     $m_invoice_items->inv_non_tax_amount=$this->get_numeric_value($inv_non_tax_amount[$i]);
-
+                    $m_invoice_items->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
                     $m_invoice_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                     if($is_parent[$i] == '1'){
                             $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
@@ -397,7 +397,7 @@ class Cash_invoice extends CORE_Controller
                     $m_invoice_items->inv_line_total_price=$this->get_numeric_value($inv_line_total_price[$i]);
                     $m_invoice_items->inv_tax_amount=$this->get_numeric_value($inv_tax_amount[$i]);
                     $m_invoice_items->inv_non_tax_amount=$this->get_numeric_value($inv_non_tax_amount[$i]);
-
+                    $m_invoice_items->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
                     $m_invoice_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                     if($is_parent[$i] == '1'){
                         $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));

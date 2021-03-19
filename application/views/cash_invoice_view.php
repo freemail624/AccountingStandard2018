@@ -1287,7 +1287,8 @@ $(document).ready(function(){
                 primary_unit:suggestion.primary_unit,
                 a:a,
                 is_basyo:suggestion.is_basyo,
-                is_product_basyo:suggestion.is_product_basyo
+                is_product_basyo:suggestion.is_product_basyo,
+                cost_upon_invoice : suggestion.purchase_cost
             }));
 
             _line_unit=$('.line_unit'+a).select2({
@@ -1920,7 +1921,8 @@ $(document).ready(function(){
                             retail_price: retail_price,
                             a:a,
                             is_basyo:value.is_basyo,
-                            is_product_basyo:value.is_product_basyo
+                            is_product_basyo:value.is_product_basyo,
+                            cost_upon_invoice : value.cost_upon_invoice
                         }));
                         changetxn = 'inactive';
                           _line_unit=$('.line_unit'+a).select2({
@@ -2375,7 +2377,7 @@ $(document).ready(function(){
         return '<tr>'+
         //DISPLAY
         '<td ><input name="inv_qty[]" type="text" class="numeric form-control trigger-keyup qty" value="'+accounting.formatNumber(d.inv_qty,2)+'"></td>'+unit+
-        '<td ">'+d.product_desc+'<input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"> <input type="text" class="hidden is_basyo" value="'+d.is_basyo+'"> <input type="text" class="hidden is_product_basyo" value="'+d.is_product_basyo+'"> </td>'+
+        '<td ">'+d.product_desc+'<input type="text" class="hidden numeric form-control" name="cost_upon_invoice[]" value="'+d.cost_upon_invoice+'"><input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"> <input type="text" class="hidden is_basyo" value="'+d.is_basyo+'"> <input type="text" class="hidden is_product_basyo" value="'+d.is_product_basyo+'"> </td>'+
         '<td ><input name="inv_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.inv_price,2)+'" style="text-align:right;"></td>'+
         '<td  style=""><input name="inv_discount[]" type="text" class="numeric form-control discount" value="'+ accounting.formatNumber(d.inv_discount,2)+'" style="text-align:right;"></td>'+
         // DISPLAY NONE

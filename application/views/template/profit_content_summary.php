@@ -48,9 +48,13 @@
     <div>
         <h3><strong><center>Profit Report By Product</center> </strong></h3>
     </div>
-<?php $summary_grand_qty = 0;
-$summary_grand_gross = 0;
-$summary_grand_profit = 0; ?>
+
+<?php 
+    $summary_grand_qty = 0;
+    $summary_grand_gross = 0;
+    $summary_grand_net = 0;
+    $summary_grand_profit = 0; 
+?>
 
 <table cellspacing="0" cellpadding="5">
 	<tr>
@@ -68,6 +72,7 @@ $summary_grand_profit = 0; ?>
     <th>Date</th>
     <th class="right-align">QTY Sold</th>
     <th class="right-align">Gross</th>
+    <th class="right-align">Net Cost</th>
     <th class="right-align">Net Profit</th>
  
     </thead>
@@ -79,11 +84,13 @@ $summary_grand_profit = 0; ?>
         <td><?php echo $value->date_invoice ?></td>
         <td class="right-align"><?php echo $value->qty_total ?></td>
         <td class="right-align"><?php echo number_format($value->gross_total,2) ?></td>
+        <td class="right-align"><?php echo number_format($value->net_cost_total,2) ?></td>
         <td class="right-align"><?php echo number_format($value->profit_total,2) ?></td>
         </tr>
         <?php 
             $summary_grand_qty+=$value->qty_total;
             $summary_grand_gross+=$value->gross_total;
+            $summary_grand_net+=$value->net_cost_total;
             $summary_grand_profit+=$value->profit_total;
         } ?>
 
@@ -93,6 +100,7 @@ $summary_grand_profit = 0; ?>
         <td></td>
         <td class="right-align"><strong><?php echo number_format($summary_grand_qty,2); ?></strong></td>
         <td class="right-align"><strong><?php echo number_format($summary_grand_gross,2); ?></strong></td>
+        <td class="right-align"><strong><?php echo number_format($summary_grand_net,2); ?></strong></td>
         <td class="right-align"><strong><?php echo number_format($summary_grand_profit,2); ?></strong></td>
         </tr>
         </tbody>
