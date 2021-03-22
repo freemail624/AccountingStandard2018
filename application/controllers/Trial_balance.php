@@ -65,247 +65,24 @@ class Trial_balance extends CORE_Controller
 
                 $excel=$this->excel;
 
-                $titles=$m_titles->get_account_titles_balance(
-                    date('Y-m-d',strtotime($start)),
-                    date('Y-m-d',strtotime($end))
-                );
+                $sheet=0;
 
-                $excel->setActiveSheetIndex(0);
-
-                //name the worksheet
-                $excel->getActiveSheet()->setTitle('Trial Balance');
-
-                $account_types=$m_types->get_list();
-
-                //change font color
-                $phpColor = new PHPExcel_Style_Color();
-                $phpColor->setRGB('FFFFF');
-
-               //company info
-                $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
-                                        ->setCellValue('A2',$company_info[0]->company_address)
-                                        ->setCellValue('A3',$company_info[0]->email_address)
-                                        ->setCellValue('A4',$company_info[0]->mobile_no);
-
-                //$excel->getActiveSheet()->getProtection()->setSheet(TRUE);
-                $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
-
-                $excel->getActiveSheet()->setCellValue('A6','Trial Balance')
-                                        ->setCellValue('A7',$start.' to '.$end);
-
-                $column = "B";                                            
                 foreach($date_filters as $date_filter){
 
-                    $excel->getActiveSheet()->setCellValue($column.'9',$date_filter->date_span);
-
-                    $first = $column;
-
-                    $column++;
-
-                    $second = $column;
-
-                    $column++;
-                    
-                    $last = $column;
-
-                    $column++;
-
-                    $space = $column;
-
-                    $column++;
-
-                    $excel->getActiveSheet()->getColumnDimensionByColumn($first)->setWidth('100');
-                    $excel->getActiveSheet()->getColumnDimensionByColumn($second)->setWidth('100');
-                    $excel->getActiveSheet()->getColumnDimensionByColumn($last)->setWidth('100');
-                    $excel->getActiveSheet()->getColumnDimensionByColumn($space)->setWidth('10');
-
-                    $excel->getActiveSheet()->setCellValue($first.'10','Dr');
-                    $excel->getActiveSheet()->setCellValue($second.'10','Cr');
-                    $excel->getActiveSheet()->setCellValue($last.'10','Balance');
-
-                    $excel->getActiveSheet()->getStyle($first.'10'.':'.$last.'10')->getFill()
-                                            ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
-                                            ->getStartColor()->setARGB('0252d3');
-
-                    $excel->getActiveSheet()->getStyle($first.'10'.':'.$last.'10')->getFont()->setColor($phpColor);
-
-
-                    $excel->getActiveSheet()
-                            ->mergeCells($first.'9'.':'.$last.'9');
-                    $excel->getActiveSheet()->getStyle($first.'9'.':'.$last.'9')->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->getStyle($first.'9'.':'.$last.'9')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                }
-
-
-
-
-
-
-                $excel->getActiveSheet()->getStyle('A6')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('B9:D9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('A7')->getFont()->setItalic(TRUE);
-
-                $i=9;
-                $dr_amount=0.00; $cr_amount=0.00;
-                foreach($account_types as $types){
-                    $i++;
-                    $excel->getActiveSheet()->setCellValue('A'.$i,$types->account_type);
-                    $excel->getActiveSheet()->getStyle('A'.$i)->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->getStyle('A'.$i.':D'.$i)->getFill()
-                                            ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
-                                            ->getStartColor()->setARGB('0252d3');
-
-                    $excel->getActiveSheet()->getStyle('A'.$i.':D'.$i)->getFont()->setColor($phpColor);
-
-
-                    foreach($classes as $class){
-
-                        $c_dr_amount=0.00; $c_cr_amount=0.00; $c_total=0.00;
-
-                        if($types->account_type_id==$class->account_type_id){
-                            $i++;
-                            $excel->getActiveSheet()->setCellValue('A'.$i,'       '.$class->account_class);
-                            $excel->getActiveSheet()->getStyle('A'.$i)->getFont()->setItalic(TRUE)->setBold(TRUE);
-                        }
-
-                        $first_row = $i+1;
-
-                            foreach($titles as $title){
-                                if($types->account_type_id==$title->account_type_id&&$title->account_class_id==$class->account_class_id){
-                                    $i++;
-
-                                    $excel->getActiveSheet()->setCellValue('A'.$i,'               '.$title->account_title);
-                                    $excel->getActiveSheet()->setCellValue('B'.$i,$title->dr_amount);
-                                    $excel->getActiveSheet()->setCellValue('C'.$i,$title->cr_amount);
-                                    $excel->getActiveSheet()->setCellValue('D'.$i,"=SUM(B".$i."-C".$i.")");
-
-                                    $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-
-                                    $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-
-                                    $c_dr_amount+=$title->dr_amount;
-                                    $c_cr_amount+=$title->cr_amount;
-                                    $c_total+=$title->balance;
-
-                                    $dr_amount+=$title->dr_amount;
-                                    $cr_amount+=$title->cr_amount;
-
-                                }
-                            }
-
-
-
-                        $last_row = $i;
-
-                        //write total of account titles for each class
-                        if($types->account_type_id==$class->account_type_id){
-
-
-                            //border bottom
-                            $BStyle = array(
-                                'borders' => array(
-                                    'bottom' => array(
-                                        'style' => PHPExcel_Style_Border::BORDER_THIN
-                                    )
-                                )
-                            );
-                            $excel->getActiveSheet()->getStyle('A'.$i.':D'.$i)->applyFromArray($BStyle);
-
-                            $i++;
-
-                            $excel->getActiveSheet()
-                                    ->getStyle('A'.$i)
-                                    ->getAlignment()
-                                    ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                            $excel->getActiveSheet()->getStyle('A'.$i)->getFont()->setBold(TRUE);
-
-                            $excel->getActiveSheet()->setCellValue('A'.$i,'Sub-Total :   ');
-
-                            $excel->getActiveSheet()->setCellValue('B'.$i,"=SUM(B".$first_row.":B".$last_row.")");
-                            $excel->getActiveSheet()->setCellValue('C'.$i,"=SUM(C".$first_row.":C".$last_row.")");
-                            $excel->getActiveSheet()->setCellValue('D'.$i,"=SUM(D".$first_row.":D".$last_row.")");
-
-
-                            $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                            $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getFont()->setBold(TRUE);
-                            $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-
-                            $i++;
-                        }
-
-                    }
-                }
-
-                $i++;
-                $excel->getActiveSheet()->setCellValue('B'.$i,$dr_amount);
-                $excel->getActiveSheet()->setCellValue('C'.$i,$cr_amount);
-                $excel->getActiveSheet()->setCellValue('D'.$i,$dr_amount-$cr_amount);
-
-
-                $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-
-
-                $excel->getActiveSheet()->getColumnDimension('A')->setAutoSize(TRUE);
-                $excel->getActiveSheet()->getColumnDimension('B')->setAutoSize(TRUE);
-                $excel->getActiveSheet()->getColumnDimension('C')->setAutoSize(TRUE);
-                $excel->getActiveSheet()->getColumnDimension('D')->setAutoSize(TRUE);
-
-                //merge cell A1 until D1
-                //$excel->getActiveSheet()->mergeCells('A1:D1');
-                //set aligment to center for that merged cell (A1 to D1)
-                //$excel->getActiveSheet()->getStyle('A1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-
-                // Redirect output to a client’s web browser (Excel2007)
-                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                header('Content-Disposition: attachment;filename="Trial Balance '.date('Y-m-d',strtotime($end)).'.xlsx"');
-                header('Cache-Control: max-age=0');
-                // If you're serving to IE 9, then the following may be needed
-                header('Cache-Control: max-age=1');
-
-                // If you're serving to IE over SSL, then the following may be needed
-                header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-                header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
-                header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-                header ('Pragma: public'); // HTTP/1.0
-
-                $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
-                $objWriter->save('php://output');
-
-
-                break;
-
-                case 'email-excel':
-
-                $m_class=$this->Account_class_model;
-                $m_types=$this->Account_type_model;
-                $m_titles=$this->Account_title_model;
-                $m_company=$this->Company_model;
-
-                $company_info=$m_company->get_list();
-                $start=$this->input->get('start',TRUE);
-                $end=$this->input->get('end',TRUE);
-                $classes=$m_class->get_account_class_on_account_titles();
-
                 $titles=$m_titles->get_account_titles_balance(
-                    date('Y-m-d',strtotime($start)),
-                    date('Y-m-d',strtotime($end))
+                    date('Y-m-d',strtotime($date_filter->start_date)),
+                    date('Y-m-d',strtotime($date_filter->end_date))
                 );
 
-                $excel=$this->excel;
-                $m_email=$this->Email_settings_model;
-                $filter_value = 2;
-                $email=$m_email->get_list(2);  
+                $excel->createSheet();
 
-                ob_start();
-                $excel->setActiveSheetIndex(0);
+                $excel->setActiveSheetIndex($sheet);
                 $excel->getActiveSheet()->getColumnDimensionByColumn('B')->setWidth('100');
                 $excel->getActiveSheet()->getColumnDimensionByColumn('C')->setWidth('100');
                 $excel->getActiveSheet()->getColumnDimensionByColumn('D')->setWidth('100');
 
                 //name the worksheet
-                $excel->getActiveSheet()->setTitle('Trial Balance');
+                $excel->getActiveSheet()->setTitle($date_filter->app_month_year);
 
                 $account_types=$m_types->get_list();
 
@@ -319,7 +96,8 @@ class Trial_balance extends CORE_Controller
                 $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
 
                 $excel->getActiveSheet()->setCellValue('A6','Trial Balance')
-                                        ->setCellValue('A7',$start.' to '.$end)
+                                        ->setCellValue('A7',$date_filter->app_month_year)
+                                        ->setCellValue('A8',$date_filter->start_date.' to '.$date_filter->end_date)
                                         ->setCellValue('B10','Dr')
                                         ->setCellValue('C10','Cr')
                                         ->setCellValue('D10','Balance');
@@ -438,6 +216,210 @@ class Trial_balance extends CORE_Controller
                 $excel->getActiveSheet()->getColumnDimension('C')->setAutoSize(TRUE);
                 $excel->getActiveSheet()->getColumnDimension('D')->setAutoSize(TRUE);
 
+                $sheet++;
+
+                }
+
+                //merge cell A1 until D1
+                //$excel->getActiveSheet()->mergeCells('A1:D1');
+                //set aligment to center for that merged cell (A1 to D1)
+                //$excel->getActiveSheet()->getStyle('A1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                // Redirect output to a client’s web browser (Excel2007)
+                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                header('Content-Disposition: attachment;filename="Trial Balance '.date('Y-m-d',strtotime($end)).'.xlsx"');
+                header('Cache-Control: max-age=0');
+                // If you're serving to IE 9, then the following may be needed
+                header('Cache-Control: max-age=1');
+
+                // If you're serving to IE over SSL, then the following may be needed
+                header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+                header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+                header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+                header ('Pragma: public'); // HTTP/1.0
+
+                $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+                $objWriter->save('php://output');
+
+
+                break;
+
+                case 'email-excel':
+
+                $m_class=$this->Account_class_model;
+                $m_types=$this->Account_type_model;
+                $m_titles=$this->Account_title_model;
+                $m_months=$this->Months_model;
+                $m_company=$this->Company_model;
+
+                $company_info=$m_company->get_list();
+                $start=$this->input->get('start',TRUE);
+                $end=$this->input->get('end',TRUE);
+                $classes=$m_class->get_account_class_on_account_titles();
+
+                $excel=$this->excel;
+                $m_email=$this->Email_settings_model;
+                $filter_value = 2;
+                $email=$m_email->get_list(2);  
+
+                $date_filters = $m_months->get_between_dates(date('Y-m-d',strtotime($start)),date('Y-m-d',strtotime($end)));
+
+                $excel=$this->excel;
+
+                $sheet=0;
+
+                foreach($date_filters as $date_filter){
+
+                $titles=$m_titles->get_account_titles_balance(
+                    date('Y-m-d',strtotime($date_filter->start_date)),
+                    date('Y-m-d',strtotime($date_filter->end_date))
+                );
+
+                ob_start();
+                $excel->createSheet();
+                $excel->setActiveSheetIndex($sheet);
+                $excel->getActiveSheet()->getColumnDimensionByColumn('B')->setWidth('100');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('C')->setWidth('100');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('D')->setWidth('100');
+
+                //name the worksheet
+                $excel->getActiveSheet()->setTitle($date_filter->app_month_year);
+
+                $account_types=$m_types->get_list();
+
+               //company info
+                $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
+                                        ->setCellValue('A2',$company_info[0]->company_address)
+                                        ->setCellValue('A3',$company_info[0]->email_address)
+                                        ->setCellValue('A4',$company_info[0]->mobile_no);
+
+                //$excel->getActiveSheet()->getProtection()->setSheet(TRUE);
+                $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
+
+                $excel->getActiveSheet()->setCellValue('A6','Trial Balance')
+                                        ->setCellValue('A7',$date_filter->app_month_year)
+                                        ->setCellValue('A8',$date_filter->start_date.' to '.$date_filter->end_date)
+                                        ->setCellValue('B10','Dr')
+                                        ->setCellValue('C10','Cr')
+                                        ->setCellValue('D10','Balance');
+
+                $excel->getActiveSheet()->getStyle('A6')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('B9:D9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('A7')->getFont()->setItalic(TRUE);
+
+                $i=9;
+                $dr_amount=0.00; $cr_amount=0.00;
+                foreach($account_types as $types){
+                    $i++;
+                    $excel->getActiveSheet()->setCellValue('A'.$i,$types->account_type);
+                    $excel->getActiveSheet()->getStyle('A'.$i)->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->getStyle('A'.$i.':D'.$i)->getFill()
+                                            ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+                                            ->getStartColor()->setARGB('0252d3');
+
+                    //change font color
+                    $phpColor = new PHPExcel_Style_Color();
+                    $phpColor->setRGB('FFFFF');
+                    $excel->getActiveSheet()->getStyle('A'.$i.':D'.$i)->getFont()->setColor($phpColor);
+
+
+
+
+                    foreach($classes as $class){
+
+                        $c_dr_amount=0.00; $c_cr_amount=0.00; $c_total=0.00;
+
+                        if($types->account_type_id==$class->account_type_id){
+                            $i++;
+                            $excel->getActiveSheet()->setCellValue('A'.$i,'       '.$class->account_class);
+                            $excel->getActiveSheet()->getStyle('A'.$i)->getFont()->setItalic(TRUE)->setBold(TRUE);
+                        }
+
+                        $first_row = $i+1;
+
+                        foreach($titles as $title){
+                            if($types->account_type_id==$title->account_type_id&&$title->account_class_id==$class->account_class_id){
+                                $i++;
+
+                                $excel->getActiveSheet()->setCellValue('A'.$i,'               '.$title->account_title);
+                                $excel->getActiveSheet()->setCellValue('B'.$i,$title->dr_amount);
+                                $excel->getActiveSheet()->setCellValue('C'.$i,$title->cr_amount);
+                                $excel->getActiveSheet()->setCellValue('D'.$i,"=SUM(B".$i."-C".$i.")");
+
+                                $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                                $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+
+                                $c_dr_amount+=$title->dr_amount;
+                                $c_cr_amount+=$title->cr_amount;
+                                $c_total+=$title->balance;
+
+                                $dr_amount+=$title->dr_amount;
+                                $cr_amount+=$title->cr_amount;
+
+                            }
+                        }
+
+                        $last_row = $i;
+
+                        //write total of account titles for each class
+                        if($types->account_type_id==$class->account_type_id){
+
+
+                            //border bottom
+                            $BStyle = array(
+                                'borders' => array(
+                                    'bottom' => array(
+                                        'style' => PHPExcel_Style_Border::BORDER_THIN
+                                    )
+                                )
+                            );
+                            $excel->getActiveSheet()->getStyle('A'.$i.':D'.$i)->applyFromArray($BStyle);
+
+                            $i++;
+
+                            $excel->getActiveSheet()
+                                    ->getStyle('A'.$i)
+                                    ->getAlignment()
+                                    ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                            $excel->getActiveSheet()->getStyle('A'.$i)->getFont()->setBold(TRUE);
+
+                            $excel->getActiveSheet()->setCellValue('A'.$i,'Sub-Total :   ');
+
+                            $excel->getActiveSheet()->setCellValue('B'.$i,"=SUM(B".$first_row.":B".$last_row.")");
+                            $excel->getActiveSheet()->setCellValue('C'.$i,"=SUM(C".$first_row.":C".$last_row.")");
+                            $excel->getActiveSheet()->setCellValue('D'.$i,"=SUM(D".$first_row.":D".$last_row.")");
+
+
+                            $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                            $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getFont()->setBold(TRUE);
+                            $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+
+                            $i++;
+                        }
+
+                    }
+                }
+
+                $i++;
+                $excel->getActiveSheet()->setCellValue('B'.$i,$dr_amount);
+                $excel->getActiveSheet()->setCellValue('C'.$i,$cr_amount);
+                $excel->getActiveSheet()->setCellValue('D'.$i,$dr_amount-$cr_amount);
+
+
+                $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+
+
+                $excel->getActiveSheet()->getColumnDimension('A')->setAutoSize(TRUE);
+                $excel->getActiveSheet()->getColumnDimension('B')->setAutoSize(TRUE);
+                $excel->getActiveSheet()->getColumnDimension('C')->setAutoSize(TRUE);
+                $excel->getActiveSheet()->getColumnDimension('D')->setAutoSize(TRUE);
+
+                $sheet++;
+
+                }
 
                 //merge cell A1 until D1
                 //$excel->getActiveSheet()->mergeCells('A1:D1');

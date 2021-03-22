@@ -14,6 +14,7 @@ class Months_model extends CORE_Model {
         $query = $this->db->query("SELECT
 
 			full.*,
+			CONCAT(DATE_FORMAT(full.start_date, '%M'),' ',DATE_FORMAT(full.start_date, '%Y')) AS app_month_year,
 		    CONCAT(DATE_FORMAT(full.start_date,'%m/%d/%Y'),' to ',DATE_FORMAT(full.end_date,'%m/%d/%Y')) as date_span
 
 		    FROM

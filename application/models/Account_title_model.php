@@ -168,7 +168,7 @@ function restore_default_account_title(){
     //         return $this->db->query($sql)->result();
     // }
 
-    function get_account_titles_balance($start=null,$end=null){
+    function get_account_titles_balance($start=null,$end=null,$account_id=null){
         $sql="SELECT act.account_id,
             act.account_no,
               act.account_title,
@@ -211,6 +211,7 @@ function restore_default_account_title(){
           LEFT JOIN account_classes as ac ON act.account_class_id=ac.account_class_id
 
           WHERE act.is_deleted = FALSE AND act.is_active = TRUE
+          ".($account_id==null?"":" AND act.account_id='".$account_id."'")."
           ORDER BY act.account_no ASC";
         
         return $this->db->query($sql)->result();
