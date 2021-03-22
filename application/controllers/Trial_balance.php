@@ -65,16 +65,21 @@ class Trial_balance extends CORE_Controller
 
                 $excel=$this->excel;
 
+                $titles=$m_titles->get_account_titles_balance(
+                    date('Y-m-d',strtotime($start)),
+                    date('Y-m-d',strtotime($end))
+                );
 
                 $excel->setActiveSheetIndex(0);
-                $excel->getActiveSheet()->getColumnDimensionByColumn('B')->setWidth('100');
-                $excel->getActiveSheet()->getColumnDimensionByColumn('C')->setWidth('100');
-                $excel->getActiveSheet()->getColumnDimensionByColumn('D')->setWidth('100');
 
                 //name the worksheet
                 $excel->getActiveSheet()->setTitle('Trial Balance');
 
                 $account_types=$m_types->get_list();
+
+                //change font color
+                $phpColor = new PHPExcel_Style_Color();
+                $phpColor->setRGB('FFFFF');
 
                //company info
                 $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
@@ -86,10 +91,55 @@ class Trial_balance extends CORE_Controller
                 $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
 
                 $excel->getActiveSheet()->setCellValue('A6','Trial Balance')
-                                        ->setCellValue('A7',$start.' to '.$end)
-                                        ->setCellValue('B10','Dr')
-                                        ->setCellValue('C10','Cr')
-                                        ->setCellValue('D10','Balance');
+                                        ->setCellValue('A7',$start.' to '.$end);
+
+                $column = "B";                                            
+                foreach($date_filters as $date_filter){
+
+                    $excel->getActiveSheet()->setCellValue($column.'9',$date_filter->date_span);
+
+                    $first = $column;
+
+                    $column++;
+
+                    $second = $column;
+
+                    $column++;
+                    
+                    $last = $column;
+
+                    $column++;
+
+                    $space = $column;
+
+                    $column++;
+
+                    $excel->getActiveSheet()->getColumnDimensionByColumn($first)->setWidth('100');
+                    $excel->getActiveSheet()->getColumnDimensionByColumn($second)->setWidth('100');
+                    $excel->getActiveSheet()->getColumnDimensionByColumn($last)->setWidth('100');
+                    $excel->getActiveSheet()->getColumnDimensionByColumn($space)->setWidth('10');
+
+                    $excel->getActiveSheet()->setCellValue($first.'10','Dr');
+                    $excel->getActiveSheet()->setCellValue($second.'10','Cr');
+                    $excel->getActiveSheet()->setCellValue($last.'10','Balance');
+
+                    $excel->getActiveSheet()->getStyle($first.'10'.':'.$last.'10')->getFill()
+                                            ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+                                            ->getStartColor()->setARGB('0252d3');
+
+                    $excel->getActiveSheet()->getStyle($first.'10'.':'.$last.'10')->getFont()->setColor($phpColor);
+
+
+                    $excel->getActiveSheet()
+                            ->mergeCells($first.'9'.':'.$last.'9');
+                    $excel->getActiveSheet()->getStyle($first.'9'.':'.$last.'9')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->getStyle($first.'9'.':'.$last.'9')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                }
+
+
+
+
+
 
                 $excel->getActiveSheet()->getStyle('A6')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->getStyle('B9:D9')->getFont()->setBold(TRUE);
@@ -105,12 +155,7 @@ class Trial_balance extends CORE_Controller
                                             ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                                             ->getStartColor()->setARGB('0252d3');
 
-                    //change font color
-                    $phpColor = new PHPExcel_Style_Color();
-                    $phpColor->setRGB('FFFFF');
                     $excel->getActiveSheet()->getStyle('A'.$i.':D'.$i)->getFont()->setColor($phpColor);
-
-
 
 
                     foreach($classes as $class){
@@ -124,15 +169,6 @@ class Trial_balance extends CORE_Controller
                         }
 
                         $first_row = $i+1;
-
-                        $column = 'B';
-
-                        foreach($date_filters as $date_filter){
-
-                            $titles=$m_titles->get_account_titles_balance(
-                                date('Y-m-d',strtotime($date_filter->start_date)),
-                                date('Y-m-d',strtotime($date_filter->end_date))
-                            );
 
                             foreach($titles as $title){
                                 if($types->account_type_id==$title->account_type_id&&$title->account_class_id==$class->account_class_id){
@@ -158,8 +194,6 @@ class Trial_balance extends CORE_Controller
                             }
 
 
-
-                        }
 
                         $last_row = $i;
 
