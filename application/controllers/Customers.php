@@ -20,6 +20,7 @@ class Customers extends CORE_Controller {
         $this->load->model('Customer_type_model');
         $this->load->model('Soa_settings_model');
         $this->load->model('Company_model');
+        $this->load->model('Account_integration_model');
         $this->load->library('excel');
 
     }
@@ -77,7 +78,8 @@ class Customers extends CORE_Controller {
             case 'create':
                 $m_customers=$this->Customers_model;
                 $m_photos=$this->Customer_photos_model;
-
+                $m_account_integration=$this->Account_integration_model;
+                $account_integration=$m_account_integration->get_list();
                 $customer_name = $this->input->post('customer_name',TRUE);
                 //validate customer name
                 $customer=$this->Customers_model->get_customer($customer_name);
@@ -100,6 +102,11 @@ class Customers extends CORE_Controller {
                 $m_customers->photo_path=$this->input->post('photo_path',TRUE);
                 $m_customers->term=$this->input->post('term',TRUE);
                 $m_customers->credit_limit=$this->input->post('credit_limit',TRUE);
+                $m_customers->tel_no_home=$this->input->post('tel_no_home',TRUE);
+                $m_customers->tel_no_bus=$this->input->post('tel_no_bus',TRUE);
+
+                $customer_no = COUNT($m_customers->get_list())+1+$account_integration[0]->customer_start_no;
+                $m_customers->customer_no=$customer_no;
 
                 $m_customers->set('date_created','NOW()');
                 $m_customers->posted_by_user=$this->session->user_id;

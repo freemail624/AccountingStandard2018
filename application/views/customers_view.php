@@ -87,8 +87,8 @@
                         "data":           null,
                         "defaultContent": ""
                     },
-                    { targets:[1],data: "customer_name" },
-                    { targets:[2],data: "contact_name" },
+                    { targets:[1],data: "customer_no" },
+                    { targets:[2],data: "customer_name" },
                     { targets:[3],data: "address" },
                     { targets:[4],data: "contact_no" },
                     {
@@ -688,10 +688,10 @@
                                                     <thead class="">
                                                     <tr>
                                                         <th>&nbsp;&nbsp;</th>
+                                                        <th>Customer No.</th>
                                                         <th>Customer Name</th>
-                                                        <th>Contact Person</th>
                                                         <th style="width: 30%;">Address</th>
-                                                        <th>Contact No</th>
+                                                        <th>Mobile No</th>
                                                         <th style="width: 15%;"><center>Action</center></th>
                                                     </tr>
                                                     </thead>
@@ -907,8 +907,8 @@
                                 <div class="row">
                                     <div class="col-md-8">
                                         <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b>*</b></font> Customer Name :</label>
+                                            <div class="col-md-12" id="label">
+                                                 <label class="control-label boldlabel"><font color="red"><b>*</b></font> Customer Name :</label>
                                             </div>
                                             <div class="form-group">
                                                 <div class="input-group">
@@ -921,7 +921,7 @@
                                         </div>
 
                                         <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
+                                            <div class="col-md-12" id="label">
                                                  <label class="control-label boldlabel" style="text-align:right;"><font color="red"></font> Contact Person :</label>
                                             </div>
                                             <div class="form-group">
@@ -935,7 +935,7 @@
                                         </div>
                                     
                                         <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
+                                            <div class="col-md-12" id="label">
                                                  <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b>*</b></font> Address :</label>
                                             </div>
                                             <div class="form-group">
@@ -977,7 +977,7 @@
                                         </div> -->
                                     
                                         <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
+                                            <div class="col-md-12" id="label">
                                                  <label class="control-label boldlabel" style="text-align:right;">Email Address :</label>
                                             </div>
                                             <div class="form-group">
@@ -989,22 +989,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    
-                                        <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;">Contact No :</label>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-phone"></i>
-                                                    </span>
-                                                    <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Contact No">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-12">
+                                        <div class="col-md-12 hidden">
                                             <div class="col-md-4" id="label">
                                                  <label class="control-label boldlabel" style="text-align:right;">TIN :</label>
                                             </div>
@@ -1018,7 +1003,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-12">
+                                        <div class="col-md-12 hidden">
                                             <div class="col-md-4" id="label">
                                                  <label class="control-label boldlabel" style="text-align:right;">Customer Type :</label>
                                             </div>
@@ -1038,7 +1023,54 @@
                                     </div>
 
                                     <div class="col-md-4">
-                                        <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="col-md-12" id="label">
+                                                     <label class="control-label boldlabel">Mobile No :</label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon">
+                                                            <i class="fa fa-mobile"></i>
+                                                        </span>
+                                                        <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Mobile No">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="col-md-12" id="label">
+                                                     <label class="control-label boldlabel">Tel No. (Home) :</label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon">
+                                                            <i class="fa fa-phone"></i>
+                                                        </span>
+                                                        <input type="text" name="tel_no_home" id="tel_no_home" class="form-control" placeholder="Tel No. (Home)">
+                                                    </div>
+                                                </div>
+                                            </div> 
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="col-md-12" id="label">
+                                                     <label class="control-label boldlabel">Tel No. (Bus) :</label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon">
+                                                            <i class="fa fa-phone"></i>
+                                                        </span>
+                                                        <input type="text" name="tel_no_bus" id="tel_no_bus" class="form-control" placeholder="Tel No. (Bus)">
+                                                    </div>
+                                                </div>
+                                            </div> 
+                                        </div>                                        
+
+
+                                        <div class="col-md-12 hidden">
                                             <div class="col-md-12">
                                                 <label class="control-label boldlabel" style="text-align:left;padding-top:10px;"><i class="fa fa-user" aria-hidden="true" style="padding-right:10px;"></i>Customer's Photo</label>
                                                 <hr style="margin-top:0px !important;height:1px;background-color:black;">

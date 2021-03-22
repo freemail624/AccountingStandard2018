@@ -407,6 +407,14 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
              <div class="tab-pane" id="accounts_integration_setting_customer" style="min-height: 300px;">
                 <form id="frm_account_integration_customer" role="form" class="form-horizontal row-border">
                     <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Customer Integration Account</strong></span></h4>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label"> Customer No Start :</label>
+                        <div class="col-md-7">
+                            <input type="text" name="customer_start_no" class="form-control" value="<?php echo $current_accounts->customer_start_no ?>">
+                            <span class="help-block m-b-none">Please select the Starting Incremental number for Customers.</span>
+                        </div>
+                    </div>                                      
                     <div class="form-group">
                         <label class="col-md-3 control-label"> * Output Tax Account :</label>
                         <div class="col-md-7">

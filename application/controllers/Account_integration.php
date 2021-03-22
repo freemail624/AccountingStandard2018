@@ -195,6 +195,7 @@ class Account_integration extends CORE_Controller
                 $m_integration=$this->Account_integration_model;
 
                 // //customers
+                $m_integration->customer_start_no=$this->input->post('customer_start_no',TRUE);
                 $m_integration->output_tax_account_id=$this->input->post('output_tax_account_id',TRUE);
                 $m_integration->receivable_account_id=$this->input->post('receivable_account_id',TRUE);
                 $m_integration->receivable_discount_account_id=$this->input->post('receivable_discount_account_id',TRUE);
