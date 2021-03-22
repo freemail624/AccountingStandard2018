@@ -33,6 +33,7 @@ class Products extends CORE_Controller
         $this->load->model('Brands_model');
         $this->load->model('Sync_references_model');
         $this->load->model('Pos_item_sales_model');
+        $this->load->model('Cash_invoice_items_model');
     }
 
     public function index() {
@@ -216,6 +217,49 @@ class Products extends CORE_Controller
 
                 echo json_encode($response);
 
+                break;
+
+            case 'updateCost':
+
+                $m_sales_items = $this->Sales_invoice_item_model;
+                $m_cash_items = $this->Cash_invoice_items_model;
+
+                $products = $this->Products_model->get_list();
+                $sales = $m_sales_items->get_sales_wo_cost();
+                $cashes = $m_cash_items->get_cash_wo_cost();
+
+                if(count($products) > 0){
+
+                    foreach($products as $product){
+
+                        // Sales Invoice
+                        foreach($sales as $sale){
+
+                            if($sale->product_id == $product->product_id){
+                                $m_sales_items->cost_upon_invoice = $this->get_numeric_value($product->purchase_cost);
+                                $m_sales_items->modify($sale->sales_item_id);
+                            }
+
+                        }
+
+                        // Sales Invoice
+                        foreach($cashes as $cash){
+
+                            if($cash->product_id == $product->product_id){
+                                $m_cash_items->cost_upon_invoice = $this->get_numeric_value($product->purchase_cost);
+                                $m_cash_items->modify($cash->cash_item_id);
+                            }
+                            
+                        } 
+
+                    }
+
+                }
+
+                $response['title'] = 'Success!';
+                $response['stat'] = 'success';
+                $response['msg'] = 'Sales and Cash (Costs) successfully updated.';
+                echo json_encode($response);
                 break;
 
             case 'update':
