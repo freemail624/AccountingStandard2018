@@ -115,7 +115,9 @@
                                 <li  class="<?php echo (in_array('4-7',$this->session->user_rights)?'':'hidden'); ?>"><a href="Brands">Brands Management</a></li>
                                 <li  class="<?php echo (in_array('4-8',$this->session->user_rights)?'':'hidden'); ?>"><a href="Order_source">Order Source Management</a></li>
                                 <li  class="<?php echo (in_array('4-9',$this->session->user_rights)?'':'hidden'); ?>"><a href="Terms">Terms Management</a></li>
-                                <li  class="<?php echo (in_array('4-10',$this->session->user_rights)?'':'hidden'); ?>"><a href="vehicle_models">Model Management</a></li>
+                                <li  class="<?php echo (in_array('4-10',$this->session->user_rights)?'':'hidden'); ?>"><a href="vehicle_models">Models Management</a></li>
+                                <li  class="<?php echo (in_array('4-11',$this->session->user_rights)?'':'hidden'); ?>"><a href="colors">Colors Management</a></li>
+                                <li  class="<?php echo (in_array('4-12',$this->session->user_rights)?'':'hidden'); ?>"><a href="vehicle_years">Vehicle Year Management</a></li>                                
                             </ul>
                         </li>
                         <li class="<?php echo (in_array('5',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-harddrive"></i><span>Masterfiles</span></a>
@@ -125,6 +127,7 @@
                                 <li class="<?php echo (in_array('5-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="customers">Customer Management</a></li>
                                 <li class="<?php echo (in_array('5-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Salesperson">Salesperson Management</a></li>
 <!--                                 <li class="<?php //echo (in_array('5-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Agent">Agent Management</a></li> -->
+                                <li class="<?php echo (in_array('5-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Vehicles">Vehicles Management</a></li>
                             </ul>
                         </li>
                         <li class="<?php echo (in_array('14',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-view-list-alt"></i><span>Treasury</span></a>

@@ -17,5 +17,12 @@ class Vehicle_model extends CORE_Model {
         return $this->db->query($sql)->result();
     }
 
+    function check_model($model_name,$model_id=null){
+        $sql="SELECT * FROM vehicle_model 
+            WHERE is_deleted = FALSE AND 
+            model_name = '".$model_name."' 
+            ".($model_id==null?"":" AND model_id!=$model_id")."";
+        return $this->db->query($sql)->result();
+    }
 }
 ?>

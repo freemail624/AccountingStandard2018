@@ -72,27 +72,28 @@
 
                     <ol class="breadcrumb transparent-background" style="margin: 0;">
                         <li><a href="dashboard">Dashboard</a></li>
-                        <li><a href="vehicle_models">Models</a></li>
+                        <li><a href="vehicle_years">Vehicle Year</a></li>
                     </ol>
 
                     <div class="container-fluid">
                         <div data-widget-group="group1">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div id="div_modellist">
+                                    <div id="div_vehicle_year_list">
                                         <div class="panel panel-default">
 <!--                                             <div class="panel-heading">
                                      
                                                 <b style="color: white; font-size: 12pt;"><i style="color: #ffce3a;" class="ti ti-layout-accordion-merged"></i>&nbsp; Departments</b>
                                             </div> -->
                                             <div class="panel-body table-responsive">
-                                            <h2 class="h2-panel-heading">Models</h2><hr>
-                                                <table id="tbl_models" class="table table-striped" cellspacing="0" width="100%">
+                                            <h2 class="h2-panel-heading">Vehicle Year</h2><hr>
+                                                <table id="tbl_vehicle_year" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead>
-                                                        <tr>
-                                                            <th>Model</th>
-                                                            <th><center>Action</center></th>
-                                                        </tr>
+                                                    <tr>
+                                                        <th>Vehicle Year</th>
+                                                        <th>Remarks</th>
+                                                        <th><center>Action</center></th>
+                                                    </tr>
                                                     </thead>
                                                     <tbody>
                                                     </tbody>
@@ -127,28 +128,32 @@
                     </div>
                 </div>
             </div><!---modal-->
-            <div id="modal_new_model" class="modal fade" role="dialog">
+            <div id="modal_new_vehicle_year" class="modal fade" role="dialog">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header" style="background: #2ecc71">
-                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
-                             <h2 id="model_title" class="modal-title" style="color:white;"></h2>
+                             <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                             <h2 id="vehicle_year_title" class="modal-title" style="color:white;"></h2>
                         </div>
                         <div class="modal-body">
-                            <form id="frm_model" role="form" class="form-horizontal">
+                            <form id="frm_vehicle_year" role="form" class="form-horizontal">
                                 <div class="row" style="margin: 1%;">
                                     <div class="col-lg-12">
                                         <div class="form-group" style="margin-bottom:0px;">
-                                            <label class=""><b>*</b> Model :</label>
-                                            <input name="model_name" class="form-control" data-error-msg="Model is required!" placeholder="Model" id="model_text" autofocus required>
+                                            <label class=""><b> * </b> Vehicle Year :</label>
+                                            <input type="text" placeholder="Vehicle Year" class="form-control" name="vehicle_year" data-error-msg="Vehicle Year is required!" id="vehicle_year" required >
+                                        </div>
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            <label class="">Remarks :</label>
+                                            <textarea name="remarks" placeholder="Remarks" class="form-control"></textarea>
                                         </div>
                                     </div>
                                 </div>
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button id="btn_save" class="btn btn-primary">Save</button>
-                            <button id="btn_cancel" class="btn btn-default">Cancel</button>
+                            <button id="btn_save" type="button" class="btn btn-primary">Save</button>
+                            <button id="btn_cancel" type="button" class="btn btn-default">Cancel</button>
                         </div>
                     </div>
                 </div>
@@ -184,17 +189,18 @@ $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj;
 
     var initializeControls=function(){
-        dt=$('#tbl_models').DataTable({
+        dt=$('#tbl_vehicle_year').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "ajax" : "vehicle_models/transaction/list",
+            "ajax" : "vehicle_years/transaction/list",
             "language" : {
-                "searchPlaceholder": "Search Model"
+                "searchPlaceholder": "Search Year"
             },
             "columns": [
-                { targets:[0],data: "model_name" },
+                { targets:[0],data: "vehicle_year" },
+                { targets:[1],data: "remarks" },
                 {
-                    targets:[1],
+                    targets:[2],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
@@ -207,9 +213,9 @@ $(document).ready(function(){
 
         var createToolBarButton=function(){
 
-            var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Model" >'+
+            var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Vehicle Year" >'+
 
-                '<i class="fa fa-plus"></i> New Model</button>';
+                '<i class="fa fa-plus"></i> New Vehicle Year</button>';
             $("div.toolbar").html(_btnNew);
         }();
     }();
@@ -219,16 +225,16 @@ $(document).ready(function(){
 
         $('#btn_new').click(function(){
             _txnMode="new";
-            clearFields($('#frm_model'));
-            $('#model_title').text('New Model');
-            $('#modal_new_model').modal('show');
+            clearFields($('#frm_vehicle_year'));
+            $('#vehicle_year_title').text('New Vehicle Year');
+            $('#modal_new_vehicle_year').modal('show');
         });
 
-        $('#tbl_models tbody').on('click','button[name="edit_info"]',function(){
+        $('#tbl_vehicle_year tbody').on('click','button[name="edit_info"]',function(){
             _txnMode="edit";
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
-            _selectedID=data.model_id;
+            _selectedID=data.vehicle_year_id;
 
             $('input,textarea,select').each(function(){
                 var _elem=$(this);
@@ -238,23 +244,23 @@ $(document).ready(function(){
                     }
                 });
             });
-            $('#model_title').text('Edit Model');
-            $('#modal_new_model').modal('show');
+            $('#vehicle_year_title').text('Edit Vehicle Year');
+            $('#modal_new_vehicle_year').modal('show');
             setTimeout(function (){
                 $('form').find('input:first').focus();
-            }, 500);
+            }, 500);            
         });
 
-        $('#tbl_models tbody').on('click','button[name="remove_info"]',function(){
+        $('#tbl_vehicle_year tbody').on('click','button[name="remove_info"]',function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
-            _selectedID=data.model_id;
+            _selectedID=data.vehicle_year_id;
 
             $('#modal_confirmation').modal('show');
         });
 
         $('#btn_yes').click(function(){
-            removeModel().done(function(response){
+            removeVehicleYear().done(function(response){
                 showNotification(response);
                 dt.row(_selectRowObj).remove().draw();
             });
@@ -262,32 +268,31 @@ $(document).ready(function(){
 
         $('#btn_cancel').click(function(){
             clearFields();
-            $('#modal_new_model').modal('hide');
+            $('#modal_new_vehicle_year').modal('hide');
         });
 
         $('#btn_save').click(function(){
             if(validateRequiredFields()){
                 if(_txnMode=="new"){
-                    createModel().done(function(response){
+                    createVehicleYear().done(function(response){
                         showNotification(response);
 
                         if(response.stat == 'success'){
                             dt.row.add(response.row_added[0]).draw();
                             clearFields();
-                            $('#modal_new_model').modal('hide');
+                            $('#modal_new_vehicle_year').modal('hide');
                         }
 
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
                     });
                 }else{
-                    updateModel().done(function(response){
+                    updateVehicleYear().done(function(response){
                         showNotification(response);
-
                         if(response.stat == 'success'){
                             dt.row(_selectRowObj).data(response.row_updated[0]).draw();
                             clearFields();
-                            $('#modal_new_model').modal('hide');
+                            $('#modal_new_vehicle_year').modal('hide');
                         }
 
                     }).always(function(){
@@ -297,12 +302,12 @@ $(document).ready(function(){
             }
         });
 
-        $('#model_text').on('keypress',function(evt){
+        $('form').on('keypress','input',function(evt){
             if(evt.keyCode==13){
                 evt.preventDefault();
                 $('#btn_save').trigger('click');
             }
-        }); 
+        });        
 
     })();
 
@@ -310,7 +315,7 @@ $(document).ready(function(){
         var stat=true;
 
         $('div.form-group').removeClass('has-error');
-        $('input[required],textarea[required]','#frm_model').each(function(){
+        $('input[required],textarea[required]','#frm_vehicle_year').each(function(){
             if($(this).val()==""){
                 showNotification({title:"Error!",stat:"error",msg:$(this).data('error-msg')});
                 $(this).closest('div.form-group').addClass('has-error');
@@ -322,47 +327,47 @@ $(document).ready(function(){
         return stat;
     };
 
-    var createModel=function(){
-        var _data=$('#frm_model').serializeArray();
+    var createVehicleYear=function(){
+        var _data=$('#frm_vehicle_year').serializeArray();
 
         return $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"vehicle_models/transaction/create",
+            "url":"vehicle_years/transaction/create",
             "data":_data,
             "beforeSend": showSpinningProgress($('#btn_save'))
         });
     };
 
-    var updateModel=function(){
-        var _data=$('#frm_model').serializeArray();
-        _data.push({name : "model_id" ,value : _selectedID});
+    var updateVehicleYear=function(){
+        var _data=$('#frm_vehicle_year').serializeArray();
+        _data.push({name : "vehicle_year_id" ,value : _selectedID});
 
         return $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"vehicle_models/transaction/update",
+            "url":"vehicle_years/transaction/update",
             "data":_data,
             "beforeSend": showSpinningProgress($('#btn_save'))
         });
     };
 
-    var removeModel=function(){
+    var removeVehicleYear=function(){
         return $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"vehicle_models/transaction/delete",
-            "data":{model_id : _selectedID}
+            "url":"vehicle_years/transaction/delete",
+            "data":{vehicle_year_id : _selectedID}
         });
     };
 
     var showList=function(b){
         if(b){
-            $('#div_model_list').show();
-            $('#div_model_fields').hide();
+            $('#div_vehicle_year_list').show();
+            $('#div_vehicle_year_fields').hide();
         }else{
-            $('#div_model_list').hide();
-            $('#div_model_fields').show();
+            $('#div_vehicle_year_list').hide();
+            $('#div_vehicle_year_fields').show();
         }
     };
 
@@ -380,11 +385,10 @@ $(document).ready(function(){
     };
 
     var clearFields=function(){
-        $('input[required],textarea','#frm_model').val('');
+        $('input[required],textarea','#frm_vehicle_year').val('');
         setTimeout(function (){
             $('form').find('input:first').focus();
         }, 500);
-
     };
 
 });

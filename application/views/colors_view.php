@@ -72,27 +72,27 @@
 
                     <ol class="breadcrumb transparent-background" style="margin: 0;">
                         <li><a href="dashboard">Dashboard</a></li>
-                        <li><a href="vehicle_models">Models</a></li>
+                        <li><a href="colors">Colors</a></li>
                     </ol>
 
                     <div class="container-fluid">
                         <div data-widget-group="group1">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div id="div_modellist">
+                                    <div id="div_color_list">
                                         <div class="panel panel-default">
 <!--                                             <div class="panel-heading">
                                      
                                                 <b style="color: white; font-size: 12pt;"><i style="color: #ffce3a;" class="ti ti-layout-accordion-merged"></i>&nbsp; Departments</b>
                                             </div> -->
                                             <div class="panel-body table-responsive">
-                                            <h2 class="h2-panel-heading">Models</h2><hr>
-                                                <table id="tbl_models" class="table table-striped" cellspacing="0" width="100%">
+                                            <h2 class="h2-panel-heading">Colors</h2><hr>
+                                                <table id="tbl_colors" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead>
-                                                        <tr>
-                                                            <th>Model</th>
-                                                            <th><center>Action</center></th>
-                                                        </tr>
+                                                    <tr>
+                                                        <th>Color</th>
+                                                        <th><center>Action</center></th>
+                                                    </tr>
                                                     </thead>
                                                     <tbody>
                                                     </tbody>
@@ -127,28 +127,28 @@
                     </div>
                 </div>
             </div><!---modal-->
-            <div id="modal_new_model" class="modal fade" role="dialog">
+            <div id="modal_new_color" class="modal fade" role="dialog">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header" style="background: #2ecc71">
-                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
-                             <h2 id="model_title" class="modal-title" style="color:white;"></h2>
+                             <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                             <h2 id="color_title" class="modal-title" style="color:white;"></h2>
                         </div>
                         <div class="modal-body">
-                            <form id="frm_model" role="form" class="form-horizontal">
+                            <form id="frm_color" role="form" class="form-horizontal">
                                 <div class="row" style="margin: 1%;">
                                     <div class="col-lg-12">
                                         <div class="form-group" style="margin-bottom:0px;">
-                                            <label class=""><b>*</b> Model :</label>
-                                            <input name="model_name" class="form-control" data-error-msg="Model is required!" placeholder="Model" id="model_text" autofocus required>
+                                            <label class=""><b> * </b> Color :</label>
+                                            <input type="text" placeholder="Color" class="form-control" name="color" data-error-msg="Color is required!" id="color_text" required >
                                         </div>
                                     </div>
                                 </div>
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button id="btn_save" class="btn btn-primary">Save</button>
-                            <button id="btn_cancel" class="btn btn-default">Cancel</button>
+                            <button id="btn_save" type="button" class="btn btn-primary">Save</button>
+                            <button id="btn_cancel" type="button" class="btn btn-default">Cancel</button>
                         </div>
                     </div>
                 </div>
@@ -184,15 +184,15 @@ $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj;
 
     var initializeControls=function(){
-        dt=$('#tbl_models').DataTable({
+        dt=$('#tbl_colors').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "ajax" : "vehicle_models/transaction/list",
+            "ajax" : "Colors/transaction/list",
             "language" : {
-                "searchPlaceholder": "Search Model"
+                "searchPlaceholder": "Search Color"
             },
             "columns": [
-                { targets:[0],data: "model_name" },
+                { targets:[0],data: "color" },
                 {
                     targets:[1],
                     render: function (data, type, full, meta){
@@ -207,9 +207,9 @@ $(document).ready(function(){
 
         var createToolBarButton=function(){
 
-            var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Model" >'+
+            var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Color" >'+
 
-                '<i class="fa fa-plus"></i> New Model</button>';
+                '<i class="fa fa-plus"></i> New Color</button>';
             $("div.toolbar").html(_btnNew);
         }();
     }();
@@ -219,16 +219,16 @@ $(document).ready(function(){
 
         $('#btn_new').click(function(){
             _txnMode="new";
-            clearFields($('#frm_model'));
-            $('#model_title').text('New Model');
-            $('#modal_new_model').modal('show');
+            clearFields($('#frm_color'));
+            $('#color_title').text('New Color');
+            $('#modal_new_color').modal('show');
         });
 
-        $('#tbl_models tbody').on('click','button[name="edit_info"]',function(){
+        $('#tbl_colors tbody').on('click','button[name="edit_info"]',function(){
             _txnMode="edit";
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
-            _selectedID=data.model_id;
+            _selectedID=data.color_id;
 
             $('input,textarea,select').each(function(){
                 var _elem=$(this);
@@ -238,23 +238,23 @@ $(document).ready(function(){
                     }
                 });
             });
-            $('#model_title').text('Edit Model');
-            $('#modal_new_model').modal('show');
+            $('#color_title').text('Edit Color');
+            $('#modal_new_color').modal('show');
             setTimeout(function (){
                 $('form').find('input:first').focus();
-            }, 500);
+            }, 500);            
         });
 
-        $('#tbl_models tbody').on('click','button[name="remove_info"]',function(){
+        $('#tbl_colors tbody').on('click','button[name="remove_info"]',function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
-            _selectedID=data.model_id;
+            _selectedID=data.color_id;
 
             $('#modal_confirmation').modal('show');
         });
 
         $('#btn_yes').click(function(){
-            removeModel().done(function(response){
+            removeColor().done(function(response){
                 showNotification(response);
                 dt.row(_selectRowObj).remove().draw();
             });
@@ -262,32 +262,31 @@ $(document).ready(function(){
 
         $('#btn_cancel').click(function(){
             clearFields();
-            $('#modal_new_model').modal('hide');
+            $('#modal_new_color').modal('hide');
         });
 
         $('#btn_save').click(function(){
             if(validateRequiredFields()){
                 if(_txnMode=="new"){
-                    createModel().done(function(response){
+                    createColor().done(function(response){
                         showNotification(response);
 
                         if(response.stat == 'success'){
                             dt.row.add(response.row_added[0]).draw();
                             clearFields();
-                            $('#modal_new_model').modal('hide');
+                            $('#modal_new_color').modal('hide');
                         }
 
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
                     });
                 }else{
-                    updateModel().done(function(response){
+                    updateColor().done(function(response){
                         showNotification(response);
-
                         if(response.stat == 'success'){
                             dt.row(_selectRowObj).data(response.row_updated[0]).draw();
                             clearFields();
-                            $('#modal_new_model').modal('hide');
+                            $('#modal_new_color').modal('hide');
                         }
 
                     }).always(function(){
@@ -297,12 +296,12 @@ $(document).ready(function(){
             }
         });
 
-        $('#model_text').on('keypress',function(evt){
+        $('#color_text').on('keypress',function(evt){
             if(evt.keyCode==13){
                 evt.preventDefault();
                 $('#btn_save').trigger('click');
             }
-        }); 
+        });        
 
     })();
 
@@ -310,7 +309,7 @@ $(document).ready(function(){
         var stat=true;
 
         $('div.form-group').removeClass('has-error');
-        $('input[required],textarea[required]','#frm_model').each(function(){
+        $('input[required],textarea[required]','#frm_color').each(function(){
             if($(this).val()==""){
                 showNotification({title:"Error!",stat:"error",msg:$(this).data('error-msg')});
                 $(this).closest('div.form-group').addClass('has-error');
@@ -322,47 +321,47 @@ $(document).ready(function(){
         return stat;
     };
 
-    var createModel=function(){
-        var _data=$('#frm_model').serializeArray();
+    var createColor=function(){
+        var _data=$('#frm_color').serializeArray();
 
         return $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"vehicle_models/transaction/create",
+            "url":"Colors/transaction/create",
             "data":_data,
             "beforeSend": showSpinningProgress($('#btn_save'))
         });
     };
 
-    var updateModel=function(){
-        var _data=$('#frm_model').serializeArray();
-        _data.push({name : "model_id" ,value : _selectedID});
+    var updateColor=function(){
+        var _data=$('#frm_color').serializeArray();
+        _data.push({name : "color_id" ,value : _selectedID});
 
         return $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"vehicle_models/transaction/update",
+            "url":"Colors/transaction/update",
             "data":_data,
             "beforeSend": showSpinningProgress($('#btn_save'))
         });
     };
 
-    var removeModel=function(){
+    var removeColor=function(){
         return $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"vehicle_models/transaction/delete",
-            "data":{model_id : _selectedID}
+            "url":"Colors/transaction/delete",
+            "data":{color_id : _selectedID}
         });
     };
 
     var showList=function(b){
         if(b){
-            $('#div_model_list').show();
-            $('#div_model_fields').hide();
+            $('#div_color_list').show();
+            $('#div_color_fields').hide();
         }else{
-            $('#div_model_list').hide();
-            $('#div_model_fields').show();
+            $('#div_color_list').hide();
+            $('#div_color_fields').show();
         }
     };
 
@@ -380,11 +379,10 @@ $(document).ready(function(){
     };
 
     var clearFields=function(){
-        $('input[required],textarea','#frm_model').val('');
+        $('input[required],textarea','#frm_color').val('');
         setTimeout(function (){
             $('form').find('input:first').focus();
         }, 500);
-
     };
 
 });
