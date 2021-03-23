@@ -17,6 +17,7 @@
 					'Users_model',
 					'Company_model',
 					'Bank_reconciliation_details_model',
+					'Bank_reconciliation_checks_model',
 					'Months_model',
 					'Bank_statement_model',
 					'Bank_statement_item_model',
@@ -59,8 +60,9 @@
 					$startDate=date('Y-m-d',strtotime($this->input->get('sDate',TRUE)));
 					$endDate=date('Y-m-d',strtotime($this->input->get('eDate',TRUE)));
 					$account_id=$this->input->get('accountid',TRUE);
+					$bank_recon_id=$this->input->get('bank_recon_id',TRUE);
 
-					$response['data']=$m_journal->get_bank_recon($account_id,$startDate,$endDate);
+					$response['data']=$m_journal->get_bank_recon($account_id,$startDate,$endDate,$bank_recon_id);
 
 					echo json_encode($response);
 					break;
@@ -70,6 +72,7 @@
 					$m_bank_details = $this->Bank_reconciliation_details_model;
 					$m_bank_statement = $this->Bank_statement_model;
 					$m_bank_statement_items = $this->Bank_statement_item_model;
+					$m_bank_checks = $this->Bank_reconciliation_checks_model;
 
 					$month_id = $this->input->post('month_id', TRUE);
 					$account_id = $this->input->post('account_id',TRUE);
@@ -158,16 +161,13 @@
 					$journal_id = $this->input->post('journal_id');
 					$check_status = $this->input->post('check_status');
 
-					// for($i=0;$i<count($journal_id);$i++)
-					// {
-					// 	$m_bank_details->bank_recon_id=$bank_recon_id;
-					// 	$m_bank_details->journal_id=$journal_id[$i];
-					// 	$m_bank_details->check_status=$check_status[$i];
-					// 	$m_bank_details->save();
-
-					// 	$m_journal->is_reconciled=1;
-					// 	$m_journal->modify('journal_id='.$journal_id[$i]);
-					// }
+					for($i=0;$i<count($journal_id);$i++)
+					{
+						$m_bank_checks->bank_recon_id=$bank_recon_id;
+						$m_bank_checks->journal_id=$journal_id[$i];
+						$m_bank_checks->check_status_id=$check_status[$i];
+						$m_bank_checks->save();
+					}
 
 					$m_bankr->commit();
 
@@ -194,6 +194,7 @@
 					$m_bank_details = $this->Bank_reconciliation_details_model;
 					$m_bank_statement = $this->Bank_statement_model;
 					$m_bank_statement_items = $this->Bank_statement_item_model;
+					$m_bank_checks = $this->Bank_reconciliation_checks_model;
 
 					$bank_recon_id = $this->input->post('bank_recon_id', TRUE);
 
@@ -273,19 +274,18 @@
 
 					$m_journal=$this->Journal_info_model;
 
+               	 	$m_bank_checks->delete_via_fk($bank_recon_id); //delete previous items then insert those new
+
 					$journal_id = $this->input->post('journal_id');
 					$check_status = $this->input->post('check_status');
 
-					// for($i=0;$i<count($journal_id);$i++)
-					// {
-					// 	$m_bank_details->bank_recon_id=$bank_recon_id;
-					// 	$m_bank_details->journal_id=$journal_id[$i];
-					// 	$m_bank_details->check_status=$check_status[$i];
-					// 	$m_bank_details->save();
-
-					// 	$m_journal->is_reconciled=1;
-					// 	$m_journal->modify('journal_id='.$journal_id[$i]);
-					// }
+					for($i=0;$i<count($journal_id);$i++)
+					{
+						$m_bank_checks->bank_recon_id=$bank_recon_id;
+						$m_bank_checks->journal_id=$journal_id[$i];
+						$m_bank_checks->check_status_id=$check_status[$i];
+						$m_bank_checks->save();
+					}
 
 					$m_bankr->commit();
 

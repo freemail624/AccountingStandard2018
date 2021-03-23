@@ -683,7 +683,7 @@
 $(document).ready(function(){
     var dt; var dt_bank_reconciliation; var dtHistory;  var _cboAccounts; var _cboAccountTbl;
     var _checkNo; var dtBankReconData; var _cboMonths; var _cboYears; 
-    var load_status=0; var _txnMode; var _selectedID;
+    var load_status=0; var _txnMode; var _selectedID=0;;
 
     var oTBJournal={
         "dr" : "td:eq(3)",
@@ -828,7 +828,8 @@ $(document).ready(function(){
                     return $.extend({}, d, {
                         "sDate":$('#startDate').val(),
                         "eDate":$('#endDate').val(),
-                        "accountid": _cboAccounts.select2('val')
+                        "accountid": _cboAccounts.select2('val'),
+                        "bank_recon_id":_selectedID
 
                     });
                 }
@@ -872,21 +873,35 @@ $(document).ready(function(){
                     class: "text-center",
                     targets:[8], 
                     render: function(data,type,full,meta) {
-                        return '<input id="outstanding_'+full.check_no+'" type="radio" name="outstanding_'+ full.check_no +'[]" class="outstanding status" value="1" data-amount="' + full.amount + '"/>'
+                        var attr_checked="";
+                        if(full.check_status_id==1){
+                            attr_checked="checked";
+                        }
+
+                        return '<input id="outstanding_'+full.check_no+'" type="radio" name="outstanding_'+ full.check_no +'[]" class="outstanding status" value="1" '+attr_checked+' data-amount="' + full.amount + '"/>'
                     }
                 },
                 { 
                     class: "text-center",
                     targets:[9],
                     render: function(data,type,full,meta) {
-                        return '<input id="good_check_'+full.check_no+'" type="radio" name="outstanding_'+ full.check_no +'[]" class="good-check status" value="2" />'
+                        var attr_checked="";
+                        if(full.check_status_id==2){
+                            attr_checked="checked";
+                        }
+
+                        return '<input id="good_check_'+full.check_no+'" type="radio" name="outstanding_'+ full.check_no +'[]" class="good-check status" value="2" '+attr_checked+'/>'
                     }
                 },
                 { 
                     class: "text-center hidden",
                     targets:[10],
                     render: function(data,type,full,meta) {
-                        return '<input id="default_'+full.check_no+'" type="radio" name="outstanding_'+ full.check_no +'[]" class="default status" value="0" checked/>'
+                        var attr_checked="";
+                        if(full.check_status_id==0){
+                            attr_checked="checked";
+                        }
+                        return '<input id="default_'+full.check_no+'" type="radio" name="outstanding_'+ full.check_no +'[]" class="default status" value="0" '+attr_checked+'/>'
                     }
                 }
             ]
@@ -1030,6 +1045,7 @@ $(document).ready(function(){
             _editStatus=0;
 
             $('#tbl_bank_reconciliation').DataTable().ajax.reload();
+
             reInitializeNumeric();
             showList(false);
         });

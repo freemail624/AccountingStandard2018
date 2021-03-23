@@ -4458,7 +4458,8 @@ class Templates extends CORE_Controller {
                         DATEDIFF(b_payment_info.check_date,NOW()) as rem_day_for_due,
                         customers.link_department_id,
                         b_payment_info.remarks,
-                        b_payment_info.reference_no
+                        b_payment_info.reference_no,
+                        b_payment_info.amount_paid
                         ',
                         array(array('b_payment_info','b_payment_info.payment_id = temp_journal_info.payment_id','left'),
                             array('customers','customers.customer_id = temp_journal_info.customer_id','left'))

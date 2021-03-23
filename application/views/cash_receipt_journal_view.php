@@ -496,12 +496,12 @@
                                 </div>
                             </div>
                             <div class="col-lg-2">
-                                <label>Check # :</label><br />
+                                <b class="required">*</b> <label>Amount :</label><br />
                                 <div class="input-group">
                                     <span class="input-group-addon">
                                         <i class="fa fa-code"></i>
                                     </span>
-                                    <input type="text" name="check_no" id="check_no" class="form-control" data-error-msg="Check no. is required">
+                                    <input type="text" name="amount" class="form-control numeric" required data-error-msg="Amount is required">
                                 </div>
                             </div>
                         </div>
@@ -519,26 +519,30 @@
                             </div>
 
                             <div class="col-lg-2 col-lg-offset-2">
-                                <label>Check Date :</label><br />
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-calendar"></i>
-                                    </span>
-                                    <input type="text" name="check_date" id="check_date" class="date-picker form-control" data-error-msg="Check date is required" value="<?php echo date("m/d/Y"); ?>">
+                                <div class="for_check hidden">
+                                    <b class="required">*</b> <label>Check Date :</label><br />
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                        <input type="text" name="check_date" id="check_date" class="date-picker form-control" data-error-msg="Check date is required" value="<?php echo date("m/d/Y"); ?>">
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="col-lg-2">
-                                <b class="required">*</b> <label>Amount :</label><br />
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-code"></i>
-                                    </span>
-                                    <input type="text" name="amount" class="form-control numeric" required data-error-msg="Amount is required">
-                                </div>
+                                <div class="for_check hidden">
+                                    <b class="required">*</b> <label>Check # :</label><br />
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-code"></i>
+                                        </span>
+                                        <input type="text" name="check_no" id="check_no" class="form-control" data-error-msg="Check no. is required">
+                                    </div>
+                                </div>                             
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row for_check hidden">
                             <div class="col-sm-4">
                                 <b class="required">*</b> <label>Check Type : </label><br />
                                     <select name="check_type_id"  id="cbo_check_types"  data-error-msg="Check Type is required.">
@@ -1472,19 +1476,19 @@ $(document).ready(function(){
 
         _cboParticulars=$('#cbo_particulars').select2({
             placeholder: "Please select a Particular.",
-            allowClear: true
+            allowClear: false
         });
         _cboParticulars.select2('val',null);
 
         _cbo_paymentMethod = $('#cbo_payment_method').select2({
             placeholder: "Please select Payment Method.",
-            allowClear: true
+            allowClear: false
         });
         _cbo_paymentMethod.select2('val',null);
 
         _cbo_departments = $('#cbo_departments').select2({
             placeholder: "Please select Department.",
-            allowClear: true
+            allowClear: false
         });
         _cbo_departments.select2('val',null);
 
@@ -1832,7 +1836,7 @@ $(document).ready(function(){
             $('#cbo_particulars').select2('val',null);
             $('#cbo_departments').select2('val',null);
             $('#cbo_payment_method').select2('val',null);
-            _cbo_check_types.select2('val',0);
+            $('#cbo_check_types').val(0).trigger("change");
             $('input[name="file_2307"]').removeAttr('val');
             $('#file_2307_value').text('No File.');
             clearFields($('#frm_journal'));
@@ -1847,6 +1851,7 @@ $(document).ready(function(){
             checkdate.attr('disabled', true);
             checkdate.val('');
 
+            reInitializeNumeric();
             showList(false);
 
         });
@@ -1928,8 +1933,13 @@ $(document).ready(function(){
             $('input,textarea').each(function(){
                 var _elem=$(this);
                 $.each(data,function(name,value){
+
                     if(_elem.attr('name')==name){
-                        _elem.val(value);
+                        if(_elem.hasClass('numeric')){
+                            _elem.val(accounting.formatNumber(value,2));
+                        }else{
+                            _elem.val(value);
+                        }  
                     }
                 });
             });
@@ -1979,7 +1989,6 @@ $(document).ready(function(){
                 reComputeTotals($('#tbl_entries'));
             });
 
-
             showList(false);
 
         });
@@ -2016,12 +2025,14 @@ $(document).ready(function(){
             $('#tbl_entries select.dept').each(function(){ $(this).select2('val',_selectedDepartment); });
        });
        
-        _cbo_paymentMethod.on("select2:select", function (e) {
+        _cbo_paymentMethod.on("change", function (e) {
             var selectchecktype = $('#cbo_check_types');
             var checkno = $('#check_no');
             var checkdate = $('#check_date');
             var i=$(this).select2('val');
-            if(i==2){ //new customer
+
+            if(i==2){ // if payment method is check
+                $('.for_check').removeClass('hidden');
                 selectchecktype.attr('required', true);
                 checkno.attr('required', true);
                 checkdate.attr('required', true);
@@ -2029,6 +2040,7 @@ $(document).ready(function(){
                 checkdate.attr('disabled', false);
                 $('#check_date').datepicker('setDate','today');
             }else{
+                $('.for_check').addClass('hidden');
                 selectchecktype.attr('required', false);
                 checkno.attr('required', false);
                 checkdate.attr('required', false);
@@ -2753,23 +2765,37 @@ $(document).ready(function(){
 
         });
 
+        parent.on('change', '.cbo_payment_method', function(){
+            // If payment method is check
+            if ($(this).val() == 2){
+                $('.for_check_billing_payment_'+_dataParentID).removeClass('hidden');
+                $('.check_date_'+_dataParentID).prop('required',true);
+                $('.check_no_'+_dataParentID).prop('required',true);
+            }else{
+                $('.for_check_billing_payment_'+_dataParentID).addClass('hidden');
+                $('.check_date_'+_dataParentID).prop('required',false);
+                $('.check_no_'+_dataParentID).prop('required',false);
+            }
+        });
 
         parent.on('click','button[name="btn_finalize_journal_review"]',function(){
 
             var _curBtn=$(this);
             if(isZero('#tbl_entries_for_review_billing_'+_dataParentID)){
             if(isBalance('#tbl_entries_for_review_billing_'+_dataParentID)){
-                finalizeJournalReview().done(function(response){
-                    showNotification(response);
-                    if(response.stat=="success"){
-                        dt.row.add(response.row_added[0]).draw();
-                        var _parentRow=_curBtn.parents('table.table_journal_entries_review').parents('tr').prev();
-                        dtReviewBilling.row(_parentRow).remove().draw();
-                    }
+                if(validateRequiredFields($('.frm_billing_payment_'+_dataParentID))){
+                    finalizeJournalReview().done(function(response){
+                        showNotification(response);
+                        if(response.stat=="success"){
+                            dt.row.add(response.row_added[0]).draw();
+                            var _parentRow=_curBtn.parents('table.table_journal_entries_review').parents('tr').prev();
+                            dtReviewBilling.row(_parentRow).remove().draw();
+                        }
 
-                }).always(function(){
-                    showSpinningProgress(_curBtn);
-                });
+                    }).always(function(){
+                        showSpinningProgress(_curBtn);
+                    });
+                }
             }else{
                 showNotification({title:"Not Balance!",stat:"error",msg:'Please make sure Debit and Credit amount are equal.'});
                 stat=false;

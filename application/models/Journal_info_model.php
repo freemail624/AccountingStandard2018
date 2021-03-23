@@ -80,7 +80,7 @@ class Journal_info_model extends CORE_Model{
         return $query->result();        
     }
 
-    function get_bank_recon($account_id,$sDate,$eDate) 
+    function get_bank_recon($account_id,$sDate,$eDate,$bank_recon_id=0) 
     {
         $sql="SELECT 
                 t.*
@@ -88,7 +88,8 @@ class Journal_info_model extends CORE_Model{
                 (SELECT 
                     ji.*,
                     IF(ji.supplier_id = 0,c.customer_name,s.supplier_name) as particular,
-                    department_name
+                    department_name,
+                    COALESCE((SELECT check_status_id FROM bank_reconciliation_checks WHERE bank_recon_id = $bank_recon_id AND journal_id = ji.journal_id),0) as check_status_id
                 FROM
                     journal_info as ji
                 LEFT JOIN suppliers AS s ON s.supplier_id = ji.supplier_id

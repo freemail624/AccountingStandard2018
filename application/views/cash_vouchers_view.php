@@ -385,9 +385,9 @@
                                         </select>    
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row for_check">
                                     <div class="col-sm-12">
-                                        <label>Check Type :</label><br />
+                                        <b class="required"> * </b> <label>Check Type :</label><br />
                                         <select id="cbo_check_type" class="form-control" name="check_type_id">
                                         <option value="0">None </option>
                                         <?php foreach($check_types as $check_type){ ?>
@@ -396,9 +396,9 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row for_check">
                                     <div class="col-sm-6">
-                                        <label>Check Date :</label><br />
+                                        <b class="required"> * </b> <label>Check Date :</label><br />
                                         <div class="input-group">
                                             <span class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
@@ -407,7 +407,7 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
-                                        <label>Check # :</label><br />
+                                        <b class="required"> * </b> <label>Check # :</label><br />
                                         <div class="input-group">
                                             <span class="input-group-addon">
                                                 <i class="fa fa-list-alt"></i>
@@ -907,32 +907,32 @@ $(document).ready(function(){
 
         _cboSuppliers=$('#cbo_suppliers').select2({
             placeholder: "Please select supplier.",
-            allowClear: true
+            allowClear: false
         });
         _cboSuppliers.select2('val',null);
 
         _cboPaymentMethod = $('#cbo_pay_type').select2({
             placeholder: "Please select Payment Type.",
-            allowClear: true
+            allowClear: false
         });
         _cboPaymentMethod.select2('val',null);
 
          _cboBranches=$('#cbo_branch').select2({
             placeholder: "Please select department.",
-            allowClear: true
+            allowClear: false
         });
         _cboBranches.select2('val',null);
 
         _cboLayouts=$('#cbo_layouts').select2({
             placeholder: "Please select check layout.",
-            allowClear: true
+            allowClear: false
         });
         _cboLayouts.select2('val',null);
         _cboCheckTypes.select2('val',null);
 
         cbo_refType=$('#cbo_refType').select2({
             placeholder: "Please select reference type.",
-            allowClear: true
+            allowClear: false
         });
 
         _cboTaxCode=$('#cbo_tax_code').select2({
@@ -1432,13 +1432,7 @@ $(document).ready(function(){
         });
 
         $("#cbo_pay_type").change(function(){
-            if($(this).val() == 2) {
-                $('#check_date').prop('required',true);
-                $('#check_no').prop('required',true);
-            } else {
-                $('#check_date').prop('required',false);
-                $('#check_no').prop('required',false);
-            }
+            initializePaymentMethod($(this).val());
         });
 
         _TableFilter.on("select2:select", function (e) {
@@ -1457,6 +1451,24 @@ $(document).ready(function(){
 
     //*********************************************************************8
     //              user defines
+
+    var initializePaymentMethod = function(id){
+        /* if payment method is check */
+
+        $('#cbo_check_type').val(0).trigger("change");
+        $('#check_date').val('');
+        $('#check_no').val('');
+
+        if(id == 2) { 
+            $('.for_check').removeClass('hidden');
+            $('#check_date').prop('required',true);
+            $('#check_no').prop('required',true);
+        } else {
+            $('.for_check').addClass('hidden');
+            $('#check_date').prop('required',false);
+            $('#check_no').prop('required',false);
+        }
+    };
 
     var createJournal=function(){
         var _data=$('#frm_journal').serializeArray();
