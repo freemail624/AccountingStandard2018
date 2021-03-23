@@ -176,13 +176,13 @@
                 <tr>
                     <td width="25%">Prepared By:</td>
                     <td width="25%">Certified Correct:</td>
-                    <td width="25%">Approved:</td>
+                    <td width="25%">Posted By:</td>
                     <td width="25%">Payment Received:</td>
                 </tr>
                 <tr>
-                    <td><?php echo $voucher_info->posted_by ?></td>
-                    <td><?php echo $voucher_info->verified_by ?></td>
-                    <td><?php echo $voucher_info->approved_by ?></td>
+                    <td><?php echo $voucher_info->posted_by; ?></td>
+                    <td><?php echo $voucher_info->verified_by; ?></td>
+                    <td><?php echo $voucher_info->approved_by; ?></td>
                     <td></td>
                 </tr>
                 <tr>
