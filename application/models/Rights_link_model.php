@@ -118,9 +118,12 @@ class Rights_link_model extends CORE_Model{
                                           (110,'15','15-7','Batch Inventory'),
                                           (111,'15','15-8','Barcode Generator'),
                                           (112,'4','4-10','Models Management'),
-                                          (113,'5','5-7','Vehicles Management'),
-                                          (114,'4','4-11','Colors Management'),
-                                          (115,'4','4-12','Vehicle Year Management')
+                                          (113,'4','4-11','Colors Management'),
+                                          (114,'4','4-12','Vehicle Year Management'),
+                                          (115,'4','4-13','Makes Management'),
+                                          (116,'5','5-7','Advisor Management'),
+                                          (117,'5','5-8','Insurance Management'),
+                                          (118,'5','5-9','Vehicles Management')
 
 
                                           ON DUPLICATE KEY UPDATE
