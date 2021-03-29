@@ -165,7 +165,7 @@
                                                                 <div class="col-lg-6">
                                                                     Department * : <br />
                                                                     <select id="cbo_department" class="form-control">
-                                                                        <option value="0">All Department</option>
+                                                                        <!-- <option value="0">All Department</option> -->
                                                                         <?php foreach($departments as $department){ ?>
                                                                             <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
                                                                         <?php } ?>
