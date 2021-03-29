@@ -34,11 +34,14 @@ class makes extends CORE_Controller
             case 'create':
                 $m_makes = $this->Makes_model;
 
+                $m_makes->begin();
+
                 $m_makes->make_code = $this->input->post('make_code', TRUE);
                 $m_makes->make_desc = $this->input->post('make_desc', TRUE);
                 $m_makes->save();
-
                 $make_id = $m_makes->last_insert_id();
+
+                $m_makes->commit();
 
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
@@ -85,10 +88,14 @@ class makes extends CORE_Controller
             case 'update':
                 $m_makes=$this->Makes_model;
 
+                $m_makes->begin();
+
                 $make_id=$this->input->post('make_id',TRUE);
                 $m_makes->make_code=$this->input->post('make_code',TRUE);
                 $m_makes->make_desc=$this->input->post('make_desc',TRUE);
                 $m_makes->modify($make_id);
+
+                $m_makes->commit();
 
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;

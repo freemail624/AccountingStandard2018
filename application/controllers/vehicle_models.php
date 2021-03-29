@@ -48,10 +48,14 @@ class vehicle_models extends CORE_Controller {
                     die(json_encode($response));
                 }
 
+                $m_models->begin();
+
                 $m_models->model_name = $model_name;
                 $m_models->save();
 
                 $model_id = $m_models->last_insert_id();
+
+                $m_models->commit();
 
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
@@ -108,8 +112,12 @@ class vehicle_models extends CORE_Controller {
                     die(json_encode($response));
                 }
 
+                $m_models->begin();
+
                 $m_models->model_name=$model_name;
                 $m_models->modify($model_id);
+
+                $m_models->commit();
 
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;

@@ -48,9 +48,8 @@ class Insurance extends CORE_Controller {
                 $m_insurance->email_address=$this->input->post('email_address',TRUE);
                 $m_insurance->posted_by_user=$this->session->user_id;
                 $m_insurance->save();
-                $m_insurance->commit();
-
                 $insurance_id=$m_insurance->last_insert_id();
+                $m_insurance->commit();
 
                 $response['title']='Success!';
                 $response['stat']='success';

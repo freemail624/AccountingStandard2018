@@ -31,6 +31,7 @@ class Products extends CORE_Controller
         $this->load->model('Company_model');
         $this->load->model('Trans_model');
         $this->load->model('Brands_model');
+        $this->load->model('Bins_model');
         $this->load->library('M_pdf');
     }
 
@@ -58,6 +59,7 @@ class Products extends CORE_Controller
         $data['accounts'] = $this->Account_title_model->get_list('is_active= TRUE AND is_deleted = FALSE');
         $data['tax_types']=$this->Tax_model->get_list(array('tax_types.is_deleted'=>FALSE));
         $data['brands']= $this->Brands_model->get_brand_list();
+        $data['bins']= $this->Bins_model->get_bin_list();
 
         $data['products']=$this->Products_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
 
@@ -87,7 +89,9 @@ class Products extends CORE_Controller
 
             case 'list':
                 $m_products = $this->Products_model;
-                $response['data']=$m_products->product_list(1,null,null,null,null,null,null,null,1);
+
+                $item_type_id=$this->input->get('item_type_id');
+                $response['data']=$m_products->product_list(1,null,null,null,null,$item_type_id,null,null,1,null,null,null,null);
                 // $response['data']=$this->response_rows(array('products.is_deleted'=>FALSE));
                 echo json_encode($response);
                 break;
@@ -169,15 +173,18 @@ class Products extends CORE_Controller
                 $m_products->size = $this->input->post('size', TRUE);
                 $m_products->supplier_id = $this->input->post('supplier_id', TRUE);
                 $m_products->category_id = $this->input->post('category_id', TRUE);
+                $m_products->bin_id = $this->input->post('bin_id', TRUE);
                 $m_products->refproduct_id = $this->input->post('refproduct_id', TRUE);
                 $m_products->item_type_id = $this->input->post('item_type_id', TRUE);
-                $m_products->income_account_id = $this->input->post('income_account_id', TRUE);
-                $m_products->expense_account_id = $this->input->post('expense_account_id', TRUE);
-                $m_products->cos_account_id = $this->input->post('cos_account_id', TRUE);
-                $m_products->sales_return_account_id = $this->input->post('sales_return_account_id', TRUE);
-                $m_products->sd_account_id = $this->input->post('sd_account_id', TRUE);
-                $m_products->po_return_account_id = $this->input->post('po_return_account_id', TRUE);
-                $m_products->pd_account_id = $this->input->post('pd_account_id', TRUE);
+
+                $m_products->income_account_id = $this->get_numeric_value($this->input->post('income_account_id', TRUE));
+                $m_products->expense_account_id = $this->get_numeric_value($this->input->post('expense_account_id', TRUE));
+                $m_products->cos_account_id = $this->get_numeric_value($this->input->post('cos_account_id', TRUE));
+                $m_products->sales_return_account_id = $this->get_numeric_value($this->input->post('sales_return_account_id', TRUE));
+                $m_products->sd_account_id = $this->get_numeric_value($this->input->post('sd_account_id', TRUE));
+                $m_products->po_return_account_id = $this->get_numeric_value($this->input->post('po_return_account_id', TRUE));
+                $m_products->pd_account_id = $this->get_numeric_value($this->input->post('pd_account_id', TRUE));
+
                 $m_products->parent_unit_id = $this->input->post('parent_unit_id', TRUE);
                 $m_products->is_bulk =$this->get_numeric_value($this->input->post('is_bulk',TRUE));
                 $m_products->child_unit_desc = $this->get_numeric_value($this->input->post('child_unit_desc', TRUE));
@@ -255,15 +262,17 @@ class Products extends CORE_Controller
                 $m_products->size = $this->input->post('size', TRUE);
                 $m_products->supplier_id = $this->input->post('supplier_id', TRUE);
                 $m_products->category_id = $this->input->post('category_id', TRUE);
+                $m_products->bin_id = $this->input->post('bin_id', TRUE);
                 $m_products->refproduct_id = $this->input->post('refproduct_id', TRUE);
                 $m_products->item_type_id = $this->input->post('item_type_id', TRUE);
-                $m_products->income_account_id = $this->input->post('income_account_id', TRUE);
-                $m_products->expense_account_id = $this->input->post('expense_account_id', TRUE);
-                $m_products->cos_account_id = $this->input->post('cos_account_id', TRUE);
-                $m_products->sales_return_account_id = $this->input->post('sales_return_account_id', TRUE);
-                $m_products->sd_account_id = $this->input->post('sd_account_id', TRUE);
-                $m_products->po_return_account_id = $this->input->post('po_return_account_id', TRUE);
-                $m_products->pd_account_id = $this->input->post('pd_account_id', TRUE);
+                $m_products->income_account_id = $this->get_numeric_value($this->input->post('income_account_id', TRUE));
+                $m_products->expense_account_id = $this->get_numeric_value($this->input->post('expense_account_id', TRUE));
+                $m_products->cos_account_id = $this->get_numeric_value($this->input->post('cos_account_id', TRUE));
+                $m_products->sales_return_account_id = $this->get_numeric_value($this->input->post('sales_return_account_id', TRUE));
+                $m_products->sd_account_id = $this->get_numeric_value($this->input->post('sd_account_id', TRUE));
+                $m_products->po_return_account_id = $this->get_numeric_value($this->input->post('po_return_account_id', TRUE));
+                $m_products->pd_account_id = $this->get_numeric_value($this->input->post('pd_account_id', TRUE));
+
                 $m_products->parent_unit_id = $this->input->post('parent_unit_id', TRUE);
                 $m_products->child_unit_desc = $this->get_numeric_value($this->input->post('child_unit_desc', TRUE));
                 $m_products->child_unit_id = $this->input->post('child_unit_id', TRUE);  
@@ -647,8 +656,8 @@ class Products extends CORE_Controller
                 WHEN products.is_parent = TRUE 
                     THEN blkunit.unit_name
                 ELSE chldunit.unit_name
-            END) as product_unit_name
-            ',
+            END) as product_unit_name,
+            bins.bin_code',
 
             array(
                 array('suppliers','suppliers.supplier_id=products.supplier_id','left'),
@@ -658,7 +667,8 @@ class Products extends CORE_Controller
                 array('account_titles','account_titles.account_id=products.income_account_id','left'),
                 array('units as punit','punit.unit_id=products.parent_unit_id','left'),
                 array('units as blkunit','blkunit.unit_id=products.bulk_unit_id','left'),
-                array('units as chldunit','chldunit.unit_id=products.parent_unit_id','left')
+                array('units as chldunit','chldunit.unit_id=products.parent_unit_id','left'),
+                array('bins','bins.bin_id=products.bin_id','left')
             )
         );
     }

@@ -6,6 +6,11 @@ class Vehicles extends CORE_Controller {
         parent::__construct('');
         $this->validate_session();
         $this->load->model('Customer_vehicles_model');
+        $this->load->model('Customers_model');
+        $this->load->model('Makes_model');
+        $this->load->model('Vehicle_year_model');
+        $this->load->model('Vehicle_model');
+        $this->load->model('Colors_model');
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
     }
@@ -19,8 +24,14 @@ class Vehicles extends CORE_Controller {
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['title'] = 'Vehicles Management';
 
-        (in_array('4-9',$this->session->user_rights)? 
-        $this->load->view('terms_view', $data)
+        $data['customers'] = $this->Customers_model->get_customer_list();
+        $data['makes'] = $this->Makes_model->get_makes_list();
+        $data['years'] = $this->Vehicle_year_model->get_vehicle_year_list();
+        $data['models'] = $this->Vehicle_model->get_models_list();
+        $data['colors'] = $this->Colors_model->get_colors_list();
+
+        (in_array('5-9',$this->session->user_rights)? 
+        $this->load->view('customer_vehicle_view', $data)
         :redirect(base_url('dashboard')));
         
     }
@@ -28,82 +39,121 @@ class Vehicles extends CORE_Controller {
     function transaction($txn = null) {
         switch ($txn) {
             case 'list':
-                $m_term = $this->Customer_vehicles_model;
-                $response['data'] = $m_term->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
+                $m_vehicle = $this->Customer_vehicles_model;
+                $customer_id = $this->input->get('customer_id');
+                $response['data'] = $m_vehicle->get_vehicles(null,$customer_id);
+                echo json_encode($response);
+                break;
+
+            case 'get-customer-vehicles':
+                $m_vehicle = $this->Customer_vehicles_model;
+                $customer_id = $this->input->post('customer_id');
+                $response['data'] = $m_vehicle->get_vehicles(null,$customer_id);
                 echo json_encode($response);
                 break;
 
             case 'create':
-                $m_term = $this->Customer_vehicles_model;
+                $m_vehicle = $this->Customer_vehicles_model;
+                $m_customers = $this->Customers_model;
 
-                $m_term->term_description = $this->input->post('term_description', TRUE);
-                $m_term->save();
+                $customer_id = $this->input->post('customer_id', TRUE);
+                $plate_no = $this->input->post('plate_no', TRUE);
 
-                $term_id = $m_term->last_insert_id();
+                $m_vehicle->begin();
+                $m_vehicle->customer_id = $customer_id;
+                $m_vehicle->make_id = $this->input->post('make_id', TRUE);
+                $m_vehicle->vehicle_year_id = $this->input->post('vehicle_year_id', TRUE);
+                $m_vehicle->model_id = $this->input->post('model_id', TRUE);
+                $m_vehicle->color_id = $this->input->post('color_id', TRUE);
+                $m_vehicle->plate_no = $plate_no;
+                $m_vehicle->chassis_no = $this->input->post('chassis_no', TRUE);
+                $m_vehicle->engine_no = $this->input->post('engine_no', TRUE);
+                $m_vehicle->save();
+                
+                $vehicle_id = $m_vehicle->last_insert_id();
+
+                $m_vehicle->commit();
+
+
+                $customer = $m_customers->get_list($customer_id,'customer_name');
 
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=1; //CRUD
-                $m_trans->trans_type_id=71; // TRANS TYPE
-                $m_trans->trans_log='Created Term: '.$this->input->post('term_description', TRUE);
+                $m_trans->trans_type_id=81; // TRANS TYPE
+                $m_trans->trans_log='Created vehicle for '.$customer[0]->customer_name.' with plate # '.$plate_no;
                 $m_trans->save();
 
                 $response['title'] = 'Success!';
                 $response['stat'] = 'success';
-                $response['msg'] = 'Term Information successfully created.';
-                $response['row_added'] = $m_term->get_terms_list($term_id);
+                $response['msg'] = 'Vehicle Information successfully created.';
+                $response['row_added'] = $m_vehicle->get_vehicles($vehicle_id);
                 echo json_encode($response);
 
                 break;
 
-            case 'delete':
-                $m_term=$this->Customer_vehicles_model;
-
-                $term_id=$this->input->post('term_id',TRUE);
-
-                $m_term->is_deleted=1;
-                if($m_term->modify($term_id)){
-                    $response['title']='Success!';
-                    $response['stat']='success';
-                    $response['msg']='Term Information successfully deleted.';
-
-                    $terms = $m_term->get_list($term_id,'term_description');
-                    $m_trans=$this->Trans_model;
-                    $m_trans->user_id=$this->session->user_id;
-                    $m_trans->set('trans_date','NOW()');
-                    $m_trans->trans_key_id=3; //CRUD
-                    $m_trans->trans_type_id=71; // TRANS TYPE
-                    $m_trans->trans_log='Deleted Term: '.$terms[0]->term_description;
-                    $m_trans->save();
-
-                    echo json_encode($response);
-                }
-
-                break;
-
             case 'update':
-                $m_term=$this->Customer_vehicles_model;
+                $m_vehicle = $this->Customer_vehicles_model;
+                $m_customers = $this->Customers_model;
 
-                $term_id=$this->input->post('term_id',TRUE);
-                $m_term->term_description=$this->input->post('term_description',TRUE);
-                $m_term->modify($term_id);
+                $vehicle_id = $this->input->post('vehicle_id', TRUE);
+                $customer_id = $this->input->post('customer_id', TRUE);
+                $plate_no = $this->input->post('plate_no', TRUE);
+
+                $m_vehicle->begin();
+                $m_vehicle->customer_id = $customer_id;
+                $m_vehicle->make_id = $this->input->post('make_id', TRUE);
+                $m_vehicle->vehicle_year_id = $this->input->post('vehicle_year_id', TRUE);
+                $m_vehicle->model_id = $this->input->post('model_id', TRUE);
+                $m_vehicle->color_id = $this->input->post('color_id', TRUE);
+                $m_vehicle->plate_no = $plate_no;
+                $m_vehicle->chassis_no = $this->input->post('chassis_no', TRUE);
+                $m_vehicle->engine_no = $this->input->post('engine_no', TRUE);
+                $m_vehicle->modify($vehicle_id);
+                $m_vehicle->commit();
+
+                $customer = $m_customers->get_list($customer_id,'customer_name');
 
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=2; //CRUD
-                $m_trans->trans_type_id=71; // TRANS TYPE
-                $m_trans->trans_log='Updated Term: '.$this->input->post('term_description',TRUE).' ID('.$term_id.')';
+                $m_trans->trans_type_id=81; // TRANS TYPE
+                $m_trans->trans_log='Updated vehivle of '.$customer[0]->customer_name.' ID('.$vehicle_id.')';
                 $m_trans->save();
 
                 $response['title']='Success!';
                 $response['stat']='success';
-                $response['msg']='Term Information successfully updated.';
-                $response['row_updated']=$m_term->get_terms_list($term_id);
+                $response['msg']='Vehicle Information successfully updated.';
+                $response['row_updated']=$m_vehicle->get_vehicles($vehicle_id);
                 echo json_encode($response);
 
                 break;
+
+            case 'delete':
+                $m_vehicle=$this->Customer_vehicles_model;
+                $vehicle_id=$this->input->post('vehicle_id',TRUE);
+
+                $m_vehicle->is_deleted=1;
+                if($m_vehicle->modify($vehicle_id)){
+                    $response['title']='Success!';
+                    $response['stat']='success';
+                    $response['msg']='Vehicle Information successfully deleted.';
+
+                    $vehicle = $m_vehicle->get_list($vehicle_id, 'plate_no');
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=3; //CRUD
+                    $m_trans->trans_type_id=81; // TRANS TYPE
+                    $m_trans->trans_log='Deleted vehicle with plate # : '.$vehicle[0]->plate_no;
+                    $m_trans->save();
+
+                    echo json_encode($response);
+                }
+
+                break;                
         }
     }
 }

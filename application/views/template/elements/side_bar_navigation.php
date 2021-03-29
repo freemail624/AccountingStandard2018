@@ -46,6 +46,7 @@
                         </li>
                         <li class="<?php echo (in_array('13',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-view-list-alt"></i><span>Services</span></a>
                             <ul class="acc-menu">
+                                <li class="<?php echo (in_array('13-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Repair_order">Repair Order</a></li>
                                 <li class="<?php echo (in_array('13-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Service_invoice">Service Invoice</a></li>
                                 <li class="<?php echo (in_array('13-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Service_journal">Service Journal</a></li>
                                 <li class="<?php echo (in_array('13-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Service_unit">Service Unit</a></li>
@@ -110,15 +111,16 @@
                                 <li  class="<?php echo (in_array('4-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="categories">Category Management</a></li>
                                 <li  class="<?php echo (in_array('4-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="departments">Department Management</a></li>
                                 <li  class="<?php echo (in_array('4-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="units">Unit Management</a></li>
-                                <li  class="<?php echo (in_array('4-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Locations">Locations Management</a></li>
+                                <li  class="<?php echo (in_array('4-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Locations">Location Management</a></li>
                                 <li  class="<?php echo (in_array('4-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Bank">Bank Management</a></li>
-                                <li  class="<?php echo (in_array('4-7',$this->session->user_rights)?'':'hidden'); ?>"><a href="Brands">Brands Management</a></li>
+                                <li  class="<?php echo (in_array('4-7',$this->session->user_rights)?'':'hidden'); ?>"><a href="Brands">Brand Management</a></li>
                                 <li  class="<?php echo (in_array('4-8',$this->session->user_rights)?'':'hidden'); ?>"><a href="Order_source">Order Source Management</a></li>
-                                <li  class="<?php echo (in_array('4-9',$this->session->user_rights)?'':'hidden'); ?>"><a href="Terms">Terms Management</a></li>
-                                <li  class="<?php echo (in_array('4-10',$this->session->user_rights)?'':'hidden'); ?>"><a href="vehicle_models">Models Management</a></li>
-                                <li  class="<?php echo (in_array('4-11',$this->session->user_rights)?'':'hidden'); ?>"><a href="colors">Colors Management</a></li>
+                                <li  class="<?php echo (in_array('4-9',$this->session->user_rights)?'':'hidden'); ?>"><a href="Terms">Term Management</a></li>
+                                <li  class="<?php echo (in_array('4-10',$this->session->user_rights)?'':'hidden'); ?>"><a href="vehicle_models">Model Management</a></li>
+                                <li  class="<?php echo (in_array('4-11',$this->session->user_rights)?'':'hidden'); ?>"><a href="colors">Color Management</a></li>
                                 <li  class="<?php echo (in_array('4-12',$this->session->user_rights)?'':'hidden'); ?>"><a href="vehicle_years">Vehicle Year Management</a></li>
-                                <li  class="<?php echo (in_array('4-13',$this->session->user_rights)?'':'hidden'); ?>"><a href="makes">Makes Management</a></li>                                
+                                <li  class="<?php echo (in_array('4-13',$this->session->user_rights)?'':'hidden'); ?>"><a href="makes">Make Management</a></li>   
+                                <li  class="<?php echo (in_array('4-14',$this->session->user_rights)?'':'hidden'); ?>"><a href="Bins">Bin Management</a></li>                             
                             </ul>
                         </li>
                         <li class="<?php echo (in_array('5',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-harddrive"></i><span>Masterfiles</span></a>

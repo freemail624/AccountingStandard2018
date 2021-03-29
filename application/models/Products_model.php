@@ -2529,7 +2529,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
 
                 FROM
 
-                (SELECT p.*,blkunit.unit_name as bulk_unit_name,c.category_name,
+                (SELECT p.*,blkunit.unit_name as bulk_unit_name,c.category_name,bins.bin_code,
                     FORMAT(p.sale_price,4) as srp, 
                     FORMAT(p.purchase_cost,4) as srp_cost,
                     'N/A' as exp_date,
@@ -2552,6 +2552,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 LEFT JOIN categories as c ON c.category_id=p.category_id
                 LEFT JOIN units as blkunit ON blkunit.unit_id = p.bulk_unit_id
                 LEFT JOIN units as chldunit ON chldunit.unit_id = p.parent_unit_id
+                LEFT JOIN bins ON bins.bin_id = p.bin_id
                 WHERE p.is_deleted = FALSE 
                 ".($product_id==NULL?"":" AND p.product_id = $product_id")."
                 ".($is_parent==NULL?"":" AND (p.is_parent = TRUE OR (p.is_parent = FALSE AND p.parent_id = 0))")."
@@ -2869,7 +2870,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 WHERE core.is_active = TRUE
                 ".($supplier_id==null?"":" AND core.supplier_id='".$supplier_id."'")."
                 ".($category_id==null?"":" AND core.category_id='".$category_id."'")."
-                ".($item_type_id==null?"":" AND core.item_type_id='".$item_type_id."'")."
+                ".($item_type_id==null || $item_type_id==0?"":" AND core.item_type_id='".$item_type_id."'")."
 
                 ORDER BY core.product_desc) as main ) as productmain
                 ".($pick_list==TRUE?" WHERE productmain.total_qty_bulk < productmain.product_warn  ":" ")."

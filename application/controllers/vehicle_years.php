@@ -48,12 +48,16 @@ class vehicle_years extends CORE_Controller {
                     $response['msg']=$vehicle_year.' is already existing. <br/>Please make sure year is unique!<br />';
                     die(json_encode($response));
                 }
+                
+                $m_vehicle_year->begin();
 
                 $m_vehicle_year->vehicle_year = $vehicle_year;
                 $m_vehicle_year->remarks = $remarks;
                 $m_vehicle_year->save();
 
                 $vehicle_year_id = $m_vehicle_year->last_insert_id();
+
+                $m_vehicle_year->commit();
 
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
@@ -113,9 +117,13 @@ class vehicle_years extends CORE_Controller {
                     die(json_encode($response));
                 }
 
+                $m_vehicle_year->begin();
+
                 $m_vehicle_year->vehicle_year=$vehicle_year;
                 $m_vehicle_year->remarks=$remarks;
                 $m_vehicle_year->modify($vehicle_year_id);
+
+                $m_vehicle_year->commit();
 
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;

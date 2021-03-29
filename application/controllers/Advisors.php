@@ -39,8 +39,9 @@ class Advisors extends CORE_Controller {
             case 'create':
                 $m_advisor=$this->Advisor_model;
 
-                $m_advisor->set('date_created','NOW()');
+                $m_advisor->begin();
 
+                $m_advisor->set('date_created','NOW()');
                 $m_advisor->advisor_code=$this->input->post('advisor_code',TRUE);
                 $m_advisor->advisor_fname=$this->input->post('advisor_fname',TRUE);
                 $m_advisor->advisor_mname=$this->input->post('advisor_mname',TRUE);
@@ -51,6 +52,8 @@ class Advisors extends CORE_Controller {
                 $m_advisor->save();
 
                 $advisor_id=$m_advisor->last_insert_id();
+
+                $m_advisor->commit();
 
                 $response['title']='Success!';
                 $response['stat']='success';
@@ -96,6 +99,8 @@ class Advisors extends CORE_Controller {
                 $m_advisor=$this->Advisor_model;
                 $advisor_id=$this->input->post('advisor_id',TRUE);
 
+                $m_advisor->begin();
+
                 $m_advisor->advisor_code=$this->input->post('advisor_code',TRUE);
                 $m_advisor->firstname=$this->input->post('firstname',TRUE);
                 $m_advisor->advisor_mname=$this->input->post('advisor_mname',TRUE);
@@ -103,6 +108,8 @@ class Advisors extends CORE_Controller {
                 $m_advisor->advisor_contact_no=$this->input->post('advisor_contact_no',TRUE);
                 $m_advisor->department_id=$this->input->post('department_id',TRUE);
                 $m_advisor->modify($advisor_id);
+
+                $m_advisor->commit();
 
                 $response['title']='Success!';
                 $response['stat']='success';

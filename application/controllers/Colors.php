@@ -47,10 +47,14 @@ class Colors extends CORE_Controller {
                     die(json_encode($response));
                 }
 
+                $m_colors->begin();
+
                 $m_colors->color = $color;
                 $m_colors->save();
 
                 $color_id = $m_colors->last_insert_id();
+
+                $m_colors->commit();
 
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;

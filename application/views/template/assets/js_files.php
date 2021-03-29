@@ -34,7 +34,11 @@
 <script type="text/javascript" src="assets/plugins/barcode/download.js"></script>
 <script type="text/javascript" src="assets/plugins/barcode/printThis.js"></script>
 
-
+<!-- Date range use moment.js same as full calendar plugin -->
+<script src="assets/plugins/datapicker/moment.min.js"></script> 
+<!-- Data picker -->
+<script src="assets/plugins/datapicker/bootstrap-datepicker.js"></script>
+<script src="assets/plugins/datapicker/datetimepicker.min.js"></script>
 
 <!-- <script>    _______________   PACE Pace loader -> this query will only show loader on page load but not on ajax calls
     paceOptions = {
