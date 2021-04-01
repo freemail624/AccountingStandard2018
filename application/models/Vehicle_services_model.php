@@ -8,5 +8,12 @@ class Vehicle_services_model extends CORE_Model {
         parent::__construct();
     }
 
+    function get_vehicle_services()
+    {
+        $query = $this->db->query("SELECT * FROM vehicle_services ORDER BY vehicle_service_id ASC");
+        return $query->result();
+    }
+
+
 }
 ?>

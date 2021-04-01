@@ -170,47 +170,8 @@ class Repair_order extends CORE_Controller
 
             ////****************************************items/products of selected Items***********************************************
             case 'items': //items on the specific PO, loads when edit button is called
-                $m_items=$this->Sales_invoice_item_model;
-                $response['data']=$m_items->get_list(
-                    array('sales_invoice_id'=>$id_filter),
-                    array(
-                        'sales_invoice_items.*',
-                        'products.product_code',
-                        'products.product_desc',
-                        'products.sale_price',
-                        'products.is_bulk',
-                        'products.is_basyo',
-                        'products.child_unit_id',
-                        'products.parent_unit_id',
-                        'products.child_unit_desc',
-                        'products.discounted_price',
-                        'products.dealer_price',
-                        'products.distributor_price',
-                        'products.public_price',
-                        '(CASE
-                            WHEN products.is_parent = TRUE 
-                                THEN products.bulk_unit_id
-                            ELSE products.parent_unit_id
-                        END) as product_unit_id',
-                        '(CASE
-                            WHEN products.is_parent = TRUE 
-                                THEN blkunit.unit_name
-                            ELSE chldunit.unit_name
-                        END) as product_unit_name',                        
-                        '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.parent_unit_id) as parent_unit_name',
-                        '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name',
-                        '(SELECT count(*) FROM account_integration WHERE basyo_product_id = products.product_id) as is_product_basyo'
-                    ),
-                    array(
-                        array('products','products.product_id=sales_invoice_items.product_id','left'),
-                        array('units','units.unit_id=sales_invoice_items.unit_id','left'),
-                        array('units blkunit','blkunit.unit_id=products.bulk_unit_id','left'),
-                        array('units chldunit','chldunit.unit_id=products.parent_unit_id','left'),                        
-                    ),
-                    'sales_invoice_items.sales_item_id ASC'
-                );
-
-
+                $m_order_item=$this->Repair_order_item_model;
+                $response['data']=$m_order_item->get_repair_order_items($id_filter);
                 echo json_encode($response);
                 break;
 
@@ -282,7 +243,7 @@ class Repair_order extends CORE_Controller
                 $m_order->set('document_date','NOW()');
                 $m_order->pms_desc = $this->input->post('pms_desc', TRUE);
                 $m_order->bpr_desc = $this->input->post('bpr_desc', TRUE);
-                $m_order->gb_desc = $this->input->post('gb_desc', TRUE);
+                $m_order->gj_desc = $this->input->post('gj_desc', TRUE);
                 $m_order->date_time_promised = date('Y-m-d h:i:s',strtotime($this->input->post('date_time_promised', TRUE)));
                 $m_order->delivery_date = date('Y-m-d',strtotime($this->input->post('delivery_date', TRUE)));
                 $m_order->selling_dealer=$this->input->post('selling_dealer',TRUE);
@@ -386,226 +347,119 @@ class Repair_order extends CORE_Controller
 
             ////***************************************update Items************************************************
             case 'update':
-                $m_invoice=$this->Sales_invoice_model;
-                $m_loading=$this->Loading_model;
-                $m_loading_items=$this->Loading_item_model;
+                $m_order=$this->Repair_order_model;
+                $m_order_item=$this->Repair_order_item_model;
 
-                $sales_invoice_id=$this->input->post('sales_invoice_id',TRUE);
-                $sales_inv_no=$this->input->post('sales_inv_no',TRUE);
+                $repair_order_id=$this->input->post('repair_order_id',TRUE);
 
-                $customer_id = $this->input->post('customer',true);
-                $date_due = date('Y-m-d',strtotime($this->input->post('date_due',TRUE)));
-                $data=$m_invoice->checkCustomerInvoice($customer_id,$date_due,$sales_invoice_id);
-                
-                // if(count($data) > 0){
-                //     $response['title'] = 'Error!';
-                //     $response['stat'] = 'error';
-                //     $response['msg'] = 'Invoice is already existing for '.$data[0]->customer_name.' with due date of '.$data[0]->date_due.' in invoice # : '.$data[0]->sales_inv_no;
-                //     echo json_encode($response);
-                //     exit;
-                // }
+                $m_order->begin();
 
-                //if  valid invoice no.
-                //if($this->validate_record($sales_inv_no)){
+                /* Customers Info */
 
-                    //get sales order id base on SO number
-                    $m_so=$this->Sales_order_model;
-                    $arr_so_info=$m_so->get_list(
-                        array('sales_order.so_no'=>$this->input->post('so_no',TRUE)),
-                        'sales_order.sales_order_id'
-                    );
-                    $sales_order_id=(count($arr_so_info)>0?$arr_so_info[0]->sales_order_id:0);
+                $m_order->customer_id= $this->get_numeric_value($this->input->post('customer_id',TRUE));
+                $m_order->address = $this->input->post('address',TRUE);
+                $m_order->address = $this->input->post('address',TRUE);
+                $m_order->mobile_no = $this->input->post('mobile_no',TRUE);
+                $m_order->tel_no_home = $this->input->post('tel_no_home',TRUE);
+                $m_order->tel_no_bus = $this->input->post('tel_no_bus',TRUE);
+                $m_order->representative_name = $this->input->post('representative_name',TRUE);
+                $m_order->representative_no = $this->input->post('representative_no',TRUE);
 
-                    $m_invoice->begin();
+                /* Vehicle Information */
 
-                    $m_invoice->for_dispatching=$this->get_numeric_value($this->input->post('for_dispatching',TRUE));
-                    //$m_invoice->sales_inv_no=$sales_inv_no;
-                    $m_invoice->order_source_id=$this->input->post('order_source_id',TRUE);
-                    $m_invoice->customer_type_id=$this->input->post('customer_type_id',TRUE);
-                    $m_invoice->customer_id=$this->input->post('customer',TRUE);
-                    $m_invoice->department_id=$this->input->post('department',TRUE);
-                    $m_invoice->agent_id=$this->input->post('agent_id',TRUE);
-                    $m_invoice->remarks=$this->input->post('remarks',TRUE);
-                    //$m_invoice->terms=$this->input->post('terms',TRUE);
-                    $m_invoice->customer_id=$this->input->post('customer',TRUE);
-                    $m_invoice->salesperson_id=$this->input->post('salesperson_id',TRUE);
-                    $m_invoice->sales_order_id=$sales_order_id;
-                    $m_invoice->date_due=date('Y-m-d',strtotime($this->input->post('date_due',TRUE)));
-                    $m_invoice->date_invoice=date('Y-m-d',strtotime($this->input->post('date_invoice',TRUE)));
-                    $m_invoice->contact_person=$this->input->post('contact_person',TRUE);
-                    $m_invoice->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
-                    $m_invoice->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
-                    $m_invoice->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
-                    $m_invoice->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
-                    $m_invoice->total_tax_amount=$this->get_numeric_value($this->input->post('summary_tax_amount',TRUE));
-                    $m_invoice->total_after_tax=$this->get_numeric_value($this->input->post('summary_after_tax',TRUE));
-                    $m_invoice->total_after_discount=$this->get_numeric_value($this->input->post('total_after_discount',TRUE));
-                    $m_invoice->address=$this->input->post('address',TRUE);
-                    $m_invoice->modified_by_user=$this->session->user_id;
-                    $m_invoice->modify($sales_invoice_id);
+                $m_order->vehicle_id = $this->get_numeric_value($this->input->post('vehicle_id', TRUE));
+                $m_order->year_make_id = $this->input->post('year_make_id', TRUE);
+                $m_order->model_name = $this->input->post('model_name', TRUE);
+                $m_order->color_name = $this->input->post('color_name', TRUE);
+                $m_order->chassis_no = $this->input->post('chassis_no', TRUE);
+                $m_order->engine_no = $this->input->post('engine_no', TRUE);
+                $m_order->km_reading = $this->get_numeric_value($this->input->post('km_reading', TRUE));
+                $m_order->next_svc_date = date('Y-m-d',strtotime($this->input->post('next_svc_date', TRUE)));
+                $m_order->next_svc_km = $this->get_numeric_value($this->input->post('next_svc_km', TRUE));
 
+                /* Repair Order Information */
 
-                    $m_order_item=$this->Sales_invoice_item_model;
+                $m_order->pms_desc = $this->input->post('pms_desc', TRUE);
+                $m_order->bpr_desc = $this->input->post('bpr_desc', TRUE);
+                $m_order->gj_desc = $this->input->post('gj_desc', TRUE);
+                $m_order->date_time_promised = date('Y-m-d h:i:s',strtotime($this->input->post('date_time_promised', TRUE)));
+                $m_order->delivery_date = date('Y-m-d',strtotime($this->input->post('delivery_date', TRUE)));
+                $m_order->selling_dealer=$this->input->post('selling_dealer',TRUE);
+                $m_order->advisor_id=$this->input->post('advisor_id',TRUE);
+                $m_order->advisor_remarks=$this->input->post('advisor_remarks',TRUE);
+                $m_order->customer_remarks=$this->input->post('customer_remarks',TRUE);
 
-                    $m_order_item->delete_via_fk($sales_invoice_id); //delete previous items then insert those new
+                $m_order->modify($repair_order_id);
 
-                    $prod_id=$this->input->post('product_id',TRUE);
-                    $order_price=$this->input->post('order_price',TRUE);
-                    $order_discount=$this->input->post('order_discount',TRUE);
-                    $order_line_total_discount=$this->input->post('order_line_total_discount',TRUE);
-                    $order_tax_rate=$this->input->post('order_tax_rate',TRUE);
-                    $order_qty=$this->input->post('order_qty',TRUE);
-                    $order_gross=$this->input->post('order_gross',TRUE);
-                    $order_line_total_price=$this->input->post('order_line_total_price',TRUE);
-                    $order_line_total_after_global=$this->input->post('order_line_total_after_global',TRUE);
-                    $order_tax_amount=$this->input->post('order_tax_amount',TRUE);
-                    $order_non_tax_amount=$this->input->post('order_non_tax_amount',TRUE);
-                    $batch_no=$this->input->post('batch_no',TRUE);
-                    $exp_date=$this->input->post('exp_date',TRUE);
-                    $orig_so_price=$this->input->post('orig_so_price',TRUE);
-                    $cost_upon_invoice=$this->input->post('cost_upon_invoice',TRUE);
-                    $is_parent=$this->input->post('is_parent',TRUE);
+                $m_order_item->delete_via_fk($repair_order_id); //delete previous items then insert those new
 
-                    $m_products=$this->Products_model;
+                $prod_id=$this->input->post('product_id',TRUE);
+                $order_qty=$this->input->post('order_qty',TRUE);
+                $order_price=$this->input->post('order_price',TRUE);
+                $order_gross=$this->input->post('order_gross',TRUE);
+                $order_discount=$this->input->post('order_discount',TRUE);
+                $order_line_total_discount=$this->input->post('order_line_total_discount',TRUE);
+                $order_tax_rate=$this->input->post('order_tax_rate',TRUE);
+                $order_line_total_price=$this->input->post('order_line_total_price',TRUE);
+                $order_tax_amount=$this->input->post('order_tax_amount',TRUE);
+                $order_non_tax_amount=$this->input->post('order_non_tax_amount',TRUE);
+                $order_line_total_after_global=$this->input->post('order_line_total_after_global',TRUE);
+                $exp_date=$this->input->post('exp_date',TRUE);
+                $batch_no=$this->input->post('batch_no',TRUE);
+                $cost_upon_invoice=$this->input->post('cost_upon_invoice',TRUE);
+                $vehicle_service_id=$this->input->post('vehicle_service_id',TRUE);
+                $is_parent=$this->input->post('is_parent',TRUE);
 
-                    for($i=0;$i<count($prod_id);$i++){
+                $m_products=$this->Products_model;
 
-                        $m_order_item->sales_invoice_id=$sales_invoice_id;
-                        $m_order_item->product_id=$this->get_numeric_value($prod_id[$i]);
-                        $m_order_item->order_line_total_after_global=$this->get_numeric_value($order_line_total_after_global[$i]);
-                        $m_order_item->order_price=$this->get_numeric_value($order_price[$i]);
-                        $m_order_item->order_discount=$this->get_numeric_value($order_discount[$i]);
-                        $m_order_item->order_line_total_discount=$this->get_numeric_value($order_line_total_discount[$i]);
-                        $m_order_item->order_tax_rate=$this->get_numeric_value($order_tax_rate[$i]);
-                        $m_order_item->order_qty=$this->get_numeric_value($order_qty[$i]);
-                        $m_order_item->order_gross=$this->get_numeric_value($order_gross[$i]);
-                        $m_order_item->order_line_total_price=$this->get_numeric_value($order_line_total_price[$i]);
-                        $m_order_item->order_tax_amount=$this->get_numeric_value($order_tax_amount[$i]);
-                        $m_order_item->order_non_tax_amount=$this->get_numeric_value($order_non_tax_amount[$i]);
-                        $m_order_item->orig_so_price=$this->get_numeric_value($orig_so_price[$i]);
-                        $m_order_item->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
-                        $m_order_item->batch_no=$batch_no[$i];
-                        $m_order_item->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
+                for($i=0;$i<count($prod_id);$i++){
 
-                        //unit id retrieval is change, because of TRIGGER restriction
-                        $m_order_item->is_parent=$this->get_numeric_value($is_parent[$i]);
-                        if($is_parent[$i] == '1'){
-                                                $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
-                                                $m_order_item->unit_id=$unit_id[0]->bulk_unit_id;
-                        }else{
-                                                 $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
-                                                $m_order_item->unit_id=$unit_id[0]->parent_unit_id;
-                        }   
-                        //$m_order_item->set('unit_id','(SELECT unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
+                    $m_order_item->repair_order_id=$repair_order_id;
+                    $m_order_item->product_id=$this->get_numeric_value($prod_id[$i]);
+                    $m_order_item->order_line_total_after_global=$this->get_numeric_value($order_line_total_after_global[$i]);
+                    $m_order_item->order_qty=$this->get_numeric_value($order_qty[$i]);
+                    $m_order_item->order_price=$this->get_numeric_value($order_price[$i]);
+                    $m_order_item->order_gross=$this->get_numeric_value($order_gross[$i]);
+                    $m_order_item->order_discount=$this->get_numeric_value($order_discount[$i]);
+                    $m_order_item->order_line_total_discount=$this->get_numeric_value($order_line_total_discount[$i]);
+                    $m_order_item->order_tax_rate=$this->get_numeric_value($order_tax_rate[$i]);
+                    $m_order_item->order_line_total_price=$this->get_numeric_value($order_line_total_price[$i]);
+                    $m_order_item->order_tax_amount=$this->get_numeric_value($order_tax_amount[$i]);
+                    $m_order_item->order_non_tax_amount=$this->get_numeric_value($order_non_tax_amount[$i]);
+                    $m_order_item->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
+                    $m_order_item->batch_no=$batch_no[$i];
+                    $m_order_item->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
+                    $m_order_item->vehicle_service_id=$this->get_numeric_value($vehicle_service_id[$i]);
 
-                        //$on_hand=$m_products->get_product_current_qty($batch_no[$i], $prod_id[$i], date('Y-m-d', strtotime($exp_date[$i])));
+                    //unit id retrieval is change, because of TRIGGER restriction
+                    $m_order_item->is_parent=$this->get_numeric_value($is_parent[$i]);
 
-                        $m_order_item->save();
-                        $m_products->on_hand=$m_products->get_product_qty($this->get_numeric_value($prod_id[$i]));
-                        $m_products->modify($this->get_numeric_value($prod_id[$i]));
-                    }
+                    if($is_parent[$i] == '1'){
 
-                    $checkInvoice = $m_loading->check_invoice_loading($sales_invoice_id);
-                    if(count($checkInvoice)>0){
-                        $loading = $m_invoice->get_open_sales_invoice_list(null,null,null,$sales_invoice_id);
+                        $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
+                        $m_order_item->unit_id=$unit_id[0]->bulk_unit_id;
 
-                        if(count($loading)>0){
-                            $m_loading_items->total_after_discount = $this->get_numeric_value($loading[0]->total_after_discount);
-                            $m_loading_items->order_qty = $this->get_numeric_value($loading[0]->order_qty);
-                            $m_loading_items->address = $loading[0]->address;
-                            $m_loading_items->modify($checkInvoice[0]->loading_item_id);
-                        }
-                    }
+                    }else{
 
-                    //update status of so
-                    $m_so->order_status_id=$this->get_so_status($sales_order_id);
-                    $m_so->modify($sales_order_id);
+                        $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
+                        $m_order_item->unit_id=$unit_id[0]->parent_unit_id;
 
+                    }   
 
-                    //******************************************************************************************
-                    // IMPORTANT!!!
-                    //update receivable amount field of customer table
-                    $m_customers=$this->Customers_model;
-                    $m_customers->recalculate_customer_receivable($this->input->post('customer',TRUE));
-                    //******************************************************************************************
-                    $sal_info=$m_invoice->get_list($sales_invoice_id,'sales_inv_no');
-                    $m_trans=$this->Trans_model;
-                    $m_trans->user_id=$this->session->user_id;
-                    $m_trans->set('trans_date','NOW()');
-                    $m_trans->trans_key_id=2; //CRUD
-                    $m_trans->trans_type_id=17; // TRANS TYPE
-                    $m_trans->trans_log='Updated Sales Invoice No: '.$sal_info[0]->sales_inv_no;
-                    $m_trans->save();
+                    $m_order_item->save();
+                    $m_products->on_hand=$m_products->get_product_qty($this->get_numeric_value($prod_id[$i]));
+                    $m_products->modify($this->get_numeric_value($prod_id[$i]));
+                }
 
-                    $m_invoice->commit();
+                $m_order->commit();
 
-
-
-                    if($m_invoice->status()===TRUE){
-                        $response['title'] = 'Success!';
-                        $response['stat'] = 'success';
-                        $response['msg'] = 'Sales invoice successfully updated.';
-                        $response['row_updated']=$this->response_rows($sales_invoice_id);
-
-                        $response['is_auto_print']=$this->input->post('is_auto_print',TRUE);
-                        // $response['is_auto_print']=0;
-
-                        $m_sales_invoice=$this->Sales_invoice_model;
-                        $m_sales_invoice_items=$this->Sales_invoice_item_model;
-                        $m_company_info=$this->Company_model;
-
-                        $company_info=$m_company_info->get_list();
-                        $data['company_info']=$company_info[0];
-
-                        $info=$m_sales_invoice->get_list(
-                            $sales_invoice_id,
-                            array(
-                                'sales_invoice.sales_invoice_id',
-                                'sales_invoice.sales_inv_no',
-                                'sales_invoice.remarks', 
-                                'sales_invoice.date_created',
-                                'sales_invoice.customer_id',
-                                'sales_invoice.inv_type',
-                                'sales_invoice.*',
-                                'DATE_FORMAT(sales_invoice.date_invoice,"%m/%d/%Y") as date_invoice',
-                                'DATE_FORMAT(sales_invoice.date_due,"%m/%d/%Y") as date_due',
-                                'departments.department_id',
-                                'departments.department_name',
-                                'customers.customer_name',
-                                'sales_invoice.salesperson_id',
-                                'sales_invoice.address',
-                                'sales_order.so_no',
-                                'order_source.order_source_name',
-                                'CONCAT(salesperson.firstname," ",salesperson.lastname) AS salesperson_name'
-                            ),
-                            array(
-                                array('departments','departments.department_id=sales_invoice.department_id','left'),
-                                array('salesperson','salesperson.salesperson_id=sales_invoice.salesperson_id','left'),
-                                array('customers','customers.customer_id=sales_invoice.customer_id','left'),
-                                array('sales_order','sales_order.sales_order_id=sales_invoice.sales_order_id','left'),
-                                array('order_source','order_source.order_source_id=sales_invoice.order_source_id','left'),
-                            )
-                        );
-
-                        $data['sales_info']=$info[0];
-                        $data['sales_invoice_items']=$m_sales_invoice_items->get_list(
-                            array('sales_invoice_items.sales_invoice_id'=>$sales_invoice_id),
-                            'sales_invoice_items.*,products.product_desc,products.size,units.unit_name,products.product_code',
-                            array(
-                                array('products','products.product_id=sales_invoice_items.product_id','left'),
-                                array('units','units.unit_id=sales_invoice_items.unit_id','left')
-                            )
-                        );
-
-                        $response['file'] = $this->load->view('template/sales_invoice_direct_content',$data,TRUE);
-                        echo json_encode($response);
-                    }
-
-
-
-
-               // }
-
+                if($m_order->status()===TRUE){
+                    $response['title'] = 'Success!';
+                    $response['stat'] = 'success';
+                    $response['msg'] = 'Repair Order successfully updated.';
+                    $response['row_updated']=$m_order->get_repair_order($repair_order_id);
+                    echo json_encode($response);
+                }
 
                 break;
 

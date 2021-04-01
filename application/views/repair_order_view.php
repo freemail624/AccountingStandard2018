@@ -136,7 +136,7 @@
             border: 1px #ff0000 solid;
         }
 
-        .tab-content {
+        .tab-content-view {
             border-radius: 0 2px 2px 2px;
             border: 1px solid #e0e0e0;
             padding: 16px;
@@ -150,7 +150,7 @@
         }
 
         .tab-primary.tab-container > .nav-tabs > li.active > a {
-            border-top-color: white;
+            /*border-top-color: white;*/
         }
 
         .not-active{
@@ -256,7 +256,7 @@
 <div id="div_sales_invoice_fields" style="display: none;">
     <div class="panel panel-default">
         <div class="pull-right">
-            <h4 class="sales_invoice_title" style="margin-top: 0%;"></h4>
+            <h4 class="repair_order_title" style="margin-top: 0%;"></h4>
             <div class="btn btn-green" style="margin-left: 10px;">
                 <strong><a id="btn_receive_so" href="#" style="text-decoration: none; color: white;">Create from Sales Order</a></strong>
             </div>
@@ -523,7 +523,7 @@
                 <div class="tab-container tab-top tab-primary">
                     <ul class="nav nav-tabs">
                         <li class="active">
-                            <a href="#pms" data-toggle="tab" data-vehicle-service="1" class="nav_button" data-active-color="#2780e3" style="font-family: tahoma;background: #2780e3; color: white;border-top-left-radius: 1em;border-top-right-radius: 1em;"> Periodic Maintenance (PMS)
+                            <a href="#pms" id="btn_pms" data-toggle="tab" data-vehicle-service="1" class="nav_button" data-active-color="#2780e3" style="font-family: tahoma;background: #2780e3; color: white;border-top-left-radius: 1em;border-top-right-radius: 1em;"> Periodic Maintenance (PMS)
                             <span style="background: white; color: #2780e3; border-radius: 50%;padding: 1px 5px;font-size: 8pt;" id="pms_count">0</span> </a>
                         </li>
                         <li>
@@ -537,7 +537,7 @@
                     </ul>
 
                 </div>
-                <div class="tab-content">
+                <div class="tab-content tab-content-view">
                     <div class="tab-pane active" id="pms">
                         <button class="refreshproducts btn-success btn pull-right" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;border-radius: 50%;padding: 5px;z-index: 99999!important;"><i class="fa fa-refresh"></i></button>
                         <br/>
@@ -641,7 +641,7 @@
                         <br/>                    
                         <form id="frm_items_gb">
                         <label>Description :</label> 
-                        <textarea class="form-control" name="gb_desc" placeholder="General Job Description"></textarea>
+                        <textarea class="form-control" name="gj_desc" placeholder="General Job Description"></textarea>
                         <label class="control-label" style="font-family: Tahoma;"><strong>Enter PLU or Search Item :</strong></label>
                         <div id="custom-templates">
                             <input class="typeahead typeaheadsearch" type="text" placeholder="Enter PLU or Search Item">
@@ -1211,6 +1211,68 @@
         </div>
     </div>
 </div>
+<div id="modal_new_advisor" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#2ecc71;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 id="advisor_title" class="modal-title" style="color: #ecf0f1;"><span id="modal_mode"></span> Advisor Information </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form id="frm_advisor" role="form">
+                        <div class="">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="col-xs-12 col-md-4 control-label "><strong><font color="red">*</font> Code :</strong></label>
+                                    <div class="col-xs-12 col-md-8">
+                                        <input type="text" name="advisor_code" class="form-control" placeholder="Code" data-error-msg="Code is required!" required>
+                                    </div>
+                                </div>
+                            </div><br><br>
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="col-xs-12 col-md-4 control-label "><strong><font color="red">*</font> First name :</strong></label>
+                                    <div class="col-xs-12 col-md-8">
+                                        <input type="text" name="advisor_fname" class="form-control" placeholder="Firstname" data-error-msg="Firstname is required!" required>
+                                    </div>
+                                </div>
+                            </div><br><br>
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="col-xs-12 col-md-4 control-label "><strong>&nbsp;&nbsp;Middle name :</strong></label>
+                                    <div class="col-xs-12 col-md-8">
+                                        <input type="text" name="advisor_mname" class="form-control" placeholder="Middlename">
+                                    </div>
+                                </div>
+                            </div><br><br>
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="col-xs-12 col-md-4 control-label "><strong>Last name :</strong></label>
+                                    <div class="col-xs-12 col-md-8">
+                                        <input type="text" name="advisor_lname" class="form-control" placeholder="Last name">
+                                    </div>
+                                </div>
+                            </div><br><br>
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="col-xs-12 col-md-4 control-label "><strong>Contact Number :</strong></label>
+                                    <div class="col-xs-12 col-md-8">
+                                        <input type="text" name="advisor_contact_no" id="contact_no" class="form-control" placeholder="Contact Number">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn_save_advisor" class="btn btn-primary" name="btn_save"><span></span>Save</button>
+                <button id="btn_cancel_advisor" class="btn btn-default">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div id="modal_search_list" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog" style="width: 90%;">
@@ -1288,7 +1350,7 @@ $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboDepartments; var _cboCustomers; var dt_so; var products; var changetxn;
     var _cboCustomerType; var prodstat;
     var _cboCustomerTypeCreate; var _cboSource; var _cboVehicles; var _cboAdvisors;
-    var _line_unit; var global_item_desc = ''; var _selectRowTblItems; var _cboMakes; var _cboYears; var _cboModels; var _cboColors; var _vehicleService=1;
+    var _line_unit; var global_item_desc = ''; var _selectRowTblItems; var _cboMakes; var _cboYears; var _cboModels; var _cboColors; var _vehicleService=1; var _checkVehicle=true;
 
     var oTableItems={
         qty : 'td:eq(0)',
@@ -1712,6 +1774,29 @@ $(document).ready(function(){
 
         var detailRows = [];
 
+
+        var closeAllDetailControls = function(){
+
+            var table_row = $('#tbl_repair_order > tbody > tr');
+
+            table_row.each(function() {
+
+                var tr = $(this).closest('tr');
+                var row = dt.row( tr );
+                var idx = $.inArray( tr.attr('id'), detailRows );
+
+                if ( row.child.isShown() ) {
+                    tr.removeClass( 'details' );
+                    row.child.hide();
+
+                    // Remove from the 'open' array
+                    detailRows.splice( idx, 1 );
+                }
+
+            });
+
+        };
+
         $('#tbl_repair_order tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
             var row = dt.row( tr );
@@ -1732,7 +1817,7 @@ $(document).ready(function(){
                 $.ajax({
                     "dataType":"html",
                     "type":"POST",
-                    "url":"Templates/layout/sales-invoice/"+ d.sales_invoice_id +"?type=dropdown",
+                    "url":"Templates/layout/repair-order/"+ d.repair_order_id,
                     "beforeSend" : function(){
                         row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
                     }
@@ -1821,6 +1906,7 @@ $(document).ready(function(){
                 _cboVehicles.select2('val', null);
                 
             }).always(function(){
+
                 if(open){
                     $('#cbo_vehicles').select2('open');
                 }
@@ -1849,15 +1935,23 @@ $(document).ready(function(){
             }else{
                 var obj_customers=$('#cbo_customers').find('option[value="' + i + '"]');
 
-                $('.customer_name').html(obj_customers.text());
-                $('input[name="customer_no"]').val(obj_customers.data('customer-no'));
-                $('textarea[name="address"]').val(obj_customers.data('address'));
-                $('input[name="mobile_no"]').val(obj_customers.data('contact-no'));
-                $('input[name="tel_no_home"]').val(obj_customers.data('tel-no-home'));
-                $('input[name="tel_no_bus"]').val(obj_customers.data('tel-no-bus'));
+                if(_checkVehicle == true){
+
+                    $('.customer_name').html(obj_customers.text());
+                    $('input[name="customer_no"]').val(obj_customers.data('customer-no'));
+                    $('textarea[name="address"]').val(obj_customers.data('address'));
+                    $('input[name="mobile_no"]').val(obj_customers.data('contact-no'));
+                    $('input[name="tel_no_home"]').val(obj_customers.data('tel-no-home'));
+                    $('input[name="tel_no_bus"]').val(obj_customers.data('tel-no-bus'));
+
+                }
+
             }
 
-            getCustomerVehicles(i,_modelVehicleOpen);
+            if(_checkVehicle == true){
+                getCustomerVehicles(i,_modelVehicleOpen);
+            }
+
         });   
 
         _cboVehicles.on("change", function (e) {
@@ -1877,14 +1971,29 @@ $(document).ready(function(){
             }else{
                 var obj_vehicle=$('#cbo_vehicles').find('option[value="' + i + '"]');
 
-                $('input[name="year_make_id"]').val(obj_vehicle.data('vehicle-year-make'));
-                $('input[name="model_name"]').val(obj_vehicle.data('model-name'));
-                $('input[name="color_name"]').val(obj_vehicle.data('color-name'));
-                $('input[name="chassis_no"]').val(obj_vehicle.data('chassis-no'));
-                $('input[name="engine_no"]').val(obj_vehicle.data('engine-no'));
-
+                if(_checkVehicle == true){
+                    $('input[name="year_make_id"]').val(obj_vehicle.data('vehicle-year-make'));
+                    $('input[name="model_name"]').val(obj_vehicle.data('model-name'));
+                    $('input[name="color_name"]').val(obj_vehicle.data('color-name'));
+                    $('input[name="chassis_no"]').val(obj_vehicle.data('chassis-no'));
+                    $('input[name="engine_no"]').val(obj_vehicle.data('engine-no'));
+                }
             }
         });         
+
+        /* Make Modal */
+        _cboAdvisors.on("select2:select", function (e) {
+            var i=$(this).select2('val');
+            if(i==0){ 
+                _cboAdvisors.select2('val',null);
+                clearFields($('#frm_advisor'));
+                $('#modal_new_advisor').modal('show');
+            }
+        });
+
+        $('#btn_cancel_advisor').on('click', function(){
+            $('#modal_new_advisor').modal('hide');
+        });
 
         /* Make Modal */
         _cboMakes.on("select2:select", function (e) {
@@ -1993,6 +2102,20 @@ $(document).ready(function(){
             }
         });
 
+        $('#btn_save_advisor').click(function(){
+            if(validateRequiredFields($('#frm_advisor'))){
+                createAdvisor().done(function(response){
+                    var _advisor=response.row_added[0];
+
+                    $('#cbo_advisors').append('<option value="'+ _advisor.advisor_id +'">'+_advisor.fullname +'</option>');
+                    _cboAdvisors.select2('val',_advisor.advisor_id);
+
+                    $('#modal_new_advisor').modal('hide');
+                    clearFields($('#frm_advisor'));
+                });
+            }
+        }); 
+
         $('#btn_save_make').click(function(){
             if(validateRequiredFields($('#frm_makes'))){
                 createMake().done(function(response){
@@ -2081,7 +2204,7 @@ $(document).ready(function(){
             $('#span_repair_order_no').html('RAXXXX');
             showList(false);
             $('#cbo_customers').select2('open');
-            $('#tbl_items > tbody').html('');
+            $('#tbl_items > tbody, #tbl_items_bpr > tbody, #tbl_items_gj > tbody').html('');
             $('#cbo_customers').select2('val', null);
             $('#cbo_vehicles').select2('val', null);
             $('#cbo_advisors').select2('val', null);
@@ -2089,19 +2212,14 @@ $(document).ready(function(){
             $('.date-picker').datepicker('setDate', 'today');
             $('.datetime-picker').val(getCurrentDatetime());
 
-            $('#td_discount').html('0.00');
-            $('#td_total_before_tax').html('0.00');
-            $('#td_tax').html('0.00');
-            $('#td_total_after_tax').html('0.00');
-            $('#txt_overall_discount').val('0.00'); 
-            $('#txt_overall_discount_amount').val('0.00'); 
-            $('#repair_order_grand_total').val('0.00'); 
-
-
-
-            $('input[id="checkcheck"]').prop('checked', false);
-            $('#for_dispatching').val('0');
-            $('textarea[name="remarks"]').val($('textarea[name="remarks"]').data('default'));
+            // $('#td_discount').html('0.00');
+            // $('#td_total_before_tax').html('0.00');
+            // $('#td_tax').html('0.00');
+            // $('#td_total_after_tax').html('0.00');
+            // $('#txt_overall_discount').val('0.00'); 
+            // $('#txt_overall_discount_amount').val('0.00'); 
+            // $('#repair_order_grand_total').val('0.00'); 
+            // $('input[id="checkcheck"]').prop('checked', false);
 
             getproduct().done(function(data){
                 products.clear();
@@ -2114,10 +2232,12 @@ $(document).ready(function(){
             }).always(function(){ 
                 $('.typeaheadsearch').val('');
             });
+                    
+            $('#btn_pms').trigger('click');
+            countTblItems(1);
+            countTblItems(2);
+            countTblItems(3);
 
-
-            /*$('#cbo_prodType').select2('val', 3);
-            $('#cboLookupPrice').select2('val', 1);*/
             reComputeTotal(); //this is to make sure, display summary are recomputed as 0
         });
         $('#tbl_so_list > tbody').on('click','button[name="accept_so"]',function(){
@@ -2243,13 +2363,7 @@ $(document).ready(function(){
         $('#tbl_repair_order tbody').on('click','button[name="edit_info"]',function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
-            _selectedID=data.sales_invoice_id;
-            _is_journal_posted=data.is_journal_posted;
-
-            if(_is_journal_posted > 0){
-                showNotification({title:"<b style='color:white;'> Error!</b>",stat:"error",msg:"Cannot Edit: Invoice is already Posted in Sales Journal."});
-                return;
-            }
+            _selectedID=data.repair_order_id;
 
             getproduct().done(function(data){
                 products.clear();
@@ -2264,73 +2378,77 @@ $(document).ready(function(){
             });
 
             _txnMode="edit";
-            $('.sales_invoice_title').html('Edit Sales Invoice');                
+            $('.repair_order_title').html('Edit Repair Order');                
 
-            if(data.for_dispatching == 1){
-                $('input[id="checkcheck"]').prop('checked', true);
-                $('#for_dispatching').val('1');
-            }else{
-                $('input[id="checkcheck"]').prop('checked', false);
-                $('#for_dispatching').val('0');
-            }
-            
             $('input,textarea').each(function(){
                 var _elem=$(this);
                 $.each(data,function(name,value){
+
                     if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
-                        _elem.val(value);
+                        if(_elem.hasClass('numeric')){
+                            _elem.val(accounting.formatNumber(value,2));
+                        }else{
+                            _elem.val(value);
+                        }
                     }
                 });
             });
             
-            $('#cbo_order_source').select2('val',data.order_source_id);
-            $('#cbo_customer_type').select2('val',data.customer_type_id);
-            $('#cbo_departments').select2('val',data.department_id);
-            $('#cbo_department').select2('val',data.department_id);
+            $('input[name="next_svc_date"]').val(data.next_svc_date_edit);
+            $('input[name="document_date"]').val(data.document_date_edit);
+            $('input[name="delivery_date"]').val(data.delivery_date_edit);
+            $('input[name="date_time_promised"]').val(data.date_time_promised_edit);
+
+            _checkVehicle = false;
+
             $('#cbo_customers').select2('val',data.customer_id);
-            $('#cbo_salesperson').select2('val',data.salesperson_id);
+            $('#cbo_vehicles').select2('val',data.vehicle_id);
+            $('#cbo_advisors').select2('val',data.advisor_id);
+
+            $('#btn_pms').trigger('click');
 
             $.ajax({
-                url : 'Sales_invoice/transaction/items/'+data.sales_invoice_id,
+                url : 'Repair_order/transaction/items/'+data.repair_order_id,
                 type : "GET",
                 cache : false,
                 dataType : 'json',
                 processData : false,
                 contentType : false,
                 beforeSend : function(){
-                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="6"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
                 },
                 success : function(response){
                     var rows=response.data;
+
                     $('#tbl_items > tbody').html('');
-                     a=0;
+                    $('#tbl_items_bpr > tbody').html('');
+                    $('#tbl_items_gj > tbody').html('');
+
+                    a=0;
                     $.each(rows,function(i,value){
 
-                    _customer_type_ = _cboCustomerType.val();
-                    var temp_sale_price=0.00;
+                    var temp_sale_price=value.sale_price;
 
-                        if(_customer_type_ == '' || _customer_type_ == 0){
-                            temp_sale_price=value.sale_price;
-                        }else if(_customer_type_ == '1' ){ // DISCOUNTED CUSTOMER TYPE
-                            temp_sale_price=value.discounted_price;
-                        }else if(_customer_type_ == '2' ){ // DEALER CUSTOMER TYPE
-                            temp_sale_price=value.dealer_price;
-                        }else if(_customer_type_ == '3' ){ // DISTRIBUTOR CUSTOMER TYPE
-                            temp_sale_price=value.distributor_price;
-                        }else if(_customer_type_ == '4' ){ // PUBLIC CUSTOMER TYPE
-                            temp_sale_price=value.public_price;
-                        }else{
-                            temp_sale_price=value.sale_price;
+                    var retail_price;
+                        if(value.is_bulk == 1){
+                            retail_price = getFloat(temp_sale_price) / getFloat(value.child_unit_desc);
+
+                        }else if (value.is_bulk == 0){
+                            retail_price = 0;
                         }
-                        var retail_price;
-                            if(value.is_bulk == 1){
-                                retail_price = getFloat(temp_sale_price) / getFloat(value.child_unit_desc);
 
-                            }else if (value.is_bulk == 0){
-                                retail_price = 0;
-                            }
+                        var tbl_selected;
 
-                        $('#tbl_items > tbody').append(newRowItem({
+                        if(value.vehicle_service_id == 1){
+                            tbl_selected = $('#tbl_items > tbody');
+                        }else if(value.vehicle_service_id == 2){
+                            tbl_selected = $('#tbl_items_bpr > tbody');
+                        }else if(value.vehicle_service_id == 3){
+                            tbl_selected = $('#tbl_items_gj > tbody');
+                        }
+
+
+                        tbl_selected.append(newRowItem({
                             order_qty : value.order_qty,
                             product_code : value.product_code,
                             unit_id : value.unit_id,
@@ -2361,9 +2479,11 @@ $(document).ready(function(){
                             is_product_basyo:value.is_product_basyo,
                             exp_date : value.exp_date,
                             batch_no : value.batch_no,
-                            cost_upon_invoice : value.cost_upon_invoice
+                            cost_upon_invoice : value.cost_upon_invoice,
+                            vehicle_service_id : value.vehicle_service_id
 
                         }));
+
                         changetxn = 'inactive';
                           _line_unit=$('.line_unit'+a).select2({
                             minimumResultsForSearch: -1
@@ -2371,25 +2491,31 @@ $(document).ready(function(){
                             _line_unit.select2('val',value.unit_id);
                             a++;
                     });
+
                     changetxn = 'active';
                     reComputeTotal();
+                    countTblItems(1);
+                    countTblItems(2);
+                    countTblItems(3);
                     reInitializeNumeric();
                 }
             });
-            $('#span_repair_order_no').html(data.sales_inv_no);
-            showList(false);          
-            
+
+            $('#span_repair_order_no').html(data.repair_order_no);
+            _checkVehicle = true;
+            showList(false);  
         });
+
         $('#tbl_repair_order tbody').on('click','button[name="remove_info"]',function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
-            _selectedID=data.sales_invoice_id;
+            _selectedID=data.repair_order_id;
 
             _is_journal_posted=data.is_journal_posted;
 
                 _selectRowObj=$(this).closest('tr');
                 var data=dt.row(_selectRowObj).data();
-                _selectedID=data.sales_invoice_id;
+                _selectedID=data.repair_order_id;
                 $.ajax({
                     "url":"Adjustments/transaction/check-invoice-for-returns?id="+_selectedID,
                 type : "GET",
@@ -2534,6 +2660,7 @@ $(document).ready(function(){
                         if(response.stat=="success"){
                             dt.row.add(response.row_added[0]).draw();
                             clearFields($('#frm_repair_order'));
+                            closeAllDetailControls();
                             showList(true);
                         }
                     }).always(function(){
@@ -2545,6 +2672,7 @@ $(document).ready(function(){
                         if(response.stat=="success"){
                             dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
                             clearFields($('#frm_repair_order'));
+                            closeAllDetailControls();
                             showList(true);
                         }
                     }).always(function(){
@@ -2725,6 +2853,17 @@ $(document).ready(function(){
         });
     };
 
+    var createAdvisor=function(){
+        var _data=$('#frm_advisor').serializeArray();
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Advisors/transaction/create",
+            "data":_data
+        });
+    };
+
     var createMake=function(){
         var _data=$('#frm_makes').serializeArray();
 
@@ -2817,7 +2956,7 @@ $(document).ready(function(){
         // _data.push({name : "summary_tax_amount", value : tbl_summary.find(oTableDetails.order_tax_amount).text()});
         // _data.push({name : "summary_after_tax", value : tbl_summary.find(oTableDetails.after_tax).text()});
 
-        _data.push({name : "sales_invoice_id" ,value : _selectedID});
+        _data.push({name : "repair_order_id" ,value : _selectedID});
 
         return $.ajax({
             "dataType":"json",
@@ -2833,7 +2972,7 @@ $(document).ready(function(){
             "dataType":"json",
             "type":"POST",
             "url":"Sales_invoice/transaction/check-invoice-loading",
-            "data":{sales_invoice_id : _selectedID}
+            "data":{repair_order_id : _selectedID}
         });
     };
 
@@ -2851,7 +2990,7 @@ $(document).ready(function(){
             "dataType":"json",
             "type":"POST",
             "url":"Sales_invoice/transaction/delete",
-            "data":{sales_invoice_id : _selectedID}
+            "data":{repair_order_id : _selectedID}
         });
     };
     var showList=function(b){

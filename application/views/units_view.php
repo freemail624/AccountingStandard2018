@@ -189,13 +189,13 @@
                         <div class="modal-body">
                             <form id="frm_unit" role="form" class="form-horizontal row-border">
                                 <div class="form-group">
-                                    <label class="col-md-3 col-md-offset-1 control-label"><strong><B> * </B> Unit Code :</strong></label>
+                                    <label class="col-md-3 col-md-offset-1 control-label"><strong> Unit Code :</strong></label>
                                     <div class="col-md-7">
                                         <div class="input-group">
                                             <span class="input-group-addon">
                                                 <i class="fa fa-tag"></i>
                                             </span>
-                                            <input type="text" name="unit_code" class="form-control" placeholder="Unit Code" data-error-msg="Unit Code is required!" required>
+                                            <input type="text" name="unit_code" class="form-control" placeholder="Unit Code" data-error-msg="Unit Code is required!">
                                         </div>
                                     </div>
                                 </div>
@@ -212,9 +212,9 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-md-3 col-md-offset-1 control-label"><strong><B> * </B> Unit Description :</strong></label>
+                                    <label class="col-md-3 col-md-offset-1 control-label"><strong> Unit Description :</strong></label>
                                     <div class="col-md-7">
-                                        <textarea name="unit_desc" class="form-control" data-error-msg="Unit Description is required!" placeholder="Description" required></textarea>
+                                        <textarea name="unit_desc" class="form-control" data-error-msg="Unit Description is required!" placeholder="Description" ></textarea>
                                     </div>
                                 </div><br/>
                             </form>
@@ -415,7 +415,7 @@ $(document).ready(function(){
         var stat=true;
 
         $('div.form-group').removeClass('has-error');
-        $('input[required],textarea','#frm_unit').each(function(){
+        $('input[required],textarea[required]','#frm_unit').each(function(){
             if($(this).val()==""){
                 showNotification({title:"Error!",stat:"error",msg:$(this).data('error-msg')});
                 $(this).closest('div.form-group').addClass('has-error');

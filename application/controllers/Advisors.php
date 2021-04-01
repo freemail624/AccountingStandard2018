@@ -102,7 +102,7 @@ class Advisors extends CORE_Controller {
                 $m_advisor->begin();
 
                 $m_advisor->advisor_code=$this->input->post('advisor_code',TRUE);
-                $m_advisor->firstname=$this->input->post('firstname',TRUE);
+                $m_advisor->advisor_fname=$this->input->post('advisor_fname',TRUE);
                 $m_advisor->advisor_mname=$this->input->post('advisor_mname',TRUE);
                 $m_advisor->advisor_lname=$this->input->post('advisor_lname',TRUE);
                 $m_advisor->advisor_contact_no=$this->input->post('advisor_contact_no',TRUE);

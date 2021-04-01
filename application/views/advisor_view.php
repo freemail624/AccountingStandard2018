@@ -172,7 +172,7 @@
                                             </div><br><br>
                                             <div class="col-xs-12">
                                                 <div class="form-group">
-                                                    <label class="col-xs-12 col-md-4 control-label "><strong><font color="red">*</font> Last name :</strong></label>
+                                                    <label class="col-xs-12 col-md-4 control-label "><strong> Last name :</strong></label>
                                                     <div class="col-xs-12 col-md-8">
                                                         <input type="text" name="advisor_lname" class="form-control" placeholder="Last name">
                                                     </div>

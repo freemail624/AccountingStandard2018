@@ -763,12 +763,12 @@
                         <div class="modal-body">
                             <form id="frm_unit_group">
                                 <div class="form-group">
-                                    <label class="boldlabel"><b class="required">*</b> Unit Code :</label>
+                                    <label class="boldlabel"> Unit Code :</label>
                                     <div class="input-group">
                                                 <span class="input-group-addon">
                                                     <i class="fa fa-envelope-o"></i>
                                                 </span>
-                                        <input type="text" name="unit_code" id="unit_code" class="form-control" placeholder="Unit Code" data-error-msg="Unit code is required." required>
+                                        <input type="text" name="unit_code" id="unit_code" class="form-control" placeholder="Unit Code" data-error-msg="Unit code is required.">
                                     </div>
                                 </div>
                                 <div class="form-group">

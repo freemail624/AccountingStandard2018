@@ -109,6 +109,10 @@ class Templates extends CORE_Controller {
         $this->load->model('Travel_order_model');
         $this->load->model('Incident_report_model');
 
+        $this->load->model('Repair_order_model');
+        $this->load->model('Repair_order_item_model');
+        $this->load->model('Vehicle_services_model');
+
         $this->load->library('M_pdf');
         $this->load->library('excel');
         $this->load->model('Email_settings_model');
@@ -1074,6 +1078,59 @@ class Templates extends CORE_Controller {
                 break;
 
             //****************************************************
+            case 'repair-order':
+                
+                $m_order = $this->Repair_order_model;
+                $m_order_items = $this->Repair_order_item_model;
+                $m_services = $this->Vehicle_services_model;
+                $m_company_info=$this->Company_model;
+                $m_category=$this->Categories_model;
+
+                $type=$this->input->get('type',TRUE);
+                $repair_order_id = $filter_value;
+
+                $data['company_info']=$m_company_info->get_list()[0];
+                $data['info']=$m_order->get_repair_order($repair_order_id)[0];
+
+                $customer_id = $data['info']->customer_id;
+                $vehicle_id = $data['info']->vehicle_id;
+
+                $data['histories']=$m_order->get_customer_history($customer_id,$vehicle_id,$repair_order_id);
+                $data['items']=$m_order_items->get_repair_order_items($repair_order_id);
+                $data['services']=$m_services->get_vehicle_services();
+                $data['categories']=$m_order_items->get_category_items($repair_order_id);
+
+                //show only inside grid with menu button
+                if($type=='fullview'||$type==null){
+                    echo $this->load->view('template/repair_order_content_dropdown',$data,TRUE);
+                    // echo $this->load->view('template/repair_order_content_menus',$data,TRUE);
+                }
+
+                //preview on browser
+                if($type=='preview'){
+                    $file_name=$data['info']->repair_order_no;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                    $content=$this->load->view('template/repair_order_content',$data,TRUE); //load the template
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output();
+                }
+
+                //download pdf
+                if($type=='pdf'){
+                    $file_name=$data['info']->repair_order_no;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                    $content=$this->load->view('template/repair_order_content',$data,TRUE); //load the template
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output($pdfFilePath,"D");
+
+                }
+
+                break;
+
             case 'sales-invoice': //delivery invoice
                 $m_sales_invoice=$this->Sales_invoice_model;
                 $m_sales_invoice_items=$this->Sales_invoice_item_model;
