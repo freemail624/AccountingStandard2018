@@ -1440,7 +1440,14 @@ $(document).ready(function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.sales_order_id;
-            $('#modal_confirmation').modal('show');
+
+            if(getFloat(data.order_status_id)>1){
+                showNotification({"title":"Error!","stat":"error","msg":"Sorry, you cannot edit sales order that is already been received."});
+                return;
+            }else{
+                $('#modal_confirmation').modal('show');                
+            }
+
         });
         //track every changes on numeric fields
 

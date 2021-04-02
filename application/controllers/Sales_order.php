@@ -420,14 +420,6 @@ class Sales_order extends CORE_Controller
                 $m_sales_order=$this->Sales_order_model;
                 $sales_order_id=$this->input->post('sales_order_id',TRUE);
 
-                if(count($m_sales_order->get_list(array('sales_order.sales_order_id'=>$sales_order_id,'sales_order.is_deleted'=>FALSE,'sales_order.is_active'=>TRUE)))>0){
-                    $response['title']='Error!';
-                    $response['stat']='error';
-                    $response['msg']='Sorry, you cannot delete sales order that is already been received.';
-                    echo json_encode($response);
-                    exit;
-                }
-
                 //mark Items as deleted
                 $m_sales_order->set('date_deleted','NOW()'); //treat NOW() as function and not string
                 $m_sales_order->deleted_by_user=$this->session->user_id;//user that deleted the record
