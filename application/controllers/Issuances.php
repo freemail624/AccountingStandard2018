@@ -10,10 +10,11 @@ class Issuances extends CORE_Controller
         $this->load->model('Departments_model');
         $this->load->model('Tax_types_model');
         $this->load->model('Products_model');
-        //$this->load->model('Customers_model');
+        $this->load->model('Customers_model');
         $this->load->model('Refproduct_model');
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
+        $this->load->model('Repair_order_model');
 
     }
     public function index() {
@@ -59,7 +60,7 @@ class Issuances extends CORE_Controller
         //         array('tax_types','tax_types.tax_type_id=products.tax_type_id','left')
         //     )
         // );
-        $data['title'] = 'Issuance';
+        $data['title'] = 'Parts Requisition & Issuance Slip';
         (in_array('15-2',$this->session->user_rights)? 
         $this->load->view('issuance_view', $data)
         :redirect(base_url('dashboard')));
@@ -125,17 +126,21 @@ class Issuances extends CORE_Controller
             //***************************************create new Items************************************************
             case 'create':
                 $m_issuance=$this->Issuance_model;
-                if(count($m_issuance->get_list(array('slip_no'=>$this->input->post('slip_no',TRUE))))>0){
-                    $response['title'] = 'Invalid!';
-                    $response['stat'] = 'error';
-                    $response['msg'] = 'Slip No. already exists.';
-                    echo json_encode($response);
-                    exit;
-                }
+                // if(count($m_issuance->get_list(array('slip_no'=>$this->input->post('slip_no',TRUE))))>0){
+                //     $response['title'] = 'Invalid!';
+                //     $response['stat'] = 'error';
+                //     $response['msg'] = 'Slip No. already exists.';
+                //     echo json_encode($response);
+                //     exit;
+                // }
+
+                $repair_order_id = $this->input->post('repair_order_id',TRUE);
+
                 $m_issuance->begin();
                 $m_issuance->set('date_created','NOW()'); //treat NOW() as function and not string
                 $m_issuance->issued_department_id=$this->input->post('department',TRUE);
                 //$m_issuance->issued_to_person=$this->input->post('issued_to_person',TRUE);
+                $m_issuance->repair_order_id=$repair_order_id;
                 $m_issuance->remarks=$this->input->post('remarks',TRUE);
                 $m_issuance->date_issued=date('Y-m-d',strtotime($this->input->post('date_issued',TRUE)));
                 //$m_issuance->customer_id=$this->input->post('customer_id',TRUE);
@@ -147,7 +152,9 @@ class Issuances extends CORE_Controller
                 $m_issuance->total_after_tax=$this->get_numeric_value($this->input->post('summary_after_tax',TRUE));
                 $m_issuance->posted_by_user=$this->session->user_id;
                 $m_issuance->save();
+
                 $issuance_id=$m_issuance->last_insert_id();
+
                 $m_issue_items=$this->Issuance_item_model;
                 $prod_id=$this->input->post('product_id',TRUE);
                 $issue_qty=$this->input->post('issue_qty',TRUE);
@@ -160,8 +167,11 @@ class Issuances extends CORE_Controller
                 $issue_non_tax_amount=$this->input->post('issue_non_tax_amount',TRUE);
                 $batch_no=$this->input->post('batch_no',TRUE);
                 $exp_date=$this->input->post('exp_date',TRUE);
+                $cost_upon_invoice=$this->input->post('cost_upon_invoice',TRUE);
                 $is_parent=$this->input->post('is_parent',TRUE);
+
                 $m_products=$this->Products_model;
+
                 for($i=0;$i<count($prod_id);$i++){
                     $m_issue_items->issuance_id=$issuance_id;
                     $m_issue_items->product_id=$this->get_numeric_value($prod_id[$i]);
@@ -173,28 +183,25 @@ class Issuances extends CORE_Controller
                     $m_issue_items->issue_line_total_price=$this->get_numeric_value($issue_line_total_price[$i]);
                     $m_issue_items->issue_tax_amount=$this->get_numeric_value($issue_tax_amount[$i]);
                     $m_issue_items->issue_non_tax_amount=$this->get_numeric_value($issue_non_tax_amount[$i]);
+                    $m_issue_items->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
                     // $m_issue_items->batch_no=$batch_no[$i];
                     // $m_issue_items->exp_date=date('Y-m-d',strtotime($exp_date[$i]));
+
                     //unit id retrieval is change, because of TRIGGER restriction
+                    $m_issue_items->is_parent=$this->get_numeric_value($is_parent[$i]);
 
-                        $m_issue_items->is_parent=$this->get_numeric_value($is_parent[$i]);
-                        if($is_parent[$i] == '1'){
-                            $m_issue_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
-                        }else{
-                             $m_issue_items->set('unit_id','(SELECT child_unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
-                        } 
+                    if($is_parent[$i] == '1'){
 
+                        $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
+                        $m_issue_items->unit_id=$unit_id[0]->bulk_unit_id;
 
-                    //$on_hand=$m_products->get_product_current_qty($batch_no[$i], $prod_id[$i], date('Y-m-d', strtotime($exp_date[$i])));
-                    /*if ($this->get_numeric_value($issue_qty[$i]) > $this->get_numeric_value($on_hand)) {
-                        $prod_description=$unit_id[0]->product_desc;
-                        $response['title'] = 'Insufficient!';
-                        $response['stat'] = 'error';
-                        $response['msg'] = 'The item <b><u>'.$prod_description.'</u></b> is insufficient. Please make sure Quantiy is not greater than <b><u>'.number_format($on_hand,2).'</u></b>. <br /><br /> Item : <b>'.$prod_description.'</b><br /> Batch # : <b>'.$batch_no[$i].'</b><br />Expiration : <b>'.$exp_date[$i].'</b><br />On Hand : <b>'.number_format($on_hand,2).'</b><br />';
-                        $response['current_row_index'] = $i;
-                        die(json_encode($response));
-                    }*/
-                    //$m_issue_items->set('unit_id','(SELECT unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
+                    }else{
+
+                        $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
+                        $m_issue_items->unit_id=$unit_id[0]->parent_unit_id;
+
+                    }   
+
                     $m_issue_items->save();
                     $m_products->on_hand=$m_products->get_product_qty($this->get_numeric_value($prod_id[$i]));
                     $m_products->modify($this->get_numeric_value($prod_id[$i]));
@@ -203,12 +210,16 @@ class Issuances extends CORE_Controller
                 $m_issuance->slip_no='SLP-'.date('Ymd').'-'.$issuance_id;
                 $m_issuance->modify($issuance_id);
 
+                $m_order = $this->Repair_order_model;
+                $m_order->issued_status_id = TRUE;
+                $m_order->modify($repair_order_id);
+
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=1; //CRUD
                 $m_trans->trans_type_id=14; // TRANS TYPE
-                $m_trans->trans_log='Created Issuance No: SLP-'.date('Ymd').'-'.$issuance_id;
+                $m_trans->trans_log='Created Parts Requisition & Issuance Slip: SLP-'.date('Ymd').'-'.$issuance_id;
                 $m_trans->save();
 
                 $m_issuance->commit();
@@ -220,14 +231,18 @@ class Issuances extends CORE_Controller
                     echo json_encode($response);
                 }
                 break;
+
             ////***************************************update Items************************************************
             case 'update':
                 $m_issuance=$this->Issuance_model;
                 $issuance_id=$this->input->post('issuance_id',TRUE);
+                $repair_order_id=$this->input->post('repair_order_id',TRUE);
+
                 $m_issuance->begin();
                 $m_issuance->issued_department_id=$this->input->post('department',TRUE);
                 //$m_issuance->issued_to_person=$this->input->post('issued_to_person',TRUE);
                 $m_issuance->remarks=$this->input->post('remarks',TRUE);
+                $m_issuance->repair_order_id=$repair_order_id;
                 $m_issuance->date_issued=date('Y-m-d',strtotime($this->input->post('date_issued',TRUE)));
                 //$m_issuance->customer_id=$this->input->post('customer_id',TRUE);
                 //$m_issuance->address=$this->input->post('address',TRUE);
@@ -255,8 +270,11 @@ class Issuances extends CORE_Controller
                 $issue_non_tax_amount=$this->input->post('issue_non_tax_amount',TRUE);
                 $batch_no=$this->input->post('batch_no',TRUE);
                 $exp_date=$this->input->post('exp_date',TRUE);
+                $cost_upon_invoice=$this->input->post('cost_upon_invoice',TRUE);
                 $is_parent=$this->input->post('is_parent',TRUE);
+
                 $m_products=$this->Products_model;
+
                 for($i=0;$i<count($prod_id);$i++){
                     $m_issue_items->issuance_id=$issuance_id;
                     $m_issue_items->product_id=$this->get_numeric_value($prod_id[$i]);
@@ -268,37 +286,43 @@ class Issuances extends CORE_Controller
                     $m_issue_items->issue_line_total_price=$this->get_numeric_value($issue_line_total_price[$i]);
                     $m_issue_items->issue_tax_amount=$this->get_numeric_value($issue_tax_amount[$i]);
                     $m_issue_items->issue_non_tax_amount=$this->get_numeric_value($issue_non_tax_amount[$i]);
+                    $m_issue_items->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
                     // $m_issue_items->batch_no=$batch_no[$i];
                     // $m_issue_items->exp_date=date('Y-m-d',strtotime($exp_date[$i]));
-                    //unit id retrieval is change, because of TRIGGER restriction
-                        $m_issue_items->is_parent=$this->get_numeric_value($is_parent[$i]);
-                        if($is_parent[$i] == '1'){
-                            $m_issue_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
-                        }else{
-                             $m_issue_items->set('unit_id','(SELECT child_unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
-                        } 
-                    //$on_hand=$m_products->get_product_current_qty($batch_no[$i], $prod_id[$i], date('Y-m-d', strtotime($exp_date[$i])));
 
-                    //$m_issue_items->set('unit_id','(SELECT unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
+                    //unit id retrieval is change, because of TRIGGER restriction
+                    $m_issue_items->is_parent=$this->get_numeric_value($is_parent[$i]);
+
+                    if($is_parent[$i] == '1'){
+
+                        $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
+                        $m_issue_items->unit_id=$unit_id[0]->bulk_unit_id;
+
+                    }else{
+
+                        $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
+                        $m_issue_items->unit_id=$unit_id[0]->parent_unit_id;
+
+                    }   
                     $m_issue_items->save();
 
-                    // $m_products->on_hand=$m_products->get_product_qty($this->get_numeric_value($prod_id[$i]));
-                    // $m_products->modify($this->get_numeric_value($prod_id[$i]));
                 }
 
                 for($i=0;$i<count($tmp_prod_id);$i++) {
                     $m_products->on_hand=$m_products->get_product_qty($this->get_numeric_value($tmp_prod_id[$i]->product_id));
                     $m_products->modify($this->get_numeric_value($tmp_prod_id[$i]->product_id));
                 }
+
                 $iss_info=$m_issuance->get_list($issuance_id,'slip_no');
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=2; //CRUD
                 $m_trans->trans_type_id=14; // TRANS TYPE
-                $m_trans->trans_log='Updated Issuance No: '.$iss_info[0]->slip_no;
+                $m_trans->trans_log='Updated Parts Requisition & Issuance Slip: '.$iss_info[0]->slip_no;
                 $m_trans->save();
                 $m_issuance->commit();
+
                 if($m_issuance->status()===TRUE){
                     $response['title'] = 'Success!';
                     $response['stat'] = 'success';
@@ -311,13 +335,23 @@ class Issuances extends CORE_Controller
             case 'delete':
                 $m_issuance=$this->Issuance_model;
                 $m_issuance_items=$this->Issuance_item_model;
+                $m_order=$this->Repair_order_model;
                 $m_products=$this->Products_model;
                 $issuance_id=$this->input->post('issuance_id',TRUE);
+
                 //mark Items as deleted
                 $m_issuance->set('date_deleted','NOW()'); //treat NOW() as function and not string, set deletion date
                 $m_issuance->deleted_by_user=$this->session->user_id;
                 $m_issuance->is_deleted=1;
                 $m_issuance->modify($issuance_id);
+
+                // Update Repair Order Issuance Status
+                $issuance = $m_issuance->get_list($issuance_id);
+                $repair_order_id = $issuance[0]->repair_order_id;
+                
+                $m_order->issued_status_id = FALSE;
+                $m_order->modify($repair_order_id);
+
                 //update product on_hand after issuance is deleted...
                 $products=$m_issuance_items->get_list(
                     'issuance_id='.$issuance_id,
@@ -356,7 +390,11 @@ class Issuances extends CORE_Controller
                 'issuance_info.remarks',
                 'issuance_info.issued_to_person',
                 'issuance_info.is_journal_posted',
-                //'customers.customer_name',
+                'customers.customer_no',
+                'customers.customer_name',
+                'issuance_info.repair_order_id',
+                'repair_order.repair_order_no',
+                'customer_vehicles.plate_no',
                 'issuance_info.date_created',
                 'DATE_FORMAT(issuance_info.date_issued,"%m/%d/%Y") as date_issued',
                 'issuance_info.terms',
@@ -364,8 +402,10 @@ class Issuances extends CORE_Controller
                 'departments.department_name'
             ),
             array(
-                array('departments','departments.department_id=issuance_info.issued_department_id','left')
-                //array('customers','customers.customer_id=issuance_info.issued_to_person','left')
+                array('departments','departments.department_id=issuance_info.issued_department_id','left'),
+                array('repair_order','repair_order.repair_order_id=issuance_info.repair_order_id','left'),
+                array('customers','customers.customer_id=repair_order.customer_id','left'),
+                array('customer_vehicles','customer_vehicles.vehicle_id=repair_order.vehicle_id','left')
             ),
             'issuance_info.issuance_id DESC'
         );

@@ -110,48 +110,10 @@ class Repair_order extends CORE_Controller
     function transaction($txn = null,$id_filter=null,$id_filter2=null) {
         switch ($txn){
 
-            case 'close-invoice':  
-            $m_sales=$this->Sales_invoice_model;
-            $sales_invoice_id =$this->input->post('sales_invoice_id');
-            $m_sales->closing_reason = $this->input->post('closing_reason');
-            $m_sales->closed_by_user = $this->session->user_id;
-            $m_sales->is_closed = TRUE;
-            $m_sales->modify($sales_invoice_id);
-
-
-            $sal_inv_info=$m_sales->get_list($sales_invoice_id,'sales_inv_no');
-            $m_trans=$this->Trans_model;
-            $m_trans->user_id=$this->session->user_id;
-            $m_trans->set('trans_date','NOW()');
-            $m_trans->trans_key_id=11; //CRUD
-            $m_trans->trans_type_id=17; // TRANS TYPE
-            $m_trans->trans_log='Closed/ Did Not Post Sales Invoice No: '.$sal_inv_info[0]->sales_inv_no.' from Accounts Receivable Pending with reason: '.$this->input->post('closing_reason');
-            $m_trans->save();
-            $response['title'] = 'Success!';
-            $response['stat'] = 'success';
-            $response['msg'] = 'Sales Invoice successfully closed.';
-            echo json_encode($response);    
-
-            break;
-
-            case 'current-invoice-no':
-                $user_id=$this->session->user_id;
-                $invoice_no=$this->get_current_invoice_no($user_id);
-                $response['invoice_no']=$invoice_no;
-                echo json_encode($response);
-                break;
-
             case 'current-items':
                 $type=$this->input->get('type');
                 $description=$this->input->get('description');
                 echo json_encode($this->Products_model->get_current_item_list($description,$type));
-                break;
-
-            case 'check-invoice-loading':
-                $m_loading=$this->Loading_model;
-                $sales_invoice_id = $this->input->post('sales_invoice_id',TRUE);
-                $response['invoice']=$m_loading->check_invoice_loading($sales_invoice_id);
-                echo json_encode($response);
                 break;
 
             case 'list':  //this returns JSON of Issuance to be rendered on Datatable
@@ -175,16 +137,28 @@ class Repair_order extends CORE_Controller
                 echo json_encode($response);
                 break;
 
+            case 'item-issuance':
+                $m_order_item=$this->Repair_order_item_model;
+                $response['data']=$m_order_item->get_repair_order_inv_items($id_filter);
+                echo json_encode($response);
+                break;
+
+
             //***********************************************************************************************************
-            case 'open':  //this returns SI
-                $m_sales_invoice=$this->Sales_invoice_model;
-                $sdate = $this->input->get('start_date'); 
-                $edate = $this->input->get('end_date'); 
+            case 'open': 
+                $m_order=$this->Repair_order_model;
+                // $sdate = $this->input->get('start_date'); 
+                // $edate = $this->input->get('end_date'); 
 
-                $start_date = date('Y-m-d',strtotime($sdate));
-                $end_date = date('Y-m-d',strtotime($edate));
+                // $start_date = date('Y-m-d',strtotime($sdate));
+                // $end_date = date('Y-m-d',strtotime($edate));
+                $response['data']= $m_order->get_repair_order_issuance();
+                echo json_encode($response);
+                break;
 
-                $response['data']= $m_sales_invoice->get_open_sales_invoice_list_date($start_date,$end_date);
+            case 'ro-open':
+                $m_order=$this->Repair_order_model;
+                $response['data']= $m_order->get_repair_order_invoice();
                 echo json_encode($response);
                 break;
 
@@ -490,65 +464,50 @@ class Repair_order extends CORE_Controller
                 $response['msg']='Record successfully deleted.';
                 echo json_encode($response);*/
 
-                $m_invoice=$this->Sales_invoice_model;
-                $m_order_item=$this->Sales_invoice_item_model;
-                $m_products=$this->Products_model;
-                $m_sales_invoice_count = $this->Customers_model;
-                $sales_invoice_id=$this->input->post('sales_invoice_id',TRUE);
+                $m_order=$this->Repair_order_model;
 
-                if(count($m_sales_invoice_count->get_sales_invoice_count($sales_invoice_id))>0)
-                {
-                    $response['title'] = 'Cannot delete!';
-                    $response['stat'] = 'notice';
-                    $response['msg'] = 'This Invoice still has an active transaction in Collection Entry.';
-
-                    echo json_encode($response);
-                    exit;
-                }
-
+                $repair_order_id=$this->input->post('repair_order_id',TRUE);
 
                 //mark Items as deleted
-                $m_invoice->set('date_deleted','NOW()'); //treat NOW() as function and not string
-                $m_invoice->deleted_by_user=$this->session->user_id;//user that deleted the record
-                $m_invoice->is_deleted=1;//mark as deleted
-                $m_invoice->modify($sales_invoice_id);
+                $m_order->is_deleted=1;//mark as deleted
+                $m_order->modify($repair_order_id);
 
                 //update product on_hand after invoice is deleted...
-                $products=$m_order_item->get_list(
-                    'sales_invoice_id='.$sales_invoice_id,
-                    'product_id'
-                ); 
+                // $products=$m_order_item->get_list(
+                //     'sales_invoice_id='.$sales_invoice_id,
+                //     'product_id'
+                // ); 
 
-                for($i=0;$i<count($products);$i++) {
-                    $prod_id=$products[$i]->product_id;
-                    $m_products->on_hand=$m_products->get_product_qty($prod_id);
-                    $m_products->modify($prod_id);
-                }
+                // for($i=0;$i<count($products);$i++) {
+                //     $prod_id=$products[$i]->product_id;
+                //     $m_products->on_hand=$m_products->get_product_qty($prod_id);
+                //     $m_products->modify($prod_id);
+                // }
                 //end update product on_hand after invoice is deleted...
 
-                $so_info=$m_invoice->get_list($sales_invoice_id,'sales_invoice.sales_order_id');// get purchase order first
+                // $so_info=$m_invoice->get_list($sales_invoice_id,'sales_invoice.sales_order_id');// get purchase order first
 
-                if(count($so_info)>0){
-                    $sales_order_id=$so_info[0]->sales_order_id;// pass to variable
-                    $m_so=$this->Sales_order_model;
-                    $m_so->order_status_id=$this->get_so_status(
-                        $sales_order_id);
-                    $m_so->modify($sales_order_id);
+                // if(count($so_info)>0){
+                //     $sales_order_id=$so_info[0]->sales_order_id;// pass to variable
+                //     $m_so=$this->Sales_order_model;
+                //     $m_so->order_status_id=$this->get_so_status(
+                //         $sales_order_id);
+                //     $m_so->modify($sales_order_id);
 
-                }
+                // }
 
-                $sal_info=$m_invoice->get_list($sales_invoice_id,'sales_inv_no');
-                $m_trans=$this->Trans_model;
-                $m_trans->user_id=$this->session->user_id;
-                $m_trans->set('trans_date','NOW()');
-                $m_trans->trans_key_id=3; //CRUD
-                $m_trans->trans_type_id=17; // TRANS TYPE
-                $m_trans->trans_log='Deleted Sales Invoice No: '.$sal_info[0]->sales_inv_no;
-                $m_trans->save();
+                // $sal_info=$m_invoice->get_list($sales_invoice_id,'sales_inv_no');
+                // $m_trans=$this->Trans_model;
+                // $m_trans->user_id=$this->session->user_id;
+                // $m_trans->set('trans_date','NOW()');
+                // $m_trans->trans_key_id=3; //CRUD
+                // $m_trans->trans_type_id=17; // TRANS TYPE
+                // $m_trans->trans_log='Deleted Sales Invoice No: '.$sal_info[0]->sales_inv_no;
+                // $m_trans->save();
 
                 $response['title']='Success!';
                 $response['stat']='success';
-                $response['msg']='Record successfully deleted.';
+                $response['msg']='Repair Order successfully deleted.';
                 echo json_encode($response);
 
                 break;

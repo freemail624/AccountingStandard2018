@@ -23,12 +23,21 @@
             float: left;
         }
         td.details-control {
-            background: url('assets/img/print.png') no-repeat center center;
+            background: url('assets/img/Folder_Closed.png') no-repeat center center;
             cursor: pointer;
         }
         tr.details td.details-control {
             background: url('assets/img/Folder_Opened.png') no-repeat center center;
         }
+
+        #tbl_ro_list td.details-control {
+            background: url('assets/img/print.png') no-repeat center center;
+            cursor: pointer;
+        }
+        #tbl_ro_list tr.details td.details-control {
+            background: url('assets/img/print.png') no-repeat center center;
+        }
+
         .child_table{
             padding: 5px;
             border: 1px #ff0000 solid;
@@ -90,7 +99,7 @@ echo $_side_bar_navigation;
 <div class="page-content"><!-- #page-content -->
 <ol class="breadcrumb"  style="margin-bottom: 10px;">
     <li><a href="Dashboard">Dashboard</a></li>
-    <li><a href="Issuances">Issuance</a></li>
+    <li><a href="Issuances">Parts Requisition &amp; Issuance Slip</a></li>
 </ol>
 <div class="container-fluid"">
 <div data-widget-group="group1">
@@ -102,14 +111,14 @@ echo $_side_bar_navigation;
             <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Issuance</b>
         </div> -->
         <div class="panel-body table-responsive">
-        <h2 class="h2-panel-heading">Issuance</h2><hr>
+        <h2 class="h2-panel-heading"><i class="fa fa-cog"></i> Parts Requisition &amp; Issuance Slip</h2><hr>
             <table id="tbl_issuances" class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
                 <tr>
                     <th></th>
-                    <th>Slip #</th>
-                    <th>Department</th>
-                    <th>Remarks</th>
+                    <th>RO Number</th>
+                    <th>Customer #</th>
+                    <th>Customer</th>
                     <th><center>Action</center></th>
                 </tr>
                 </thead>
@@ -140,46 +149,42 @@ echo $_side_bar_navigation;
             <div>
                 <div class="row">
                     <div class="col-xs-12 col-lg-4">
-                         Slip # : <br />
+                         Repair Order No : <br />
                         <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="fa fa-code"></i>
+                            <input type="text" name="repair_order_no" class="form-control" placeholder="Repair Order No" readonly>
+                             <span class="input-group-addon">
+                                <a href="#" id="link_browse_ro"><b>...</b></a>
                             </span>
-                            <input type="text" name="slip_no" class="form-control" placeholder="SLP-YYYYMMDD-XXX" readonly>
-                        </div>
+                        </div>  
                     </div>
                     <div class="col-lg-4"></div>
-                    <div class="col-xs-12 col-lg-4">
-                        <b class="required">*</b>  Department : <br />
-                        <select name="department" id="cbo_departments" data-error-msg="Department is required." required>
-                            <option value="0">[ Create New Department ]</option>
-                            <?php foreach($departments as $department){ ?>
-                            <option value="<?php echo $department->department_id; ?>" data-tax-type="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
-                            <?php } ?>
-                        </select>
+                    <div class="col-lg-4">
+                        Plate No :<br />
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <i class="fa fa-user"></i>
+                            </span>
+                            <input type="text" name="plate_no" class="form-control" readonly>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
-                    <!-- <div class="col-xs-12 col-lg-4">
-                        * Issue to : <br />
-                        <select name="issued_to_person" id="cbo_customers" data-error-msg="Customer is required." required>
-                            <option value="0">[ Create New Customer ]</option>
-                            <?php foreach($customers as $customer){ ?>
-                                <option data-address="<?php echo $customer->address; ?>" value="<?php echo $customer->customer_id; ?>"><?php echo $customer->customer_name; ?></option>
-                            <?php } ?>
-                        </select>
-                    </div> -->
-                    <div class="col-xs-12 col-lg-4">
-                        <b class="required">*</b>  Terms :<br />
+                    <div class="col-lg-1">
+                        Customer # :<br />
+                        <input type="text" name="customer_no" class="form-control" readonly>
+                        <input type="text" name="repair_order_id" class="form-control hidden" readonly>
+                    </div>
+                    <div class="col-lg-3">
+                        Customer :<br />
                         <div class="input-group">
                             <span class="input-group-addon">
-                                <i class="fa fa-code"></i>
+                                <i class="fa fa-user"></i>
                             </span>
-                            <input type="text" name="terms" class="form-control" required data-error-msg="Terms is required!">
+                            <input type="text" name="customer_name" class="form-control" readonly>
                         </div>
                     </div>
                     <div class="col-lg-4"></div>
-                    <div class="col-xs-12 col-lg-4">
+                    <div class="col-lg-4">
                         Date issued : <br />
                         <div class="input-group">
                             <span class="input-group-addon">
@@ -189,11 +194,17 @@ echo $_side_bar_navigation;
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row hidden">
                     <div class="col-xs-12 col-lg-4">
+                        <b class="required" style="display: none;">*</b>  Department : <br />
+                        <select style="display: none;" name="department" id="cbo_departments" data-error-msg="Department is required.">
+                            <option value="0">[ Create New Department ]</option>
+                            <?php foreach($departments as $department){ ?>
+                            <option value="<?php echo $department->department_id; ?>" data-tax-type="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
+                            <?php } ?>
+                        </select>
                     </div>
                     <div class="col-lg-4"></div>
-
                 </div>
             </div>
         </form>
@@ -218,16 +229,16 @@ echo $_side_bar_navigation;
                                     <tr>
                                         <th width="5%">Qty</th>
                                         <th width="10%">UM</th>
-                                        <th width="15%">Item</th>
-                                        <th width="20%" style="text-align: right;">Unit Price</th>
-                                        <th width="12%" style="text-align: right; display: none;">Discount</th>
+                                        <th width="70%">Item</th>
+                                        <th style="text-align: right;" class="hidden">Unit Price</th>
+                                        <th style="text-align: right; display: none;">Discount</th>
                                         <th style="display: none;">T.D</th> <!-- total discount -->
                                         <th style="display: none;">Tax %</th>
-                                        <th width="20%" style="text-align: right;">Total</th>
+                                        <th style="text-align: right;" class="hidden">Total</th>
                                         <th style="display: none;">V.I</th> <!-- vat input -->
                                         <th style="display: none;">N.V</th> <!-- net of vat -->
-                                        <th style="display: none;">Item ID</td><!-- product id -->
-                                        <th><center>Action</center></th>
+                                        <th style="display: none;">Item ID</td><!-- product id -->acc
+                                        <th width="10%"><center>Action</center></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -235,15 +246,15 @@ echo $_side_bar_navigation;
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <td colspan="6" style="height: 50px;">&nbsp;</td>
+                                        <td colspan="4" style="height: 50px;">&nbsp;</td>
                                     </tr>
-                                    <tr>
+                                    <tr class="hidden">
                                         <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount :</strong></td>
                                         <td align="right" colspan="1" id="td_discount" color="red">0.00</td>
                                         <td colspan="2" id="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
                                         <td align="right" colspan="1" id="td_before_tax" color="red">0.00</td>
                                     </tr>
-                                    <tr>
+                                    <tr class="hidden">
                                         <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
                                         <td align="right" colspan="1" id="td_tax" color="red">0.00</td>
                                         <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
@@ -540,6 +551,37 @@ echo $_side_bar_navigation;
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+<div id="modal_ro_list" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+    <div class="modal-dialog" style="width: 80%;">
+        <div class="modal-content"><!---content-->
+            <div class="modal-header ">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Repair Order</h4>
+            </div>
+            <div class="modal-body">
+                <table id="tbl_ro_list" class="table table-striped" cellspacing="0" width="100%">
+                    <thead class="">
+                    <tr>
+                        <th></th>
+                        <th>Repair Order #</th>
+                        <th>Customer</th>
+                        <th>Plate No</th>
+                        <th>Date</th>
+                        <th><center>Action</center></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Cancel</button>
+            </div>
+        </div><!---content-->
+    </div>
+</div><!---modal-->
+
 <footer role="contentinfo">
     <div class="clearfix">
         <ul class="list-unstyled list-inline pull-left">
@@ -579,13 +621,13 @@ $(document).ready(function(){
     var dt; var _txnMode; 
     var _selectedID; 
     var _selectRowObj; 
+    var _selectRowObjRO;
     var _cboDepartments; 
-    var dt_si; 
     var _cboCustomers;
     var _issuance_filter_id;
     var _productType;
     var _line_unit;
-
+    var dt_ro;
 
     var oTableItems={
         qty : 'td:eq(0)',
@@ -601,88 +643,14 @@ $(document).ready(function(){
         bulk_price : 'td:eq(12)',
         retail_price : 'td:eq(13)'
     };
-    $('#tbl_si_list > tbody').on('click','button[name="accept_si"]',function(){
-            _selectRowObj=$(this).closest('tr');
-            var data=dt_si.row(_selectRowObj).data();
-            //alert(d.sales_order_id);
-            $('input,textarea').each(function(){
-                var _elem=$(this);
-                $.each(data,function(name,value){
-                    if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
-                        _elem.val(value);
-                    }
-                });
-                $('input[name="issued_to_person"]').val(data.customer_name);
-                $('#cbo_departments').select2('val',data.department_id);
-                //$('#cbo_customers').select2('val',data.customer_id);
-            });
-            $.ajax({
-                url : 'Sales_invoice/transaction/list/'+data.sales_invoice_id,
-                type : "GET",
-                cache : false,
-                dataType : 'json',
-                processData : false,
-                contentType : false,
-                beforeSend : function(){
-                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
-                },
-                success : function(response){
-                    var rows=response.data;
-                    $('#tbl_items > tbody').html('');
-                    $.each(rows,function(i,value){
-                        $('#tbl_items > tbody').prepend(newRowItem({
-                            issue_qty : value.inv_qty,
-                            unit_id : value.unit_id,
-                            unit_name : value.unit_name,
-                            product_id: value.product_id,
-                            product_desc : value.product_desc,
-                            issue_line_total_discount : value.inv_line_total_discount,
-                            tax_exempt : false,
-                            issue_tax_rate : value.inv_tax_rate,
-                            issue_price : value.inv_price,
-                            issue_discount : value.inv_discount,
-                            tax_type_id : null,
-                            issue_line_total_price : value.inv_line_total_price,
-                            issue_non_tax_amount: value.inv_non_tax_amount,
-                            issue_tax_amount:value.inv_tax_amount
-                        }));
-                    });
-                    reComputeTotal();
-                    $('#modal_si_list').modal('hide');
-                    resetSummary();
-                }
-            });
-        });
+
     var oTableDetails={
         discount : 'tr:eq(0) > td:eq(1)',
         before_tax : 'tr:eq(1) > td:eq(1)',
         issue_tax_amount : 'tr:eq(2) > td:eq(1)',
         after_tax : 'tr:eq(3) > td:eq(1)'
     };
-dt_si = $('#tbl_si_list').DataTable({
-        "bLengthChange" : false,
-        "ajax" : "Sales_invoice/transaction/list",
-        "columns" : [
-        {
-            "targets" : [0],
-            "class":     "details-control",
-            "orderable" : true,
-            "data" : null,
-            "defaultContent" : ""
-        },
-        { targets:[1], data: "sales_inv_no" },
-        { targets:[2], data: "date_invoice" },
-        { targets:[3], data: "department_name"},
-        { targets:[4], data: "remarks"},
-        { 
-            targets:[5], 
-            render: function (data, type, full, meta){
-                var btn_accept='<button class="btn btn-success btn-sm" name="accept_si"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Create Sales Invoice on SO"><i class="fa fa-check"></i> Accept SI</button>';
-                return '<center>'+btn_accept+'</center>';
-            }
-        }
-    ]
-});
+
     var initializeControls=function(){
         dt=$('#tbl_issuances').DataTable({
             "dom": '<"toolbar">frtip',
@@ -697,9 +665,9 @@ dt_si = $('#tbl_si_list').DataTable({
                     "data":           null,
                     "defaultContent": ""
                 },
-                { targets:[1],data: "slip_no" },
-                { targets:[2],data: "department_name" },
-                { targets:[3],data: "remarks" },
+                { targets:[1],data: "repair_order_no" },
+                { targets:[2],data: "customer_no" },
+                { targets:[3],data: "customer_name" },
                 {
                     targets:[4],
                     render: function (data, type, full, meta){
@@ -710,22 +678,44 @@ dt_si = $('#tbl_si_list').DataTable({
                 }
             ]
         });
-        $('#btn_receive_si').click(function(){
-            $('#modal_si_list').modal('show');
+
+        dt_ro=$('#tbl_ro_list').DataTable({
+            "bLengthChange":false,
+            "ajax" : "Repair_order/transaction/open",
+            "columns": [
+                {   
+                    "targets": [0],
+                    "class":          "details-control",
+                    "orderable":      false,
+                    "data":           null,
+                    "defaultContent": ""
+                },
+                { targets:[1],data: "repair_order_no" },
+                { targets:[2],data: "customer_name" },
+                { targets:[3],data: "plate_no" },
+                { targets:[4],data: "document_date" },
+                {
+                    targets:[5],
+                    render: function (data, type, full, meta){
+                        var btn_accept='<button class="btn btn-success btn-sm" name="accept_ro"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Issuce RO"><i class="fa fa-check"></i> Accept RO</button>';
+                        return '<center>'+btn_accept+'</center>';
+                    }
+                }
+
+            ]
         });
+
         var createToolBarButton=function(){
-            var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Record Item To Issue" >'+
-                '<i class="fa fa-plus"></i> Record Item To Issue</button>';
+            var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Issuance Slip" >'+
+                '<i class="fa fa-plus"></i> New Issuance Slip</button>';
             $("div.toolbar").html(_btnNew);
         }();
-        /*_cboCustomers = $("#cbo_customers").select2({
-            placeholder: "Please select customer.",
-            allowClear: true
-        });*/
+
         _cboDepartments=$("#cbo_departments").select2({
             placeholder: "Issue item to Department.",
             allowClear: true
         });
+
         _cboDepartments.select2('val',null);
         $('.date-picker').datepicker({
             todayBtn: "linked",
@@ -734,6 +724,7 @@ dt_si = $('#tbl_si_list').DataTable({
             calendarWeeks: true,
             autoclose: true
         });
+
         $('#custom-templates .typeahead').keypress(function(event){
             if (event.keyCode == 13) {
                 $('.tt-suggestion:first').click();
@@ -765,6 +756,8 @@ dt_si = $('#tbl_si_list').DataTable({
         }).bind('typeahead:select', function(ev, suggestion) {
             //console.log(suggestion);
 
+            _objTypeHead.typeahead('close');
+            _objTypeHead.typeahead('val','');
 
             if(getFloat(suggestion.CurrentQty) <= 0){
                 showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
@@ -779,6 +772,7 @@ dt_si = $('#tbl_si_list').DataTable({
             var bulk_price = 0;
             var retail_price = 0;
             var a = ''; 
+
             if(suggestion.is_tax_exempt=="0"){ //not tax excempt
                 net_vat=total/(1+(getFloat(tax_rate)/100));
                 vat_input=total-net_vat;
@@ -788,7 +782,7 @@ dt_si = $('#tbl_si_list').DataTable({
                 vat_input=0;
             }
 
-           bulk_price = suggestion.sale_price;
+            bulk_price = suggestion.sale_price;
             if(suggestion.is_bulk == 1){
                 retail_price = getFloat(suggestion.purchase_cost) / getFloat(suggestion.child_unit_desc);
             }else if (suggestion.is_bulk== 0){
@@ -818,8 +812,8 @@ dt_si = $('#tbl_si_list').DataTable({
                 parent_unit_name : suggestion.parent_unit_name,
                 is_parent: 1 ,// INITIALLY , UNIT USED IS THE PARENT , 1 for PARENT 0 for CHILD
                 a:a
- 
             }));
+
             changetxn ='active';
             _line_unit=$('.line_unit'+a).select2({
             minimumResultsForSearch: -1
@@ -854,6 +848,13 @@ dt_si = $('#tbl_si_list').DataTable({
     });*/
     var bindEventHandlers=(function(){
         var detailRows = [];
+
+        $('#link_browse_ro').click(function(){
+            $('#tbl_ro_list tbody').html('<tr><td colspan="7"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
+            dt_ro.ajax.reload( null, false );
+            $('#modal_ro_list').modal('show');
+        });
+
         $('#tbl_issuances tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
             var row = dt.row( tr );
@@ -892,7 +893,140 @@ dt_si = $('#tbl_si_list').DataTable({
                     }
                 });
             }
-        } );
+        });
+
+        $('#tbl_ro_list tbody').on( 'click', 'tr td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = dt_ro.row( tr );
+            var d=row.data();
+
+            window.open('Templates/layout/repair-order/'+d.repair_order_id+'?type=inv-preview')
+
+            // var idx = $.inArray( tr.attr('id'), detailRows );
+            // if ( row.child.isShown() ) {
+            //     tr.removeClass( 'details' );
+            //     row.child.hide();
+            //     // Remove from the 'open' array
+            //     detailRows.splice( idx, 1 );
+            // }
+            // else {
+            //     tr.addClass( 'details' );
+            //     //console.log(row.data());
+            //     var d=row.data();
+            //     $.ajax({
+            //         "dataType":"html",
+            //         "type":"POST",
+            //         "url":"Templates/layout/repair-order/"+ d.repair_order_id+"?type=inv-preview",
+            //         "beforeSend" : function(){
+            //             row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+            //         }
+            //     }).done(function(response){
+            //         row.child('<div style="padding: 20px;">'+response+'</div>','no-padding').show();
+            //         // Add to the 'open' array
+            //         if ( idx === -1 ) {
+            //             detailRows.push( tr.attr('id') );
+            //         }
+            //     });
+            // }
+        });
+
+        $('#tbl_ro_list > tbody').on('click','button[name="accept_ro"]',function(){
+            _selectRowObjRO=$(this).closest('tr');
+            var data=dt_ro.row(_selectRowObjRO).data();
+            
+            $('input,textarea').each(function(){
+                var _elem=$(this);
+                $.each(data,function(name,value){
+                    if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
+                        if(_elem.hasClass('numeric')){
+                            _elem.val(accounting.formatNumber(value,2));
+                        }else{
+                            _elem.val(value);
+                        }
+                    }
+                });
+            });
+            
+            $('#modal_ro_list').modal('hide');
+
+            $.ajax({
+                url : 'Repair_order/transaction/item-issuance/'+data.repair_order_id,
+                type : "GET",
+                cache : false,
+                dataType : 'json',
+                processData : false,
+                contentType : false,
+                beforeSend : function(){
+                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="4"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                },
+                success : function(response){
+                    var rows=response.data;
+                    $('#tbl_items > tbody').html('');
+                     
+                    var total_discount=0;
+                    var total_tax_amount=0;
+                    var total_non_tax_amount=0;
+                    var gross_amount=0;
+                    var a = 0;
+
+                    $.each(rows,function(i,value){
+                        bulk_price = value.purchase_cost;
+                        var retail_price = 0;
+                        if(value.is_bulk == 1){
+                            retail_price = getFloat(value.purchase_cost) / getFloat(value.child_unit_desc);
+
+                        }else if (value.is_bulk== 0){
+                            retail_price = 0;
+                        }
+                        changetxn ='inactive';
+
+                        $('#tbl_items > tbody').prepend(newRowItem({
+                            issue_qty : value.order_qty,
+                            product_code : value.product_code,
+                            product_id: value.product_id,
+                            product_desc : value.product_desc,
+                            issue_line_total_discount : value.order_line_total_discount,
+                            tax_exempt : false,
+                            issue_tax_rate : value.order_tax_rate,
+                            issue_price : value.order_price,
+                            issue_discount : value.order_discount,
+                            tax_type_id : null,
+                            issue_line_total_price : value.order_line_total_price,
+                            issue_non_tax_amount: value.order_non_tax_amount,
+                            issue_tax_amount:value.order_tax_amount,
+                            bulk_price: bulk_price,
+                            retail_price: retail_price,
+                            is_bulk: value.is_bulk,
+                            parent_unit_id : value.parent_unit_id,
+                            child_unit_id : value.child_unit_id,
+                            child_unit_name : value.child_unit_name,
+                            parent_unit_name : value.parent_unit_name,
+                            is_parent: value.is_parent,
+                            cost_upon_invoice : value.cost_upon_invoice,
+                            a:a
+                        }));
+
+
+                        _line_unit=$('.line_unit'+a).select2({
+         
+                        });
+                        _line_unit.select2('val',value.unit_id);
+                        a++;
+
+                    });
+
+                    changetxn = 'active';
+                    $('#txt_overall_discount').val(accounting.formatNumber($('#txt_overall_discount').val(),2));
+                    reInitializeNumeric();
+                    reComputeTotal();
+                   
+                    
+                }
+
+            });
+        });
+
+
         //loads modal to create new department
         _cboDepartments.on("select2:select", function (e) {
             var i=$(this).select2('val');
@@ -996,16 +1130,12 @@ dt_si = $('#tbl_si_list').DataTable({
             $('img[name="img_user"]').attr('src','assets/img/anonymous-icon.png');
         });
         $('#tbl_issuances tbody').on('click','button[name="edit_info"]',function(){
-            ///alert("ddd");
-
-
 
             _txnMode="edit";
             $('#item_issuance_title').html('Edit Item to issue');
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.issuance_id;
-
 
 
             _is_journal_posted=data.is_journal_posted;
@@ -1045,7 +1175,7 @@ dt_si = $('#tbl_si_list').DataTable({
                 processData : false,
                 contentType : false,
                 beforeSend : function(){
-                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="4"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
                 },
                 success : function(response){
                     var rows=response.data;
@@ -1347,11 +1477,11 @@ dt_si = $('#tbl_si_list').DataTable({
         return '<tr>'+
         '<td width="10%"><input name="issue_qty[]" type="text" class="numeric form-control trigger-number" value="'+ d.issue_qty+'"></td>'+unit+
         '<td width="30%">'+d.product_desc+'<input type="text" style="display: none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
-        '<td width="11%"><input name="issue_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.issue_price,2)+'" style="text-align:right;"></td>'+
+        '<td width="11%" class="hidden"><input name="issue_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.issue_price,2)+'" style="text-align:right;"></td>'+
         '<td width="11%" style="display: none;"><input name="issue_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.issue_discount,2)+'" style="text-align:right;"></td>'+
         '<td style="display: none;" width="11%"><input name="issue_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.issue_line_total_discount,2)+'" readonly></td>'+
         '<td width="11%" style="display: none;"><input name="issue_tax_rate[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.issue_tax_rate,2)+'"></td>'+
-        '<td width="11%" align="right"><input name="issue_line_total_price[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.issue_line_total_price,2)+'" readonly></td>'+
+        '<td width="11%" align="right" class="hidden"><input name="issue_line_total_price[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.issue_line_total_price,2)+'" readonly></td>'+
         '<td style="display: none;"><input name="issue_tax_amount[]" type="text" class="numeric form-control" value="'+ d.issue_tax_amount+'" readonly></td>'+
         '<td style="display: none;"><input name="issue_non_tax_amount[]" type="text" class="numeric form-control" value="'+ d.issue_non_tax_amount+'" readonly></td>'+
         '<td style="display: none;"><input name="product_id[]" type="text" class="numeric form-control" value="'+ d.product_id+'" readonly></td>'+

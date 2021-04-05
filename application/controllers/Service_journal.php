@@ -125,6 +125,7 @@ class Service_journal extends CORE_Controller
                 $response['row_added']=$this->get_response_rows($journal_id);
                 echo json_encode($response);
                 break;
+                
             case 'update':
                 $journal_id=$this->input->get('id');
                 $m_journal=$this->Journal_info_model;

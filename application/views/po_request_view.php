@@ -969,6 +969,8 @@ $(document).ready(function(){
                 _objTypeHead.typeahead('val','');
             }
         }).bind('typeahead:select', function(ev, suggestion) {
+                _objTypeHead.typeahead('close');
+                _objTypeHead.typeahead('val','');
             //if(_objTypeHead.typeahead('val')==''){ return false; }
             //console.log(suggestion);
 

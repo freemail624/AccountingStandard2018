@@ -20,10 +20,10 @@
     <!--/twitter typehead-->
     <link href="assets/plugins/twittertypehead/twitter.typehead.css" rel="stylesheet">
     <style>
-        #span_repair_order_no{
+        #span_invoice_no{
             min-width: 50px;
         }
-        #span_repair_order_no:focus{
+        #span_invoice_no:focus{
             border: 3px solid orange;
             background-color: yellow;
         }
@@ -43,6 +43,15 @@
         tr.details td.details-control {
             background: url('assets/img/Folder_Opened.png') no-repeat center center;
         }
+        
+        #tbl_service_invoice td.details-control {
+            background: url('assets/img/print.png') no-repeat center center;
+            cursor: pointer;
+        }
+        #tbl_service_invoice tr.details td.details-control {
+            background: url('assets/img/print.png') no-repeat center center;
+        }
+
         .child_table{
             padding: 5px;
             border: 1px #ff0000 solid;
@@ -104,7 +113,7 @@
         .form-group {
             margin-bottom: 15px;
         }
-        #tbl_repair_order_filter    
+        #tbl_service_invoice_filter
         { 
             display:none; 
         } 
@@ -192,7 +201,7 @@
 <div class="page-content"><!-- #page-content -->
 <ol class="breadcrumb"  style="margin-bottom: 0;">
     <li><a href="Dashboard">Dashboard</a></li>
-    <li><a href="Repair_order">Repair Order</a></li>
+    <li><a href="Service_invoice">Service Invoice</a></li>
 </ol>
 <div class="container-fluid"">
 <div data-widget-group="group1">
@@ -202,10 +211,10 @@
     <div class="panel panel-default">
         <div class="panel-body table-responsive" style="width: 100%;overflow-x: hidden;">
         <div class="row panel-row">
-        <h2 class="h2-panel-heading">Repair Order</h2><hr>
+        <h2 class="h2-panel-heading">Service Invoice</h2><hr>
             <div class="row"> 
                 <div class="col-lg-3"><br> 
-                <button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Record Repair Order" ><i class="fa fa-plus"></i> Record Repair Order</button> 
+                <button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Record Invoice" ><i class="fa fa-plus"></i> Record Invoice</button> 
                 </div> 
                 <div class="col-lg-3"> 
                         From :<br /> 
@@ -230,13 +239,13 @@
                          <input type="text" id="tbl_search" class="form-control"> 
                 </div> 
             </div> 
-            <table id="tbl_repair_order" class="table table-striped" cellspacing="0" width="100%" style="">
+            <table id="tbl_service_invoice" class="table table-striped" cellspacing="0" width="100%" style="">
                 <thead >
                 <tr>
                     <th></th>
-                    <th>Control #</th>
+                    <th>Ivoice #</th>
+                    <th>RO #</th>
                     <th>Document Date</th>
-                    <th>Customer No</th>
                     <th>Customer</th>
                     <th>Plate No</th>
                     <th>Date Time Promised</th>
@@ -256,15 +265,15 @@
 <div id="div_sales_invoice_fields" style="display: none;">
     <div class="panel panel-default">
         <div class="pull-right">
-            <h4 class="repair_order_title" style="margin-top: 0%;"></h4>
+            <h4 class="service_invoice_title" style="margin-top: 0%;"></h4>
             <div class="btn btn-green" style="margin-left: 10px;">
-                <strong><a id="btn_receive_so" href="#" style="text-decoration: none; color: white;">Create from Sales Order</a></strong>
+                <strong><a id="btn_receive_ro" href="#" style="text-decoration: none; color: white;"></a></strong>
             </div>
         </div>
         <div class="panel-body" >
         <div class="row panel-row">
-            <form id="frm_repair_order" role="form" class="form-horizontal">
-                <h2 class="h2-panel-heading">Control No : <span id="span_repair_order_no">RAXXXX</span></h2>
+            <form id="frm_service_invoice" role="form" class="form-horizontal">
+                <h2 class="h2-panel-heading">Invoice # : <span id="span_invoice_no">SER-INV-YYYYMMDD</span></h2>
                 <div>
                 <hr>
                 <br/>
@@ -272,6 +281,18 @@
                     <div class="col-md-4">
                         <div class="fieldset">
                           <h1><i class="fa fa-user"></i> Customer Information</h1>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label> Repair Order # :</label> <br />
+                                    <div class="input-group">
+                                        <input type="text" name="repair_order_no" class="form-control" placeholder="Repair Order No" readonly>
+                                        <input type="text" name="repair_order_id" class="form-control hidden" placeholder="Repair Order ID" readonly>
+                                         <span class="input-group-addon">
+                                            <a href="#" id="link_browse_ro"><b>...</b></a>
+                                        </span>
+                                    </div>  
+                                </div>
+                            </div>
                             <div class="row">
                                 <div class="col-md-4">
                                     <label> Customer No :</label> <br />
@@ -839,38 +860,34 @@
         </div>
     </div>
 </div>
-<div id="modal_so_list" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+<div id="modal_ro_list" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog" style="width: 80%;">
-        <div class="modal-content">
+        <div class="modal-content"><!---content-->
             <div class="modal-header ">
-                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
-                <h2 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Sales Order</h2>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Repair Order</h4>
             </div>
             <div class="modal-body">
-                <table id="tbl_so_list" class="table table-striped" cellspacing="0" width="100%">
+                <table id="tbl_ro_list" class="table table-striped" cellspacing="0" width="100%">
                     <thead class="">
                     <tr>
                         <th></th>
-                        <th>SO#</th>
+                        <th>Repair Order #</th>
                         <th>Customer</th>
-                        <th>Remarks</th>
-                        <th>Order</th>
-                        <th>Status</th>
+                        <th>Plate No</th>
+                        <th>Date</th>
                         <th><center>Action</center></th>
                     </tr>
                     </thead>
                     <tbody>
-                        <!-- Sales Order Content -->
                     </tbody>
                 </table>
             </div>
             <div class="modal-footer">
-      <!--           <button id="btn_accept" type="button" class="btn btn-green" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Receive this Order</button> -->
-                <button id="cancel_modal" class="btn btn-default" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Cancel</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Cancel</button>
             </div>
-        </div><!---content---->
+        </div><!---content-->
     </div>
-<div class="clearfix"></div>
 </div><!---modal-->
 <div id="modal_sales_invoice" class="modal fade" role="dialog">
     <div class="modal-dialog modal-lg">
@@ -1347,7 +1364,7 @@
 
 <script>
 $(document).ready(function(){
-    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboDepartments; var _cboCustomers; var dt_so; var products; var changetxn;
+    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboDepartments; var _cboCustomers; var dt_ro; var products; var changetxn;
     var _cboCustomerType; var prodstat;
     var _cboCustomerTypeCreate; var _cboSource; var _cboVehicles; var _cboAdvisors;
     var _line_unit; var global_item_desc = ''; var _selectRowTblItems; var _cboMakes; var _cboYears; var _cboModels; var _cboColors; var _vehicleService=1; var _checkVehicle=true;
@@ -1384,12 +1401,12 @@ $(document).ready(function(){
         after_tax : 'tr:eq(3) > td:eq(1)'
     };
     var initializeControls=function(){
-        dt=$('#tbl_repair_order').DataTable({
+        dt=$('#tbl_service_invoice').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "order": [[ 9, "desc" ]],
             "ajax" : { 
-                "url":"Repair_order/transaction/list", 
+                "url":"Service_invoice/transaction/list", 
                 "bDestroy": true,             
                 "data": function ( d ) { 
                         return $.extend( {}, d, { 
@@ -1399,7 +1416,7 @@ $(document).ready(function(){
                     } 
             }, 
             "language": {
-                "searchPlaceholder":"Search Order"
+                "searchPlaceholder":"Search Invoice"
             },
             oLanguage: { 
                     sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>' 
@@ -1413,9 +1430,9 @@ $(document).ready(function(){
                     "data":           null,
                     "defaultContent": ""
                 },
+                { targets:[1],data: "service_invoice_no" },
                 { targets:[1],data: "repair_order_no" },
                 { targets:[2],data: "document_date" },
-                { targets:[3],data: "customer_no" },
                 { targets:[4],data: "customer_name" },
                 { targets:[5],data: "plate_no" },
                 { targets:[6],data: "date_time_promised" },
@@ -1432,29 +1449,29 @@ $(document).ready(function(){
             ]
         });
 
-        dt_so=$('#tbl_so_list').DataTable({
+        dt_ro=$('#tbl_ro_list').DataTable({
             "bLengthChange":false,
-            "ajax" : "Sales_order/transaction/open",
+            "ajax" : "Repair_order/transaction/ro-open",
             "columns": [
-                {
+                {   
                     "targets": [0],
                     "class":          "details-control",
                     "orderable":      false,
                     "data":           null,
                     "defaultContent": ""
                 },
-                { targets:[1],data: "so_no" },
+                { targets:[1],data: "repair_order_no" },
                 { targets:[2],data: "customer_name" },
-                { targets:[3],data: "remarks" },
-                { targets:[4],data: "date_order" },
-                { targets:[5],data: "order_status" },
+                { targets:[3],data: "plate_no" },
+                { targets:[4],data: "document_date" },
                 {
-                    targets:[6],
+                    targets:[5],
                     render: function (data, type, full, meta){
-                        var btn_accept='<button class="btn btn-success btn-sm" name="accept_so"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Create Sales Invoice on SO"><i class="fa fa-check"></i> Accept SO</button>';
+                        var btn_accept='<button class="btn btn-success btn-sm" name="accept_ro"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Issuce RO"><i class="fa fa-check"></i> Accept RO</button>';
                         return '<center>'+btn_accept+'</center>';
                     }
                 }
+
             ]
         });
 
@@ -1777,7 +1794,7 @@ $(document).ready(function(){
 
         var closeAllDetailControls = function(){
 
-            var table_row = $('#tbl_repair_order > tbody > tr');
+            var table_row = $('#tbl_service_invoice > tbody > tr');
 
             table_row.each(function() {
 
@@ -1797,47 +1814,86 @@ $(document).ready(function(){
 
         };
 
-        $('#tbl_repair_order tbody').on( 'click', 'tr td.details-control', function () {
+        // $('#tbl_service_invoice tbody').on( 'click', 'tr td.details-control', function () {
+        //     var tr = $(this).closest('tr');
+        //     var row = dt.row( tr );
+        //     var idx = $.inArray( tr.attr('id'), detailRows );
+
+        //     if ( row.child.isShown() ) {
+        //         tr.removeClass( 'details' );
+        //         row.child.hide();
+
+        //         // Remove from the 'open' array
+        //         detailRows.splice( idx, 1 );
+        //     }
+        //     else {
+        //         tr.addClass( 'details' );
+        //         //console.log(row.data());
+        //         var d=row.data();
+
+        //         $.ajax({
+        //             "dataType":"html",
+        //             "type":"POST",
+        //             "url":"Templates/layout/repair-order/"+ d.repair_order_id,
+        //             "beforeSend" : function(){
+        //                 row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+        //             }
+        //         }).done(function(response){
+        //             row.child( response,'no-padding' ).show();
+        //             // Add to the 'open' array
+        //             if ( idx === -1 ) {
+        //                 detailRows.push( tr.attr('id') );
+        //             }
+        //         });
+        //     }
+        // } );
+
+        $('#tbl_service_invoice tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
             var row = dt.row( tr );
             var idx = $.inArray( tr.attr('id'), detailRows );
 
-            if ( row.child.isShown() ) {
-                tr.removeClass( 'details' );
-                row.child.hide();
+            // if ( row.child.isShown() ) {
+            //     tr.removeClass( 'details' );
+            //     row.child.hide();
 
-                // Remove from the 'open' array
-                detailRows.splice( idx, 1 );
-            }
-            else {
-                tr.addClass( 'details' );
+            //     // Remove from the 'open' array
+            //     detailRows.splice( idx, 1 );
+            // }
+            // else {
+                // tr.addClass( 'details' );
                 //console.log(row.data());
+                
                 var d=row.data();
+                window.open("Templates/layout/service-invoice-dropdown/"+ d.service_invoice_id+"?type=preview");
+                // $.ajax({
+                //     "dataType":"html",
+                //     "type":"POST",
+                //     "url":,
+                //     "beforeSend" : function(){
+                //         row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                //     }
+                // }).done(function(response){
+                //     row.child( response,'no-padding' ).show();
+                //     // Add to the 'open' array
+                //     if ( idx === -1 ) {
+                //         detailRows.push( tr.attr('id') );
+                //     }
+                // });
 
-                $.ajax({
-                    "dataType":"html",
-                    "type":"POST",
-                    "url":"Templates/layout/repair-order/"+ d.repair_order_id,
-                    "beforeSend" : function(){
-                        row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
-                    }
-                }).done(function(response){
-                    row.child( response,'no-padding' ).show();
-                    // Add to the 'open' array
-                    if ( idx === -1 ) {
-                        detailRows.push( tr.attr('id') );
-                    }
-                });
-            }
+
+
+
+            // }
         } );
 
-        $('#link_browse').click(function(){
-            $('#btn_receive_so').click();
+        $('#link_browse_ro').click(function(){
+            $('#btn_receive_ro').click();
         });
 
-        $('#tbl_so_list tbody').on( 'click', 'tr td.details-control', function () {
+        $('#tbl_ro_list tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
-            var row = dt_so.row( tr );
+            var row = dt_ro.row( tr );
             var idx = $.inArray( tr.attr('id'), detailRows );
             if ( row.child.isShown() ) {
                 tr.removeClass( 'details' );
@@ -1850,11 +1906,11 @@ $(document).ready(function(){
                 //console.log(row.data());
                 //console.log(tr);
                 _selectRowObj=$(this).closest('tr');
-                var d=dt_so.row(_selectRowObj).data();
+                var d=dt_ro.row(_selectRowObj).data();
                 $.ajax({
                     "dataType":"html",
                     "type":"POST",
-                    "url":"Templates/layout/sales-order/"+ d.sales_order_id+'/contentview',
+                    "url":"Templates/layout/repair-order/"+ d.repair_order_id,
                     "beforeSend" : function(){
                         row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
                     }
@@ -1876,11 +1932,11 @@ $(document).ready(function(){
         }); 
 
         $("#txt_start_date_sales").on("change", function () {         
-            $('#tbl_repair_order').DataTable().ajax.reload() 
+            $('#tbl_service_invoice').DataTable().ajax.reload() 
         }); 
 
         $("#txt_end_date_sales").on("change", function () {
-            $('#tbl_repair_order').DataTable().ajax.reload()
+            $('#tbl_service_invoice').DataTable().ajax.reload()
         });
 
         var getCustomerVehicles = function(i,open=false){
@@ -2192,18 +2248,17 @@ $(document).ready(function(){
         });                                     
 
 
-        $('#btn_receive_so').click(function(){
-            $('#tbl_so_list tbody').html('<tr><td colspan="7"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
-            dt_so.ajax.reload( null, false );
-            $('#modal_so_list').modal('show');
+        $('#btn_receive_ro').click(function(){
+            $('#tbl_ro_list tbody').html('<tr><td colspan="7"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
+            dt_ro.ajax.reload( null, false );
+            $('#modal_ro_list').modal('show');
         });
 
         $('#btn_new').click(function(){
             _txnMode="new";
-            clearFields($('#div_sales_invoice_fields'));
-            $('#span_repair_order_no').html('RAXXXX');
+            clearFields($('#frm_service_invoice'));
+            $('#span_invoice_no').html('SER-INV-YYYYMMDD');
             showList(false);
-            $('#cbo_customers').select2('open');
             $('#tbl_items > tbody, #tbl_items_bpr > tbody, #tbl_items_gj > tbody').html('');
             $('#cbo_customers').select2('val', null);
             $('#cbo_vehicles').select2('val', null);
@@ -2240,150 +2295,14 @@ $(document).ready(function(){
 
             reComputeTotal(); //this is to make sure, display summary are recomputed as 0
         });
-        $('#tbl_so_list > tbody').on('click','button[name="accept_so"]',function(){
-            _selectRowObj=$(this).closest('tr');
-            var data=dt_so.row(_selectRowObj).data();
+
+        $('#tbl_ro_list > tbody').on('click','button[name="accept_ro"]',function(){
+            _selectRowObjRO=$(this).closest('tr');
+            var data=dt_ro.row(_selectRowObjRO).data();
+            
             $('input,textarea').each(function(){
                 var _elem=$(this);
                 $.each(data,function(name,value){
-                    if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
-                        _elem.val(value);
-                    }
-                });
-                $('#cbo_customers').select2('val',data.customer_id);
-                $('#cbo_departments').select2('val',data.department_id);
-                $('#cbo_department').select2('val',data.department_id);
-                $('#cbo_salesperson').select2('val',data.salesperson_id);
-                $('#cbo_customer_type').select2('val',data.customer_type_id);
-                $('#cbo_order_source').select2('val', $('#cbo_order_source').data('default'));
-
-                var obj_customers=$('#cbo_customers').find('option[value="' + data.customer_id + '"]');
-                $('#txt_address').val(obj_customers.data('address'));
-                $('#contact_person').val(obj_customers.data('contact'));
-
-            });
-            $('#modal_so_list').modal('hide');
-            resetSummary();
-            $.ajax({
-                url : 'Sales_order/transaction/item-balance/'+data.sales_order_id,
-                type : "GET",
-                cache : false,
-                dataType : 'json',
-                processData : false,
-                contentType : false,
-                beforeSend : function(){
-                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
-                },
-                success : function(response){
-                    var rows=response.data;
-                    $('#tbl_items > tbody').html('');
-                    //var rowCount = $('#tbl-items .row-item');
-                    //console.log(rowCount);
-                    var a = 0; 
-
-
-                        changetxn ='inactive';
-                    $.each(rows,function(i,value){
-
-                    _customer_type_ = _cboCustomerType.val();
-                    var temp_sale_price=0.00;
-
-                        if(_customer_type_ == '' || _customer_type_ == 0){
-                            temp_sale_price=value.sale_price;
-                        }else if(_customer_type_ == '1' ){ // DISCOUNTED CUSTOMER TYPE
-                            temp_sale_price=value.discounted_price;
-                        }else if(_customer_type_ == '2' ){ // DEALER CUSTOMER TYPE
-                            temp_sale_price=value.dealer_price;
-                        }else if(_customer_type_ == '3' ){ // DISTRIBUTOR CUSTOMER TYPE
-                            temp_sale_price=value.distributor_price;
-                        }else if(_customer_type_ == '4' ){ // PUBLIC CUSTOMER TYPE
-                            temp_sale_price=value.public_price;
-                        }else{
-                            temp_sale_price=value.sale_price;
-                        }
-                        bulk_price = temp_sale_price;
-
-                        var retail_price = 0;
-                        if(value.is_bulk == 1){
-                            retail_price = getFloat(temp_sale_price) / getFloat(value.child_unit_desc);
-
-                        }else if (value.is_bulk== 0){
-                            retail_price = 0;
-                        }
-                        
-                        $('#tbl_items > tbody').append(newRowItem({
-                            order_gross : value.order_gross,
-                            order_qty : value.so_qty, 
-                            product_code : value.product_code,
-                            product_id: value.product_id,
-                            product_desc : value.product_desc,
-                            order_line_total_discount : value.so_line_total_discount,
-                            tax_exempt : false,
-                            order_tax_rate : value.so_tax_rate,
-                            order_price : value.so_price,
-                            order_discount : value.so_discount,
-                            tax_type_id : null,
-                            order_line_total_price : value.so_line_total,
-                            order_non_tax_amount: value.non_tax_amount,
-                            order_tax_amount:value.tax_amount,
-                            orig_so_price : value.so_price,
-                            order_line_total_after_global: 0.00,
-                            child_unit_id : value.child_unit_id,
-                            child_unit_name : value.child_unit_name,
-                            parent_unit_name : value.product_unit_name,
-                            parent_unit_id : getFloat(value.product_unit_id),
-                            is_bulk: value.is_bulk,
-                            is_parent : value.is_parent,
-                            bulk_price: temp_sale_price,
-                            retail_price: retail_price,
-                            a:a,
-                            is_basyo:value.is_basyo,
-                            is_product_basyo:value.is_product_basyo,
-                            exp_date : '',
-                            batch_no : '',
-                            cost_upon_invoice : value.purchase_cost
-
-                        }));
-                        _line_unit=$('.line_unit'+a).select2({
-                            minimumResultsForSearch: -1
-                        });
-                        _line_unit.select2('val',value.unit_id);
-                        a++;
-                    });
-
-                    changetxn = 'active';
-                    $('#txt_overall_discount').val(accounting.formatNumber($('#txt_overall_discount').val(),2));
-                    reInitializeNumeric();
-                    reComputeTotal();
-                
-                }
-            });
-
-        });
-        $('#tbl_repair_order tbody').on('click','button[name="edit_info"]',function(){
-            _selectRowObj=$(this).closest('tr');
-            var data=dt.row(_selectRowObj).data();
-            _selectedID=data.repair_order_id;
-
-            getproduct().done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                countproducts = data.data.length;
-                if(countproducts > 100){
-                showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-                }
-            }).always(function(){ 
-                $('.typeaheadsearch').val('');
-            });
-
-            _txnMode="edit";
-            $('.repair_order_title').html('Edit Repair Order');                
-
-            $('input,textarea').each(function(){
-                var _elem=$(this);
-                $.each(data,function(name,value){
-
                     if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
                         if(_elem.hasClass('numeric')){
                             _elem.val(accounting.formatNumber(value,2));
@@ -2407,6 +2326,8 @@ $(document).ready(function(){
 
             $('#btn_pms').trigger('click');
 
+            $('#modal_ro_list').modal('hide');
+
             $.ajax({
                 url : 'Repair_order/transaction/items/'+data.repair_order_id,
                 type : "GET",
@@ -2423,9 +2344,10 @@ $(document).ready(function(){
                     $('#tbl_items > tbody').html('');
                     $('#tbl_items_bpr > tbody').html('');
                     $('#tbl_items_gj > tbody').html('');
+                     
+                    var a = 0;
 
-                    a=0;
-                    $.each(rows,function(i,value){
+                $.each(rows,function(i,value){
 
                     var temp_sale_price=value.sale_price;
 
@@ -2492,6 +2414,7 @@ $(document).ready(function(){
                             a++;
                     });
 
+
                     changetxn = 'active';
                     reComputeTotal();
                     countTblItems(1);
@@ -2501,23 +2424,166 @@ $(document).ready(function(){
                 }
             });
 
-            $('#span_repair_order_no').html(data.repair_order_no);
+            _checkVehicle = true;
+        });
+
+
+        $('#tbl_service_invoice tbody').on('click','button[name="edit_info"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dt.row(_selectRowObj).data();
+            _selectedID=data.service_invoice_id;
+
+            getproduct().done(function(data){
+                products.clear();
+                products.local = data.data;
+                products.initialize(true);
+                countproducts = data.data.length;
+                if(countproducts > 100){
+                showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
+                }
+            }).always(function(){ 
+                $('.typeaheadsearch').val('');
+            });
+
+            _txnMode="edit";
+            $('.service_invoice_title').html('Edit Repair Order');                
+
+            $('input,textarea').each(function(){
+                var _elem=$(this);
+                $.each(data,function(name,value){
+
+                    if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
+                        if(_elem.hasClass('numeric')){
+                            _elem.val(accounting.formatNumber(value,2));
+                        }else{
+                            _elem.val(value);
+                        }
+                    }
+                });
+            });
+            
+            $('input[name="next_svc_date"]').val(data.next_svc_date_edit);
+            $('input[name="document_date"]').val(data.document_date_edit);
+            $('input[name="delivery_date"]').val(data.delivery_date_edit);
+            $('input[name="date_time_promised"]').val(data.date_time_promised_edit);
+
+            _checkVehicle = false;
+
+            $('#cbo_customers').select2('val',data.customer_id);
+            $('#cbo_vehicles').select2('val',data.vehicle_id);
+            $('#cbo_advisors').select2('val',data.advisor_id);
+
+            $('#btn_pms').trigger('click');
+
+            $.ajax({
+                url : 'Service_invoice/transaction/items/'+data.service_invoice_id,
+                type : "GET",
+                cache : false,
+                dataType : 'json',
+                processData : false,
+                contentType : false,
+                beforeSend : function(){
+                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="6"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                },
+                success : function(response){
+                    var rows=response.data;
+
+                    $('#tbl_items > tbody').html('');
+                    $('#tbl_items_bpr > tbody').html('');
+                    $('#tbl_items_gj > tbody').html('');
+
+                    a=0;
+                    $.each(rows,function(i,value){
+
+                    var temp_sale_price=value.sale_price;
+
+                    var retail_price;
+                        if(value.is_bulk == 1){
+                            retail_price = getFloat(temp_sale_price) / getFloat(value.child_unit_desc);
+
+                        }else if (value.is_bulk == 0){
+                            retail_price = 0;
+                        }
+
+                        var tbl_selected;
+
+                        if(value.vehicle_service_id == 1){
+                            tbl_selected = $('#tbl_items > tbody');
+                        }else if(value.vehicle_service_id == 2){
+                            tbl_selected = $('#tbl_items_bpr > tbody');
+                        }else if(value.vehicle_service_id == 3){
+                            tbl_selected = $('#tbl_items_gj > tbody');
+                        }
+
+
+                        tbl_selected.append(newRowItem({
+                            order_qty : value.service_qty,
+                            product_code : value.product_code,
+                            unit_id : value.unit_id,
+                            order_gross : value.service_gross,
+                            unit_name : value.unit_name,
+                            product_id: value.product_id,
+                            product_desc : value.product_desc,
+                            order_line_total_discount : value.service_line_total_discount,
+                            tax_exempt : false,
+                            order_tax_rate : value.service_tax_rate,
+                            order_price : value.service_price,
+                            order_discount : value.service_discount,
+                            tax_type_id : null,
+                            order_line_total_price : value.service_line_total_price,
+                            order_non_tax_amount: value.service_non_tax_amount,
+                            order_tax_amount:value.service_tax_amount,
+                            order_line_total_after_global : value.service_line_total_after_global,
+                            child_unit_id : value.child_unit_id,
+                            child_unit_name : value.child_unit_name,
+                            parent_unit_name : value.product_unit_name,
+                            parent_unit_id : getFloat(value.product_unit_id),
+                            is_bulk: value.is_bulk,
+                            is_parent : value.is_parent,
+                            bulk_price: temp_sale_price,
+                            retail_price: retail_price,
+                            a:a,
+                            is_basyo:value.is_basyo,
+                            is_product_basyo:value.is_product_basyo,
+                            exp_date : value.exp_date,
+                            batch_no : value.batch_no,
+                            cost_upon_invoice : value.cost_upon_invoice,
+                            vehicle_service_id : value.vehicle_service_id
+
+                        }));
+
+                        changetxn = 'inactive';
+                          _line_unit=$('.line_unit'+a).select2({
+                            minimumResultsForSearch: -1
+                            });
+                            _line_unit.select2('val',value.unit_id);
+                            a++;
+                    });
+
+                    changetxn = 'active';
+                    reComputeTotal();
+                    countTblItems(1);
+                    countTblItems(2);
+                    countTblItems(3);
+                    reInitializeNumeric();
+                }
+            });
+
+            $('#span_invoice_no').html(data.service_invoice_no);
             _checkVehicle = true;
             showList(false);  
         });
 
-        $('#tbl_repair_order tbody').on('click','button[name="remove_info"]',function(){
+        $('#tbl_service_invoice tbody').on('click','button[name="remove_info"]',function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
-            
-            _selectedID=data.repair_order_id;
+            _selectedID=data.service_invoice_id;
             _is_journal_posted=data.is_journal_posted;
-
-            _selectRowObj=$(this).closest('tr');
-            var data=dt.row(_selectRowObj).data();
-            _selectedID=data.repair_order_id;
-
             $('#modal_confirmation').modal('show');
+            
+                // _selectRowObj=$(this).closest('tr');
+                // var data=dt.row(_selectRowObj).data();
+                // _selectedID=data.repair_order_id;
                 // $.ajax({
                 //     "url":"Adjustments/transaction/check-invoice-for-returns?id="+_selectedID,
                 // type : "GET",
@@ -2547,6 +2613,7 @@ $(document).ready(function(){
                         
                 //     }
                 // });
+
 
 
 
@@ -2640,7 +2707,7 @@ $(document).ready(function(){
             //if(getFloat(d.order_status_id)>1){
             //showNotification({title:"Error!",stat:"error",msg:"Sorry, you cannot delete purchase order that is already been recorded on purchase invoice."});
             //}else{
-            removeRepairOrder().done(function(response){
+            removeServiceInvoice().done(function(response){
                 showNotification(response);
                 if(response.stat=="success"){
                     dt.row(_selectRowObj).remove().draw();
@@ -2649,18 +2716,18 @@ $(document).ready(function(){
             //}
         });
         $('#btn_cancel').click(function(){
-            //$('#modal_so_list').modal('hide');
+            //$('#modal_ro_list').modal('hide');
             showList(true);
         });
 
         $('#btn_save').click(function(){
-            if(validateRequiredFields($('#frm_repair_order'))){
+            if(validateRequiredFields($('#frm_service_invoice'))){
                 if(_txnMode=="new"){
-                    createRepairOrder().done(function(response){
+                    createServiceInvoice().done(function(response){
                         showNotification(response);
                         if(response.stat=="success"){
                             dt.row.add(response.row_added[0]).draw();
-                            clearFields($('#frm_repair_order'));
+                            clearFields($('#frm_service_invoice'));
                             closeAllDetailControls();
                             showList(true);
                         }
@@ -2668,11 +2735,11 @@ $(document).ready(function(){
                         showSpinningProgress($('#btn_save'));
                     });
                 }else{
-                    updateRepairOrder().done(function(response){
+                    updateServiceInvoice().done(function(response){
                         showNotification(response);
                         if(response.stat=="success"){
                             dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
-                            clearFields($('#frm_repair_order'));
+                            clearFields($('#frm_service_invoice'));
                             closeAllDetailControls();
                             showList(true);
                         }
@@ -2926,8 +2993,8 @@ $(document).ready(function(){
         });
     };
 
-    var createRepairOrder=function(){
-        var _data=$('#frm_repair_order,#frm_items_pms,#frm_items_bpr,#frm_items_gb').serializeArray();
+    var createServiceInvoice=function(){
+        var _data=$('#frm_service_invoice,#frm_items_pms,#frm_items_bpr,#frm_items_gb').serializeArray();
         _data.push({name : "advisor_remarks", value : $('textarea[name="advisor_remarks"]').val()});
         _data.push({name : "customer_remarks", value : $('textarea[name="customer_remarks"]').val()});
 
@@ -2940,14 +3007,14 @@ $(document).ready(function(){
         return $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"Repair_order/transaction/create",
+            "url":"Service_invoice/transaction/create",
             "data":_data,
             "beforeSend": showSpinningProgress($('#btn_save'))
         });
     };
 
-    var updateRepairOrder=function(){
-        var _data=$('#frm_repair_order,#frm_items_pms,#frm_items_bpr,#frm_items_gb').serializeArray();
+    var updateServiceInvoice=function(){
+        var _data=$('#frm_service_invoice,#frm_items_pms,#frm_items_bpr,#frm_items_gb').serializeArray();
         _data.push({name : "advisor_remarks", value : $('textarea[name="advisor_remarks"]').val()});
         _data.push({name : "customer_remarks", value : $('textarea[name="customer_remarks"]').val()});
 
@@ -2957,12 +3024,12 @@ $(document).ready(function(){
         // _data.push({name : "summary_tax_amount", value : tbl_summary.find(oTableDetails.order_tax_amount).text()});
         // _data.push({name : "summary_after_tax", value : tbl_summary.find(oTableDetails.after_tax).text()});
 
-        _data.push({name : "repair_order_id" ,value : _selectedID});
+        _data.push({name : "service_invoice_id" ,value : _selectedID});
 
         return $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"Repair_order/transaction/update",
+            "url":"Service_invoice/transaction/update",
             "data":_data,
             "beforeSend": showSpinningProgress($('#btn_save'))
         });
@@ -2986,12 +3053,12 @@ $(document).ready(function(){
         });
     }
 
-    var removeRepairOrder=function(){
+    var removeServiceInvoice=function(){
         return $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"Repair_order/transaction/delete",
-            "data":{repair_order_id : _selectedID}
+            "url":"Service_invoice/transaction/delete",
+            "data":{service_invoice_id : _selectedID}
         });
     };
     var showList=function(b){
@@ -3013,7 +3080,7 @@ $(document).ready(function(){
         });
     };
     $('#cancel_modal').on('click',function(){
-        $('#modal_so_list').modal('hide');
+        $('#modal_ro_list').modal('hide');
     });
     var showSpinningProgress=function(e){
         $(e).find('span').toggleClass('glyphicon glyphicon-refresh spinning');
@@ -3275,7 +3342,7 @@ $(document).ready(function(){
     };
 
     var resetSummary=function(){
-        var tbl_summary=$('#tbl_repair_order');
+        var tbl_summary=$('#tbl_service_invoice');
         tbl_summary.find(oTableDetails.discount).html('0.00');
         tbl_summary.find(oTableDetails.before_tax).html('0.00');
         tbl_summary.find(oTableDetails.order_tax_amount).html('0.00');

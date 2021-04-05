@@ -184,20 +184,21 @@
             </thead>
             <tbody>
             <?php
-            $inv_total_price=0.00;
+            $service_gross=0;
+            $service_total_price=0;
             foreach($items as $item){
                 ?>
                 <tr>
-                    <td><?php echo $item->service_desc; ?></td>
+                    <td><?php echo $item->product_desc; ?></td>
                     <td style="text-align: left;"><?php echo $item->service_qty; ?></td>
-                    <td ><?php echo $item->service_unit_name; ?></td>
+                    <td ><?php echo $item->unit_name; ?></td>
                     <td align="right"><?php echo number_format($item->service_price,2); ?></td>
-                    <td align="right"><?php echo number_format($item->service_line_total,2); ?></td>
+                    <td align="right"><?php echo number_format($item->service_line_total_price,2); ?></td>
                 </tr>
                 <?php
-                $inv_total_price+=$item->service_line_total;
-            }
-            ?>
+                $service_gross+=$item->service_gross;
+                $service_total_price+=$item->service_line_total_price;
+                } ?>
             </tbody>
             <tfoot>
             <tr>
@@ -205,7 +206,7 @@
             </tr>
             <tr>
                 <td colspan="4" align="right">Total before Discount: </td>
-                <td align="right"><?php echo number_format($service_invoice->total_amount,2); ?></td>
+                <td align="right"><?php echo number_format($service_gross,2); ?></td>
             </tr>
             <tr>
                 <td colspan="4" align="right">Discount: </td>
@@ -213,7 +214,7 @@
             </tr>
             <tr>
                 <td colspan="4" align="right"><strong>Total after Discount: </strong></td>
-                <td align="right"><strong><?php echo number_format($service_invoice->total_amount_after_discount,2); ?></strong></td>
+                <td align="right"><strong><?php echo number_format($service_total_price,2); ?></strong></td>
             </tr>
             </tfoot>
         </table>

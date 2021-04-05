@@ -385,8 +385,8 @@
                     <th class="hidden">Total Discount</th>
                     <th class="hidden">Tax %</th>
                     <th width="13%" style="text-align: right;">Total</th> <!-- TOTAL AFTER GLOBAL --> 
-                    <th width="10%">Expiration Date</th>
-                    <th width="10%">LOT#</th>
+                    <th width="10%" class="hidden">Expiration Date</th>
+                    <th width="10%" class="hidden">LOT#</th>
                     <th class="hidden">V.I</th>
                     <th class="hidden">N.V</th>
                     <td class="hidden">Item ID</td>
@@ -399,7 +399,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="9" style="height: 20px;">&nbsp;</td>
+                        <td colspan="7" style="height: 20px;">&nbsp;</td>
                     </tr>
                     <tr class="">
                         <td colspan="2" align="right">
@@ -412,7 +412,7 @@
                         <td id="td_total_after_discount" style="text-align: right;display: none;">
                             <strong>0.00</strong>
                         </td>
-                        <td style="border-left: none;" colspan="4" align="right">
+                        <td style="border-left: none;" colspan="2" align="right">
                             <strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong>
                         </td>
                         <td align="right" colspan="2" id="td_before_tax" color="red">0.00</td>
@@ -422,31 +422,31 @@
                             <strong><i class="glyph-icon icon-star"></i> Tax :</strong>
                         </td>
                         <td align="right" id="td_tax" color="red">0.00</td>
-                        <td colspan="4" align="right">
+                        <td colspan="2" align="right">
                             <strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong>
                         </td>
                         <td align="right" colspan="2" id="td_after_tax" color="red">0.00</td>
                     </tr>
                     <tr>
-                        <td colspan="7" align="right"><strong>Shipping Cost :</strong> </td>
+                        <td colspan="5" align="right"><strong>Shipping Cost :</strong> </td>
                         <td colspan="2">
                             <input type="text" name="shipping_cost" id="shipping_cost" class="additional-payment numeric form-control">
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="7" align="right"><strong>Custom Duties :</strong> </td>
+                        <td colspan="5" align="right"><strong>Custom Duties :</strong> </td>
                         <td colspan="2">
                             <input type="text" name="custom_duties" id="custom_duties" class="additional-payment numeric form-control">
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="7" align="right"><strong>Other Amounts :</strong> </td>
+                        <td colspan="5" align="right"><strong>Other Amounts :</strong> </td>
                         <td colspan="2">
                             <input type="text" name="other_amount" id="other_amount" class="additional-payment numeric form-control">
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="7" align="right"><strong>Total Amount :</strong> </td>
+                        <td colspan="5" align="right"><strong>Total Amount :</strong> </td>
                         <td colspan="2">
                             <input type="text" name="grand_total_amount" id="grand_total_amount" class="numeric form-control" readonly style="font-weight: bold;">
                         </td>
@@ -1173,6 +1173,8 @@ $(document).ready(function(){
                 }
             }).bind('typeahead:select', function(ev, suggestion) {
 
+               _objTypeHead.typeahead('close');     //  -- changed due to barcode scan not working
+              _objTypeHead.typeahead('val','');      //  -- changed due to barcode scan not working
             // if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
             //     showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
             //     return;
@@ -2012,15 +2014,15 @@ $(document).ready(function(){
         });
 
 
-         $('#refreshproducts').click(function(){
+        $('#refreshproducts').click(function(){
             getproduct().done(function(data){
                 products.clear();
                 products.local = data.data;
                 products.initialize(true);
                     showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-            }).always(function(){
-                });
-         });
+            }).always(function(){});
+        });
+
         $('#link_browse_po').click(function(){
             $('#btn_receive_po').click();
         });
@@ -2297,10 +2299,10 @@ $(document).ready(function(){
         '<td><input name="dr_line_total_after_global[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.total_after_global,2)+'" readonly></td>'+         
 
         // 9. EXPIRATION DATE
-        '<td align="right"><input name="exp_date[]" type="text" class="date-picker form-control" value="'+d.exp_date+'"></td>'+
+        '<td align="right" class="hidden"><input name="exp_date[]" type="text" class="date-picker form-control" value="'+d.exp_date+'"></td>'+
 
         // 10. BATCH NO
-        '<td align="right"><input name="batch_no[]" type="text" class="form-control" value="'+d.batch_no+'"></td>'+
+        '<td align="right" class="hidden"><input name="batch_no[]" type="text" class="form-control" value="'+d.batch_no+'"></td>'+
 
         // 11. VAT INPUT
         '<td  style="display: none;"><input name="dr_tax_amount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_tax_amount,2)+'" readonly></td>'+

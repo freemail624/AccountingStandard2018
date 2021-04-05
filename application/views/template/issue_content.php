@@ -1,186 +1,165 @@
-<head>  <title>Issuance Report</title></head>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Parts Requisition & Issuance Slip</title>
+    <style type="text/css">
+        table.pris{
+            border-collapse: collapse;
+            border-radius: 1em;
+            font-size: 9pt;
+            font-family: calibri;
+        }
+        .top{
+            border-top: 1px solid black;
+        }
+        .left{
+            border-left: 1px solid black;
+        }
+        .right{
+            border-right: 1px solid black;
+        }   
+        .bottom{
+            border-bottom: 1px solid black;
+        }   
+        
+        table.pris tr:last-child td:first-child {
+            border-bottom-left-radius: 10px;
+        }
+
+        table.pris tr:last-child td:last-child {
+            border-bottom-right-radius: 10px;
+        }
+
+    </style>
+</head>
 <body>
-<style>
-
-
-
-    #issuance tr {
-        background: transparent !important;
-    }
-
-    #report_footer th {
-/*        background: #303030 !important;
-*/    }
-    .report{
-
-    border-bottom: 1px solid gray;
-
-    border-right: none;
-    border-left:none;
-    border-top:none;
-
-}
-    td{
-
-    }
-    tr {
-/*        border: none!important;*/
-    }
-
-    tr:nth-child(even){
-/*        background: #414141 !important;*/
-/*        border: none!important;*/
-    }
-
-/*    tr:hover {
-        transition: .4s;
-        background: #414141 !important;
-        color: white;
-    }
-    
-*/
-    th{
-        background-color: transparent!important;
-    }
-/*    tr:hover .btn {
-        border-color: #494949!important;
-        border-radius: 0!important;
-        -webkit-box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
-        -moz-box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
-        box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
-    }
-*/
-       body {
-        font-family: 'Calibri',sans-serif;
-        font-size: 12px;
-    }
-
-    .align-right {
-        text-align: right;
-    }
-
-    .align-left {
-        text-align: left;
-    }
-
-    .align-center {
-        text-align: center;
-    }
-
-    .report-header {
-        font-weight: bolder;
-    }
-       table{
-        border:none!important;
-    }
-          
-      </style>
-
-<div style="width:100%">
-<table width="100%">
-        <tr>
-            <td width="10%" style="border:none!important; object-fit: cover;"><img src="<?php echo $company_info->logo_path; ?>" style="height: 90px; width: 90px; text-align: left;"></td>
-            <td width="90%" style="border:none!important;" class="">
-                <h1 class="report-header"><strong><?php echo $company_info->company_name; ?></strong></h1>
+    <table width="100%">
+        <tr class="">
+            <td width="15%" valign="top">
+                <img src="<?php echo $company_info->logo_path; ?>" style="height: 100px; width: 100px;"> 
+            </td>
+            <td width="85%" valign="top">
+                <strong style="font-size: 18pt;"><?php echo $company_info->company_name; ?></strong>
+                <br/><br/>
                 <p><?php echo $company_info->company_address; ?></p>
-                <p><?php echo $company_info->landline.'/'.$company_info->mobile_no; ?></p>
-                <span><?php echo $company_info->email_address; ?></span><br>
+                <p><?php echo $company_info->company_address_2; ?></p>
+                <span>Email : <?php echo $company_info->email_address; ?></span>
+                <p>Tel and Fax no.: <?php echo $company_info->landline.' &nbsp;'.$company_info->mobile_no; ?></p>
             </td>
         </tr>
-    </table><hr>
-<table style="font-family:tahoma;" id="report_header">
-    <tbody>
+    </table>
+    <br/>
+
+    <table width="100%" cellspacing="5" cellpadding="5" class="pris">
         <tr>
-            <td style="width:85%;font-size:18px;font-weight:bold;border:none!important;">ISSUANCE REPORT</td>
-            <td style="width:15%;font-size:18px;font-weight:bold;border:none!important;"><?php echo $issuance_info->slip_no; ?></td>
-        </tr>
-    </tbody>
-</table>
-<table width="100%" id="issuance">
-    <thead>
-    </thead>
-    <tbody>
-        <tr>
-            <td style="width:20%;font-weight:bold;border:none!important;">Name of Customer: </td>
-            <td style="width:30%;" class="report"> <?php echo $issuance_info->customer_name; ?></td>
-            <td style="width:10%;border:none!important;"></td>
-            <td style="text-align:right;font-weight:bold;border:none!important;">Date:</td>
-            <td style="width:20%;text-align:center;" class="report"><?php echo  date_format(new DateTime($issuance_info->date_issued),"m/d/Y"); ?></td>
+            <td colspan="8" align="center" valign="top" class="top left right bottom">
+                <strong>
+                    <h2>Parts Requisition &amp; Issuance Slip # <?php echo $issuance_info->repair_order_no; ?></h2>
+                </strong>
+            </td>
         </tr>
         <tr>
-            <td style="width:20%;font-weight:bold;border:none!important;">Address: </td>
-            <td style="width:30%;" class="report"> <?php echo $issuance_info->address; ?></td>
-            <td style="width:10%;border: none!important;"></td>
-            <td style="text-align:right;font-weight:bold;border:none!important;">Terms:</td>
-            <td style="width:20%;text-align:center;" class="report"> <?php echo $issuance_info->terms; ?></td>
+            <td width="90%" colspan="6" class="left right bottom" valign="top" style="height: 100px;min-height: 100px;font-size: 11pt;">
+                <?php echo $issuance_info->customer_no; ?><br/>
+                <strong><?php echo $issuance_info->customer_name; ?></strong>
+            </td>
+            <td width="10%" colspan="2" class="right bottom" valign="top">
+                RO NUMBER <br/>
+                <?php echo $issuance_info->repair_order_no; ?>
+            </td>
         </tr>
-    </tbody>
-</table><br>
-<table width="100%" style="font-family:tahoma;" cellspacing="0" >
-    <thead>
-        <tr >
-            <th style="width:35%;text-align:left;border-bottom: 1px solid gray;">Description</th>
-            <th style="width:10%;text-align:center;border-bottom: 1px solid gray;">Quantity</th>
-            <th style="width:15%;text-align:center;border-bottom: 1px solid gray;">Unit</th>
-            <th style="width:20%;text-align:center;border-bottom: 1px solid gray;">Unit Price</th>
-            <th style="width:20%;text-align:center;border-bottom: 1px solid gray;">Amount</th>
+        <tr>
+            <td width="20%" valign="middle" align="center" class="left bottom">
+                <strong>Part Number</strong>
+            </td>
+            <td class="left bottom" width="30%"></td>
+            <td valign="middle" align="center" class="left bottom" width="10%">
+                <strong>BIN</strong>
+            </td>
+            <td valign="middle" align="center" class="left bottom" width="10%">
+                <strong>CURR <br/> SOH</strong>
+            </td>
+            <td valign="middle" align="center" class="left bottom" width="10%">
+                <strong>QTY <br/> ORD</strong>
+            </td>
+            <td valign="middle" align="center" class="left bottom" width="10%">
+                <strong>QTY <br/> BO</strong>
+            </td>
+            <td valign="middle" align="center" class="left bottom" width="10%">
+                <strong>QTY <br/> SUPP</strong>
+            </td>
+            <td valign="middle" align="center" class="left right bottom" width="10%">
+                <strong>QTY <br/> PCIKED</strong>
+            </td>
         </tr>
-    </thead>
-    <tbody>
-       <?php 
-            $grandtotal=0;
-            foreach($issue_items as $item){
-            $grandtotal+=$item->issue_line_total_price;
-             ?>
-                <tr>
-                    <td style="border-bottom: 1px solid gray;"><?php echo $item->product_desc; ?></td>
-                    <td style="text-align:center; border-bottom: 1px solid gray;"><?php echo number_format($item->issue_qty,0); ?></td>
-                    <td style="text-align:center; border-bottom: 1px solid gray;"><?php echo $item->unit_name; ?></td>
-                    <td style="text-align:center;border-bottom: 1px solid gray;"><?php echo number_format($item->issue_price,2); ?></td>
-                    <td style="text-align:center;border-bottom: 1px solid gray;"><?php echo number_format($item->issue_line_total_price,2); ?></td>
-                </tr>
-            <?php } ?>
+        <?php foreach($issue_items as $item){ ?>
             <tr>
-            <td colspan="3"></td>
-                <td  style="text-align:left;font-weight:bold;  border-bottom: 1px solid gray;">Grand Total</td>
-                <td style="text-align:center;font-weight:bold; border-bottom: 1px solid gray;"><?php echo number_format($grandtotal,2); ?></td>
+                <td class="left"><?php echo $item->product_code; ?></td>
+                <td><?php echo $item->product_desc; ?></td>
+                <td align="center"><?php echo $item->bin_code; ?></td>
+                <td align="center"><?php echo number_format(0,0); ?></td>
+                <td align="center"><?php echo number_format($item->issue_qty,0); ?></td>
+                <td align="center"><?php echo number_format(0,0); ?></td>
+                <td align="center"><?php echo number_format($item->issue_qty,0); ?></td>
+                <td class="right" align="center" valign="bottom">________</td>
             </tr>
-    </tbody>
-</table>
-<br><br><br>
-<table id="report_footer" style="width: 100%;">
-    <tbody>
-<!--         <tr >
-            <th style="width:35%;text-align:center;"><br></th>
-            <th style="width:10%;text-align:center;"></th>
-            <th style="width:10%;text-align:center;"></th>
-            <th style="width:22%;text-align:center;"></th>
-            <th style="width:23%;text-align:center;"></th>
-        </tr>
-        <tr style="background-color: transparent!important;">
-            <th style="width:35%;text-align:center;border-top:1px solid black;">Authorized Signature</th>
-            <th style="width:10%;text-align:center;"></th>
-            <th style="width:10%;text-align:center;"></th>
-            <th style="width:22%;text-align:center;"></th>
-            <th style="width:23%;text-align:center;border-top:1px solid black;">Customer's Signature</th>
-        </tr> -->
+        <?php }?>
         <tr>
-        <td style="border:none!important;">
-            <th style="width: 10%;"></th><th style="width:30%;text-align:center;border-top:1px solid black;">Authorized Signature</th><th style="width: 10%;"></th>
-        </td>
-        <td style="border:none!important;">
-        <th style="width: 10%;"></th><th style="width:30%;text-align:center;border-top:1px solid black;">Customer's Signature</th><th style="width: 10%;"></th>
-        </td>
+            <td class="left bottom"></td>
+            <td class="bottom" style="font-size: 9pt;">***NOTHING FOLLOWS***</td>
+            <td class="right bottom" colspan="6"></td>
         </tr>
-    </tbody>
-</table>
-</div>
-
-
-
-
-
-
-
-
-
+    </table>
+    <br/>
+    <table width="100%">
+        <tr>
+            <td width="34%" style="padding-right: 20px;">
+                <table width="100%" style="border-collapse: collapse;">
+                    <tr>
+                        <td valign="top" class="top left right" style="font-size: 10pt;">Salesman/Date:</td>
+                    </tr>
+                    <tr>
+                        <td class="left right" style="height: 50px;min-height: 50px;"></td>
+                    </tr>
+                    <tr>
+                        <td align="center" valign="top" class="top bottom right left" style="font-size: 10pt;">
+                            Signtaure Over Printed Name
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td width="33%">
+                <table width="100%" style="border-collapse: collapse;">
+                    <tr>
+                        <td valign="top" class="top left right" style="font-size: 10pt;">Picker&amp;Issuer/Date:</td>
+                    </tr>
+                    <tr>
+                        <td class="left right" style="height: 50px;min-height: 50px;"></td>
+                    </tr>
+                    <tr>
+                        <td align="center" valign="top" class="top bottom right left" style="font-size: 10pt;">
+                            Signtaure Over Printed Name
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td width="33%" style="padding-left: 20px;">
+                <table width="100%" style="border-collapse: collapse;">
+                    <tr>
+                        <td valign="top" class="top left right" style="font-size: 10pt;">Received(Technician) Date:</td>
+                    </tr>
+                    <tr>
+                        <td class="left right" style="height: 50px;min-height: 50px;"></td>
+                    </tr>
+                    <tr>
+                        <td align="center" valign="top" class="top bottom right left" style="font-size: 10pt;">
+                            Signtaure Over Printed Name
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <span style="font-size: 8pt;margin-top: 10px;">Pick Slip Date/Time Printed: <?php echo date('m/d/Y h:i A'); ?></span>
+</body>
+</html>

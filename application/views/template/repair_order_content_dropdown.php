@@ -69,347 +69,182 @@
 
 	<div style="background: white;padding: 10px;">
 		<div class="row">
-			<div class="col-md-10">
-				<div class="row">
-					<div class="col-md-6">
-		                <div class="tab-container tab-top tab-primary">
-		                    <ul class="nav nav-tabs">
-		                        <li class="active">
-		                            <a href="#pms_<?php echo $info->repair_order_id; ?>" data-toggle="tab"> Periodic Maintenance (PMS)
-			                            <span style="background: gray; color: white; border-radius: 50%;padding: 1px 5px;font-size: 8pt;">
-			                            	<?php echo number_format($pms_count,0); ?>
-			                            </span> 
-		                            </a>
-		                        </li>
-		                        <li>
-		                            <a href="#bpr_<?php echo $info->repair_order_id; ?>" data-toggle="tab"> Body Paint Repair
-		                            	<span style="background: gray; color: white; border-radius: 50%;padding: 1px 5px;font-size: 8pt;">
-		                            	<?php echo number_format($bpr_count,0); ?>
-		                            	</span>
-		                            </a>
-		                        </li>
-		                        <li>
-		                            <a href="#gj_<?php echo $info->repair_order_id; ?>" data-toggle="tab"> General Job
-		                            	<span style="background: gray; color: white; border-radius: 50%;padding: 1px 5px;font-size: 8pt;">
-		                            		<?php echo number_format($gj_count,0); ?>
-		                            	</span>
-									</a>
-		                        </li>
-		                    </ul>
+			<div class="col-md-9">
+				<table width="100%" class="table" border="1" cellspacing="0" cellpadding="0" style="font-size: 8pt;">
+			    	<tr>
+			    		<td valign="top" width="16%">
+			    			Customer No. <br/> 
+			    			<strong><?php echo $info->customer_no; ?></strong>
+			    		</td>
+			    		<td valign="top" colspan="4" rowspan="3" width="40%">
+			    			Customer Name and Address <br/>
+			    			<strong style="font-size: 10pt;">
+			    				<?php echo $info->customer_name; ?><br/>
+			    				<?php echo $info->address; ?>
+			    			</strong>
+			    		</td>
+			    		<td valign="top">
+			    			Plate No. <br/>
+			    			<strong><?php echo $info->plate_no; ?></strong>
+			    		</td>
+			    		<td valign="top" colspan="2">
+			    			Advisor <br/>
+			    			<strong><?php echo $info->advisor_fullname; ?></strong>
+			    		</td>
+			    		<td valign="top">
+			    			Doc. Date <br/>
+			    			<strong><?php echo $info->document_date; ?></strong>
+			    		</td>
+			    	</tr>
+			    	<tr>
+			    		<td valign="top">
+			    			Mode of Payment <br/>
+			    		</td>
+			    		<td valign="top">
+			    			Km Reading <br/>
+			    			<strong><?php echo number_format($info->km_reading,0); ?></strong>
+			    		</td>
+			    		<td valign="top" colspan="2">
+			    			Next Svc Date <br/>
+			    			<strong><?php echo $info->next_svc_date; ?></strong>
+			    		</td>
+			    		<td valign="top">
+			    			Next Svc Km <br/>
+			    			<strong><?php echo number_format($info->next_svc_km,0); ?></strong>
+			    		</td>
+			    	</tr>
+			    	<tr>
+			    		<td valign="top">
+			    			Insurer <br/>
+			    		</td>
+			    		<td valign="top">
+			    			Year/Make <br/>
+			    			<strong><?php echo $info->year_make_id; ?></strong>
+			    		</td>
+			    		<td valign="top" colspan="2">
+			    			Model <br/>
+			    			<strong><?php echo $info->model_name; ?></strong>
+			    		</td>
+			    		<td valign="top">
+			    			Color <br/>
+			    			<strong><?php echo $info->color_name; ?></strong>
+			    		</td>
+			    	</tr>    	
+			    	<tr>
+			    		<td valign="top">
+			    			LOA No. <br/>
+			    		</td>
+			    		<td valign="top">
+			    			Mobile No. <br/>
+			    			<strong><?php echo $info->mobile_no; ?></strong>
+			    		</td>
+			    		<td valign="top" colspan="2">
+			    			Tel No.(Home)<br/>
+			    			<strong><?php echo $info->tel_no_home; ?></strong>
+			    		</td>
+			    		<td valign="top">
+			    			Tel No.(Bus)<br/>
+			    			<strong><?php echo $info->tel_no_bus; ?></strong>
+			    		</td>
+			    		<td valign="top" colspan="2">
+			    			VIN/Chassis No. <br/>
+			    			<strong><?php echo $info->chassis_no; ?></strong>
+			    		</td>
+			    		<td valign="top" colspan="2">
+			    			Engine No. <br/>
+			    			<strong><?php echo $info->engine_no; ?></strong>
+			    		</td>	
+			    	</tr>
+			    	<tr>
+			    		<td valign="top">
+			    			LOA Date <br/>
+			    		</td>
+			    		<td valign="top" colspan="2">
+			    			Representative Name <br/>
+			    			<strong><?php echo $info->representative_name; ?></strong>
+			    		</td>
+			    		<td valign="top" colspan="2">
+			    			Contact No(s) <br/>
+			    			<strong><?php echo $info->representative_no; ?></strong>
+			    		</td>
+			    		<td valign="top">
+			    			Selling Dealer <br/>
+			    			<strong><?php echo $info->selling_dealer; ?></strong>
+			    		</td>    
+			    		<td valign="top" colspan="2">
+			    			Delivery Date <br/>
+			    			<strong><?php echo $info->delivery_date; ?></strong>
+			    		</td>  
+			    		<td valign="top">
+			    			G.V.D. <br/>
+			    		</td>  		
+			    	</tr>
+			    	<tr>
+			    		<td valign="top">
+			    			Policy No <br/>
+			    		</td>
+			    		<td valign="top" colspan="2">
+			    			Time Received <br/>
+			    			<strong><?php echo $info->time_received; ?></strong>
+			    		</td>
+			    		<td valign="top" colspan="2">
+			    			Date/Time Promised <br/>
+			    			<strong><?php echo $info->date_time_promised; ?></strong>
+			    		</td>
+			    		<td valign="top">
+			    			WTY Date <br/>
+			    		</td>    
+			    		<td valign="top" colspan="2">
+			    			Ext. Wty Date <br/>
+			    		</td>  
+			    		<td valign="top">
+			    			Wty Exp Date <br/> 
+			    		</td>  		
+			    	</tr>    	
+			    </table>
+			    <br/>
+			 	<?php if(count($histories) > 0){ ?>
+			    <table width="100%" class="table table-striped" cellspacing="0" style="font-size: 8.5pt;border: 1px solid black;">
+			    	<tr>
+			    		<td valign="top" colspan="4" align="center">
+			    			<strong>HISTORY</strong>
+			    		</td>
+			    	</tr>
+			    	<tr>
+			    		<td valign="top" align="center"><strong>DATE</strong></td>
+			    		<td valign="top" align="center"><strong>REPAIR ORDER NO.</strong></td>
+			    		<td valign="top" align="center"><strong>MILEAGE</strong></td>
+			    		<td valign="top" align="center"><strong>SERVICE ADVISOR</strong></td>
+			    	</tr>
+			    	<?php foreach($histories as $history){ ?>
+			    		<tr>
+			    			<td valign="top" align="center"><?php echo $history->document_date; ?></td>
+			    			<td valign="top" align="center"><?php echo $history->repair_order_no; ?></td>
+			    			<td valign="top" align="center"><?php echo number_format($history->km_reading,0); ?></td>
+			    			<td valign="top" align="center"><?php echo $history->advisor_fullname; ?></td>
+			    		</tr>
+			    	<?php }?>
+			    	<tr>
+			    		<td colspan="4">&nbsp;</td>
+			    	</tr>
+			    </table>
 
-		                </div>
-		                <div class="tab-content">
-		                    <div class="tab-pane active" id="pms_<?php echo $info->repair_order_id; ?>">
-		                    	<table width="100%" class="table table-striped" cellspacing="0" style="font-size: 8.5pt;">
-									<thead>
-								    	<tr>
-								    		<th valign="top" width="5%"><strong>Line</strong></th>
-								    		<th valign="top" width="10%"><strong>Product</strong></th>
-								    		<th valign="top" width="40%"><strong>Description</strong></th>
-								    		<th valign="top" width="15%" align="right" style="text-align: right;"><strong>Quantity</strong></th>
-								    		<th valign="top" width="15%" align="right" style="text-align: right;"><strong>Unit Price</strong></th>
-								    		<th valign="top" width="15%" align="right" style="text-align: right;"><strong>Amount</strong></th>
-								    	</tr>
-									</thead>
-							    	<?php foreach($services as $service){ 
-							    		if($service->vehicle_service_id == 1){
-							    	?>
-							    		<tr>
-							    			<td valign="top" colspan="2" class="gray">C</td>
-							    			<td valign="top" colspan="4" class="gray">
-							    				<strong><?php echo $info->pms_desc; ?></strong>
-							    			</td>
-							    		</tr>
-							    		<?php 
-							    			$sub_total=0;
-							    			foreach($items as $item){
-							    			if($item->vehicle_service_id == $service->vehicle_service_id){
-							    			$sub_total+=$item->order_gross;
-							    		?>
-							    			<tr>
-							    				<td valign="top"></td>
-							    				<td valign="top"><?php echo $item->unit_code; ?></td>
-							    				<td valign="top"><?php echo $item->product_desc; ?></td>
-							    				<td valign="top" align="right"><?php echo $item->order_qty + 0;?></td>
-							    				<td valign="top" align="right"><?php echo number_format($item->order_price,2) ?></td>
-							    				<td valign="top" align="right"><?php echo number_format($item->order_gross,2) ?></td>
-							    			</tr>
-							    		<?php }}?>
-							    		<tr>
-							    			<td valign="top" colspan="5" align="right"><strong>Sub-Total</strong></td>
-							    			<td valign="top" align="right" class=""><strong><?php echo number_format($sub_total,2); ?></strong></td>
-							    		</tr>
-							    	<?php }}?>
-						    	</table>
-		                    </div>
-		                    <div class="tab-pane" id="bpr_<?php echo $info->repair_order_id; ?>">
-							<table width="100%" class="table table-striped" cellspacing="0" style="font-size: 8.5pt;">
-									<thead>
-								    	<tr>
-								    		<th valign="top" width="5%"><strong>Line</strong></th>
-								    		<th valign="top" width="10%"><strong>Product</strong></th>
-								    		<th valign="top" width="40%"><strong>Description</strong></th>
-								    		<th valign="top" width="15%" align="right" style="text-align: right;"><strong>Quantity</strong></th>
-								    		<th valign="top" width="15%" align="right" style="text-align: right;"><strong>Unit Price</strong></th>
-								    		<th valign="top" width="15%" align="right" style="text-align: right;"><strong>Amount</strong></th>
-								    	</tr>
-									</thead>
-							    	<?php foreach($services as $service){ 
-							    		if($service->vehicle_service_id == 2){
-							    	?>
-							    		<tr>
-							    			<td valign="top" colspan="2" class="gray">C</td>
-							    			<td valign="top" colspan="4" class="gray">
-							    				<strong><?php echo $info->bpr_desc; ?></strong>
-							    			</td>
-							    		</tr>
-							    		<?php 
-							    			$sub_total=0;
-							    			foreach($items as $item){
-							    			if($item->vehicle_service_id == $service->vehicle_service_id){
-							    			$sub_total+=$item->order_gross;
-							    		?>
-							    			<tr>
-							    				<td valign="top"></td>
-							    				<td valign="top"><?php echo $item->unit_code; ?></td>
-							    				<td valign="top"><?php echo $item->product_desc; ?></td>
-							    				<td valign="top" align="right"><?php echo $item->order_qty + 0;?></td>
-							    				<td valign="top" align="right"><?php echo number_format($item->order_price,2) ?></td>
-							    				<td valign="top" align="right"><?php echo number_format($item->order_gross,2) ?></td>
-							    			</tr>
-							    		<?php }}?>
-							    		<tr>
-							    			<td valign="top" colspan="5" align="right"><strong>Sub-Total</strong></td>
-							    			<td valign="top" align="right" class=""><strong><?php echo number_format($sub_total,2); ?></strong></td>
-							    		</tr>
-							    	<?php }}?>
-						    	</table>
-		                    </div>
-		                    <div class="tab-pane" id="gj_<?php echo $info->repair_order_id; ?>">
-		                    	<table width="100%" class="table table-striped" cellspacing="0" style="font-size: 8.5pt;">
-									<thead>
-								    	<tr>
-								    		<th valign="top" width="5%"><strong>Line</strong></th>
-								    		<th valign="top" width="10%"><strong>Product</strong></th>
-								    		<th valign="top" width="40%"><strong>Description</strong></th>
-								    		<th valign="top" width="15%" align="right" style="text-align: right;"><strong>Quantity</strong></th>
-								    		<th valign="top" width="15%" align="right" style="text-align: right;"><strong>Unit Price</strong></th>
-								    		<th valign="top" width="15%" align="right" style="text-align: right;"><strong>Amount</strong></th>
-								    	</tr>
-									</thead>
-							    	<?php foreach($services as $service){ 
-							    		if($service->vehicle_service_id == 3){
-							    	?>
-							    		<tr>
-							    			<td valign="top" colspan="2" class="gray">C</td>
-							    			<td valign="top" colspan="4" class="gray">
-							    				<strong><?php echo $info->gj_desc; ?></strong>
-							    			</td>
-							    		</tr>
-							    		<?php 
-							    			$sub_total=0;
-							    			foreach($items as $item){
-							    			if($item->vehicle_service_id == $service->vehicle_service_id){
-							    			$sub_total+=$item->order_gross;
-							    		?>
-							    			<tr>
-							    				<td valign="top"></td>
-							    				<td valign="top"><?php echo $item->unit_code; ?></td>
-							    				<td valign="top"><?php echo $item->product_desc; ?></td>
-							    				<td valign="top" align="right"><?php echo $item->order_qty + 0;?></td>
-							    				<td valign="top" align="right"><?php echo number_format($item->order_price,2) ?></td>
-							    				<td valign="top" align="right"><?php echo number_format($item->order_gross,2) ?></td>
-							    			</tr>
-							    		<?php }}?>
-							    		<tr>
-							    			<td valign="top" colspan="5" align="right"><strong>Sub-Total</strong></td>
-							    			<td valign="top" align="right" class=""><strong><?php echo number_format($sub_total,2); ?></strong></td>
-							    		</tr>
-							    	<?php }}?>
-						    	</table>
-		                    </div>
-		                </div>
-					</div>
-					<div class="col-md-6">
-						<br/><br/>
-						<table width="100%" class="table" border="1" cellspacing="0" cellpadding="0" style="font-size: 8pt;">
-					    	<tr>
-					    		<td valign="top" width="16%">
-					    			Customer No. <br/> 
-					    			<strong><?php echo $info->customer_no; ?></strong>
-					    		</td>
-					    		<td valign="top" colspan="4" rowspan="3" width="40%">
-					    			Customer Name and Address <br/>
-					    			<strong style="font-size: 10pt;">
-					    				<?php echo $info->customer_name; ?><br/>
-					    				<?php echo $info->address; ?>
-					    			</strong>
-					    		</td>
-					    		<td valign="top">
-					    			Plate No. <br/>
-					    			<strong><?php echo $info->plate_no; ?></strong>
-					    		</td>
-					    		<td valign="top" colspan="2">
-					    			Advisor <br/>
-					    			<strong><?php echo $info->advisor_fullname; ?></strong>
-					    		</td>
-					    		<td valign="top">
-					    			Doc. Date <br/>
-					    			<strong><?php echo $info->document_date; ?></strong>
-					    		</td>
-					    	</tr>
-					    	<tr>
-					    		<td valign="top">
-					    			Mode of Payment <br/>
-					    		</td>
-					    		<td valign="top">
-					    			Km Reading <br/>
-					    			<strong><?php echo number_format($info->km_reading,0); ?></strong>
-					    		</td>
-					    		<td valign="top" colspan="2">
-					    			Next Svc Date <br/>
-					    			<strong><?php echo $info->next_svc_date; ?></strong>
-					    		</td>
-					    		<td valign="top">
-					    			Next Svc Km <br/>
-					    			<strong><?php echo number_format($info->next_svc_km,0); ?></strong>
-					    		</td>
-					    	</tr>
-					    	<tr>
-					    		<td valign="top">
-					    			Insurer <br/>
-					    		</td>
-					    		<td valign="top">
-					    			Year/Make <br/>
-					    			<strong><?php echo $info->year_make_id; ?></strong>
-					    		</td>
-					    		<td valign="top" colspan="2">
-					    			Model <br/>
-					    			<strong><?php echo $info->model_name; ?></strong>
-					    		</td>
-					    		<td valign="top">
-					    			Color <br/>
-					    			<strong><?php echo $info->color_name; ?></strong>
-					    		</td>
-					    	</tr>    	
-					    	<tr>
-					    		<td valign="top">
-					    			LOA No. <br/>
-					    		</td>
-					    		<td valign="top">
-					    			Mobile No. <br/>
-					    			<strong><?php echo $info->mobile_no; ?></strong>
-					    		</td>
-					    		<td valign="top" colspan="2">
-					    			Tel No.(Home)<br/>
-					    			<strong><?php echo $info->tel_no_home; ?></strong>
-					    		</td>
-					    		<td valign="top">
-					    			Tel No.(Bus)<br/>
-					    			<strong><?php echo $info->tel_no_bus; ?></strong>
-					    		</td>
-					    		<td valign="top" colspan="2">
-					    			VIN/Chassis No. <br/>
-					    			<strong><?php echo $info->chassis_no; ?></strong>
-					    		</td>
-					    		<td valign="top" colspan="2">
-					    			Engine No. <br/>
-					    			<strong><?php echo $info->engine_no; ?></strong>
-					    		</td>	
-					    	</tr>
-					    	<tr>
-					    		<td valign="top">
-					    			LOA Date <br/>
-					    		</td>
-					    		<td valign="top" colspan="2">
-					    			Representative Name <br/>
-					    			<strong><?php echo $info->representative_name; ?></strong>
-					    		</td>
-					    		<td valign="top" colspan="2">
-					    			Contact No(s) <br/>
-					    			<strong><?php echo $info->representative_no; ?></strong>
-					    		</td>
-					    		<td valign="top">
-					    			Selling Dealer <br/>
-					    			<strong><?php echo $info->selling_dealer; ?></strong>
-					    		</td>    
-					    		<td valign="top" colspan="2">
-					    			Delivery Date <br/>
-					    			<strong><?php echo $info->delivery_date; ?></strong>
-					    		</td>  
-					    		<td valign="top">
-					    			G.V.D. <br/>
-					    		</td>  		
-					    	</tr>
-					    	<tr>
-					    		<td valign="top">
-					    			Policy No <br/>
-					    		</td>
-					    		<td valign="top" colspan="2">
-					    			Time Received <br/>
-					    			<strong><?php echo $info->time_received; ?></strong>
-					    		</td>
-					    		<td valign="top" colspan="2">
-					    			Date/Time Promised <br/>
-					    			<strong><?php echo $info->date_time_promised; ?></strong>
-					    		</td>
-					    		<td valign="top">
-					    			WTY Date <br/>
-					    		</td>    
-					    		<td valign="top" colspan="2">
-					    			Ext. Wty Date <br/>
-					    		</td>  
-					    		<td valign="top">
-					    			Wty Exp Date <br/> 
-					    		</td>  		
-					    	</tr>    	
-					    </table>
-					    <br/>
-					 	<?php if(count($histories) > 0){ ?>
-					    <table width="100%" class="table table-striped" cellspacing="0" style="font-size: 8.5pt;border: 1px solid black;">
-					    	<tr>
-					    		<td valign="top" colspan="4" align="center">
-					    			<strong>HISTORY</strong>
-					    		</td>
-					    	</tr>
-					    	<tr>
-					    		<td valign="top" align="center"><strong>DATE</strong></td>
-					    		<td valign="top" align="center"><strong>REPAIR ORDER NO.</strong></td>
-					    		<td valign="top" align="center"><strong>MILEAGE</strong></td>
-					    		<td valign="top" align="center"><strong>SERVICE ADVISOR</strong></td>
-					    	</tr>
-					    	<?php foreach($histories as $history){ ?>
-					    		<tr>
-					    			<td valign="top" align="center"><?php echo $history->document_date; ?></td>
-					    			<td valign="top" align="center"><?php echo $history->repair_order_no; ?></td>
-					    			<td valign="top" align="center"><?php echo number_format($history->km_reading,0); ?></td>
-					    			<td valign="top" align="center"><?php echo $history->advisor_fullname; ?></td>
-					    		</tr>
-					    	<?php }?>
-					    	<tr>
-					    		<td colspan="4">&nbsp;</td>
-					    	</tr>
-					    </table>
+			    <?php } ?>
 
-					    <?php } ?>
-
-					    <table width="100%" cellspacing="5" cellpadding="5" border="1" style="font-size: 8.5pt;">
-					    	<tr>
-					    		<td valign="top" width="50%">
-					    			<strong>CUSTOMER'S REQUEST</strong><br/>
-					    			<?php echo $info->customer_remarks; ?><br/>
-					    		</td>
-					    		<td valign="top" width="50%">
-					    			<strong>ADVISOR'S RECOMMENDATION</strong><br/>
-					    			***<?php echo $info->advisor_remarks; ?>***<br/><br/>
-					    		</td>    		
-					    	</tr>
-					    </table>						
-					</div>
-				</div>		   	    
+			    <table width="100%" cellspacing="5" cellpadding="5" border="1" style="font-size: 8.5pt;">
+			    	<tr>
+			    		<td valign="top" width="50%" style="height: 80px; min-height: 80px;">
+			    			<strong>CUSTOMER'S REQUEST</strong><br/>
+			    			<?php echo $info->customer_remarks; ?><br/>
+			    		</td>
+			    		<td valign="top" width="50%">
+			    			<strong>ADVISOR'S RECOMMENDATION</strong><br/>
+			    			***<?php echo $info->advisor_remarks; ?>***<br/><br/>
+			    		</td>    		
+			    	</tr>
+			    </table>		   	    
 			</div>	
-			<div class="col-md-2">
-				<br/><br/>
+			<div class="col-md-3">
 				<table width="100%" border="1" cellspacing="5" cellpadding="5" style="font-size: 8.5pt;">
 					<tr>
 						<td colspan="2" valign="top" align="center">
@@ -526,7 +361,168 @@
                     </tr>			
 				</table>
 			</div>
-		</div>	
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+	            <div class="tab-container tab-top tab-primary">
+	                <ul class="nav nav-tabs">
+	                    <li class="active">
+	                        <a href="#pms_<?php echo $info->repair_order_id; ?>" data-toggle="tab"> PMS
+	                            <span style="background: gray; color: white; border-radius: 50%;padding: 1px 5px;font-size: 8pt;">
+	                            	<?php echo number_format($pms_count,0); ?>
+	                            </span> 
+	                        </a>
+	                    </li>
+	                    <li>
+	                        <a href="#bpr_<?php echo $info->repair_order_id; ?>" data-toggle="tab"> Body Paint Repair
+	                        	<span style="background: gray; color: white; border-radius: 50%;padding: 1px 5px;font-size: 8pt;">
+	                        	<?php echo number_format($bpr_count,0); ?>
+	                        	</span>
+	                        </a>
+	                    </li>
+	                    <li>
+	                        <a href="#gj_<?php echo $info->repair_order_id; ?>" data-toggle="tab"> General Job
+	                        	<span style="background: gray; color: white; border-radius: 50%;padding: 1px 5px;font-size: 8pt;">
+	                        		<?php echo number_format($gj_count,0); ?>
+	                        	</span>
+							</a>
+	                    </li>
+	                </ul>
+
+	            </div>
+	            <div class="tab-content">
+	                <div class="tab-pane active" id="pms_<?php echo $info->repair_order_id; ?>">
+	                	<table width="100%" class="table table-striped" cellspacing="0" style="font-size: 8.5pt;">
+							<thead>
+						    	<tr>
+						    		<th valign="top" width="5%"><strong>Line</strong></th>
+						    		<th valign="top" width="10%"><strong>Product</strong></th>
+						    		<th valign="top" width="40%"><strong>Description</strong></th>
+						    		<th valign="top" width="15%" align="right" style="text-align: right;"><strong>Quantity</strong></th>
+						    		<th valign="top" width="15%" align="right" style="text-align: right;"><strong>Unit Price</strong></th>
+						    		<th valign="top" width="15%" align="right" style="text-align: right;"><strong>Amount</strong></th>
+						    	</tr>
+							</thead>
+					    	<?php foreach($services as $service){ 
+					    		if($service->vehicle_service_id == 1){
+					    	?>
+					    		<tr>
+					    			<td valign="top" colspan="2" class="gray">C</td>
+					    			<td valign="top" colspan="4" class="gray">
+					    				<strong><?php echo $info->pms_desc; ?></strong>
+					    			</td>
+					    		</tr>
+					    		<?php 
+					    			$sub_total=0;
+					    			foreach($items as $item){
+					    			if($item->vehicle_service_id == $service->vehicle_service_id){
+					    			$sub_total+=$item->order_gross;
+					    		?>
+					    			<tr>
+					    				<td valign="top"></td>
+					    				<td valign="top"><?php echo $item->unit_code; ?></td>
+					    				<td valign="top"><?php echo $item->product_desc; ?></td>
+					    				<td valign="top" align="right"><?php echo $item->order_qty + 0;?></td>
+					    				<td valign="top" align="right"><?php echo number_format($item->order_price,2) ?></td>
+					    				<td valign="top" align="right"><?php echo number_format($item->order_gross,2) ?></td>
+					    			</tr>
+					    		<?php }}?>
+					    		<tr>
+					    			<td valign="top" colspan="5" align="right"><strong>Sub-Total</strong></td>
+					    			<td valign="top" align="right" class=""><strong><?php echo number_format($sub_total,2); ?></strong></td>
+					    		</tr>
+					    	<?php }}?>
+				    	</table>
+	                </div>
+	                <div class="tab-pane" id="bpr_<?php echo $info->repair_order_id; ?>">
+					<table width="100%" class="table table-striped" cellspacing="0" style="font-size: 8.5pt;">
+							<thead>
+						    	<tr>
+						    		<th valign="top" width="5%"><strong>Line</strong></th>
+						    		<th valign="top" width="10%"><strong>Product</strong></th>
+						    		<th valign="top" width="40%"><strong>Description</strong></th>
+						    		<th valign="top" width="15%" align="right" style="text-align: right;"><strong>Quantity</strong></th>
+						    		<th valign="top" width="15%" align="right" style="text-align: right;"><strong>Unit Price</strong></th>
+						    		<th valign="top" width="15%" align="right" style="text-align: right;"><strong>Amount</strong></th>
+						    	</tr>
+							</thead>
+					    	<?php foreach($services as $service){ 
+					    		if($service->vehicle_service_id == 2){
+					    	?>
+					    		<tr>
+					    			<td valign="top" colspan="2" class="gray">C</td>
+					    			<td valign="top" colspan="4" class="gray">
+					    				<strong><?php echo $info->bpr_desc; ?></strong>
+					    			</td>
+					    		</tr>
+					    		<?php 
+					    			$sub_total=0;
+					    			foreach($items as $item){
+					    			if($item->vehicle_service_id == $service->vehicle_service_id){
+					    			$sub_total+=$item->order_gross;
+					    		?>
+					    			<tr>
+					    				<td valign="top"></td>
+					    				<td valign="top"><?php echo $item->unit_code; ?></td>
+					    				<td valign="top"><?php echo $item->product_desc; ?></td>
+					    				<td valign="top" align="right"><?php echo $item->order_qty + 0;?></td>
+					    				<td valign="top" align="right"><?php echo number_format($item->order_price,2) ?></td>
+					    				<td valign="top" align="right"><?php echo number_format($item->order_gross,2) ?></td>
+					    			</tr>
+					    		<?php }}?>
+					    		<tr>
+					    			<td valign="top" colspan="5" align="right"><strong>Sub-Total</strong></td>
+					    			<td valign="top" align="right" class=""><strong><?php echo number_format($sub_total,2); ?></strong></td>
+					    		</tr>
+					    	<?php }}?>
+				    	</table>
+	                </div>
+	                <div class="tab-pane" id="gj_<?php echo $info->repair_order_id; ?>">
+	                	<table width="100%" class="table table-striped" cellspacing="0" style="font-size: 8.5pt;">
+							<thead>
+						    	<tr>
+						    		<th valign="top" width="5%"><strong>Line</strong></th>
+						    		<th valign="top" width="10%"><strong>Product</strong></th>
+						    		<th valign="top" width="40%"><strong>Description</strong></th>
+						    		<th valign="top" width="15%" align="right" style="text-align: right;"><strong>Quantity</strong></th>
+						    		<th valign="top" width="15%" align="right" style="text-align: right;"><strong>Unit Price</strong></th>
+						    		<th valign="top" width="15%" align="right" style="text-align: right;"><strong>Amount</strong></th>
+						    	</tr>
+							</thead>
+					    	<?php foreach($services as $service){ 
+					    		if($service->vehicle_service_id == 3){
+					    	?>
+					    		<tr>
+					    			<td valign="top" colspan="2" class="gray">C</td>
+					    			<td valign="top" colspan="4" class="gray">
+					    				<strong><?php echo $info->gj_desc; ?></strong>
+					    			</td>
+					    		</tr>
+					    		<?php 
+					    			$sub_total=0;
+					    			foreach($items as $item){
+					    			if($item->vehicle_service_id == $service->vehicle_service_id){
+					    			$sub_total+=$item->order_gross;
+					    		?>
+					    			<tr>
+					    				<td valign="top"></td>
+					    				<td valign="top"><?php echo $item->unit_code; ?></td>
+					    				<td valign="top"><?php echo $item->product_desc; ?></td>
+					    				<td valign="top" align="right"><?php echo $item->order_qty + 0;?></td>
+					    				<td valign="top" align="right"><?php echo number_format($item->order_price,2) ?></td>
+					    				<td valign="top" align="right"><?php echo number_format($item->order_gross,2) ?></td>
+					    			</tr>
+					    		<?php }}?>
+					    		<tr>
+					    			<td valign="top" colspan="5" align="right"><strong>Sub-Total</strong></td>
+					    			<td valign="top" align="right" class=""><strong><?php echo number_format($sub_total,2); ?></strong></td>
+					    		</tr>
+					    	<?php }}?>
+				    	</table>
+	                </div>
+	            </div>
+			</div>
+		</div>
 	</div>
 </body>
 </html>

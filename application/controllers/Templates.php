@@ -197,20 +197,7 @@ class Templates extends CORE_Controller {
                 );
 
                 $data['entries']=$m_service_invoice->get_journal_entries_2($service_invoice_id);
-
-                $data['items']=$m_service_invoice_items->get_list(
-                    array('service_invoice_items.service_invoice_id'=>$service_invoice_id),
-                    array(
-                        'service_invoice_items.*',
-                        'services.service_desc',
-                        'service_unit.service_unit_id',
-                        'service_unit.service_unit_name'
-                        ),
-                    array(
-                        array('services','services.service_id=service_invoice_items.service_id','left'),
-                        array('service_unit','service_unit.service_unit_id=service_invoice_items.service_unit','left')
-                        )
-                    );
+                $data['items']=$m_service_invoice_items->get_service_invoice_items($service_invoice_id);
 
                 
                 //validate if customer is not deleted
@@ -667,52 +654,31 @@ class Templates extends CORE_Controller {
             case 'service-invoice-dropdown': //delivery invoice
                 $m_info=$this->Service_invoice_model;
                 $m_items=$this->Service_invoice_item_model;
-                $type=$this->input->get('type',TRUE);
-                $info=$m_info->get_list($filter_value,
-                    'service_invoice.*, 
-                     departments.department_name,
-                     customers.customer_name,
-                     salesperson.firstname,
-                     salesperson.lastname',
-                    array(
-                        array('departments', 'departments.department_id=service_invoice.department_id','left'),
-                        array('customers', 'customers.customer_id=service_invoice.customer_id','left'),
-                        array('salesperson','salesperson.salesperson_id=service_invoice.salesperson_id', 'left')
-                        )
-                    );
+                $m_services = $this->Vehicle_services_model;
 
-                $data['item_info']=$m_items->get_list(array('service_invoice_items.service_invoice_id'=>$filter_value),
-                    array('service_invoice_items.*',
-                     'services.service_desc',
-                     'service_unit.service_unit_name'),
-                    array(
-                        array('services','services.service_id=service_invoice_items.service_id','left'),
-                        array('service_unit','service_unit.service_unit_id=service_invoice_items.service_unit','left')
-                        )
-                    );
+                $type=$this->input->get('type',TRUE);
+                $info=$m_info->get_service_invoice_list($filter_value);
+                $data['item_info']=$m_items->get_service_invoice_items($filter_value);
                 $data['service']=$info[0];
+                $data['vehicle_services']=$m_services->get_vehicle_services();
+
                 $m_company=$this->Company_model;
                 $company=$m_company->get_list();
                 $data['company_info']=$company[0];
-
-
-                    
-                    
                             
                 if($type=='fullview'||$type==null){
                     echo $this->load->view('template/service_invoice_content',$data,TRUE);
                     echo $this->load->view('template/service_invoice_content_menus',$data,TRUE);
                         }
-                if($type=='html'){
+                if($type=='preview'){
                     $file_name=$info[0]->service_invoice_no;
                     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                     $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
                     $content=$this->load->view('template/service_invoice_content',$data,TRUE);//load the template
-                    $pdf->setFooter('{PAGENO}');
+                    // $pdf->setFooter('{PAGENO}');
                     $pdf->WriteHTML($content);
                     //download it.
                     $pdf->Output();
-                    // echo $this->load->view('template/service_invoice_content',$data,TRUE);
                 }
 
                 break;
@@ -764,10 +730,11 @@ class Templates extends CORE_Controller {
 
                 $info=$m_issuance->get_list(
                     $filter_value,
-                    'issuance_info.*,departments.department_name,customers.customer_name',
+                    'issuance_info.*,departments.department_name,customers.customer_no,customers.customer_name,repair_order.repair_order_no',
                     array(
                         array('departments','departments.department_id=issuance_info.issued_department_id','left'),
-                        array('customers','customers.customer_id=issuance_info.issued_to_person','left')
+                        array('repair_order','repair_order.repair_order_id=issuance_info.repair_order_id','left'),
+                        array('customers','customers.customer_id=repair_order.customer_id','left'),
                     )
                 );
 
@@ -777,26 +744,24 @@ class Templates extends CORE_Controller {
                 $data['company_info']=$company[0];
                 $data['issue_items']=$m_dr_items->get_list(
                     array('issuance_items.issuance_id'=>$filter_value),
-                    'issuance_items.*,products.product_desc,units.unit_name',
+                    'issuance_items.*,products.product_code,products.product_desc,units.unit_name,bins.bin_code,bins.description',
                     array(
                         array('products','products.product_id=issuance_items.product_id','left'),
-                        array('units','units.unit_id=issuance_items.unit_id','left')
+                        array('units','units.unit_id=issuance_items.unit_id','left'),
+                        array('bins','bins.bin_id=products.bin_id','left')
                     )
                 );
 
-
-
                 //show only inside grid with menu button
                 if($type=='fullview'||$type==null){
-                    echo $this->load->view('template/issue_content',$data,TRUE);
+                    echo $this->load->view('template/issue_content_dropdown',$data,TRUE);
                     echo $this->load->view('template/issue_content_menus',$data,TRUE);
                 }
 
                 //show only inside grid without menu button
                 if($type=='contentview'){
-                    echo $this->load->view('template/issue_content',$data,TRUE);
+                    echo $this->load->view('template/issue_content_dropdown',$data,TRUE);
                 }
-
 
                 //download pdf
                 if($type=='pdf'){
@@ -804,7 +769,6 @@ class Templates extends CORE_Controller {
                     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                     $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
                     $content=$this->load->view('template/issue_content',$data,TRUE); //load the template
-                    $pdf->setFooter('{PAGENO}');
                     $pdf->WriteHTML($content);
                     //download it.
                     $pdf->Output($pdfFilePath,"D");
@@ -817,7 +781,6 @@ class Templates extends CORE_Controller {
                     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                     $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
                     $content=$this->load->view('template/issue_content',$data,TRUE); //load the template
-                    $pdf->setFooter('{PAGENO}');
                     $pdf->WriteHTML($content);
                     //download it.
                     $pdf->Output();
@@ -1112,6 +1075,17 @@ class Templates extends CORE_Controller {
                     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                     $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
                     $content=$this->load->view('template/repair_order_content',$data,TRUE); //load the template
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output();
+                }
+
+                //inventory preview on browser
+                if($type=='inv-preview'){
+                    $file_name=$data['info']->repair_order_no;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                    $content=$this->load->view('template/repair_order_issuance_content',$data,TRUE); //load the template
                     $pdf->WriteHTML($content);
                     //download it.
                     $pdf->Output();
