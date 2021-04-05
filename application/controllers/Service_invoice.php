@@ -348,6 +348,22 @@ class Service_invoice extends CORE_Controller
                 $service_invoice_id=$this->input->post('service_invoice_id',TRUE);
                 $repair_order_id=$this->input->post('repair_order_id',TRUE);
 
+                $check_inv=$m_invoice->get_list($service_invoice_id);
+                
+                if(count($check_inv) > 0){
+
+                    if($check_inv[0]->is_journal_posted == TRUE){
+
+                        $response['stat']='error';
+                        $response['title']='<b>Warning</b>';
+                        $response['msg']='This service invoice was already posted!';
+                        die(json_encode($response));
+
+                    }
+
+                }
+
+
                 $m_invoice->begin();
 
                 /* Customers Info */
@@ -532,6 +548,21 @@ class Service_invoice extends CORE_Controller
                 $service_invoice_id=$this->input->post('service_invoice_id',TRUE);
 
                 $m_order = $this->Repair_order_model;
+
+                $check_inv=$m_invoice->get_list($service_invoice_id);
+                
+                if(count($check_inv) > 0){
+
+                    if($check_inv[0]->is_journal_posted == TRUE){
+
+                        $response['stat']='error';
+                        $response['title']='<b>Warning</b>';
+                        $response['msg']='This service invoice was already posted!';
+                        die(json_encode($response));
+
+                    }
+
+                }
 
                 //mark Items as deleted
                 $m_invoice->set('date_deleted','NOW()'); //treat NOW() as function and not string

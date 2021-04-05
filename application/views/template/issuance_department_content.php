@@ -39,10 +39,12 @@
 <div>
     <table width="100%">
         <tr class="">
+            <td width="10%" valign="top">
+                <img src="<?php echo base_url().$company_info->logo_path; ?>" style="height: 100px; width: 100px;"> 
+            </td>
             <td width="50%" valign="top">
-                <img src="<?php echo base_url().$company_info->logo_path; ?>" style="height: 70px; width: 300px;"> 
-                <br/><br/>
-
+                <h2>Le Mans Stellar Motor Corp.</h2>
+                <br/>
                 <p><?php echo $company_info->company_address; ?></p>
                 <p><?php echo $company_info->company_address_2; ?></p>
                 <span>Email : <?php echo $company_info->email_address; ?></span>
@@ -102,8 +104,6 @@
         <tr>
             <td width="15%" class="default-color border" valign="top">QTY</td>
             <td width="25%" class="default-color border" valign="top">DESCRIPTION</td>
-            <td width="15%" class="default-color border" valign="top">EXPIRATION</td>
-            <td width="15%" class="default-color border" valign="top">LOT#</td>
             <td width="15%" class="default-color border" valign="top" align="right">UNIT PRICE</td>
             <td width="15%" class="default-color border" valign="top" align="right">TOTAL</td>
         </tr>
@@ -114,23 +114,17 @@
         <tr>
             <td class="left right"><?php echo number_format($item->issue_qty,2); ?></td>
             <td class="left right"><?php echo $item->product_desc; ?></td>
-            <td class="left right"><?php echo $item->exp_date; ?></td>
-            <td class="left right"><?php echo $item->batch_no; ?></td>
             <td class="left right" align="right"><?php echo number_format($item->issue_price,2); ?></td>
             <td class="left right" align="right"><?php echo number_format($item->issue_line_total_price,2); ?></td>
         </tr>
         <?php }?>
         <tr>
-            <td class="border" align="right" colspan="5"><b>TOTAL AMOUNT DUE</b></td>
+            <td class="border" align="right" colspan="3"><b>TOTAL AMOUNT DUE</b></td>
             <td class="border" align="right">
                 <?php echo number_format($grandtotal,2); ?>
             </td>
         </tr>
     </table>
-
-    <br/><br/><br/><br/>
-
-    <?php include 'po_report_footer.php'; ?> 
 </div>
 
 

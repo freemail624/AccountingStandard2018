@@ -688,15 +688,15 @@
                 </div>
                 <br/>
                 <div class="col-md-6">
-                    <label ><strong>Advisor Recommendation :</strong></label>
+                    <label ><strong>Advisor's Recommendation :</strong></label>
                     <div class="col-lg-12" style="padding: 0px;">
                         <textarea name="advisor_remarks" id="advisor_remarks" class="form-control" placeholder="Advisor Recommendation"></textarea>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <label ><strong>Customer Recommendation :</strong></label>
+                    <label ><strong>Customer's Request :</strong></label>
                     <div class="col-lg-12" style="padding: 0px;">
-                        <textarea name="customer_remarks" id="customer_remarks" class="form-control" placeholder="Customer Recommendation"></textarea>
+                        <textarea name="customer_remarks" id="customer_remarks" class="form-control" placeholder="Customer's Request"></textarea>
                     </div>
                 </div>                
             </div>
@@ -784,10 +784,10 @@
                                     </td>
                                 </tr>                           
                                 <tr>
-                                    <td colspan="2" align="center"><strong>Discount</strong></td>
+                                    <td class="hidden" colspan="2" align="center"><strong>Discount</strong></td>
                                 </tr>
                                 <tr>
-                                    <td colspan="2">
+                                    <td class="hidden" colspan="2">
                                         <input type="text" name="repair_order_dicsount" id="txt_overall_discount" value="0.00" class="form-control numeric">
                                     </td>
                                 </tr> 

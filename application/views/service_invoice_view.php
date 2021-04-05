@@ -317,7 +317,7 @@
 </div>
 <div id="modal_confirmation" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog modal-sm">
-        <div class="modal-content"><!---content--->
+        <div class="modal-content"><!---content-->
             <div class="modal-header ">
                 <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
                 <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Confirm Deletion</h4>
@@ -329,7 +329,7 @@
                 <button id="btn_yes" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Yes</button>
                 <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">No</button>
             </div>
-        </div><!---content---->
+        </div><!---content-->
     </div>
 </div><!---modal-->
 
@@ -1069,11 +1069,11 @@ $(document).ready(function(){
             _selectedID=data.service_invoice_id;
             //alert(_selectedID);
             _is_journal_posted=data.is_journal_posted;
-        if(_is_journal_posted > 0){
+            if(_is_journal_posted > 0){
                 showNotification({title:" Error!",stat:"error",msg:"Cannot Delete: Invoice is already Posted in Sales Journal."});
             } else{
-            $('#modal_confirmation').modal('show');
-        }
+                $('#modal_confirmation').modal('show');
+            }
         });
         //track every changes on numeric fields
         $('#tbl_items tbody').on('keyup','input.numeric,input.number',function(){
@@ -1105,18 +1105,26 @@ $(document).ready(function(){
                 if(_txnMode=="new"){
                     createServiceInvoice().done(function(response){
                         showNotification(response);
-                        dt.row.add(response.row_added[0]).draw();
-                        clearFields($('#frm_service_invoice'));
-                        showList(true);
+
+                        if(response.stat=="success"){
+                            dt.row.add(response.row_added[0]).draw();
+                            clearFields($('#frm_service_invoice'));
+                            showList(true);
+                        }
+
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
                     });
                 }else{
                     updateServiceInvoice().done(function(response){
                         showNotification(response);
-                        dt.row(_selectRowObj).data(response.row_updated[0]).draw();
-                        clearFields($('#frm_service_invoice'));
-                        showList(true);
+
+                        if(response.stat=="success"){
+                            dt.row(_selectRowObj).data(response.row_updated[0]).draw();
+                            clearFields($('#frm_service_invoice'));
+                            showList(true);
+                        }
+
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
                     });

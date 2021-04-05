@@ -220,14 +220,14 @@ echo $_side_bar_navigation;
                                     <tr>
                                         <th width="10%">Qty</th>
                                         <th width="10%">UM</th>
-                                        <th width="25%">Description</th>
+                                        <th width="35%">Description</th>
                                         <th width="10%" style="text-align: right;">Unit Price</th>
                                         <th class="hidden">Discount</th>
                                         <th class="hidden">T.D</th>
                                         <th class="hidden">Tax %</th>
                                         <th width="15%" style="text-align: right;">Total</th>
-                                        <th width="10%">Expiration</th>
-                                        <th width="10%">Batch #</th>
+                                        <th class="hidden">Expiration</th>
+                                        <th class="hidden">Batch #</th>
                                         <th class="hidden">Cost Upon Invoice</th>
                                         <th class="hidden">V.I</th> <!-- vat input -->
                                         <th class="hidden">N.V</th> <!-- net of vat -->
@@ -239,18 +239,18 @@ echo $_side_bar_navigation;
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <td colspan="8" style="height: 50px;">&nbsp;</td>
+                                        <td colspan="6" style="height: 50px;">&nbsp;</td>
                                     </tr>
                                     <tr class="hidden">
                                         <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount :</strong></td>
                                         <td align="right" colspan="1" id="td_discount" color="red">0.00</td>
-                                        <td colspan="2" id="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
+                                        <td id="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
                                         <td align="right" colspan="1" id="td_before_tax" color="red">0.00</td>
                                     </tr>
                                     <tr>
                                         <td class="hidden" colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
                                         <td class="hidden" align="right" colspan="1" id="td_tax" color="red">0.00</td>
-                                        <td colspan="7" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Amount :</strong></td>
+                                        <td colspan="5" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Amount :</strong></td>
                                         <td align="right" id="td_after_tax" color="red">0.00</td>
                                     </tr>
                                 </tfoot>
@@ -299,12 +299,12 @@ echo $_side_bar_navigation;
 <div class="panel-footer">
     <div class="row">
         <div class="col-sm-12">
-            <label class="control-label" id="is_auto_print"> 
+<!--             <label class="control-label" id="is_auto_print"> 
                 <strong> 
                    <input type="checkbox" name="is_auto_print" for="is_auto_print" <?php if($company->is_print_auto == 1){ echo 'checked'; } ?>>
                         Print after saving?
                 </strong>
-            </label>
+            </label> -->
             <br/>
             <button id="btn_save" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>  Save Changes</button>
             <button id="btn_cancel" class="btn-default btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"">Cancel</button>
@@ -645,8 +645,8 @@ dt_si = $('#tbl_si_list').DataTable({
                     '<td width=15%" style="padding-left: 1%;"><b>PLU</b></td>'+
                     '<td class="hidden"><b>UniqID</b></td>'+
                     '<td width="25%" align="left"><b>Description</b></td>'+
-                    '<td width="20%" align="left"><b>Expiration</b></td>'+
-                    '<td width="10%" align="left"><b>LOT#</b></td>'+
+                    '<td width="20%" align="left" class="hidden"><b>Expiration</b></td>'+
+                    '<td width="10%" align="left" class="hidden"><b>LOT#</b></td>'+
                     '<td width="17%" align="right"><b>On Hand</b></td>'+
                     '<td width="13%" align="right" style="padding-right: 1%;"><b>Cost Price</b></td>'+
                     '</tr></table>'
@@ -655,8 +655,8 @@ dt_si = $('#tbl_si_list').DataTable({
                     '<td width="15%" style="padding-left: 1%;">{{product_code}}</td>'+
                     '<td class="hidden">{{unq_id}}</td>'+
                     '<td width="25%" align="left">{{product_desc}}</td>'+
-                    '<td width="20%" align="left">{{exp_date}}</td>'+
-                    '<td width="10%" align="left">{{batch_no}}</td>'+
+                    '<td width="20%" align="left" class="hidden">{{exp_date}}</td>'+
+                    '<td width="10%" align="left" class="hidden">{{batch_no}}</td>'+
                     '<td width="17%" align="right">{{on_hand_per_batch}}</td>'+
                     '<td width="13%" align="right" style="padding-right: 1%;">{{purchase_cost}}</td>'+
                     '</tr></table>')
@@ -677,6 +677,9 @@ dt_si = $('#tbl_si_list').DataTable({
             //     showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
             //     return;
             // }
+
+            _objTypeHead.typeahead('close');           //     -- changed due to barcode scan not working
+            _objTypeHead.typeahead('val','');         //  -- changed due to barcode scan not working
 
             var product_id = 0;
             var conversion_rate = 0;
@@ -1436,11 +1439,11 @@ dt_si = $('#tbl_si_list').DataTable({
                 '<input name="issue_line_total_price[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.issue_line_total_price,2)+'" readonly>'+
             '</td>'+
             // [8] Expiration
-            '<td>'+
+            '<td class="hidden">'+
                 '<input name="exp_date[]" type="text" class="form-control" value="'+ d.exp_date +'" readonly>'+
             '</td>'+
             // [9] Batch #
-            '<td>'+
+            '<td class="hidden">'+
                 '<input name="batch_no[]" type="text" class="form-control" value="'+ d.batch_no +'" readonly>'+
             '</td>'+
             // [10] Cost Upon Invoice
@@ -1460,7 +1463,7 @@ dt_si = $('#tbl_si_list').DataTable({
             '</td>'+
             // [14] Action
             '<td align="center">'+
-                '<button type="button" name="search_item" class="btn btn-warning" style="margin-right: 5px;"><i class="fa fa-search"></i></button>'+
+                '<button type="button" name="search_item" class="btn btn-warning hidden" style="margin-right: 5px;"><i class="fa fa-search"></i></button>'+
                 '<button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button>'+
             '</td>'+
             // [15] Bulk Price
@@ -1533,7 +1536,7 @@ dt_si = $('#tbl_si_list').DataTable({
        return $.ajax({
            "dataType":"json",
            "type":"POST",
-           "url":"products/transaction/current-items",
+           "url":"products/transaction/list",
            "beforeSend": function(){
                 countproducts = products.local.length;
                 if(countproducts > 100){

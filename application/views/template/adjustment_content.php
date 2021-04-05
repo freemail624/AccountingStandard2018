@@ -36,10 +36,12 @@
 
     <table width="100%">
         <tr class="">
-            <td width="50%" valign="top">
-                <img src="<?php echo $company_info->logo_path; ?>" style="height: 70px; width: 300px;"> 
-                <br/><br/>
-
+            <td width="10%" valign="top">
+                <img src="<?php echo $company_info->logo_path; ?>" style="height: 100px; width: 100px;"> 
+            </td>
+            <td width="40%" valign="top">
+                <h2>Le Mans Stellar Motor Corp.</h2>
+                <br/>
                 <p><?php echo $company_info->company_address; ?></p>
                 <p><?php echo $company_info->company_address_2; ?></p>
                 <span>Email : <?php echo $company_info->email_address; ?></span>
@@ -101,8 +103,6 @@
         <tr>
             <td width="15%" class="default-color border" valign="top">QTY</td>
             <td width="25%" class="default-color border" valign="top">DESCRIPTION</td>
-            <td width="15%" class="default-color border" valign="top">EXPIRATION</td>
-            <td width="15%" class="default-color border" valign="top">LOT#</td>
             <td width="15%" class="default-color border" valign="top" align="right">UNIT PRICE</td>
             <td width="15%" class="default-color border" valign="top" align="right">TOTAL</td>
         </tr>
@@ -117,14 +117,12 @@
         <tr>
             <td class="left right"><?php echo number_format($item->adjust_qty,2); ?></td>
             <td class="left right"><?php echo $item->product_desc; ?></td>
-            <td class="left right"><?php echo $item->exp_date; ?></td>
-            <td class="left right"><?php echo $item->batch_no; ?></td>
             <td class="left right" align="right"><?php echo number_format($item->adjust_price,2); ?></td>
             <td class="left right" align="right"><?php echo number_format($item->adjust_price*$item->adjust_qty,2); ?></td>
         </tr>
         <?php }?>
         <tr>
-            <td colspan="3" class="top" rowspan="4" valign="top">
+            <td colspan="2" class="top" rowspan="4" valign="top">
                 <table width="100%" style="font-size: 8pt;">
                     <tr>
                         <td valign="top" colspan="2" rowspan="4">
@@ -134,34 +132,30 @@
                     </tr>
                 </table>
             </td>
-            <td class="border" colspan="2" align="right">SUB TOTAL</td>
+            <td class="border" align="right">SUB TOTAL</td>
             <td class="border" align="right">
                 <?php echo number_format($gross_total,2); ?>
             </td>
         </tr>
         <tr>
-            <td class="border" colspan="2" align="right">DISCOUNT</td>
+            <td class="border" align="right">DISCOUNT</td>
             <td class="border" align="right">
                 <?php echo number_format($total_discount,2); ?>
             </td>
         </tr>
         <tr>
-            <td class="border" colspan="2" align="right">TAX AMOUNT</td>
+            <td class="border" align="right">TAX AMOUNT</td>
             <td class="border" align="right">
                 <?php echo number_format($total_tax_amount,2); ?>
             </td>
         </tr>
         <tr>
-            <td class="border" colspan="2" align="right"><b>TOTAL AMOUNT DUE</b></td>
+            <td class="border" align="right"><b>TOTAL AMOUNT DUE</b></td>
             <td class="border" align="right">
                 <?php echo number_format($adjustment_info->total_after_tax,2); ?>
             </td>
         </tr>
     </table>
-
-    <br/><br/><br/><br/>
-
-    <?php include 'po_report_footer.php'; ?>       
     
 </div>
 

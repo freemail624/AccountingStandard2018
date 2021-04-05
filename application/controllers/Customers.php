@@ -291,6 +291,9 @@ class Customers extends CORE_Controller {
                 $m_customers->term=$this->input->post('term',TRUE);
                 $m_customers->credit_limit=$this->input->post('credit_limit',TRUE);
                 $m_customers->customer_type_id=$this->input->post('customer_type_id',TRUE);
+                $m_customers->tel_no_home=$this->input->post('tel_no_home',TRUE);
+                $m_customers->tel_no_bus=$this->input->post('tel_no_bus',TRUE);
+
                 $m_customers->set('date_modified','NOW()');
                 $m_customers->modified_by_user=$this->session->user_id;
 

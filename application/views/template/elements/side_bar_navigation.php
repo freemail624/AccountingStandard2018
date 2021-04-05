@@ -44,16 +44,6 @@
                                 <li class="<?php echo (in_array('1-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Cash_receipt">Cash Receipt Journal</a></li>
                             </ul>
                         </li>
-                        <li class="<?php echo (in_array('13',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-view-list-alt"></i><span>Services</span></a>
-                            <ul class="acc-menu">
-                                <li class="<?php echo (in_array('13-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Repair_order">Repair Order</a></li>
-                                <li class="<?php echo (in_array('13-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Service_invoice">Service Invoice</a></li>
-                                <li class="<?php echo (in_array('13-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Service_journal">Service Journal</a></li>
-                                <li class="<?php echo (in_array('3-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Receivable_payments">Collection Entry</a></li>
-<!--                                 <li class="<?php //echo (in_array('13-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Service_unit">Service Unit</a></li>
-                                <li class="<?php //echo (in_array('13-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Services">Service Management</a></li> -->
-                            </ul>
-                        </li>
                         <li class="<?php echo (in_array('2',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-package"></i><span>Purchasing</span></a>
                             <ul class="acc-menu">
                                 <li class="<?php echo (in_array('2-9',$this->session->user_rights)?'':'hidden'); ?>"><a href="Purchase_request">Purchase Request</a></li>
@@ -64,23 +54,30 @@
                                 <li class="<?php echo (in_array('2-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Payable_payments">Record Payment</a></li>
 
                             </ul>
+                        </li>                        
+                        <li class="<?php echo (in_array('13',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="fa fa-car"></i><span>Services</span></a>
+                            <ul class="acc-menu">
+                                <li class="<?php echo (in_array('13-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Repair_order">Repair Order</a></li>
+                                <li class="<?php echo (in_array('13-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Service_invoice">Service Invoice</a></li>
+                                <li class="<?php echo (in_array('13-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Service_journal">Service Journal</a></li>
+                                <li class="<?php echo (in_array('3-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Receivable_payments">Collection Entry</a></li>
+<!--                                 <li class="<?php //echo (in_array('13-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Service_unit">Service Unit</a></li>
+                                <li class="<?php //echo (in_array('13-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Services">Service Management</a></li> -->
+                            </ul>
                         </li>
-                        <li class="<?php echo (in_array('3',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-shopping-cart"></i><span>Sales</span></a>
+<!--                         <li class="<?php echo (in_array('3',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-shopping-cart"></i><span>Sales</span></a>
                             <ul class="acc-menu">
                                 <li class="<?php echo (in_array('3-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Sales_order">Sales Order</a></li>
                                 <li class="<?php echo (in_array('3-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Sales_invoice">Charge Invoice</a></li>
                                 <li class="<?php echo (in_array('3-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Cash_invoice">Cash Invoice</a></li>
-                                <!-- <li class="<?php echo (in_array('3-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Dispatching">Warehouse Dispatching</a></li> -->
-
-<!--                                 <li class="<?php echo (in_array('3-8',$this->session->user_rights)?'':'hidden'); ?>"><a href="Loading">Loading Report</a></li> -->
-
+                                <li class="<?php echo (in_array('3-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Dispatching">Warehouse Dispatching</a></li>
+                                <li class="<?php echo (in_array('3-8',$this->session->user_rights)?'':'hidden'); ?>"><a href="Loading">Loading Report</a></li>
                                 <li class="<?php echo (in_array('3-7',$this->session->user_rights)?'':'hidden'); ?>"><a href="Customer_sale_history">Customer Sales History</a></li>
                                 <li class="<?php echo (in_array('3-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Sales_history">Sales/Cash Invoice History</a></li>
-
-                                <!-- <li><a href="Sales_invoice_other">Other Sales Invoice</a></li> -->
+                                <li><a href="Sales_invoice_other">Other Sales Invoice</a></li>
                                 <li class="<?php echo (in_array('3-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Receivable_payments">Collection Entry</a></li>
                             </ul>
-                        </li>
+                        </li> -->
 
 
 
@@ -101,9 +98,9 @@
                                 <li class="<?php echo (in_array('15-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Issuance_department">Item Transfer</a></li>
                                 <li class="<?php echo (in_array('15-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Adjustments">Item Adjustment</a></li>
                                 <li class="<?php echo (in_array('15-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Inventory">Inventory</a></li>
-                                <li class="<?php echo (in_array('15-7',$this->session->user_rights)?'':'hidden'); ?>"><a href="Batch_inventory">Batch Inventory</a></li>
+<!--                                 <li class="<?php //echo (in_array('15-7',$this->session->user_rights)?'':'hidden'); ?>"><a href="Batch_inventory">Batch Inventory</a></li> -->
                                 <li class="<?php echo (in_array('15-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Stock_card">Stock Card</a></li>
-                                <li class="<?php echo (in_array('15-8',$this->session->user_rights)?'':'hidden'); ?>"><a href="Barcode_generator">Barcode Generator</a></li>
+<!--                                 <li class="<?php //echo (in_array('15-8',$this->session->user_rights)?'':'hidden'); ?>"><a href="Barcode_generator">Barcode Generator</a></li> -->
                             </ul>
                         </li>
                         <li class="<?php echo (in_array('4',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-view-list-alt"></i><span>References</span></a>

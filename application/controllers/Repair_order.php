@@ -101,7 +101,7 @@ class Repair_order extends CORE_Controller
 
         $data['title'] = 'Repair Order';
         
-        (in_array('3-2',$this->session->user_rights)? 
+        (in_array('13-5',$this->session->user_rights)? 
         $this->load->view('repair_order_view', $data)
         :redirect(base_url('dashboard')));
     }
@@ -326,6 +326,21 @@ class Repair_order extends CORE_Controller
 
                 $repair_order_id=$this->input->post('repair_order_id',TRUE);
 
+                $check_ro=$m_order->get_list($repair_order_id);
+
+                if(count($check_ro) > 0){
+
+                    if($check_ro[0]->ro_status_id == 1 OR $check_ro[0]->issued_status_id == 1){
+
+                        $response['stat']='error';
+                        $response['title']='<b>Warning</b>';
+                        $response['msg']='This repair order was already received!';
+                        die(json_encode($response));
+
+                    }
+
+                }
+
                 $m_order->begin();
 
                 /* Customers Info */
@@ -467,6 +482,20 @@ class Repair_order extends CORE_Controller
                 $m_order=$this->Repair_order_model;
 
                 $repair_order_id=$this->input->post('repair_order_id',TRUE);
+                $check_ro=$m_order->get_list($repair_order_id);
+                
+                if(count($check_ro) > 0){
+
+                    if($check_ro[0]->ro_status_id == 1 OR $check_ro[0]->issued_status_id == 1){
+
+                        $response['stat']='error';
+                        $response['title']='<b>Warning</b>';
+                        $response['msg']='This repair order was already received!';
+                        die(json_encode($response));
+
+                    }
+
+                }
 
                 //mark Items as deleted
                 $m_order->is_deleted=1;//mark as deleted

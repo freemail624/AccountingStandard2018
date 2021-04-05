@@ -114,9 +114,9 @@
     <table width="100%">
         <tr>
             <td width="34%" style="padding-right: 20px;">
-                <table width="100%" style="border-collapse: collapse;">
+                <table width="100%" style="border-collapse: collapse;font-size: 7pt!important;">
                     <tr>
-                        <td valign="top" class="top left right" style="font-size: 10pt;">Salesman/Date:</td>
+                        <td valign="top" class="top left right" style="font-size: 7pt!important;">Salesman/Date:</td>
                     </tr>
                     <tr>
                         <td class="left right" style="height: 50px;min-height: 50px;"></td>
@@ -129,9 +129,9 @@
                 </table>
             </td>
             <td width="33%">
-                <table width="100%" style="border-collapse: collapse;">
+                <table width="100%" style="border-collapse: collapse;font-size: 7pt!important;">
                     <tr>
-                        <td valign="top" class="top left right" style="font-size: 10pt;">Picker&amp;Issuer/Date:</td>
+                        <td valign="top" class="top left right" style="font-size: 7pt!important;">Picker&amp;Issuer/Date:</td>
                     </tr>
                     <tr>
                         <td class="left right" style="height: 50px;min-height: 50px;"></td>
@@ -144,9 +144,9 @@
                 </table>
             </td>
             <td width="33%" style="padding-left: 20px;">
-                <table width="100%" style="border-collapse: collapse;">
+                <table width="100%" style="border-collapse: collapse;font-size: 7pt!important;">
                     <tr>
-                        <td valign="top" class="top left right" style="font-size: 10pt;">Received(Technician) Date:</td>
+                        <td valign="top" class="top left right" style="font-size: 7pt!important;">Received(Technician) Date:</td>
                     </tr>
                     <tr>
                         <td class="left right" style="height: 50px;min-height: 50px;"></td>

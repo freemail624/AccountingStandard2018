@@ -34,9 +34,12 @@
 <div>
     <table width="100%">
         <tr class="">
-            <td width="50%" valign="top">
-                <img src="<?php echo $company_info->logo_path; ?>" style="height: 70px; width: 300px;"> 
-                <br/><br/>
+            <td width="10%" valign="top">
+                <img src="<?php echo $company_info->logo_path; ?>" style="height: 100px; width: 100px;"> 
+            </td>
+            <td width="40%" valign="top">
+                <h2>Le Mans Stellar Motor Corp.</h2>
+                <br/>
                 <p><?php echo $company_info->company_address; ?></p>
                 <p><?php echo $company_info->company_address_2; ?></p>
                 <span>Email : <?php echo $company_info->email_address; ?></span>
@@ -186,8 +189,6 @@
             </td>
         </tr>                
     </table>
-    <br/><br/><br/><br/>
-    <?php include 'po_report_footer.php'; ?>   
 </div>
 
 

@@ -39,10 +39,12 @@
 <div>
     <table width="100%">
         <tr class="">
+            <td width="10%" valign="top">
+                <img src="<?php echo base_url().$company_info->logo_path; ?>" style="height: 100px; width: 100px;"> 
+            </td>
             <td width="50%" valign="top">
-                <img src="<?php echo base_url().$company_info->logo_path; ?>" style="height: 70px; width: 300px;"> 
-                <br/><br/>
-
+                <h2>Le Mans Stellar Motor Corp.</h2>
+                <br/>
                 <p><?php echo $company_info->company_address; ?></p>
                 <p><?php echo $company_info->company_address_2; ?></p>
                 <span>Email : <?php echo $company_info->email_address; ?></span>
@@ -72,8 +74,8 @@
     <table width="100%" >
         <thead>
             <tr>
-                <td class="bottom bold" width="20%">PLU</td>
-                <td class="bottom bold" width="30%">Description</td>
+                <td class="bottom bold" width="15%">PLU</td>
+                <td class="bottom bold" width="35%">Description</td>
                 <td class="bottom bold" width="15%" align="right">Quantity In</td>
                 <td class="bottom bold" width="15%" align="right">Quantity Out</td>
                 <td class="bottom bold" width="20%" align="right">On Hand</td>

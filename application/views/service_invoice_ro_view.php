@@ -715,9 +715,9 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <label ><strong>Customer Recommendation :</strong></label>
+                    <label ><strong>Customer's Request :</strong></label>
                     <div class="col-lg-12" style="padding: 0px;">
-                        <textarea name="customer_remarks" id="customer_remarks" class="form-control" placeholder="Customer Recommendation"></textarea>
+                        <textarea name="customer_remarks" id="customer_remarks" class="form-control" placeholder="Customer's Request"></textarea>
                     </div>
                 </div>                
             </div>
@@ -814,10 +814,10 @@
                                 </tr> 
 
                                 <tr>
-                                    <td colspan="2" align="center"><strong>Grand Total</strong></td>
+                                    <td class="hidden" colspan="2" align="center"><strong>Grand Total</strong></td>
                                 </tr>
                                 <tr>
-                                    <td colspan="2">
+                                    <td class="hidden" colspan="2">
                                         <input type="text" name="repair_order_grand_total" id="repair_order_grand_total" value="0.00" class="form-control numeric" readonly style="font-weight: bold!important;font-size: 20px;">
                                     </td>
                                 </tr>                                                                      
