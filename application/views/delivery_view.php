@@ -365,6 +365,20 @@
 
 <div class="row ">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+        <div class="row">
+            <div class="col-md-2">
+                <table width="100%">
+                    <tr>
+                        <td width="50%" style="border: 1px solid white!important;"><label>Quantity :</label></td>
+                        <td width="50%">
+                            <input type="text" id="qty_no" class="numeric form-control" style="width: 10%;">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
         <label class="control-label" style="font-family: Tahoma;"><strong>Enter PLU or Search Item :</strong></label>
         <button id="refreshproducts" class="btn-primary btn pull-right" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>  Refresh</button>
         <div id="custom-templates">
@@ -1080,6 +1094,9 @@ $(document).ready(function(){
                 }
             }).bind('typeahead:select', function(ev, suggestion) {
 
+               _objTypeHead.typeahead('close');     //  -- changed due to barcode scan not working
+              _objTypeHead.typeahead('val','');      //  -- changed due to barcode scan not working
+
             if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
                 showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
                 return;
@@ -1121,9 +1138,16 @@ $(document).ready(function(){
                 var dividend = suggestion.sale_price - temp_inv_price;
                 var markuppercent_sugg = (dividend/temp_inv_price)*100;
 
+                var qty_no = $('#qty_no').val();
+                if(qty_no <= 0){
+                    qty_no = 1;
+                }else{
+                    qty_no = qty_no;
+                }
+
                 $('#tbl_items > tbody').append(newRowItem({
                     //dr_qty : value.dr_qty,
-                    dr_qty : "1",
+                    dr_qty : qty_no,
                     product_code : suggestion.product_code,
                     unit_id : suggestion.unit_id,
                     unit_name : suggestion.unit_name,
@@ -1160,6 +1184,10 @@ $(document).ready(function(){
                 reInitializeNumeric();
                 reComputeTotal();
 
+                $('.trigger-keyup').keyup();
+                $('#qty_no').val(1);
+                $('#qty_no').focus();
+                $('#qty_no').select();
 
             });
 
@@ -1310,6 +1338,21 @@ $(document).ready(function(){
             });
         });
 
+        $("input.numeric").click(function () {
+           $(this).select();
+        });
+
+        $("input#qty_no").click(function () {
+           $(this).select();
+        });        
+
+        $('input#qty_no').on('keypress',function(evt){
+            if(evt.keyCode==13){
+                evt.preventDefault();
+                $('#typeaheadsearch').focus();
+            }
+        });        
+
         $('#btn_new').click(function(){
             _txnMode="new";
             //$('.toggle-fullscreen').click();
@@ -1322,6 +1365,7 @@ $(document).ready(function(){
             $('#td_before_tax').html('0.00');
             $('#td_tax').html('0.00');
             $('#td_after_tax').html('0.00');
+            $('#qty_no').val(1);
             $('#tbl_items tbody').html('');
             $('#order_default').datepicker('setDate', 'today');
             $('#due_default').datepicker('setDate', 'today');

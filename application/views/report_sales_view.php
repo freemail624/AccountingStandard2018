@@ -43,6 +43,14 @@
             font-weight: bolder;
         }
 
+        .red{
+            color: red;
+        }
+
+        .black{
+            color: black;
+        }
+
         div.dataTables_processing{ 
         position: absolute!important; 
         top: 0%!important; 
@@ -202,12 +210,29 @@
                                                                     <div class="row">
                                                                         <div class="" style="margin-top: 20px;">
                                                                             <div class="row">
-                                                                                <div class="col-md-4">
+                                                                                <div class="col-md-3">
+                                                                                    <br/>
                                                                                     <h1>Sales Returns</h1>
                                                                                 </div>
-                                                                                <div class="col-md-5">
+                                                                                <div class="col-md-3">
+                                                                                    Invoice # : <br/>
+                                                                                    <select id="cbo_invoice" style="width: 100%;">
+                                                                                        <option value="0">ALL</option>
+                                                                                    </select>
                                                                                 </div>
                                                                                 <div class="col-md-3">
+                                                                                    Cashier : <br/>
+                                                                                    <select id="cbo_cashier" style="width: 100%;">
+                                                                                        <option value="0">ALL</option>
+                                                                                        <?php foreach($cashiers as $cashier){ ?>
+                                                                                            <option value="<?php echo $cashier->return_cashier_id; ?>">
+                                                                                                <?php echo $cashier->return_cashier_name; ?>
+                                                                                            </option>
+                                                                                        <?php } ?>
+                                                                                    </select>
+                                                                                </div>
+                                                                                <div class="col-md-3">
+                                                                                    Search : <br/>
                                                                                     <input type="text" id="tbl_returns_summary_search" class="form-control">
                                                                                 </div>
                                                                             </div>
@@ -215,37 +240,40 @@
                                                                                 <thead class="">
                                                                                 <tr>
                                                                                     <th>Product ID</th>
+                                                                                    <th>Datetime</th>
+                                                                                    <th>Invoice #</th>
                                                                                     <th style="width: 20%">Product</th>
                                                                                     <th>Terminal</th>
+                                                                                    <th>Cashier</th>
                                                                                     <th>Quantity</th>
                                                                                     <th>Discount</th>
                                                                                     <th>Vatable Sales</th>
                                                                                     <th>Vat Amount</th>
                                                                                     <th>Vat Excempt Sales</th>
                                                                                     <th>Zero Rated</th>
-                                                                                    <th>Invoice Amount</th>
+                                                                                    <th class="black">Invoice Amount</th>
                                                                                 </tr>
                                                                                 </thead>
                                                                                 <tbody>
                                                                                 </tbody>
                                                                                 <tfoot>
                                                                                     <tr>
-                                                                                        <td align="right" colspan="4">Current Page Total : </td>
+                                                                                        <td align="right" colspan="7">Current Page Total : </td>
                                                                                         <td id="td_returns_page_total_discount" align="right"></td>
                                                                                         <td id="td_returns_page_total_vatable" align="right"></td>
                                                                                         <td id="td_returns_page_total_vat" align="right"></td>
                                                                                         <td id="td_returns_page_total_excempt" align="right"></td>
                                                                                         <td id="td_returns_page_total_zero_rated" align="right"></td>
-                                                                                        <td id="td_returns_page_total_invoice_amount" align="right"></td>
+                                                                                        <td class="black" id="td_returns_page_total_invoice_amount" align="right"></td>
                                                                                     </tr>
                                                                                     <tr>
-                                                                                        <td align="right" colspan="4">Grand Total : </td>
+                                                                                        <td align="right" colspan="7">Grand Total : </td>
                                                                                         <td id="td_returns_grand_total_discount" align="right"></td>
                                                                                         <td id="td_returns_grand_total_vatable" align="right"></td>
                                                                                         <td id="td_returns_grand_total_vat" align="right"></td>
                                                                                         <td id="td_returns_grand_total_excempt" align="right"></td>
                                                                                         <td id="td_returns_grand_total_zero_rated" align="right"></td>
-                                                                                        <td id="td_returns_grand_total_invoice_amount" align="right"></td>
+                                                                                        <td class="black" id="td_returns_grand_total_invoice_amount" align="right"></td>
                                                                                     </tr>
                                                                                 </tfoot>
                                                                             </table>
@@ -314,7 +342,7 @@
         var dtSummary, dtDetailed;
         var dtReturns; 
         var tbl_summary = $('#tbl_pi_summary');
-        var _cboXReading;
+        var _cboCashier; var _cboInvoice;
         var _date_from = $('input[name="date_from"]');
         var _date_to = $('input[name="date_to"]');
 
@@ -331,10 +359,15 @@
                 autoclose: true
             });
 
-        _cboXReading=$('#cbo_xreading').select2({
-            placeholder: "Please Select an X Reading.",
+        _cboCashier=$('#cbo_cashier').select2({
+            placeholder: "Please Select a cashier.",
             allowClear: false
         });
+
+        _cboInvoice=$('#cbo_invoice').select2({
+            placeholder: "Please Select an invoice.",
+            allowClear: false
+        });          
 
         dtSummary=tbl_summary.DataTable({  
             "dom": '<"toolbar">frtip',
@@ -452,61 +485,65 @@
                 "data": function (d) {
                     return $.extend({}, d, {
                         "startDate":_date_from.val(),
-                        "endDate":_date_to.val()
-
+                        "endDate":_date_to.val(),
+                        "invoice_id":_cboInvoice.val(),
+                        "return_cashier_id":_cboCashier.val()
                     });
                 }
             },
-            
+
                 "columns":[
                     { targets:[0],data: "product_id", visible:false },
-                    { targets:[1],data: "product_desc" },
-                    { targets:[2],data: "terminal" },
+                    { targets:[1],data: "return_datetime" },
+                    { targets:[2],data: "invoice_no" },
+                    { targets:[3],data: "product_desc" },
+                    { targets:[4],data: "terminal" },
+                    { targets:[5],data: "return_cashier_name" },
                     {
                         sClass: "numericCol", 
-                        targets:[3],data: "product_quantity",
+                        targets:[6],data: "product_quantity",
                         render: function(data,type,full,meta){
                             return accounting.formatNumber(data,0);
                         }
                     },
                     {
                         sClass: "numericCol", 
-                        targets:[4],data: "discount_amount",
+                        targets:[7],data: "discount_amount",
                         render: function(data,type,full,meta){
                             return accounting.formatNumber(data,2);
                         }
                     },
                     {
                         sClass: "numericCol", 
-                        targets:[5],data: "vatable_sales",
+                        targets:[8],data: "vatable_sales",
                         render: function(data,type,full,meta){
                             return accounting.formatNumber(data,2);
                         }
                     },
                     {
                         sClass: "numericCol", 
-                        targets:[6],data: "vat_amount",
+                        targets:[9],data: "vat_amount",
                         render: function(data,type,full,meta){
                             return accounting.formatNumber(data,2);
                         }
                     },
                     {
                         sClass: "numericCol", 
-                        targets:[7],data: "vat_exempt_sales",
+                        targets:[10],data: "vat_exempt_sales",
                         render: function(data,type,full,meta){
                             return accounting.formatNumber(data,2);
                         }
                     },
                     {
                         sClass: "numericCol", 
-                        targets:[8],data: "zero_rated_sales",
+                        targets:[11],data: "zero_rated_sales",
                         render: function(data,type,full,meta){
                             return accounting.formatNumber(data,2);
                         }
                     },  
                     {
-                        sClass: "numericCol", 
-                        targets:[9],data: "item_total",
+                        sClass: "numericCol red", 
+                        targets:[12],data: "item_total",
                         render: function(data,type,full,meta){
                             return accounting.formatNumber(data,2);
                         }
@@ -527,42 +564,42 @@
 
                     // Total over all pages
                     grand_total_discount = api
-                        .column( 4 )
+                        .column( 7 )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0 );
 
                     grand_total_vatable = api
-                        .column( 5 )
+                        .column( 8 )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0 );
 
                     grand_total_vat = api
-                        .column( 6 )
+                        .column( 9 )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0 ); 
 
                     grand_total_excempt = api
-                        .column( 7 )
+                        .column( 10 )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0 ); 
 
                     grand_total_zero_rated = api
-                        .column( 8 )
+                        .column( 11 )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0 );      
 
                     grand_total_invoice_amount = api
-                        .column( 9 )
+                        .column( 12 )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
@@ -570,37 +607,37 @@
 
                     // Total over this page
                     page_total_discount = api
-                        .column( 4, { page: 'current'} )
+                        .column( 7, { page: 'current'} )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0 );
                     page_total_vatable = api
-                        .column( 5, { page: 'current'} )
+                        .column( 8, { page: 'current'} )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0 );
                     page_total_vat = api
-                        .column( 6, { page: 'current'} )
+                        .column( 9, { page: 'current'} )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0 );                                                
                     page_total_excempt = api
-                        .column( 7, { page: 'current'} )
+                        .column( 10, { page: 'current'} )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0 );   
                     page_total_zero_rated = api
-                        .column( 8, { page: 'current'} )
+                        .column( 11, { page: 'current'} )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0 );    
                     page_total_invoice_amount = api
-                        .column( 9, { page: 'current'} )
+                        .column( 12, { page: 'current'} )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
@@ -620,7 +657,6 @@
                     $('#td_returns_grand_total_excempt').html('<b>'+accounting.formatNumber(grand_total_excempt,2)+'</b>');
                     $('#td_returns_grand_total_zero_rated').html('<b>'+accounting.formatNumber(grand_total_zero_rated,2)+'</b>');
                     $('#td_returns_grand_total_invoice_amount').html('<b>'+accounting.formatNumber(grand_total_invoice_amount,2)+'</b>');
-
 
                 }
 
@@ -656,7 +692,34 @@
                 });
             };
 
+            var getInvoices = function(){
+
+                var _data=$('#').serializeArray();
+                _data.push({name : "startDate" ,value : _date_from.val() });
+                _data.push({name : "endDate" ,value : _date_to.val() });
+
+                $.ajax({
+                    "dataType":"json",
+                    "type":"POST",
+                    "url":"Report_sales/transaction/get-invoices",
+                    "data":_data
+                }).done(function(response){
+
+                    var rows=response.data;
+                    $("#cbo_invoice option").remove();
+                    $("#cbo_invoice").append('<option value="0">All</option>');
+
+                    $.each(rows,function(i,value){
+                       $("#cbo_invoice").append('<option value="'+ value.invoice_id +'">'+ value.invoice_no +'</option>');
+                    });
+
+                    _cboInvoice.select2('val', 0);
+                    
+                }).always(function(){});
+            };
+
             var recomputeTotalSales = function(){
+                getInvoices();
                 getNetSales().done(function(response){
                     var data = response.data[0];
 
@@ -664,7 +727,7 @@
                     $('#total_returns').html(accounting.formatNumber(data.total_returns,2));
                     $('#net_sales').html(accounting.formatNumber(data.net_sales,2));
 
-                }).always(function(){});            
+                }).always(function(){});
             };
 
             recomputeTotalSales();
@@ -679,6 +742,15 @@
                 $('#tbl_pi_summary').DataTable().ajax.reload();
                 $('#tbl_returns_summary').DataTable().ajax.reload();
                 recomputeTotalSales();
+            });
+
+
+            _cboInvoice.on("select2:select", function (e) {
+               $('#tbl_returns_summary').DataTable().ajax.reload();
+            });
+
+            _cboCashier.on("select2:select", function (e) {
+               $('#tbl_returns_summary').DataTable().ajax.reload();
             });
 
             $("#tbl_pi_summary_search").keyup(function(){         

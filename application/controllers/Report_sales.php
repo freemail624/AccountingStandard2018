@@ -11,6 +11,7 @@
             $this->load->model(
                 array(
                     'Pos_item_sales_model',
+                    'Pos_item_returns_model',
                     'Users_model',
                     'Company_model'
                 )
@@ -29,15 +30,27 @@
 	        $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', true);
 	        $data['title'] = 'Sales Report';
 
-        $data['xreadings']=$this->Pos_item_sales_model->get_xreading();
-        (in_array('3-9',$this->session->user_rights)? 
-        $this->load->view('report_sales_view',$data)
-        :redirect(base_url('dashboard')));
-    
+            $data['cashiers'] = $this->Pos_item_returns_model->get_cashier_list();
+            $data['xreadings']=$this->Pos_item_sales_model->get_xreading();
+
+            (in_array('3-9',$this->session->user_rights)? 
+            $this->load->view('report_sales_view',$data)
+            :redirect(base_url('dashboard')));
+        
         }
 
         function transaction($txn=null){
             switch($txn){
+
+                case 'get-invoices':
+
+                    $start=date("Y-m-d",strtotime($this->input->post('startDate',TRUE)));
+                    $end=date("Y-m-d",strtotime($this->input->post('endDate',TRUE)));
+                    $response['data'] = $this->Pos_item_returns_model->get_invoice_list($start,$end);
+                    echo json_encode($response);
+
+                    break;
+
                 case 'list':
 
                     $start=date("Y-m-d",strtotime($this->input->get('startDate',TRUE)));

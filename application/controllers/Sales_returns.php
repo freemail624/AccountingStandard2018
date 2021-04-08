@@ -54,8 +54,10 @@
 
                     $start=date("Y-m-d",strtotime($this->input->get('startDate',TRUE)));
                     $end=date("Y-m-d",strtotime($this->input->get('endDate',TRUE)));
+                    $invoice_id=$this->input->get('invoice_id',TRUE);
+                    $return_cashier_id=$this->input->get('return_cashier_id',TRUE);
 
-                    $response['data']=$m_returns->get_sales_returns_from_date($start,$end);
+                    $response['data']=$m_returns->get_sales_returns_from_date($start,$end,$invoice_id,$return_cashier_id);
                     echo json_encode($response);                    
 
                 break;

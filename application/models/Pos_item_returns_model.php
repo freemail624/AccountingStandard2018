@@ -8,6 +8,17 @@ class Pos_item_returns_model extends CORE_Model {
         parent::__construct();
     }
 
+    function get_invoice_list($start,$end) {
+        $sql="SELECT DISTINCT pir.invoice_id, pir.invoice_no FROM pos_item_returns pir WHERE invoice_id > 0 AND invoice_no != ''
+            AND DATE_FORMAT(CAST(pir.start_datetime as DATE),'%Y-%m-%d') BETWEEN '".$start."' AND '".$end."'";
+        return $this->db->query($sql)->result();
+    }
+
+    function get_cashier_list() {
+        $sql="SELECT DISTINCT pir.return_cashier_id, pir.return_cashier_name FROM pos_item_returns pir WHERE pir.return_cashier_id > 0";
+        return $this->db->query($sql)->result();
+    }
+
     function get_xreading() {
         $sql="  SELECT distinct x_reading_id,DATE_FORMAT(CAST(start_datetime as DATE),'%m/%d/%Y') as trans_date, terminal_id FROM pos_item_returns";
         return $this->db->query($sql)->result();
@@ -18,11 +29,20 @@ class Pos_item_returns_model extends CORE_Model {
         return $this->db->query($sql)->result();
     }
 
-    function get_sales_returns_from_date($start,$end) {
-        $sql="SELECT pir.*, p.product_desc, CONCAT('Terminal ', pir.terminal_id) as terminal FROM
+    function get_sales_returns_from_date($start,$end,$invoice_id=0,$return_cashier_id=0) {
+        $sql="SELECT pir.*, p.product_desc, CONCAT('Terminal ', pir.terminal_id) as terminal,
+
+            (CASE 
+                WHEN pir.return_datetime = '0000-00-00 00:00:00' THEN ''
+                ELSE date_format(pir.return_datetime, '%m/%d/%Y %h:%i %p') 
+            END) as return_datetime
+
+            FROM
             pos_item_returns pir
             LEFT JOIN products p ON p.product_id = pir.product_id
-            WHERE DATE_FORMAT(CAST(pir.start_datetime as DATE),'%Y-%m-%d') BETWEEN '".$start."' AND '".$end."' ";
+            WHERE DATE_FORMAT(CAST(pir.start_datetime as DATE),'%Y-%m-%d') BETWEEN '".$start."' AND '".$end."'
+            ".($invoice_id==0?"":" AND pir.invoice_id=".$invoice_id)."
+            ".($return_cashier_id==0?"":" AND pir.return_cashier_id=".$return_cashier_id)."";
         return $this->db->query($sql)->result();
     }
 
