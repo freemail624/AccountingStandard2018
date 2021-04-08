@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class makes extends CORE_Controller
+class Makes extends CORE_Controller
 {
 
     function __construct() {

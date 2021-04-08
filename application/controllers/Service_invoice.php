@@ -190,6 +190,37 @@ class Service_invoice extends CORE_Controller
                 // $m_invoice->total_after_tax=$this->get_numeric_value($this->input->post('summary_after_tax',TRUE));
                 // $m_invoice->total_after_discount=$this->get_numeric_value($this->input->post('total_after_discount',TRUE));
 
+                $m_invoice->sdesc_1=$this->input->post('sdesc_1',TRUE);
+                $m_invoice->sdesc_2=$this->input->post('sdesc_2',TRUE);
+                $m_invoice->sdesc_3=$this->input->post('sdesc_3',TRUE);
+                $m_invoice->sdesc_4=$this->input->post('sdesc_4',TRUE);
+                $m_invoice->sdesc_5=$this->input->post('sdesc_5',TRUE);
+                $m_invoice->sdesc_6=$this->input->post('sdesc_6',TRUE);
+                $m_invoice->sdesc_7=$this->input->post('sdesc_7',TRUE);
+                $m_invoice->sdesc_8=$this->input->post('sdesc_8',TRUE);
+                $m_invoice->sdesc_9=$this->input->post('sdesc_9',TRUE);
+                $m_invoice->sdesc_10=$this->input->post('sdesc_10',TRUE);
+                $m_invoice->sdesc_11=$this->input->post('sdesc_11',TRUE);
+                $m_invoice->sdesc_12=$this->input->post('sdesc_12',TRUE);
+                $m_invoice->sdesc_13=$this->input->post('sdesc_13',TRUE);
+                $m_invoice->sdesc_14=$this->input->post('sdesc_14',TRUE);
+                $m_invoice->sdesc_15=$this->input->post('sdesc_15',TRUE);
+                $m_invoice->sdesc_16=$this->input->post('sdesc_16',TRUE);
+                $m_invoice->sdesc_17=$this->input->post('sdesc_17',TRUE);
+                $m_invoice->sdesc_18=$this->input->post('sdesc_18',TRUE);
+                $m_invoice->sdesc_19=$this->input->post('sdesc_19',TRUE);
+                $m_invoice->sdesc_20=$this->input->post('sdesc_20',TRUE);
+                $m_invoice->sdesc_21=$this->input->post('sdesc_21',TRUE);
+                $m_invoice->sdesc_22=$this->input->post('sdesc_22',TRUE);
+                $m_invoice->sdesc_23=$this->input->post('sdesc_23',TRUE);
+                $m_invoice->sdesc_24=$this->input->post('sdesc_24',TRUE);
+                $m_invoice->sdesc_25=$this->input->post('sdesc_25',TRUE);
+                $m_invoice->sdesc_26=$this->input->post('sdesc_26',TRUE);
+                $m_invoice->sdesc_27=$this->input->post('sdesc_27',TRUE);
+                $m_invoice->sdesc_28=$this->input->post('sdesc_28',TRUE);
+                $m_invoice->sdesc_29=$this->input->post('sdesc_29',TRUE);
+                $m_invoice->sdesc_30=$this->input->post('sdesc_30',TRUE);
+
                 $m_invoice->posted_by_user=$this->session->user_id;
                 $m_invoice->save();
 
@@ -210,6 +241,7 @@ class Service_invoice extends CORE_Controller
                 $batch_no=$this->input->post('batch_no',TRUE);
                 $cost_upon_invoice=$this->input->post('cost_upon_invoice',TRUE);
                 $vehicle_service_id=$this->input->post('vehicle_service_id',TRUE);
+                $tbl_no=$this->input->post('tbl_no',TRUE);                
                 $is_parent=$this->input->post('is_parent',TRUE);
             
                 $m_products=$this->Products_model;
@@ -232,6 +264,7 @@ class Service_invoice extends CORE_Controller
                     $m_invoice_item->batch_no=$batch_no[$i];
                     $m_invoice_item->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
                     $m_invoice_item->vehicle_service_id=$this->get_numeric_value($vehicle_service_id[$i]);
+                    $m_invoice_item->tbl_no=$this->get_numeric_value($tbl_no[$i]);
 
                     //unit id retrieval is change, because of TRIGGER restriction
                     $m_invoice_item->is_parent=$this->get_numeric_value($is_parent[$i]);
@@ -402,6 +435,37 @@ class Service_invoice extends CORE_Controller
                 $m_invoice->advisor_remarks=$this->input->post('advisor_remarks',TRUE);
                 $m_invoice->customer_remarks=$this->input->post('customer_remarks',TRUE);
 
+                $m_invoice->sdesc_1=$this->input->post('sdesc_1',TRUE);
+                $m_invoice->sdesc_2=$this->input->post('sdesc_2',TRUE);
+                $m_invoice->sdesc_3=$this->input->post('sdesc_3',TRUE);
+                $m_invoice->sdesc_4=$this->input->post('sdesc_4',TRUE);
+                $m_invoice->sdesc_5=$this->input->post('sdesc_5',TRUE);
+                $m_invoice->sdesc_6=$this->input->post('sdesc_6',TRUE);
+                $m_invoice->sdesc_7=$this->input->post('sdesc_7',TRUE);
+                $m_invoice->sdesc_8=$this->input->post('sdesc_8',TRUE);
+                $m_invoice->sdesc_9=$this->input->post('sdesc_9',TRUE);
+                $m_invoice->sdesc_10=$this->input->post('sdesc_10',TRUE);
+                $m_invoice->sdesc_11=$this->input->post('sdesc_11',TRUE);
+                $m_invoice->sdesc_12=$this->input->post('sdesc_12',TRUE);
+                $m_invoice->sdesc_13=$this->input->post('sdesc_13',TRUE);
+                $m_invoice->sdesc_14=$this->input->post('sdesc_14',TRUE);
+                $m_invoice->sdesc_15=$this->input->post('sdesc_15',TRUE);
+                $m_invoice->sdesc_16=$this->input->post('sdesc_16',TRUE);
+                $m_invoice->sdesc_17=$this->input->post('sdesc_17',TRUE);
+                $m_invoice->sdesc_18=$this->input->post('sdesc_18',TRUE);
+                $m_invoice->sdesc_19=$this->input->post('sdesc_19',TRUE);
+                $m_invoice->sdesc_20=$this->input->post('sdesc_20',TRUE);
+                $m_invoice->sdesc_21=$this->input->post('sdesc_21',TRUE);
+                $m_invoice->sdesc_22=$this->input->post('sdesc_22',TRUE);
+                $m_invoice->sdesc_23=$this->input->post('sdesc_23',TRUE);
+                $m_invoice->sdesc_24=$this->input->post('sdesc_24',TRUE);
+                $m_invoice->sdesc_25=$this->input->post('sdesc_25',TRUE);
+                $m_invoice->sdesc_26=$this->input->post('sdesc_26',TRUE);
+                $m_invoice->sdesc_27=$this->input->post('sdesc_27',TRUE);
+                $m_invoice->sdesc_28=$this->input->post('sdesc_28',TRUE);
+                $m_invoice->sdesc_29=$this->input->post('sdesc_29',TRUE);
+                $m_invoice->sdesc_30=$this->input->post('sdesc_30',TRUE);
+
                 $m_invoice->modify($service_invoice_id);
 
                 $m_invoice_item->delete_via_fk($service_invoice_id); //delete previous items then insert those new
@@ -421,6 +485,7 @@ class Service_invoice extends CORE_Controller
                 $batch_no=$this->input->post('batch_no',TRUE);
                 $cost_upon_invoice=$this->input->post('cost_upon_invoice',TRUE);
                 $vehicle_service_id=$this->input->post('vehicle_service_id',TRUE);
+                $tbl_no=$this->input->post('tbl_no',TRUE);                
                 $is_parent=$this->input->post('is_parent',TRUE);
 
                 $m_products=$this->Products_model;
@@ -443,6 +508,7 @@ class Service_invoice extends CORE_Controller
                     $m_invoice_item->batch_no=$batch_no[$i];
                     $m_invoice_item->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
                     $m_invoice_item->vehicle_service_id=$this->get_numeric_value($vehicle_service_id[$i]);
+                    $m_invoice_item->tbl_no=$this->get_numeric_value($tbl_no[$i]);
 
                     //unit id retrieval is change, because of TRIGGER restriction
                     $m_invoice_item->is_parent=$this->get_numeric_value($is_parent[$i]);

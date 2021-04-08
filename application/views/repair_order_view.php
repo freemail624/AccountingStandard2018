@@ -300,8 +300,8 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-4">
-                                    <label style="font-size: 7pt;">Mobile No. : </label>
-                                    <input type="text" name="mobile_no" class="form-control">
+                                    <label style="font-size: 7pt;"><b class="required">*</b> Mobile No. : </label>
+                                    <input type="text" name="mobile_no" class="form-control" required data-error-msg="Mobile no is required!">
                                 </div>
                                 <div class="col-md-4">
                                     <label style="font-size: 7pt;">Tel No.(Home) : </label>
@@ -540,149 +540,211 @@
                 <div class="tab-content tab-content-view">
                     <div class="tab-pane active" id="pms">
                         <button class="refreshproducts btn-success btn pull-right" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;border-radius: 50%;padding: 5px;z-index: 99999!important;"><i class="fa fa-refresh"></i></button>
-                        <br/>
+                        <br/><br/>
                         <form id="frm_items_pms">
-                        <label>Description :</label> 
-                        <textarea class="form-control" name="pms_desc" placeholder="Periodic Maintenance Description"></textarea>
 
                         <label class="control-label" style="font-family: Tahoma;"><strong>Enter PLU or Search Item :</strong></label>
                         <div id="custom-templates">
                             <input class="typeahead typeaheadsearch" type="text" placeholder="Enter PLU or Search Item">
                         </div><br />
-                            <div class="table-responsive">
-                                <table id="tbl_items" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
-                                    <thead class="">    
-                                        <tr>
-                                            <th width="5%">Qty</th>
-                                            <th width="8%">UM</th>
-                                            <th width="15%">Description</th>
-                                            <th width="10%" style="text-align: right;">Unit Price</th>
-                                            <th class="hidden">Discount</th>
-                                            <!-- DISPLAY NONE  -->
-                                            <th class="hidden">Total Discount</th>
-                                            <th class="hidden">Tax %</th>
-                                            <!-- DISPLAY -->
-                                            <th class="hidden">Gross</th>
-                                            <th width="10%" style="text-align: right;">Net Total</th>
-                                            <!-- Expiration and LOT# -->
-                                            <th class="hidden">Expiration</th>
-                                            <th class="hidden">LOT#</th>
-                                            <th class="hidden">Cost Upon Invoice</th>
-                                            <!-- DISPLAY NONE  -->
-                                            <th class="hidden">Vat Input(Total Line Tax)</th>
-                                            <th class="hidden">Net of Vat (Price w/out Tax)</th>
-                                            <td class="hidden">Item ID</td>
-                                            <th class="hidden">Total after Global</th> 
-                                            <th width="5%"><center>Action</center></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td colspan="6" style="height: 0px;min-height: 335px;">&nbsp;</td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
+
+                        <div class="tab-container tab-top tab-primary">
+                            <ul class="nav nav-tabs">
+                                <?php for($i=1;$i<=10;$i++){?>
+                                    <li class="<?php if($i == 1){ echo 'active'; } ?>">
+                                        <a href="#service_<?php echo $i; ?>" class="tbl_services" data-tbl-no="<?php echo $i; ?>" id="btn_service_<?php echo $i; ?>" data-toggle="tab"> SVC <?php echo $i; ?></a>
+                                    </li>
+                                <?php }?>
+                            </ul>
+                        </div>
+                        <div class="tab-content tab-content-view">
+
+                            <?php for($i=1;$i<=10;$i++){?>
+
+                            <div class="tab-pane <?php if($i == 1){ echo 'active'; } ?>" id="service_<?php echo $i; ?>">
+                                <label>Service Description :</label> 
+                                <textarea class="form-control" name="sdesc_<?php echo $i; ?>" placeholder="Service Description"></textarea>
+                                <div class="table-responsive">
+                                    <table id="tbl_items_<?php echo $i; ?>" class="tbl_items tbl_items_1 table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
+                                        <thead class="">    
+                                            <tr>
+                                                <th width="5%">Qty</th>
+                                                <th width="8%">UM</th>
+                                                <th width="15%">Description</th>
+                                                <th width="10%" style="text-align: right;">Unit Price</th>
+                                                <th class="hidden">Discount</th>
+                                                <!-- DISPLAY NONE  -->
+                                                <th class="hidden">Total Discount</th>
+                                                <th class="hidden">Tax %</th>
+                                                <!-- DISPLAY -->
+                                                <th class="hidden">Gross</th>
+                                                <th width="10%" style="text-align: right;">Net Total</th>
+                                                <!-- Expiration and LOT# -->
+                                                <th class="hidden">Expiration</th>
+                                                <th class="hidden">LOT#</th>
+                                                <th class="hidden">Cost Upon Invoice</th>
+                                                <!-- DISPLAY NONE  -->
+                                                <th class="hidden">Vat Input(Total Line Tax)</th>
+                                                <th class="hidden">Net of Vat (Price w/out Tax)</th>
+                                                <td class="hidden">Item ID</td>
+                                                <th class="hidden">Total after Global</th> 
+                                                <th width="5%"><center>Action</center></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="6" style="height: 0px;min-height: 335px;">&nbsp;</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+
                             </div>
+
+                            <?php }?>
+                        </div>
                         </form>
                     </div>
                     <div class="tab-pane" id="body">
                         <button class="refreshproducts btn-success btn pull-right" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;border-radius: 50%;padding: 5px;z-index: 99999!important;"><i class="fa fa-refresh"></i></button>
-                        <br/>                    
+                        <br/><br/>      
                         <form id="frm_items_bpr">
-                        <label>Description :</label> 
-                        <textarea class="form-control" name="bpr_desc" placeholder="Body Paint Repair Description"></textarea>
+
                         <label class="control-label" style="font-family: Tahoma;"><strong>Enter PLU or Search Item :</strong></label>
                         <div id="custom-templates">
                             <input class="typeahead typeaheadsearch" type="text" placeholder="Enter PLU or Search Item">
-                            <i class="pull-right hidden">Note: Unit Price will depend on chosen Customer Type</i>
                         </div><br />
-                            <div class="table-responsive">
-                                <table id="tbl_items_bpr" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
-                                    <thead class="">    
-                                        <tr>
-                                            <th width="5%">Qty</th>
-                                            <th width="8%">UM</th>
-                                            <th width="15%">Description</th>
-                                            <th width="10%" style="text-align: right;">Unit Price</th>
-                                            <th class="hidden">Discount</th>
-                                            <!-- DISPLAY NONE  -->
-                                            <th class="hidden">Total Discount</th>
-                                            <th class="hidden">Tax %</th>
-                                            <!-- DISPLAY -->
-                                            <th class="hidden">Gross</th>
-                                            <th width="10%" style="text-align: right;">Net Total</th>
-                                            <!-- Expiration and LOT# -->
-                                            <th class="hidden">Expiration</th>
-                                            <th class="hidden">LOT#</th>
-                                            <th class="hidden">Cost Upon Invoice</th>
-                                            <!-- DISPLAY NONE  -->
-                                            <th class="hidden">Vat Input(Total Line Tax)</th>
-                                            <th class="hidden">Net of Vat (Price w/out Tax)</th>
-                                            <td class="hidden">Item ID</td>
-                                            <th class="hidden">Total after Global</th> 
-                                            <th width="5%"><center>Action</center></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td colspan="6" style="height: 0px;min-height: 335px;">&nbsp;</td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
+
+                        <div class="tab-container tab-top tab-primary">
+                            <ul class="nav nav-tabs">
+                                <?php for($i=11;$i<=20;$i++){?>
+                                    <li>
+                                        <a href="#service_<?php echo $i; ?>" class="tbl_services" data-tbl-no="<?php echo $i; ?>" id="btn_service_<?php echo $i; ?>" data-toggle="tab"> SVC <?php echo $i; ?></a>
+                                    </li>
+                                <?php }?>
+                            </ul>
+                        </div>
+                        <div class="tab-content tab-content-view">
+
+                            <?php for($i=11;$i<=20;$i++){?>
+
+                            <div class="tab-pane" id="service_<?php echo $i; ?>">
+                                <label>Service Description <?php echo $i; ?>:</label> 
+                                <textarea class="form-control" name="sdesc_<?php echo $i; ?>" placeholder="Service Description"></textarea>
+                                <div class="table-responsive">
+                                    <table id="tbl_items_<?php echo $i; ?>" class="tbl_items tbl_items_2 table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
+                                        <thead class="">    
+                                            <tr>
+                                                <th width="5%">Qty</th>
+                                                <th width="8%">UM</th>
+                                                <th width="15%">Description</th>
+                                                <th width="10%" style="text-align: right;">Unit Price</th>
+                                                <th class="hidden">Discount</th>
+                                                <!-- DISPLAY NONE  -->
+                                                <th class="hidden">Total Discount</th>
+                                                <th class="hidden">Tax %</th>
+                                                <!-- DISPLAY -->
+                                                <th class="hidden">Gross</th>
+                                                <th width="10%" style="text-align: right;">Net Total</th>
+                                                <!-- Expiration and LOT# -->
+                                                <th class="hidden">Expiration</th>
+                                                <th class="hidden">LOT#</th>
+                                                <th class="hidden">Cost Upon Invoice</th>
+                                                <!-- DISPLAY NONE  -->
+                                                <th class="hidden">Vat Input(Total Line Tax)</th>
+                                                <th class="hidden">Net of Vat (Price w/out Tax)</th>
+                                                <td class="hidden">Item ID</td>
+                                                <th class="hidden">Total after Global</th> 
+                                                <th width="5%"><center>Action</center></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="6" style="height: 0px;min-height: 335px;">&nbsp;</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+
                             </div>
+
+                            <?php }?>
+                        </div>
+
                         </form>
                     </div>
                     <div class="tab-pane" id="general_jobs">
                         <button class="refreshproducts btn-success btn pull-right" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;border-radius: 50%;padding: 5px;z-index: 99999!important;"><i class="fa fa-refresh"></i></button>
-                        <br/>                    
+                        <br/><br/>         
                         <form id="frm_items_gb">
-                        <label>Description :</label> 
-                        <textarea class="form-control" name="gj_desc" placeholder="General Job Description"></textarea>
+
                         <label class="control-label" style="font-family: Tahoma;"><strong>Enter PLU or Search Item :</strong></label>
                         <div id="custom-templates">
                             <input class="typeahead typeaheadsearch" type="text" placeholder="Enter PLU or Search Item">
-                            <i class="pull-right hidden">Note: Unit Price will depend on chosen Customer Type</i>
                         </div><br />
-                            <div class="table-responsive">
-                                <table id="tbl_items_gj" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
-                                    <thead class="">    
-                                        <tr>
-                                            <th width="5%">Qty</th>
-                                            <th width="8%">UM</th>
-                                            <th width="15%">Description</th>
-                                            <th width="10%" style="text-align: right;">Unit Price</th>
-                                            <th class="hidden">Discount</th>
-                                            <!-- DISPLAY NONE  -->
-                                            <th class="hidden">Total Discount</th>
-                                            <th class="hidden">Tax %</th>
-                                            <!-- DISPLAY -->
-                                            <th class="hidden">Gross</th>
-                                            <th width="10%" style="text-align: right;">Net Total</th>
-                                            <!-- Expiration and LOT# -->
-                                            <th class="hidden">Expiration</th>
-                                            <th class="hidden">LOT#</th>
-                                            <th class="hidden">Cost Upon Invoice</th>
-                                            <!-- DISPLAY NONE  -->
-                                            <th class="hidden">Vat Input(Total Line Tax)</th>
-                                            <th class="hidden">Net of Vat (Price w/out Tax)</th>
-                                            <td class="hidden">Item ID</td>
-                                            <th class="hidden">Total after Global</th> 
-                                            <th width="5%"><center>Action</center></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td colspan="6" style="height: 0px;min-height: 335px;">&nbsp;</td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
+
+                        <div class="tab-container tab-top tab-primary">
+                            <ul class="nav nav-tabs">
+                                <?php for($i=21;$i<=30;$i++){?>
+                                    <li>
+                                        <a href="#service_<?php echo $i; ?>" class="tbl_services" data-tbl-no="<?php echo $i; ?>" id="btn_service_<?php echo $i; ?>" data-toggle="tab"> SVC <?php echo $i; ?></a>
+                                    </li>
+                                <?php }?>
+                            </ul>
+                        </div>
+                        <div class="tab-content tab-content-view">
+
+                            <?php for($i=21;$i<=30;$i++){?>
+
+                            <div class="tab-pane" id="service_<?php echo $i; ?>">
+                                <label>Service Description <?php echo $i; ?>:</label> 
+                                <textarea class="form-control" name="sdesc_<?php echo $i; ?>" placeholder="Service Description"></textarea>
+                                <div class="table-responsive">
+                                    <table id="tbl_items_<?php echo $i; ?>" class="tbl_items tbl_items_3 table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
+                                        <thead class="">    
+                                            <tr>
+                                                <th width="5%">Qty</th>
+                                                <th width="8%">UM</th>
+                                                <th width="15%">Description</th>
+                                                <th width="10%" style="text-align: right;">Unit Price</th>
+                                                <th class="hidden">Discount</th>
+                                                <!-- DISPLAY NONE  -->
+                                                <th class="hidden">Total Discount</th>
+                                                <th class="hidden">Tax %</th>
+                                                <!-- DISPLAY -->
+                                                <th class="hidden">Gross</th>
+                                                <th width="10%" style="text-align: right;">Net Total</th>
+                                                <!-- Expiration and LOT# -->
+                                                <th class="hidden">Expiration</th>
+                                                <th class="hidden">LOT#</th>
+                                                <th class="hidden">Cost Upon Invoice</th>
+                                                <!-- DISPLAY NONE  -->
+                                                <th class="hidden">Vat Input(Total Line Tax)</th>
+                                                <th class="hidden">Net of Vat (Price w/out Tax)</th>
+                                                <td class="hidden">Item ID</td>
+                                                <th class="hidden">Total after Global</th> 
+                                                <th width="5%"><center>Action</center></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="6" style="height: 0px;min-height: 335px;">&nbsp;</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+
                             </div>
+
+                            <?php }?>
+                        </div>
+
                         </form>
                     </div>
                 </div>
@@ -959,14 +1021,14 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="col-md-12" id="label">
-                                         <label class="control-label boldlabel">Mobile No :</label>
+                                         <label class="control-label boldlabel"><b class="required">*</b> Mobile No :</label>
                                     </div>
                                     <div class="form-group">
                                         <div class="input-group">
                                             <span class="input-group-addon">
                                                 <i class="fa fa-mobile"></i>
                                             </span>
-                                            <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Mobile No">
+                                            <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Mobile No" required data-error-msg="Mobile no is required!">
                                         </div>
                                     </div>
                                 </div>
@@ -1350,7 +1412,7 @@ $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboDepartments; var _cboCustomers; var dt_so; var products; var changetxn;
     var _cboCustomerType; var prodstat;
     var _cboCustomerTypeCreate; var _cboSource; var _cboVehicles; var _cboAdvisors;
-    var _line_unit; var global_item_desc = ''; var _selectRowTblItems; var _cboMakes; var _cboYears; var _cboModels; var _cboColors; var _vehicleService=1; var _checkVehicle=true;
+    var _line_unit; var global_item_desc = ''; var _selectRowTblItems; var _cboMakes; var _cboYears; var _cboModels; var _cboColors; var _vehicleService=1; var _checkVehicle=true; var tbl_no=1;
 
     var oTableItems={
         qty : 'td:eq(0)',
@@ -1669,15 +1731,8 @@ $(document).ready(function(){
             // }
 
             changetxn = 'active';
-            var tbl_selected;
 
-            if(_vehicleService == 1){
-                tbl_selected = $('#tbl_items > tbody');
-            }else if(_vehicleService == 2){
-                tbl_selected = $('#tbl_items_bpr > tbody');
-            }else if(_vehicleService == 3){
-                tbl_selected = $('#tbl_items_gj > tbody');
-            }
+            var tbl_selected = $('#tbl_items_'+tbl_no+' > tbody');
 
             tbl_selected.append(newRowItem({
                 order_qty : 1,
@@ -1710,7 +1765,8 @@ $(document).ready(function(){
                 exp_date : suggestion.exp_date,
                 batch_no : suggestion.batch_no,
                 cost_upon_invoice : suggestion.srp_cost,
-                vehicle_service_id : _vehicleService
+                vehicle_service_id : _vehicleService,
+                tbl_no : tbl_no
 
             }));
 
@@ -1762,6 +1818,17 @@ $(document).ready(function(){
             $(this).find('span').css('background','white');
             $(this).find('span').css('color',active_color);
 
+            if(_vehicleService == 1){
+                $('#btn_service_1').trigger('click');
+            }else if(_vehicleService == 2){
+                $('#btn_service_11').trigger('click');
+            }else if(_vehicleService == 3){
+                $('#btn_service_21').trigger('click');
+            }
+        });
+
+        $('.tbl_services').click(function(){
+            tbl_no = $(this).data('tbl-no');
         });
 
         $('[id=checkcheck]').click(function(event) {
@@ -2201,10 +2268,11 @@ $(document).ready(function(){
         $('#btn_new').click(function(){
             _txnMode="new";
             clearFields($('#div_sales_invoice_fields'));
+            $('textarea').val('');
             $('#span_repair_order_no').html('RAXXXX');
             showList(false);
             $('#cbo_customers').select2('open');
-            $('#tbl_items > tbody, #tbl_items_bpr > tbody, #tbl_items_gj > tbody').html('');
+            $('.tbl_items > tbody').html('');
             $('#cbo_customers').select2('val', null);
             $('#cbo_vehicles').select2('val', null);
             $('#cbo_advisors').select2('val', null);
@@ -2240,126 +2308,7 @@ $(document).ready(function(){
 
             reComputeTotal(); //this is to make sure, display summary are recomputed as 0
         });
-        $('#tbl_so_list > tbody').on('click','button[name="accept_so"]',function(){
-            _selectRowObj=$(this).closest('tr');
-            var data=dt_so.row(_selectRowObj).data();
-            $('input,textarea').each(function(){
-                var _elem=$(this);
-                $.each(data,function(name,value){
-                    if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
-                        _elem.val(value);
-                    }
-                });
-                $('#cbo_customers').select2('val',data.customer_id);
-                $('#cbo_departments').select2('val',data.department_id);
-                $('#cbo_department').select2('val',data.department_id);
-                $('#cbo_salesperson').select2('val',data.salesperson_id);
-                $('#cbo_customer_type').select2('val',data.customer_type_id);
-                $('#cbo_order_source').select2('val', $('#cbo_order_source').data('default'));
 
-                var obj_customers=$('#cbo_customers').find('option[value="' + data.customer_id + '"]');
-                $('#txt_address').val(obj_customers.data('address'));
-                $('#contact_person').val(obj_customers.data('contact'));
-
-            });
-            $('#modal_so_list').modal('hide');
-            resetSummary();
-            $.ajax({
-                url : 'Sales_order/transaction/item-balance/'+data.sales_order_id,
-                type : "GET",
-                cache : false,
-                dataType : 'json',
-                processData : false,
-                contentType : false,
-                beforeSend : function(){
-                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
-                },
-                success : function(response){
-                    var rows=response.data;
-                    $('#tbl_items > tbody').html('');
-                    //var rowCount = $('#tbl-items .row-item');
-                    //console.log(rowCount);
-                    var a = 0; 
-
-
-                        changetxn ='inactive';
-                    $.each(rows,function(i,value){
-
-                    _customer_type_ = _cboCustomerType.val();
-                    var temp_sale_price=0.00;
-
-                        if(_customer_type_ == '' || _customer_type_ == 0){
-                            temp_sale_price=value.sale_price;
-                        }else if(_customer_type_ == '1' ){ // DISCOUNTED CUSTOMER TYPE
-                            temp_sale_price=value.discounted_price;
-                        }else if(_customer_type_ == '2' ){ // DEALER CUSTOMER TYPE
-                            temp_sale_price=value.dealer_price;
-                        }else if(_customer_type_ == '3' ){ // DISTRIBUTOR CUSTOMER TYPE
-                            temp_sale_price=value.distributor_price;
-                        }else if(_customer_type_ == '4' ){ // PUBLIC CUSTOMER TYPE
-                            temp_sale_price=value.public_price;
-                        }else{
-                            temp_sale_price=value.sale_price;
-                        }
-                        bulk_price = temp_sale_price;
-
-                        var retail_price = 0;
-                        if(value.is_bulk == 1){
-                            retail_price = getFloat(temp_sale_price) / getFloat(value.child_unit_desc);
-
-                        }else if (value.is_bulk== 0){
-                            retail_price = 0;
-                        }
-                        
-                        $('#tbl_items > tbody').append(newRowItem({
-                            order_gross : value.order_gross,
-                            order_qty : value.so_qty, 
-                            product_code : value.product_code,
-                            product_id: value.product_id,
-                            product_desc : value.product_desc,
-                            order_line_total_discount : value.so_line_total_discount,
-                            tax_exempt : false,
-                            order_tax_rate : value.so_tax_rate,
-                            order_price : value.so_price,
-                            order_discount : value.so_discount,
-                            tax_type_id : null,
-                            order_line_total_price : value.so_line_total,
-                            order_non_tax_amount: value.non_tax_amount,
-                            order_tax_amount:value.tax_amount,
-                            orig_so_price : value.so_price,
-                            order_line_total_after_global: 0.00,
-                            child_unit_id : value.child_unit_id,
-                            child_unit_name : value.child_unit_name,
-                            parent_unit_name : value.product_unit_name,
-                            parent_unit_id : getFloat(value.product_unit_id),
-                            is_bulk: value.is_bulk,
-                            is_parent : value.is_parent,
-                            bulk_price: temp_sale_price,
-                            retail_price: retail_price,
-                            a:a,
-                            is_basyo:value.is_basyo,
-                            is_product_basyo:value.is_product_basyo,
-                            exp_date : '',
-                            batch_no : '',
-                            cost_upon_invoice : value.purchase_cost
-
-                        }));
-                        _line_unit=$('.line_unit'+a).select2({
-                            minimumResultsForSearch: -1
-                        });
-                        _line_unit.select2('val',value.unit_id);
-                        a++;
-                    });
-
-                    changetxn = 'active';
-                    $('#txt_overall_discount').val(accounting.formatNumber($('#txt_overall_discount').val(),2));
-                    reInitializeNumeric();
-                    reComputeTotal();
-                
-                }
-            });
-
-        });
         $('#tbl_repair_order tbody').on('click','button[name="edit_info"]',function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
@@ -2415,14 +2364,12 @@ $(document).ready(function(){
                 processData : false,
                 contentType : false,
                 beforeSend : function(){
-                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="6"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                    $('.tbl_items > tbody').html('<tr><td align="center" colspan="6"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
                 },
                 success : function(response){
                     var rows=response.data;
 
-                    $('#tbl_items > tbody').html('');
-                    $('#tbl_items_bpr > tbody').html('');
-                    $('#tbl_items_gj > tbody').html('');
+                    $('.tbl_items > tbody').html('');
 
                     a=0;
                     $.each(rows,function(i,value){
@@ -2437,16 +2384,7 @@ $(document).ready(function(){
                             retail_price = 0;
                         }
 
-                        var tbl_selected;
-
-                        if(value.vehicle_service_id == 1){
-                            tbl_selected = $('#tbl_items > tbody');
-                        }else if(value.vehicle_service_id == 2){
-                            tbl_selected = $('#tbl_items_bpr > tbody');
-                        }else if(value.vehicle_service_id == 3){
-                            tbl_selected = $('#tbl_items_gj > tbody');
-                        }
-
+                        var tbl_selected = $('#tbl_items_'+value.tbl_no+' > tbody');
 
                         tbl_selected.append(newRowItem({
                             order_qty : value.order_qty,
@@ -2480,7 +2418,8 @@ $(document).ready(function(){
                             exp_date : value.exp_date,
                             batch_no : value.batch_no,
                             cost_upon_invoice : value.cost_upon_invoice,
-                            vehicle_service_id : value.vehicle_service_id
+                            vehicle_service_id : value.vehicle_service_id,
+                            tbl_no : value.tbl_no
 
                         }));
 
@@ -2558,7 +2497,7 @@ $(document).ready(function(){
             reComputeTotal();
         });
 
-        $('#tbl_items tbody').on('change','select',function(){
+        $('.tbl_items tbody').on('change','select',function(){
         if(changetxn == 'active'){
         var row=$(this).closest('tr');
         var unit_value=row.find(oTableItems.unit_value).find('option:selected').attr("data-unit-identifier"); 
@@ -2574,7 +2513,7 @@ $(document).ready(function(){
         }   
         });
 
-        $('#tbl_items tbody, #tbl_items_bpr tbody, #tbl_items_gj tbody').on('keyup','input.numeric',function(){
+        $('.tbl_items tbody').on('keyup','input.numeric',function(){
             var row=$(this).closest('tr');
             var price=parseFloat(accounting.unformat(row.find(oTableItems.unit_price).find('input.numeric').val()));
             var discount=parseFloat(accounting.unformat(row.find(oTableItems.discount).find('input.numeric').val()));
@@ -2618,38 +2557,32 @@ $(document).ready(function(){
             reComputeTotal();
         });
 
-        $('#tbl_items tbody, #tbl_items_bpr tbody, #tbl_items_gj tbody').on('keypress','input.qty',function(){
+        $('.tbl_items tbody').on('keypress','input.qty',function(){
             var row=$(this).closest('tr');
             row.find(oTableItems.discount).find('input.numeric').focus();
             row.find(oTableItems.discount).find('input.numeric').select();
         });
         
-        $('#tbl_items tbody, #tbl_items_bpr tbody, #tbl_items_gj tbody').on('keypress','input.discount',function(evt){
+        $('.tbl_items tbody, #tbl_items_bpr tbody, #tbl_items_gj tbody').on('keypress','input.discount',function(evt){
             if(evt.keyCode==13){
                 evt.preventDefault();
                 $('.typeaheadsearch').focus();
             }
         });        
 
-        $('#tbl_items tbody, #tbl_items_bpr tbody, #tbl_items_gj tbody').on('focus','input.numeric',function(){
+        $('.tbl_items tbody, #tbl_items_bpr tbody, #tbl_items_gj tbody').on('focus','input.numeric',function(){
             $(this).select();
         });
 
         $('#btn_yes').click(function(){
-            //var d=dt.row(_selectRowObj).data();
-            //if(getFloat(d.order_status_id)>1){
-            //showNotification({title:"Error!",stat:"error",msg:"Sorry, you cannot delete purchase order that is already been recorded on purchase invoice."});
-            //}else{
             removeRepairOrder().done(function(response){
                 showNotification(response);
                 if(response.stat=="success"){
                     dt.row(_selectRowObj).remove().draw();
                 }
             });
-            //}
         });
         $('#btn_cancel').click(function(){
-            //$('#modal_so_list').modal('hide');
             showList(true);
         });
 
@@ -2683,119 +2616,12 @@ $(document).ready(function(){
             }
         });
 
-        $('#tbl_items > tbody').on('click','button[name="remove_item"]',function(){
+        $('.tbl_items > tbody').on('click','button[name="remove_item"]',function(){
             $(this).closest('tr').remove();
-            // reComputeTotalBasyo();
             reComputeTotal(_vehicleService);
             countTblItems(_vehicleService);
         });
 
-        $('#tbl_items_bpr > tbody').on('click','button[name="remove_item"]',function(){
-            $(this).closest('tr').remove();
-            // reComputeTotalBasyo();
-            reComputeTotal(_vehicleService);
-            countTblItems(_vehicleService);
-        });
-
-        $('#tbl_items_gj > tbody').on('click','button[name="remove_item"]',function(){
-            $(this).closest('tr').remove();
-            // reComputeTotalBasyo();
-            reComputeTotal(_vehicleService);
-            countTblItems(_vehicleService);
-        });
-
-
-        $('#tbl_items > tbody').on('click','button[name="search_item"]',function(){
-            _selectRowTblItems=$(this).closest('tr');
-            global_item_desc=_selectRowTblItems.find(oTableItems.unit_identifier).find($('.product_desc')).val();
-
-            var _data=[];
-            _data.push({name : "description", value : global_item_desc });
-
-
-            $.ajax({
-                url : 'Sales_invoice/transaction/current-items-search',
-                "dataType":"json",
-                "type":"POST",
-                cache : false,
-                dataType : 'json',
-                "data":_data,
-                beforeSend : function(){
-                    $('#tbl_search_list > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
-                },
-                success : function(response){
-                    var rows=response.data;
-                    if(rows.length == 0){
-                        showNotification({
-                            title: "<b style='color:white;display: inline;'>No Stocks!</b>",
-                            stat : "error",
-                            msg : "There are no stocks available for the item."
-                        });
-
-                    }else{
-                        $('#tbl_search_list > tbody').html('');
-                        $.each(rows,function(i,value){
-                            $('#tbl_search_list > tbody').append('<tr class="row-item">'+
-                            '<td >'+value.product_code+'</td>'+
-                            '<td >'+value.product_desc+'</td>'+
-                            '<td >'+value.batch_no+'</td>'+
-                            '<td >'+value.exp_date+'</td>'+
-                            '<td align="right">'+value.on_hand_per_batch+'</td>'+
-                            '<td align="right">'+value.srp+'</td>'+
-                            '<td align="right">'+value.srp_cost+'</td>'+
-                            '<td><center><button type="button" name="accept_search" class="btn btn-success"><i class="fa fa-check"></i></button></center></td>'+
-                            '<tr></tr>'
-                            );
-                        });
-                        $("#modal_search_list").modal('show');
-                    }
-
-
-                }
-            });
-        });        
-
-        $('#tbl_search_list > tbody').on('click','button[name="accept_search"]',function(){
-            var row=$(this).closest('tr');
-            _selectRowTblItems.find(oTableItems.exp_date).find('input').val(row.find(oTableSearch.sExpDate).text());
-            _selectRowTblItems.find(oTableItems.batch_no).find('input').val(row.find(oTableSearch.sBatch).text());
-            _selectRowTblItems.find(oTableItems.cost_upon_invoice).find('input').val(row.find(oTableSearch.sCost).text());
-
-            showNotification({title:"Success!",stat:"success",msg:'The item you selected was updated.'});
-
-            $('#modal_search_list').modal('hide');
-        });
-
-        $('#btn_browse').click(function(event){
-            event.preventDefault();
-            $('input[name="file_upload[]"]').click();
-        });
-        $('input[name="file_upload[]"]').change(function(event){
-            var _files=event.target.files;
-            /*$('#div_img_product').hide();
-            $('#div_img_loader').show();*/
-            var data=new FormData();
-            $.each(_files,function(key,value){
-                data.append(key,value);
-            });
-            console.log(_files);
-            $.ajax({
-                url : 'Customers/transaction/upload',
-                type : "POST",
-                data : data,
-                cache : false,
-                dataType : 'json',
-                processData : false,
-                contentType : false,
-                success : function(response){
-                    $('img[name="img_user"]').attr('src',response.path);
-                }
-            });
-        });
-        $('#btn_remove_photo').click(function(event){
-            event.preventDefault();
-            $('img[name="img_user"]').attr('src','assets/img/anonymous-icon.png');
-        });
     })();
     var validateRequiredFields=function(f){
         var stat=true;
@@ -3062,6 +2888,9 @@ $(document).ready(function(){
                 '<input type="text" class="hidden is_basyo" value="'+d.is_basyo+'">'+
                 '<input type="text" class="hidden is_product_basyo" value="'+d.is_product_basyo+'">'+
                 '<input type="text" name="vehicle_service_id[]" class="hidden" value="'+d.vehicle_service_id+'">'+
+                '<input type="text" name="tbl_no[]" class="hidden" value="'+d.tbl_no+'">'+
+
+
             '</td>'+
             // [3] Unit Price
             '<td>'+
@@ -3126,16 +2955,17 @@ $(document).ready(function(){
     };
 
     var reComputeTotal=function(stat=null){
-        var rows_pms=$('#tbl_items > tbody tr');
-        var rows_bpr=$('#tbl_items_bpr > tbody tr');
-        var rows_gj=$('#tbl_items_gj > tbody tr');
+
+        var rows_1=$('.tbl_items_1 > tbody tr');
+        var rows_2=$('.tbl_items_2 > tbody tr');
+        var rows_3=$('.tbl_items_3 > tbody tr');
 
         if(stat == null || stat == 1){
             var discounts=0; var before_tax=0; var after_tax=0; var order_tax_amount=0; var gross=0;
 
             // Periodic Maintenance (PMS)
 
-            $.each(rows_pms,function(){
+            $.each(rows_1,function(){
                 //console.log($(oTableItems.net_vat,$(this)));
                 // total=parseFloat(accounting.unformat($(oTableItems.total,$(this)).find('input.numeric').val()));
                 // total_after_global = (total - (total*global_discount));
@@ -3167,7 +2997,7 @@ $(document).ready(function(){
      
             var gross_bpr=0; var discounts_bpr=0; var before_tax_bpr=0; var order_tax_amount_bpr=0; var after_tax_bpr=0;
 
-            $.each(rows_bpr,function(){
+            $.each(rows_2,function(){
 
                 // total_bpr=parseFloat(accounting.unformat($(oTableItems.total,$(this)).find('input.numeric').val()));
                 // total_after_global_bpr = (total_bpr - (total_bpr*global_discount));
@@ -3199,7 +3029,7 @@ $(document).ready(function(){
 
             var gross_gj=0; var discounts_gj=0; var before_tax_gj=0; var order_tax_amount_gj=0; var after_tax_gj=0;
 
-            $.each(rows_gj,function(){
+            $.each(rows_3,function(){
                 //console.log($(oTableItems.net_vat,$(this)));
 
                 // total_gj=parseFloat(accounting.unformat($(oTableItems.total,$(this)).find('input.numeric').val()));
@@ -3225,53 +3055,22 @@ $(document).ready(function(){
             $('input[name="summary_tax_amount_gj"]').val(accounting.formatNumber(order_tax_amount_gj,2));
             $('input[name="summary_after_tax_gj"]').val(accounting.formatNumber(after_tax_gj,2));
         }
+   
+        // var global_discount = parseFloat(accounting.unformat($('#txt_overall_discount').val()/100));
 
-                
-            // var global_discount = parseFloat(accounting.unformat($('#txt_overall_discount').val()/100));
+        // total_gj=parseFloat(accounting.unformat($(oTableItems.total,$(this)).find('input.numeric').val()));
 
-            // total_gj=parseFloat(accounting.unformat($(oTableItems.total,$(this)).find('input.numeric').val()));
+        //     total_after_global_gj = (total_gj - (total_gj*global_discount));
+        //     $(oTableItems.total_after_global,$(this)).find('input.numeric').val(accounting.formatNumber(total_after_global_gj,2));
 
-            //     total_after_global_gj = (total_gj - (total_gj*global_discount));
-            //     $(oTableItems.total_after_global,$(this)).find('input.numeric').val(accounting.formatNumber(total_after_global_gj,2));
+        var summary_after_tax_pms = accounting.unformat($('input[name="summary_after_tax_pms"]').val());
+        var summary_after_tax_bpr = accounting.unformat($('input[name="summary_after_tax_bpr"]').val());
+        var summary_after_tax_gj = accounting.unformat($('input[name="summary_after_tax_gj"]').val());
 
+        var grand_total = summary_after_tax_pms + summary_after_tax_bpr + summary_after_tax_gj;
 
-            var summary_after_tax_pms = accounting.unformat($('input[name="summary_after_tax_pms"]').val());
-            var summary_after_tax_bpr = accounting.unformat($('input[name="summary_after_tax_bpr"]').val());
-            var summary_after_tax_gj = accounting.unformat($('input[name="summary_after_tax_gj"]').val());
+        $('input[name="repair_order_grand_total"]').val(accounting.formatNumber(grand_total,2));
 
-            var grand_total = summary_after_tax_pms + summary_after_tax_bpr + summary_after_tax_gj;
-
-            $('input[name="repair_order_grand_total"]').val(accounting.formatNumber(grand_total,2));
-
-    };
-
-    var TotalBasyo=function(){
-        var rows=$('#tbl_items > tbody tr');
-        var total_basyo = 0;
-        var qty = 0;
-
-        $.each(rows,function(){
-            var is_basyo = $(this).find('.is_basyo').val();
-            if(is_basyo == 1){
-                qty=parseFloat(accounting.unformat($(oTableItems.qty,$(this)).find('input.numeric').val()));
-                total_basyo += qty;
-            }
-        });
-
-        return accounting.formatNumber(total_basyo,2);
-    };
-
-    var reComputeTotalBasyo=function(){
-        var total_basyo = TotalBasyo();
-
-        var basyo_rows=$('#tbl_items > tbody tr');
-        $.each(basyo_rows,function(){
-            var is_product_basyo = $(this).find('.is_product_basyo').val();
-            if(is_product_basyo == 1){
-                $(this).find('.qty').val(total_basyo);
-                $(this).find('.qty').trigger('keyup');
-            }
-        });
     };
 
     var resetSummary=function(){
@@ -3288,14 +3087,13 @@ $(document).ready(function(){
     var countTblItems = function(param){
         var tbl; var tbl_count;
 
+        tbl = $('.tbl_items_'+param+' > tbody > tr');
+
         if (param == 1){
-            tbl = $('#tbl_items > tbody > tr');
             tbl_count = $('#pms_count');
         }else if(param == 2){
-            tbl = $('#tbl_items_bpr > tbody > tr');
             tbl_count = $('#bpr_count');
         }else if(param == 3){
-            tbl = $('#tbl_items_gj > tbody > tr');
             tbl_count = $('#gj_count');
         }
 
@@ -3304,16 +3102,7 @@ $(document).ready(function(){
 
     var checkProduct= function(check_id){
         var prodstat=true;
-        var rowcheck;
-
-        if(_vehicleService == 1){
-            rowcheck = $('#tbl_items > tbody tr');
-        }else if(_vehicleService == 2){
-            rowcheck = $('#tbl_items_bpr > tbody tr');
-        }else if(_vehicleService == 3){
-            rowcheck = $('#tbl_items_gj > tbody tr');
-        }
-
+        var rowcheck = $('#tbl_items_'+tbl_no+' > tbody tr');
         $.each(rowcheck,function(){
             item = parseFloat(accounting.unformat($(oTableItems.item_id,$(this)).find('input.numeric').val()));
             if(check_id == item){

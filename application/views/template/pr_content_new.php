@@ -35,9 +35,9 @@
 	<table width="100%">
         <tr class="">
             <td width="50%" valign="top">
-                <img src="<?php echo $company_info->logo_path; ?>" style="height: 70px; width: 300px;"> 
+                <img src="<?php echo $company_info->logo_path; ?>" style="height: 100px; width: 150px;"> 
                 <br/><br/>
-
+                <h1><?php echo $company_info->company_name; ?></h1>
                 <p><?php echo $company_info->company_address; ?></p>
                 <p><?php echo $company_info->company_address_2; ?></p>
                 <span>Email : <?php echo $company_info->email_address; ?></span>
@@ -102,10 +102,6 @@
             </td>        
         <tr>
     </table>
-
-    <br/><br/><br/><br/>
-
-    <?php include 'po_report_footer.php'; ?>
 
 </body>
 </html>

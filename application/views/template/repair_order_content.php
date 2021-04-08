@@ -68,33 +68,12 @@
     </style>
 </head>
 <body>
-
-	<?php 
-		$pms_count=0;
-		$bpr_count=0;
-		$gj_count=0;
-		foreach($items as $item){
-			/* PMS */
-			if($item->vehicle_service_id == 1){
-				$pms_count++;
-			}
-			/* BPR */
-			if($item->vehicle_service_id == 2){
-				$bpr_count++;
-			}
-			/* GJ */
-			if($item->vehicle_service_id == 3){
-				$gj_count++;
-			}
-		}
-	?>
-
     <table width="100%">
         <tr class="">
-        	<td width="15%" valign="top">
-                <img src="<?php echo $company_info->logo_path; ?>" style="height: 100px; width: 100px;"> 
+        	<td width="25%" valign="top">
+                <img src="<?php echo $company_info->logo_path; ?>" style="height: 100px; width: 150px;"> 
         	</td>
-            <td width="55%" valign="top">
+            <td width="45%" valign="top">
             	<strong style="font-size: 18pt;"><?php echo $company_info->company_name; ?></strong>
             	<br/><br/>
                 <p><?php echo $company_info->company_address; ?></p>
@@ -304,21 +283,20 @@
 	    		<th valign="top" width="15%" align="right"><strong>Amount</strong></th>
 	    	</tr>
 		</thead>
-    	<?php foreach($services as $service){ 
-    		if($service->vehicle_service_id == 1){
-    			if($pms_count > 0){
+    	<?php foreach($tbl_count as $tbl){
     	?>
     		<tr>
     			<td valign="top" colspan="2" class="gray">C</td>
     			<td valign="top" colspan="4" class="gray">
-    				<strong><?php echo $info->pms_desc; ?></strong>
-    			</td>
+    				<strong><?php echo $tbl->sdesc; ?></strong>
+    			</td>    
     		</tr>
     		<?php 
+
     			$sub_total=0;
-    			foreach($items as $item){
-    			if($item->vehicle_service_id == $service->vehicle_service_id){
-    			$sub_total+=$item->order_gross;
+        			foreach($items as $item){
+        			if($item->tbl_no == $tbl->tbl_no){
+        			$sub_total+=$item->order_gross;
     		?>
     			<tr>
     				<td valign="top"></td>
@@ -333,65 +311,7 @@
     			<td valign="top" colspan="5" align="right">Sub-Total</td>
     			<td valign="top" align="right" class=""><hr><?php echo number_format($sub_total,2); ?> <hr><hr></td>
     		</tr>
-    	<?php }}
-    		if($service->vehicle_service_id == 2){
-    			if($bpr_count > 0){
-    	?>
-    		<tr>
-    			<td valign="top" colspan="2" class="gray">C</td>
-    			<td valign="top" colspan="4" class="gray">
-    				<strong><?php echo $info->bpr_desc; ?></strong>
-    			</td>
-    		</tr>
-    		<?php 
-    			$sub_total=0;
-    			foreach($items as $item){ 
-    			if($item->vehicle_service_id == $service->vehicle_service_id){
-    			$sub_total+=$item->order_gross;
-    		?>
-    			<tr>
-    				<td valign="top"></td>
-    				<td valign="top"><?php echo $item->unit_code; ?></td>
-    				<td valign="top"><?php echo $item->product_desc; ?></td>
-    				<td valign="top" align="right"><?php echo $item->order_qty + 0;?></td>
-    				<td valign="top" align="right"><?php echo number_format($item->order_price,2) ?></td>
-    				<td valign="top" align="right"><?php echo number_format($item->order_gross,2) ?></td>
-    			</tr>
-    		<?php }}?>			    		
-    		<tr>
-    			<td valign="top" colspan="5" align="right">Sub-Total</td>
-    			<td valign="top" align="right" class=""><hr><?php echo number_format($sub_total,2); ?> <hr><hr></td>
-    		</tr>
-    	<?php }}
-    		if($service->vehicle_service_id == 3){
-    			if($gj_count > 0){
-    	?>
-    		<tr>
-    			<td valign="top" colspan="2" class="gray">C</td>
-    			<td valign="top" colspan="4" class="gray">
-    				<strong><?php echo $info->gj_desc; ?></strong>
-    			</td>
-    		</tr>
-    		<?php 
-    			$sub_total=0;
-    			foreach($items as $item){ 
-    			if($item->vehicle_service_id == $service->vehicle_service_id){
-    			$sub_total+=$item->order_gross;
-    		?>
-    			<tr>
-    				<td valign="top"></td>
-    				<td valign="top"><?php echo $item->unit_code; ?></td>
-    				<td valign="top"><?php echo $item->product_desc; ?></td>
-    				<td valign="top" align="right"><?php echo $item->order_qty + 0;?></td>
-    				<td valign="top" align="right"><?php echo number_format($item->order_price,2) ?></td>
-    				<td valign="top" align="right"><?php echo number_format($item->order_gross,2) ?></td>
-    			</tr>
-    		<?php }}?>			    		
-    		<tr>
-    			<td valign="top" colspan="5" align="right">Sub-Total</td>
-    			<td valign="top" align="right" class=""><hr><?php echo number_format($sub_total,2); ?> <hr><hr></td>
-    		</tr>
-    	<?php }}}?>
+    	<?php }?>
     </table>
     <div>
 	    <table width="100%" cellpadding="1" cellspacing="1" style="font-size: 8.5pt;">
@@ -481,7 +401,7 @@
 	    		</td>
 	    	</tr>
 	    </table>
-	    <table width="100%" style="margin-top: 3px'">
+	    <table width="100%" style="margin-top: 3px;">
 	    	<tr>
 	    		<td valign="top" colspan="2" style="padding:0;font-size: 5pt;">
 	    			<strong>Reminders to customer: Please present this Repair Order when claiming your vehicle.</strong>

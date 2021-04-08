@@ -188,7 +188,7 @@ $(document).ready(function(){
         dt=$('#tbl_makes').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "ajax" : "makes/transaction/list",
+            "ajax" : "Makes/transaction/list",
             "language" : {
                 "searchPlaceholder": "Search"
             },
@@ -312,7 +312,7 @@ $(document).ready(function(){
         return $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"makes/transaction/create",
+            "url":"Makes/transaction/create",
             "data":_data,
             "beforeSend": showSpinningProgress($('#btn_save'))
         });
@@ -325,7 +325,7 @@ $(document).ready(function(){
         return $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"makes/transaction/update",
+            "url":"Makes/transaction/update",
             "data":_data,
             "beforeSend": showSpinningProgress($('#btn_save'))
         });
@@ -335,7 +335,7 @@ $(document).ready(function(){
         return $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"makes/transaction/delete",
+            "url":"Makes/transaction/delete",
             "data":{make_id : _selectedID}
         });
     };

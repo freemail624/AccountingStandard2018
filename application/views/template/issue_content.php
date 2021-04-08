@@ -35,10 +35,10 @@
 <body>
     <table width="100%">
         <tr class="">
-            <td width="15%" valign="top">
-                <img src="<?php echo $company_info->logo_path; ?>" style="height: 100px; width: 100px;"> 
+            <td width="25%" valign="top">
+                <img src="<?php echo $company_info->logo_path; ?>" style="height: 100px; width: 150px;"> 
             </td>
-            <td width="85%" valign="top">
+            <td width="75%" valign="top">
                 <strong style="font-size: 18pt;"><?php echo $company_info->company_name; ?></strong>
                 <br/><br/>
                 <p><?php echo $company_info->company_address; ?></p>
@@ -89,7 +89,7 @@
                 <strong>QTY <br/> SUPP</strong>
             </td>
             <td valign="middle" align="center" class="left right bottom" width="10%">
-                <strong>QTY <br/> PCIKED</strong>
+                <strong>QTY <br/> PICKED</strong>
             </td>
         </tr>
         <?php foreach($issue_items as $item){ ?>

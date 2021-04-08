@@ -72,7 +72,7 @@
 				<strong>QTY <br/> SUPP</strong>
 			</td>
 			<td valign="middle" align="center" class="left right bottom" width="10%">
-				<strong>QTY <br/> PCIKED</strong>
+				<strong>QTY <br/> PICKED</strong>
 			</td>
 		</tr>
 		<?php foreach($issue_items as $item){ ?>

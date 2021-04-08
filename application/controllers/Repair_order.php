@@ -185,7 +185,8 @@ class Repair_order extends CORE_Controller
             case 'create':
                 $m_order=$this->Repair_order_model;
                 $m_order_item=$this->Repair_order_item_model;
-
+                $m_account=$this->Account_integration_model;
+                
                 $m_order->begin();
 
                 /* Customers Info */
@@ -225,6 +226,37 @@ class Repair_order extends CORE_Controller
                 $m_order->advisor_remarks=$this->input->post('advisor_remarks',TRUE);
                 $m_order->customer_remarks=$this->input->post('customer_remarks',TRUE);
 
+                $m_order->sdesc_1=$this->input->post('sdesc_1',TRUE);
+                $m_order->sdesc_2=$this->input->post('sdesc_2',TRUE);
+                $m_order->sdesc_3=$this->input->post('sdesc_3',TRUE);
+                $m_order->sdesc_4=$this->input->post('sdesc_4',TRUE);
+                $m_order->sdesc_5=$this->input->post('sdesc_5',TRUE);
+                $m_order->sdesc_6=$this->input->post('sdesc_6',TRUE);
+                $m_order->sdesc_7=$this->input->post('sdesc_7',TRUE);
+                $m_order->sdesc_8=$this->input->post('sdesc_8',TRUE);
+                $m_order->sdesc_9=$this->input->post('sdesc_9',TRUE);
+                $m_order->sdesc_10=$this->input->post('sdesc_10',TRUE);
+                $m_order->sdesc_11=$this->input->post('sdesc_11',TRUE);
+                $m_order->sdesc_12=$this->input->post('sdesc_12',TRUE);
+                $m_order->sdesc_13=$this->input->post('sdesc_13',TRUE);
+                $m_order->sdesc_14=$this->input->post('sdesc_14',TRUE);
+                $m_order->sdesc_15=$this->input->post('sdesc_15',TRUE);
+                $m_order->sdesc_16=$this->input->post('sdesc_16',TRUE);
+                $m_order->sdesc_17=$this->input->post('sdesc_17',TRUE);
+                $m_order->sdesc_18=$this->input->post('sdesc_18',TRUE);
+                $m_order->sdesc_19=$this->input->post('sdesc_19',TRUE);
+                $m_order->sdesc_20=$this->input->post('sdesc_20',TRUE);
+                $m_order->sdesc_21=$this->input->post('sdesc_21',TRUE);
+                $m_order->sdesc_22=$this->input->post('sdesc_22',TRUE);
+                $m_order->sdesc_23=$this->input->post('sdesc_23',TRUE);
+                $m_order->sdesc_24=$this->input->post('sdesc_24',TRUE);
+                $m_order->sdesc_25=$this->input->post('sdesc_25',TRUE);
+                $m_order->sdesc_26=$this->input->post('sdesc_26',TRUE);
+                $m_order->sdesc_27=$this->input->post('sdesc_27',TRUE);
+                $m_order->sdesc_28=$this->input->post('sdesc_28',TRUE);
+                $m_order->sdesc_29=$this->input->post('sdesc_29',TRUE);
+                $m_order->sdesc_30=$this->input->post('sdesc_30',TRUE);
+
                 // $m_invoice->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                 // $m_invoice->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                 // $m_invoice->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
@@ -234,6 +266,16 @@ class Repair_order extends CORE_Controller
                 // $m_invoice->total_after_discount=$this->get_numeric_value($this->input->post('total_after_discount',TRUE));
 
                 $m_order->posted_by_user=$this->session->user_id;
+
+                // generate repair no
+                $account_integration = $m_account->get_list();
+                
+                $number = '0000000'; // the number to format
+                $inc_no = COUNT($m_order->get_list())+1+$account_integration[0]->ro_no_start;
+
+                $repair_order_no = str_pad(intval($number) + $inc_no, strlen($number), '0', STR_PAD_LEFT);
+                $m_order->repair_order_no='RA'.$repair_order_no;
+
                 $m_order->save();
 
                 $repair_order_id=$m_order->last_insert_id();
@@ -253,6 +295,7 @@ class Repair_order extends CORE_Controller
                 $batch_no=$this->input->post('batch_no',TRUE);
                 $cost_upon_invoice=$this->input->post('cost_upon_invoice',TRUE);
                 $vehicle_service_id=$this->input->post('vehicle_service_id',TRUE);
+                $tbl_no=$this->input->post('tbl_no',TRUE);                
                 $is_parent=$this->input->post('is_parent',TRUE);
             
                 $m_products=$this->Products_model;
@@ -275,6 +318,7 @@ class Repair_order extends CORE_Controller
                     $m_order_item->batch_no=$batch_no[$i];
                     $m_order_item->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
                     $m_order_item->vehicle_service_id=$this->get_numeric_value($vehicle_service_id[$i]);
+                    $m_order_item->tbl_no=$this->get_numeric_value($tbl_no[$i]);
 
                     //unit id retrieval is change, because of TRIGGER restriction
                     $m_order_item->is_parent=$this->get_numeric_value($is_parent[$i]);
@@ -295,10 +339,6 @@ class Repair_order extends CORE_Controller
                     $m_products->on_hand=$m_products->get_product_qty($this->get_numeric_value($prod_id[$i]));
                     $m_products->modify($this->get_numeric_value($prod_id[$i]));
                 }
-
-                //update repair order on formatted last insert id
-                $m_order->repair_order_no='RA02888'.$repair_order_id;
-                $m_order->modify($repair_order_id);
 
                 //update status of so
                 // $m_so->order_status_id=$this->get_so_status($sales_order_id);
@@ -378,6 +418,38 @@ class Repair_order extends CORE_Controller
                 $m_order->advisor_remarks=$this->input->post('advisor_remarks',TRUE);
                 $m_order->customer_remarks=$this->input->post('customer_remarks',TRUE);
 
+
+                $m_order->sdesc_1=$this->input->post('sdesc_1',TRUE);
+                $m_order->sdesc_2=$this->input->post('sdesc_2',TRUE);
+                $m_order->sdesc_3=$this->input->post('sdesc_3',TRUE);
+                $m_order->sdesc_4=$this->input->post('sdesc_4',TRUE);
+                $m_order->sdesc_5=$this->input->post('sdesc_5',TRUE);
+                $m_order->sdesc_6=$this->input->post('sdesc_6',TRUE);
+                $m_order->sdesc_7=$this->input->post('sdesc_7',TRUE);
+                $m_order->sdesc_8=$this->input->post('sdesc_8',TRUE);
+                $m_order->sdesc_9=$this->input->post('sdesc_9',TRUE);
+                $m_order->sdesc_10=$this->input->post('sdesc_10',TRUE);
+                $m_order->sdesc_11=$this->input->post('sdesc_11',TRUE);
+                $m_order->sdesc_12=$this->input->post('sdesc_12',TRUE);
+                $m_order->sdesc_13=$this->input->post('sdesc_13',TRUE);
+                $m_order->sdesc_14=$this->input->post('sdesc_14',TRUE);
+                $m_order->sdesc_15=$this->input->post('sdesc_15',TRUE);
+                $m_order->sdesc_16=$this->input->post('sdesc_16',TRUE);
+                $m_order->sdesc_17=$this->input->post('sdesc_17',TRUE);
+                $m_order->sdesc_18=$this->input->post('sdesc_18',TRUE);
+                $m_order->sdesc_19=$this->input->post('sdesc_19',TRUE);
+                $m_order->sdesc_20=$this->input->post('sdesc_20',TRUE);
+                $m_order->sdesc_21=$this->input->post('sdesc_21',TRUE);
+                $m_order->sdesc_22=$this->input->post('sdesc_22',TRUE);
+                $m_order->sdesc_23=$this->input->post('sdesc_23',TRUE);
+                $m_order->sdesc_24=$this->input->post('sdesc_24',TRUE);
+                $m_order->sdesc_25=$this->input->post('sdesc_25',TRUE);
+                $m_order->sdesc_26=$this->input->post('sdesc_26',TRUE);
+                $m_order->sdesc_27=$this->input->post('sdesc_27',TRUE);
+                $m_order->sdesc_28=$this->input->post('sdesc_28',TRUE);
+                $m_order->sdesc_29=$this->input->post('sdesc_29',TRUE);
+                $m_order->sdesc_30=$this->input->post('sdesc_30',TRUE);
+
                 $m_order->modify($repair_order_id);
 
                 $m_order_item->delete_via_fk($repair_order_id); //delete previous items then insert those new
@@ -397,6 +469,7 @@ class Repair_order extends CORE_Controller
                 $batch_no=$this->input->post('batch_no',TRUE);
                 $cost_upon_invoice=$this->input->post('cost_upon_invoice',TRUE);
                 $vehicle_service_id=$this->input->post('vehicle_service_id',TRUE);
+                $tbl_no=$this->input->post('tbl_no',TRUE);
                 $is_parent=$this->input->post('is_parent',TRUE);
 
                 $m_products=$this->Products_model;
@@ -419,6 +492,7 @@ class Repair_order extends CORE_Controller
                     $m_order_item->batch_no=$batch_no[$i];
                     $m_order_item->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
                     $m_order_item->vehicle_service_id=$this->get_numeric_value($vehicle_service_id[$i]);
+                    $m_order_item->tbl_no=$this->get_numeric_value($tbl_no[$i]);
 
                     //unit id retrieval is change, because of TRIGGER restriction
                     $m_order_item->is_parent=$this->get_numeric_value($is_parent[$i]);

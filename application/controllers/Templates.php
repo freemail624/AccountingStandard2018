@@ -661,6 +661,7 @@ class Templates extends CORE_Controller {
                 $data['item_info']=$m_items->get_service_invoice_items($filter_value);
                 $data['service']=$info[0];
                 $data['vehicle_services']=$m_services->get_vehicle_services();
+                $data['tbl_count']=$m_items->get_invoice_tbl_count_items($filter_value);
 
                 $m_company=$this->Company_model;
                 $company=$m_company->get_list();
@@ -1060,6 +1061,7 @@ class Templates extends CORE_Controller {
 
                 $data['histories']=$m_order->get_customer_history($customer_id,$vehicle_id,$repair_order_id);
                 $data['items']=$m_order_items->get_repair_order_items($repair_order_id);
+                $data['tbl_count']=$m_order_items->get_tbl_count_items($repair_order_id);
                 $data['services']=$m_services->get_vehicle_services();
                 $data['categories']=$m_order_items->get_category_items($repair_order_id);
 
@@ -1068,6 +1070,27 @@ class Templates extends CORE_Controller {
                     echo $this->load->view('template/repair_order_content_dropdown',$data,TRUE);
                     // echo $this->load->view('template/repair_order_content_menus',$data,TRUE);
                 }
+
+                if($type=='tech'){
+                    $file_name=$data['info']->repair_order_no;
+                    $pdfFilePath = 'TECH - '.$file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                    $content=$this->load->view('template/repair_order_tech_content',$data,TRUE); //load the template
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output();
+                }
+
+                if($type=='sa'){
+                    $file_name=$data['info']->repair_order_no;
+                    $pdfFilePath = 'SA - '.$file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                    $content=$this->load->view('template/repair_order_sa_content',$data,TRUE); //load the template
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output();
+                }
+
 
                 //preview on browser
                 if($type=='preview'){

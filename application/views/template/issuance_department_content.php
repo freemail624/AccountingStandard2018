@@ -39,12 +39,12 @@
 <div>
     <table width="100%">
         <tr class="">
-            <td width="10%" valign="top">
-                <img src="<?php echo base_url().$company_info->logo_path; ?>" style="height: 100px; width: 100px;"> 
-            </td>
             <td width="50%" valign="top">
-                <h2>Le Mans Stellar Motor Corp.</h2>
-                <br/>
+                <img src="<?php echo base_url().$company_info->logo_path; ?>" style="height: 100px; width: 150px;">
+                <br/><br/>
+                
+                <h1><?php echo $company_info->company_name; ?></h1>
+                
                 <p><?php echo $company_info->company_address; ?></p>
                 <p><?php echo $company_info->company_address_2; ?></p>
                 <span>Email : <?php echo $company_info->email_address; ?></span>

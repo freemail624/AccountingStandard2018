@@ -189,6 +189,10 @@
         <input type="checkbox" name="invoice[]" value="sales_invoice_items" id="sales_invoice_items" class="css-checkbox"><label class="css-label " for="sales_invoice_items">Sales Invoice Items</label>(<?php echo $current_count->sales_invoice_items; ?>)<br>
         <input type="checkbox" name="invoice[]" value="loading" id="loading" class="css-checkbox"><label class="css-label " for="loading">Loading Info</label>(<?php echo $current_count->loading; ?>)<br>
         <input type="checkbox" name="invoice[]" value="loading_items" id="loading_items" class="css-checkbox"><label class="css-label " for="loading_items">Loading Items</label>(<?php echo $current_count->loading_items; ?>)<br>
+
+        <input type="checkbox" name="invoice[]" value="repair_order" id="repair_order" class="css-checkbox"><label class="css-label " for="repair_order">Repair Order Info</label>(<?php echo $current_count->repair_order; ?>)<br>
+        <input type="checkbox" name="invoice[]" value="repair_order_items" id="repair_order_items" class="css-checkbox"><label class="css-label " for="repair_order_items">Repair Order Items</label>(<?php echo $current_count->repair_order_items; ?>)<br>
+
         <input type="checkbox" name="invoice[]" value="service_invoice" id="service_invoice" class="css-checkbox"><label class="css-label " for="service_invoice">Service Invoice Info</label>(<?php echo $current_count->service_invoice; ?>)<br>
         <input type="checkbox" name="invoice[]" value="service_invoice_items" id="service_invoice_items" class="css-checkbox"><label class="css-label " for="service_invoice_items">Service Invoice Items</label>(<?php echo $current_count->service_invoice_items; ?>)<br>
         <input type="checkbox" name="invoice[]" value="adjustment_info" id="adjustment_info" class="css-checkbox"><label class="css-label " for="adjustment_info">Adjustments Info</label>(<?php echo $current_count->adjustment_info; ?>)<br>
@@ -197,6 +201,9 @@
         <input type="checkbox" name="invoice[]" value="issuance_department_items" id="issuance_department_items" class="css-checkbox"><label class="css-label " for="issuance_department_items">Issuance Department Items</label>(<?php echo $current_count->issuance_department_items; ?>)<br>
         <input type="checkbox" name="invoice[]" value="dispatching_invoice" id="dispatching_invoice" class="css-checkbox"><label class="css-label " for="dispatching_invoice">Warehouse Dispatching</label>(<?php echo $current_count->dispatching_invoice; ?>)<br>
         <input type="checkbox" name="invoice[]" value="dispatching_invoice_items" id="dispatching_invoice_items" class="css-checkbox"><label class="css-label " for="dispatching_invoice_items">Warehouse Dispatching Items</label>(<?php echo $current_count->dispatching_invoice_items; ?>)<br>
+
+        <input type="checkbox" name="invoice[]" value="issuance_info" id="issuance_info" class="css-checkbox"><label class="css-label " for="issuance_info">Issuance Info</label>(<?php echo $current_count->issuance_info; ?>)<br>
+        <input type="checkbox" name="invoice[]" value="issuance_items" id="issuance_items" class="css-checkbox"><label class="css-label " for="issuance_items">Issuance Items</label>(<?php echo $current_count->issuance_items; ?>)<br>
 
         </form>
 
