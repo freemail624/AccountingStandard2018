@@ -145,6 +145,9 @@
             margin-left: 20px !important;
         }
 
+        #tbl_purchases_filter{
+            display: none;
+        }
     </style>
 </head>
 
@@ -185,6 +188,34 @@
 
         <div class="panel-body table-responsive">
         <h2 class="h2-panel-heading">Purchase Order<small> | <a href="assets/manual/purchasing/Purchase_Order.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
+
+            <div class="row"> 
+                <div class="col-lg-3"><br> 
+                <button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-placement="left" title="Record Charge Invoice" ><i class="fa fa-plus"></i> Record Order</button> 
+                </div> 
+                <div class="col-lg-2"> 
+                </div> 
+                <div class="col-lg-2"> 
+                    Status : <br/>
+                    <select class="form-control" id="cbo_order_status">
+                        <option value="0">All</option>
+                        <?php foreach($statuses as $status){?>
+                            <option value="<?php echo $status->order_status_id; ?>">
+                                <?php echo $status->order_status; ?>
+                            </option>
+                        <?php }?>
+                    </select>
+                </div>
+                <div class="col-lg-2 text-right">
+                    Total Amount :
+                    <input type="text" class="numeric form-control" id="tbl_total_amount" readonly>
+                </div> 
+                <div class="col-lg-3"> 
+                    Search :<br /> 
+                    <input type="text" id="tbl_search" class="form-control"> 
+                </div> 
+            </div> 
+            <br/>
             <table id="tbl_purchases" class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
                 <tr>
@@ -197,6 +228,8 @@
                     <th>Approved</th>
                     <th>Status</th>
                     <th>Sent</th>
+                    <th>Total Qty</th>
+                    <th>Amount</th>
                     <th width="15%"><center>Action</center></th>
                     <th></th>
                 </tr>
@@ -295,15 +328,19 @@
                     </div>
 
                     <div class="col-sm-4 col-sm-offset-3">
-                        Terms : <br />
-                        <select class="form-control" name="term_id" id="cbo_terms">
-                            <option value="new">[ Create New Term ]</option>
-                            <?php foreach($terms as $term){?>
-                                <option value="<?php echo $term->term_id; ?>">
-                                    <?php echo $term->term_description; ?>
-                                </option>
-                            <?php }?>
-                        </select>
+                        Exchange Rate : 
+                        <input type="text" class="numeric form-control" id="exchange_rate" name="exchange_rate">
+                        <div class="hidden">
+                            Terms : <br />
+                            <select class="form-control" name="term_id" id="cbo_terms">
+                                <option value="new">[ Create New Term ]</option>
+                                <?php foreach($terms as $term){?>
+                                    <option value="<?php echo $term->term_id; ?>">
+                                        <?php echo $term->term_description; ?>
+                                    </option>
+                                <?php }?>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -332,15 +369,13 @@
                         <th width="5%">Qty</th>
                         <th width="10%">UM</th>
                         <th width="15%">Description</th>
+                        <th width="10%" style="text-align: right;">RMB</th>
                         <th width="10%" style="text-align: right;">Unit Price</th>
                         <th width="10%" style="text-align: right;">Discount</th>
-
                         <th style="display: none;" width="5%">T.D</th> <!-- total discount -->
                         <th style="display: none;" width="5%">Tax %</th>
-
-                        <th width="15%" style="text-align: right;">Total</th>
+                        <th width="10%" style="text-align: right;">Total</th>
                         <th width="10%" style="display: none;">V.I</th> <!-- vat input -->
-
                         <th style="display: none;" width="10%">N.V</th> <!-- net of vat -->
                         <th style="display: none;" width="10%">Item ID</th><!-- product id -->
                         <th width="5%"><center>Action</center></th>
@@ -354,7 +389,7 @@
 
                     <tfoot>
                     <tr>
-                        <td colspan="7" style="height: 20px;">&nbsp;</td>
+                        <td colspan="8" style="height: 20px;">&nbsp;</td>
                     </tr>
                     <tr class="">
                         <td colspan="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount (%) :</strong></td>
@@ -364,35 +399,35 @@
                         </td>
                         <td style="text-align: right;"><strong style="display: none;"> <i class="glyph-icon icon-star"></i>Total After Discount :</strong></td>
                         <td id="td_total_after_discount" style="text-align: right;display: none;"><strong>0.00</strong></td><td style="border-right: 0px;"></td>
-                        <td style="text-align: right; border-left: 0px!important;"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
+                        <td colspan="2" style="text-align: right; border-left: 0px!important;"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
                         <td align="right" colspan="2" id="td_before_tax" color="red">0.00</td>
                     </tr>
                     <tr>
                         <td class="" colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
                         <td class="" align="right" colspan="1" id="td_tax" color="red">0.00</td>
-                        <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
+                        <td colspan="3" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
                         <td align="right" colspan="2" id="td_after_tax" color="red">0.00</td>
                     </tr>
                     <tr>
-                        <td colspan="5" align="right"><strong>Shipping Cost :</strong> </td>
+                        <td colspan="6" align="right"><strong>Shipping Cost :</strong> </td>
                         <td colspan="2">
                             <input type="text" name="shipping_cost" id="shipping_cost" class="additional-payment numeric form-control">
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="5" align="right"><strong>Custom Duties :</strong> </td>
+                        <td colspan="6" align="right"><strong>Custom Duties :</strong> </td>
                         <td colspan="2">
                             <input type="text" name="custom_duties" id="custom_duties" class="additional-payment numeric form-control">
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="5" align="right"><strong>Other Amounts :</strong> </td>
+                        <td colspan="6" align="right"><strong>Other Amounts :</strong> </td>
                         <td colspan="2">
                             <input type="text" name="other_amount" id="other_amount" class="additional-payment numeric form-control">
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="5" align="right"><strong>Total Amount :</strong> </td>
+                        <td colspan="6" align="right"><strong>Total Amount :</strong> </td>
                         <td colspan="2">
                             <input type="text" name="grand_total_amount" id="grand_total_amount" class="numeric form-control" readonly style="font-weight: bold;">
                         </td>
@@ -899,7 +934,7 @@
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboSuppliers; var _cboTaxType;
     var _cboDepartments; var _defCostType; var products; var _line_unit; var changetxn;
-    var _cboTerms;
+    var _cboTerms; var _cboStatus; var recomputeTblAmt;
 
     //_defCostType=1; //Luzon Area Purchase Cost is default, this will change when branch is specified
 
@@ -907,19 +942,18 @@ $(document).ready(function(){
         qty : 'td:eq(0)',
         unit_value: 'td:eq(1)',
         unit_identifier : 'td:eq(2)',
-        unit_price : 'td:eq(3)',
-        discount : 'td:eq(4)',
-        total_line_discount : 'td:eq(5)',
-        tax : 'td:eq(6)',
-        total : 'td:eq(7)',
-        vat_input : 'td:eq(8)',
-        net_vat : 'td:eq(9)',
-        item_id : 'td:eq(10)',
-        bulk_price : 'td:eq(12)',
-        retail_price : 'td:eq(13)',
-        total_after_global : 'td:eq(14)'
-
-
+        rmb : 'td:eq(3)',
+        unit_price : 'td:eq(4)',
+        discount : 'td:eq(5)',
+        total_line_discount : 'td:eq(6)',
+        tax : 'td:eq(7)',
+        total : 'td:eq(8)',
+        vat_input : 'td:eq(9)',
+        net_vat : 'td:eq(10)',
+        item_id : 'td:eq(11)',
+        bulk_price : 'td:eq(13)',
+        retail_price : 'td:eq(14)',
+        total_after_global : 'td:eq(15)'
     };
 
 
@@ -930,8 +964,38 @@ $(document).ready(function(){
         after_tax : 'tr:eq(3) > td:eq(1)'
     };
 
+    recomputeTblAmt = function(){
+        var _data=$('#').serializeArray();
+        _data.push({name : "order_status_id" ,value : $('#cbo_order_status').val()});
+
+        $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Purchases/transaction/tbl_amount",
+            "data":_data
+        }).done(function(response){
+            var row = response.data;
+            var total_tbl_amount = 0;
+
+            if(row.length > 0){
+                var data = response.data[0];
+                total_tbl_amount = data.total_tbl_amount;
+            }
+
+            $('#tbl_total_amount').val(accounting.formatNumber(total_tbl_amount,2));
+
+        });
+
+    }
 
     var initializeControls=function(){
+
+        _cboStatus=$("#cbo_order_status").select2({
+            placeholder: "Please select a status.",
+            allowClear: false
+        });
+
+        _cboStatus.select2('val', 1);
 
         dt_pr=$('#tbl_pr_list').DataTable({
             "bLengthChange":false,
@@ -958,11 +1022,21 @@ $(document).ready(function(){
             ]
         });
 
+        recomputeTblAmt();
+
         dt=$('#tbl_purchases').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 10, "desc" ]],
-            "ajax" : "Purchases/transaction/list",
+            "order": [[ 12, "desc" ]],
+            "ajax" : { 
+                "url":"Purchases/transaction/list", 
+                "bDestroy": true,             
+                "data": function ( d ) { 
+                        return $.extend( {}, d, { 
+                            "order_status_id":$('#cbo_order_status').val()
+                        }); 
+                    } 
+            }, 
             "columns": [
                 {
                     "targets": [0],
@@ -971,7 +1045,6 @@ $(document).ready(function(){
                     "data":           null,
                     "defaultContent": ""
                 },
-                
                 { visible:false,
                     targets:[1], data:null,
                     render: function (data, type, full, meta){
@@ -988,8 +1061,8 @@ $(document).ready(function(){
                 { targets:[2],data: "po_no" },
                 { targets:[3],data: "pr_no" },
                 { targets:[4],data: "supplier_name" },
-                { targets:[5],data: "term_description" },
-                { targets:[6],data: "approval_status" },
+                { visible: false, targets:[5],data: "term_description" },
+                { visible: false, targets:[6],data: "approval_status" },
                 { targets:[7],data: "order_status" },
                 {
                     visible:false,targets:[8],data: null,
@@ -1007,9 +1080,21 @@ $(document).ready(function(){
 
                 },
                 {
-                    sClass:"text-left", targets:[9],data: null,
+                    sClass: "text-right", targets:[9],data: null,
                     render: function (data, type, full, meta){
-                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
+                        return accounting.formatNumber(data.total_qty,2);
+                    }
+                },
+                {
+                    sClass: "text-right", targets:[10],data: null,
+                    render: function (data, type, full, meta){
+                        return accounting.formatNumber(data.total_after_discount,2);
+                    }
+                },
+                {
+                    sClass:"text-left", targets:[11],data: null,
+                    render: function (data, type, full, meta){
+                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
                         var btn_message='<a href="Po_messages?id='+data.purchase_order_id+'" target="_blank" class="btn btn-green btn-sm" name="message_po" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Message"><i class="fa fa-envelope-o"></i> </a>';
                         var btn_mark_as_closed='<button class="btn btn-warning btn-sm" name="mark_as_closed" style="" data-toggle="tooltip" data-placement="top" title="Close"><i class="fa fa-times"></i> </button>';
@@ -1022,15 +1107,9 @@ $(document).ready(function(){
 
                     }
                 },
-                { targets:[10],data: "purchase_order_id",visible:false }
+                { targets:[12],data: "purchase_order_id",visible:false }
             ]
         });
-
-        var createToolBarButton=function(){
-            var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Purcahase Order" >'+
-                '<i class="fa fa-plus"></i> New Purchase Order</button>';
-            $("div.toolbar").html(_btnNew);
-        }();
 
         $('.date-picker').datepicker({
             todayBtn: "linked",
@@ -1148,6 +1227,9 @@ $(document).ready(function(){
             //if(_objTypeHead.typeahead('val')==''){ return false; }
             //console.log(suggestion);
 
+                _objTypeHead.typeahead('close');
+                _objTypeHead.typeahead('val','');
+
             //var tax_id=$('#cbo_tax_type').select2('val');
             //var tax_rate=parseFloat($('#cbo_tax_type').find('option[value="'+tax_id+'"]').data('tax-rate'));
             //alert(suggestion.tax_rate);
@@ -1221,6 +1303,7 @@ $(document).ready(function(){
                 po_line_total_discount : "0.00",
                 tax_exempt : false,
                 po_tax_rate : tax_rate,
+                rmb_price : 0.00,
                 po_price : temp_inv_price,
                 po_discount : "0.00",
                 tax_type_id : null,
@@ -1345,6 +1428,16 @@ $(document).ready(function(){
             $('#modal_pr_list').modal('show');
         });
 
+         $("#tbl_search").keyup(function(){          
+                dt 
+                    .search(this.value) 
+                    .draw(); 
+        });
+
+        $("#cbo_order_status").on("change", function () { 
+            recomputeTblAmt();       
+            $('#tbl_purchases').DataTable().ajax.reload();
+        }); 
 
         // $('#tbl_purchases tbody').on('click','#btn_email',function(){
         //     _selectRowObj=$(this).parents('tr').prev();
@@ -1400,6 +1493,7 @@ $(document).ready(function(){
             $('textarea[name="remarks"]').val($('textarea[name="remarks"]').data('default'));
             $('textarea[name="deliver_to_address"]').val($('textarea[name="deliver_to_address"]').data('default'));
 
+            $('#exchange_rate').val('0.00');
             $('#shipping_cost').val('0.00');
             $('#custom_duties').val('0.00');
             $('#other_amount').val('0.00');
@@ -1588,6 +1682,7 @@ $(document).ready(function(){
                             po_line_total_discount : value.po_line_total_discount,
                             tax_exempt : false,
                             po_tax_rate : value.po_tax_rate,
+                            rmb_price : value.rmb_price,
                             po_price : value.po_price,
                             po_discount : value.po_discount,
                             tax_type_id : null,
@@ -1682,6 +1777,7 @@ $(document).ready(function(){
                             po_line_total_discount : value.po_line_total_discount,
                             tax_exempt : false,
                             po_tax_rate : value.po_tax_rate,
+                            rmb_price : 0.00,
                             po_price : value.po_price,
                             po_discount : value.po_discount,
                             tax_type_id : null,
@@ -1753,6 +1849,25 @@ $(document).ready(function(){
         });
 
 
+        $('#tbl_items tbody').on('keyup ','input.rmb_price',function(){
+
+            var row=$(this).closest('tr');
+            var rmb=parseFloat(accounting.unformat(row.find(oTableItems.rmb).find('input.numeric4').val()));
+
+            var exchange_rate = parseFloat(accounting.unformat($('#exchange_rate').val()));
+
+            if(exchange_rate <= 0){
+                showNotification({title:"Invalid",stat:"error",msg:"Exchange rate is required!"});
+                $('#exchange_rate').select();
+                return;
+            }
+
+            var rmb_unit_price = rmb * exchange_rate;
+            $(oTableItems.unit_price,row).find('input.numeric').val(accounting.formatNumber(rmb_unit_price,2));
+            $(oTableItems.unit_price,row).find('input.numeric').trigger('keyup');
+
+        });
+
         //track every changes on numeric fields
         $('#tbl_items tbody').on('keyup ','input.numeric',function(){
             var row=$(this).closest('tr');
@@ -1807,7 +1922,11 @@ $(document).ready(function(){
             }
         });        
 
-        $('#tbl_items tbody').on('focus','input.numeric',function(){
+        $('#tbl_items tbody').on('focus','input.numeric, input.numeric4',function(){
+            $(this).select();
+        });
+        
+        $('input.numeric, input.numeric4').on('focus', function(){
             $(this).select();
         });
         
@@ -2147,6 +2266,7 @@ $(document).ready(function(){
         return '<tr>'+
         '<td ><input name="po_qty[]" type="text" class="numeric form-control number-keyup qty" value="'+ d.po_qty+'"></td>'+unit+'<td >'+d.product_desc+' <input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
 
+        '<td ><input name="rmb_price[]" type="text" class="rmb_price numeric4 form-control" value="'+accounting.formatNumber(d.rmb_price,4)+'" style="text-align:right;"></td>'+
         '<td ><input name="po_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.po_price,2)+'" style="text-align:right;"></td>'+
         '<td ><input name="po_discount[]" type="text" class="numeric form-control discount" value="'+ accounting.formatNumber(d.po_discount,2)+'" style="text-align:right;"></td>'+
         //display:none;
@@ -2263,6 +2383,7 @@ $(document).ready(function(){
     var reInitializeNumeric=function(){
         $('.numeric').autoNumeric('init',{mDec: 2});
         $('.number').autoNumeric('init', {mDec:0});
+        $('.numeric4').autoNumeric('init',{mDec: 4});
     };
     var checkProduct= function(check_id){
         var prodstat=true;

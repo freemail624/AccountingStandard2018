@@ -116,7 +116,7 @@ class Rights_link_model extends CORE_Model{
                                           -- (108,'17','17-4','Accomplishment Report'),
                                           (109,'5','5-6','Edit Product Costing'),
                                           -- (110,'15','15-7','Batch Inventory'),
-                                          -- (111,'15','15-8','Barcode Generator')
+                                          (111,'15','15-8','Barcode Generator'),
                                           (112,'2','2-4','Purchase Request for Approval')
 
 

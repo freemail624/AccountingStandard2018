@@ -127,6 +127,9 @@
         #img_user {
             padding-bottom: 15px;
         }
+        #tbl_sales_order_filter{
+            display: none;
+        }
     </style>
 </head>
 <body class="animated-content"  style="font-family: tahoma;">
@@ -150,7 +153,36 @@
     <div class="panel panel-default" style="border: 4px solid #2980b9;">
         <div class="panel-body table-responsive" >
         <h2 class="h2-panel-heading">Sales Order<small> | <a href="assets/manual/sales/Sales_Order.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
-            <table id="tbl_sales_order"  class="table table-striped" cellspacing="0" width="100%">
+
+            <div class="row"> 
+                <div class="col-lg-3"><br> 
+                <button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-placement="left" title="Record Charge Invoice" ><i class="fa fa-plus"></i> New Sales Order</button> 
+                </div> 
+                <div class="col-lg-2"> 
+                </div> 
+                <div class="col-lg-2"> 
+                    Status : <br/>
+                    <select class="form-control" id="cbo_order_status">
+                        <option value="0">All</option>
+                        <?php foreach($statuses as $status){?>
+                            <option value="<?php echo $status->order_status_id; ?>">
+                                <?php echo $status->order_status; ?>
+                            </option>
+                        <?php }?>
+                    </select>
+                </div>
+                <div class="col-lg-2 text-right">
+                    Total Amount :
+                    <input type="text" class="numeric form-control" id="tbl_total_amount" readonly style="width: 100%;">
+                </div> 
+                <div class="col-lg-3"> 
+                    Search :<br /> 
+                    <input type="text" id="tbl_search" class="form-control"> 
+                </div> 
+            </div> 
+            <br/>
+
+            <table id="tbl_sales_order" class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
                     <tr>
                         <th>&nbsp;&nbsp;</th>
@@ -159,6 +191,8 @@
                         <th>Customer</th>
                         <th style="width: 25%;">Remarks</th>
                         <th>Status</th>
+                        <th>Total Qty</th>
+                        <th>Amount</th>
                         <th><center>Action</center></th>
                         <th>id</th>                    
                     </tr>
@@ -689,6 +723,27 @@
         </div>
     </div>
 </div><!---modal-->
+
+<div id="modal_confirmation_close" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title"><span id="modal_mode"> </span>Confirm closing of SO</h4>
+
+            </div>
+
+            <div class="modal-body">
+                <p id="modal-body-message">Are you sure ?</p>
+            </div>
+
+            <div class="modal-footer">
+                <button id="btn_yes_close" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Yes</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">No</button>
+            </div>
+        </div>
+    </div>
+</div>
 <footer role="contentinfo">
     <div class="clearfix">
         <ul class="list-unstyled list-inline pull-left">
@@ -727,8 +782,8 @@
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj;
     var _cboDepartments; var _cboDepartment; var _cboSalesperson; var _cboCustomers; var _lookUpPrice; var products;
-    var _line_unit; var _cboCustomerType;
-    var _cboCustomerTypeCreate;
+    var _line_unit; var _cboCustomerType; 
+    var _cboCustomerTypeCreate; var _cboStatus; var recomputeTblAmt;
  
     /*var oTableItems={
         qty : 'td:eq(0)',
@@ -768,13 +823,56 @@ $(document).ready(function(){
         so_tax_amount : 'tr:eq(2) > td:eq(1)',
         after_tax : 'tr:eq(3) > td:eq(1)'
     };
+
+    recomputeTblAmt = function(){
+        var _data=$('#').serializeArray();
+        _data.push({name : "order_status_id" ,value : $('#cbo_order_status').val()});
+
+        $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Sales_order/transaction/tbl_amount",
+            "data":_data
+        }).done(function(response){
+            var row = response.data;
+            var total_tbl_amount = 0;
+
+            if(row.length > 0){
+                var data = response.data[0];
+                total_tbl_amount = data.total_tbl_amount;
+            }
+
+            $('#tbl_total_amount').val(accounting.formatNumber(total_tbl_amount,2));
+
+        });
+
+    }
+
     var initializeControls=function(){
+
+        _cboStatus=$("#cbo_order_status").select2({
+            placeholder: "Please select a status.",
+            allowClear: false
+        });
+
+        _cboStatus.select2('val', 1);
+
+        recomputeTblAmt();
+
         dt=$('#tbl_sales_order').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "pageLength":15,
-            "order": [[ 7, "desc" ]],
-            "ajax" : "Sales_order/transaction/list",
+            "order": [[ 9, "desc" ]],
+            "ajax" : { 
+                "url":"Sales_order/transaction/list", 
+                "bDestroy": true,             
+                "data": function ( d ) { 
+                        return $.extend( {}, d, { 
+                            "order_status_id":$('#cbo_order_status').val()
+                        }); 
+                    } 
+            }, 
             "columns": [
                 {
                     "targets": [0],
@@ -789,21 +887,35 @@ $(document).ready(function(){
                 { targets:[4],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(80) },
                 { targets:[5],data: "order_status" },
                 {
-                    targets:[6],
+                    sClass: "text-right", targets:[6],data: null,
                     render: function (data, type, full, meta){
-                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:0px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
-                        var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
-                        return '<center>'+btn_edit+"&nbsp;"+btn_trash+'</center>';
+                        return accounting.formatNumber(data.total_qty,2);
                     }
                 },
-                { targets:[7],data: "sales_order_id", visible:false}
+                {
+                    sClass: "text-right", targets:[7],data: null,
+                    render: function (data, type, full, meta){
+                        return accounting.formatNumber(data.total_after_discount,2);
+                    }
+                },
+                {
+                    targets:[8], data: null,
+                    render: function (data, type, full, meta){
+                        var btn_mark_as_closed="";
+                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:0px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
+                        var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
+
+                        if (data.order_status_id == 1  || data.order_status_id == 3){
+                        btn_mark_as_closed='<button class="btn btn-warning btn-sm" name="mark_as_closed" style="" data-toggle="tooltip" data-placement="top" title="Close"><i class="fa fa-times"></i> </button>';
+                        }
+
+                        return btn_edit+"&nbsp;"+btn_trash+'&nbsp;'+btn_mark_as_closed;
+                    }
+                },
+                { targets:[9],data: "sales_order_id", visible:false}
             ]
         }); 
-        var createToolBarButton=function(){
-            var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Sales Order" >'+
-                '<i class="fa fa-plus"></i> New Sales Order</button>';
-                $("div.toolbar").html(_btnNew);
-        }();
+
         _cboCustomers=$("#cbo_customers").select2({
             placeholder: "Please select customer.",
             allowClear: false
@@ -975,28 +1087,16 @@ $(document).ready(function(){
                 }
             }).bind('typeahead:select', function(ev, suggestion) {
                 //var tax_rate=suggestion.tax_rate; // tax rate is based the tax type set to selected product
-                //var _defLookUp=_lookUpPrice.select2('val');
-                /*if(_defLookUp=="2"){
-                    total=getFloat(suggestion.distributor_price);
-                }else if(_defLookUp=="3"){
-                    total=getFloat(suggestion.dealer_price);
-                }
-                else if(_defLookUp=="4"){
-                    total=getFloat(suggestion.public_price);
-                }
-                else if(_defLookUp=="5"){
-                    total=getFloat(suggestion.discounted_price);
-                }
-                else if(_defLookUp=="6"){
-                    total=getFloat(suggestion.sale_price);
-                }else{
-                    total=getFloat(suggestion.sale_price);
-                }*/
+
+                _objTypeHead.typeahead('close');
+                _objTypeHead.typeahead('val','');
+
                 //alert(suggestion.sale_price);
                 if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
                     showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
                     return;
                 }
+
                 var product_id = 0;
                 var conversion_rate = 0;
 
@@ -1006,28 +1106,28 @@ $(document).ready(function(){
                     product_id = suggestion.parent_id;
                 }
 
-                getInvetory(product_id).done(function(response){
-                    data = response.data[0];
-                    var CurrentQty = data.CurrentQty;
-                    var CurrentQtyTotal = 0;
+                // getInvetory(product_id).done(function(response){
+                //     data = response.data[0];
+                //     var CurrentQty = data.CurrentQty;
+                //     var CurrentQtyTotal = 0;
 
-                    if(suggestion.is_parent == 1){
-                        CurrentQtyTotal = (CurrentQty / suggestion.bulk_conversion_rate);
-                    }
-                    else if(suggestion.is_parent <= 0 && suggestion.parent_id <= 0){
-                        CurrentQtyTotal = CurrentQty;
-                    }
-                    else{
-                        CurrentQtyTotal = (CurrentQty / suggestion.conversion_rate);
-                    }
+                //     if(suggestion.is_parent == 1){
+                //         CurrentQtyTotal = (CurrentQty / suggestion.bulk_conversion_rate);
+                //     }
+                //     else if(suggestion.is_parent <= 0 && suggestion.parent_id <= 0){
+                //         CurrentQtyTotal = CurrentQty;
+                //     }
+                //     else{
+                //         CurrentQtyTotal = (CurrentQty / suggestion.conversion_rate);
+                //     }
 
-                    if(getFloat(CurrentQtyTotal) <= 0){
-                        showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
-                    }else if(getFloat(CurrentQtyTotal) <= getFloat(suggestion.product_warn) ){
-                        showNotification({title: suggestion.product_desc ,stat:"info",msg:"This item has low stock remaining.<br>It might result to negative inventory."});
-                    }
+                //     if(getFloat(CurrentQtyTotal) <= 0){
+                //         showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
+                //     }else if(getFloat(CurrentQtyTotal) <= getFloat(suggestion.product_warn) ){
+                //         showNotification({title: suggestion.product_desc ,stat:"info",msg:"This item has low stock remaining.<br>It might result to negative inventory."});
+                //     }
 
-                });
+                // });
 
 
                 var tax_rate=suggestion.tax_rate; //base on the tax rate set to current product
@@ -1045,6 +1145,10 @@ $(document).ready(function(){
                     sale_price=suggestion.distributor_price;
                 }else if(_customer_type_ == '4' ){ // PUBLIC CUSTOMER TYPE
                     sale_price=suggestion.public_price;
+                }else if(_customer_type_ == '5' ){ // SHOPEE
+                    sale_price=suggestion.shopee_price;
+                }else if(_customer_type_ == '6' ){ // LAZADA
+                    sale_price=suggestion.lazada_price;
                 }else{
                     sale_price=suggestion.sale_price;
                 }
@@ -1065,34 +1169,14 @@ $(document).ready(function(){
                 }
                 bulk_price = sale_price;
 
-                // if(suggestion.is_bulk == 1){
-                //     retail_price = getFloat(sale_price) / getFloat(suggestion.child_unit_desc);
-
-                // }else if (suggestion.is_bulk== 0){
-                //     retail_price = 0;
-                // }
 
                 retail_price = sale_price;
                 suggis_parent = suggestion.is_parent;
-                temp_inv_price = sale_price;
+                temp_inv_price = sale_price;    
 
-                // if(suggestion.primary_unit == 1){ 
-                //         suggis_parent = 1;
-                //         temp_inv_price = sale_price;
-                // }else{ 
-                //         suggis_parent = 0;
-                //         temp_inv_price = retail_price;
-                //         net_vat = getFloat(net_vat) / getFloat(suggestion.child_unit_desc);
-                //         vat_input = getFloat(vat_input) / getFloat(suggestion.child_unit_desc);
-                // }                
                 
-                var qty = 1;
-                if (suggestion.is_product_basyo == 1){
-                    qty = TotalBasyo();
-                }
-
                 $('#tbl_items > tbody').append(newRowItem({
-                    so_qty : qty,
+                    so_qty : 1,
                     product_code : suggestion.product_code,
                     size : suggestion.size,
                     product_id: suggestion.product_id,
@@ -1100,11 +1184,11 @@ $(document).ready(function(){
                     so_line_total_discount : "0.00",
                     tax_exempt : false,
                     so_tax_rate : tax_rate,
-                    so_gross : temp_inv_price,
-                    so_price : temp_inv_price,
+                    so_gross : sale_price,
+                    so_price : sale_price,
                     so_discount : "0.00",
                     tax_type_id : null,
-                    so_line_total_price : temp_inv_price,
+                    so_line_total_price : sale_price,
                     so_non_tax_amount: net_vat,
                     so_tax_amount:vat_input,
                     batch_no : suggestion.batch_no,
@@ -1120,7 +1204,7 @@ $(document).ready(function(){
                     primary_unit:suggestion.primary_unit,
                     a:a,
                     is_basyo:suggestion.is_basyo,
-                    is_product_basyo:suggestion.is_product_basyo                    
+                    is_product_basyo:suggestion.is_product_basyo                  
                 }));
                 changetxn ='active';
                 _line_unit=$('.line_unit'+a).select2({
@@ -1217,6 +1301,18 @@ $(document).ready(function(){
             $('#modal_new_salesperson').modal('show');
             _cboDepartment.select2('val',null);
         });
+
+         $("#tbl_search").keyup(function(){          
+                dt 
+                    .search(this.value) 
+                    .draw(); 
+        });
+
+        $("#cbo_order_status").on("change", function () { 
+            recomputeTblAmt();       
+            $('#tbl_sales_order').DataTable().ajax.reload();
+        }); 
+
         //create new department
         $('#btn_create_department').click(function(){
             var btn=$(this);
@@ -1310,6 +1406,7 @@ $(document).ready(function(){
             showList(false);
             $('#cbo_customers').select2('open');
         });
+        
         $('#tbl_sales_order tbody').on('click','button[name="edit_info"]',function(){
             ///alert("ddd");
             _txnMode="edit";
@@ -1370,19 +1467,24 @@ $(document).ready(function(){
                         _customer_type_ = _cboCustomerType.val();
                         var temp_sale_price=0.00;
 
-                            if(_customer_type_ == '' || _customer_type_ == 0){
-                                temp_sale_price=value.sale_price;
-                            }else if(_customer_type_ == '1' ){ // DISCOUNTED CUSTOMER TYPE
-                                temp_sale_price=value.discounted_price;
-                            }else if(_customer_type_ == '2' ){ // DEALER CUSTOMER TYPE
-                                temp_sale_price=value.dealer_price;
-                            }else if(_customer_type_ == '3' ){ // DISTRIBUTOR CUSTOMER TYPE
-                                temp_sale_price=value.distributor_price;
-                            }else if(_customer_type_ == '4' ){ // PUBLIC CUSTOMER TYPE
-                                temp_sale_price=value.public_price;
-                            }else{
-                                temp_sale_price=value.sale_price;
-                            }
+                        if(_customer_type_ == '' || _customer_type_ == 0){
+                            sale_price=value.sale_price;
+                        }else if(_customer_type_ == '1' ){ // DISCOUNTED CUSTOMER TYPE
+                            sale_price=value.discounted_price;
+                        }else if(_customer_type_ == '2' ){ // DEALER CUSTOMER TYPE
+                            sale_price=value.dealer_price;
+                        }else if(_customer_type_ == '3' ){ // DISTRIBUTOR CUSTOMER TYPE
+                            sale_price=value.distributor_price;
+                        }else if(_customer_type_ == '4' ){ // PUBLIC CUSTOMER TYPE
+                            sale_price=value.public_price;
+                        }else if(_customer_type_ == '5' ){ // SHOPEE
+                            sale_price=value.shopee_price;
+                        }else if(_customer_type_ == '6' ){ // LAZADA
+                            sale_price=value.lazada_price;
+                        }else{
+                            sale_price=value.sale_price;
+                        }
+
                         var retail_price;
                         if(value.is_bulk == 1){
                             retail_price = getFloat(temp_sale_price) / getFloat(value.child_unit_desc);
@@ -1450,6 +1552,14 @@ $(document).ready(function(){
 
         });
         //track every changes on numeric fields
+
+        $('#tbl_sales_order tbody').on('click','button[name="mark_as_closed"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dt.row(_selectRowObj).data();
+            _selectedID=data.sales_order_id;
+
+            $('#modal_confirmation_close').modal('show');
+        });
 
         $('#txt_overall_discount').on('keyup',function(){
             $('.trigger-keyup').keyup();
@@ -1548,6 +1658,17 @@ $(document).ready(function(){
             });
             //}
         });
+
+        $('#btn_yes_close').click(function(){
+            MarkRecordAsClosed().done(function(response){
+                showNotification(response);
+                if(response.stat=="success"){
+                    dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
+                }
+
+            });
+        });
+
         $('#btn_cancel').click(function(){
             showList(true);
         });
@@ -1735,6 +1856,15 @@ $(document).ready(function(){
             "data":{product_id : product_id}
         });
     }
+
+    var MarkRecordAsClosed=function(){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Sales_order/transaction/close",
+            "data":{sales_order_id : _selectedID}
+        });
+    };    
 
     var removeIssuanceRecord=function(){
         return $.ajax({

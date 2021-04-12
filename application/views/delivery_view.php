@@ -148,6 +148,9 @@
             padding-bottom: 15px;
         }
 
+        #tbl_delivery_invoice_filter{
+            display: none;
+        }
 
     </style>
 </head>
@@ -190,6 +193,36 @@
         <div class="panel-body table-responsive">
         <div class="row panel-row">
             <h2 style="margin-bottom: 0;" class="h2-panel-heading"> Purchase Invoice<small> | <a href="assets/manual/purchasing/Purchase_Invoice.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
+            <div class="row"> 
+                <div class="col-lg-3"><br> 
+                <button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-placement="left" title="Record Charge Invoice" ><i class="fa fa-plus"></i> Record Purchase Invoice</button> 
+                </div> 
+                <div class="col-lg-2"> 
+                </div> 
+                <div class="col-lg-2">
+                    From :<br /> 
+                    <div class="input-group"> 
+                        <input type="text" id="txt_start_date" name="" class="date-picker form-control" value="<?php echo date("m"); ?>/01/<?php echo date("Y"); ?>"> 
+                         <span class="input-group-addon"> 
+                                <i class="fa fa-calendar"></i> 
+                         </span> 
+                    </div> 
+                </div>
+                <div class="col-lg-2">
+                    To :<br /> 
+                    <div class="input-group"> 
+                        <input type="text" id="txt_end_date" name="" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>"> 
+                         <span class="input-group-addon"> 
+                                <i class="fa fa-calendar"></i> 
+                         </span> 
+                    </div> 
+                </div> 
+                <div class="col-lg-3"> 
+                    Search :<br /> 
+                    <input type="text" id="tbl_search" class="form-control"> 
+                </div> 
+            </div> 
+            <br/>
             <table id="tbl_delivery_invoice" class="table table-striped" cellspacing="0" width="100%">
                 <thead>
                 <tr>
@@ -309,7 +342,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <b class="required">*</b> <label>Deliver to </label>:<br />
-                            <textarea name="deliver_to_address" class="form-control" rows="5" placeholder="Deliver to address"></textarea>
+                            <textarea name="deliver_to_address" class="form-control" rows="8" style="min-height: 155px;" placeholder="Deliver to address"></textarea>
                         </div>
                     </div>
                 </div>
@@ -327,19 +360,6 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <label>Terms :</label><br />
-                            <select class="form-control" name="term_id" id="cbo_terms">
-                                <option value="new">[ Create New Term ]</option>
-                                <?php foreach($terms as $term){ ?>
-                                    <option value="<?php echo $term->term_id; ?>">
-                                        <?php echo $term->term_description; ?> 
-                                    </option>
-                                <?php }?>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
                             <label>Contact Person :</label><br />
                             <div class="input-group">
                                 <span class="input-group-addon">
@@ -348,6 +368,23 @@
                                 <input type="text" name="contact_person" class="form-control" placeholder="Contact Person">
                             </div>
                             <div class="hidden">
+                                <label>Terms :</label><br />
+                                <select class="form-control" name="term_id" id="cbo_terms">
+                                    <option value="new">[ Create New Term ]</option>
+                                    <?php foreach($terms as $term){ ?>
+                                        <option value="<?php echo $term->term_id; ?>">
+                                            <?php echo $term->term_description; ?> 
+                                        </option>
+                                    <?php }?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Exchange Rate :</label> 
+                            <input type="text" class="numeric form-control" id="exchange_rate" name="exchange_rate">
+                            <div class="hidden">
                                 <label>Tax type :</label><br />
                                 <select name="tax_type" id="cbo_tax_type"  data-error-msg="Tax Type is required !">
                                     <?php foreach($tax_types as $tax_type){ ?>
@@ -355,6 +392,15 @@
                                     <?php } ?>
                                 </select>
                             </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Payment Method :</label>
+                            <select class="form-control" id="cbo_payment_method" name="payment_method_id">
+                                <option value="1">Cash</option>
+                                <option value="2">Charge</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -380,6 +426,7 @@
                     <th width="8%">Qty</th>
                     <th width="10%" style="">UM</th>
                     <th width="15%">Description</th>
+                    <th width="10%" style="text-align: right;">RMB</th>
                     <th width="10%" style="text-align: right;">Unit Price</th>
                     <th width="10%" style="text-align: right;">Discount</th>
                     <th class="hidden">Total Discount</th>
@@ -399,7 +446,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="7" style="height: 20px;">&nbsp;</td>
+                        <td colspan="8" style="height: 20px;">&nbsp;</td>
                     </tr>
                     <tr class="">
                         <td colspan="2" align="right">
@@ -412,7 +459,7 @@
                         <td id="td_total_after_discount" style="text-align: right;display: none;">
                             <strong>0.00</strong>
                         </td>
-                        <td style="border-left: none;" colspan="2" align="right">
+                        <td style="border-left: none;" colspan="3" align="right">
                             <strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong>
                         </td>
                         <td align="right" colspan="2" id="td_before_tax" color="red">0.00</td>
@@ -422,31 +469,31 @@
                             <strong><i class="glyph-icon icon-star"></i> Tax :</strong>
                         </td>
                         <td align="right" id="td_tax" color="red">0.00</td>
-                        <td colspan="2" align="right">
+                        <td colspan="3" align="right">
                             <strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong>
                         </td>
                         <td align="right" colspan="2" id="td_after_tax" color="red">0.00</td>
                     </tr>
                     <tr>
-                        <td colspan="5" align="right"><strong>Shipping Cost :</strong> </td>
+                        <td colspan="6" align="right"><strong>Shipping Cost :</strong> </td>
                         <td colspan="2">
                             <input type="text" name="shipping_cost" id="shipping_cost" class="additional-payment numeric form-control">
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="5" align="right"><strong>Custom Duties :</strong> </td>
+                        <td colspan="6" align="right"><strong>Custom Duties :</strong> </td>
                         <td colspan="2">
                             <input type="text" name="custom_duties" id="custom_duties" class="additional-payment numeric form-control">
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="5" align="right"><strong>Other Amounts :</strong> </td>
+                        <td colspan="6" align="right"><strong>Other Amounts :</strong> </td>
                         <td colspan="2">
                             <input type="text" name="other_amount" id="other_amount" class="additional-payment numeric form-control">
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="5" align="right"><strong>Total Amount :</strong> </td>
+                        <td colspan="6" align="right"><strong>Total Amount :</strong> </td>
                         <td colspan="2">
                             <input type="text" name="grand_total_amount" id="grand_total_amount" class="numeric form-control" readonly style="font-weight: bold;">
                         </td>
@@ -941,26 +988,27 @@
 $(document).ready(function(){
     var dt; var dt_po; var _txnMode; var _selectedID; var _selectRowObj; var _cboSuppliers; var _cboTaxType;
     var _productType; var _cboDepartments; var _defCostType; var products; var _line_unit; var changetxn ;
-    var _cboTerms;
+    var _cboTerms; var _cboPaymentMethod;
     //_defCostType=0;
 
     var oTableItems={
         qty : 'td:eq(0)',
         unit_value: 'td:eq(1)',
         unit_identifier : 'td:eq(2)',
-        unit_price : 'td:eq(3)',
-        discount : 'td:eq(4)',
-        total_line_discount : 'td:eq(5)',
-        tax : 'td:eq(6)',
-        total_after_global : 'td:eq(7)',
-        exp_date : 'td:eq(8)',
-        batch_no : 'td:eq(9)',
-        vat_input : 'td:eq(10)',
-        net_vat : 'td:eq(11)',
-        item_id : 'td:eq(12)',
-        total: 'td:eq(13)',
-        bulk_price : 'td:eq(15)',
-        retail_price : 'td:eq(16)'
+        rmb : 'td:eq(3)',
+        unit_price : 'td:eq(4)',
+        discount : 'td:eq(5)',
+        total_line_discount : 'td:eq(6)',
+        tax : 'td:eq(7)',
+        total_after_global : 'td:eq(8)',
+        exp_date : 'td:eq(9)',
+        batch_no : 'td:eq(10)',
+        vat_input : 'td:eq(11)',
+        net_vat : 'td:eq(12)',
+        item_id : 'td:eq(13)',
+        total: 'td:eq(14)',
+        bulk_price : 'td:eq(16)',
+        retail_price : 'td:eq(17)'
 
     };
 
@@ -1009,7 +1057,19 @@ $(document).ready(function(){
             "language": {
                 "searchPlaceholder":"Search Purchase Invoice"
             },
-            "ajax" : "Deliveries/transaction/delivery_list_count",
+            "ajax" : { 
+                "url":"Deliveries/transaction/delivery_list_count", 
+                "bDestroy": true,             
+                "data": function ( d ) { 
+                        return $.extend( {}, d, { 
+                            "tsd":$('#txt_start_date').val(), 
+                            "ted":$('#txt_end_date').val() 
+                        }); 
+                    } 
+            }, 
+            "language": {
+                "searchPlaceholder":"Search Invoice"
+            },
             "columns": [
                 {
                     "targets": [0],
@@ -1022,9 +1082,9 @@ $(document).ready(function(){
                 { targets:[2],data: "supplier_name" },
                 { targets:[3],data: "external_ref_no" },
                 { targets:[4],data: "po_no" },
-                { targets:[5],data: "term_description" },
+                { visible: false, targets:[5],data: "term_description" },
                 { targets:[6],data: "date_delivered" },
-                { visible: false, targets:[7],data: null,
+                { targets:[7],data: null,
                     render: function (data, type, full, meta){
                         var _attribute='';
                         //console.log(data.is_email_sent);
@@ -1049,24 +1109,12 @@ $(document).ready(function(){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
 
-                        return '<div style="text-align: right;">'+btn_edit+'&nbsp;'+btn_trash+'</div>';
+                        return '<div style="text-align: right;">'+btn_finalized+'&nbsp;'+btn_edit+'&nbsp;'+btn_trash+'</div>';
                     }
                 },
                 { targets:[9],data: "dr_invoice_id", visible:false }
             ]
         });
-
-
-        var createToolBarButton=function(){
-            var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Record Purchase Invoice" >'+
-                '<i class="fa fa-plus"></i> Record Purchase Invoice</button>';
-
-            $("div.toolbar").html(_btnNew);
-        }();
-
-
-
-
 
         $('.date-picker').datepicker({
             todayBtn: "linked",
@@ -1113,6 +1161,10 @@ $(document).ready(function(){
 
         _cboTerms.select2('val',null); 
 
+        _cboPaymentMethod=$("#cbo_payment_method").select2({
+            placeholder: "Please select a payment type.",
+            allowClear: false
+        });
 
         $('#custom-templates .typeahead').keypress(function(event){
             if (event.keyCode == 13) {
@@ -1173,10 +1225,14 @@ $(document).ready(function(){
                 }
             }).bind('typeahead:select', function(ev, suggestion) {
 
-            // if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
-            //     showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
-            //     return;
-            // }
+               _objTypeHead.typeahead('close');     //  -- changed due to barcode scan not working
+              _objTypeHead.typeahead('val','');      //  -- changed due to barcode scan not working
+
+                if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
+                    showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
+                    return;
+                }
+
                 var tax_rate=suggestion.tax_rate; 
                 var total=getFloat(suggestion.purchase_cost);
                 var net_vat=0;
@@ -1230,6 +1286,7 @@ $(document).ready(function(){
                     dr_line_total_discount : "0.00",
                     tax_exempt : false,
                     dr_tax_rate : tax_rate,
+                    rmb_price : 0.00,
                     dr_price : temp_inv_price,
                     dr_discount : "0.00",
                     tax_type_id : null,
@@ -1428,6 +1485,7 @@ $(document).ready(function(){
             $('#cbo_departments').select2('val', $('#cbo_departments').data('default') );
             $('#cbo_suppliers').select2('val', null);
             $('#cbo_terms').select2('val', null);
+            $('#cbo_payment_method').select2('val', 1);
             $('#img_user').attr('src','assets/img/anonymous-icon.png');
             $('#td_discount').html('0.00');
             $('#td_before_tax').html('0.00');
@@ -1439,6 +1497,7 @@ $(document).ready(function(){
             $('#typeaheadsearch').val('');
             $('textarea[name="remarks"]').val($('textarea[name="remarks"]').data('default'));
 
+            $('#exchange_rate').val('0.00');
             $('#shipping_cost').val('0.00');
             $('#custom_duties').val('0.00');
             $('#other_amount').val('0.00');
@@ -1536,6 +1595,7 @@ $(document).ready(function(){
                             dr_line_total_discount : value.po_line_total_discount,
                             tax_exempt : false,
                             dr_tax_rate : value.po_tax_rate,
+                            rmb_price : value.rmb_price,
                             dr_price : value.po_price,
                             dr_discount : value.po_discount,
                             tax_type_id : null,
@@ -1691,6 +1751,9 @@ $(document).ready(function(){
             if(_is_journal_posted > 0){
                 showNotification({title:"Error!",stat:"error",msg:"Cannot Edit: Invoice is already Posted in Purchase Journal."});
             } 
+            else if(_is_finalized > 0){
+                showNotification({title:"Error!",stat:"error",msg:"Cannot Edit: Invoice is already finalized."});
+            }
             else {
                 getproduct().done(function(data){
                     products.clear();
@@ -1715,6 +1778,7 @@ $(document).ready(function(){
                 $('#cbo_suppliers').select2('val',data.supplier_id);
                 $('#cbo_departments').select2('val',data.department_id);
                 $('#cbo_terms').select2('val',data.term_id);
+                $('#cbo_payment_method').select2('val',data.payment_method_id);
 
                 $('input,textarea').each(function(){
                     var _elem=$(this);
@@ -1771,6 +1835,7 @@ $(document).ready(function(){
                                 dr_line_total_discount : value.dr_line_total_discount,
                                 tax_exempt : false,
                                 dr_tax_rate : value.dr_tax_rate,
+                                rmb_price : value.rmb_price,
                                 dr_price : value.dr_price,
                                 dr_discount : value.dr_discount,
                                 tax_type_id : null,
@@ -1836,6 +1901,9 @@ $(document).ready(function(){
             if(_is_journal_posted > 0){
                 showNotification({title:"Error!",stat:"error",msg:"Cannot Delete: Invoice is already Posted in Purchase Journal."});
             } 
+            else if(_is_finalized > 0){
+                showNotification({title:"Error!",stat:"error",msg:"Cannot Edit: Invoice is already finalized."});
+            }
             else {
                 $('#modal_confirmation').modal('show');
             }
@@ -1867,6 +1935,25 @@ $(document).ready(function(){
         $('.trigger-keyup').keyup();
         }
         
+        });
+
+        $('#tbl_items tbody').on('keyup ','input.rmb_price',function(){
+
+            var row=$(this).closest('tr');
+            var rmb=parseFloat(accounting.unformat(row.find(oTableItems.rmb).find('input.numeric4').val()));
+
+            var exchange_rate = parseFloat(accounting.unformat($('#exchange_rate').val()));
+
+            if(exchange_rate <= 0){
+                showNotification({title:"Invalid",stat:"error",msg:"Exchange rate is required!"});
+                $('#exchange_rate').select();
+                return;
+            }
+
+            var rmb_unit_price = rmb * exchange_rate;
+            $(oTableItems.unit_price,row).find('input.numeric').val(accounting.formatNumber(rmb_unit_price,2));
+            $(oTableItems.unit_price,row).find('input.numeric').trigger('keyup');
+
         });
 
         $('#tbl_items tbody').on('keyup','input.numeric',function(){
@@ -1921,7 +2008,11 @@ $(document).ready(function(){
             }
         });              
 
-        $('#tbl_items tbody').on('focus','input.numeric',function(){
+        $('#tbl_items tbody').on('focus','input.numeric, input.numeric4',function(){
+            $(this).select();
+        });
+    
+        $('input.numeric, input.numeric4').on('focus', function(){
             $(this).select();
         });
 
@@ -2024,6 +2115,16 @@ $(document).ready(function(){
         $('#link_browse_po').click(function(){
             $('#btn_receive_po').click();
         });
+
+        $("#tbl_search").keyup(function(){          
+                dt 
+                    .search(this.value) 
+                    .draw(); 
+        });
+
+        $("#txt_start_date, #txt_end_date").on("change", function () {         
+            $('#tbl_delivery_invoice').DataTable().ajax.reload() 
+        }); 
 
         $('#tbl_items > tbody').on('click','button[name="remove_item"]',function(){
             $(this).closest('tr').remove();
@@ -2281,46 +2382,49 @@ $(document).ready(function(){
         // 3. ITEM
         '<td>'+d.product_desc+'<input type="text" style="display: none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
 
-        // 4. UNIT PRICE
+        // 4. RMB PRICE
+        '<td ><input name="rmb_price[]" type="text" class="rmb_price numeric4 form-control" value="'+accounting.formatNumber(d.rmb_price,4)+'" style="text-align:right;"></td>'+
+
+        // 5. UNIT PRICE
         '<td ><input name="dr_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.dr_price,2)+'" style="text-align:right;"></td>'+
 
-        // 5. DISCOUNT
+        // 6. DISCOUNT
         '<td ><input name="dr_discount[]" type="text" class="numeric form-control discount" value="'+ accounting.formatNumber(d.dr_discount,2)+'" style="text-align:right;"></td>'+
 
-        // 5. TOTAL DISCOUNT
+        // 7. TOTAL DISCOUNT
         '<td  style="display: none;"><input name="dr_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_line_total_discount,2)+'" readonly></td>'+
 
-        // 7. TAX %
+        // 8. TAX %
         '<td  style="display: none;"><input name="dr_tax_rate[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_tax_rate,2)+'"></td>'+
 
-        // 8. TOTAL AFTER GLOBAL
+        // 9. TOTAL AFTER GLOBAL
         '<td><input name="dr_line_total_after_global[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.total_after_global,2)+'" readonly></td>'+         
 
-        // 9. EXPIRATION DATE
+        // 10. EXPIRATION DATE
         '<td class="hidden" align="right"><input name="exp_date[]" type="text" class="date-picker form-control" value="'+d.exp_date+'"></td>'+
 
-        // 10. BATCH NO
+        // 11. BATCH NO
         '<td class="hidden" align="right"><input name="batch_no[]" type="text" class="form-control" value="'+d.batch_no+'"></td>'+
 
-        // 11. VAT INPUT
+        // 12. VAT INPUT
         '<td  style="display: none;"><input name="dr_tax_amount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_tax_amount,2)+'" readonly></td>'+
 
-        // 12. NON VAT
+        // 13. NON VAT
         '<td  style="display: none;"><input name="dr_non_tax_amount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_non_tax_amount,2)+'" readonly></td>'+
 
-        // 13. PRODUCT ID
+        // 14. PRODUCT ID
         '<td  style="display: none;" ><input name="product_id[]" type="text" class="numeric form-control" value="'+ d.product_id+'" readonly></td>'+
 
-        // 14. TOTAL
+        // 15. TOTAL
         '<td style="display: none;" align="right"><input name="dr_line_total_price[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.dr_line_total_price,2)+'" readonly></td>'+
 
-        // 15. ACTION
+        // 16. ACTION
         '<td  align="center"><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>'+
 
-        // 16. BULK PRICE
+        // 17. BULK PRICE
         '<td  style="display: none;" ><input type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.bulk_price,2)+'" readonly></td>'+
 
-        // 17. RETAIL PRICE
+        // 18. RETAIL PRICE
         '<td  style="display: none;" ><input type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.retail_price,2)+'" readonly></td>'+
 
         '</tr>';
@@ -2377,8 +2481,9 @@ $(document).ready(function(){
 
     var reInitializeNumeric=function(){
         $('.numeric').autoNumeric('init',{mDec: 2});
+        $('.number').autoNumeric('init', {mDec:0});
+        $('.numeric4').autoNumeric('init',{mDec: 4});
     };
-
 
     var reInitializeExpireDate=function(){
         $('.date-picker').datepicker({

@@ -89,9 +89,12 @@ class Deliveries extends CORE_Controller
                 echo json_encode($response);    
 
                 break;
+
             case'delivery_list_count':  //this returns JSON of Purchase Order to be rendered on Datatable with validation of count in invoice
             $m_delivery=$this->Delivery_invoice_model;
-            $response['data']=$m_delivery->delivery_list_count($id_filter);
+            $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
+            $ted = date('Y-m-d',strtotime($this->input->get('ted')));
+            $response['data']=$m_delivery->delivery_list_count($id_filter,null,null,$tsd,$ted,null);
 
             echo json_encode($response);    
 
@@ -215,7 +218,8 @@ class Deliveries extends CORE_Controller
                 $m_delivery_invoice->custom_duties=$this->get_numeric_value($this->input->post('custom_duties',TRUE));
                 $m_delivery_invoice->other_amount=$this->get_numeric_value($this->input->post('other_amount',TRUE));
                 $m_delivery_invoice->grand_total_amount=$this->get_numeric_value($this->input->post('grand_total_amount',TRUE));
-                    
+                $m_delivery_invoice->exchange_rate=$this->get_numeric_value($this->input->post('exchange_rate',TRUE));
+                $m_delivery_invoice->payment_method_id=$this->get_numeric_value($this->input->post('payment_method_id',TRUE));
                 $m_delivery_invoice->save();
 
                 $dr_invoice_id=$m_delivery_invoice->last_insert_id();
@@ -223,6 +227,7 @@ class Deliveries extends CORE_Controller
 
                 $prod_id=$this->input->post('product_id',TRUE);
                 $dr_qty=$this->input->post('dr_qty',TRUE);
+                $rmb_price=$this->input->post('rmb_price',TRUE);
                 $dr_price=$this->input->post('dr_price',TRUE);
                 $dr_discount=$this->input->post('dr_discount',TRUE);
                 $dr_line_total_discount=$this->input->post('dr_line_total_discount',TRUE);
@@ -241,6 +246,7 @@ class Deliveries extends CORE_Controller
                     $m_dr_items->dr_invoice_id=$dr_invoice_id;
                     $m_dr_items->product_id=$this->get_numeric_value($prod_id[$i]);
                     $m_dr_items->dr_qty=$this->get_numeric_value($dr_qty[$i]);
+                    $m_dr_items->rmb_price=$this->get_numeric_value($rmb_price[$i]);
                     $m_dr_items->dr_price=$this->get_numeric_value($dr_price[$i]);
                     $m_dr_items->dr_discount=$this->get_numeric_value($dr_discount[$i]);
                     $m_dr_items->dr_line_total_discount=$this->get_numeric_value($dr_line_total_discount[$i]);
@@ -355,6 +361,8 @@ class Deliveries extends CORE_Controller
                 $m_delivery_invoice->custom_duties=$this->get_numeric_value($this->input->post('custom_duties',TRUE));
                 $m_delivery_invoice->other_amount=$this->get_numeric_value($this->input->post('other_amount',TRUE));
                 $m_delivery_invoice->grand_total_amount=$this->get_numeric_value($this->input->post('grand_total_amount',TRUE));
+                $m_delivery_invoice->exchange_rate=$this->get_numeric_value($this->input->post('exchange_rate',TRUE));
+                $m_delivery_invoice->payment_method_id=$this->get_numeric_value($this->input->post('payment_method_id',TRUE));
                 $m_delivery_invoice->modify($dr_invoice_id);
 
 
@@ -368,6 +376,7 @@ class Deliveries extends CORE_Controller
                 $m_dr_items->delete_via_fk($dr_invoice_id); //delete previous items then insert those new
 
                 $prod_id=$this->input->post('product_id',TRUE);
+                $rmb_price=$this->input->post('rmb_price',TRUE);
                 $dr_price=$this->input->post('dr_price',TRUE);
                 $dr_discount=$this->input->post('dr_discount',TRUE);
                 $dr_line_total_discount=$this->input->post('dr_line_total_discount',TRUE);
@@ -386,6 +395,7 @@ class Deliveries extends CORE_Controller
                 for($i=0;$i<count($prod_id);$i++){
                     $m_dr_items->dr_invoice_id=$dr_invoice_id;
                     $m_dr_items->product_id=$this->get_numeric_value($prod_id[$i]);
+                    $m_dr_items->rmb_price=$this->get_numeric_value($rmb_price[$i]);
                     $m_dr_items->dr_price=$this->get_numeric_value($dr_price[$i]);
                     $m_dr_items->dr_discount=$this->get_numeric_value($dr_discount[$i]);
                     $m_dr_items->dr_line_total_discount=$this->get_numeric_value($dr_line_total_discount[$i]);
@@ -543,39 +553,21 @@ class Deliveries extends CORE_Controller
 
 
             //****************************************list of purchase invoice that are not yet posted as journal***********************************************
-            case 'purchases-for-review':
+
+            case 'delivery-for-review':
+                // Cash
                 $m_delivery_invoice=$this->Delivery_invoice_model;
-                // $response['data']=$m_delivery_invoice->get_list(
-
-                //     array(
-                //         'delivery_invoice.is_active'=>TRUE,
-                //         'delivery_invoice.is_deleted'=>FALSE,
-                //         'delivery_invoice.is_journal_posted'=>FALSE
-                //     ),
-
-                //     array(
-                //         'delivery_invoice.dr_invoice_id',
-                //         'delivery_invoice.dr_invoice_no',
-                //         'CONCAT_WS(" ",delivery_invoice.terms,delivery_invoice.duration)as term_description',
-                //         'delivery_invoice.remarks',
-                //         'DATE_FORMAT(delivery_invoice.date_delivered,"%m/%d/%Y") as date_delivered',
-                //         'suppliers.supplier_name'
-                //     ),
-
-                //     array(
-                //         array('suppliers','suppliers.supplier_id=delivery_invoice.supplier_id','left')
-                //     ),
-                //     'delivery_invoice.dr_invoice_id DESC'
-
-
-
-                // );
-
-                // OLD Response - Invoice not subject to finalizing are still showing up so i revised the code
-
-                $response['data']=$m_delivery_invoice->get_purchases_for_review();
+                $response['data']=$m_delivery_invoice->get_purchases_for_review(1);
                 echo json_encode($response);
                 break;
+                
+            case 'purchases-for-review': 
+                // Charge
+                $m_delivery_invoice=$this->Delivery_invoice_model;
+                $response['data']=$m_delivery_invoice->get_purchases_for_review(2);
+                echo json_encode($response);
+                break;
+
             //***************************************************************************************
             case 'test':
                 $m_po=$this->Purchases_model;

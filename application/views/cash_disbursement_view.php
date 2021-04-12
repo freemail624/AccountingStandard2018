@@ -195,7 +195,37 @@
             <div class="panel-body panel-responsive" >
             <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo" style="text-decoration: none;">
 <!--             <div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Review Expense (Pending)</b></div> -->
-            <h2 class="h2-panel-heading"> Review Expense<small> | Pending  <a href="assets/manual/financing/Review_Expense_Pending.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
+            <h2 class="h2-panel-heading"> Review Deliveries (Expense) <small> | Pending  </small><!-- <a href="assets/manual/financing/Review_Expense_Pending.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2>
+            </a> -->
+            </h2>
+            </a>
+            <hr>
+            <div id="collapseTwo" class="collapse in">
+                    <div style="padding: 1%;border-radius: 5px;padding-bottom: 2%;">
+                        <table id="tbl_delivery_for_review" class="table table-striped" cellspacing="0" width="100%">
+                            <thead class="">
+                            <tr>
+                                <th></th>
+                                <th>Invoice #</th>
+                                <th>External Ref</th>
+                                <th>Supplier</th>
+                                <th width="25%">Remarks</th>
+                                <th>Payment</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+            </div>
+            </div>
+        </div>
+        <br/>
+        <div class="panel panel-default">
+            <div class="panel-body panel-responsive" >
+            <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo" style="text-decoration: none;">
+<!--             <div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Review Expense (Pending)</b></div> -->
+            <h2 class="h2-panel-heading"> Review Expense (Payment) <small> | Pending  <a href="assets/manual/financing/Review_Expense_Pending.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
             </a>
 
             <div id="collapseTwo" class="collapse in">
@@ -1089,7 +1119,7 @@
 $(document).ready(function(){
     var _txnMode; var _cboSuppliers; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode, _cboBranches, _cboPaymentMethod, _cboBanks, _cboAccountType;
     var dtReview; var cbo_refType; var _cboLayouts; var dtRecurring; var dtCheckList; var _attribute; var _cboTax;
-
+    var dtDelivery;
 
     var oTBJournal={
         "dr" : "td:eq(2)",
@@ -1203,6 +1233,31 @@ $(document).ready(function(){
             ]
         });
         
+        dtDelivery=$('#tbl_delivery_for_review').DataTable({
+            "bLengthChange":false,
+            "ajax" : "Deliveries/transaction/delivery-for-review",
+            "columns": [
+                {
+                    "targets": [0],
+                    "class":          "details-control",
+                    "orderable":      false,
+                    "data":           null,
+                    "defaultContent": ""
+                },
+                { targets:[1],data: "dr_invoice_no" },
+                { targets:[2],data: "external_ref_no" },
+                { targets:[3],data: "supplier_name" },
+                { targets:[4],data: "remarks",render: $.fn.dataTable.render.ellipsis(80) },
+                {
+                    sClass: "text-right", targets:[5], data: null,
+                    render: function (data, type, full, meta){
+                        return accounting.formatNumber(data.total_after_discount,2);
+                    }
+                },                
+            ]
+        });
+
+
         dtReview=$('#tbl_expense_for_review').DataTable({
             "bLengthChange":false,
             "ajax" : "Payable_payments/transaction/expense-for-review",

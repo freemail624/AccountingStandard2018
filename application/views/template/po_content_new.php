@@ -32,6 +32,10 @@
         table{
             border-collapse: collapse;
         }
+        .td_height{
+            height: 30px;
+            min-height: 30px;
+        }
     </style>
 </head>
 <body>
@@ -153,7 +157,7 @@
                         <tr>
                             <td valign="top">2.</td>
                             <td valign="top">
-                                Accustandard reserves the right to inspect the items and to reject the same if found not in accordance with the specifictions or not in good condition.
+                                <?php echo $company_info->company_name; ?> reserves the right to inspect the items and to reject the same if found not in accordance with the specifictions or not in good condition.
                             </td>
                         </tr>
                         <tr>
@@ -193,6 +197,24 @@
                 <td class="border" align="right">
                     <?php echo number_format($purchase_info->grand_total_amount,2); ?>
                 </td>
+            </tr>
+        </table> <br/>
+
+        <table width="100%">
+            <tr>
+                <td valign="bottom" width="15%" class="td_height">Ship-out Date : </td>
+                <td valign="bottom" width="25%" class="td_height bottom"></td>
+                <td valign="bottom" width="60%" class="td_height"></td>
+            </tr>
+            <tr>
+                <td valign="bottom" class="td_height">Total Cartons : </td>
+                <td valign="bottom" class="td_height bottom"></td>
+                <td valign="bottom" class="td_height"></td>
+            </tr>
+            <tr>
+                <td valign="bottom" class="td_height">Total CBM : </td>
+                <td valign="bottom" class="td_height bottom"></td>
+                <td valign="bottom" class="td_height"></td>
             </tr>
         </table>
 
@@ -301,11 +323,37 @@
                     <td class="left right bottom"><?php echo $item->product_desc; ?></td>
                 </tr>
                 <?php }?>
+            </table> <br/>
+
+            <table width="100%">
+                <tr>
+                    <td valign="bottom" width="20%" class="td_height">Date of Arrival : </td>
+                    <td valign="bottom" width="25%" class="td_height bottom"></td>
+                    <td valign="bottom" width="25%" class="td_height"></td>
+                    <td valign="bottom" width="30%" class="td_height"></td>
+                </tr>
+                <tr>
+                    <td valign="bottom" class="td_height">Total Cartons : </td>
+                    <td valign="bottom" class="td_height bottom"></td>
+                    <td valign="bottom" class="td_height"></td>
+                    <td valign="bottom" class="td_height bottom"></td>
+                </tr>
+                <tr>
+                    <td valign="bottom" class="td_height">Total CBM : </td>
+                    <td valign="bottom" class="td_height bottom"></td>
+                    <td valign="bottom" class="td_height"></td>
+                    <td valign="top" class="td_height" align="center">Checked By</td>
+                </tr>
+                <tr>
+                    <td valign="bottom" class="td_height">Shipping Receipt No. : </td>
+                    <td valign="bottom" class="td_height bottom"></td>
+                    <td valign="bottom" class="td_height"></td>
+                    <td valign="bottom" class="td_height"></td>
+                </tr>
             </table>
 
             <br/><br/><br/><br/>
-
-            <?php include 'po_report_footer.php'; ?>        
+      
     </div>
 
 </body>

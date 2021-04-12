@@ -103,9 +103,5 @@
         <tr>
     </table>
 
-    <br/><br/><br/><br/>
-
-    <?php include 'po_report_footer.php'; ?>
-
 </body>
 </html>

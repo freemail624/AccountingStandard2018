@@ -437,7 +437,6 @@ GROUP BY n.supplier_id HAVING total_balance > 0
             return $this->db->query($sql)->result();
     }
 
-
     function delivery_list_count($id_filter,$department_id=null,$supplier_id=null,$startDate=null,$endDate=null,$is_finalized=null){
         $sql="
         SELECT di.*,
@@ -551,11 +550,13 @@ GROUP BY n.supplier_id HAVING total_balance > 0
         return $this->db->query($sql)->result();
     }
 
- function get_purchases_for_review(){
+ function get_purchases_for_review($method_id=1){
     $sql='SELECT 
         di.dr_invoice_id,
         di.dr_invoice_no,
+        di.external_ref_no,
         di.remarks,
+        di.total_after_discount,
         terms.term_description,
         DATE_FORMAT(di.date_delivered,"%m/%d/%Y") as date_delivered,
         s.supplier_name
@@ -568,7 +569,8 @@ GROUP BY n.supplier_id HAVING total_balance > 0
         di.is_deleted = FALSE AND
         di.is_journal_posted = FALSE AND
         di.is_closed = FALSE AND
-        di.is_finalized = TRUE';
+        di.is_finalized = TRUE AND 
+        di.payment_method_id ='.$method_id;
 
          return $this->db->query($sql)->result();
 

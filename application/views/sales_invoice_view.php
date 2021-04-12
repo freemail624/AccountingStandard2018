@@ -176,6 +176,7 @@
                     <th>Customer</th>
                     <th>Department</th>
                     <th style="width: 20%">Remarks</th>
+                    <th>Amount</th>
                     <th width="20%"><center>Action</center></th>
                     <th>Invoice #</th>
                 </tr>
@@ -1011,7 +1012,7 @@ $(document).ready(function(){
         dt=$('#tbl_sales_invoice').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 8, "desc" ]],
+            "order": [[ 9, "desc" ]],
             "ajax" : { 
                 "url":"Sales_invoice/transaction/list", 
                 "bDestroy": true,             
@@ -1038,9 +1039,15 @@ $(document).ready(function(){
                 { targets:[3],data: "date_due" ,visible:false},
                 { targets:[4],data: "customer_name" },
                 { targets:[5],data: "department_name" },
-                { targets:[6],data: "remarks"  ,render: $.fn.dataTable.render.ellipsis(60)},
+                { targets:[6],data: "remarks"  ,render: $.fn.dataTable.render.ellipsis(30)},
                 {
-                    targets:[7],data:null,
+                    sClass: "text-right", targets:[7],data: null,
+                    render: function (data, type, full, meta){
+                        return accounting.formatNumber(data.total_after_tax,2);
+                    }
+                },
+                {
+                    targets:[8],data:null,
                     render: function (data, type, full, meta){
                         var btn_attachments='<a href="Sales_attachments?id='+data.sales_invoice_id+'" target="_blank" class="btn btn-default btn-sm" name="attachment_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Attachments"><i class="fa fa-paperclip"></i> '+data.total_attachments+'</a>';
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-right:0" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
@@ -1048,7 +1055,7 @@ $(document).ready(function(){
                         return '<center>'+btn_attachments+"&nbsp;"+btn_edit+"&nbsp;"+btn_trash+'</center>';
                     }
                 },
-                { targets:[8],data: "sales_invoice_id", visible:false }
+                { targets:[9],data: "sales_invoice_id", visible:false }
             ]
         });
         dt_so=$('#tbl_so_list').DataTable({
@@ -1167,6 +1174,9 @@ $(document).ready(function(){
             }
         }).bind('typeahead:select', function(ev, suggestion) {
 
+            _objTypeHead.typeahead('close');           //     -- changed due to barcode scan not working
+            _objTypeHead.typeahead('val','');         //  -- changed due to barcode scan not working
+
             if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
                 showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
                 return;
@@ -1203,7 +1213,6 @@ $(document).ready(function(){
             //     }
 
             // });
-
 
             var tax_rate=suggestion.tax_rate; //base on the tax rate set to current product
             //choose what purchase cost to be use
@@ -1242,27 +1251,13 @@ $(document).ready(function(){
                 vat_input=0;
             }
 
-                a = '';
-                bulk_price = sale_price;
+            a = '';
+            bulk_price = sale_price;
 
-                // if(suggestion.is_bulk == 1){
-                //     retail_price = getFloat(sale_price) / getFloat(suggestion.child_unit_desc);
-                // }else if (suggestion.is_bulk== 0){
-                //     retail_price = 0;
-                // }
-                retail_price = sale_price;
-                suggis_parent = suggestion.is_parent;
-                temp_inv_price = sale_price;                
+            retail_price = sale_price;
+            suggis_parent = suggestion.is_parent;
+            temp_inv_price = sale_price;                
 
-                // if(suggestion.primary_unit == 1){ 
-                //         suggis_parent = 1; 
-                //         temp_inv_price = sale_price;
-                // }else{ 
-                //     suggis_parent = 0; 
-                //     temp_inv_price = retail_price;
-                //     net_vat = getFloat(net_vat) / getFloat(suggestion.child_unit_desc);
-                //     vat_input = getFloat(vat_input) / getFloat(suggestion.child_unit_desc);
-                // }
             var qty = 1;
             if (suggestion.is_product_basyo == 1){
                 qty = TotalBasyo();
@@ -1740,31 +1735,35 @@ $(document).ready(function(){
                     //console.log(rowCount);
                     var a = 0; 
 
-
-                        changetxn ='inactive';
+                    changetxn ='inactive';
                     $.each(rows,function(i,value){
 
                     _customer_type_ = _cboCustomerType.val();
-                    var temp_sale_price=0.00;
+                    var sale_price=0.00;
 
-                        if(_customer_type_ == '' || _customer_type_ == 0){
-                            temp_sale_price=value.sale_price;
-                        }else if(_customer_type_ == '1' ){ // DISCOUNTED CUSTOMER TYPE
-                            temp_sale_price=value.discounted_price;
-                        }else if(_customer_type_ == '2' ){ // DEALER CUSTOMER TYPE
-                            temp_sale_price=value.dealer_price;
-                        }else if(_customer_type_ == '3' ){ // DISTRIBUTOR CUSTOMER TYPE
-                            temp_sale_price=value.distributor_price;
-                        }else if(_customer_type_ == '4' ){ // PUBLIC CUSTOMER TYPE
-                            temp_sale_price=value.public_price;
-                        }else{
-                            temp_sale_price=value.sale_price;
-                        }
-                        bulk_price = temp_sale_price;
+                    if(_customer_type_ == '' || _customer_type_ == 0){
+                        sale_price=value.sale_price;
+                    }else if(_customer_type_ == '1' ){ // DISCOUNTED CUSTOMER TYPE
+                        sale_price=value.discounted_price;
+                    }else if(_customer_type_ == '2' ){ // DEALER CUSTOMER TYPE
+                        sale_price=value.dealer_price;
+                    }else if(_customer_type_ == '3' ){ // DISTRIBUTOR CUSTOMER TYPE
+                        sale_price=value.distributor_price;
+                    }else if(_customer_type_ == '4' ){ // PUBLIC CUSTOMER TYPE
+                        sale_price=value.public_price;
+                    }else if(_customer_type_ == '5' ){ // SHOPEE
+                        sale_price=value.shopee_price;
+                    }else if(_customer_type_ == '6' ){ // LAZADA
+                        sale_price=value.lazada_price;
+                    }else{
+                        sale_price=value.sale_price;
+                    }
+
+                        bulk_price = sale_price;
 
                         var retail_price = 0;
                         if(value.is_bulk == 1){
-                            retail_price = getFloat(temp_sale_price) / getFloat(value.child_unit_desc);
+                            retail_price = getFloat(sale_price) / getFloat(value.child_unit_desc);
 
                         }else if (value.is_bulk== 0){
                             retail_price = 0;
@@ -1793,7 +1792,7 @@ $(document).ready(function(){
                             parent_unit_id : getFloat(value.product_unit_id),
                             is_bulk: value.is_bulk,
                             is_parent : value.is_parent,
-                            bulk_price: temp_sale_price,
+                            bulk_price: bulk_price,
                             retail_price: retail_price,
                             a:a,
                             is_basyo:value.is_basyo,
@@ -1801,13 +1800,15 @@ $(document).ready(function(){
                             exp_date : '',
                             batch_no : '',
                             cost_upon_invoice : value.purchase_cost
-
                         }));
+
                         _line_unit=$('.line_unit'+a).select2({
                             minimumResultsForSearch: -1
                         });
                         _line_unit.select2('val',value.unit_id);
+
                         a++;
+
                     });
 
                     changetxn = 'active';
@@ -1886,24 +1887,29 @@ $(document).ready(function(){
                     $.each(rows,function(i,value){
 
                     _customer_type_ = _cboCustomerType.val();
-                    var temp_sale_price=0.00;
+                    var sale_price=0.00;
 
-                        if(_customer_type_ == '' || _customer_type_ == 0){
-                            temp_sale_price=value.sale_price;
-                        }else if(_customer_type_ == '1' ){ // DISCOUNTED CUSTOMER TYPE
-                            temp_sale_price=value.discounted_price;
-                        }else if(_customer_type_ == '2' ){ // DEALER CUSTOMER TYPE
-                            temp_sale_price=value.dealer_price;
-                        }else if(_customer_type_ == '3' ){ // DISTRIBUTOR CUSTOMER TYPE
-                            temp_sale_price=value.distributor_price;
-                        }else if(_customer_type_ == '4' ){ // PUBLIC CUSTOMER TYPE
-                            temp_sale_price=value.public_price;
-                        }else{
-                            temp_sale_price=value.sale_price;
-                        }
+                    if(_customer_type_ == '' || _customer_type_ == 0){
+                        sale_price=value.sale_price;
+                    }else if(_customer_type_ == '1' ){ // DISCOUNTED CUSTOMER TYPE
+                        sale_price=value.discounted_price;
+                    }else if(_customer_type_ == '2' ){ // DEALER CUSTOMER TYPE
+                        sale_price=value.dealer_price;
+                    }else if(_customer_type_ == '3' ){ // DISTRIBUTOR CUSTOMER TYPE
+                        sale_price=value.distributor_price;
+                    }else if(_customer_type_ == '4' ){ // PUBLIC CUSTOMER TYPE
+                        sale_price=value.public_price;
+                    }else if(_customer_type_ == '5' ){ // SHOPEE
+                        sale_price=value.shopee_price;
+                    }else if(_customer_type_ == '6' ){ // LAZADA
+                        sale_price=value.lazada_price;
+                    }else{
+                        sale_price=value.sale_price;
+                    }
+
                         var retail_price;
                             if(value.is_bulk == 1){
-                                retail_price = getFloat(temp_sale_price) / getFloat(value.child_unit_desc);
+                                retail_price = getFloat(sale_price) / getFloat(value.child_unit_desc);
 
                             }else if (value.is_bulk == 0){
                                 retail_price = 0;
@@ -1933,7 +1939,7 @@ $(document).ready(function(){
                             parent_unit_id : getFloat(value.product_unit_id),
                             is_bulk: value.is_bulk,
                             is_parent : value.is_parent,
-                            bulk_price: temp_sale_price,
+                            bulk_price: sale_price,
                             retail_price: retail_price,
                             a:a,
                             is_basyo:value.is_basyo,
@@ -2299,7 +2305,7 @@ $(document).ready(function(){
        return $.ajax({
            "dataType":"json",
            "type":"POST",
-           "url":"products/transaction/current-items",
+           "url":"products/transaction/sales-list",
            "beforeSend": function(){
                 countproducts = products.local.length;
                 if(countproducts > 100){

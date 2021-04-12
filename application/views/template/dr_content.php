@@ -144,7 +144,7 @@
                     <tr>
                         <td valign="top">2.</td>
                         <td valign="top">
-                            Accustandard reserves the right to inspect the items and to reject the same if found not in accordance with the specifictions or not in good condition.
+                            <?php echo $company_info->company_name; ?> reserves the right to inspect the items and to reject the same if found not in accordance with the specifictions or not in good condition.
                         </td>
                     </tr>
                     <tr>
@@ -186,10 +186,6 @@
             </td>
         </tr>
     </table>
-
-    <br/><br/><br/><br/>
-
-    <?php include 'po_report_footer.php'; ?>
     
 </div>
 

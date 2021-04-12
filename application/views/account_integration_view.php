@@ -168,7 +168,7 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                 <li><a href="#accounts_integration_setting" data-toggle="tab" style="font-family: tahoma;"> Other Accounts</a></li>
                 <li><a href="#accounts_integration_adjustment" data-toggle="tab" style="font-family: tahoma;">Adjustments</a></li>
                 <li><a href="#accounts_integration_item_transfer" data-toggle="tab" style="font-family: tahoma;">Item Transfer</a></li>
-                <li class="hidden"><a href="#accounts_integration_default_settings" data-toggle="tab" style="font-family: tahoma;">Default Settings</a></li>
+                <li><a href="#accounts_integration_default_settings" data-toggle="tab" style="font-family: tahoma;">Default Settings</a></li>
                 <!-- <li class=""><a href="#sched_expense_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-gear"></i> Expense Group (Schedule of Expense)</a></li> -->
                 <li class=""><a href="#account_year_setting" data-toggle="tab" style="font-family: tahoma;"> Accounting Period</a></li>
                 <!-- <li class=""><a href="#invoice_counter_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-code"></i> Invoice Number</a></li> -->
@@ -229,7 +229,7 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="hidden form-group">
                         <label class="col-md-3 control-label"> <b class="required"> * </b>Product :</label>
                         <div class="col-md-7">
                             <select name="basyo_product_id" class="cbo_accounts" data-error-msg="Product (Basyo) is required." required>
@@ -274,8 +274,8 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                         </div>
                     </div>
 
-                    <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Loading Report (Order Qty) </strong></span></h4>
-                    <div class="form-group">
+                    <h4 class="hidden"><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Loading Report (Order Qty) </strong></span></h4>
+                    <div class="hidden form-group">
                         <label class="col-md-3 control-label"> <b class="required"> * </b>Product Category :</label>
                         <div class="col-md-7">
                             <select name="loading_category_id" class="cbo_accounts" data-error-msg="Category is required." required>
@@ -287,8 +287,8 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                         </div>
                     </div>
 
-                    <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Daily Allowance </strong></span></h4>
-                    <div class="form-group">
+                    <h4 class="hidden"><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Daily Allowance </strong></span></h4>
+                    <div class="hidden form-group">
                         <label class="col-md-3 control-label"> <b class="required"> * </b>Allowance :</label>
                         <div class="col-md-2">
                             <input type="text" class="numeric form-control" name="daily_allowance" placeholder="Daily Allowance" required data-error-msg="Daily Allowance is required." value="<?php echo $current_accounts->daily_allowance; ?>">

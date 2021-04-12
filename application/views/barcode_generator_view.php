@@ -98,37 +98,19 @@
                                                     Product : <br />
                                                     <select name="product_id" id="cbo_products" data-error-msg="Branch is required." required>
                                                         <?php foreach($products as $product){ ?>
-                                                            <option value="<?php echo $product->product_id; ?>"><?php echo $product->product_desc; ?></option>
+                                                            <option value="<?php echo $product->product_id; ?>" data-product-code="<?php echo $product->product_code; ?>"><?php echo $product->product_desc; ?></option>
                                                         <?php } ?>
                                                     </select>
                                                 </div>
-                                            </div> 
-
-                                            <div class="row">
-                                                <div class="col-sm-12">
-                                                    Batch Code : <br />
-                                                    <select name="unq_id" id="cbo_batches" data-error-msg="Batch Code is required." required>
-                                                    </select>
-                                                </div>
-                                            </div>                                             
+                                            </div>                                          
 
                                             <div class="row">
                                                 <div class="col-sm-6">
-                                                    Expiration Date : <br />
-                                                    <input type="text" id="exp_date" class="form-control" placeholder="Expiration" readonly>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    LOT# : <br />
-                                                    <input type="text" id="batch_no" class="form-control" placeholder="Batch No" readonly>
+                                                    PLU : <br />
+                                                    <input type="text" id="product_code" class="form-control" placeholder="Product Code" readonly>
                                                 </div>
                                             </div>    
-
-                                            <div class="row hidden">
-                                                <div class="col-sm-12">
-                                                    Batch Code : <br />
-                                                    <input type="text" id="barcode" class="form-control" placeholder="Barcode">
-                                                </div>
-                                            </div>  
+                                            
 
                                             <div class="row">
                                                 <div class="col-sm-3">
@@ -151,9 +133,6 @@
                                                 </div>
                                             </div>
                                             <br />
-
-
-
                                         </div>
                                         <div class="modal-footer">
                                             <div class="col-xs-12">
@@ -196,7 +175,7 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
-        var _cboProducts; var _cboBatches;
+        var _cboProducts;
 
         var initializeControls=function(){
 
@@ -208,11 +187,6 @@
             });
 
             _cboProducts.select2('val', null);
-
-            _cboBatches=$('#cbo_batches').select2({
-                placeholder: "Please select a batch code.",
-                allowClear: false
-            });
 
             $('#modal_barcode_generator').modal('show');
             JsBarcode("#barcode1", 'BARCODE HERE');
@@ -236,11 +210,11 @@
         };
         
         $('#btn_print').click(function(){
-            var batch_code = $('#cbo_batches').val();
+            var product_code = $('#product_code').val();
             var qty = $('#qty').val();
 
-            if(batch_code == null){
-                showNotification({title: 'Error!',stat:"error",msg: "Batch Code is required!"});
+            if(product_code == null || product_code == ""){
+                showNotification({title: 'Error!',stat:"error",msg: "Product Code is required!"});
             }else{
 
                 if(qty > 0){
@@ -248,7 +222,7 @@
                     $('.barcodes').html("");
                     for (i = 0; i < qty; i++) {
                         $('.barcodes').append('<img style="height:60px;margin-right: 20px;margin-bottom: 10px;" title="Download Barcode" class="barcode1"/>');
-                        JsBarcode(".barcode1", batch_code);
+                        JsBarcode(".barcode1", product_code);
                     }
 
                     var currentURL = window.location.href;
@@ -271,47 +245,21 @@
 
         });
 
-        var getBatches=function(){
-            var product_id = $("#cbo_products").val();
-
-            $.ajax({
-                url : 'Barcode_generator/transaction/get_batches?id='+product_id,
-                type : "GET",
-                cache : false,
-                dataType : 'json',
-                processData : false,
-                contentType : false,
-                success : function(response){
-                    var rows=response.data;
-                        $("#cbo_batches option").remove();
-                        $.each(rows,function(i,value){
-                           $("#cbo_batches").append('<option value="'+ value.unq_id +'" data-exp-date="'+value.exp_date+'" data-batch-no="'+value.batch_no+'">'+ value.exp_date + ' - ['+ value.batch_no +']</option>');
-                        });
-                        $('#cbo_batches').val("").trigger("change");
-
-                    }
-                });
-        };
-
         $("#cbo_products").change(function() {
-            getBatches();
-        });
+        
+            var product_code = $(this).find('option:selected').data('product-code');
+            $('#product_code').val(product_code);
 
-        $("#cbo_batches").change(function() {
-            $('#exp_date').val($(this).find(':selected').data('exp-date'));
-            $('#batch_no').val($(this).find(':selected').data('batch-no'));
-            JsBarcode("#barcode1", $(this).val());
+            JsBarcode("#barcode1", product_code);
         });
 
         $('#donwload_barcode').click(function() {
-            var batch_code = $('#cbo_batches').val();
-            var exp_date = $('#cbo_batches').find(':selected').data('exp-date');
-            var batch_no = $('#cbo_batches').find(':selected').data('batch-no');
+            var product_code = $('#product_code').val();
 
-            if(batch_code == null){
-                showNotification({title: 'Error!',stat:"error",msg: "Batch Code is required!"});
+            if(product_code == null || product_code == ""){
+                showNotification({title: 'Error!',stat:"error",msg: "Product Code is required!"});
             }else{
-                download($('#barcode1').attr('src'),exp_date+' - '+batch_no +' - ['+ batch_code +']',"image/png");
+                download($('#barcode1').attr('src'),product_code,"image/png");
             }
         });
 

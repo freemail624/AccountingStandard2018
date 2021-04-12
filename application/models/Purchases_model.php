@@ -8,6 +8,53 @@ class Purchases_model extends CORE_Model {
         parent::__construct();
     }
 
+    function get_po_list($purchase_order_id=null,$order_status_id=0){
+        $sql="SELECT 
+                po.*,
+                terms.term_description,
+                s.supplier_name,
+                tax_types.tax_type,
+                app_stat.approval_status,
+                ord_stat.order_status,
+                pr.pr_no,
+                DATE_FORMAT(po.delivery_date, '%m/%d/%Y') AS delivery_date
+            FROM
+                purchase_order po
+                    LEFT JOIN
+                suppliers s ON s.supplier_id = po.supplier_id
+                    LEFT JOIN
+                tax_types ON tax_types.tax_type_id = po.tax_type_id
+                    LEFT JOIN
+                approval_status app_stat ON app_stat.approval_id = po.approval_id
+                    LEFT JOIN
+                order_status ord_stat ON ord_stat.order_status_id = po.order_status_id
+                    LEFT JOIN
+                purchase_request pr ON pr.purchase_request_id = po.purchase_request_id
+                    LEFT JOIN
+                terms ON terms.term_id = po.term_id
+            WHERE
+                po.is_deleted = FALSE
+                    AND po.is_active = TRUE
+                    ".($purchase_order_id==null?"":" AND po.purchase_order_id='".$purchase_order_id."'")."
+                    ".($order_status_id==0?"":" AND po.order_status_id='".$order_status_id."'")."
+            ORDER BY po.purchase_order_id DESC";
+            return $this->db->query($sql)->result();
+    }
+
+    function get_tbl_amount($order_status_id=0){
+        $sql="SELECT 
+                COALESCE(SUM(poi.po_line_total_after_global), 0) AS total_tbl_amount
+            FROM
+                purchase_order_items poi
+                    LEFT JOIN
+                purchase_order po ON po.purchase_order_id = poi.purchase_order_id
+                WHERE po.is_deleted = FALSE AND
+                    po.is_active = TRUE
+                ".($order_status_id==0?"":" AND po.order_status_id='".$order_status_id."'")."";
+            
+            return $this->db->query($sql)->result();
+    }
+
 
     function get_po_balance_qty($id){
         $sql="SELECT SUM(x.Balance)as Balance

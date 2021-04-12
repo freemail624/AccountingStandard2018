@@ -21,6 +21,7 @@ class Sales_order extends CORE_Controller
         $this->load->model('Customer_type_model');
         $this->load->model('Company_model');  
         $this->load->model('Account_integration_model');
+        $this->load->model('Order_status_model');
 
     }
 
@@ -90,6 +91,7 @@ class Sales_order extends CORE_Controller
             'is_deleted=FALSE'
         );
 
+        $data['statuses'] = $this->Order_status_model->get_list();
         $data['company']=$this->Company_model->getDefaultRemarks()[0];
         $data['accounts']=$this->Account_integration_model->get_list(1);
         $data['title'] = 'Sales Order';
@@ -107,10 +109,15 @@ class Sales_order extends CORE_Controller
         switch ($txn){
             case 'list':  //this returns JSON of Issuance to be rendered on Datatable
                 $m_sales_order=$this->Sales_order_model;
-                $response['data']=$this->response_rows(
-                    'sales_order.is_active=TRUE AND sales_order.is_deleted=FALSE'.($id_filter==null?'':' AND sales_order.sales_order_id='.$id_filter),
-                    'sales_order.sales_order_id DESC'
-                );
+                $order_status_id = $this->input->get('order_status_id', TRUE);
+                $response['data']=$m_sales_order->get_so_list(null, $order_status_id);
+                echo json_encode($response);
+                break;
+
+            case 'tbl_amount':
+                $m_sales_order=$this->Sales_order_model;
+                $order_status_id = $this->input->post('order_status_id', TRUE);
+                $response['data']=$m_sales_order->get_tbl_amount($order_status_id);
                 echo json_encode($response);
                 break;
 
@@ -201,6 +208,33 @@ class Sales_order extends CORE_Controller
                 echo json_encode($response);
                 break;
 
+            case 'close':
+                $m_sales_order=$this->Sales_order_model;
+                $sales_order_id=$this->input->post('sales_order_id',TRUE);
+
+                $m_sales_order->set('date_closed','NOW()'); //treat NOW() as function and not string
+                $m_sales_order->closed_by_user=$this->session->user_id;//user that closed the record
+                $m_sales_order->is_closed=1;//mark as closed
+                $m_sales_order->order_status_id=4;//mark as closed
+                $m_sales_order->modify($sales_order_id);
+
+                $so_info=$m_sales_order->get_list($sales_order_id,'so_no');
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=11; //CRUD
+                $m_trans->trans_type_id=16; // TRANS TYPE
+                $m_trans->trans_log='Closed Sales Order No: '.$so_info[0]->so_no;
+                $m_trans->save();
+
+                $response['title']='Success!';
+                $response['stat']='success';
+                $response['msg']='Record successfully marked as closed.';
+                $response['row_updated']=$m_sales_order->get_so_list($sales_order_id);
+
+                echo json_encode($response);
+
+                break;
 
             //***************************************create new Items************************************************
             case 'create':
@@ -251,13 +285,14 @@ class Sales_order extends CORE_Controller
                 $so_line_total_price=$this->input->post('so_line_total_price',TRUE);
                 $so_tax_amount=$this->input->post('so_tax_amount',TRUE);
                 $so_non_tax_amount=$this->input->post('so_non_tax_amount',TRUE);
-
                 $batch_no=$this->input->post('batch_no',TRUE);
                 $exp_date=$this->input->post('exp_date',TRUE);
                 $is_parent=$this->input->post('is_parent',TRUE);
- 
+                $total_qty = 0;
+
                 for($i=0;$i<count($prod_id);$i++){
 
+                    $total_qty += $this->get_numeric_value($so_qty[$i]);
                     $m_sales_order_items->sales_order_id=$sales_order_id;
                     $m_sales_order_items->product_id=$this->get_numeric_value($prod_id[$i]);
                     $m_sales_order_items->so_qty=$this->get_numeric_value($so_qty[$i]);
@@ -284,6 +319,7 @@ class Sales_order extends CORE_Controller
 
                 //update so number base on formatted last insert id
                 $m_sales_order->so_no='SO-'.date('Ymd').'-'.$sales_order_id;
+                $m_sales_order->total_qty = $this->get_numeric_value($total_qty);
                 $m_sales_order->modify($sales_order_id);
 
                 $m_trans=$this->Trans_model;
@@ -303,7 +339,7 @@ class Sales_order extends CORE_Controller
                     $response['title'] = 'Success!';
                     $response['stat'] = 'success';
                     $response['msg'] = 'Sales order successfully created.';
-                    $response['row_added']=$this->response_rows($sales_order_id);
+                    $response['row_added']=$m_sales_order->get_so_list($sales_order_id);
 
                     echo json_encode($response);
                 }
@@ -363,9 +399,11 @@ class Sales_order extends CORE_Controller
                 $is_parent=$this->input->post('is_parent',TRUE);
                 $batch_no=$this->input->post('batch_no',TRUE);
                 $exp_date=$this->input->post('exp_date',TRUE);
+                $total_qty = 0;
 
                 for($i=0;$i<count($prod_id);$i++){
 
+                    $total_qty += $this->get_numeric_value($so_qty[$i]);
                     $m_sales_order_items->sales_order_id=$sales_order_id;
                     $m_sales_order_items->product_id=$this->get_numeric_value($prod_id[$i]);
                     $m_sales_order_items->so_price=$this->get_numeric_value($so_price[$i]);
@@ -389,6 +427,9 @@ class Sales_order extends CORE_Controller
                     $m_sales_order_items->save();
                 }
 
+                $m_sales_order->total_qty = $this->get_numeric_value($total_qty);
+                $m_sales_order->modify($sales_order_id);
+
                 $sal_info=$m_sales_order->get_list($sales_order_id,'so_no');
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
@@ -406,7 +447,7 @@ class Sales_order extends CORE_Controller
                     $response['title'] = 'Success!';
                     $response['stat'] = 'success';
                     $response['msg'] = 'Sales order successfully updated.';
-                    $response['row_updated']=$this->response_rows($sales_order_id);
+                    $response['row_updated']=$m_sales_order->get_so_list($sales_order_id);
 
                     echo json_encode($response);
                 }

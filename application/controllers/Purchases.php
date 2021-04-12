@@ -23,7 +23,7 @@ class Purchases extends CORE_Controller
         $this->load->model('Trans_model');
         $this->load->model('Terms_model');
         $this->load->model('Account_integration_model');
-
+        $this->load->model('Order_status_model');
         $this->load->library('M_pdf');
 
 
@@ -61,6 +61,7 @@ class Purchases extends CORE_Controller
         $data['tax_types']=$this->Tax_types_model->get_list('is_deleted=0');
         $data['company']=$this->Company_model->getDefaultRemarks()[0];
         $data['accounts']=$this->Account_integration_model->get_list(1);
+        $data['statuses'] = $this->Order_status_model->get_list();
 
         $data['title'] = 'Purchase Order';
         (in_array('2-1',$this->session->user_rights)? 
@@ -73,28 +74,22 @@ class Purchases extends CORE_Controller
             switch ($txn){
                 case 'list':  //this returns JSON of Purchase Order to be rendered on Datatable
                     $m_purchases=$this->Purchases_model;
-                    $response['data']=$this->row_response(
-                        array(
-                            'purchase_order.is_deleted'=>FALSE,
-                            'purchase_order.is_active'=>TRUE
-                        )
-                    );
+                    $order_status_id = $this->input->get('order_status_id', TRUE);
+                    $response['data']=$m_purchases->get_po_list(null,$order_status_id);
                     echo json_encode($response);
                     break;
 
+                case 'tbl_amount':
+                    $m_purchases=$this->Purchases_model;
+                    $order_status_id = $this->input->post('order_status_id', TRUE);
+                    $response['data']=$m_purchases->get_tbl_amount($order_status_id);
+                    echo json_encode($response);
+                    break;
+                    
                 case 'get-po-details':
                     $m_purchases=$this->Purchases_model;
-
                     $purchase_order_id = $this->input->get('s',TRUE);
-
-                    $response['data']=$this->row_response(
-                        array(
-                            'purchase_order.is_deleted'=>FALSE,
-                            'purchase_order.is_active'=>TRUE,
-                            'purchase_order.purchase_order_id'=>$purchase_order_id
-                        )
-                    );
-
+                    $response['data']=$m_purchases->get_po_list($purchase_order_id);
                     echo json_encode($response);
 
                     break;
@@ -273,6 +268,7 @@ class Purchases extends CORE_Controller
                     $m_purchases->custom_duties=$this->get_numeric_value($this->input->post('custom_duties',TRUE));
                     $m_purchases->other_amount=$this->get_numeric_value($this->input->post('other_amount',TRUE));
                     $m_purchases->grand_total_amount=$this->get_numeric_value($this->input->post('grand_total_amount',TRUE));
+                    $m_purchases->exchange_rate=$this->get_numeric_value($this->input->post('exchange_rate',TRUE));
 
                     $m_purchases->save();
 
@@ -281,6 +277,7 @@ class Purchases extends CORE_Controller
 
                     $prod_id=$this->input->post('product_id',TRUE);
                     $po_qty=$this->input->post('po_qty',TRUE);
+                    $rmb_price=$this->input->post('rmb_price',TRUE);
                     $po_price=$this->input->post('po_price',TRUE);
                     $po_discount=$this->input->post('po_discount',TRUE);
                     $po_line_total_discount=$this->input->post('po_line_total_discount',TRUE);
@@ -290,12 +287,15 @@ class Purchases extends CORE_Controller
                     $tax_amount=$this->input->post('tax_amount',TRUE);
                     $non_tax_amount=$this->input->post('non_tax_amount',TRUE);
                     $is_parent=$this->input->post('is_parent',TRUE);
+                    $total_qty = 0;
 
                     for($i=0;$i<count($prod_id);$i++){
 
+                        $total_qty += $this->get_numeric_value($po_qty[$i]);
                         $m_po_items->purchase_order_id=$po_id;
                         $m_po_items->product_id=$this->get_numeric_value($prod_id[$i]);
                         $m_po_items->po_qty=$this->get_numeric_value($po_qty[$i]);
+                        $m_po_items->rmb_price=$this->get_numeric_value($rmb_price[$i]);
                         $m_po_items->po_price=$this->get_numeric_value($po_price[$i]);
                         $m_po_items->po_discount=$this->get_numeric_value($po_discount[$i]);
                         $m_po_items->po_line_total_discount=$this->get_numeric_value($po_line_total_discount[$i]);
@@ -316,6 +316,7 @@ class Purchases extends CORE_Controller
 
                     //update po number base on formatted last insert id
                     $m_purchases->po_no='PO-'.date('Ymd').'-'.$po_id;
+                    $m_purchases->total_qty = $this->get_numeric_value($total_qty);
                     $m_purchases->modify($po_id);
 
                     //update status of pr
@@ -338,7 +339,7 @@ class Purchases extends CORE_Controller
                         $response['title'] = 'Success!';
                         $response['stat'] = 'success';
                         $response['msg'] = 'Purchase order successfully created.';
-                        $response['row_added'] = $this->row_response($po_id);
+                        $response['row_added'] = $m_purchases->get_po_list($po_id);
 
                         echo json_encode($response);
                     }
@@ -382,6 +383,7 @@ class Purchases extends CORE_Controller
                     $m_purchases->custom_duties=$this->get_numeric_value($this->input->post('custom_duties',TRUE));
                     $m_purchases->other_amount=$this->get_numeric_value($this->input->post('other_amount',TRUE));
                     $m_purchases->grand_total_amount=$this->get_numeric_value($this->input->post('grand_total_amount',TRUE));
+                    $m_purchases->exchange_rate=$this->get_numeric_value($this->input->post('exchange_rate',TRUE));
                     
                     $m_purchases->modify($po_id);
 
@@ -391,6 +393,7 @@ class Purchases extends CORE_Controller
                     $m_po_items->delete_via_fk($po_id); //delete previous items then insert those new
 
                     $prod_id=$this->input->post('product_id',TRUE);
+                    $rmb_price=$this->input->post('rmb_price',TRUE);
                     $po_price=$this->input->post('po_price',TRUE);
                     $po_discount=$this->input->post('po_discount',TRUE);
                     $po_line_total_discount=$this->input->post('po_line_total_discount',TRUE);
@@ -401,11 +404,15 @@ class Purchases extends CORE_Controller
                     $non_tax_amount=$this->input->post('non_tax_amount',TRUE);
                     $is_parent=$this->input->post('is_parent',TRUE);
                     $po_line_total_after_global=$this->input->post('po_line_total_after_global',TRUE);
+                    $total_qty = 0;
+
                     for($i=0;$i<count($prod_id);$i++){
 
+                        $total_qty += $this->get_numeric_value($po_qty[$i]);
                         $m_po_items->purchase_order_id=$po_id;
                         $m_po_items->product_id=$this->get_numeric_value($prod_id[$i]);
                         $m_po_items->po_qty=$this->get_numeric_value($po_qty[$i]);
+                        $m_po_items->rmb_price=$this->get_numeric_value($rmb_price[$i]);
                         $m_po_items->po_price=$this->get_numeric_value($po_price[$i]);
                         $m_po_items->po_discount=$this->get_numeric_value($po_discount[$i]);
                         $m_po_items->po_line_total_discount=$this->get_numeric_value($po_line_total_discount[$i]);
@@ -424,6 +431,10 @@ class Purchases extends CORE_Controller
 
                         $m_po_items->save();
                     }
+
+                    $m_purchases->total_qty = $this->get_numeric_value($total_qty);
+                    $m_purchases->modify($po_id);
+
                     $po_info=$m_purchases->get_list($po_id,'po_no');
                     $m_trans=$this->Trans_model;
                     $m_trans->user_id=$this->session->user_id;
@@ -441,7 +452,7 @@ class Purchases extends CORE_Controller
                         $response['stat'] = 'success';
                         $response['msg'] = 'Purchase order successfully updated.';
 
-                        $response['row_updated'] = $this->row_response($po_id);
+                        $response['row_updated'] = $m_purchases->get_po_list($po_id);
 
                         echo json_encode($response);
                     }
@@ -508,7 +519,8 @@ class Purchases extends CORE_Controller
                     $response['title']='Success!';
                     $response['stat']='success';
                     $response['msg']='Record successfully marked as closed.';
-                    $response['row_updated']=$this->row_response($purchase_order_id);
+                    $response['row_updated']=$m_purchases->get_po_list($purchase_order_id);
+
                     echo json_encode($response);
 
                     break;
@@ -716,47 +728,12 @@ class Purchases extends CORE_Controller
                             $response['title']='Success!';
                             $response['stat']='success';
                             $response['msg']='Email Sent successfully.';
-                            $response['row_updated'] =$this->row_response($filter_value);
- 
+                            $response['row_updated'] =$m_purchases->get_po_list($filter_value);
+
                             echo json_encode($response);
                             }
                     break;
             }
-
-
-
-
-
-
-
-
-    }
-
-
-
-    function row_response($filter_value){
-        return $this->Purchases_model->get_list(
-            $filter_value,
-            array(
-                'purchase_order.*',
-                'terms.term_description',
-                'suppliers.supplier_name',
-                'tax_types.tax_type',
-                'approval_status.approval_status',
-                'order_status.order_status',
-                'purchase_request.pr_no',
-                'DATE_FORMAT(purchase_order.delivery_date,"%m/%d/%Y") as delivery_date,'
-            ),
-            array(
-                array('suppliers','suppliers.supplier_id=purchase_order.supplier_id','left'),
-                array('tax_types','tax_types.tax_type_id=purchase_order.tax_type_id','left'),
-                array('approval_status','approval_status.approval_id=purchase_order.approval_id','left'),
-                array('order_status','order_status.order_status_id=purchase_order.order_status_id','left'),
-                array('purchase_request','purchase_request.purchase_request_id=purchase_order.purchase_request_id','left'),
-                array('terms','terms.term_id=purchase_order.term_id','left')
-            ),
-            'purchase_order.purchase_order_id DESC'
-        );
     }
 
     function get_pr_status($id){
