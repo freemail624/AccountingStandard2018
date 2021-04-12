@@ -8,14 +8,15 @@ class Pos_item_returns_model extends CORE_Model {
         parent::__construct();
     }
 
-    function get_invoice_list($start,$end) {
+    function get_invoice_list($start,$end,$invoice_id=0) {
         $sql="SELECT DISTINCT pir.invoice_id, pir.invoice_no FROM pos_item_returns pir WHERE invoice_id > 0 AND invoice_no != ''
-            AND DATE_FORMAT(CAST(pir.start_datetime as DATE),'%Y-%m-%d') BETWEEN '".$start."' AND '".$end."'";
+            AND DATE_FORMAT(CAST(pir.start_datetime as DATE),'%Y-%m-%d') BETWEEN '".$start."' AND '".$end."'
+            ".($invoice_id==0?"":" AND pir.invoice_id=".$invoice_id)."";
         return $this->db->query($sql)->result();
     }
 
-    function get_cashier_list() {
-        $sql="SELECT DISTINCT pir.return_cashier_id, pir.return_cashier_name FROM pos_item_returns pir WHERE pir.return_cashier_id > 0";
+    function get_cashier_list($return_cashier_id=0) {
+        $sql="SELECT DISTINCT pir.return_cashier_id, pir.return_cashier_name FROM pos_item_returns pir WHERE pir.return_cashier_id > 0 ".($return_cashier_id==0?"":" AND pir.return_cashier_id=".$return_cashier_id)."";
         return $this->db->query($sql)->result();
     }
 

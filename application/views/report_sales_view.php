@@ -210,9 +210,14 @@
                                                                     <div class="row">
                                                                         <div class="" style="margin-top: 20px;">
                                                                             <div class="row">
-                                                                                <div class="col-md-3">
+                                                                                <div class="col-md-2">
                                                                                     <br/>
                                                                                     <h1>Sales Returns</h1>
+                                                                                </div>
+                                                                                <div class="col-md-2">
+                                                                                    <br/>
+                                                                                    <button class="btn btn-success pull-right" id="btn_export_sales_returns" title="Export to Excel" style="padding: 7px 7px!important;margin-left: 10px;">
+                                                                                    <i class="fa fa-file-excel-o"></i> Sales Returns</button>
                                                                                 </div>
                                                                                 <div class="col-md-3">
                                                                                     Invoice # : <br/>
@@ -220,7 +225,7 @@
                                                                                         <option value="0">ALL</option>
                                                                                     </select>
                                                                                 </div>
-                                                                                <div class="col-md-3">
+                                                                                <div class="col-md-2">
                                                                                     Cashier : <br/>
                                                                                     <select id="cbo_cashier" style="width: 100%;">
                                                                                         <option value="0">ALL</option>
@@ -242,9 +247,9 @@
                                                                                     <th>Product ID</th>
                                                                                     <th>Datetime</th>
                                                                                     <th>Invoice #</th>
-                                                                                    <th style="width: 20%">Product</th>
                                                                                     <th>Terminal</th>
                                                                                     <th>Cashier</th>
+                                                                                    <th style="width: 20%">Product</th>
                                                                                     <th>Quantity</th>
                                                                                     <th>Discount</th>
                                                                                     <th>Vatable Sales</th>
@@ -496,9 +501,9 @@
                     { targets:[0],data: "product_id", visible:false },
                     { targets:[1],data: "return_datetime" },
                     { targets:[2],data: "invoice_no" },
-                    { targets:[3],data: "product_desc" },
-                    { targets:[4],data: "terminal" },
-                    { targets:[5],data: "return_cashier_name" },
+                    { targets:[3],data: "terminal" },
+                    { targets:[4],data: "return_cashier_name" },
+                    { targets:[5],data: "product_desc" },
                     {
                         sClass: "numericCol", 
                         targets:[6],data: "product_quantity",
@@ -676,6 +681,16 @@
 
             $('#btn_export_sales_all').on('click', function(){
                 window.open('Report_sales/transaction/export-all?startDate='+_date_from.val()+'&endDate='+_date_to.val());
+            });
+
+            $('#btn_export_sales_returns').on('click', function(){
+
+                var start_date = _date_from.val();
+                var end_date = _date_to.val();
+                var invoice_id = _cboInvoice.val();
+                var return_cashier_id = _cboCashier.val(); 
+
+                window.open('Sales_returns/transaction/export-sales-return?startDate='+start_date+'&endDate='+end_date+'&invoice_id='+invoice_id+'&return_cashier_id='+return_cashier_id);
             });
 
             var getNetSales=function() {
