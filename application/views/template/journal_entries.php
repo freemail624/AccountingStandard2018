@@ -3,7 +3,7 @@
         <td>
             <select name="accounts[]" class="<?php if($entry->cr_amount > 0){ ?> enable <?php } ?> selectpicker show-tick form-control selectpicker_accounts" data-live-search="true" >
                 <?php foreach($accounts as $account){ ?>
-                    <option value='<?php echo $account->account_id; ?>' <?php echo ($entry->account_id==$account->account_id?'selected':''); ?> ><?php echo $account->account_title; ?></option>
+                    <option value='<?php echo $account->account_id; ?>' <?php echo ($entry->account_id==$account->account_id?'selected':''); ?> data-cib="<?php echo $account->for_cib; ?>"><?php echo $account->account_title; ?></option>
                 <?php } ?>
             </select>
         </td>

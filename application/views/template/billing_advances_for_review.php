@@ -67,7 +67,7 @@
                                         <input type="text" name="date_txn" class="date-picker  form-control" value="<?php echo $info->date_txn; ?>">
                                     </div>
                                     <br /><br />
-                                    <label class="col-lg-2"> <b class="required">*</b> Supplier : </label>
+                                    <label class="col-lg-2"> <b class="required">*</b> Particular : </label>
                                     <div class="col-lg-10">
 
                                             <select id="cbo_particulars" name="particular_id" class=" cbo_supplier_list selectpicker show-tick form-control" data-live-search="true" data-error-msg="Particular is required." required>

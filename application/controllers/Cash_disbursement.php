@@ -12,6 +12,7 @@ class Cash_disbursement extends CORE_Controller
         $this->load->model(
             array(
                 'Suppliers_model',
+                'Customers_model',
                 'Departments_model',
                 'Account_title_model',
                 'Payment_method_model',
@@ -52,6 +53,7 @@ class Cash_disbursement extends CORE_Controller
             'b_refchecktype.*,account_titles.account_title',
             array(array( 'account_titles' , 'account_titles.account_id = b_refchecktype. account_id', 'left'))
             );
+        $data['customers']=$this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'customer_name ASC');
         $data['suppliers']=$this->Suppliers_model->get_list('is_deleted = FALSE',null, null,'supplier_name ASC');
         $data['departments']=$this->Departments_model->get_list('is_deleted = FALSE',null, null,'department_name ASC');
         $data['accounts']=$this->Account_title_model->get_list('is_deleted = FALSE',null, null,'trim(account_title) ASC');
@@ -101,7 +103,15 @@ class Cash_disbursement extends CORE_Controller
                 $m_journal_temp_info=$this->Journal_template_info_model;
                 $m_journal_temp_entry=$this->Journal_template_entry_model;
 
-                $m_journal_temp_info->supplier_id=$this->input->post('supplier_id',TRUE);
+                $particular=explode('-',$this->input->post('particular_id',TRUE));
+                if($particular[0]=='C'){
+                    $m_journal_temp_info->customer_id=$particular[1];
+                    $m_journal_temp_info->supplier_id=0;
+                }else{
+                    $m_journal_temp_info->customer_id=0;
+                    $m_journal_temp_info->supplier_id=$particular[1];
+                }
+
                 $m_journal_temp_info->template_code=$this->input->post('template_code',TRUE);
                 $m_journal_temp_info->template_description=$this->input->post('template_description',TRUE);
                 $m_journal_temp_info->remarks=$this->input->post('remarks',TRUE);
@@ -160,10 +170,15 @@ class Cash_disbursement extends CORE_Controller
                     $ref_type_count = COUNT($m_journal->get_list(array('ref_type'=>$ref_type)))+1 + $account_integration[0]->jv_start_no;
                 }
 
+                if($voucher_info->supplier_id > 0){
+                    $m_journal->supplier_id=$voucher_info->supplier_id;
+                }else{
+                    $m_journal->customer_id=$voucher_info->customer_id;
+                }
+
                 $m_journal->ref_type=$ref_type;
                 // $m_journal->ref_no=str_pad($ref_type_count, 8, "0", STR_PAD_LEFT); // Commented for a while 
                 $m_journal->ref_no = $voucher_info->ref_no;
-                $m_journal->supplier_id=$voucher_info->supplier_id;
                 $m_journal->remarks=$voucher_info->remarks;
                 $m_journal->date_txn=date('Y-m-d',strtotime($voucher_info->date_txn));
                 $m_journal->book_type='CDJ';
@@ -218,7 +233,13 @@ class Cash_disbursement extends CORE_Controller
 
                 if ($form_2307_apply == 1){
                     $m_form_2307->journal_id=$journal_id;
-                    $m_form_2307->supplier_id=$voucher_info->supplier_id;
+
+                    if($voucher_info->supplier_id > 0){
+                        $m_form_2307->supplier_id=$voucher_info->supplier_id;
+                    }else{
+                        $m_form_2307->customer_id=$voucher_info->customer_id;
+                    }
+
                     $m_form_2307->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
                     $m_form_2307->date=date('Y-m-d',strtotime($voucher_info->date_txn));
                     // $m_form_2307->payee_tin=$supplier[0]->tin_no;
@@ -353,12 +374,18 @@ class Cash_disbursement extends CORE_Controller
                     $ref_type_count = COUNT($m_journal->get_list(array('ref_type'=>$ref_type)))+1 + $account_integration[0]->jv_start_no;
                 }
 
-                
+                $particular=explode('-',$this->input->post('particular_id',TRUE));
+                if($particular[0]=='C'){
+                    $m_journal->customer_id=$particular[1];
+                    $m_journal->supplier_id=0;
+                }else{
+                    $m_journal->customer_id=0;
+                    $m_journal->supplier_id=$particular[1];
+                }
 
                 $m_journal->ref_type=$ref_type;
                 // $m_journal->ref_no=str_pad($ref_type_count, 8, "0", STR_PAD_LEFT); // Commented for a while 
                 $m_journal->ref_no=$this->input->post('ref_no');
-                $m_journal->supplier_id=$this->input->post('supplier_id',TRUE);
                 $m_journal->remarks=$this->input->post('remarks',TRUE);
                 $m_journal->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
                 $m_journal->book_type='CDJ';
@@ -413,7 +440,16 @@ class Cash_disbursement extends CORE_Controller
 
                 if ($form_2307_apply == 1){
                     $m_form_2307->journal_id=$journal_id;
-                    $m_form_2307->supplier_id=$supplier_id;
+
+                    $particular=explode('-',$this->input->post('particular_id',TRUE));
+                    if($particular[0]=='C'){
+                        $m_form_2307->customer_id=$particular[1];
+                        $m_form_2307->supplier_id=0;
+                    }else{
+                        $m_form_2307->customer_id=0;
+                        $m_form_2307->supplier_id=$particular[1];
+                    }
+
                     $m_form_2307->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
                     $m_form_2307->date=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
                     // $m_form_2307->payee_tin=$supplier[0]->tin_no;
@@ -498,7 +534,15 @@ class Cash_disbursement extends CORE_Controller
                     die(json_encode($response));
                 }
 
-                $m_journal->supplier_id=$this->input->post('supplier_id',TRUE);
+                $particular=explode('-',$this->input->post('particular_id',TRUE));
+                if($particular[0]=='C'){
+                    $m_journal->customer_id=$particular[1];
+                    $m_journal->supplier_id=0;
+                }else{
+                    $m_journal->customer_id=0;
+                    $m_journal->supplier_id=$particular[1];
+                }
+
                 $m_journal->remarks=$this->input->post('remarks',TRUE);
                 $m_journal->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
                 $m_journal->book_type='CDJ';
@@ -556,7 +600,16 @@ class Cash_disbursement extends CORE_Controller
                 if ($form_2307_apply == 1){
 
                     $m_form_2307->journal_id=$journal_id;
-                    $m_form_2307->supplier_id=$supplier_id;
+
+                    $particular=explode('-',$this->input->post('particular_id',TRUE));
+                    if($particular[0]=='C'){
+                        $m_form_2307->customer_id=$particular[1];
+                        $m_form_2307->supplier_id=0;
+                    }else{
+                        $m_form_2307->customer_id=0;
+                        $m_form_2307->supplier_id=$particular[1];
+                    }
+                    
                     $m_form_2307->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
                     $m_form_2307->date=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
                     // $m_form_2307->payee_tin=$supplier[0]->tin_no;
@@ -714,7 +767,8 @@ class Cash_disbursement extends CORE_Controller
                 'CONCAT(IFNULL(journal_info.ref_type,""),"-",IFNULL(journal_info.ref_no,"")) as reference_no',
                 'journal_info.amount',
                 'departments.department_name',
-                'CONCAT(IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,""))as particular',
+                'CONCAT(IF(NOT ISNULL(customers.customer_id),CONCAT("C-",customers.customer_id),""),IF(NOT ISNULL(suppliers.supplier_id),CONCAT("S-",suppliers.supplier_id),"")) as particular_id',
+                'CONCAT_WS(" ",IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,"")) as particular',
                 'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by'
             ),
             array(

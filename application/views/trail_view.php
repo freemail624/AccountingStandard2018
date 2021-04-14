@@ -23,197 +23,6 @@
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
     <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
     <link href="assets/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
-
-    <?php echo $_switcher_settings; ?>
-    <?php echo $_def_js_files; ?>
-
-
-    <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
-    <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
-
-
-    <!-- Date range use moment.js same as full calendar plugin -->
-    <script src="assets/plugins/fullcalendar/moment.min.js"></script>
-    <!-- Data picker -->
-    <script src="assets/plugins/datapicker/bootstrap-datepicker.js"></script>
-
-    <!-- Select2 -->
-    <script src="assets/plugins/select2/select2.full.min.js"></script>
-
-
-    <!-- Date range use moment.js same as full calendar plugin -->
-    <script src="assets/js/plugins/fullcalendar/moment.min.js"></script>
-    <!-- Data picker -->
-    <script src="assets/js/plugins/datapicker/bootstrap-datepicker.js"></script>
-
-    <!-- twitter typehead -->
-    <script src="assets/plugins/twittertypehead/handlebars.js"></script>
-    <script src="assets/plugins/twittertypehead/bloodhound.min.js"></script>
-    <script src="assets/plugins/twittertypehead/typeahead.bundle.min.js"></script>
-    <script src="assets/plugins/twittertypehead/typeahead.jquery.min.js"></script>
-
-    <!-- touchspin -->
-    <script type="text/javascript" src="assets/plugins/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.js"></script>
-
-    <!-- numeric formatter -->
-    <script src="assets/plugins/formatter/autoNumeric.js" type="text/javascript"></script>
-    <script src="assets/plugins/formatter/accounting.js" type="text/javascript"></script>
-
-    <script>
-
-$(document).ready(function(){
-    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboItemTypes; var _selectedProductType; var _isTaxExempt=0;
-    var _cboSupplier; var _cboCategory; var _cboTax; var _cboInventory; var _cboMeasurement; var _cboCredit; var _cboDebit;
-    var _cboTaxGroup;
-    var _section_id; var _menu_id; var _trans_key_id; var _user_id;
-    /*$(document).ready(function(){
-        $('#modal_filter').modal('show');
-        showList(false);
-    });*/
-
-    var initializeControls=function() {
-        dt=$('#tbl_products').DataTable({
-            "fnInitComplete": function (oSettings, json) {
-                // $.unblockUI();
-                },
-            "dom": '<"toolbar">frtip',
-            "bLengthChange":false,
-            "pageLength":15,
-            "order": [[ 5, "asc" ]],
-             "searching": false,
-            // "scrollX": true,
-            "ajax": {
-              "url":"Trail/transaction/list",
-              "type":"GET",
-              // "order": [[ 6, "desc" ]],
-              "data":function (d) {
-                return $.extend( {}, d, {
-                    "user_id": $('#user_id').val(),
-                    "trans_type_id": $('#trans_type_id').val(),
-                    "trans_key_id": $('#trans_key_id').val(),
-                    "start_date": $('#start_date').val(),
-                    "end_date": $('#end_date').val()
-                });
-              }
-            },
-            "columns": [
-
-                { targets:[0],data: "trans_date" },
-                { targets:[1],data: "trans_type_desc" },
-                { targets:[2],data: "trans_key_desc" },
-                { targets:[3],data: "trans_log" },
-                { targets:[4], data: null, render: function ( data, type, row ) {
-                // Combine the first and last names into a single table field
-                if(data.user_fname!== null){
-                    return data.user_fname+' '+data.user_lname; // data to be rendered 
-                }else{
-                    return'';
-                }
-
-                } },
-                { visible:false,targets:[5],data: "trans_id" }
-
-            ],
-
-            language: {
-                         searchPlaceholder: "Search"
-                     },
-            "rowCallback":function( row, data, index ){
-
-                // $(row).find('td').eq(4).attr({
-                //     "align": "right"
-                // });
-            }
-
-
-        });
-
-
-        $('.date-picker').datepicker({
-            todayBtn: "linked",
-            keyboardNavigation: false,
-            forceParse: false,
-            calendarWeeks: true,
-            autoclose: true
-        });
-
-        _cboCategory=$('#trans_type_id').select2({
-            allowClear: false
-        });
-
-
-        _trans_key_id=$('#trans_key_id').select2({
-            allowClear: false
-        });
-
-
-        _user_id=$('#user_id').select2({
-            allowClear: false
-        });
-
-
-      
-    }();
-    
-        
-
-    var bindEventHandlers=(function(){
-        $("#trans_type_id").on("change", function () {        
-            $('#tbl_products').DataTable().ajax.reload()
-        });
-        $("#user_id").on("change", function () {        
-            $('#tbl_products').DataTable().ajax.reload()
-        });
-        $("#trans_key_id").on("change", function () {        
-            $('#tbl_products').DataTable().ajax.reload()
-        });
-        $("#end_date").on("change", function () {        
-            $('#tbl_products').DataTable().ajax.reload()
-        });
-        $("#start_date").on("change", function () {        
-            $('#tbl_products').DataTable().ajax.reload()
-        });
-
-    })();
-
-
-
-
-    var showList=function(b){
-        if(b){
-            $('#div_product_list').show();
-            $('#div_product_fields').hide();
-        }else{
-            $('#div_product_list').hide();
-            $('#div_product_fields').show();
-        }
-    };
-
-    var showNotification=function(obj){
-        PNotify.removeAll();
-        new PNotify({
-            title:  obj.title,
-            text:  obj.msg,
-            type:  obj.stat
-        });
-    };
-
-    var showSpinningProgress=function(e){
-        $(e).find('span').toggleClass('glyphicon glyphicon-refresh spinning');
-        $(e).toggleClass('disabled');
-    };
-
-
-
-    var getFloat=function(f){
-        return parseFloat(accounting.unformat(f));
-    };
-
-
-});
-
-</script>
-
     <style>
         .right-align{
             text-align: right;
@@ -244,6 +53,11 @@ $(document).ready(function(){
         .select2-container{
             min-width: 100%;
         }
+
+        #tbl_products_filter{
+            display: none;
+        }
+
         @keyframes spin {
             from { transform: scale(1) rotate(0deg); }
             to { transform: scale(1) rotate(360deg); }
@@ -287,8 +101,25 @@ $(document).ready(function(){
                                                 <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Products</b>
                                             </div> -->
                                             <div class="panel-body table-responsive" id="product_list_panel">
-                                            <h2 class="h2-panel-heading">Audit Trail</h2><hr>
-                                                <div class="row">
+
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <br/>
+                                                    <h2 class="h2-panel-heading">
+                                                       <i class="fa fa-list"></i> Audit Trail
+                                                    </h2>
+                                                </div>
+                                                <div class="col-md-4 col-md-offset-2">
+                                                    Search : 
+                                                    <input type="text" id="tbl_search" class="form-control">
+                                                    <br/>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <hr style="margin-top: 0px;">
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
                                                 <div class="col-sm-3" >
                                                     Transaction Type :
                                                     <select name="" id="trans_type_id" required>
@@ -393,7 +224,200 @@ $(document).ready(function(){
 </div>
 
 
+    <?php echo $_switcher_settings; ?>
+    <?php echo $_def_js_files; ?>
 
+
+    <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
+
+
+    <!-- Date range use moment.js same as full calendar plugin -->
+    <script src="assets/plugins/fullcalendar/moment.min.js"></script>
+    <!-- Data picker -->
+    <script src="assets/plugins/datapicker/bootstrap-datepicker.js"></script>
+
+    <!-- Select2 -->
+    <script src="assets/plugins/select2/select2.full.min.js"></script>
+
+
+    <!-- Date range use moment.js same as full calendar plugin -->
+    <script src="assets/js/plugins/fullcalendar/moment.min.js"></script>
+    <!-- Data picker -->
+    <script src="assets/js/plugins/datapicker/bootstrap-datepicker.js"></script>
+
+    <!-- twitter typehead -->
+    <script src="assets/plugins/twittertypehead/handlebars.js"></script>
+    <script src="assets/plugins/twittertypehead/bloodhound.min.js"></script>
+    <script src="assets/plugins/twittertypehead/typeahead.bundle.min.js"></script>
+    <script src="assets/plugins/twittertypehead/typeahead.jquery.min.js"></script>
+
+    <!-- touchspin -->
+    <script type="text/javascript" src="assets/plugins/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.js"></script>
+
+    <!-- numeric formatter -->
+    <script src="assets/plugins/formatter/autoNumeric.js" type="text/javascript"></script>
+    <script src="assets/plugins/formatter/accounting.js" type="text/javascript"></script>
+
+    <script>
+
+$(document).ready(function(){
+    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboItemTypes; var _selectedProductType; var _isTaxExempt=0;
+    var _cboSupplier; var _cboCategory; var _cboTax; var _cboInventory; var _cboMeasurement; var _cboCredit; var _cboDebit;
+    var _cboTaxGroup;
+    var _section_id; var _menu_id; var _trans_key_id; var _user_id;
+    /*$(document).ready(function(){
+        $('#modal_filter').modal('show');
+        showList(false);
+    });*/
+
+    var initializeControls=function() {
+        dt=$('#tbl_products').DataTable({
+            "fnInitComplete": function (oSettings, json) {
+                // $.unblockUI();
+                },
+            "dom": '<"toolbar">frtip',
+            "bLengthChange":false,
+            "pageLength":15,
+            "order": [[ 5, "asc" ]],
+            // "scrollX": true,
+            "ajax": {
+              "url":"Trail/transaction/list",
+              "type":"GET",
+              // "order": [[ 6, "desc" ]],
+              "data":function (d) {
+                return $.extend( {}, d, {
+                    "user_id": $('#user_id').val(),
+                    "trans_type_id": $('#trans_type_id').val(),
+                    "trans_key_id": $('#trans_key_id').val(),
+                    "start_date": $('#start_date').val(),
+                    "end_date": $('#end_date').val()
+                });
+              }
+            },
+            "columns": [
+
+                { targets:[0],data: "trans_date" },
+                { targets:[1],data: "trans_type_desc" },
+                { targets:[2],data: "trans_key_desc" },
+                { targets:[3],data: "trans_log" },
+                { targets:[4], data: null, render: function ( data, type, row ) {
+                // Combine the first and last names into a single table field
+                if(data.user_fname!== null){
+                    return data.user_fname+' '+data.user_lname; // data to be rendered 
+                }else{
+                    return'';
+                }
+
+                } },
+                { visible:false,targets:[5],data: "trans_id" }
+
+            ],
+
+            language: {
+                         searchPlaceholder: "Search"
+                     },
+            "rowCallback":function( row, data, index ){
+
+                // $(row).find('td').eq(4).attr({
+                //     "align": "right"
+                // });
+            }
+
+
+        });
+
+
+        $('.date-picker').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: true,
+            autoclose: true
+        });
+
+        _cboCategory=$('#trans_type_id').select2({
+            allowClear: false
+        });
+
+
+        _trans_key_id=$('#trans_key_id').select2({
+            allowClear: false
+        });
+
+
+        _user_id=$('#user_id').select2({
+            allowClear: false
+        });
+
+
+      
+    }();
+    
+        
+
+    var bindEventHandlers=(function(){
+        $("#trans_type_id").on("change", function () {        
+            $('#tbl_products').DataTable().ajax.reload()
+        });
+        $("#user_id").on("change", function () {        
+            $('#tbl_products').DataTable().ajax.reload()
+        });
+        $("#trans_key_id").on("change", function () {        
+            $('#tbl_products').DataTable().ajax.reload()
+        });
+        $("#end_date").on("change", function () {        
+            $('#tbl_products').DataTable().ajax.reload()
+        });
+        $("#start_date").on("change", function () {        
+            $('#tbl_products').DataTable().ajax.reload()
+        });
+
+        $("#tbl_search").keyup(function(){         
+            dt
+                .search(this.value)
+                .draw();
+        });
+
+    })();
+
+
+
+
+    var showList=function(b){
+        if(b){
+            $('#div_product_list').show();
+            $('#div_product_fields').hide();
+        }else{
+            $('#div_product_list').hide();
+            $('#div_product_fields').show();
+        }
+    };
+
+    var showNotification=function(obj){
+        PNotify.removeAll();
+        new PNotify({
+            title:  obj.title,
+            text:  obj.msg,
+            type:  obj.stat
+        });
+    };
+
+    var showSpinningProgress=function(e){
+        $(e).find('span').toggleClass('glyphicon glyphicon-refresh spinning');
+        $(e).toggleClass('disabled');
+    };
+
+
+
+    var getFloat=function(f){
+        return parseFloat(accounting.unformat(f));
+    };
+
+
+});
+
+</script>
 
 
 </body>

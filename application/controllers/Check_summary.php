@@ -222,7 +222,7 @@ class Check_summary extends CORE_Controller
                                         ->setCellValue('D'.$i,number_format($row->amount,2))
                                         ->setCellValue('E'.$i,$row->ref_no)
                                         ->setCellValue('F'.$i,$row->book_type)
-                                        ->setCellValue('G'.$i,$row->supplier_name)
+                                        ->setCellValue('G'.$i,$row->particular)
                                         ->setCellValue('H'.$i,$row->remarks)
                                         ->setCellValue('I'.$i,$row->status);    
 
@@ -280,7 +280,8 @@ class Check_summary extends CORE_Controller
                         'DATE_FORMAT(cv_info.date_txn,"%m/%d/%Y")as date_txn',
                         'DATE_FORMAT(cv_info.check_date,"%m/%d/%Y") as check_date',
                         'payment_methods.payment_method',
-                        'suppliers.supplier_name as particular',
+                        'CONCAT(IF(NOT ISNULL(customers.customer_id),CONCAT("C-",customers.customer_id),""),IF(NOT ISNULL(suppliers.supplier_id),CONCAT("S-",suppliers.supplier_id),"")) as particular_id',
+                        'CONCAT_WS(" ",IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,"")) as particular',
                         'departments.department_name',
                         'b_refchecktype.check_type_desc',
                         'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by',
@@ -290,6 +291,7 @@ class Check_summary extends CORE_Controller
                         'dr.dr_invoice_no'
                     ),
                     array(
+                        array('customers','customers.customer_id=cv_info.customer_id','left'),
                         array('suppliers','suppliers.supplier_id=cv_info.supplier_id','left'),
                         array('departments','departments.department_id=cv_info.department_id','left'),
                         array('user_accounts','user_accounts.user_id=cv_info.created_by_user','left'),

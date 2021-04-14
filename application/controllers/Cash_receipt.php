@@ -101,6 +101,7 @@ class Cash_receipt extends CORE_Controller
                 $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'department_name ASC');
                 $this->load->view('template/journal_entries', $data);
                 break;
+
             case 'create' :
                 $m_journal=$this->Journal_info_model;
                 $m_journal_accounts=$this->Journal_account_model;
@@ -142,7 +143,6 @@ class Cash_receipt extends CORE_Controller
                     $m_journal->customer_id=0;
                     $m_journal->supplier_id=$particular[1];
                 }
-
 
 
                 $m_journal->remarks=$this->input->post('remarks',TRUE);

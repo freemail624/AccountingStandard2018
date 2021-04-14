@@ -375,7 +375,7 @@ $(document).ready(function(){
                 },
                 { targets:[3],data: "check_date" },
                 { targets:[4],data: "ref_no" },
-                { targets:[5],data: "supplier_name" },
+                { targets:[5],data: "particular" },
                 { targets:[6],data: "remarks" , render: $.fn.dataTable.render.ellipsis(40) },
                 {  targets:[7],data: "check_status",
                     render: function (data, type, full, meta){
@@ -412,7 +412,7 @@ $(document).ready(function(){
                                     '<td><b>Particular</b></td>'+
                                     '<td><b>Remarks</b></td>'+
                                     '<td align="center"><b>Issued</b></td>'+
-                                    '<td><center>Action</center></td>'+
+                                    '<td><center><b>Action</b></center></td>'+
                             '</tr>'
                         );
 

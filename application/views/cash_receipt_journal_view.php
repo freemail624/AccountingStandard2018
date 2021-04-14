@@ -501,7 +501,7 @@
                                     <span class="input-group-addon">
                                         <i class="fa fa-code"></i>
                                     </span>
-                                    <input type="text" name="amount" class="form-control numeric" required data-error-msg="Amount is required">
+                                    <input type="text" id="cash_amount" name="amount" class="form-control numeric" required data-error-msg="Amount is required">
                                 </div>
                             </div>
                         </div>
@@ -584,7 +584,7 @@
                                     <td>
                                         <select name="accounts[]" class="selectpicker show-tick form-control selectpicker_accounts" data-live-search="true" >
                                             <?php foreach($accounts as $account){ ?>
-                                                <option value='<?php echo $account->account_id; ?>'><?php echo $account->account_title; ?></option>
+                                                <option value='<?php echo $account->account_id; ?>' data-cib="<?php echo $account->for_cib; ?>"><?php echo $account->account_title; ?></option>
                                             <?php } ?>
                                         </select>
                                     </td>
@@ -608,7 +608,7 @@
                                     <td>
                                         <select name="accounts[]" class="selectpicker show-tick form-control selectpicker_accounts" data-live-search="true" >
                                             <?php foreach($accounts as $account){ ?>
-                                                <option value='<?php echo $account->account_id; ?>'><?php echo $account->account_title; ?></option>
+                                                <option value='<?php echo $account->account_id; ?>' data-cib="<?php echo $account->for_cib; ?>"><?php echo $account->account_title; ?></option>
                                             <?php } ?>
                                         </select>
                                     </td>
@@ -672,7 +672,7 @@
                 <td>
                     <select name="accounts[]" class="selectpicker show-tick form-control selectpicker_accounts" data-live-search="true" >
                         <?php foreach($accounts as $account){ ?>
-                            <option value='<?php echo $account->account_id; ?>'><?php echo $account->account_title; ?></option>
+                            <option value='<?php echo $account->account_id; ?>' data-cib="<?php echo $account->for_cib; ?>"><?php echo $account->account_title; ?></option>
                         <?php } ?>
                     </select>
                 </td>
@@ -946,7 +946,7 @@
                                     <div class="col-md-8">
                                         <div class="col-md-12">
                                             <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;"> Customer Name :</label>
+                                                 <label class="control-label boldlabel" style="text-align:right;"> <b class="required">*</b> Customer Name :</label>
                                             </div>
                                             <div class="form-group">
                                                 <div class="input-group">
@@ -960,7 +960,7 @@
 
                                         <div class="col-md-12">
                                             <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;"> Contact Person :</label>
+                                                 <label class="control-label boldlabel" style="text-align:right;"> <b class="required">*</b> Contact Person :</label>
                                             </div>
                                             <div class="form-group">
                                                 <div class="input-group">
@@ -974,7 +974,7 @@
                                     
                                         <div class="col-md-12">
                                             <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;">Address :</label>
+                                                 <label class="control-label boldlabel" style="text-align:right;"><b class="required">*</b> Address :</label>
                                             </div>
                                             <div class="form-group">
                                                 <div class="input-group">
@@ -1023,7 +1023,7 @@
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-envelope-o"></i>
                                                     </span>
-                                                    <input type="text" name="email_address" class="form-control" placeholder="Email Address" data-error-msg="Email Address is required." required>
+                                                    <input type="text" name="email_address" class="form-control" placeholder="Email Address" data-error-msg="Email Address is required.">
                                                 </div>
                                             </div>
                                         </div>
@@ -1037,7 +1037,7 @@
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-phone"></i>
                                                     </span>
-                                                    <input type="text" name="contact_no" class="form-control" placeholder="Contact No" data-error-msg="Contact No  is required." required>
+                                                    <input type="text" name="contact_no" class="form-control" placeholder="Contact No" data-error-msg="Contact No  is required.">
                                                 </div>
                                             </div>
                                         </div>
@@ -1051,7 +1051,7 @@
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-file-code-o"></i>
                                                     </span>
-                                                    <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="TIN" data-error-msg="TIN is required." required>
+                                                    <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="TIN" data-error-msg="TIN is required.">
                                                 </div>
                                             </div>
                                         </div>
@@ -1201,6 +1201,7 @@ $(document).ready(function(){
     var _cboArTrans; var dtReviewAdvances; var _selectedParentRow; var _curBtn_; var cancelAdvance;
 
     var oTBJournal={
+        "account" : "td:eq(0)",
         "dr" : "td:eq(2)",
         "cr" : "td:eq(3)"
     };
@@ -1463,8 +1464,6 @@ $(document).ready(function(){
             autoclose: true
 
         });
-
-
 
         _cboTaxGroup=$('#cbo_tax_type').select2({
             allowClear: false
@@ -1885,7 +1884,7 @@ $(document).ready(function(){
                 }
             }
 
-
+            recomputeCheckAmount($('#tbl_entries'));
             reComputeTotals($('#tbl_entries'));
         });
 
@@ -1921,14 +1920,6 @@ $(document).ready(function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.journal_id;
-
-            if(data.check_date == '01/01/1970') {
-                //$('#check_date').datepicker('setDate','today');
-                //$('#check_date').val(null);
-                //clearFields($('#frm_journal'));
-
-                //alert('data.check_date');
-            }
 
             $('input,textarea').each(function(){
                 var _elem=$(this);
@@ -1972,6 +1963,13 @@ $(document).ready(function(){
             $('#cbo_payment_method').select2('val',data.payment_method_id);
             $('#cbo_check_types').select2('val',data.check_type_id);
 
+            $('#check_date').val(data.check_date);
+            $('#check_no').val(data.check_no);
+
+            if(data.check_date == '00/00/0000'){
+                $('input[name="check_date"]').val('');
+            }
+
             $.ajax({
                 url: 'Cash_receipt/transaction/get-entries?id=' + data.journal_id,
                 type: "GET",
@@ -2001,10 +1999,12 @@ $(document).ready(function(){
                 $('img').attr('src','assets/img/anonymous-icon.png');
                  $('#cbo_customer_type').select2('val', 0);
                 $('#cbo_ar_trans').select2('val',null);
+                _cboParticulars.select2('val', null);
                 $('#modal_create_customer').modal('show');
             } else if (_cboParticulars.val() == 'create_supplier'){
                 clearFields($('#frm_supplier'));
                 $('img').attr('src','assets/img/anonymous-icon.png');
+                _cboParticulars.select2('val', null);
                 $('#modal_create_suppliers').modal('show');
             }else {
                 var obj_customers=$('#cbo_particulars').find('option[value="' + i + '"]');
@@ -2053,6 +2053,9 @@ $(document).ready(function(){
 
         });
 
+        $('#tbl_entries tbody').on('change','select.selectpicker_accounts',function(){
+            recomputeCheckAmount($('#tbl_entries'));
+        });
 
         $('#tbl_entries').on('click','button.remove_account',function(){
             var oRow=$('#tbl_entries > tbody tr');
@@ -2063,6 +2066,7 @@ $(document).ready(function(){
                 showNotification({"title":"Error!","stat":"error","msg":"Sorry, you cannot remove all rows."});
             }
 
+            recomputeCheckAmount($('#tbl_entries'));
             reComputeTotals($('#tbl_entries'));
 
         });
@@ -2425,6 +2429,26 @@ $(document).ready(function(){
         $(e).find('span').toggleClass('glyphicon glyphicon-refresh spinning');
     };
 
+    var recomputeCheckAmount=function(tbl){
+        var oRows=tbl.find('tbody tr');
+        var totalAmount = 0; var _DR_amount=0; var _CR_amount;
+
+        $.each(oRows,function(i,value){
+
+            var for_cib = accounting.unformat($(this).find(oTBJournal.account).find('select').find('option:selected').data('cib'));
+
+            _DR_amount=getFloat($(this).find(oTBJournal.dr).find('input.numeric').val());
+            _CR_amount=getFloat($(this).find(oTBJournal.cr).find('input.numeric').val());
+
+            if (for_cib == 1){
+                totalAmount += (_DR_amount + _CR_amount);
+            }
+
+        });
+
+        $('#cash_amount').val(accounting.formatNumber(totalAmount,2));
+
+    }
 
     var reComputeTotals=function(tbl){
         var oRows=tbl.find('tbody tr');

@@ -82,24 +82,26 @@
 		                    	<div class="row">
 		                    		<div class="container-fluid">
 		                    			<div class="container-fluid group-box">
-		                    				<div class="col-xs-12 col-md-6">
-		                    					<strong>Start Date * : </strong><br>
-		                    					<div class="input-group">
-			                    					<input id="startDate" type="text" class="date-picker form-control" name="date_from" value="01/01/<?php echo date("Y"); ?>">
-			                    					<div class="input-group-addon">
-			                    						<i class="fa fa-calendar"></i>
-			                    					</div>
-		                    					</div>
-		                    				</div>
-			                    			<div class="col-xs-12 col-md-6">
-		                    					<strong>End Date * : </strong><br>
-			                    				<div class="input-group">
-			                    					<input id="endDate" type="text" class="date-picker form-control" name="date_to" value="<?php echo date("m/d/Y"); ?>">
-			                    					<div class="input-group-addon">
-			                    						<i class="fa fa-calendar"></i>
-			                    					</div>
-		                    					</div>
-		                    				</div>
+                                            <div class="row">                                            
+                                                <div class="col-xs-12 col-md-6">
+                                                    <strong>Start Date * : </strong><br>
+                                                    <div class="input-group">
+                                                        <input id="startDate" type="text" class="date-picker form-control" name="date_from" value="01/01/<?php echo date("Y"); ?>">
+                                                        <div class="input-group-addon">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-md-6">
+                                                    <strong>End Date * : </strong><br>
+                                                    <div class="input-group">
+                                                        <input id="endDate" type="text" class="date-picker form-control" name="date_to" value="<?php echo date("m/d/Y"); ?>">
+                                                        <div class="input-group-addon">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
 			                    		</div><br>
 			                    		<div class="container-fluid ">
 			                    			<button class="btn btn-primary pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_print"  data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Print" ><i class="fa fa-print"></i> Print Report
@@ -279,7 +281,7 @@
         		  "paging": false,
         		    "bInfo" : false,
         		"language": {
-        			"searchPlaceholder":"Search Supplier"
+        			"searchPlaceholder":"Search"
         		},
         		"ajax":{
         			"url": "Voucher_registry_report/transaction/list",
@@ -295,7 +297,7 @@
                 "columns": [
                     { "searchable": true,targets:[0],data: "ref_no" },
                      { "searchable": true,targets:[1],data: "date_txn" },  
-                      { "searchable": true,targets:[2],data: "supplier_name" },  
+                      { "searchable": true,targets:[2],data: "particular" },  
                       { "searchable": true, className:"isNumeric" ,targets:[3],data: "amount"
                       ,
                       	render: $.fn.dataTable.render.number( ',', '.', 2 )

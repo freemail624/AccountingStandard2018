@@ -36,10 +36,10 @@
 <span style="top: 120px; left: 248px;letter-spacing: 6px;"><?php echo $payee_tin_3;?></span>
 <span style="top: 120px; left: 310px;letter-spacing: 6px;"><?php echo $payee_tin_4;?></span>
 
-<span style="top: 143px; left: 130px;letter-spacing: 1px; width: 570px;max-width:570px;"><?php echo $supplier->supplier_name; ?></span>
+<span style="top: 143px; left: 130px;letter-spacing: 1px; width: 570px;max-width:570px;"><?php echo $particular->particular; ?></span>
 
-<span style="top: 173px; left: 130px;letter-spacing: 1px; width: 420px;max-width:420px;"><?php echo $supplier->address; ?></span>
-<span style="top: 173px; left: 635px;letter-spacing: 9px;"><?php echo $supplier->zip_code; ?></span>
+<span style="top: 173px; left: 130px;letter-spacing: 1px; width: 420px;max-width:420px;"><?php echo $particular->address; ?></span>
+<span style="top: 173px; left: 635px;letter-spacing: 9px;"><?php echo $particular->zip_code; ?></span>
 
 <span style="top: 195px; left: 130px;letter-spacing: 1px; width: 420px;max-width:420px;"></span>
 <span style="top: 195px; left: 635px;letter-spacing: 9px;"></span>

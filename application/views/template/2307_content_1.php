@@ -124,7 +124,7 @@
                             substr($item->tin_no,6, 3).'-'.
                             substr($item->tin_no,9, 3);
                 }?></center></td>
-                <td class="bordered"><?php echo $item->supplier_name; ?></td>
+                <td class="bordered"><?php echo $item->particular; ?></td>
                 <td class="bordered"><center><?php echo  date_format(date_create($item->date_txn),"m/y"); ?></center></td>
                 <td class="bordered"><?php echo $item->atc; ?></td>
                 <td class="bordered"><?php echo $item->remarks; ?></td> 

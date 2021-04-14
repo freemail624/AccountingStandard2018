@@ -37,7 +37,7 @@ class Certificate_of_creditable_tax extends CORE_Controller {
                 $year = $this->input->get('year', TRUE);
                 if($month == 0){$month = null;}
                 // $response['data'] = $m_form_2307->get_2307_list($month,$year);
-                $response['data'] = $m_form_2307->get_2307_suppliers($month,$year);
+                $response['data'] = $m_form_2307->get_2307_particulars($month,$year);
                 echo json_encode($response);
                 break;
 
@@ -327,7 +327,7 @@ class Certificate_of_creditable_tax extends CORE_Controller {
 
                 $excel->getActiveSheet()->setCellValue('A'.$i,$a)
                                         ->setCellValue('B'.$i,$tin_no)
-                                        ->setCellValue('C'.$i,$row->supplier_name)
+                                        ->setCellValue('C'.$i,$row->particular)
                                         ->setCellValue('D'.$i,date_format(date_create($row->date_txn),"m/y"))
                                         ->setCellValue('E'.$i,$row->atc)
                                         ->setCellValue('F'.$i,$row->remarks)

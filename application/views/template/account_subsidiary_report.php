@@ -5,7 +5,7 @@
 	<style type="text/css">
         body {
             font-family: 'Calibri',sans-serif;
-            font-size: 12px;
+            font-size: 9px;
         }
 
         .align-right {
@@ -62,14 +62,11 @@
         </tr>
     </table><hr>
     <div class="">
-                    <h3>PERIOD : <?php echo '<strong>'.$_GET['startDate'].'</strong> to <strong>'.$_GET['endDate'].'</strong>'; ?></h3>
+        <h3>PERIOD : <?php echo '<strong>'.$_GET['startDate'].'</strong> to <strong>'.$_GET['endDate'].'</strong>'; ?></h3>
         <h3 class="report-header"><strong>ACCOUNT SUBSIDIARY REPORT</strong></h3>
+        <h3><strong>Account: </strong><?php echo $subsidiary_info->account_title; ?></h3>
     </div>
-     <table width="100%" border="0" cellspacing="-1">
-        <tr>
-        	<td style="padding: 4px;" width="100%"><strong>Account: </strong><?php echo $subsidiary_info->account_title; ?></td>
-        </tr>
-    </table><br>
+    <br>
     <table width="100%" border="1" cellspacing="-1">
     	<thead>
             <tr>
@@ -89,17 +86,17 @@
         <tbody>
         	<?php foreach($supplier_subsidiary as $items) { ?>
         	<tr>
-                <td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->book_type; ?></td>
-        		<td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->date_txn; ?></td>
+                <td style="border: 1px solid black;text-align: center;height: 20px;padding: 6px;"><?php echo $items->book_type; ?></td>
+        		<td style="border: 1px solid black;text-align: center;height: 20px;padding: 6px;"><?php echo $items->date_txn; ?></td>
         		<td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->txn_no; ?></td>
                 <td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->particular; ?></td>
                 <td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->tin_no; ?></td>
         		<td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->memo; ?></td>
         		<td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->remarks; ?></td>
         		<td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->posted_by; ?></td>
-        		<td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo number_format($items->debit,2); ?></td>
-        		<td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo number_format($items->credit,2); ?></td>
-        		<td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo number_format($items->balance,2); ?></td>
+        		<td style="border: 1px solid black;text-align: right;height: 20px;padding: 6px;"><?php echo number_format($items->debit,2); ?></td>
+        		<td style="border: 1px solid black;text-align: right;height: 20px;padding: 6px;"><?php echo number_format($items->credit,2); ?></td>
+        		<td style="border: 1px solid black;text-align: right;height: 20px;padding: 6px;"><?php echo number_format($items->balance,2); ?></td>
     		</tr>
     		<?php } ?>
         </tbody>

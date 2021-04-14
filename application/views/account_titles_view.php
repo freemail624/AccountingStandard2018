@@ -122,6 +122,7 @@
                                                     <th>Account</th>
                                                     <th>Parent</th>
                                                     <th>Type</th>
+                                                    <th><center>CIB</center></th>
                                                     <th style="width: 15%;"><center>Action</center></th>
                                                 </tr>
                                                 </thead>
@@ -196,6 +197,12 @@
                                                         <option value="<?php echo $account->account_id; ?>"><?php echo $account->account_title; ?></option>
                                                     <?php } ?>
                                                 </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-2 control-label"></label>
+                                            <div class="col-md-9">
+                                                <label  for="for_cib" style="text-align: left;vertical-align: middle;"><input type="checkbox" name="for_cib" class="" id="for_cib" style="transform: scale(2.0);">&nbsp;&nbsp; For Check Amount ? </label>
                                             </div>
                                         </div>
                                         <br /><br /><br />
@@ -363,8 +370,21 @@ $(document).ready(function(){
                 { targets:[2],data: "account_title" },
                 { targets:[3],data: "parent_account" },
                 { targets:[4],data: "account_type" },
+                { targets:[5],data: null,
+                    render: function (data, type, full, meta){
+                        var _attribute='';
+
+                        if(data.for_cib=="1"){
+                            _attribute=' class="fa fa-check-circle" style="color:green;" ';
+                        }else{
+                            _attribute=' class="fa fa-times-circle" style="color:red;" ';
+                        }
+
+                        return '<center><i '+_attribute+'></i></center>';
+                    }
+                },
                 {
-                    targets:[5],
+                    targets:[6],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
@@ -491,6 +511,7 @@ $(document).ready(function(){
             _cboClasses.select2('val',null);
             _cboTypes.select2('val',1);
             _cboParentAccounts.select2('val',0);
+            $('#for_cib').attr('checked', false);
             showList(false);
         });
 
@@ -555,7 +576,7 @@ $(document).ready(function(){
 
             $('#cbo_account_class').select2('val',data.account_class_id);
             $('#cbo_parent_account').select2('val',data.parent_account_id);
-
+            $('#for_cib').prop('checked', (data.for_cib==1?true:false));
 
             $('#account_add_title').text('Edit Account Information');
             showList(false);
@@ -687,6 +708,10 @@ $(document).ready(function(){
     var createAccountInfo=function(){
         var _data=$('#frm_accounts').serializeArray();
 
+        $('#for_cib').prop("checked") ?  
+            _data.push({name : "for_cib" , value : '1'   }) : 
+            _data.push({name : "for_cib" , value : '0'   });
+
         return $.ajax({
             "dataType":"json",
             "type":"POST",
@@ -698,6 +723,11 @@ $(document).ready(function(){
 
     var updateAccountInfo=function(){
         var _data=$('#frm_accounts').serializeArray();
+
+        $('#for_cib').prop("checked") ?  
+            _data.push({name : "for_cib" , value : '1'   }) : 
+            _data.push({name : "for_cib" , value : '0'   });
+
         _data.push({name : "account_id" ,value : _selectedID});
 
         return $.ajax({

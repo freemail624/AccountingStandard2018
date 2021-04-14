@@ -429,7 +429,7 @@
                                                     <div class="col-xs-12 col-sm-12 <?php echo (in_array('7-3',$this->session->user_rights)?'':'hidden'); ?>">
                                                       <div class="data-container table-responsive" style="min-height: 300px; max-height: 700px;overflow-x: hidden;">
                                                       <div class="row">
-                                                        <div class="col-sm-9"><h3 class="po_title" style=""><i class="fa fa-file-text-o"  style="color: #067cb2;"></i> <span >VOUCHERS FOR APPROVAL</span></h3>
+                                                        <div class="col-sm-9"><h3 class="po_title" style=""><i class="fa fa-file-text-o"  style="color: #067cb2;"></i> <span> VOUCHERS FOR APPROVAL</span></h3>
                                                         </div>
                                                         <div class="col-sm-3">
                                                         <input type="text" id="search_tbl_vouchers_list" class="form-control">

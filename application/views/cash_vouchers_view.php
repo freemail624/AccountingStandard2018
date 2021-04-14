@@ -309,11 +309,21 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <b class="required"> * </b> <label>Supplier  :</label><br />
-                                        <select id="cbo_suppliers" name="supplier_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Supplier name is required." required>
-                                            <?php foreach($suppliers as $supplier){ ?>
-                                                <option value='<?php echo $supplier->supplier_id; ?>'><?php echo $supplier->supplier_name; ?></option>
-                                            <?php } ?>
+                                        <b class="required"> * </b> <label>Particular  :</label><br />
+                                        <select id="cbo_particulars" name="particular_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Particular is required." required>
+                                            <optgroup label="Customers">
+                                                <!-- <option value="create_customer">[Create New Customer]</option> -->
+                                                <?php foreach($customers as $customer){ ?>
+                                                    <option value='C-<?php echo $customer->customer_id; ?>' data-link_department='<?php echo $customer->link_department_id; ?>'><?php echo $customer->customer_name; ?></option>
+                                                <?php } ?>
+                                            </optgroup>
+
+                                            <optgroup label="Suppliers">
+                                                <!-- <option value="create_supplier">[Create New Supplier]</option> -->
+                                                <?php foreach($suppliers as $supplier){ ?>
+                                                    <option value='S-<?php echo $supplier->supplier_id; ?>' data-link_department='0'><?php echo $supplier->supplier_name; ?></option>
+                                                <?php } ?>
+                                            </optgroup>
                                         </select>
                                     </div>
                                 </div>
@@ -452,7 +462,7 @@
                             <td>
                                 <select name="accounts[]" class="selectpicker show-tick form-control selectpicker_accounts" data-live-search="true" >
                                     <?php $i=0; foreach($accounts as $account){ ?>
-                                        <option value='<?php echo $account->account_id; ?>' <?php echo ($i==0?'':''); ?>><?php echo $account->account_title; ?></option>
+                                        <option value='<?php echo $account->account_id; ?>' <?php echo ($i==0?'':''); ?> data-cib="<?php echo $account->for_cib; ?>"><?php echo $account->account_title; ?></option>
                                         <?php $i++; } ?>
                                 </select>
                             </td>
@@ -477,7 +487,7 @@
                             <td>
                                 <select name="accounts[]" class="selectpicker show-tick form-control selectpicker_accounts" data-live-search="true">
                                     <?php $i=0; foreach($accounts as $account){ ?>
-                                        <option value='<?php echo $account->account_id; ?>' <?php echo ($i==0?'':''); ?> > <?php echo $account->account_title; ?> </option>
+                                        <option value='<?php echo $account->account_id; ?>' <?php echo ($i==0?'':''); ?> data-cib="<?php echo $account->for_cib; ?>"> <?php echo $account->account_title; ?> </option>
                                         <?php $i++; } ?>
                                 </select>
                             </td>
@@ -541,7 +551,7 @@
             <td width="30%">
                 <select name="accounts[]" class="selectpicker show-tick form-control selectpicker_accounts" data-live-search="true" >
                     <?php $i=0; foreach($accounts as $account){ ?>
-                        <option value='<?php echo $account->account_id; ?>' <?php echo ($i==0?'':''); ?>><?php echo $account->account_title; ?></option>
+                        <option value='<?php echo $account->account_id; ?>' <?php echo ($i==0?'':''); ?> data-cib="<?php echo $account->for_cib; ?>"><?php echo $account->account_title; ?></option>
                         <?php $i++; } ?>
                 </select>
             </td>
@@ -737,6 +747,395 @@
 </div><!---modal-->
 
 
+<div id="modal_create_suppliers" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false"><!--modal-->
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#2ecc71;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title" style="color:#ecf0f1;"><span id="modal_mode"> </span>New Supplier Information</h4>
+            </div>
+
+            <div class="modal-body">
+                <form id="frm_supplier">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="col-md-12">
+                                <div class="col-md-4" id="label">
+                                     <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b class="required">*</b></font> Company Name :</label>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-users"></i>
+                                        </span>
+                                        <input type="text" name="supplier_name" class="form-control" placeholder="Supplier Name" data-error-msg="Supplier Name is required!" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="col-md-4" id="label">
+                                     <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b class="required">*</b></font> Contact Person :</label>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-users"></i>
+                                        </span>
+                                        <input type="text" name="contact_name" class="form-control" placeholder="Contact Person" data-error-msg="Contact Person is required!" required>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                            <div class="col-md-12">
+                                <div class="col-md-4" id="label">
+                                     <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b class="required">*</b></font> Address :</label>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-home"></i>
+                                         </span>
+                                         <textarea name="address" class="form-control" data-error-msg="Supplier address is required!" placeholder="Address" required ></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                            <div class="col-md-12">
+                                <div class="col-md-4" id="label">
+                                     <label class="control-label boldlabel" style="text-align:right;">Email Address :</label>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-envelope-o"></i>
+                                        </span>
+                                        <input type="text" name="email_address" class="form-control" placeholder="Email Address">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="col-md-4" id="label">
+                                     <label class="control-label boldlabel" style="text-align:right;">Contact No :</label>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-mobile"></i>
+                                        </span>
+                                        <input type="text" name="contact_no" class="form-control" placeholder="Contact No">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="col-md-4" id="label">
+                                     <label class="control-label boldlabel" style="text-align:right;">TIN # :</label>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-code"></i>
+                                        </span>
+                                        <input type="text" name="tin_no" class="form-control" placeholder="TIN #">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-4" id="label">
+                                     <label class="control-label boldlabel" style="text-align:right;">Tax Output % :</label>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-code"></i>
+                                        </span>
+                                        <input type="text" name="tax_output" class="form-control" placeholder="Input Percentage Number Only"> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-4" id="label">
+                                     <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b class="required">*</b></font> Tax :</label>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-code"></i>
+                                        </span>
+                                        <select name="tax_type_id" id="cbo_tax_type" data-error-msg="Tax type is required!" required="">
+                                            <option value="">Please select tax type...</option>
+                                            <?php foreach($tax_types as $tax_type){ ?>
+                                                <option value="<?php echo $tax_type->tax_type_id; ?>" data-tax-rate="<?php echo $tax_type->tax_rate; ?>"><?php echo $tax_type->tax_type; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    <label class="control-label boldlabel" style="text-align:left;padding-top:10px;"><i class="fa fa-user" aria-hidden="true" style="padding-right:10px;"></i>Supplier's Photo</label>
+                                    <hr style="margin-top:0px !important;height:1px;background-color:black;">
+                                </div>
+                                <div style="width:100%;height:350px;border:2px solid #34495e;border-radius:5px;">
+                                    <center>
+                                        <img name="img_supplier" id="img_user" src="assets/img/anonymous-icon.png" height="140px;" width="140px;"></img>
+                                    </center>
+                                    <hr style="margin-top:0px !important;height:1px;background-color:black;">
+                                    <center>
+                                         <button type="button" id="btn_browse_supplier_photo" style="width:150px;margin-bottom:5px;" class="btn btn-primary">Browse Photo</button>
+                                         <button type="button" id="btn_remove_photo_supplier" style="width:150px;" class="btn btn-danger">Remove</button>
+                                         <input type="file" name="file_supplier[]" class="hidden">
+                                    </center> 
+                                </div>
+                            </div>   
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button id="btn_save_supplier" type="button" class="btn btn-primary" style="background-color:#2ecc71;color:white;"><span class=""></span> Save</button>
+                <button id="btn_cancel_supplier" type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+            </div>
+        </div><!---content---->
+    </div>
+</div><!---modal-->
+
+<div id="modal_create_customer" class="modal fade" role="dialog"  data-backdrop="static" data-keyboard="false"><!--modal-->
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#2ecc71;">
+                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title" style="color:#ecf0f1;"><span id="modal_mode"> </span>New Customer Information</h4>
+            </div>
+
+            <div class="modal-body">
+                <form id="frm_customer">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="col-md-12">
+                                <div class="col-md-4" id="label">
+                                     <label class="control-label boldlabel" style="text-align:right;"> <b class="required">*</b> Customer Name :</label>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-users"></i>
+                                        </span>
+                                        <input type="text" name="customer_name" class="form-control" placeholder="Customer Name" data-error-msg="Customer Name is required!" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="col-md-4" id="label">
+                                     <label class="control-label boldlabel" style="text-align:right;"> <b class="required">*</b> Contact Person :</label>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-users"></i>
+                                        </span>
+                                        <input type="text" name="contact_name" class="form-control" placeholder="Contact Person" required data-error-msg="Contact Person is required.">
+                                    </div>
+                                </div>
+                            </div>
+                        
+                            <div class="col-md-12">
+                                <div class="col-md-4" id="label">
+                                     <label class="control-label boldlabel" style="text-align:right;"><b class="required">*</b> Address :</label>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-home"></i>
+                                         </span>
+                                         <textarea name="address" class="form-control" data-error-msg="Supplier address is required!" placeholder="Address" required ></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- <div class="col-md-12">
+                                <div class="col-md-4" id="label">
+                                     <label class="control-label boldlabel" style="text-align:right;"> Term :</label>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-file-code-o"></i>
+                                        </span>
+                                        <input type="text" name="term" id="term" class="form-control" placeholder="Term in days">
+                                    </div>
+                                </div>
+                            </div> -->
+
+                            <!-- <div class="col-md-12">
+                                <div class="col-md-4" id="label">
+                                     <label class="control-label boldlabel" style="text-align:right;"> Credit Limit :</label>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-file-code-o"></i>
+                                        </span>
+                                        <input type="text" name="credit_limit" id="credit_limit" class="form-control" placeholder="Credit Limit">
+                                    </div>
+                                </div>
+                            </div> -->
+                        
+                            <div class="col-md-12">
+                                <div class="col-md-4" id="label">
+                                     <label class="control-label boldlabel" style="text-align:right;"> Email Address :</label>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-envelope-o"></i>
+                                        </span>
+                                        <input type="text" name="email_address" class="form-control" placeholder="Email Address" data-error-msg="Email Address is required.">
+                                    </div>
+                                </div>
+                            </div>
+                        
+                            <div class="col-md-12">
+                                <div class="col-md-4" id="label">
+                                     <label class="control-label boldlabel" style="text-align:right;"> Contact No :</label>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-phone"></i>
+                                        </span>
+                                        <input type="text" name="contact_no" class="form-control" placeholder="Contact No" data-error-msg="Contact No  is required.">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="col-md-4" id="label">
+                                     <label class="control-label boldlabel" style="text-align:right;"> TIN :</label>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-file-code-o"></i>
+                                        </span>
+                                        <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="TIN" data-error-msg="TIN is required.">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12"><br>
+                                <div class="col-md-4" id="label">
+                                     <label class="control-label boldlabel" style="text-align:right;margin-bottom:0px;">Department:</label><br>
+                                     <small><i>Used in Journal Entries</i> </small>
+                                </div>
+                                <div class="col-md-8" style="padding: 0px;">
+                                <select name="link_department_id" id="cbo_link_department_id" style="width: 100%">
+                                    <option value="0">None</option>
+                                    <?php foreach($departments as $department){ ?>
+                                        <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name?></option>
+                                    <?php } ?>
+                                </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12 hidden">
+                                <div class="col-md-4" id="label">
+                                     <label class="control-label boldlabel" style="text-align:right;">Business Organization :</label>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-users"></i>
+                                        </span>
+                                        <input type="text" name="business_organization" id="business_organization" class="form-control" placeholder="Business Organization" data-error-msg="Business Organization is required.">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 hidden">
+                                <div class="col-md-4" id="label">
+                                     <label class="control-label boldlabel" style="text-align:right;">Office Fax Number :</label>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-users"></i>
+                                        </span>
+                                        <input type="text" name="office_fax_number" id="office_fax_number" class="form-control" placeholder="Office Fax Number" data-error-msg="Office Fax Number is required." >
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 hidden">
+                                <div class="col-md-4" id="label">
+                                     <label class="control-label boldlabel" style="text-align:right;">AR Transaction :</label>
+                                </div>
+                                <div class="col-md-8" style="padding: 0px;">
+                                <select name="ar_trans_id" id="cbo_ar_trans" style="width: 100%" data-error-msg="Type of Accounts Receivable Transaction is required." >
+                                    <?php foreach($ar_trans as $ar_tran){ ?>
+                                        <option value="<?php echo $ar_tran->ar_trans_id; ?>"><?php echo $ar_tran->ar_trans_name?></option>
+                                    <?php } ?>
+                                </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12 hidden"><br>
+                                <div class="col-md-4" id="label">
+                                     <label class="control-label boldlabel" style="text-align:right;" >Terms and Conditions :</label>
+                                </div>
+                                <div class="col-md-8" style="padding: 0px;">
+                                <input type="text" name="payment_term_desc" class="form-control" data-error-msg="Payment Terms and Condition is required." >
+                                </div>
+                            </div>
+                            <div class="col-md-12 hidden"><br>
+                                <div class="col-md-4" id="label">
+                                     <label class="control-label boldlabel" style="text-align:right;">Customer Type :</label>
+                                </div>
+                                <div class="col-md-8" style="padding: 0px;">
+                                <select name="customer_type_id" id="cbo_customer_type" style="width: 100%">
+                                    <option value="0">None</option>
+                                    <?php foreach($customer_type as $customer_type){ ?>
+                                        <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name?></option>
+                                    <?php } ?>
+                                </select>
+                                </div>
+                            </div>  
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    <label class="control-label boldlabel" style="text-align:left;padding-top:10px;"><i class="fa fa-user" aria-hidden="true" style="padding-right:10px;"></i>Customer's Photo</label>
+                                    <hr style="margin-top:0px !important;height:1px;background-color:black;">
+                                </div>
+                                <div style="width:100%;height:350px;border:2px solid #34495e;border-radius:5px;">
+                                    <center>
+                                        <img name="img_customer" id="img_user" src="assets/img/anonymous-icon.png" height="140px;" width="140px;"></img>
+                                    </center>
+                                    <hr style="margin-top:0px !important;height:1px;background-color:black;">
+                                    <center>
+                                         <button type="button" id="btn_browse_customer_photo" style="width:150px;margin-bottom:5px;" class="btn btn-primary">Browse Photo</button>
+                                         <button type="button" id="btn_remove_photo_customer" style="width:150px;" class="btn btn-danger">Remove</button>
+                                         <input type="file" name="file_upload[]" class="hidden">
+                                    </center> 
+                                </div>
+                            </div>   
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button id="btn_save_customer" type="button" class="btn" style="background-color:#2ecc71;color:white;"><span class=""></span> Save</button>
+                <button id="btn_cancel_customer" type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+            </div>
+        </div><!---content-->
+    </div>
+</div>
+
+
 <?php echo $_switcher_settings; ?>
 <?php echo $_def_js_files; ?>
 
@@ -765,11 +1164,12 @@
 
 <script>
 $(document).ready(function(){
-    var _txnMode; var _cboSuppliers; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode, _cboBranches, _cboPaymentMethod, _cboCheckTypes;
+    var _txnMode; var _cboParticulars; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode, _cbo_departments, _cboPaymentMethod, _cboCheckTypes;
      var cbo_refType; var _cboLayouts; var dtRecurring; var _attribute; var _TableFilter; var _selectedDepartment = 0;
-     var _cboTaxCode; var dt_rr; var btn_rr_status;
+     var _cboTaxCode; var dt_rr; var btn_rr_status; var _cboCustomerType; var _cboArTrans; var _cboLinkDepartment; var _cboTaxGroup;
 
     var oTBJournal={
+        "account" : "td:eq(0)",
         "dr" : "td:eq(2)",
         "cr" : "td:eq(3)"
     };
@@ -905,11 +1305,11 @@ $(document).ready(function(){
             allowClear:false
         });
 
-        _cboSuppliers=$('#cbo_suppliers').select2({
-            placeholder: "Please select supplier.",
+        _cboParticulars=$('#cbo_particulars').select2({
+            placeholder: "Please select a particular.",
             allowClear: false
         });
-        _cboSuppliers.select2('val',null);
+        _cboParticulars.select2('val',null);
 
         _cboPaymentMethod = $('#cbo_pay_type').select2({
             placeholder: "Please select Payment Type.",
@@ -917,11 +1317,20 @@ $(document).ready(function(){
         });
         _cboPaymentMethod.select2('val',null);
 
-         _cboBranches=$('#cbo_branch').select2({
+        _cbo_departments=$('#cbo_branch').select2({
             placeholder: "Please select department.",
             allowClear: false
         });
-        _cboBranches.select2('val',null);
+        _cbo_departments.select2('val',null);
+
+        _cboCustomerType=$("#cbo_customer_type").select2({
+            allowClear: false
+        });
+
+        _cboArTrans=$("#cbo_ar_trans").select2({
+            placeholder: "Please select AR Transaction.",
+            allowClear: false
+        });
 
         _cboLayouts=$('#cbo_layouts').select2({
             placeholder: "Please select check layout.",
@@ -940,6 +1349,19 @@ $(document).ready(function(){
             allowClear: false
         });
         _cboTaxCode.select2('val',null);
+
+        _cboLinkDepartment=$("#cbo_link_department_id").select2({
+            placeholder: "Please Select Default Department.",
+            allowClear: false
+        });
+
+        _cboTaxGroup=$('#cbo_tax_type').select2({
+            allowClear: false
+        });
+
+        _cboTaxGroup.select2({
+            dropdownParent: $('#modal_create_suppliers')
+        });
 
     }();
 
@@ -1039,7 +1461,7 @@ $(document).ready(function(){
             var data=dt_rr.row(_selectRowObj).data();
 
             $('textarea[name="remarks"]').val(data.remarks);
-            $('#cbo_suppliers').select2('val',data.supplier_id);
+            $('#cbo_particulars').select2('val','S-'+data.supplier_id);
             $('#cbo_branch').select2('val',data.department_id);
             get_button_rr(1);
 
@@ -1157,6 +1579,43 @@ $(document).ready(function(){
             // });
         });
 
+        _cboParticulars.on('select2:select',function(){
+            var i=$(this).select2('val');
+
+            if (i == 'create_customer') {
+
+                $('input,textarea,select',$('#frm_customer')).val('');
+                $('img').attr('src','assets/img/anonymous-icon.png');
+                $('#cbo_customer_type').select2('val', 0);
+                $('#cbo_link_department_id').select2('val', 0);
+                $('#cbo_ar_trans').select2('val',null);
+                _cboParticulars.select2('val', null);
+                $('#modal_create_customer').modal('show');
+
+            } else if (i == 'create_supplier'){
+
+                clearFields($('#frm_supplier'));
+                $('img').attr('src','assets/img/anonymous-icon.png');
+                _cboParticulars.select2('val', null);
+                $('#modal_create_suppliers').modal('show');
+
+            }else {
+
+                var obj_customers=$('#cbo_particulars').find('option[value="' + i + '"]');
+
+                _selectedDepartment = obj_customers.data('link_department');
+                $('#tbl_entries select.dept').each(function(){ $(this).select2('val',_selectedDepartment)});
+
+                if(_selectedDepartment == '0'){
+                    _cbo_departments.select2('val',null);
+                }else{
+                    _cbo_departments.select2('val',_selectedDepartment);
+                }
+
+            }
+
+        });
+
         $('#btn_preview_check').click(function(){
             if ($('#cbo_layouts').select2('val') != null || $('#cbo_layouts').select2('val') != undefined)
                 window.open('Templates/layout/print-check-voucher?id='+$('#cbo_layouts').val()+'&cv_id='+_selectedID);
@@ -1203,7 +1662,7 @@ $(document).ready(function(){
 
             $('#cbo_branch').select2('val',null);
             $('#cbo_pay_type').select2('val',1);
-            $('#cbo_suppliers').select2('val',null);
+            $('#cbo_particulars').select2('val',null);
             $('#cbo_refType').select2('val',"CV");
             $('#is_2307').prop('checked', false);
             $('#cbo_tax_code').select2('val',null);
@@ -1258,7 +1717,7 @@ $(document).ready(function(){
                 }
             }
 
-
+            recomputeCheckAmount($('#tbl_entries'));
             reComputeTotals($('#tbl_entries'));
         });
 
@@ -1335,8 +1794,9 @@ $(document).ready(function(){
                     }
                 });
             });
+
             $('#cbo_pay_type').select2('val',data.payment_method_id);
-            $('#cbo_suppliers').select2('val',data.supplier_id);
+            $('#cbo_particulars').select2('val',data.particular_id);
             $('#cbo_branch').select2('val',data.department_id);
             $('#cbo_refType').select2('val',data.ref_type);
             $('#cbo_check_type').select2('val',data.check_type_id);
@@ -1348,9 +1808,13 @@ $(document).ready(function(){
                 get_button_rr(2);
             }
 
+            $('#check_date').val(data.check_date);
+            $('#check_no').val(data.check_no);
+
             if(data.check_date == '00/00/0000'){
                 $('input[name="check_date"]').val('');
             }
+
             if(data.is_2307 == true){
                 $('#is_2307').prop('checked', true);
             }else{
@@ -1385,7 +1849,43 @@ $(document).ready(function(){
             }else{
                 showNotification({"title":"Error!","stat":"error","msg":"Sorry, you cannot remove all rows."});
             }
+            recomputeCheckAmount($('#tbl_entries'));
             reComputeTotals($('#tbl_entries'));
+        });
+
+        $('#btn_save_customer').click(function(){
+            if(validateRequiredFields($('#frm_customer'),false)){
+                createCustomer().done(function(response){
+                    showNotification(response);
+                    var _customer = response.row_added[0];
+                    _cboParticulars.select2().find('optgroup[label="Customers"]').append('<option value="'+ 'C-'+_customer.customer_id +'" data-link_department = "'+_customer.link_department_id+'">'+ _customer.customer_name +'</option>');
+                    _cboParticulars.select2('val','C-'+_customer.customer_id);
+                      _selectedDepartment = _customer.link_department_id;
+                    $('#tbl_entries select.dept').each(function(){ $(this).select2('val',_selectedDepartment)});
+                    _cbo_departments.select2('val',_selectedDepartment);
+                    $('input,textarea,select',$('#frm_customer')).val('');
+                }).always(function(){
+                    $('#modal_create_customer').modal('toggle');
+                    showSpinningProgress($('#btn_save_customer'));
+                });
+                return;
+            }
+        });
+
+        $('#btn_save_supplier').click(function(){
+            if(validateRequiredFields($('#frm_supplier'), false)){
+                createSupplier().done(function(response){
+                    showNotification(response);
+                    var _supplier = response.row_added[0];
+                    _cboParticulars.select2().find('optgroup[label="Suppliers"]').append('<option value="'+ 'S-'+_supplier.supplier_id +'">'+ _supplier.supplier_name +'</option>');
+                    _cboParticulars.select2('val','S-'+_supplier.supplier_id);
+                    clearFields($('#frm_supplier'));
+                }).always(function(){
+                    $('#modal_create_suppliers').modal('toggle');
+                    showSpinningProgress($('#btn_save_supplier'));
+                });
+                return;
+            }
         });
 
 
@@ -1393,7 +1893,7 @@ $(document).ready(function(){
             var btn=$(this);
             var f=$('#frm_journal');
             if(validateAccounts(f)){
-            if(validateRequiredFields(f)){
+            if(validateRequiredFields(f, true)){
                 if(_txnMode=="new"){
                     createJournal().done(function(response){
                         showNotification(response);
@@ -1439,10 +1939,95 @@ $(document).ready(function(){
             $('#tbl_temp_vouchers_list').DataTable().ajax.reload()
         });
 
-        _cboBranches.on("select2:select", function (e) {
+        _cbo_departments.on("select2:select", function (e) {
             _selectedDepartment = $(this).select2('val'); 
             $('#tbl_entries select.dept').each(function(){ $(this).select2('val',_selectedDepartment)}); 
         });
+
+
+        $('#tbl_entries tbody').on('change','select.selectpicker_accounts',function(){
+            recomputeCheckAmount($('#tbl_entries'));
+        });
+
+        $('#btn_browse_customer_photo').click(function(event){
+            event.preventDefault();
+            $('input[name="file_upload[]"]').click();
+        });
+
+        $('input[name="file_upload[]"]').change(function(event){
+            var _files=event.target.files;
+            var data=new FormData();
+            $.each(_files,function(key,value){
+                data.append(key,value);
+            });
+
+            $.ajax({
+                url : 'Customers/transaction/upload',
+                type : "POST",
+                data : data,
+                cache : false,
+                dataType : 'json',
+                processData : false,
+                contentType : false,
+                success : function(response){
+                    //console.log(response);
+                    //alert(response.path);
+                    /*$('#div_img_loader').hide();
+                    $('#div_img_user').show();*/
+                    $('img[name="img_customer"]').attr('src',response.path);
+                }
+            });
+        });
+
+
+
+        $('input[name="file_supplier[]"]').change(function(event){
+            var _files=event.target.files;
+            
+            var data=new FormData();
+            $.each(_files,function(key,value){
+                data.append(key,value);
+            });
+            $.ajax({
+                url : 'Suppliers/transaction/upload',
+                type : "POST",
+                data : data,
+                cache : false,
+                dataType : 'json',
+                processData : false,
+                contentType : false,
+                success : function(response){
+                    
+                    $('img[name="img_supplier"]').attr('src',response.path);
+                }
+            });
+        });
+
+        $('#btn_remove_photo_customer').click(function(event){
+            event.preventDefault();
+            $('img[name="img_customer"]').attr('src','assets/img/anonymous-icon.png');
+        });
+
+        $('#btn_browse_supplier_photo').click(function(event){
+            event.preventDefault();
+            $('input[name="file_supplier[]"]').click();
+        });
+
+        $('#btn_remove_photo_supplier').click(function(event){
+            event.preventDefault();
+            $('img[name="img_supplier"]').attr('src','assets/img/anonymous-icon.png');
+        });
+
+        $('#btn_cancel_customer').click(function(){
+            _cboParticulars.select2('val',null);
+            $('#modal_new_customer').modal('hide');
+        });
+
+        $('#btn_cancel_supplier').click(function(){
+            _cboParticulars.select2('val',null);
+            $('#modal_create_suppliers').modal('hide');
+        });
+
     }();
 
 
@@ -1470,6 +2055,32 @@ $(document).ready(function(){
         }
     };
 
+    var createCustomer=function(){
+        var _data=$('#frm_customer').serializeArray();
+        _data.push({name : "photo_path" ,value : $('img[name="img_customer"]').attr('src')});
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Customers/transaction/create",
+            "data":_data,
+            "beforeSend": showSpinningProgress($('#btn_save_customer'))
+        });
+    };
+
+
+    var createSupplier=function() {
+        var _data=$('#frm_supplier').serializeArray();
+        _data.push({name : "photo_path" ,value : $('img[name="img_supplier"]').attr('src')});
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Suppliers/transaction/create",
+            "data":_data,
+            "beforeSend": showSpinningProgress($('#btn_save_supplier'))
+        });
+    };
+
     var createJournal=function(){
         var _data=$('#frm_journal').serializeArray();
         if($('#is_2307').is(':checked')==true){
@@ -1486,7 +2097,6 @@ $(document).ready(function(){
 
         });
     };
-
 
     var updateJournal=function(){
         var _data=$('#frm_journal').serializeArray();
@@ -1600,6 +2210,26 @@ $(document).ready(function(){
         $(e).find('span').toggleClass('glyphicon glyphicon-refresh spinning');
     };
 
+    var recomputeCheckAmount=function(tbl){
+        var oRows=tbl.find('tbody tr');
+        var totalAmount = 0; var _DR_amount=0; var _CR_amount;
+
+        $.each(oRows,function(i,value){
+
+            var for_cib = accounting.unformat($(this).find(oTBJournal.account).find('select').find('option:selected').data('cib'));
+
+            _DR_amount=getFloat($(this).find(oTBJournal.dr).find('input.numeric').val());
+            _CR_amount=getFloat($(this).find(oTBJournal.cr).find('input.numeric').val());
+
+            if (for_cib == 1){
+                totalAmount += (_DR_amount + _CR_amount);
+            }
+
+        });
+
+        $('#cash_amount').val(accounting.formatNumber(totalAmount,2));
+
+    }
 
     var reComputeTotals=function(tbl){
         var oRows=tbl.find('tbody tr');
@@ -1645,7 +2275,7 @@ $(document).ready(function(){
         return stat;
     };
     
-    var validateRequiredFields=function(f){
+    var validateRequiredFields=function(f, status=false){
         var stat=true;
 
         $('div.form-group').removeClass('has-error');
@@ -1673,15 +2303,18 @@ $(document).ready(function(){
 
         });
 
+        if(status){
 
-        if(!isBalance()){
-            showNotification({title:"Error!",stat:"error",msg:'Please make sure Debit and Credit is balance.'});
-            stat=false;
-        }
+            if(!isBalance()){
+                showNotification({title:"Error!",stat:"error",msg:'Please make sure Debit and Credit is balance.'});
+                stat=false;
+            }
 
-        if(!isZero()){
-            showNotification({title:"Error!",stat:"error",msg:'Please make sure Debit and Credit does not amount to zero.'});
-            stat=false;
+            if(!isZero()){
+                showNotification({title:"Error!",stat:"error",msg:'Please make sure Debit and Credit does not amount to zero.'});
+                stat=false;
+            }
+
         }
 
         return stat;

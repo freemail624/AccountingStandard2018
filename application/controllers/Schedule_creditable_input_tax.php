@@ -316,7 +316,7 @@ class Schedule_creditable_input_tax extends CORE_Controller {
 
                 $excel->getActiveSheet()->setCellValue('A'.$i,$row->date_txn)
                                         ->setCellValue('B'.$i,$tin_no)
-                                        ->setCellValue('C'.$i,$row->supplier_name)
+                                        ->setCellValue('C'.$i,$row->particular)
                                         ->setCellValue('D'.$i,$row->ref_no)
                                         ->setCellValue('E'.$i,$row->address)
                                         ->setCellValue('F'.$i,$row->department_name)

@@ -113,49 +113,51 @@
                                     <form id="frm_journal" role="form">
                                         <div class="container-fluid">
                                             <div class="container-fluid group-box">
-                                                <div class="col-xs-12 col-md-4">
-                                                    <strong>* Template Code :</strong>
-                                                    <div class="input-group">
-                                                        <div class="input-group-addon">
-                                                            <i class="fa fa-code"></i>
-                                                        </div>
-                                                        <input type="text" name="template_code" class="form-control" data-error-msg="Template Code is required!" placeholder="Enter Template Code" required>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-md-4">
-                                                    <strong>* Template Description :</strong><br>
-                                                    <div class="input-group">
-                                                        <div class="input-group-addon">
-                                                            <i class="fa fa-code"></i>
-                                                        </div>
-                                                        <input type="text" name="template_description" class="form-control" data-error-msg="Template Description is required!" placeholder="Enter Template Description" required>
-                                                    </div>
-                                                </div>
-                                                <div id="show_gj">
+                                                <div class="row">
                                                     <div class="col-xs-12 col-md-4">
-                                                        <strong>* Particular :</strong><br>
-                                                        <select id="cbo_particulars" name="particular_id" class="show-tick form-control" data-live-search="true" >
-                                                            <optgroup label="Customers">
-                                                                <?php foreach($customers as $customer){ ?>
-                                                                    <option value='C-<?php echo $customer->customer_id; ?>'><?php echo $customer->customer_name; ?></option>
-                                                                <?php } ?>
-                                                            </optgroup>
-                                                            <optgroup label="Suppliers">
+                                                        <strong>* Template Code :</strong>
+                                                        <div class="input-group">
+                                                            <div class="input-group-addon">
+                                                                <i class="fa fa-code"></i>
+                                                            </div>
+                                                            <input type="text" name="template_code" class="form-control" data-error-msg="Template Code is required!" placeholder="Enter Template Code" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-md-4">
+                                                        <strong>* Template Description :</strong><br>
+                                                        <div class="input-group">
+                                                            <div class="input-group-addon">
+                                                                <i class="fa fa-code"></i>
+                                                            </div>
+                                                            <input type="text" name="template_description" class="form-control" data-error-msg="Template Description is required!" placeholder="Enter Template Description" required>
+                                                        </div>
+                                                    </div>
+                                                    <div id="show_gj">
+                                                        <div class="col-xs-12 col-md-4">
+                                                            <strong>* Particular :</strong><br>
+                                                            <select id="cbo_particulars" name="particular_id" class="show-tick form-control" data-live-search="true" >
+                                                                <optgroup label="Customers">
+                                                                    <?php foreach($customers as $customer){ ?>
+                                                                        <option value='C-<?php echo $customer->customer_id; ?>'><?php echo $customer->customer_name; ?></option>
+                                                                    <?php } ?>
+                                                                </optgroup>
+                                                                <optgroup label="Suppliers">
+                                                                    <?php foreach($suppliers as $supplier){ ?>
+                                                                        <option value='S-<?php echo $supplier->supplier_id; ?>'><?php echo $supplier->supplier_name; ?></option>
+                                                                    <?php } ?>
+                                                                </optgroup>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div id="show_cdj">
+                                                        <div class="col-xs-12 col-md-4">
+                                                            <strong>* Supplier :</strong><br>
+                                                            <select id="cbo_supplier" name="particular_id" class="show-tick form-control" data-live-search="true">
                                                                 <?php foreach($suppliers as $supplier){ ?>
                                                                     <option value='S-<?php echo $supplier->supplier_id; ?>'><?php echo $supplier->supplier_name; ?></option>
                                                                 <?php } ?>
-                                                            </optgroup>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div id="show_cdj">
-                                                    <div class="col-xs-12 col-md-4">
-                                                        <strong>* Supplier :</strong><br>
-                                                        <select id="cbo_supplier" name="particular_id" class="show-tick form-control" data-live-search="true">
-                                                            <?php foreach($suppliers as $supplier){ ?>
-                                                                <option value='S-<?php echo $supplier->supplier_id; ?>'><?php echo $supplier->supplier_name; ?></option>
-                                                            <?php } ?>
-                                                        </select>
+                                                            </select>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div><br>

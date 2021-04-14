@@ -163,7 +163,7 @@
 
 						$excel->getActiveSheet()->setCellValue('A'.$i,$voucher->ref_no);
 						$excel->getActiveSheet()->setCellValue('B'.$i,$voucher->date_txn);
-						$excel->getActiveSheet()->setCellValue('C'.$i,$voucher->supplier_name);
+						$excel->getActiveSheet()->setCellValue('C'.$i,$voucher->particular);
 						$excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');	
 						$excel->getActiveSheet()->setCellValue('D'.$i,number_format($voucher->amount,2));
 
@@ -318,7 +318,7 @@
 
 						$excel->getActiveSheet()->setCellValue('A'.$i,$voucher->ref_no);
 						$excel->getActiveSheet()->setCellValue('B'.$i,$voucher->date_txn);
-						$excel->getActiveSheet()->setCellValue('C'.$i,$voucher->supplier_name);
+						$excel->getActiveSheet()->setCellValue('C'.$i,$voucher->particular);
 						$excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');	
 						$excel->getActiveSheet()->setCellValue('D'.$i,number_format($voucher->amount,2));
 

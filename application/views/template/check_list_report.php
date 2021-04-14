@@ -55,7 +55,7 @@
                     <td><?php echo $check->check_date; ?></td>
                     <td align="right"><?php echo number_format($check->amount,2); ?></td>
                     <td><?php echo $check->ref_no; ?></td>
-                    <td><?php echo $check->supplier_name; ?></td>
+                    <td><?php echo $check->particular; ?></td>
                     <td><?php echo $check->remarks; ?></td>
                     <td align="center"><?php echo ($check->check_status==1?'Y':'N'); ?></td>
 

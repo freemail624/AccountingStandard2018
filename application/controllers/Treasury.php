@@ -75,11 +75,12 @@ class Treasury extends CORE_Controller
                     "journal_info.is_active=1 AND journal_info.is_deleted=0  AND journal_info.book_type='CDJ' AND journal_info.payment_method_id=2 AND journal_info.check_status=0 ".$approval_filter,
                     array(
                         'journal_info.*',
-                        's.supplier_name',
+                        'CONCAT_WS(" ",IFNULL(c.customer_name,""),IFNULL(s.supplier_name,"")) as particular',
                         'DATE_FORMAT(journal_info.check_date,"%m/%d/%Y")as check_date'
                     ),
                     array(
-                        array('suppliers as s','s.supplier_id=journal_info.supplier_id','left')
+                        array('suppliers as s','s.supplier_id=journal_info.supplier_id','left'),
+                        array('customers as c','c.customer_id=journal_info.customer_id','left')
                     )
                 );
                 echo json_encode($response);
@@ -91,11 +92,12 @@ class Treasury extends CORE_Controller
                     "journal_info.is_active=1 AND journal_info.is_check_delivered=FALSE AND journal_info.is_deleted=0 AND journal_info.book_type='CDJ' AND journal_info.payment_method_id=2 AND journal_info.check_status=1",
                     array(
                         'journal_info.*',
-                        's.supplier_name',
+                        'CONCAT_WS(" ",IFNULL(c.customer_name,""),IFNULL(s.supplier_name,"")) as particular',
                         'DATE_FORMAT(journal_info.check_date,"%m/%d/%Y")as check_date'
                     ),
                     array(
-                        array('suppliers as s','s.supplier_id=journal_info.supplier_id','left')
+                        array('suppliers as s','s.supplier_id=journal_info.supplier_id','left'),
+                        array('customers as c','c.customer_id=journal_info.customer_id','left')
                     )
                 );
                 echo json_encode($response);
@@ -107,11 +109,12 @@ class Treasury extends CORE_Controller
                     "journal_info.is_active=1 AND journal_info.is_check_delivered=TRUE AND journal_info.is_deleted=0 AND journal_info.book_type='CDJ' AND journal_info.payment_method_id=2 AND journal_info.check_status=1",
                     array(
                         'journal_info.*',
-                        's.supplier_name',
+                        'CONCAT_WS(" ",IFNULL(c.customer_name,""),IFNULL(s.supplier_name,"")) as particular',
                         'DATE_FORMAT(journal_info.check_date,"%m/%d/%Y")as check_date'
                     ),
                     array(
-                        array('suppliers as s','s.supplier_id=journal_info.supplier_id','left')
+                        array('suppliers as s','s.supplier_id=journal_info.supplier_id','left'),
+                        array('customers as c','c.customer_id=journal_info.customer_id','left')
                     )
                 );
                 echo json_encode($response);

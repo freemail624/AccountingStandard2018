@@ -27,7 +27,7 @@ class Journal_info_model extends CORE_Model{
                         ji.remarks,
                         ji.check_status,
                         IF(ji.check_status = 1, 'Yes', 'No') AS status,
-                        s.supplier_name,
+                        CONCAT_WS(' ',IFNULL(c.customer_name,''),IFNULL(s.supplier_name,'')) as particular,
                         (CASE
                             WHEN ji.check_type_id = 0 THEN 'NONE'
                             ELSE UPPER(bank.check_type_desc)
@@ -37,6 +37,7 @@ class Journal_info_model extends CORE_Model{
                 FROM
                     journal_info ji
                 LEFT JOIN suppliers s ON s.supplier_id = ji.supplier_id
+                LEFT JOIN customers c ON c.customer_id = ji.customer_id
                 LEFT JOIN b_refchecktype bank ON bank.check_type_id = ji.check_type_id
                 WHERE
                     ji.is_active = TRUE
@@ -57,7 +58,7 @@ class Journal_info_model extends CORE_Model{
                         cv.remarks,
                         cv.check_status,
                         IF(cv.check_status = 1, 'Yes', 'No') AS status,
-                        s.supplier_name,
+                        CONCAT_WS(' ',IFNULL(c.customer_name,''),IFNULL(s.supplier_name,'')) as particular,
                         (CASE
                             WHEN cv.check_type_id = 0 THEN 'NONE'
                             ELSE UPPER(bank.check_type_desc)
@@ -67,6 +68,7 @@ class Journal_info_model extends CORE_Model{
                 FROM
                     cv_info cv
                 LEFT JOIN suppliers s ON s.supplier_id = cv.supplier_id
+                LEFT JOIN customers c ON c.customer_id = cv.customer_id
                 LEFT JOIN b_refchecktype bank ON bank.check_type_id = cv.check_type_id
                 WHERE
                     cv.is_active = TRUE
@@ -87,7 +89,7 @@ class Journal_info_model extends CORE_Model{
             FROM
                 (SELECT 
                     ji.*,
-                    IF(ji.supplier_id = 0,c.customer_name,s.supplier_name) as particular,
+                    CONCAT_WS(' ',IFNULL(c.customer_name,''),IFNULL(s.supplier_name,'')) as particular,
                     department_name,
                     COALESCE((SELECT check_status_id FROM bank_reconciliation_checks WHERE bank_recon_id = $bank_recon_id AND journal_id = ji.journal_id),0) as check_status_id
                 FROM
@@ -1079,11 +1081,12 @@ class Journal_info_model extends CORE_Model{
             SUM(ji.amount) AS summmary,
             ji.*,
             CONCAT(ji.ref_type,'-',ji.ref_no) as ref_no,
-            s.*
+            CONCAT_WS(' ',IFNULL(c.customer_name,''),IFNULL(s.supplier_name,'')) as particular
 
             FROM
             `journal_info` AS ji
             LEFT JOIN suppliers AS s ON s.`supplier_id`=ji.`supplier_id`
+            LEFT JOIN customers AS c ON c.`customer_id`=ji.`customer_id`
             WHERE ji.is_deleted=FALSE AND ji.is_active=TRUE
             AND ji.date_txn BETWEEN '$startDate' AND '$endDate'
             AND ji.book_type = 'CDJ' GROUP BY ji.journal_id

@@ -60,6 +60,7 @@ class Account_titles extends CORE_Controller
                 $response['data']=$this->response_rows($filter_id); //filter_id is default as null
                 echo json_encode($response);
                 break;
+
             case 'create':
                 $m_accounts=$this->Account_title_model;
                 $parent_account_id=(float)$this->input->post('parent_account',TRUE);
@@ -75,6 +76,7 @@ class Account_titles extends CORE_Controller
                 $m_accounts->account_title=$this->input->post('account_title',TRUE);
                 $m_accounts->account_class_id=$this->input->post('account_class',TRUE);
                 $m_accounts->parent_account_id=$parent_account_id;
+                $m_accounts->for_cib =$this->get_numeric_value($this->input->post('for_cib',TRUE));
                 $m_accounts->save();
 
 
@@ -111,6 +113,7 @@ class Account_titles extends CORE_Controller
 
                 echo json_encode($response);
                 break;
+
             case 'update':
                 $m_accounts=$this->Account_title_model;
                 $parent_account_id=(float)$this->input->post('parent_account',TRUE);
@@ -131,8 +134,8 @@ class Account_titles extends CORE_Controller
                 $m_accounts->account_title=$this->input->post('account_title',TRUE);
                 $m_accounts->account_class_id=$account_class_id;
                 $m_accounts->parent_account_id=$parent_account_id;
+                $m_accounts->for_cib =$this->get_numeric_value($this->input->post('for_cib',TRUE));
                 $m_accounts->modify($account_id);
-
 
                 //update grandparent id
                 // $account_id=$m_accounts->last_insert_id();

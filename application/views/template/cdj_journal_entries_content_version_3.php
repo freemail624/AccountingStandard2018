@@ -83,7 +83,7 @@
 <table width="100%" >
     <tr>
         <td rowspan="4" width="10%">PAYEE:</td>
-        <td rowspan="4" width="60%" class="all-caps"><?php echo $journal_info->supplier_name; ?></td>
+        <td rowspan="4" width="60%" class="all-caps"><?php echo $journal_info->particular; ?></td>
         <td class="align-right" width="10%">CV#</td>
         <td style="padding-left: 5px;" width="20%" class="bold"><?php echo $journal_info->ref_no; ?></td>
     </tr>
@@ -183,7 +183,7 @@
     </tr>
 </table>
     </div>
-<p style="margin-left: 2.54cm;position: absolute;top: 834; left: 26;" class="all-caps">***<?php echo $journal_info->supplier_name; ?></p>
+<p style="margin-left: 2.54cm;position: absolute;top: 834; left: 26;" class="all-caps">***<?php echo $journal_info->particular; ?></p>
 <p style="margin-left: 2.54cm;position: absolute; top: 863.7270; left: 07.7539;text-transform:capitalize;">***<?php echo $num_words; ?></p>
 <p style="margin-left: 2.54cm;position: absolute; top: 828.6370; left: 507.6250;"><?php echo number_format($journal_info->amount,2); ?></p>
 <p style="margin-left: 2.54cm;position: absolute; top: 797.6520; left: 508.7110;"><?php echo date('F d, Y', strtotime($journal_info->date_txn)); ?></p>

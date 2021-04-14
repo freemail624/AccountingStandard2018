@@ -109,7 +109,7 @@
                             substr($item->tin_no,6, 3).'-'.
                             substr($item->tin_no,9, 3);
                 }?></center></td>
-                <td class="left right" valign="top"><?php echo $item->supplier_name; ?></td>
+                <td class="left right" valign="top"><?php echo $item->particular; ?></td>
                 <td class="left right" valign="top"><?php echo $item->ref_no; ?></td>
                 <td class="left right" valign="top"><?php echo $item->address; ?></td>
                 <td class="left right" valign="top"><?php echo $item->department_name; ?></td> 

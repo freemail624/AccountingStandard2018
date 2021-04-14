@@ -1878,22 +1878,28 @@ class Templates extends CORE_Controller {
 
             case 'print-form-2307':
                 $m_form_2307 = $this->Bir_2307_model;
-                $supplier_id=$this->input->get('supplier_id',TRUE);
+                $particular=$this->input->get('particular_id',TRUE);
                 $month_id=$this->input->get('month_id',TRUE);
                 $year=$this->input->get('year',TRUE);
                 $quarter=$this->input->get('quarter',TRUE);
                 $type=$this->input->get('type',TRUE);
 
-                $items = $m_form_2307->get_2307_items($supplier_id,$month_id,$year);
+                // Check Particular
+                $particular=explode('-',$particular);
+                $particular_type=$particular[0];
+                $particular_id=$particular[1];
 
-                $supplier = $this->Suppliers_model->get_list($supplier_id);
+                $items = $m_form_2307->get_2307_items($particular_id,$particular_type,$month_id,$year);
+
+                $particular_info = $m_form_2307->get_particular_info($particular_id,$particular_type);
+
                 $company = $this->Company_model->get_list()[0];
 
-                $data['supplier'] = $supplier[0];
+                $data['particular'] = $particular_info[0];
                 $data['company'] = $company;
                 $data['items'] = $items;
 
-                $payee_tin = $supplier[0]->tin_no;
+                $payee_tin = $particular_info[0]->tin_no;
                 $data['payee_tin_1'] = substr($payee_tin,0, 3);
                 $data['payee_tin_2'] = substr($payee_tin,3, 3);
                 $data['payee_tin_3'] = substr($payee_tin,6, 3);
@@ -2087,7 +2093,8 @@ class Templates extends CORE_Controller {
                         'DATE_FORMAT(cv_info.date_txn,"%m/%d/%Y")as date_txn',
                         'DATE_FORMAT(cv_info.check_date,"%m/%d/%Y") as check_date',
                         'payment_methods.payment_method',
-                        'suppliers.supplier_name as particular',
+                        'CONCAT(IF(NOT ISNULL(customers.customer_id),CONCAT("C-",customers.customer_id),""),IF(NOT ISNULL(suppliers.supplier_id),CONCAT("S-",suppliers.supplier_id),"")) as particular_id',
+                        'CONCAT_WS(" ",IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,"")) as particular',
                         'departments.department_name',
                         'b_refchecktype.check_type_desc',
                         'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by',
@@ -2097,6 +2104,7 @@ class Templates extends CORE_Controller {
                         'dr.dr_invoice_no'
                     ),
                     array(
+                        array('customers','customers.customer_id=cv_info.customer_id','left'),
                         array('suppliers','suppliers.supplier_id=cv_info.supplier_id','left'),
                         array('departments','departments.department_id=cv_info.department_id','left'),
                         array('user_accounts','user_accounts.user_id=cv_info.created_by_user','left'),
@@ -2177,7 +2185,8 @@ class Templates extends CORE_Controller {
                     array(
                         'journal_info.*',
                         'journal_info.is_active as cancelled',
-                        'suppliers.supplier_name',
+                        'CONCAT(IF(NOT ISNULL(customers.customer_id),CONCAT("C-",customers.customer_id),""),IF(NOT ISNULL(suppliers.supplier_id),CONCAT("S-",suppliers.supplier_id),"")) as particular_id',
+                        'CONCAT_WS(" ",IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,"")) as particular',
                         'suppliers.address',
                         'suppliers.email_address',
                         'suppliers.contact_no',
@@ -2187,6 +2196,7 @@ class Templates extends CORE_Controller {
                     ),
 
                     array(
+                        array('customers','customers.customer_id=journal_info.customer_id','left'),
                         array('suppliers','suppliers.supplier_id=journal_info.supplier_id','left'),
                         array('departments','departments.department_id=journal_info.department_id','left'),
                         array('payment_methods','payment_methods.payment_method_id=journal_info.payment_method_id','left')
@@ -3808,10 +3818,12 @@ class Templates extends CORE_Controller {
 
                     array(
                         'journal_info.*',
-                        'suppliers.supplier_name'
+                        'CONCAT(IF(NOT ISNULL(customers.customer_id),CONCAT("C-",customers.customer_id),""),IF(NOT ISNULL(suppliers.supplier_id),CONCAT("S-",suppliers.supplier_id),"")) as particular_id',
+                        'CONCAT_WS(" ",IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,"")) as particular',
                     )
                     ,
                     array(
+                        array('customers','customers.customer_id=journal_info.customer_id','left'),
                         array('suppliers','suppliers.supplier_id=journal_info.supplier_id','left')
                     )
                 );
@@ -3849,7 +3861,8 @@ class Templates extends CORE_Controller {
                     'DATE_FORMAT(cv_info.date_txn,"%m/%d/%Y")as date_txn',
                     'DATE_FORMAT(cv_info.check_date,"%m/%d/%Y") as check_date',
                     'payment_methods.payment_method',
-                    'suppliers.supplier_name',
+                    'CONCAT(IF(NOT ISNULL(customers.customer_id),CONCAT("C-",customers.customer_id),""),IF(NOT ISNULL(suppliers.supplier_id),CONCAT("S-",suppliers.supplier_id),"")) as particular_id',
+                    'CONCAT_WS(" ",IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,"")) as particular',
                     'departments.department_name',
                     'b_refchecktype.check_type_desc',
                     'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by',
@@ -3858,6 +3871,7 @@ class Templates extends CORE_Controller {
                     'CONCAT_WS(" ",cbu.user_fname,cbu.user_lname)as cancelled_by'
                 ),
                 array(
+                    array('customers','customers.customer_id=cv_info.customer_id','left'),
                     array('suppliers','suppliers.supplier_id=cv_info.supplier_id','left'),
                     array('departments','departments.department_id=cv_info.department_id','left'),
                     array('user_accounts','user_accounts.user_id=cv_info.created_by_user','left'),
@@ -4002,15 +4016,12 @@ class Templates extends CORE_Controller {
                 if ($type == 'preview' || $type == null) {
                     $pdf = $this->m_pdf->load("A4-L");
                     $content=$this->load->view('template/account_subsidiary_report',$data,TRUE);
+                    $pdf->setFooter('{PAGENO}');
+                    $pdf->WriteHTML($content);
+                    $pdf->Output();
                 }
-
-                $pdf->setFooter('{PAGENO}');
-                $pdf->WriteHTML($content);
-                $pdf->Output();
-
-
-                exit;
-                 $this->load->view('template/account_subsidiary_report',$data);
+                // exit;
+                //  $this->load->view('template/account_subsidiary_report',$data);
             break;
 
             case 'account-receivable-schedule':

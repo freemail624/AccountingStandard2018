@@ -443,7 +443,7 @@ $(document).ready(function(){
             "columns": [
 
                 { targets:[0],data: "txn_no" },
-                { targets:[1],data: "supplier_name"},
+                { targets:[1],data: "particular"},
                 { targets:[2],data: "check_date" },
                 { targets:[3],data: "check_no" },
                 {sClass:"right_align", targets:[4],data: "amount", render: $.fn.dataTable.render.number( ',', '.', 2) },
@@ -490,7 +490,7 @@ $(document).ready(function(){
             "ajax" : "Treasury/transaction/check-for-release",
             "columns": [
                 { targets:[0],data: "txn_no" },
-                { targets:[1],data: "supplier_name" },
+                { targets:[1],data: "particular" },
                 { targets:[2],data: "check_date" },
                 { targets:[3],data: "check_no" },
                 {sClass:"right_align", targets:[4],data: "amount",
@@ -528,7 +528,7 @@ $(document).ready(function(){
             "ajax" : "Treasury/transaction/check-delivered",
             "columns": [
                 { targets:[0],data: "txn_no" },
-                { targets:[1],data: "supplier_name" },
+                { targets:[1],data: "particular" },
                 { targets:[2],data: "check_date" },
                 { targets:[3],data: "check_no" },
                 { sClass:"right_align", targets:[4],data: "amount",

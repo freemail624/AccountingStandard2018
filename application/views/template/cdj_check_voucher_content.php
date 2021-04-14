@@ -89,7 +89,7 @@
     <table width="100%">
         <tr>
             <td width="15%">PAYEE : </td>
-            <td width="50%"><?php echo $journal_info->supplier_name; ?>***</td>
+            <td width="50%"><?php echo $journal_info->particular; ?>***</td>
             <td width="10%" align="right">CV #</td>
             <td width="25%"><strong><?php echo $journal_info->ref_no; ?></strong></td>
         </tr>
@@ -230,7 +230,7 @@
         </tr>
         <tr>
             <td></td>
-            <td>*** <?php echo $journal_info->supplier_name; ?> ***</td>
+            <td>*** <?php echo $journal_info->particular; ?> ***</td>
             <td align="right"><?php echo number_format($journal_info->amount,2); ?></td>
         </tr>
         <tr>

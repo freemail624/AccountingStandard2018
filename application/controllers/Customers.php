@@ -136,8 +136,8 @@ class Customers extends CORE_Controller {
                 $m_customers->customer_type_id=$this->input->post('customer_type_id_create',TRUE);
                 $m_customers->contact_no=$this->input->post('contact_no',TRUE);
                 $m_customers->tin_no=$this->input->post('tin_no',TRUE);
-                $m_customers->refcustomertype_id=$this->input->post('refcustomertype_id',TRUE);
-                $m_customers->link_department_id=$this->input->post('link_department_id',TRUE);
+                $m_customers->refcustomertype_id=$this->get_numeric_value($this->input->post('refcustomertype_id',TRUE));
+                $m_customers->link_department_id=$this->get_numeric_value($this->input->post('link_department_id',TRUE));
                 $m_customers->photo_path=$this->input->post('photo_path',TRUE);
                 $m_customers->term=$this->input->post('term',TRUE);
                 $m_customers->business_organization=$this->input->post('business_organization',TRUE);

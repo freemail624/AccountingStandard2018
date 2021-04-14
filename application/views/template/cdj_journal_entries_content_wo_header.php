@@ -78,7 +78,7 @@
             <td style="padding: 4px;" width="50%"><strong>AMOUNT :</strong> <?php echo number_format($journal_info->amount,2); ?></td>
         </tr>
         <tr>
-            <td style="padding: 4px;"><strong>PARTICULAR :</strong> <?php echo $journal_info->supplier_name; ?></td>
+            <td style="padding: 4px;"><strong>PARTICULAR :</strong> <?php echo $journal_info->particular; ?></td>
             <td style="padding: 4px;"><strong>PAYMENT METHOD :</strong> <?php echo $journal_info->payment_method; ?></td>
         </tr>
     </table><br>

@@ -188,7 +188,7 @@
                                                     <th width="5%"><center>Action</center></th> -->
                                                     <th width="10%">Period</th>
                                                     <th width="10%">TIN</th>
-                                                    <th width="75%">Supplier</th>
+                                                    <th width="75%">Particular</th>
                                                     <th width="5%">Action</th>
                                                 </thead>
                                             </table>
@@ -275,7 +275,7 @@ $(document).ready(function(){
             "columns": [
                 { targets:[0],data: "period" },
                 { targets:[1],data: "tin_no" },
-                { targets:[2],data: "supplier_name" },   
+                { targets:[2],data: "particular" },   
                 {
                     targets:[3],data: null,
                     render: function (data, type, full, meta){
@@ -349,8 +349,8 @@ $(document).ready(function(){
         $('#tbl_2307').on('click','button[name="print_form_2307"]',function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
-            _selectedID=data.supplier_id;
-            window.open("Templates/layout/print-form-2307?supplier_id="+_selectedID+"&month_id="+data.month_id+"&year="+data.year+"&quarter="+data.quarter+"&type=print","_blank");
+            _selectedID=data.particular_id;
+            window.open("Templates/layout/print-form-2307?particular_id="+_selectedID+"&month_id="+data.month_id+"&year="+data.year+"&quarter="+data.quarter+"&type=print","_blank");
         });
 
     })();

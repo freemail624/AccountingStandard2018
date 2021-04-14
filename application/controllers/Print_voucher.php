@@ -34,7 +34,8 @@ class Print_voucher extends CORE_Controller {
                     array(
                         'journal_info.*',
                         'journal_info.is_active as cancelled',
-                        'suppliers.supplier_name',
+                        'CONCAT(IF(NOT ISNULL(customers.customer_id),CONCAT("C-",customers.customer_id),""),IF(NOT ISNULL(suppliers.supplier_id),CONCAT("S-",suppliers.supplier_id),"")) as particular_id',
+                        'CONCAT_WS(" ",IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,"")) as particular',
                         'suppliers.address',
                         'suppliers.email_address',
                         'suppliers.contact_no',
@@ -43,11 +44,13 @@ class Print_voucher extends CORE_Controller {
                         'payment_methods.*'
                     ),
                     array(
+                        array('customers','customers.customer_id=journal_info.customer_id','left'),
                         array('suppliers','suppliers.supplier_id=journal_info.supplier_id','left'),
                         array('departments','departments.department_id=journal_info.department_id','left'),
                         array('payment_methods','payment_methods.payment_method_id=journal_info.payment_method_id','left')
                     )
                 );
+                
                 $data['voucher_info']=$this->Cash_vouchers_model->get_list(
                     "cv_info.journal_id= ".$journal_id,
                     array(
@@ -55,12 +58,14 @@ class Print_voucher extends CORE_Controller {
                         'DATE_FORMAT(cv_info.date_txn,"%m/%d/%Y")as date_txn',
                         'DATE_FORMAT(cv_info.check_date,"%m/%d/%Y") as check_date',
                         'payment_methods.payment_method',
-                        'suppliers.supplier_name as particular',
+                        'CONCAT(IF(NOT ISNULL(customers.customer_id),CONCAT("C-",customers.customer_id),""),IF(NOT ISNULL(suppliers.supplier_id),CONCAT("S-",suppliers.supplier_id),"")) as particular_id',
+                        'CONCAT_WS(" ",IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,"")) as particular',
                         'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by',
                         'CONCAT_WS(" ",vbu.user_fname,vbu.user_lname)as verified_by',
                         'CONCAT_WS(" ",abu.user_fname,abu.user_lname)as approved_by'
                     ),
                     array(
+                        array('customers','customers.customer_id=cv_info.customer_id','left'),
                         array('suppliers','suppliers.supplier_id=cv_info.supplier_id','left'),
                         array('departments','departments.department_id=cv_info.department_id','left'),
                         array('user_accounts','user_accounts.user_id=cv_info.created_by_user','left'),

@@ -71,7 +71,7 @@
         <tr>
             <td><?php echo $voucher->ref_no; ?></td>
             <td><?php  echo $voucher->date_txn; ?></td>
-            <td><?php echo $voucher->supplier_name; ?></td>
+            <td><?php echo $voucher->particular; ?></td>
             <td style="text-align: right;"><?php echo number_format($voucher->amount,2); ?></td>
         </tr>
         <?php } ?>

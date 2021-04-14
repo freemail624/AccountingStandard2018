@@ -12,6 +12,7 @@ class Cash_vouchers extends CORE_Controller
         $this->load->model(
             array(
                 'Suppliers_model',
+                'Customers_model',
                 'Departments_model',
                 'Account_title_model',
                 'Payment_method_model',
@@ -49,6 +50,7 @@ class Cash_vouchers extends CORE_Controller
             'b_refchecktype.*,account_titles.account_title',
             array(array( 'account_titles' , 'account_titles.account_id = b_refchecktype. account_id', 'left'))
             );
+        $data['customers']=$this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'customer_name ASC');
         $data['suppliers']=$this->Suppliers_model->get_list('is_deleted = FALSE',null, null,'supplier_name ASC');
         $data['departments']=$this->Departments_model->get_list('is_deleted = FALSE',null, null,'department_name ASC');
         $data['accounts']=$this->Account_title_model->get_list('is_deleted = FALSE',null, null,'trim(account_title) ASC');
@@ -115,6 +117,7 @@ class Cash_vouchers extends CORE_Controller
                 $m_form_2307=$this->Bir_2307_model;
                 $m_cv_accounts=$this->Cash_vouchers_accounts_model;
                 $m_company=$this->Company_model;
+
                 $valid_range=$this->Accounting_period_model->get_list("'".date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)))."'<=period_end");
                 if(count($valid_range)>0){
                     $response['stat']='error';
@@ -155,9 +158,17 @@ class Cash_vouchers extends CORE_Controller
                 $dr_invoice_id=(count($arr_rr_info)>0?$arr_rr_info[0]->dr_invoice_id:0);
 
 
+                $particular=explode('-',$this->input->post('particular_id',TRUE));
+                if($particular[0]=='C'){
+                    $m_info->customer_id=$particular[1];
+                    $m_info->supplier_id=0;
+                }else{
+                    $m_info->customer_id=0;
+                    $m_info->supplier_id=$particular[1];
+                }
+
                 $m_info->ref_type=$ref_type;
                 $m_info->ref_no=$ref_no;
-                $m_info->supplier_id=$this->input->post('supplier_id',TRUE);
                 $m_info->remarks=$this->input->post('remarks',TRUE);
                 $m_info->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
                 $m_info->department_id=$this->input->post('department_id');
@@ -272,9 +283,17 @@ class Cash_vouchers extends CORE_Controller
                 );
                 $dr_invoice_id=(count($arr_rr_info)>0?$arr_rr_info[0]->dr_invoice_id:0);
 
+                $particular=explode('-',$this->input->post('particular_id',TRUE));
+                if($particular[0]=='C'){
+                    $m_info->customer_id=$particular[1];
+                    $m_info->supplier_id=0;
+                }else{
+                    $m_info->customer_id=0;
+                    $m_info->supplier_id=$particular[1];
+                }
+
                 $m_info->ref_type=$this->input->post('ref_type');
                 $m_info->ref_no=$this->input->post('ref_no');
-                $m_info->supplier_id=$this->input->post('supplier_id',TRUE);
                 $m_info->remarks=$this->input->post('remarks',TRUE);
                 $m_info->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
                 $m_info->department_id=$this->input->post('department_id');
@@ -430,13 +449,15 @@ class Cash_vouchers extends CORE_Controller
                 'DATE_FORMAT(cv_info.date_txn,"%m/%d/%Y")as date_txn',
                 'DATE_FORMAT(cv_info.check_date,"%m/%d/%Y") as check_date',
                 'payment_methods.payment_method',
-                'suppliers.supplier_name as particular',
+                'CONCAT(IF(NOT ISNULL(customers.customer_id),CONCAT("C-",customers.customer_id),""),IF(NOT ISNULL(suppliers.supplier_id),CONCAT("S-",suppliers.supplier_id),"")) as particular_id',
+                'CONCAT_WS(" ",IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,"")) as particular',
                 'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by',
                 'CONCAT_WS(" ",vbu.user_fname,vbu.user_lname)as verified_by',
                 'CONCAT_WS(" ",abu.user_fname,abu.user_lname)as approved_by',
                 'dr.dr_invoice_no'
             ),
             array(
+                array('customers','customers.customer_id=cv_info.customer_id','left'),
                 array('suppliers','suppliers.supplier_id=cv_info.supplier_id','left'),
                 array('departments','departments.department_id=cv_info.department_id','left'),
                 array('user_accounts','user_accounts.user_id=cv_info.created_by_user','left'),

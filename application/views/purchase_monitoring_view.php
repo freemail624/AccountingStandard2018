@@ -310,46 +310,45 @@ $(document).ready(function(){
 <!--                                             <div class="panel-heading">
                                                 <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Products</b>
                                             </div> -->
-                                            <div class="panel-body table-responsive" id="product_list_panel">
+                                            <div class="panel-body table-responsive" id="product_list_panel" style="width: 100%;overflow-x: hidden;">
                                             <h2 class="h2-panel-heading">Purchase Monitoring</h2><hr>
                                                 <div class="row">
-                                                <div class="col-sm-4" >
-                                                    Supplier :
-                                                    <select id="supplier_id">
-                                                        <option value="0">All Suppliers</option>
-                                                        <?php foreach($suppliers as $supplier){ ?>
-                                                            <option value="<?php echo $supplier->supplier_id; ?>" data-tax-type="<?php echo $supplier->tax_type_id; ?>" data-contact-person="<?php echo $supplier->contact_name; ?>" data-contact-no="<?php echo $supplier->contact_no; ?>"><?php echo $supplier->supplier_name; ?></option>
-                                                        <?php } ?>
-                                                    </select>
+                                                    <div class="col-sm-4">
+                                                        Supplier :
+                                                        <select id="supplier_id" class="form-control">
+                                                            <option value="0">All Suppliers</option>
+                                                            <?php foreach($suppliers as $supplier){ ?>
+                                                                <option value="<?php echo $supplier->supplier_id; ?>" data-tax-type="<?php echo $supplier->tax_type_id; ?>" data-contact-person="<?php echo $supplier->contact_name; ?>" data-contact-no="<?php echo $supplier->contact_no; ?>"><?php echo $supplier->supplier_name; ?></option>
+                                                            <?php } ?>
+                                                        </select>
 
-                                                </div>
-                                                <div class="col-sm-4" >
-                                                    Product :
-                                                    <select id="product_id">
-                                                        <option value="">All Products</option>
-                                                        <?php foreach($products as $row) { echo '<option value="'.$row->product_id.'">'.$row->product_code.' - '.$row->product_desc.'</option>'; } ?>
-                                                    </select>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        Product :
+                                                        <select id="product_id" class="form-control">
+                                                            <option value="">All Products</option>
+                                                            <?php foreach($products as $row) { echo '<option value="'.$row->product_id.'">'.$row->product_code.' - '.$row->product_desc.'</option>'; } ?>
+                                                        </select>
 
-                                                </div>
-                                                <div class="col-sm-2">
-                                                    From :
-                                                    <div class="input-group">
-                                                        <input type="text" name="start_date" id="start_date" class="date-picker form-control" value="01/01/<?php echo date("Y"); ?>" placeholder="Date" data-error-msg="Please set the date." required>
-                                                         <span class="input-group-addon">
-                                                             <i class="fa fa-calendar"></i>
-                                                        </span>
                                                     </div>
-                                                </div>
-                                                <div class="col-sm-2">
-                                                    To :
-                                                    <div class="input-group">
-                                                        <input type="text" name="end_date" id="end_date" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date" data-error-msg="Please set the date." required>
-                                                         <span class="input-group-addon">
-                                                             <i class="fa fa-calendar"></i>
-                                                        </span>
+                                                    <div class="col-sm-2">
+                                                        From :
+                                                        <div class="input-group">
+                                                            <input type="text" name="start_date" id="start_date" class="date-picker form-control" value="01/01/<?php echo date("Y"); ?>" placeholder="Date" data-error-msg="Please set the date." required>
+                                                             <span class="input-group-addon">
+                                                                 <i class="fa fa-calendar"></i>
+                                                            </span>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <br>
+                                                    <div class="col-sm-2">
+                                                        To :
+                                                        <div class="input-group">
+                                                            <input type="text" name="end_date" id="end_date" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date" data-error-msg="Please set the date." required>
+                                                             <span class="input-group-addon">
+                                                                 <i class="fa fa-calendar"></i>
+                                                            </span>
+                                                        </div>
+                                                    </div>
                                                 </div><br>
                                                 <div class="row">
                                                     <div class="col-sm-2">

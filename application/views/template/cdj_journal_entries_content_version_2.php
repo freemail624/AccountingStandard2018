@@ -83,7 +83,7 @@
 <table width="100%" >
     <tr>
         <td rowspan="4" width="10%">PAYEE:</td>
-        <td rowspan="4" width="60%" class="all-caps"><?php echo $journal_info->supplier_name; ?></td>
+        <td rowspan="4" width="60%" class="all-caps"><?php echo $journal_info->particular; ?></td>
         <td class="align-right" width="10%">CV#</td>
         <td style="padding-left: 5px;" width="20%" class="bold"><?php echo $journal_info->ref_no; ?></td>
     </tr>

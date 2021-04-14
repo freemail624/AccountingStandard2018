@@ -7,7 +7,36 @@
 	        parent::__construct();
 	    }
 
-	    function get_2307_items($supplier_id,$month=null,$year=null){
+	    function get_particular_info($particular_id,$type){
+	    	$sql="SELECT 
+				    main.*
+				FROM
+				    (SELECT 
+						'S' as type,
+						suppliers.tin_no,
+				        suppliers.supplier_name as particular,
+				        suppliers.address,
+				        suppliers.zip_code
+				    FROM
+				        suppliers
+				    WHERE
+				        supplier_id = $particular_id UNION ALL 
+					
+				    SELECT 
+						'C' as type,
+						customers.tin_no,
+				        customers.customer_name as particular,
+				        customers.address,
+				        '' as zip_code
+				    FROM
+				        customers
+				    WHERE
+				        customer_id = $particular_id) AS main
+				    WHERE main.type = '$type'";
+			return $this->db->query($sql)->result();
+	    }
+
+	    function get_2307_items($particular_id,$type,$month=null,$year=null){
 	    	$sql="SELECT 
 			    form_2307.*,
 			    m.month_name,
@@ -24,18 +53,25 @@
 			    tax_code tc ON tc.atc_id = form_2307.atc_id
 			WHERE
 				form_2307.is_deleted = FALSE AND form_2307.is_active = TRUE 
-			    AND form_2307.supplier_id = '$supplier_id'
+			    
+			    ".($type=='S'?"
+			    	AND form_2307.supplier_id = '$particular_id'
+			    ":" 
+			    	AND form_2307.customer_id = '$particular_id'
+
+			    ")."
 			        AND MONTH(form_2307.date) = '$month'
 			        AND YEAR(form_2307.date) = '$year'
 			GROUP BY form_2307.atc_id";
 			return $this->db->query($sql)->result();
 	    }
 
-	    function get_2307_suppliers($month=null,$year=null){
+	    function get_2307_particulars($month=null,$year=null){
 	    	$sql="SELECT 
-	    		s.supplier_id,
-			    s.supplier_name,
+	    		CONCAT(IF(NOT ISNULL(c.customer_id),CONCAT('C-',c.customer_id),''),IF(NOT ISNULL(s.supplier_id),CONCAT('S-',s.supplier_id),'')) as particular_id,
+				CONCAT_WS(' ',IFNULL(c.customer_name,''),IFNULL(s.supplier_name,'')) as particular,
 			    s.tin_no,
+			    CONCAT_WS(' ',IFNULL(c.tin_no,''),IFNULL(s.tin_no,'')) as tin_no,
 				DATE_FORMAT(ji.date_txn,'%m/%y') as period,
 				DATE_FORMAT(ji.date_txn,'%m') as month_id,
 				DATE_FORMAT(ji.date_txn,'%Y') as year,
@@ -43,6 +79,7 @@
 			FROM
 			    form_2307
 			    LEFT JOIN journal_info ji ON ji.journal_id = form_2307.journal_id
+			    LEFT JOIN customers c ON c.customer_id = form_2307.customer_id
 			    LEFT JOIN suppliers s ON s.supplier_id = form_2307.supplier_id
 			   	LEFT JOIN months m ON m.month_id = MONTH(form_2307.date)			    
 				WHERE 
@@ -60,7 +97,8 @@
 				    ji.date_txn,
 				    m.month_name,
 				    m.quarter,
-				    s.*,
+					CONCAT_WS(' ',IFNULL(c.customer_name,''),IFNULL(s.supplier_name,'')) as particular,
+					CONCAT_WS(' ',IFNULL(c.tin_no,''),IFNULL(s.tin_no,'')) as tin_no,
 				    tc.atc as atc,
 				    tc.description as remarks,
 				    tc.tax_rate as tax_rate
@@ -69,6 +107,7 @@
 				    LEFT JOIN journal_info ji ON ji.journal_id = form_2307.journal_id
 				    LEFT JOIN months m ON m.month_id = MONTH(ji.date_txn)
 				    LEFT JOIN suppliers s ON s.supplier_id = form_2307.supplier_id
+				    LEFT JOIN customers c ON c.customer_id = form_2307.customer_id
 				    LEFT JOIN tax_code tc ON tc.atc_id = form_2307.atc_id
 				    WHERE 
 				    	form_2307.is_active = TRUE
@@ -139,9 +178,9 @@
 				            ji.supplier_id,
 				            ji.remarks,
 				            ji.book_type,
-				            suppliers.tin_no,
-				            suppliers.supplier_name,
-				            suppliers.address,
+				            CONCAT_WS(' ',IFNULL(customers.tin_no,''),IFNULL(suppliers.tin_no,'')) as tin_no,
+				            CONCAT_WS(' ',IFNULL(customers.customer_name,''),IFNULL(suppliers.supplier_name,'')) as particular,
+				            CONCAT_WS(' ',IFNULL(customers.address,''),IFNULL(suppliers.address,'')) as address,
 				            CONCAT(ji.ref_no, ' ', ji.or_no) AS ref_no,
 				            departments.department_name,
 				            COALESCE((SELECT 
@@ -171,6 +210,7 @@
 				    FROM
 				        journal_info ji
 				    LEFT JOIN suppliers ON suppliers.supplier_id = ji.supplier_id
+				    LEFT JOIN customers ON customers.customer_id = ji.customer_id
 				    LEFT JOIN departments ON departments.department_id = ji.department_id
 				    LEFT JOIN (SELECT 
 				        form_2307.atc_id,

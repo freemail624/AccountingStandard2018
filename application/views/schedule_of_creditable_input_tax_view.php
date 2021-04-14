@@ -190,7 +190,7 @@
                                                 <thead>
                                                     <th>Date</th>
                                                     <th>TIN #</th>
-                                                    <th>Supplier</th>
+                                                    <th>Particular</th>
                                                     <th>OR #</th>
                                                     <th>Income Center</th>
                                                     <th align="right">Purchase Sub to Vat</th>
@@ -289,7 +289,7 @@ $(document).ready(function(){
             "columns": [
                 { targets:[0],data: "date_txn" },
                 { targets:[1],data: "tin_no" },
-                { targets:[2],data: "supplier_name" },
+                { targets:[2],data: "particular" },
                 { targets:[3],data: "ref_no" },
                 { targets:[4],data: "department_name" },
                 {
