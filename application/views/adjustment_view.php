@@ -898,7 +898,7 @@ $(document).ready(function(){
                     '<td width="25%" align="left"><b>Description</b></td>'+
                     '<td width="20%" class="hidden" align="left"><b>Expiration</b></td>'+
                     '<td width="10%" class="hidden" align="left"><b>LOT#</b></td>'+
-                    '<td width="10%" align="right"><b>On Hand</b></td>'+
+                    '<td width="10%" align="right" class="hidden"><b>On Hand</b></td>'+
                     '<td width="10%" align="right"><b>SRP</b></td>'+
                     '<td width="10%" align="right" style="padding-right: 1%;"><b>Cost Price</b></td>'+
                     '</tr></table>'
@@ -909,7 +909,7 @@ $(document).ready(function(){
                     '<td width="25%" align="left">{{product_desc}}</td>'+
                     '<td width="20%" class="hidden" align="left">{{exp_date}}</td>'+
                     '<td width="10%" class="hidden" align="left">{{batch_no}}</td>'+
-                    '<td width="10%" align="right">{{on_hand_per_batch}}</td>'+
+                    '<td width="10%" align="right" class="hidden">{{on_hand_per_batch}}</td>'+
                     '<td width="10%" align="right">{{srp}}</td>'+
                     '<td width="10%" align="right" style="padding-right: 1%;">{{srp_cost}}</td>'+
                     '</tr></table>')
@@ -922,6 +922,9 @@ $(document).ready(function(){
                 _objTypeHead.typeahead('val','');
             }
         }).bind('typeahead:select', function(ev, suggestion) {
+
+                _objTypeHead.typeahead('close');
+                _objTypeHead.typeahead('val','');
 
             if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
                 showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
@@ -1976,7 +1979,7 @@ $(document).ready(function(){
        return $.ajax({
            "dataType":"json",
            "type":"POST",
-           "url":"products/transaction/current-items-for-adjustment/"+type,
+           "url":"products/transaction/sales-list",
            "beforeSend": function(){
                 countproducts = products.local.length;
                 if(countproducts > 100){

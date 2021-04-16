@@ -647,7 +647,7 @@ dt_si = $('#tbl_si_list').DataTable({
                     '<td width="25%" align="left"><b>Description</b></td>'+
                     '<td width="20%" class="hidden" align="left"><b>Expiration</b></td>'+
                     '<td width="10%" class="hidden" align="left"><b>LOT#</b></td>'+
-                    '<td width="17%" align="right"><b>On Hand</b></td>'+
+                    '<td width="17%" align="right" class="hidden"><b>On Hand</b></td>'+
                     '<td width="13%" align="right" style="padding-right: 1%;"><b>Cost Price</b></td>'+
                     '</tr></table>'
                 ].join('\n'),
@@ -657,7 +657,7 @@ dt_si = $('#tbl_si_list').DataTable({
                     '<td width="25%" align="left">{{product_desc}}</td>'+
                     '<td width="20%" class="hidden" align="left">{{exp_date}}</td>'+
                     '<td width="10%" class="hidden" align="left">{{batch_no}}</td>'+
-                    '<td width="17%" align="right">{{on_hand_per_batch}}</td>'+
+                    '<td width="17%" align="right" class="hidden">{{on_hand_per_batch}}</td>'+
                     '<td width="13%" align="right" style="padding-right: 1%;">{{purchase_cost}}</td>'+
                     '</tr></table>')
             }
@@ -672,6 +672,9 @@ dt_si = $('#tbl_si_list').DataTable({
             }
         }).bind('typeahead:select', function(ev, suggestion) {
             //console.log(suggestion);
+            
+                _objTypeHead.typeahead('close');           //     -- changed due to barcode scan not working
+                _objTypeHead.typeahead('val','');         //  -- changed due to barcode scan not working
 
             if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
                 showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
@@ -1533,7 +1536,7 @@ dt_si = $('#tbl_si_list').DataTable({
        return $.ajax({
            "dataType":"json",
            "type":"POST",
-           "url":"products/transaction/current-items",
+           "url":"products/transaction/sales-list",
            "beforeSend": function(){
                 countproducts = products.local.length;
                 if(countproducts > 100){
