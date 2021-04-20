@@ -71,7 +71,9 @@ class Trial_balance extends CORE_Controller
 
                 $titles=$m_titles->get_account_titles_balance(
                     date('Y-m-d',strtotime($date_filter->start_date)),
-                    date('Y-m-d',strtotime($date_filter->end_date))
+                    date('Y-m-d',strtotime($date_filter->end_date)),
+                    null,
+                    date('Y-m-d',strtotime($date_filter->previous_date))
                 );
 
                 $excel->createSheet();
@@ -143,7 +145,12 @@ class Trial_balance extends CORE_Controller
                                 $excel->getActiveSheet()->setCellValue('A'.$i,'               '.$title->account_title);
                                 $excel->getActiveSheet()->setCellValue('B'.$i,$title->dr_amount);
                                 $excel->getActiveSheet()->setCellValue('C'.$i,$title->cr_amount);
-                                $excel->getActiveSheet()->setCellValue('D'.$i,"=SUM(B".$i."-C".$i.")");
+
+                                if($sheet <= 0){
+                                    $excel->getActiveSheet()->setCellValue('D'.$i,$title->grand_balance);
+                                }else{
+                                    $excel->getActiveSheet()->setCellValue('D'.$i,"='".$date_filter->prev_month_year."'!D".$i."+(B".$i."-C".$i.")");
+                                }
 
                                 $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 

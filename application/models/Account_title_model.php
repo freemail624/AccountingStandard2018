@@ -168,13 +168,15 @@ function restore_default_account_title(){
     //         return $this->db->query($sql)->result();
     // }
 
-    function get_account_titles_balance($start=null,$end=null,$account_id=null){
+    function get_account_titles_balance($start=null,$end=null,$account_id=null,$prev=null){
         $sql="SELECT act.account_id,
             act.account_no,
               act.account_title,
               IFNULL(dr_amount,0) as dr_amount,
               IFNULL(cr_amount,0) as cr_amount,
               IFNULL(balance,0) as balance,
+              IFNULL(prev_balance,0) as prev_balance,
+              (IFNULL(prev_balance,0)+IFNULL(balance,0)) as grand_balance,
               act.account_class_id,
               ac.account_type_id
 
@@ -194,6 +196,7 @@ function restore_default_account_title(){
             IFNULL(SUM(ja.dr_amount),0)-IFNULL(SUM(ja.cr_amount),0),
             IFNULL(SUM(ja.cr_amount),0)-IFNULL(SUM(ja.dr_amount),0)
           ) as balance
+
           FROM (account_titles as at LEFT JOIN `account_classes` as ac ON at.account_class_id=ac.account_class_id)
           RIGHT JOIN
 
@@ -207,6 +210,31 @@ function restore_default_account_title(){
 
           GROUP BY at.account_id) as main
           ON main.account_id = act.account_id
+
+
+          LEFT JOIN
+
+          (SELECT
+                at.account_id,
+                IF(
+                  ac.account_type_id=1 OR ac.account_type_id=5,
+                  IFNULL(SUM(ja.dr_amount),0)-IFNULL(SUM(ja.cr_amount),0),
+                  IFNULL(SUM(ja.cr_amount),0)-IFNULL(SUM(ja.dr_amount),0)
+                ) as prev_balance
+
+                FROM (account_titles as at LEFT JOIN `account_classes` as ac ON at.account_class_id=ac.account_class_id)
+                RIGHT JOIN
+
+                (SELECT ja.* FROM journal_accounts as ja INNER
+                JOIN journal_info as ji ON ja.journal_id=ji.journal_id
+                WHERE ji.is_active = TRUE AND ji.is_deleted=FALSE
+            AND ji.date_txn <= '$prev'
+                )as ja
+
+                ON at.account_id=ja.account_id
+
+                GROUP BY at.account_id) as previous
+            ON previous.account_id = act.account_id
 
           LEFT JOIN account_classes as ac ON act.account_class_id=ac.account_class_id
 

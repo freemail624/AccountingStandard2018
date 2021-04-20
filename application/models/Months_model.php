@@ -14,7 +14,9 @@ class Months_model extends CORE_Model {
         $query = $this->db->query("SELECT
 
 			full.*,
+			DATE_SUB(full.start_date, INTERVAL 1 DAY) as previous_date,
 			CONCAT(DATE_FORMAT(full.start_date, '%M'),' ',DATE_FORMAT(full.start_date, '%Y')) AS app_month_year,
+			CONCAT(date_format(DATE_SUB(full.start_date, INTERVAL 1 DAY), '%M'),' ',date_format(DATE_SUB(full.start_date, INTERVAL 1 DAY), '%Y')) as prev_month_year,
 		    CONCAT(DATE_FORMAT(full.start_date,'%m/%d/%Y'),' to ',DATE_FORMAT(full.end_date,'%m/%d/%Y')) as date_span
 
 		    FROM
