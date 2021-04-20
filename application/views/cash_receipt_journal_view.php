@@ -1643,6 +1643,7 @@ $(document).ready(function(){
 
                         reInitializeSpecificDropDown($('.cbo_supplier_list'));
                         reInitializeSpecificDropDown($('.cbo_department_list'));
+                        reInitializeSpecificDropDown($('.cbo_payment_method'));
 
                         reInitializeNumeric();
 
@@ -2916,6 +2917,19 @@ $(document).ready(function(){
             $('.cbo_department_list').on("change", function (e) {
                 var department_id = $(this).select2('val'); 
                 $('#tbl_entries_for_review_bill'+_dataParentID+' select.dept').each(function(){ $(this).select2('val',department_id)});
+            });
+
+            parent.on('change', '.cbo_payment_method', function(){
+                // If payment method is check
+                if ($(this).val() == 2){
+                    $('.for_check_billing_advances_'+_dataParentID).removeClass('hidden');
+                    $('.check_date_'+_dataParentID).prop('required',true);
+                    $('.check_no_'+_dataParentID).prop('required',true);
+                }else{
+                    $('.for_check_billing_advances_'+_dataParentID).addClass('hidden');
+                    $('.check_date_'+_dataParentID).prop('required',false);
+                    $('.check_no_'+_dataParentID).prop('required',false);
+                }
             });
 
             parent.on('click','button[name="btn_finalize_journal_review"]',function(){

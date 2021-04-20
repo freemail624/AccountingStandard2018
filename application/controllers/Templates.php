@@ -4524,6 +4524,7 @@ class Templates extends CORE_Controller {
                 $m_temp_info=$this->Temp_journal_info_model;
                 $m_temp_items=$this->Temp_journal_accounts_model;
                 $m_suppliers=$this->Suppliers_model;
+                $m_methods=$this->Payment_method_model;
 
                 $info = $m_temp_info->get_list($temp_journal_id,
                         '*,
@@ -4531,6 +4532,7 @@ class Templates extends CORE_Controller {
                         array( array('customers','customers.customer_id = temp_journal_info.customer_id','left'))
                     );
                 $data['info']=$info[0];
+                $data['methods']=$m_methods->get_list();
                 $data['departments']=$m_departments->get_list('is_active=TRUE AND is_deleted=FALSE');
                 $data['entries']=$m_temp_items->get_list(array('temp_journal_id'=>$temp_journal_id),null,null,'dr_amount DESC');
                 $data['suppliers']=$m_suppliers->get_list(
