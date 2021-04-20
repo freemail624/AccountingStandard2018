@@ -17,6 +17,7 @@ class Repair_order_model extends CORE_Model
 		    c.customer_no,
 		    c.customer_name,
 		    ro.*,
+		    insurance.insurer_company,
 		    v.plate_no,
 		    CONCAT_WS(' ',
 		            advisors.advisor_fname,
@@ -26,10 +27,10 @@ class Repair_order_model extends CORE_Model
 		    DATE_FORMAT(ro.document_date, '%I:%i %p') AS time_received,
 		    DATE_FORMAT(ro.date_time_promised,
 		            '%d %b %Y   %I:%i %p') AS date_time_promised,
-		    DATE_FORMAT(ro.delivery_date, '%d %b %Y') AS delivery_date,
+		    DATE_FORMAT(v.delivery_date, '%d %b %Y') AS delivery_date,
 		    DATE_FORMAT(ro.next_svc_date, '%d %b %Y') AS next_svc_date,
 		    DATE_FORMAT(ro.next_svc_date, '%m/%d/%Y') AS next_svc_date_edit,
-		    DATE_FORMAT(ro.delivery_date, '%m/%d/%Y') AS delivery_date_edit,
+		    DATE_FORMAT(v.delivery_date, '%m/%d/%Y') AS delivery_date_edit,
 		    DATE_FORMAT(ro.document_date, '%m/%d/%Y %h:%i %p') AS document_date_edit,
 		    DATE_FORMAT(ro.date_time_promised, '%m/%d/%Y %h:%i %p') AS date_time_promised_edit
 
@@ -41,6 +42,8 @@ class Repair_order_model extends CORE_Model
 		    customer_vehicles v ON v.vehicle_id = ro.vehicle_id
 		        LEFT JOIN
 		    advisors ON advisors.advisor_id = ro.advisor_id
+		    	LEFT JOIN
+		    insurance ON insurance.insurance_id = ro.insurance_id
 
 		    WHERE ro.is_deleted = FALSE AND
 		    	ro.is_active = TRUE
@@ -67,10 +70,10 @@ class Repair_order_model extends CORE_Model
 		    DATE_FORMAT(ro.document_date, '%I:%i %p') AS time_received,
 		    DATE_FORMAT(ro.date_time_promised,
 		            '%d %b %Y   %I:%i %p') AS date_time_promised,
-		    DATE_FORMAT(ro.delivery_date, '%d %b %Y') AS delivery_date,
+		    DATE_FORMAT(v.delivery_date, '%d %b %Y') AS delivery_date,
 		    DATE_FORMAT(ro.next_svc_date, '%d %b %Y') AS next_svc_date,
 		    DATE_FORMAT(ro.next_svc_date, '%m/%d/%Y') AS next_svc_date_edit,
-		    DATE_FORMAT(ro.delivery_date, '%m/%d/%Y') AS delivery_date_edit,
+		    DATE_FORMAT(v.delivery_date, '%m/%d/%Y') AS delivery_date_edit,
 		    DATE_FORMAT(ro.document_date, '%m/%d/%Y %h:%i %p') AS document_date_edit,
 		    DATE_FORMAT(ro.date_time_promised, '%m/%d/%Y %h:%i %p') AS date_time_promised_edit
 
@@ -108,10 +111,10 @@ class Repair_order_model extends CORE_Model
 		    DATE_FORMAT(ro.document_date, '%I:%i %p') AS time_received,
 		    DATE_FORMAT(ro.date_time_promised,
 		            '%d %b %Y   %I:%i %p') AS date_time_promised,
-		    DATE_FORMAT(ro.delivery_date, '%d %b %Y') AS delivery_date,
+		    DATE_FORMAT(v.delivery_date, '%d %b %Y') AS delivery_date,
 		    DATE_FORMAT(ro.next_svc_date, '%d %b %Y') AS next_svc_date,
 		    DATE_FORMAT(ro.next_svc_date, '%m/%d/%Y') AS next_svc_date_edit,
-		    DATE_FORMAT(ro.delivery_date, '%m/%d/%Y') AS delivery_date_edit,
+		    DATE_FORMAT(v.delivery_date, '%m/%d/%Y') AS delivery_date_edit,
 		    DATE_FORMAT(ro.document_date, '%m/%d/%Y %h:%i %p') AS document_date_edit,
 		    DATE_FORMAT(ro.date_time_promised, '%m/%d/%Y %h:%i %p') AS date_time_promised_edit
 

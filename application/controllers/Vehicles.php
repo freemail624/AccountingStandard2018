@@ -58,6 +58,7 @@ class Vehicles extends CORE_Controller {
 
                 $customer_id = $this->input->post('customer_id', TRUE);
                 $plate_no = $this->input->post('plate_no', TRUE);
+                $conduction_no = $this->input->post('conduction_no', TRUE);
 
                 $m_vehicle->begin();
                 $m_vehicle->customer_id = $customer_id;
@@ -65,24 +66,45 @@ class Vehicles extends CORE_Controller {
                 $m_vehicle->vehicle_year_id = $this->input->post('vehicle_year_id', TRUE);
                 $m_vehicle->model_id = $this->input->post('model_id', TRUE);
                 $m_vehicle->color_id = $this->input->post('color_id', TRUE);
+                $m_vehicle->conduction_no = $conduction_no;
                 $m_vehicle->plate_no = $plate_no;
                 $m_vehicle->chassis_no = $this->input->post('chassis_no', TRUE);
                 $m_vehicle->engine_no = $this->input->post('engine_no', TRUE);
+                $m_vehicle->crp_no_type = $this->input->post('crp_no_type', TRUE);
+
+                $date = $this->input->post('delivery_date', TRUE);
+
+                if($date == "" || $date == null){
+                    $delivery_date = null;
+                }else{
+                    $delivery_date = date('Y-m-d', strtotime($date));
+                }
+
+                $m_vehicle->delivery_date = $delivery_date;
                 $m_vehicle->save();
                 
+                date('Y-m-d', strtotime($this->input->post('crp_no_type', TRUE)));
+
                 $vehicle_id = $m_vehicle->last_insert_id();
 
                 $m_vehicle->commit();
 
 
                 $customer = $m_customers->get_list($customer_id,'customer_name');
+                $trans_log="";
+
+                if($plate_no != "" || $plate_no != null){
+                    $trans_log = 'Created vehicle for '.$customer[0]->customer_name.' with plate # '.$plate_no;
+                }else{
+                    $trans_log = 'Created vehicle for '.$customer[0]->customer_name.' with conduction # '.$conduction_no;
+                }
 
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=1; //CRUD
                 $m_trans->trans_type_id=81; // TRANS TYPE
-                $m_trans->trans_log='Created vehicle for '.$customer[0]->customer_name.' with plate # '.$plate_no;
+                $m_trans->trans_log=$trans_log;
                 $m_trans->save();
 
                 $response['title'] = 'Success!';
@@ -100,6 +122,7 @@ class Vehicles extends CORE_Controller {
                 $vehicle_id = $this->input->post('vehicle_id', TRUE);
                 $customer_id = $this->input->post('customer_id', TRUE);
                 $plate_no = $this->input->post('plate_no', TRUE);
+                $conduction_no = $this->input->post('conduction_no', TRUE);
 
                 $m_vehicle->begin();
                 $m_vehicle->customer_id = $customer_id;
@@ -107,9 +130,21 @@ class Vehicles extends CORE_Controller {
                 $m_vehicle->vehicle_year_id = $this->input->post('vehicle_year_id', TRUE);
                 $m_vehicle->model_id = $this->input->post('model_id', TRUE);
                 $m_vehicle->color_id = $this->input->post('color_id', TRUE);
+                $m_vehicle->conduction_no = $conduction_no;
                 $m_vehicle->plate_no = $plate_no;
                 $m_vehicle->chassis_no = $this->input->post('chassis_no', TRUE);
                 $m_vehicle->engine_no = $this->input->post('engine_no', TRUE);
+                $m_vehicle->crp_no_type = $this->input->post('crp_no_type', TRUE);
+                $date = $this->input->post('delivery_date', TRUE);
+
+                if($date == "" || $date == null){
+                    $delivery_date = null;
+                }else{
+                    $delivery_date = date('Y-m-d', strtotime($date));
+                }
+
+                $m_vehicle->delivery_date = $delivery_date;
+
                 $m_vehicle->modify($vehicle_id);
                 $m_vehicle->commit();
 

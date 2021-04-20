@@ -27,6 +27,7 @@ class Service_invoice extends CORE_Controller
         $this->load->model('Repair_order_model');
         $this->load->model('Repair_order_item_model');
         $this->load->model('Products_model');
+        $this->load->model('Insurance_model');
 
     }
 
@@ -55,6 +56,9 @@ class Service_invoice extends CORE_Controller
             array('customers.is_active'=>TRUE,'customers.is_deleted'=>FALSE)
         );
 
+        $data['insurances']=$this->Insurance_model->get_list(
+            'is_deleted=FALSE'
+        );
 
         $data['services'] = $this->Services_model->get_list(
             array('services.is_active'=>TRUE,'services.is_deleted'=>FALSE), 
@@ -139,18 +143,22 @@ class Service_invoice extends CORE_Controller
                 $m_order=$this->Repair_order_model;
 
                 $repair_order_id = $this->get_numeric_value($this->input->post('repair_order_id',TRUE));
+                $customer_id = $this->get_numeric_value($this->input->post('customer_id',TRUE));
+                $address = $this->input->post('address',TRUE);
+                $mobile_no = $this->input->post('mobile_no',TRUE);
+                $tel_no_home = $this->input->post('tel_no_home',TRUE);
+                $tel_no_bus = $this->input->post('tel_no_bus',TRUE);
 
                 $m_invoice->begin();
 
                 /* Customers Info */
 
                 $m_invoice->repair_order_id= $repair_order_id;
-                $m_invoice->customer_id= $this->get_numeric_value($this->input->post('customer_id',TRUE));
-                $m_invoice->address = $this->input->post('address',TRUE);
-                $m_invoice->address = $this->input->post('address',TRUE);
-                $m_invoice->mobile_no = $this->input->post('mobile_no',TRUE);
-                $m_invoice->tel_no_home = $this->input->post('tel_no_home',TRUE);
-                $m_invoice->tel_no_bus = $this->input->post('tel_no_bus',TRUE);
+                $m_invoice->customer_id= $customer_id;
+                $m_invoice->address = $address;
+                $m_invoice->mobile_no = $mobile_no;
+                $m_invoice->tel_no_home = $tel_no_home;
+                $m_invoice->tel_no_bus = $tel_no_bus;
                 $m_invoice->representative_name = $this->input->post('representative_name',TRUE);
                 $m_invoice->representative_no = $this->input->post('representative_no',TRUE);
 
@@ -165,6 +173,8 @@ class Service_invoice extends CORE_Controller
                 $m_invoice->km_reading = $this->get_numeric_value($this->input->post('km_reading', TRUE));
                 $m_invoice->next_svc_date = date('Y-m-d',strtotime($this->input->post('next_svc_date', TRUE)));
                 $m_invoice->next_svc_km = $this->get_numeric_value($this->input->post('next_svc_km', TRUE));
+                $m_invoice->crp_no = $this->input->post('crp_no', TRUE);
+                $m_invoice->crp_no_type = $this->input->post('crp_no_type', TRUE);
 
                 /* Repair Order Information */
 
@@ -176,9 +186,9 @@ class Service_invoice extends CORE_Controller
                 $m_invoice->bpr_desc = $this->input->post('bpr_desc', TRUE);
                 $m_invoice->gj_desc = $this->input->post('gj_desc', TRUE);
                 $m_invoice->date_time_promised = date('Y-m-d h:i:s',strtotime($this->input->post('date_time_promised', TRUE)));
-                $m_invoice->delivery_date = date('Y-m-d',strtotime($this->input->post('delivery_date', TRUE)));
                 $m_invoice->selling_dealer=$this->input->post('selling_dealer',TRUE);
                 $m_invoice->advisor_id=$this->input->post('advisor_id',TRUE);
+                $m_invoice->insurance_id=$this->input->post('insurance_id',TRUE);
                 $m_invoice->advisor_remarks=$this->input->post('advisor_remarks',TRUE);
                 $m_invoice->customer_remarks=$this->input->post('customer_remarks',TRUE);
 
@@ -293,6 +303,23 @@ class Service_invoice extends CORE_Controller
                 $m_order->ro_status_id=TRUE;
                 $m_order->modify($repair_order_id);
 
+                // Update Customer Information
+                $m_customer = $this->Customers_model;
+
+                if($address != null || $address == ""){
+                    $m_customer->address = $address;
+                }
+                if($mobile_no != null || $mobile_no == ""){
+                    $m_customer->contact_no = $mobile_no;
+                }
+                if($tel_no_home != null || $tel_no_home == ""){
+                    $m_customer->tel_no_home = $tel_no_home;
+                }
+                if($tel_no_bus != null || $tel_no_bus == ""){
+                    $m_customer->tel_no_bus = $tel_no_bus;
+                }
+
+                $m_customer->modify($customer_id);
                 //update status of so
                 // $m_so->order_status_id=$this->get_so_status($sales_order_id);
                 // $m_so->modify($sales_order_id);
@@ -396,18 +423,22 @@ class Service_invoice extends CORE_Controller
 
                 }
 
+                $customer_id = $this->get_numeric_value($this->input->post('customer_id',TRUE));
+                $address = $this->input->post('address',TRUE);
+                $mobile_no = $this->input->post('mobile_no',TRUE);
+                $tel_no_home = $this->input->post('tel_no_home',TRUE);
+                $tel_no_bus = $this->input->post('tel_no_bus',TRUE);
 
                 $m_invoice->begin();
 
                 /* Customers Info */
 
                 $m_invoice->repair_order_id= $repair_order_id;
-                $m_invoice->customer_id= $this->get_numeric_value($this->input->post('customer_id',TRUE));
-                $m_invoice->address = $this->input->post('address',TRUE);
-                $m_invoice->address = $this->input->post('address',TRUE);
-                $m_invoice->mobile_no = $this->input->post('mobile_no',TRUE);
-                $m_invoice->tel_no_home = $this->input->post('tel_no_home',TRUE);
-                $m_invoice->tel_no_bus = $this->input->post('tel_no_bus',TRUE);
+                $m_invoice->customer_id= $customer_id;
+                $m_invoice->address = $address;
+                $m_invoice->mobile_no = $mobile_no;
+                $m_invoice->tel_no_home = $tel_no_home;
+                $m_invoice->tel_no_bus = $tel_no_bus;
                 $m_invoice->representative_name = $this->input->post('representative_name',TRUE);
                 $m_invoice->representative_no = $this->input->post('representative_no',TRUE);
 
@@ -422,6 +453,8 @@ class Service_invoice extends CORE_Controller
                 $m_invoice->km_reading = $this->get_numeric_value($this->input->post('km_reading', TRUE));
                 $m_invoice->next_svc_date = date('Y-m-d',strtotime($this->input->post('next_svc_date', TRUE)));
                 $m_invoice->next_svc_km = $this->get_numeric_value($this->input->post('next_svc_km', TRUE));
+                $m_invoice->crp_no = $this->input->post('crp_no', TRUE);
+                $m_invoice->crp_no_type = $this->input->post('crp_no_type', TRUE);
 
                 /* Repair Order Information */
 
@@ -429,9 +462,9 @@ class Service_invoice extends CORE_Controller
                 $m_invoice->bpr_desc = $this->input->post('bpr_desc', TRUE);
                 $m_invoice->gj_desc = $this->input->post('gj_desc', TRUE);
                 $m_invoice->date_time_promised = date('Y-m-d h:i:s',strtotime($this->input->post('date_time_promised', TRUE)));
-                $m_invoice->delivery_date = date('Y-m-d',strtotime($this->input->post('delivery_date', TRUE)));
                 $m_invoice->selling_dealer=$this->input->post('selling_dealer',TRUE);
                 $m_invoice->advisor_id=$this->input->post('advisor_id',TRUE);
+                $m_invoice->insurance_id=$this->input->post('insurance_id',TRUE);
                 $m_invoice->advisor_remarks=$this->input->post('advisor_remarks',TRUE);
                 $m_invoice->customer_remarks=$this->input->post('customer_remarks',TRUE);
 
@@ -529,6 +562,24 @@ class Service_invoice extends CORE_Controller
                     $m_products->on_hand=$m_products->get_product_qty($this->get_numeric_value($prod_id[$i]));
                     $m_products->modify($this->get_numeric_value($prod_id[$i]));
                 }
+
+                // Update Customer Information
+                $m_customer = $this->Customers_model;
+
+                if($address != null || $address == ""){
+                    $m_customer->address = $address;
+                }
+                if($mobile_no != null || $mobile_no == ""){
+                    $m_customer->contact_no = $mobile_no;
+                }
+                if($tel_no_home != null || $tel_no_home == ""){
+                    $m_customer->tel_no_home = $tel_no_home;
+                }
+                if($tel_no_bus != null || $tel_no_bus == ""){
+                    $m_customer->tel_no_bus = $tel_no_bus;
+                }
+
+                $m_customer->modify($customer_id);
 
                 $m_invoice->commit();
 

@@ -15,6 +15,7 @@ class Service_invoice_model extends CORE_Model
         $query = $this->db->query("SELECT 
             c.customer_no,
             c.customer_name,
+            c.tin_no,
             si.*,
             ro.repair_order_no,
             v.plate_no,
@@ -26,10 +27,10 @@ class Service_invoice_model extends CORE_Model
             DATE_FORMAT(si.document_date, '%I:%i %p') AS time_received,
             DATE_FORMAT(si.date_time_promised,
                     '%d %b %Y   %I:%i %p') AS date_time_promised,
-            DATE_FORMAT(si.delivery_date, '%d %b %Y') AS delivery_date,
+            DATE_FORMAT(v.delivery_date, '%d %b %Y') AS delivery_date,
             DATE_FORMAT(si.next_svc_date, '%d %b %Y') AS next_svc_date,
             DATE_FORMAT(si.next_svc_date, '%m/%d/%Y') AS next_svc_date_edit,
-            DATE_FORMAT(si.delivery_date, '%m/%d/%Y') AS delivery_date_edit,
+            DATE_FORMAT(v.delivery_date, '%m/%d/%Y') AS delivery_date_edit,
             DATE_FORMAT(si.document_date, '%m/%d/%Y %h:%i %p') AS document_date_edit,
             DATE_FORMAT(si.date_time_promised, '%m/%d/%Y %h:%i %p') AS date_time_promised_edit
 

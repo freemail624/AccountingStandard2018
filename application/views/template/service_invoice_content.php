@@ -173,7 +173,7 @@
         <tr>
             <td valign="top">
                 <strong>PLATE NO.</strong><br/>
-                <?php echo $service->plate_no; ?>
+                <?php echo $service->crp_no; ?>
             </td>
             <td valign="top">
                 <strong>MODEL NO.</strong><br/>

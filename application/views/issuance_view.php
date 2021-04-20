@@ -692,7 +692,7 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "repair_order_no" },
                 { targets:[2],data: "customer_name" },
-                { targets:[3],data: "plate_no" },
+                { targets:[3],data: "crp_no" },
                 { targets:[4],data: "document_date" },
                 {
                     targets:[5],

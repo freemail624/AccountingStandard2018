@@ -46,6 +46,7 @@ class Insurance extends CORE_Controller {
                 $m_insurance->contact_no=$this->input->post('contact_no',TRUE);
                 $m_insurance->address=$this->input->post('address',TRUE);
                 $m_insurance->email_address=$this->input->post('email_address',TRUE);
+                $m_insurance->tin_no=$this->input->post('tin_no',TRUE);
                 $m_insurance->posted_by_user=$this->session->user_id;
                 $m_insurance->save();
                 $insurance_id=$m_insurance->last_insert_id();
@@ -103,6 +104,7 @@ class Insurance extends CORE_Controller {
                 $m_insurance->contact_no=$this->input->post('contact_no',TRUE);
                 $m_insurance->address=$this->input->post('address',TRUE);
                 $m_insurance->email_address=$this->input->post('email_address',TRUE);
+                $m_insurance->tin_no=$this->input->post('tin_no',TRUE);
                 $m_insurance->modify($insurance_id);
 
                 $m_insurance->commit();

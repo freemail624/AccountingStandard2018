@@ -15,7 +15,11 @@ class Customer_vehicles_model extends CORE_Model {
                     make.make_desc,
                     year.vehicle_year,
                     model.model_name,
-                    colors.color
+                    colors.color,
+                    (CASE
+                      WHEN vehicle.crp_no_type = 1 THEN vehicle.conduction_no
+                      ELSE vehicle.plate_no
+                    END) as crp_no
                  FROM
                   customer_vehicles vehicle
                   LEFT JOIN customers c ON c.customer_id = vehicle.customer_id

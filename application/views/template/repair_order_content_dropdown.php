@@ -85,7 +85,7 @@
 			    		</td>
 			    		<td valign="top">
 			    			Plate No. <br/>
-			    			<strong><?php echo $info->plate_no; ?></strong>
+			    			<strong><?php echo $info->crp_no; ?></strong>
 			    		</td>
 			    		<td valign="top" colspan="2">
 			    			Advisor <br/>
@@ -116,6 +116,7 @@
 			    	<tr>
 			    		<td valign="top">
 			    			Insurer <br/>
+			    			<strong><?php echo $info->insurer_company; ?></strong>
 			    		</td>
 			    		<td valign="top">
 			    			Year/Make <br/>

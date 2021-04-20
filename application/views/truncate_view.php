@@ -138,14 +138,22 @@
     <input type="checkbox" id="selectall_references" class="css-checkbox"><label class="css-label " for="selectall_references">SELECT ALL REFERENCES</label><br>
     <form id="frm_references">
 
-        <input type="checkbox" name="references[]" value="bank" id="bank" class="css-checkbox"><label class="css-label " for="bank">Bank</label>(<?php echo $current_count->bank ?>)<br>
-        <input type="checkbox" name="references[]" value="departments" id="departments" class="css-checkbox"><label class="css-label " for="departments">Departments</label>(<?php echo $current_count->departments ?>)<br>
         <input type="checkbox" name="references[]" value="categories" id="categories" class="css-checkbox"><label class="css-label " for="categories">Categories</label>(<?php echo $current_count->categories ?>)<br>
-         <input type="checkbox" name="references[]" value="services" id="services" class="css-checkbox"><label class="css-label " for="services">Services</label>(<?php echo $current_count->services ?>)<br>
-        <input type="checkbox" name="references[]" value="service_unit" id="service_unit" class="css-checkbox"><label class="css-label " for="service_unit">Service Units</label>(<?php echo $current_count->service_unit ?>)<br>
-        <input type="checkbox" name="references[]" value="tax_types" id="tax_types" class="css-checkbox"><label class="css-label " for="tax_types">Tax Types</label>(<?php echo $current_count->tax_types ?>)<br>
+        <input type="checkbox" name="references[]" value="departments" id="departments" class="css-checkbox"><label class="css-label " for="departments">Departments</label>(<?php echo $current_count->departments ?>)<br>
         <input type="checkbox" name="references[]" value="units" id="units" class="css-checkbox"><label class="css-label " for="units">Units</label>(<?php echo $current_count->units ?>)<br>
         <input type="checkbox" name="references[]" value="locations" id="locations" class="css-checkbox"><label class="css-label " for="locations">Locations</label>(<?php echo $current_count->locations ?>)<br>
+        <input type="checkbox" name="references[]" value="bank" id="bank" class="css-checkbox"><label class="css-label " for="bank">Bank</label>(<?php echo $current_count->bank ?>)<br>
+        <input type="checkbox" name="references[]" value="brands" id="brands" class="css-checkbox"><label class="css-label " for="brands">Brands</label>(<?php echo $current_count->brands ?>)<br>
+        <input type="checkbox" name="references[]" value="order_source" id="order_source" class="css-checkbox"><label class="css-label " for="order_source">Order Source</label>(<?php echo $current_count->order_source ?>)<br>
+        <input type="checkbox" name="references[]" value="terms" id="terms" class="css-checkbox"><label class="css-label " for="terms">Terms</label>(<?php echo $current_count->terms ?>)<br>
+        <input type="checkbox" name="references[]" value="vehicle_model" id="vehicle_model" class="css-checkbox"><label class="css-label " for="vehicle_model">Models</label>(<?php echo $current_count->vehicle_model ?>)<br>
+        <input type="checkbox" name="references[]" value="colors" id="colors" class="css-checkbox"><label class="css-label " for="colors">Colors</label>(<?php echo $current_count->colors ?>)<br>
+        <input type="checkbox" name="references[]" value="vehicle_year" id="vehicle_year" class="css-checkbox"><label class="css-label " for="vehicle_year">Vehicle Year</label>(<?php echo $current_count->vehicle_year ?>)<br>
+        <input type="checkbox" name="references[]" value="makes" id="makes" class="css-checkbox"><label class="css-label " for="makes">Makes</label>(<?php echo $current_count->makes ?>)<br>
+        <input type="checkbox" name="references[]" value="bins" id="bins" class="css-checkbox"><label class="css-label " for="bins">Bins</label>(<?php echo $current_count->bins ?>)<br>
+        <input type="checkbox" name="references[]" value="services" id="services" class="css-checkbox"><label class="css-label " for="services">Services</label>(<?php echo $current_count->services ?>)<br>
+        <input type="checkbox" name="references[]" value="service_unit" id="service_unit" class="css-checkbox"><label class="css-label " for="service_unit">Service Units</label>(<?php echo $current_count->service_unit ?>)<br>
+        <input type="checkbox" name="references[]" value="tax_types" id="tax_types" class="css-checkbox"><label class="css-label " for="tax_types">Tax Types</label>(<?php echo $current_count->tax_types ?>)<br>
        
     </form>   
     <button id="btn_references" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Truncate References</button>
@@ -230,6 +238,9 @@
         <input type="checkbox" name="masterfiles[]" value="customer_photos" id="customer_photos" class="css-checkbox"><label class="css-label " for="customer_photos">Customers Photos</label>(<?php echo $current_count->customer_photos; ?>)<br>
         <input type="checkbox" name="masterfiles[]" value="salesperson" id="salesperson" class="css-checkbox"><label class="css-label " for="salesperson">Salespersons</label>(<?php echo $current_count->salesperson; ?>)<br>
         <input type="checkbox" name="masterfiles[]" value="agent" id="agent" class="css-checkbox"><label class="css-label " for="agent">Agents</label>(<?php echo $current_count->agent; ?>)<br>
+        <input type="checkbox" name="masterfiles[]" value="advisors" id="advisors" class="css-checkbox"><label class="css-label " for="advisors">Advisors</label>(<?php echo $current_count->advisors; ?>)<br>
+        <input type="checkbox" name="masterfiles[]" value="insurance" id="insurance" class="css-checkbox"><label class="css-label " for="insurance">Insurance</label>(<?php echo $current_count->insurance; ?>)<br>
+        <input type="checkbox" name="masterfiles[]" value="customer_vehicles" id="customer_vehicles" class="css-checkbox"><label class="css-label " for="customer_vehicles">Vehicles</label>(<?php echo $current_count->customer_vehicles; ?>)<br>
         <input type="checkbox" name="masterfiles[]" value="fixed_assets" id="fixed_assets" class="css-checkbox"><label class="css-label " for="fixed_assets">Fixed Assets</label>(<?php echo $current_count->fixed_assets; ?>)<br>
         </form>
          <button id="btn_masterfiles" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Truncate Masterfiles</button>

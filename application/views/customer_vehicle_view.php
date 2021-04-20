@@ -189,7 +189,9 @@
                                                     <th>&nbsp;&nbsp;</th>
                                                     <th>Customer</th>
                                                     <th>Model</th>
+                                                    <th>Conduction No</th>
                                                     <th>Plate No</th>
+                                                    <th><center>Active No</center></th>
                                                     <th><center>Action</center></th>
                                                 </tr>
                                                 </thead>
@@ -255,11 +257,22 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <div class="col-md-12">
+                                        <div class="col-md-8">
                                              <div class="form-group">
-                                            <h4>Vehicle Information</h4>
-                                            <hr>
+                                                <h4>Vehicle Information</h4>
+                                                <hr>
                                              </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Delivery Date :</label> <br />
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </span>
+                                                    <input type="text" name="delivery_date" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Delivery Date" data-error-msg="Delivery Date!" >
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <div class="col-md-8">
@@ -313,8 +326,13 @@
                                         <div class="col-md-4">
                                             <div class="vehicle_panel">
                                                 <div class="form-group">
-                                                    <label><b class="required">*</b> Plate No : </label>
-                                                    <input type="text" class="form-control" name="plate_no" placeholder="Plate No." required data-error-msg="Plate No is required!"> 
+                                                    <input type="radio" name="crp_no_type" id="cd_no" value="1" data-input="conduction_no" data-required="cd_no_req"> <label for="cd_no"> <b class="required crp_required cd_no_req"></b> Conduction No : </label>
+                                                    <input type="text" class="form-control for_crp_input" name="conduction_no" placeholder="Conduction No." data-error-msg="Conduction No is required!"> 
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="radio" name="crp_no_type" id="pl_no" value="2" data-input="plate_no" data-required="pl_no_req">
+                                                    <label for="pl_no"> <b class="required crp_required pl_no_req"></b> Plate No : </label>
+                                                    <input type="text" class="form-control for_crp_input" name="plate_no" placeholder="Plate No." data-error-msg="Plate No is required!"> 
                                                 </div>
                                                 <div class="form-group">
                                                     <label><b class="required">*</b> Chassis No : </label>
@@ -386,25 +404,38 @@
                                         </div>
                                         <div class="col-md-12">
                                             <div class="form-group">
-                                                <label><b class="required"></b> Email Address :</label>
+                                                <label><b class="required">*</b> Email Address :</label>
                                                 <div class="input-group">
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-envelope-o"></i>
                                                     </span>
-                                                    <input type="text" name="email_address" class="form-control" placeholder="Email Address">
+                                                    <input type="text" name="email_address" class="form-control" placeholder="Email Address" required data-error-msg="Email Address is required!">
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="col-md-12">
+                                            <div class="col-md-12" id="label">
+                                                 <label class="control-label boldlabel" style="text-align:right;">TIN :</label>
+                                            </div>
                                             <div class="form-group">
-                                                <label>Mobile No :</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-file-code-o"></i>
+                                                    </span>
+                                                    <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="TIN">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label><b class="required">*</b> Mobile No :</label>
                                                 <div class="input-group">
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-mobile"></i>
                                                     </span>
-                                                    <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Mobile No">
+                                                    <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Mobile No" required data-error-msg="Contact No is required!">
                                                 </div>
                                             </div>
                                         </div>
@@ -618,9 +649,24 @@
                     },
                     { targets:[1],data: "customer_name" },
                     { targets:[2],data: "model_name" },
-                    { targets:[3],data: "plate_no" },
+                    { targets:[3],data: "conduction_no" },
+                    { targets:[4],data: "plate_no" },
                     {
-                        targets:[4],
+                        targets:[5], data:null,
+                        render: function (data, type, full, meta){
+                            var status;
+
+                            if(data.crp_no_type == 1){
+                                status = '<label class="label label-warning" style="border-radius: 1em;"><i class="fa fa-car"></i> Conduction No</label>';
+                            }else{
+                                status = '<label class="label label-success" style="border-radius: 1em;"><i class="fa fa-car"></i> Plate No</label>';
+                            }
+
+                            return '<center>'+status+'</center>';
+                        }
+                    },
+                    {
+                        targets:[6],
                         render: function (data, type, full, meta){
                             var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"   data-toggle="tooltip" data-placement="top" title="Edit" style="margin-left:-5px;"><i class="fa fa-pencil"></i> </button>';
                             var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info"  data-toggle="tooltip" data-placement="top" title="Move to trash" style="margin-right:-5px;"><i class="fa fa-trash-o"></i> </button>';
@@ -662,6 +708,13 @@
                 allowClear: false
             });                                     
 
+            $('.date-picker').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true
+            });
      }();
 
         var bindEventHandlers=(function(){
@@ -696,6 +749,19 @@
                     $('#modal_create_make').modal('show');
                     $('#modal_create_vehicle').modal('hide');
                 }
+            });
+
+            $('input[name="crp_no_type"]').on("change", function(){
+
+                $('.crp_required').html('');
+                $('.for_crp_input').prop('required',false);
+
+                var input = $(this).data('input');
+                var required = $(this).data('required');
+
+                $('.'+required).html('*');
+                $('input[name="'+input+'"]').prop('required',true);
+
             });
 
             $('#btn_cancel_make').on('click', function(){
@@ -807,7 +873,8 @@
                 _cboYears.select2('val', null);
                 _cboModels.select2('val', null);
                 _cboColors.select2('val', null);
-
+                $("#pl_no").attr('checked', 'checked');
+                $("input[name='crp_no_type']").change();
                 $('#modal_create_vehicle').modal('show');
             });
 
@@ -822,6 +889,12 @@
                     _cboYears.select2('val', data.vehicle_year_id);
                     _cboModels.select2('val', data.model_id);
                     _cboColors.select2('val', data.color_id);
+
+                    if(data.crp_no_type == 1){
+                        $('#cd_no').trigger('click');
+                    }else{
+                        $('#pl_no').trigger('click');
+                    } 
 
                     $('input,textarea').each(function(){
                         var _elem=$(this);
@@ -1064,6 +1137,7 @@
 
         var createVehicle=function(){
             var _data=$('#frm_vehicle').serializeArray();
+            _data.push({name : "crp_no_type" ,value : ($('#cd_no').is(':checked')) ? 1 : 2 });
 
             return $.ajax({
                 "dataType":"json",
@@ -1077,6 +1151,7 @@
         var updateVehicle=function(){
             var _data=$('#frm_vehicle').serializeArray();
             _data.push({name : "vehicle_id" ,value : _selectedID});
+            _data.push({name : "crp_no_type" ,value : ($('#cd_no').is(':checked')) ? 1 : 2 });
 
             return $.ajax({
                 "dataType":"json",
@@ -1121,7 +1196,7 @@
 
         var clearFields=function(f){
             $('input,textarea,select',f).val('');
-            $(f).find('input:first').focus();
+            // $(f).find('input:first').focus();
             $('#img_user').attr('src','assets/img/anonymous-icon.png');
         };
 

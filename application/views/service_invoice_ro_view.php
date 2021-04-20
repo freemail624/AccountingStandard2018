@@ -361,13 +361,14 @@
                               <div class="col-md-12">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <label><b class="required">*</b> Plate No. : </label>
+                                        <label><b class="required">*</b> Plate No. / Conduction No : </label>
                                         <select name="vehicle_id" id="cbo_vehicles" data-error-msg="Vehicle is required." required disabled>
                                             <option value="0">[ Create New Vehicle ]</option>
                                             <?php foreach($vehicles as $vehicle){ ?>
-                                                <option value="<?php echo $vehicle->vehicle_id; ?>" data-vehicle-year-make="<?php echo $vehicle->vehicle_year.'/'.$vehicle->make_desc; ?>" data-model-name="<?php echo $vehicle->model_name; ?>" data-color-name="<?php echo $vehicle->color; ?>" data-chassis-no="<?php echo $vehicle->chassis_no; ?>" data-engine-no="<?php echo $vehicle->engine_no; ?>">
-                                                    <?php echo $vehicle->plate_no; ?>
+                                                <option value="<?php echo $vehicle->vehicle_id; ?>" data-vehicle-year-make="<?php echo $vehicle->vehicle_year.'/'.$vehicle->make_desc; ?>" data-model-name="<?php echo $vehicle->model_name; ?>" data-color-name="<?php echo $vehicle->color; ?>" data-chassis-no="<?php echo $vehicle->chassis_no; ?>" data-engine-no="<?php echo $vehicle->engine_no; ?>" data-delivery-date="<?php echo $vehicle->delivery_date; ?>" data-crp-no-type="<?php echo $vehicle->crp_no_type; ?>">
+                                                    <?php echo $vehicle->crp_no; ?>
                                                 </option>
+
                                             <?php } ?>
                                         </select>    
                                     </div>                                
@@ -423,6 +424,17 @@
                                   </div>
                                   <div class="col-md-6">
                                     <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="row">
+                                                <label>Delivery Date : </label>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </span>
+                                                    <input type="text" name="delivery_date" class="form-control" readonly>
+                                                </div>  
+                                            </div>
+                                        </div>
                                         <div class="col-md-12">
                                             <div class="row">
                                                 <label>Km Reading : </label>
@@ -487,13 +499,15 @@
                                 </div>   
                               </div>
                               <div class="col-md-12">
-                                <b class="required">*</b> <label>Delivery Date :</label> <br />
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-calendar"></i>
-                                    </span>
-                                    <input type="text" name="delivery_date" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Delivery Date" data-error-msg="Delivery Date!" required>
-                                </div>   
+                                <label>Insurance :</label> <br />
+                                <select class="form-control" name="insurance_id" id="cbo_insurance" data-error-msg="Advisor is required!">
+                                    <option value="0">[ Create New Insurance ]</option>
+                                    <?php foreach($insurances as $insurance){ ?>
+                                        <option value="<?php echo $insurance->insurance_id; ?>">
+                                            <?php echo $insurance->insurer_company; ?>
+                                        </option>
+                                    <?php }?>
+                                </select>
                               </div>
                               <div class="col-md-12">
                                 <b class="required">*</b> <label>Advisor :</label> <br />
@@ -1022,14 +1036,14 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="col-md-12" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;">Email Address :</label>
+                                     <label class="control-label boldlabel" style="text-align:right;"><b class="required">*</b> Email Address :</label>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">
                                         <span class="input-group-addon">
                                             <i class="fa fa-envelope-o"></i>
                                         </span>
-                                        <input type="text" name="email_address" class="form-control" placeholder="Email Address">
+                                        <input type="text" name="email_address" class="form-control" placeholder="Email Address" required data-error-msg="Email Address is required!">
                                     </div>
                                 </div>
                             </div>
@@ -1038,14 +1052,29 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="col-md-12" id="label">
-                                         <label class="control-label boldlabel">Mobile No :</label>
+                                         <label class="control-label boldlabel">TIN :</label>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-file-code-o"></i>
+                                            </span>
+                                            <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="TIN">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-12" id="label">
+                                         <label class="control-label boldlabel"><b class="required">*</b> Mobile No :</label>
                                     </div>
                                     <div class="form-group">
                                         <div class="input-group">
                                             <span class="input-group-addon">
                                                 <i class="fa fa-mobile"></i>
                                             </span>
-                                            <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Mobile No">
+                                            <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Mobile No" required data-error-msg="Contact No is required!">
                                         </div>
                                     </div>
                                 </div>
@@ -1104,6 +1133,25 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="col-md-8">
+                                <h2><i class="fa fa-car"></i> Vehicle Information</h2>
+                                <hr>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Delivery Date :</label> <br />
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                        <input type="text" name="delivery_date" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Delivery Date" data-error-msg="Delivery Date!" >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-8">
                                 <div class="vehicle_panel">
                                     <div class="form-group">
                                         <label><b class="required">*</b> Make : </label>
@@ -1154,8 +1202,13 @@
                             <div class="col-md-4">
                                 <div class="vehicle_panel">
                                     <div class="form-group">
-                                        <label><b class="required">*</b> Plate No : </label>
-                                        <input type="text" class="form-control" name="plate_no" placeholder="Plate No." required data-error-msg="Plate No is required!"> 
+                                        <input type="radio" name="crp_no_type" id="cd_no" value="1" data-input="conduction_no" data-required="cd_no_req"> <label for="cd_no"> <b class="required crp_required cd_no_req"></b> Conduction No : </label>
+                                        <input type="text" class="form-control for_crp_input" name="conduction_no" placeholder="Conduction No." data-error-msg="Conduction No is required!"> 
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="radio" name="crp_no_type" id="pl_no" value="2" data-input="plate_no" data-required="pl_no_req">
+                                        <label for="pl_no"> <b class="required crp_required pl_no_req"></b> Plate No : </label>
+                                        <input type="text" class="form-control for_crp_input" name="plate_no" placeholder="Plate No." data-error-msg="Plate No is required!"> 
                                     </div>
                                     <div class="form-group">
                                         <label><b class="required">*</b> Chassis No : </label>
@@ -1178,6 +1231,7 @@
         </div>
     </div>
 </div>
+
 
 <div id="modal_new_make" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog">
@@ -1352,7 +1406,76 @@
         </div>
     </div>
 </div>
-
+<div id="modal_new_insurance" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#2ecc71;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 id="insurance_title" class="modal-title" style="color: #ecf0f1;">New Insurance Information</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form id="frm_insurance" role="form">
+                        <div class="">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="col-xs-12 col-md-4 control-label "><strong><font color="red">*</font> Insurer Company :</strong></label>
+                                    <div class="col-xs-12 col-md-8">
+                                        <input type="text" name="insurer_company" class="form-control" placeholder="Insurer Company" data-error-msg="Insurer Company is required!" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="col-xs-12 col-md-4 control-label "><strong> Address :</strong></label>
+                                    <div class="col-xs-12 col-md-8">
+                                        <textarea class="form-control" placeholder="Address" name="address"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="col-xs-12 col-md-4 control-label "><strong><font color="red">*</font> Contact Person :</strong></label>
+                                    <div class="col-xs-12 col-md-8">
+                                        <input type="text" name="contact_person" class="form-control" placeholder="Contact Person" data-error-msg="Contact Person is required!" required>
+                                    </div>
+                                </div>
+                            </div><br><br>
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="col-xs-12 col-md-4 control-label "><strong><font color="red">*</font> Contact No :</strong></label>
+                                    <div class="col-xs-12 col-md-8">
+                                        <input type="text" name="contact_no" class="form-control" placeholder="Contact No" data-error-msg="Contact No is required!" required>
+                                    </div>
+                                </div>
+                            </div><br><br>
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="col-xs-12 col-md-4 control-label "><strong>Email Address :</strong></label>
+                                    <div class="col-xs-12 col-md-8">
+                                        <input type="text" name="email_address" id="email_address" class="form-control" placeholder="Email Address">
+                                    </div>
+                                </div>
+                            </div><br><br>
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="col-xs-12 col-md-4 control-label "><strong>TIN :</strong></label>
+                                    <div class="col-xs-12 col-md-8">
+                                        <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="TIN">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn_save_insurance" class="btn btn-primary" name="btn_save"><span></span>Save</button>
+                <button id="btn_cancel_insurance" class="btn btn-default">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div id="modal_search_list" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog" style="width: 90%;">
         <div class="modal-content">
@@ -1428,8 +1551,8 @@
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboDepartments; var _cboCustomers; var dt_ro; var products; var changetxn;
     var _cboCustomerType; var prodstat;
-    var _cboCustomerTypeCreate; var _cboSource; var _cboVehicles; var _cboAdvisors;
-    var _line_unit; var global_item_desc = ''; var _selectRowTblItems; var _cboMakes; var _cboYears; var _cboModels; var _cboColors; var _vehicleService=1; var _checkVehicle=true;var tbl_no=1;
+    var _cboCustomerTypeCreate; var _cboSource; var _cboVehicles; var _cboAdvisors; var _cboInsurance;
+    var _line_unit; var global_item_desc = ''; var _selectRowTblItems; var _cboMakes; var _cboYears; var _cboModels; var _cboColors; var _vehicleService=1; var _checkVehicle=true;var tbl_no=1; var _vehicleIDSelected=null;
 
     var oTableItems={
         qty : 'td:eq(0)',
@@ -1496,7 +1619,7 @@ $(document).ready(function(){
                 { targets:[1],data: "repair_order_no" },
                 { targets:[2],data: "document_date" },
                 { targets:[4],data: "customer_name" },
-                { targets:[5],data: "plate_no" },
+                { targets:[5],data: "crp_no" },
                 { targets:[6],data: "date_time_promised" },
                 { targets:[7],data: "advisor_fullname" },
                 {
@@ -1524,7 +1647,7 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "repair_order_no" },
                 { targets:[2],data: "customer_name" },
-                { targets:[3],data: "plate_no" },
+                { targets:[3],data: "crp_no" },
                 { targets:[4],data: "document_date" },
                 {
                     targets:[5],
@@ -1558,7 +1681,12 @@ $(document).ready(function(){
         _cboAdvisors=$("#cbo_advisors").select2({
             placeholder: "Please select an advisor.",
             allowClear: false
-        });        
+        });   
+
+        _cboInsurance=$("#cbo_insurance").select2({
+            placeholder: "Please select an insurance company.",
+            allowClear: false
+        });   
 
         _cboMakes=$("#cbo_makes").select2({
             placeholder: "Please select make",
@@ -2005,6 +2133,19 @@ $(document).ready(function(){
             $('#tbl_service_invoice').DataTable().ajax.reload()
         });
 
+        $('input[name="crp_no_type"]').on("change", function(){
+
+            $('.crp_required').html('');
+            $('.for_crp_input').prop('required',false);
+
+            var input = $(this).data('input');
+            var required = $(this).data('required');
+
+            $('.'+required).html('*');
+            $('input[name="'+input+'"]').prop('required',true);
+
+        });
+
         var getCustomerVehicles = function(i,open=false){
 
             var _data=$('#').serializeArray();
@@ -2022,10 +2163,10 @@ $(document).ready(function(){
                 $("#cbo_vehicles").append('<option value="0">[ Create New Vehicle ]</option>');
 
                 $.each(rows,function(i,value){
-                   $("#cbo_vehicles").append('<option value="'+ value.vehicle_id +'" data-vehicle-year-make="'+value.vehicle_year+'/'+value.make_desc+'" data-model-name="'+value.model_name+'" data-color-name="'+value.color+'" data-chassis-no="'+value.chassis_no+'" data-engine-no="'+value.engine_no+'">'+ value.plate_no +'</option>');
+                   $("#cbo_vehicles").append('<option value="'+ value.vehicle_id +'" data-vehicle-year-make="'+value.vehicle_year+'/'+value.make_desc+'" data-model-name="'+value.model_name+'" data-color-name="'+value.color+'" data-chassis-no="'+value.chassis_no+'" data-engine-no="'+value.engine_no+'" data-delivery-date="'+value.delivery_date+'" data-crp-no-type="'+value.crp_no_type+'">'+ value.crp_no +'</option>');
                 });
 
-                _cboVehicles.select2('val', null);
+                    _cboVehicles.select2('val', _vehicleIDSelected);
                 
             }).always(function(){
 
@@ -2047,7 +2188,13 @@ $(document).ready(function(){
                 _modelVehicleOpen = false;
             }else{
                 $('#cbo_vehicles').attr('disabled', false);
-                _modelVehicleOpen = true;
+                
+                if(_checkVehicle == true){
+                    _modelVehicleOpen = true;
+                }else{
+                    _modelVehicleOpen = false;
+                }
+
             }
 
             if(i==0){ //new customer
@@ -2070,9 +2217,9 @@ $(document).ready(function(){
 
             }
 
-            if(_checkVehicle == true){
                 getCustomerVehicles(i,_modelVehicleOpen);
-            }
+            // if(_checkVehicle == true){
+            // }
 
         });   
 
@@ -2088,6 +2235,8 @@ $(document).ready(function(){
                 _cboModels.select2('val', null);
                 _cboColors.select2('val', null);
 
+                $("#pl_no").trigger('click');
+                $("input[name='crp_no_type']").change();
                 $('#modal_new_vehicle').modal('show');
 
             }else{
@@ -2099,11 +2248,12 @@ $(document).ready(function(){
                     $('input[name="color_name"]').val(obj_vehicle.data('color-name'));
                     $('input[name="chassis_no"]').val(obj_vehicle.data('chassis-no'));
                     $('input[name="engine_no"]').val(obj_vehicle.data('engine-no'));
+                    $('input[name="delivery_date"]').val(obj_vehicle.data('delivery-date'));
                 }
             }
         });         
 
-        /* Make Modal */
+        /* Advisor Modal */
         _cboAdvisors.on("select2:select", function (e) {
             var i=$(this).select2('val');
             if(i==0){ 
@@ -2115,6 +2265,20 @@ $(document).ready(function(){
 
         $('#btn_cancel_advisor').on('click', function(){
             $('#modal_new_advisor').modal('hide');
+        });
+
+        /* Insurance Modal */
+        _cboInsurance.on("select2:select", function (e) {
+            var i=$(this).select2('val');
+            if(i==0){ 
+                _cboInsurance.select2('val',null);
+                clearFields($('#frm_insurance'));
+                $('#modal_new_insurance').modal('show');
+            }
+        });
+
+        $('#btn_cancel_insurance').on('click', function(){
+            $('#modal_new_insurance').modal('hide');
         });
 
         /* Make Modal */
@@ -2238,6 +2402,20 @@ $(document).ready(function(){
             }
         }); 
 
+        $('#btn_save_insurance').click(function(){
+            if(validateRequiredFields($('#frm_insurance'))){
+                createInsurance().done(function(response){
+                    var _insurance=response.row_added[0];
+
+                    $('#cbo_insurance').append('<option value="'+ _insurance.insurance_id +'">'+_insurance.insurer_company +'</option>');
+                    _cboInsurance.select2('val',_insurance.insurance_id);
+
+                    $('#modal_new_insurance').modal('hide');
+                    clearFields($('#frm_insurance'));
+                });
+            }
+        }); 
+
         $('#btn_save_make').click(function(){
             if(validateRequiredFields($('#frm_makes'))){
                 createMake().done(function(response){
@@ -2303,7 +2481,7 @@ $(document).ready(function(){
                 createVehicle().done(function(response){
                     var vehicle=response.row_added[0];
 
-                    $("#cbo_vehicles").append('<option value="'+ vehicle.vehicle_id +'" data-vehicle-year-make="'+vehicle.vehicle_year+'/'+vehicle.make_desc+'" data-model-name="'+vehicle.model_name+'" data-color-name="'+vehicle.color+'" data-chassis-no="'+vehicle.chassis_no+'" data-engine-no="'+vehicle.engine_no+'">'+ vehicle.plate_no +'</option>');
+                    $("#cbo_vehicles").append('<option value="'+ vehicle.vehicle_id +'" data-vehicle-year-make="'+vehicle.vehicle_year+'/'+vehicle.make_desc+'" data-model-name="'+vehicle.model_name+'" data-color-name="'+vehicle.color+'" data-chassis-no="'+vehicle.chassis_no+'" data-engine-no="'+vehicle.engine_no+'" data-delivery-date="'+vehicle.delivery_date+'" data-crp-no-type="'+vehicle.crp_no_type+'">'+ vehicle.crp_no +'</option>');
 
                     _cboVehicles.select2('val', vehicle.vehicle_id);
 
@@ -2311,8 +2489,7 @@ $(document).ready(function(){
                     clearFields($('#frm_vehicle'));
                 });
             }
-        });                                     
-
+        });     
 
         $('#btn_receive_ro').click(function(){
             $('#tbl_ro_list tbody').html('<tr><td colspan="7"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
@@ -2330,6 +2507,7 @@ $(document).ready(function(){
             $('#cbo_customers').select2('val', null);
             $('#cbo_vehicles').select2('val', null);
             $('#cbo_advisors').select2('val', null);
+            $('#cbo_insurance').select2('val', null);
 
             $('.date-picker').datepicker('setDate', 'today');
             $('.datetime-picker').val(getCurrentDatetime());
@@ -2359,7 +2537,7 @@ $(document).ready(function(){
             countTblItems(1);
             countTblItems(2);
             countTblItems(3);
-
+            _vehicleIDSelected = null;
             reComputeTotal(); //this is to make sure, display summary are recomputed as 0
         });
 
@@ -2382,14 +2560,20 @@ $(document).ready(function(){
             
             $('input[name="next_svc_date"]').val(data.next_svc_date_edit);
             $('input[name="document_date"]').val(data.document_date_edit);
-            $('input[name="delivery_date"]').val(data.delivery_date_edit);
             $('input[name="date_time_promised"]').val(data.date_time_promised_edit);
 
             _checkVehicle = false;
 
             $('#cbo_customers').select2('val',data.customer_id);
-            $('#cbo_vehicles').select2('val',data.vehicle_id);
+            _vehicleIDSelected = data.vehicle_id;
             $('#cbo_advisors').select2('val',data.advisor_id);
+            $('#cbo_insurance').select2('val',data.insurance_id);
+
+            $('input[name="year_make_id"]').val(data.year_make_id);
+            $('input[name="model_name"]').val(data.model_name);
+            $('input[name="color_name"]').val(data.color_name);
+            $('input[name="chassis_no"]').val(data.chassis_no);
+            $('input[name="engine_no"]').val(data.engine_no);
 
             $('#btn_pms').trigger('click');
 
@@ -2521,14 +2705,20 @@ $(document).ready(function(){
             
             $('input[name="next_svc_date"]').val(data.next_svc_date_edit);
             $('input[name="document_date"]').val(data.document_date_edit);
-            $('input[name="delivery_date"]').val(data.delivery_date_edit);
             $('input[name="date_time_promised"]').val(data.date_time_promised_edit);
 
             _checkVehicle = false;
 
             $('#cbo_customers').select2('val',data.customer_id);
-            $('#cbo_vehicles').select2('val',data.vehicle_id);
+            _vehicleIDSelected = data.vehicle_id;
             $('#cbo_advisors').select2('val',data.advisor_id);
+            $('#cbo_insurance').select2('val',data.insurance_id);
+
+            $('input[name="year_make_id"]').val(data.year_make_id);
+            $('input[name="model_name"]').val(data.model_name);
+            $('input[name="color_name"]').val(data.color_name);
+            $('input[name="chassis_no"]').val(data.chassis_no);
+            $('input[name="engine_no"]').val(data.engine_no);
 
             $('#btn_pms').trigger('click');
 
@@ -2614,6 +2804,8 @@ $(document).ready(function(){
                     reInitializeNumeric();
                 }
             });
+
+
 
             $('#span_invoice_no').html(data.service_invoice_no);
             _checkVehicle = true;
@@ -2871,6 +3063,17 @@ $(document).ready(function(){
         });
     };
 
+    var createInsurance=function(){
+        var _data=$('#frm_insurance').serializeArray();
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Insurance/transaction/create",
+            "data":_data
+        });
+    };
+
     var createMake=function(){
         var _data=$('#frm_makes').serializeArray();
 
@@ -2922,13 +3125,14 @@ $(document).ready(function(){
     var createVehicle=function(){
         var _data=$('#frm_vehicle').serializeArray();
         _data.push({name : "customer_id", value : $('#cbo_customers').val()});
+        _data.push({name : "crp_no_type" ,value : ($('#cd_no').is(':checked')) ? 1 : 2 });
 
         return $.ajax({
             "dataType":"json",
             "type":"POST",
             "url":"Vehicles/transaction/create",
             "data":_data,
-            "beforeSend": showSpinningProgress($('#btn_save'))
+            "beforeSend": showSpinningProgress($('#btn_save_vehicle'))
         });
     };
 
@@ -2937,6 +3141,8 @@ $(document).ready(function(){
         _data.push({name : "advisor_remarks", value : $('textarea[name="advisor_remarks"]').val()});
         _data.push({name : "customer_remarks", value : $('textarea[name="customer_remarks"]').val()});
 
+        _data.push({name : "crp_no", value : $("#cbo_vehicles option:selected").text()});
+        _data.push({name : "crp_no_type", value : $("#cbo_vehicles option:selected").data('crp-no-type')});
         // _data.push({name : "total_after_discount", value: $('#td_total_after_discount').text()});
         // _data.push({name : "summary_discount", value : tbl_summary.find(oTableDetails.discount).text()});
         // _data.push({name : "summary_before_discount", value :tbl_summary.find(oTableDetails.before_tax).text()});
@@ -2957,6 +3163,8 @@ $(document).ready(function(){
         _data.push({name : "advisor_remarks", value : $('textarea[name="advisor_remarks"]').val()});
         _data.push({name : "customer_remarks", value : $('textarea[name="customer_remarks"]').val()});
 
+        _data.push({name : "crp_no", value : $("#cbo_vehicles option:selected").text()});
+        _data.push({name : "crp_no_type", value : $("#cbo_vehicles option:selected").data('crp-no-type')});
         // _data.push({name : "total_after_discount", value: $('#td_total_after_discount').text()});
         // _data.push({name : "summary_discount", value : tbl_summary.find(oTableDetails.discount).text()});
         // _data.push({name : "summary_before_discount", value :tbl_summary.find(oTableDetails.before_tax).text()});
@@ -3027,7 +3235,7 @@ $(document).ready(function(){
     var clearFields=function(f){
         $('input,textarea,select,input:not(.date-picker)',f).val('');
         $('#remarks').val('');
-        $(f).find('input:first').focus();
+        // $(f).find('input:first').focus();
     };
     function format ( d ) {
         //return

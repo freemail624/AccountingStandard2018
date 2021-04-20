@@ -186,6 +186,14 @@
                                                         <input type="text" name="email_address" id="email_address" class="form-control" placeholder="Email Address">
                                                     </div>
                                                 </div>
+                                            </div><br><br>
+                                            <div class="col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="col-xs-12 col-md-4 control-label "><strong>TIN :</strong></label>
+                                                    <div class="col-xs-12 col-md-8">
+                                                        <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="TIN">
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </form>

@@ -978,31 +978,17 @@
                                     
                                         <div class="col-md-12">
                                             <div class="col-md-12" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;">Email Address :</label>
+                                                 <label class="control-label boldlabel" style="text-align:right;"><b class="required">*</b> Email Address :</label>
                                             </div>
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-envelope-o"></i>
                                                     </span>
-                                                    <input type="text" name="email_address" class="form-control" placeholder="Email Address">
+                                                    <input type="text" name="email_address" class="form-control" placeholder="Email Address" required data-error-msg="Email Address is required.">
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-12 hidden">
-                                            <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;">TIN :</label>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-file-code-o"></i>
-                                                    </span>
-                                                    <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="TIN">
-                                                </div>
-                                            </div>
-                                        </div>
-
                                         <div class="col-md-12 hidden">
                                             <div class="col-md-4" id="label">
                                                  <label class="control-label boldlabel" style="text-align:right;">Customer Type :</label>
@@ -1026,14 +1012,27 @@
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="col-md-12" id="label">
-                                                     <label class="control-label boldlabel">Mobile No :</label>
+                                                     <label class="control-label boldlabel" style="text-align:right;">TIN :</label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon">
+                                                            <i class="fa fa-file-code-o"></i>
+                                                        </span>
+                                                        <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="TIN">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="col-md-12" id="label">
+                                                     <label class="control-label boldlabel"><b class="required">*</b> Mobile No :</label>
                                                 </div>
                                                 <div class="form-group">
                                                     <div class="input-group">
                                                         <span class="input-group-addon">
                                                             <i class="fa fa-mobile"></i>
                                                         </span>
-                                                        <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Mobile No">
+                                                        <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Mobile No" required data-error-msg="Contact No is required.">
                                                     </div>
                                                 </div>
                                             </div>
