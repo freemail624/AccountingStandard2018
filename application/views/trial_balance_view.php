@@ -99,6 +99,12 @@
                                         </div>
                                     </div><br />
 
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <input type="checkbox" id="is_running_balance"> <label for="is_running_balance" style="font-weight: normal;">Export as running balance</label>
+                                        </div>
+                                    </div>
+
 
 
                                 </div>
@@ -150,9 +156,10 @@
             $('#modal_tbalance').modal('show');
 
             $('#btn_export').click(function(){
+                var is_running_balance = $('#is_running_balance').is(":checked") ? 1 : 0;
 
                 //if($('#cbo_report').val()==1){
-                window.open('Trial_balance/transaction/export?type=excel&start='+$('#dt_start_date').val()+'&end='+$('#dt_end_date').val());
+                window.open('Trial_balance/transaction/export?type=excel&start='+$('#dt_start_date').val()+'&end='+$('#dt_end_date').val()+'&is_running_balance='+is_running_balance);
                 //}else{
                 // window.open('Templates/layout/inventory?type=preview&date='+$('#dt_date_filter').val()+'$format='+$('#cbo_report').val());
                 //}
@@ -163,11 +170,11 @@
             showNotification({title:"Sending!",stat:"info",msg:"Please wait for a few seconds."});
 
             var btn=$(this);
-        
+            var is_running_balance = $('#is_running_balance').is(":checked") ? 1 : 0;
             $.ajax({
                 "dataType":"json",
                 "type":"POST",
-                "url":"Trial_balance/transaction/email-excel?type=excel&start="+$('#dt_start_date').val()+'&end='+$('#dt_end_date').val(),
+                "url":"Trial_balance/transaction/email-excel?type=excel&start="+$('#dt_start_date').val()+'&end='+$('#dt_end_date').val()+'&is_running_balance='+is_running_balance,
                 "beforeSend": showSpinningProgress(btn)
             }).done(function(response){
                 showNotification(response);

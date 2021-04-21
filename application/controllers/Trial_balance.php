@@ -1,4 +1,6 @@
 <?php
+// ini_set('memory_limit', '4096M');
+// ini_set('max_execution_time', 0);
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Trial_balance extends CORE_Controller
@@ -57,6 +59,7 @@ class Trial_balance extends CORE_Controller
                 $m_months=$this->Months_model;
 
                 $company_info=$m_company->get_list();
+                $is_running_balance=$this->input->get('is_running_balance',TRUE);
                 $start=$this->input->get('start',TRUE);
                 $end=$this->input->get('end',TRUE);
                 $classes=$m_class->get_account_class_on_account_titles();
@@ -146,10 +149,14 @@ class Trial_balance extends CORE_Controller
                                 $excel->getActiveSheet()->setCellValue('B'.$i,$title->dr_amount);
                                 $excel->getActiveSheet()->setCellValue('C'.$i,$title->cr_amount);
 
-                                if($sheet <= 0){
-                                    $excel->getActiveSheet()->setCellValue('D'.$i,$title->grand_balance);
+                                if ($is_running_balance > 0){
+                                    if($sheet <= 0){
+                                        $excel->getActiveSheet()->setCellValue('D'.$i,$title->grand_balance);
+                                    }else{
+                                        $excel->getActiveSheet()->setCellValue('D'.$i,"='".$date_filter->prev_month_year."'!D".$i."+(B".$i."-C".$i.")");
+                                    }
                                 }else{
-                                    $excel->getActiveSheet()->setCellValue('D'.$i,"='".$date_filter->prev_month_year."'!D".$i."+(B".$i."-C".$i.")");
+                                    $excel->getActiveSheet()->setCellValue('D'.$i,$title->balance);
                                 }
 
                                 $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
@@ -260,6 +267,7 @@ class Trial_balance extends CORE_Controller
                 $m_company=$this->Company_model;
 
                 $company_info=$m_company->get_list();
+                $is_running_balance=$this->input->get('is_running_balance',TRUE);
                 $start=$this->input->get('start',TRUE);
                 $end=$this->input->get('end',TRUE);
                 $classes=$m_class->get_account_class_on_account_titles();
@@ -279,7 +287,9 @@ class Trial_balance extends CORE_Controller
 
                 $titles=$m_titles->get_account_titles_balance(
                     date('Y-m-d',strtotime($date_filter->start_date)),
-                    date('Y-m-d',strtotime($date_filter->end_date))
+                    date('Y-m-d',strtotime($date_filter->end_date)),
+                    null,
+                    date('Y-m-d',strtotime($date_filter->previous_date))
                 );
 
                 ob_start();
@@ -351,7 +361,16 @@ class Trial_balance extends CORE_Controller
                                 $excel->getActiveSheet()->setCellValue('A'.$i,'               '.$title->account_title);
                                 $excel->getActiveSheet()->setCellValue('B'.$i,$title->dr_amount);
                                 $excel->getActiveSheet()->setCellValue('C'.$i,$title->cr_amount);
-                                $excel->getActiveSheet()->setCellValue('D'.$i,"=SUM(B".$i."-C".$i.")");
+                                
+                                if ($is_running_balance > 0){
+                                    if($sheet <= 0){
+                                        $excel->getActiveSheet()->setCellValue('D'.$i,$title->grand_balance);
+                                    }else{
+                                        $excel->getActiveSheet()->setCellValue('D'.$i,"='".$date_filter->prev_month_year."'!D".$i."+(B".$i."-C".$i.")");
+                                    }
+                                }else{
+                                    $excel->getActiveSheet()->setCellValue('D'.$i,$title->balance);
+                                }
 
                                 $excel->getActiveSheet()->getStyle('B'.$i.':D'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
