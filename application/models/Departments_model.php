@@ -20,6 +20,13 @@ class Departments_model extends CORE_Model {
         return $this->db->query($sql)->result();
     }
 
+    function get_for_avg_list() {
+        $sql="  SELECT * FROM departments
+                WHERE departments.is_deleted = FALSE AND 
+                      departments.is_active = TRUE AND
+                      departments.for_avg_cost = TRUE";
+        return $this->db->query($sql)->result();
+    }
 
     function create_default_department(){
 

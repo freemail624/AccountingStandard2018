@@ -904,7 +904,9 @@ $(document).ready(function(){
                 _cboAgents.select2('val',null)
                 $('#modal_new_agent').modal('show');
             }else{
-                getInvoices(0);
+                if(_txnMode == "new"){
+                    getInvoices(0);
+                }
                 $('#txt_route').focus();
             }
         });

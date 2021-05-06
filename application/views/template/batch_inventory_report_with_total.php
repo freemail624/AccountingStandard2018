@@ -83,7 +83,7 @@
         <thead>
             <tr>
                 <td width="10%">PLU</td>
-                <td width="30%">Description</td>
+                <td width="25%">Description</td>
                 <td width="10%">Category</td>
                 <td width="5%">Unit</td>
                 <td width="10%" align="right">Quantity In</td>
@@ -91,6 +91,7 @@
                 <td width="10%" align="right">Balance</td>
                 <td width="10%" align="right">Bulk Balance</td>
                 <td width="10%" align="right">Unit Cost</td>
+                <td width="15%" align="right">SRP</td>
                 <td width="10%" align="right">Total</td>
             </tr>
         </thead>
@@ -98,34 +99,35 @@
             <?php $gtotal = 0; foreach($products as $product){ ?>
 
             <tr>
-                <td><?php echo $product->product_code; ?></td>
-                <td><?php echo $product->product_desc; ?></td>
-                <td><?php echo $product->category_name; ?></td>
-                <td><?php echo $product->product_unit_name; ?></td>
-                <td align="right"><?php echo number_format($product->quantity_in,2); ?></td>
-                <td align="right"><?php echo number_format($product->quantity_out,2); ?></td>
-                <td align="right"><?php echo number_format($product->total_qty_balance,2); ?></td>
-                <td align="right"><?php echo number_format($product->total_qty_bulk,2); ?></td>
-                <td align="right"><?php echo number_format($product->purchase_cost,2); ?></td>
-                <td align="right"><?php echo number_format((round($product->purchase_cost,2) * round($product->total_qty_bulk,2)),2); ?></td>
+                <td valign="top"><?php echo $product->product_code; ?></td>
+                <td valign="top"><?php echo $product->product_desc; ?></td>
+                <td valign="top"><?php echo $product->category_name; ?></td>
+                <td valign="top"><?php echo $product->product_unit_name; ?></td>
+                <td valign="top" align="right"><?php echo number_format($product->quantity_in,2); ?></td>
+                <td valign="top" align="right"><?php echo number_format($product->quantity_out,2); ?></td>
+                <td valign="top" align="right"><?php echo number_format($product->total_qty_balance,2); ?></td>
+                <td valign="top" align="right"><?php echo number_format($product->total_qty_bulk,2); ?></td>
+                <td valign="top" align="right"><?php echo number_format($product->purchase_cost,2); ?></td>
+                <td valign="top" align="right"><?php echo number_format($product->sale_price,2); ?></td>
+                <td valign="top" align="right"><?php echo number_format((round($product->total_cost,2)),2); ?></td>
             </tr>
             <?php 
 
             $gtotal += (round($product->purchase_cost,2) * round($product->total_qty_bulk,2)); } ?>
 
             <tr>
-                <td colspan="9"><strong>Grand Total:</strong></td>
+                <td colspan="10" align="right"><strong>Grand Total:</strong></td>
                 <td align="right"><strong><?php echo number_format($gtotal,2); ?></strong></td>
             </tr>
             <?php if(count($products)==0){ ?>
                 <tr>
-                    <td colspan="10" style="height: 40px;"><center>No records found.</center></td>
+                    <td colspan="11" style="height: 40px;"><center>No records found.</center></td>
                 </tr>
             <?php } ?>
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="10">&nbsp;</td>
+                <td colspan="11">&nbsp;</td>
 
             </tr>
         </tfoot>

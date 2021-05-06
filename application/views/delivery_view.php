@@ -1982,6 +1982,7 @@ $(document).ready(function(){
 
     var createDepartment=function(){
         var _data=$('#frm_department').serializeArray();
+        _data.push({name : "for_avg_cost" ,value : 1});
 
         return $.ajax({
             "dataType":"json",

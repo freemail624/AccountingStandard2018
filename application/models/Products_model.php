@@ -2076,7 +2076,8 @@ Product Pick List
 
 function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=null,$category_id=null,$item_type_id=null,$pick_list=null,$depid=null,$account_cii,$account_dis=null,$CurrentQtyCount=null,$is_parent=null,$is_nonsalable=null){
     $sql="SELECT
-            productmain.*
+            productmain.*,
+            (productmain.total_qty_bulk * productmain.purchase_cost) as total_cost 
         FROM
         (SELECT main.*,
             (main.quantity_in - main.quantity_out) as total_qty_balance,
@@ -2205,7 +2206,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 WHERE ai.adjustment_type='IN' 
                 AND ai.is_deleted=0 
                 ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
-                ".($depid==null||$depid==0?"":" AND ai.department_id=".$depid)."
+                ".($depid==null||$depid==0?"":" AND ai.department_id IN (".$depid.")")."
                 GROUP BY aii.product_id) as aiin ON aiin.product_id = pQ.product_id
 
                  /*Child - Adjustment IN*/
@@ -2221,7 +2222,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                     chldai.is_deleted = 0
                     AND chldai.adjustment_type = 'IN'
                     ".($as_of_date==null?"":" AND chldai.date_adjusted<='".$as_of_date."'")."
-                    ".($depid==null||$depid==0?"":" AND chldai.department_id=".$depid)."
+                    ".($depid==null||$depid==0?"":" AND chldai.department_id IN (".$depid.")")."
                 GROUP BY chldp.parent_id) AS chldaiin ON chldaiin.parent_id = pQ.product_id
 
                  /*Parent - Delivery Invoice*/
@@ -2240,7 +2241,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 WHERE di.is_deleted=0
                 AND di.is_finalized = TRUE
                 ".($as_of_date==null?"":" AND di.date_delivered<='".$as_of_date."'")."
-                ".($depid==null||$depid==0?"":" AND di.department_id=".$depid)."
+                ".($depid==null||$depid==0?"":" AND di.department_id IN (".$depid.")")."
                 GROUP BY dii.product_id) as di ON di.product_id = pQ.product_id
 
                  /*Child - Delivery Invoice*/
@@ -2256,7 +2257,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                         chlddi.is_deleted = 0
                             AND chlddi.is_finalized = TRUE
                             ".($as_of_date==null?"":" AND chlddi.date_delivered<='".$as_of_date."'")."
-                            ".($depid==null||$depid==0?"":" AND chlddi.department_id=".$depid)."
+                            ".($depid==null||$depid==0?"":" AND chlddi.department_id IN (".$depid.")")."
                     GROUP BY chldp.parent_id) AS chlddi ON chlddi.parent_id = pQ.product_id
 
                  /*Parent - Sales Invoice*/
@@ -2273,7 +2274,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 LEFT JOIN products p ON p.product_id = sii.product_id
                 WHERE  si.is_deleted = 0 
                 ".($as_of_date==null?"":" AND si.date_invoice<='".$as_of_date."'")."
-                ".($depid==null||$depid==0?"":" AND si.department_id=".$depid)."
+                ".($depid==null||$depid==0?"":" AND si.department_id IN (".$depid.")")."
                 GROUP BY sii.product_id) as si on si.product_id = pQ.product_id
 
                  /*Child - Sales Invoice*/
@@ -2288,7 +2289,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 WHERE
                     chldsi.is_deleted = 0
                     ".($as_of_date==null?"":" AND chldsi.date_invoice<='".$as_of_date."'")."
-                    ".($depid==null||$depid==0?"":" AND chldsi.department_id=".$depid)."
+                    ".($depid==null||$depid==0?"":" AND chldsi.department_id IN (".$depid.")")."
                 GROUP BY chldp.parent_id) AS chldsi ON chldsi.parent_id = pQ.product_id
 
                  /*Parent - Issuance*/
@@ -2305,7 +2306,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                     LEFT JOIN products p ON p.product_id = iii.product_id
                 WHERE ii.is_deleted=0 
                 ".($as_of_date==null?"":"  AND ii.date_issued<='".$as_of_date."'")."
-                ".($depid==null||$depid==0?"":" AND ii.issued_department_id=".$depid)."
+                ".($depid==null||$depid==0?"":" AND ii.issued_department_id IN (".$depid.")")."
                 GROUP BY iii.product_id) as ii ON ii.product_id = pQ.product_id
 
                  /*Child - Issuance*/
@@ -2320,7 +2321,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 WHERE
                     chldii.is_deleted = 0
                     ".($as_of_date==null?"":"  AND chldii.date_issued<='".$as_of_date."'")."
-                    ".($depid==null||$depid==0?"":" AND chldii.issued_department_id=".$depid)."                            
+                    ".($depid==null||$depid==0?"":" AND chldii.issued_department_id IN (".$depid.")")."                            
                 GROUP BY chldp.parent_id) AS chldii ON chldii.parent_id = pQ.product_id
 
                  /*Parent - Transfer Item (From)*/
@@ -2338,7 +2339,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                         LEFT JOIN products p ON p.product_id = iii.product_id
                 WHERE ii.is_deleted=0 
                 ".($as_of_date==null?"":"  AND ii.date_issued<='".$as_of_date."'")."
-                ".($depid==null||$depid==0?"":" AND ii.from_department_id=".$depid)."
+                ".($depid==null||$depid==0?"":" AND ii.from_department_id IN (".$depid.")")."
                 GROUP BY iii.product_id) as issuefromout ON issuefromout.product_id = pQ.product_id
 
                  /*Child - Transfer Item (From)*/
@@ -2353,7 +2354,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                     WHERE
                         chldii.is_deleted = 0
                         ".($as_of_date==null?"":"  AND chldii.date_issued<='".$as_of_date."'")."
-                        ".($depid==null||$depid==0?"":" AND chldii.from_department_id=".$depid)."                                
+                        ".($depid==null||$depid==0?"":" AND chldii.from_department_id IN (".$depid.")")."                                
                     GROUP BY chldp.parent_id) AS chldissuefromout ON chldissuefromout.parent_id = pQ.product_id
 
                  /*Parent - Transfer Item (To)*/
@@ -2371,7 +2372,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                         LEFT JOIN products p ON p.product_id = iii.product_id
                 WHERE ii.is_deleted=0 
                 ".($as_of_date==null?"":"  AND ii.date_issued<='".$as_of_date."'")."
-                ".($depid==null||$depid==0?"":" AND ii.to_department_id=".$depid)."
+                ".($depid==null||$depid==0?"":" AND ii.to_department_id IN (".$depid.")")."
                 GROUP BY iii.product_id) as issuetoin ON issuetoin.product_id = pQ.product_id
 
                  /*Child - Transfer Item (To)*/
@@ -2386,7 +2387,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 WHERE
                     chldii.is_deleted = 0
                     ".($as_of_date==null?"":"  AND chldii.date_issued<='".$as_of_date."'")."
-                    ".($depid==null||$depid==0?"":" AND chldii.to_department_id=".$depid)."
+                    ".($depid==null||$depid==0?"":" AND chldii.to_department_id IN (".$depid.")")."
                 GROUP BY chldp.parent_id) AS chldissuetoin ON chldissuetoin.parent_id = pQ.product_id
 
                  /*Parent - Adjustment OUT*/
@@ -2405,7 +2406,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 WHERE ai.adjustment_type='OUT' 
                 AND ai.is_deleted=0   
                 ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
-                ".($depid==null||$depid==0?"":" AND ai.department_id=".$depid)."
+                ".($depid==null||$depid==0?"":" AND ai.department_id IN (".$depid.")")."
                 GROUP BY aii.product_id) as aiout ON aiout.product_id = pQ.product_id
 
                  /*Child - Adjustment OUT*/
@@ -2421,7 +2422,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                         chldai.is_deleted = 0
                             AND chldai.adjustment_type = 'OUT'
                             ".($as_of_date==null?"":" AND chldai.date_adjusted<='".$as_of_date."'")."
-                            ".($depid==null||$depid==0?"":" AND chldai.department_id=".$depid)."
+                            ".($depid==null||$depid==0?"":" AND chldai.department_id IN (".$depid.")")."
                     GROUP BY chldp.parent_id) AS chldaiout ON chldaiout.parent_id = pQ.product_id
 
                  /*Parent - Cash Invoice*/
@@ -2440,7 +2441,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 WHERE ci.is_deleted = 0
                 AND ci.is_active=1   
                 ".($as_of_date==null?"":" AND ci.date_invoice<='".$as_of_date."'")."
-                ".($depid==null||$depid==0?"":" AND ci.department_id=".$depid)."
+                ".($depid==null||$depid==0?"":" AND ci.department_id IN (".$depid.")")."
                 GROUP BY cii.product_id) as ciout ON ciout.product_id = pQ.product_id
 
                  /*Child - Cash Invoice*/
@@ -2456,7 +2457,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                         chldci.is_deleted = 0
                             AND chldci.is_active = 1
                             ".($as_of_date==null?"":" AND chldci.date_invoice<='".$as_of_date."'")."
-                            ".($depid==null||$depid==0?"":" AND chldci.department_id=".$depid)."
+                            ".($depid==null||$depid==0?"":" AND chldci.department_id IN (".$depid.")")."
                     GROUP BY chldp.parent_id) AS chldciout ON chldciout.parent_id = pQ.product_id                
 
                  /*Parent - Dispatching Invoice*/
@@ -2476,7 +2477,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                     di.is_deleted = 0
                     AND di.is_active=1  
                     ".($as_of_date==null?"":" AND di.date_invoice<='".$as_of_date."'")."
-                    ".($depid==null||$depid==0?"":" AND di.department_id=".$depid)."
+                    ".($depid==null||$depid==0?"":" AND di.department_id IN (".$depid.")")."
                 GROUP BY dii.product_id) as disout ON disout.product_id = pQ.product_id
 
                  /*Child - Dispatching Invoice*/
@@ -2492,7 +2493,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                         chlddi.is_deleted = 0
                         AND chlddi.is_active=1  
                         ".($as_of_date==null?"":" AND chlddi.date_invoice<='".$as_of_date."'")."
-                        ".($depid==null||$depid==0?"":" AND chlddi.department_id=".$depid)."
+                        ".($depid==null||$depid==0?"":" AND chlddi.department_id IN (".$depid.")")."
                     GROUP BY chldp.parent_id) AS chlddisout ON chlddisout.parent_id = pQ.product_id
 
 
@@ -2514,7 +2515,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                         AND pis.is_active=1
                         ".($as_of_date==null?"":" AND DATE_FORMAT(pis.start_datetime,'%Y-%m-%d') <='".$as_of_date."'")."
                         GROUP BY pis.product_id) as m_pos_out
-                        ".($depid==null||$depid==0?"":" WHERE m_pos_out.department_id=".$depid)."
+                        ".($depid==null||$depid==0?"":" WHERE m_pos_out.department_id IN (".$depid.")")."
                     ) AS posout ON posout.product_id = pQ.product_id
 
                 /*Child - POS (Sales Invoice)*/
@@ -2531,7 +2532,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                             AND pis.is_active=1  
                             ".($as_of_date==null?"":" AND DATE_FORMAT(pis.start_datetime,'%Y-%m-%d') <='".$as_of_date."'")."
                         GROUP BY chldp.parent_id) as c_pos_out
-                        ".($depid==null||$depid==0?"":" WHERE c_pos_out.department_id=".$depid)."
+                        ".($depid==null||$depid==0?"":" WHERE c_pos_out.department_id IN (".$depid.")")."
                     ) AS chldposout ON chldposout.parent_id = pQ.product_id
 
                 /*Parent - POS (Sales Return)*/
@@ -2552,7 +2553,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                         AND pir.is_active=1
                         ".($as_of_date==null?"":" AND DATE_FORMAT(pir.start_datetime,'%Y-%m-%d') <='".$as_of_date."'")."
                         GROUP BY pir.product_id) as m_pos_in
-                        ".($depid==null||$depid==0?"":" WHERE m_pos_in.department_id=".$depid)."
+                        ".($depid==null||$depid==0?"":" WHERE m_pos_in.department_id IN (".$depid.")")."
                     ) AS posrin ON posrin.product_id = pQ.product_id
 
                 /*Child - POS (Sales Return)*/
@@ -2569,7 +2570,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                             AND pir.is_active=1  
                             ".($as_of_date==null?"":" AND DATE_FORMAT(pir.start_datetime,'%Y-%m-%d') <='".$as_of_date."'")."
                         GROUP BY chldp.parent_id) as c_pos_in
-                        ".($depid==null||$depid==0?"":" WHERE c_pos_in.department_id=".$depid)."
+                        ".($depid==null||$depid==0?"":" WHERE c_pos_in.department_id IN (".$depid.")")."
                     ) AS chldposin ON chldposin.parent_id = pQ.product_id
 
                 )as core 

@@ -39,6 +39,7 @@ class Departments extends CORE_Controller {
                 $m_departments->department_desc = $this->input->post('department_desc', TRUE);
                 $m_departments->delivery_address = $this->input->post('delivery_address', TRUE);
                 $m_departments->default_cost = $this->input->post('default_cost', TRUE);
+                $m_departments->for_avg_cost = $this->input->post('for_avg_cost', TRUE);
                 $m_departments->save();
 
                 $department_id = $m_departments->last_insert_id();
@@ -92,6 +93,7 @@ class Departments extends CORE_Controller {
                 $m_departments->department_desc=$this->input->post('department_desc',TRUE);
                 $m_departments->delivery_address = $this->input->post('delivery_address', TRUE);
                 $m_departments->default_cost = $this->input->post('default_cost', TRUE);
+                $m_departments->for_avg_cost = $this->input->post('for_avg_cost', TRUE);
                 $m_departments->modify($department_id);
 
                 $m_trans=$this->Trans_model;

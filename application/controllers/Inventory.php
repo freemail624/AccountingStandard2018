@@ -370,10 +370,11 @@ class Inventory extends CORE_Controller
                 $excel->getActiveSheet()->getColumnDimension('H')->setWidth('30');
                 $excel->getActiveSheet()->getColumnDimension('I')->setWidth('30');
                 $excel->getActiveSheet()->getColumnDimension('J')->setWidth('30');
+                $excel->getActiveSheet()->getColumnDimension('K')->setWidth('30');
     
     
                 $excel->getActiveSheet()
-                        ->getStyle('E9:J9')
+                        ->getStyle('E9:K9')
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
@@ -389,7 +390,7 @@ class Inventory extends CORE_Controller
                 );
 
 
-                $excel->getActiveSheet()->getStyle('A9:J9')->applyFromArray( $style_header );
+                $excel->getActiveSheet()->getStyle('A9:K9')->applyFromArray( $style_header );
 
                 $excel->getActiveSheet()->setCellValue('A9','PLU')
                                         ->getStyle('A9')->getFont()->setBold(TRUE);
@@ -409,8 +410,10 @@ class Inventory extends CORE_Controller
                                         ->getStyle('H9')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('I9','Unit Cost')
                                         ->getStyle('I9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('J9','Total')
+                $excel->getActiveSheet()->setCellValue('J9','SRP')
                                         ->getStyle('J9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('K9','Total')
+                                        ->getStyle('K9')->getFont()->setBold(TRUE);
 
                 $i=10;
                 $gtotal=0;
@@ -425,6 +428,7 @@ class Inventory extends CORE_Controller
                         $excel->getActiveSheet()->getColumnDimension('H')->setWidth('20');
                         $excel->getActiveSheet()->getColumnDimension('I')->setWidth('20');
                         $excel->getActiveSheet()->getColumnDimension('J')->setWidth('20');
+                        $excel->getActiveSheet()->getColumnDimension('K')->setWidth('20');
 
             
                         $excel->getActiveSheet()
@@ -432,7 +436,7 @@ class Inventory extends CORE_Controller
                                 ->getAlignment()
                                 ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
                         $excel->getActiveSheet()
-                                ->getStyle('E'.$i.':J'.$i)
+                                ->getStyle('E'.$i.':K'.$i)
                                 ->getAlignment()
                                 ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
@@ -442,32 +446,33 @@ class Inventory extends CORE_Controller
                         $excel->getActiveSheet()->setCellValue('D'.$i,$product->product_unit_name);
 
 
-                        $excel->getActiveSheet()->getStyle('E'.$i.':J'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                        $excel->getActiveSheet()->getStyle('E'.$i.':K'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
                                          
-                        $excel->getActiveSheet()->setCellValue('E'.$i,number_format($product->quantity_in,2));      
-                        $excel->getActiveSheet()->setCellValue('F'.$i,number_format($product->quantity_out,2));
-                        $excel->getActiveSheet()->setCellValue('G'.$i,number_format($product->total_qty_balance,2));
-                        $excel->getActiveSheet()->setCellValue('H'.$i,number_format($product->total_qty_bulk,2)); 
-                        $excel->getActiveSheet()->setCellValue('I'.$i,number_format($product->purchase_cost,2)); 
-                        $excel->getActiveSheet()->setCellValue('J'.$i,number_format((round($product->purchase_cost,2) * round($product->total_qty_bulk,2)),2));
+                        $excel->getActiveSheet()->setCellValue('E'.$i,$product->quantity_in);      
+                        $excel->getActiveSheet()->setCellValue('F'.$i,$product->quantity_out);
+                        $excel->getActiveSheet()->setCellValue('G'.$i,$product->total_qty_balance);
+                        $excel->getActiveSheet()->setCellValue('H'.$i,$product->total_qty_bulk); 
+                        $excel->getActiveSheet()->setCellValue('I'.$i,$product->purchase_cost); 
+                        $excel->getActiveSheet()->setCellValue('J'.$i,$product->sale_price); 
+                        $excel->getActiveSheet()->setCellValue('K'.$i,number_format((round($product->total_cost,2)),2));
 
 
 
-                        $gtotal += (round($product->purchase_cost,2) * round($product->total_qty_bulk,2));
+                        $gtotal += (round($product->total_cost,2));
                         $i++;                  
                 }
 
-                        $excel->getActiveSheet()->setCellValue('A'.$i,'Grand Total');
-                        $excel->getActiveSheet()->setCellValue('J'.$i,number_format($gtotal,2));
-                        $excel->getActiveSheet()->getStyle('J'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                        $excel->getActiveSheet()->setCellValue('J'.$i,'Grand Total');
+                        $excel->getActiveSheet()->setCellValue('K'.$i,$gtotal);
+                        $excel->getActiveSheet()->getStyle('K'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
 
 
                 $excel->getActiveSheet()
-                        ->getStyle('J'.$i)
+                        ->getStyle('A'.$i.':K'.$i)
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                 $excel->getActiveSheet()
-                        ->getStyle('J'.$i)->getFont()->setBold(TRUE);
+                        ->getStyle('K'.$i)->getFont()->setBold(TRUE);
                  $excel->getActiveSheet()
                         ->getStyle('A'.$i)->getFont()->setBold(TRUE);
 
@@ -480,7 +485,7 @@ class Inventory extends CORE_Controller
 
                 }
 
-                $excel->getActiveSheet()->getStyle('A'.$i.':'.'J'.$i)->applyFromArray( $style_header );
+                $excel->getActiveSheet()->getStyle('A'.$i.':'.'K'.$i)->applyFromArray( $style_header );
 
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 header('Content-Disposition: attachment;filename="Inventory Report '.date('M-d-Y',NOW()).'.xlsx"');

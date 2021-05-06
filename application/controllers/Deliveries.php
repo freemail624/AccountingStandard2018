@@ -22,6 +22,8 @@ class Deliveries extends CORE_Controller
         $this->load->model('Company_model');    
         $this->load->model('Account_integration_model');  
         $this->load->model('Sync_references_model');
+        $this->load->model('Journal_info_model');  
+        $this->load->model('Journal_account_model');  
 
     }
 
@@ -39,7 +41,7 @@ class Deliveries extends CORE_Controller
         );
 
         $data['departments']=$this->Departments_model->get_list(
-            array('departments.is_active'=>TRUE,'departments.is_deleted'=>FALSE)
+            array('departments.is_active'=>TRUE,'departments.is_deleted'=>FALSE,'departments.for_avg_cost'=>TRUE)
         );
 
         //data required by active view
@@ -419,7 +421,7 @@ class Deliveries extends CORE_Controller
                 $m_trans->trans_type_id=12; // TRANS TYPE
                 $m_trans->trans_log='Updated Purchase Invoice No: '.$pi_info[0]->dr_invoice_no;
                 $m_trans->save();
-                
+
                 $m_delivery_invoice->commit();
 
 
@@ -445,11 +447,16 @@ class Deliveries extends CORE_Controller
                 $pi_info=$m_delivery_invoice->get_list($dr_invoice_id,'dr_invoice_no');
                 $dr_products = $m_delivery_invoice_items->get_list(array('dr_invoice_id'=>$dr_invoice_id));
 
+                $departments=$this->Departments_model->get_for_avg_list();
+                $dept = [];
+                foreach ($departments as $department) { $dept[]=$department->department_id; }
+                $filter_departments =  implode(",", $dept);
+                
                 // Updating the average cost of Parent Products
                 for ($i=0; $i < count($dr_products); $i++) { 
                     
                     $product_id = $dr_products[$i]->product_id;
-                    $product=$m_products->product_list(1,null,$product_id,null,null,null,null,null,1,null,null,1);
+                    $product=$m_products->product_list(1,null,$product_id,null,null,null,null,$filter_departments,1,null,null,1);
                     $on_hand_stock = $product[0]->total_qty_bulk;
                     $purchase_cost = $product[0]->purchase_cost;
 
@@ -488,6 +495,75 @@ class Deliveries extends CORE_Controller
                 $m_delivery_invoice->finalized_by_user=$this->session->user_id; //user that delete this record
                 $m_delivery_invoice->is_finalized=1;
                 $m_delivery_invoice->modify($dr_invoice_id);
+
+                $m_journal=$this->Journal_info_model;
+                $m_journal_accounts=$this->Journal_account_model;
+
+                $m_journal->begin();
+
+                /* Get Purchase Invoice Details */
+                $purchase_info=$m_delivery_invoice->get_list($dr_invoice_id);
+                $m_journal->ref_no=$purchase_info[0]->external_ref_no;
+                $m_journal->supplier_id=$purchase_info[0]->supplier_id;
+                $m_journal->department_id=$purchase_info[0]->department_id;
+                $m_journal->remarks=$purchase_info[0]->remarks;
+                $m_journal->date_txn=date('Y-m-d');
+                $m_journal->book_type='PJE';
+
+                //for audit details
+                $m_journal->set('date_created','NOW()');
+                $m_journal->created_by_user=$this->session->user_id;
+                $m_journal->save();
+
+                $journal_id=$m_journal->last_insert_id();
+
+                $accounts=$m_delivery_invoice->get_journal_entries_2($dr_invoice_id);
+
+                foreach($accounts as $account){
+                    $m_journal_accounts->journal_id=$journal_id;
+                    $m_journal_accounts->account_id=$account->account_id;
+                    $m_journal_accounts->memo=$account->memo;
+                    $m_journal_accounts->dr_amount=$this->get_numeric_value($account->dr_amount);
+                    $m_journal_accounts->cr_amount=$this->get_numeric_value($account->cr_amount);
+                    $m_journal_accounts->save();
+                }
+
+                //update transaction number base on formatted last insert id
+                $m_journal->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
+                $m_journal->modify($journal_id);
+
+                //if dr invoice is available, purchase invoice is recorded as journal
+                if($dr_invoice_id!=null){
+                    $m_delivery_invoice->journal_id=$journal_id;
+                    $m_delivery_invoice->is_journal_posted=TRUE;
+                    $m_delivery_invoice->modify($dr_invoice_id);
+                    
+                    // AUDIT TRAIL START
+                    $purchase_invoice=$m_delivery_invoice->get_list($dr_invoice_id,'dr_invoice_no');
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=8; //CRUD
+                    $m_trans->trans_type_id=12; // TRANS TYPE
+                    $m_trans->trans_log='Finalized Purchase Invoice No.'.$purchase_invoice[0]->dr_invoice_no.' For Purchase Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
+                    $m_trans->save();
+                    //AUDIT TRAIL END
+                }
+
+
+                // AUDIT TRAIL START
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=1; //CRUD
+                $m_trans->trans_type_id=3; // TRANS TYPE
+                $m_trans->trans_log='Created Purchase Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
+                $m_trans->save();
+                //AUDIT TRAIL END
+
+                $m_journal->commit();
+
 
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;

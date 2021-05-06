@@ -189,7 +189,7 @@
                                             <div class="panel-body table-responsive" id="product_list_panel">
                                             <h2 class="h2-panel-heading">Products<small> | <a href="assets/manual/masterfiles/Product_Management.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                                 <button class="btn btn-primary" id="btn_new" style="float: left; text-transform: capitalize;font-family: Tahoma, Georgia, Serif;margin-bottom: 0px !important;" data-toggle="modal" data-target="" data-placement="left" title="Create New product" ><i class="fa fa-plus"></i> Create New Product</button>
-                                                <button id="btn_update_cost_upon_invoice">Update Cost Upon Invoice</button>
+                                                <button id="btn_update_cost_upon_invoice" class="hidden">Update Cost Upon Invoice</button>
                                                 <table id="tbl_products" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead class="">
                                                     <tr>    

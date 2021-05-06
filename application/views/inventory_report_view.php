@@ -218,22 +218,32 @@
                                                                 <thead class="">
                                                                 <tr>
                                                                     <th width="5%"></th>
-                                                                    <th width="20%">PLU</th>
-                                                                    <th width="25%">Product</th>
+                                                                    <th>Product</th>
                                                                     <th width="10%" style="text-align: right">Quantity In</th>
                                                                     <th width="10%" style="text-align: right">Quantity Out</th>
                                                                     <th width="15%" style="text-align: right">Balance</th>
                                                                     <th width="15%" style="text-align: right">Bulk Balance</th>
+                                                                    <th width="10%">Unit Cost</th>
+                                                                    <th width="5%">SRP</th>
+                                                                    <th width="5%">Total</th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
-
                                                                 </tbody>
+
+                                                                <tfoot>
+                                                                    <tr class="hidden"><td></td></tr>
+                                                                    <tr>
+                                                                        <td colspan="8" style="text-align:right;"><strong>Current Page Total :</strong></td>
+                                                                        <td  style="text-align:right;" id="Sumofpages"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan="8" style="text-align:right;"><strong>Grand Total :</strong></td>
+                                                                        <td  style="text-align:right;" id="Sumofallpages"></td>
+                                                                    </tr>
+                                                                </tfoot>
                                                             </table>
-
                                                         </div>
-
-
                                                     </div>
                                                 </div>
                                             </div>
@@ -470,10 +480,9 @@
                         "data":           null,
                         "defaultContent": ""
                     },
-                    { targets:[1],data: "product_code" },
-                    { targets:[2],data: "product_desc" },
+                    { targets:[1],data: "product_desc" },
                     {
-                        targets:[3], sClass:'right-align',
+                        targets:[2], sClass:'right-align',
                         data: "quantity_in",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
@@ -481,7 +490,7 @@
 
                     },
                     {
-                        targets:[4], sClass:'right-align',
+                        targets:[3], sClass:'right-align',
                         data: "quantity_out",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
@@ -489,7 +498,7 @@
 
                     },
                     {
-                        targets:[5], sClass:'right-align',
+                        targets:[4], sClass:'right-align',
                         data: null,
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data.total_qty_balance,2)+' '+data.parent_unit_name;
@@ -497,26 +506,72 @@
 
                     },
                     {
-                        targets:[6], sClass:'right-align',
+                        targets:[5], sClass:'right-align',
                         data: null,
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data.total_qty_bulk,2)+' '+data.product_unit_name;
                         }
 
-                    }                                                      
+                    },
 
-                ]
+                    {
+                        targets:[6], sClass:'right-align',
+                        data: null,
+                        render: function(data, type, full, meta){
+                            return accounting.formatNumber(data.purchase_cost,2);
+                        }
 
-                ,
-                "rowCallBack": function(a,b,c){
-                    console.log(b);
+                    },
+                    {
+                        targets:[7], sClass:'right-align',
+                        data: null,
+                        render: function(data, type, full, meta){
+                            return accounting.formatNumber(data.sale_price,2);
+                        }
+
+                    },
+                    {
+                        targets:[8], sClass:'right-align',
+                        data: "total_cost",
+                        render: function(data, type, full, meta){
+                            return accounting.formatNumber(data,2);
+                        }
+
+                    }     
+
+                ],
+                "footerCallback": function ( row, data, start, end, display ) {
+                    var api = this.api(), data;
+
+                    // Remove the formatting to get integer data for summation
+                    var intVal = function ( i ) {
+                        return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '')*1 :
+                            typeof i === 'number' ?
+                                i : 0;
+                    };
+
+                    // Total over this page
+                    pageTotal = api
+                        .column( 8, { page: 'current'} )
+                        .data()
+                        .reduce( function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0 );
+
+                    // Total over all pages
+                    total = api
+                        .column( 8 )
+                        .data()
+                        .reduce( function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0 );
+
+                    $('#Sumofpages').html('<b>'+accounting.formatNumber(pageTotal,2)+'</b>');
+                    $('#Sumofallpages').html('<b>'+accounting.formatNumber(total,2)+'</b>');
                 }
-
             });
         };
-
-
-
     });
 </script>
 

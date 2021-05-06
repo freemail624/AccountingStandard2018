@@ -170,7 +170,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
                 (SELECT 
                     p.expense_account_id AS account_id,
                         '' AS memo,
-                        SUM(dii.dr_non_tax_amount) dr_amount,
+                        (SUM(dii.dr_non_tax_amount) + SUM(dii.dr_line_total_discount)) dr_amount,
                         0 AS cr_amount
                 FROM
                     `delivery_invoice_items` AS dii

@@ -51,6 +51,9 @@
         @-webkit-keyframes spin2 {
             from { -webkit-transform: rotate(0deg); }
             to { -webkit-transform: rotate(360deg); }
+        }  
+        .green{
+            color: green;
         }
 
     </style>
@@ -93,6 +96,7 @@
                                                     <tr>
                                                         <th>Department Name</th>
                                                         <th>Department Description</th>
+                                                        <th><center>For Average Costing</center></th>
                                                         <th><center>Action</center></th>
                                                     </tr>
                                                     </thead>
@@ -157,7 +161,14 @@
 
                                         </div>
                                     </div>
-                                </div><!-- 
+                                </div>
+
+                                <div class="row" style="margin: 1%;">
+                                    <div class="col-lg-12">
+                                        <label  for="for_avg_cost" style="text-align: left;vertical-align: middle;"><input type="checkbox" name="for_avg_cost" class="" id="for_avg_cost" style="transform: scale(2.0);">  &nbsp;&nbsp;For Average Costing ?</label>
+                                    </div>
+                                </div>
+                                <!-- 
 
                                 <div class="row" style="margin: 1%;">
                                     <div class="col-lg-12">
@@ -235,6 +246,20 @@ $(document).ready(function(){
             "columns": [
                 { targets:[0],data: "department_name" },
                 { targets:[1],data: "department_desc" },
+                { targets:[1],data: null,
+                    render: function (data, type, full, meta){
+                        var status="";
+
+                        if(data.for_avg_cost > 0){
+                            status = "<center><i class='fa fa-check-circle green'></i></center>";
+                        }else{
+                            status = "<center><i class='fa fa-times-circle'></i></center>";
+                        }
+
+                        return status;
+
+                    }
+                },
                 {
                     targets:[2],
                     render: function (data, type, full, meta){
@@ -285,6 +310,7 @@ $(document).ready(function(){
             _txnMode="new";
             //showList(false);
             clearFields($('#frm_department'));
+            $('#for_avg_cost').attr('checked', false);
             $('#department_title').text('New Department');
             $('#modal_new_department').modal('show');
         });
@@ -303,6 +329,8 @@ $(document).ready(function(){
                     }
                 });
             });
+
+            $('#for_avg_cost').prop('checked', (data.for_avg_cost==1?true:false));
             $('#department_title').text('Edit Department');
             $('#modal_new_department').modal('show');
             //showList(false);
@@ -398,6 +426,9 @@ $(document).ready(function(){
 
     var createDepartment=function(){
         var _data=$('#frm_department').serializeArray();
+        $('#for_avg_cost').prop("checked") ? 
+            _data.push({name : "for_avg_cost" , value : '1'   }) : 
+            _data.push({name : "for_avg_cost" , value : '0'   });
 
         return $.ajax({
             "dataType":"json",
@@ -411,6 +442,9 @@ $(document).ready(function(){
     var updateDepartment=function(){
         var _data=$('#frm_department').serializeArray();
         _data.push({name : "department_id" ,value : _selectedID});
+        $('#for_avg_cost').prop("checked") ?  
+            _data.push({name : "for_avg_cost" , value : '1'   }) : 
+            _data.push({name : "for_avg_cost" , value : '0'   });
 
         return $.ajax({
             "dataType":"json",

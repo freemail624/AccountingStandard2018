@@ -48,29 +48,29 @@
 			<td width="50%" valign="top">
 				<table width="100%" cellpadding="4" cellspacing="4" class="tbl-info">
 					<tr>
-						<td class="upp" width="38%">
+						<td valign="top" class="upp" width="38%">
 							<strong>Date : </strong><?php echo $info[0]->loading_date; ?> </td>
-						<td width="62%" class="font8 upp">
+						<td valign="top" width="62%" class="font8 upp">
 							<strong>ROUTE :</strong> <?php echo $info[0]->loading_place; ?>
 						</td>
 					</tr>
 					<tr>
-						<td class="upp"><strong>Driver : </strong> <?php echo $info[0]->driver_name; ?></td>
-						<td class="font8 upp"><strong>Pahinante : </strong> <?php echo $info[0]->driver_pahinante; ?></td>
+						<td valign="top" class="upp"><strong>Driver : </strong> <?php echo $info[0]->driver_name; ?></td>
+						<td valign="top" class="font8 upp"><strong>Pahinante : </strong> <?php echo $info[0]->driver_pahinante; ?></td>
 					</tr>
 				</table>
 			</td>
 			<td width="50%" valign="top">
 				<table width="100%" cellpadding="4" cellspacing="4" class="tbl-info" style="margin-left: 30px;">
 					<tr>
-						<td class="upp" width="50%" valign="top"><strong>Truck # : </strong> <?php echo $info[0]->truck_no; ?></td>
-						<td width="50%" class="upp" valign="top" style="font-size: 10pt;" align="right">
+						<td valign="top" class="upp" width="50%" valign="top"><strong>Truck # : </strong> <?php echo $info[0]->truck_no; ?></td>
+						<td valign="top" width="50%" class="upp" valign="top" style="font-size: 10pt;" align="right">
 							<strong><?php echo $info[0]->loading_no; ?></strong>
 						</td>
 					</tr>
 					<tr>
-						<td class="upp"></td>
-						<td class="font8 upp" align="right"></td>
+						<td valign="top" class="upp"></td>
+						<td valign="top" class="font8 upp" align="right"></td>
 					</tr>
 				</table>				
 			</td>
@@ -216,6 +216,12 @@
 	<br/>
 
 	<table cellspacing="5" cellpadding="5" class="tbl-info" width="100%">
+		<tr>
+			<td valign="top" class="font-items upp" style="padding-left: 10px;"><strong>ROUTE :</strong> <?php echo $info[0]->loading_place; ?></td>
+		</tr>
+	</table>
+
+	<table cellspacing="5" cellpadding="5" class="tbl-info" width="100%">
 		<?php 
 		$a=count($items)/40;
 		$b=ceil($a);
@@ -226,7 +232,6 @@
 				<table cellspacing="5" cellpadding="5" class="tbl-info" width="100%">
 					<tr>
 						<td colspan="3" valign="top" class="font-items upp" width="100%" style="padding-bottom: 20px;">
-							<strong>ROUTE :</strong> <?php echo $info[0]->loading_place; ?><br/>
 							<strong>LOADING # :</strong> <?php echo $info[0]->loading_no; ?><br/>
 						</td>
 					</tr>

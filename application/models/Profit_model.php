@@ -23,19 +23,36 @@ class Profit_model extends CORE_Model
                 SUM(main.inv_gross) as gross,
                 p.purchase_cost,
                 SUM(main.net_cost) as net_cost,
-                (SUM(main.inv_gross) - SUM(main.net_cost)) as net_profit
+                (SUM(main.inv_gross) - SUM(main.net_cost)) as net_profit,
+                main.invoice_status
 
                 FROM(
                 SELECT 
                 sii.product_id,
                 SUM(sii.inv_qty) as inv_qty,
                 SUM(sii.inv_line_total_price) as inv_gross,
-                SUM(sii.inv_qty * sii.cost_upon_invoice) as net_cost
-
+                SUM(sii.inv_qty * sii.cost_upon_invoice) as net_cost,
+               (CASE
+                    WHEN COALESCE(loading.invoice_id,0) > 0
+                    THEN 1
+                    ELSE 0
+                END) as invoice_status
 
                 FROM 
                 sales_invoice_items sii
                 LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
+                LEFT JOIN
+                (SELECT 
+                    li.invoice_id
+                FROM
+                    loading_items li
+                    LEFT JOIN loading l ON l.loading_id = li.loading_id
+                    LEFT JOIN sales_invoice si ON si.sales_invoice_id = li.invoice_id
+                    WHERE l.is_deleted = FALSE AND l.is_active = TRUE
+                    GROUP BY li.invoice_id) as loading ON loading.invoice_id = si.sales_invoice_id
+
+
+
                 WHERE (si.date_invoice BETWEEN '$start' AND '$end') AND si.is_active = TRUE AND si.is_deleted = FALSE
                 ".($customer_id==0?"":" AND si.customer_id='".$customer_id."'")."
                 GROUP BY sii.product_id
@@ -46,7 +63,8 @@ class Profit_model extends CORE_Model
                 cii.product_id,
                 SUM(cii.inv_qty) as inv_qty,
                 SUM(cii.inv_line_total_price) as inv_gross,
-                SUM(cii.inv_qty * cii.cost_upon_invoice) as net_cost
+                SUM(cii.inv_qty * cii.cost_upon_invoice) as net_cost,
+                1 as invoice_status
 
                 FROM 
                 cash_invoice_items cii
@@ -60,6 +78,9 @@ class Profit_model extends CORE_Model
                 LEFT JOIN units u ON u.unit_id = p.parent_unit_id
                 LEFT JOIN units as blkunit ON blkunit.unit_id = p.bulk_unit_id
                 LEFT JOIN units as chldunit ON chldunit.unit_id = p.parent_unit_id
+
+                WHERE main.invoice_status > 0
+
                 GROUP BY 
                 main.product_id
 
@@ -87,18 +108,35 @@ class Profit_model extends CORE_Model
                 SUM(main.inv_gross) as gross,
                 p.purchase_cost,
                 SUM(main.net_cost) as net_cost,
-                (SUM(main.inv_gross) - SUM(main.net_cost)) as net_profit
+                (SUM(main.inv_gross) - SUM(main.net_cost)) as net_profit,
+                main.invoice_status
 
                 FROM(
                 SELECT 
                 sii.product_id,
                 SUM(sii.inv_qty) as inv_qty,
                 SUM(sii.inv_line_total_price) as inv_gross,
-                SUM(sii.inv_qty * sii.cost_upon_invoice) as net_cost
+                SUM(sii.inv_qty * sii.cost_upon_invoice) as net_cost,
+                (CASE
+                    WHEN COALESCE(loading.invoice_id,0) > 0
+                    THEN 1
+                    ELSE 0
+                END) as invoice_status                
 
                 FROM 
                 sales_invoice_items sii
                 LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
+                LEFT JOIN
+                (SELECT 
+                    li.invoice_id
+                FROM
+                    loading_items li
+                    LEFT JOIN loading l ON l.loading_id = li.loading_id
+                    LEFT JOIN sales_invoice si ON si.sales_invoice_id = li.invoice_id
+                    WHERE l.is_deleted = FALSE AND l.is_active = TRUE
+                    GROUP BY li.invoice_id) as loading ON loading.invoice_id = si.sales_invoice_id
+
+
                 WHERE (si.date_invoice BETWEEN '$start' AND '$end') AND si.is_active = TRUE AND si.is_deleted = FALSE
 
                 ".($customer_id==0?"":" AND si.customer_id='".$customer_id."'")."
@@ -110,6 +148,9 @@ class Profit_model extends CORE_Model
                 LEFT JOIN units u ON u.unit_id = p.parent_unit_id
                 LEFT JOIN units as blkunit ON blkunit.unit_id = p.bulk_unit_id
                 LEFT JOIN units as chldunit ON chldunit.unit_id = p.parent_unit_id
+
+                WHERE main.invoice_status > 0
+
                 GROUP BY 
                 main.product_id
 
@@ -175,8 +216,8 @@ class Profit_model extends CORE_Model
 
 
         $sql="
-             ".($distinct==TRUE?" SELECT DISTINCT n.identifier,n.invoice_id,n.inv_no,c.customer_name FROM (":" ")."
-             ".($subtotal==TRUE?" SELECT n.identifier,n.invoice_id,n.inv_no,c.customer_name,n.date_invoice,SUM(n.inv_qty) as qty_total,SUM(n.inv_gross) as gross_total,SUM(n.net_profit) as profit_total, SUM(n.net_cost) as net_cost_total  FROM( ":" ")."
+             ".($distinct==TRUE?" SELECT DISTINCT n.identifier,n.invoice_id,n.inv_no,c.customer_name,n.invoice_status FROM (":" ")."
+             ".($subtotal==TRUE?" SELECT n.identifier,n.invoice_id,n.inv_no,c.customer_name,n.date_invoice,SUM(n.inv_qty) as qty_total,SUM(n.inv_gross) as gross_total,SUM(n.net_profit) as profit_total, SUM(n.net_cost) as net_cost_total, n.invoice_status  FROM( ":" ")."
 
         SELECT
             main.identifier,
@@ -192,7 +233,9 @@ class Profit_model extends CORE_Model
             main.net_cost,
             main.srp,
             main.cost_upon_invoice as purchase_cost,
-            (main.inv_gross - main.net_cost) as net_profit
+            (main.inv_gross - main.net_cost) as net_profit,
+            main.invoice_status
+
              FROM
              
             (SELECT 
@@ -207,10 +250,25 @@ class Profit_model extends CORE_Model
             sii.cost_upon_invoice,
             sii.inv_line_total_price as inv_gross,
             (sii.inv_price - sii.inv_discount) as srp,
-            (sii.inv_qty * sii.cost_upon_invoice) as net_cost
+            (sii.inv_qty * sii.cost_upon_invoice) as net_cost,
+            (CASE
+                WHEN COALESCE(loading.invoice_id,0) > 0
+                THEN 1
+                ELSE 0
+            END) as invoice_status
 
             FROM sales_invoice_items sii
             LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
+            LEFT JOIN 
+            (SELECT 
+                li.invoice_id
+            FROM
+                loading_items li
+                LEFT JOIN loading l ON l.loading_id = li.loading_id
+                LEFT JOIN sales_invoice si ON si.sales_invoice_id = li.invoice_id
+                WHERE l.is_deleted = FALSE AND l.is_active = TRUE
+                GROUP BY li.invoice_id) as loading ON loading.invoice_id = si.sales_invoice_id
+
             WHERE (si.date_invoice BETWEEN '$start' AND '$end') AND si.is_active = TRUE AND si.is_deleted = FALSE
 
             ".($customer_id==0?"":" AND si.customer_id='".$customer_id."'")."
@@ -229,7 +287,8 @@ class Profit_model extends CORE_Model
             cii.cost_upon_invoice,
             cii.inv_line_total_price as inv_gross,
             (cii.inv_price - cii.inv_discount) as srp,
-            (cii.inv_qty * cii.cost_upon_invoice) as net_cost
+            (cii.inv_qty * cii.cost_upon_invoice) as net_cost,
+            1 as invoice_status
 
             FROM cash_invoice_items cii
             LEFT JOIN cash_invoice ci ON ci.cash_invoice_id = cii.cash_invoice_id
@@ -246,12 +305,13 @@ class Profit_model extends CORE_Model
 
              ".($distinct==TRUE?") as n 
                 LEFT JOIN customers c ON c.customer_id = n.customer_id
+                WHERE invoice_status = 1
                 ORDER BY n.identifier ASC, n.invoice_id ASC":" ")."
              ".($subtotal==TRUE?" ) as n
-
-            LEFT JOIN customers c ON c.customer_id = n.customer_id
-            GROUP BY n.invoice_id,n.identifier 
-            ORDER BY n.identifier ASC, n.invoice_id ASC
+                LEFT JOIN customers c ON c.customer_id = n.customer_id
+                WHERE invoice_status = 1
+                GROUP BY n.invoice_id,n.identifier 
+                ORDER BY n.identifier ASC, n.invoice_id ASC
             ":" ")."
 
 
@@ -265,8 +325,8 @@ class Profit_model extends CORE_Model
 
 
         $sql="
-             ".($distinct==TRUE?" SELECT DISTINCT n.identifier,n.invoice_id,n.inv_no,c.customer_name FROM (":" ")."
-             ".($subtotal==TRUE?" SELECT n.identifier,n.invoice_id,n.inv_no,c.customer_name,n.date_invoice,SUM(n.inv_qty) as qty_total,SUM(n.inv_gross) as gross_total,SUM(n.net_profit) as profit_total, SUM(n.net_cost) as net_cost_total FROM( ":" ")."
+             ".($distinct==TRUE?" SELECT DISTINCT n.identifier,n.invoice_id,n.inv_no,c.customer_name,n.invoice_status FROM (":" ")."
+             ".($subtotal==TRUE?" SELECT n.identifier,n.invoice_id,n.inv_no,c.customer_name,n.date_invoice,SUM(n.inv_qty) as qty_total,SUM(n.inv_gross) as gross_total,SUM(n.net_profit) as profit_total, SUM(n.net_cost) as net_cost_total, n.invoice_status FROM( ":" ")."
 
         SELECT
             main.identifier,
@@ -282,7 +342,9 @@ class Profit_model extends CORE_Model
             main.cost_upon_invoice as purchase_cost,
             main.inv_gross,
             main.net_cost,
-            (main.inv_gross - main.net_cost) as net_profit
+            (main.inv_gross - main.net_cost) as net_profit,
+            main.invoice_status
+
              FROM
              
             (SELECT 
@@ -297,10 +359,25 @@ class Profit_model extends CORE_Model
             sii.cost_upon_invoice,
             sii.inv_line_total_price as inv_gross,
             (sii.inv_price - sii.inv_discount) as srp,
-            (sii.inv_qty * sii.cost_upon_invoice) as net_cost
+            (sii.inv_qty * sii.cost_upon_invoice) as net_cost,
+            (CASE
+                WHEN COALESCE(loading.invoice_id,0) > 0
+                THEN 1
+                ELSE 0
+            END) as invoice_status            
 
             FROM sales_invoice_items sii
             LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
+            LEFT JOIN
+            (SELECT 
+                li.invoice_id
+            FROM
+                loading_items li
+                LEFT JOIN loading l ON l.loading_id = li.loading_id
+                LEFT JOIN sales_invoice si ON si.sales_invoice_id = li.invoice_id
+                WHERE l.is_deleted = FALSE AND l.is_active = TRUE
+                GROUP BY li.invoice_id) as loading ON loading.invoice_id = si.sales_invoice_id
+
             WHERE (si.date_invoice BETWEEN '$start' AND '$end') AND si.is_active = TRUE AND si.is_deleted = FALSE
 
             ".($customer_id==0?"":" AND si.customer_id='".$customer_id."'")."
@@ -313,17 +390,19 @@ class Profit_model extends CORE_Model
 
             ORDER BY main.identifier ASC, main.invoice_id ASC
 
-             ".($distinct==TRUE?") as n 
-            LEFT JOIN customers c ON c.customer_id = n.customer_id
-            ORDER BY n.identifier ASC, n.invoice_id ASC":" ")."
-             ".($subtotal==TRUE?" ) as n
-
-            LEFT JOIN customers c ON c.customer_id = n.customer_id
-            GROUP BY n.invoice_id,n.identifier 
-            ORDER BY n.identifier ASC, n.invoice_id ASC
+            ".($distinct==TRUE?") as n 
+                LEFT JOIN customers c ON c.customer_id = n.customer_id
+                WHERE n.invoice_status > 0
+                ORDER BY n.identifier ASC, n.invoice_id ASC":" 
+            ")."
+            ".($subtotal==TRUE?" ) as n
+                LEFT JOIN customers c ON c.customer_id = n.customer_id
+                WHERE n.invoice_status > 0
+                GROUP BY n.invoice_id,n.identifier 
+                ORDER BY n.identifier ASC, n.invoice_id ASC
             ":" ")."
 
-             ";
+            ";
 
         return $this->db->query($sql)->result();
     }

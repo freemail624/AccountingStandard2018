@@ -43,7 +43,7 @@ class Purchases extends CORE_Controller
 
         //data required by active view
         $data['departments']=$this->Departments_model->get_list(
-            array('departments.is_active'=>TRUE,'departments.is_deleted'=>FALSE)
+            array('departments.is_active'=>TRUE,'departments.is_deleted'=>FALSE,'departments.for_avg_cost'=>TRUE)
         );
 
         //data required by active view
