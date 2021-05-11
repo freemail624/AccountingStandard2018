@@ -355,7 +355,7 @@ class Inventory extends CORE_Controller
                 );
 
 
-                $excel->getActiveSheet()->getStyle('A9:J9')->applyFromArray( $style_header );
+                $excel->getActiveSheet()->getStyle('A9:I9')->applyFromArray( $style_header );
 
                 $excel->getActiveSheet()->setCellValue('A9','PLU')
                                         ->getStyle('A9')->getFont()->setBold(TRUE);
@@ -371,12 +371,12 @@ class Inventory extends CORE_Controller
                                         ->getStyle('F9')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('G9','Balance')
                                         ->getStyle('G9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('H9','Bulk Balance')
+                // $excel->getActiveSheet()->setCellValue('H9','Bulk Balance')
+                //                         ->getStyle('H9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('H9','Unit Cost')
                                         ->getStyle('H9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('I9','Unit Cost')
+                $excel->getActiveSheet()->setCellValue('I9','Total')
                                         ->getStyle('I9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('J9','Total')
-                                        ->getStyle('J9')->getFont()->setBold(TRUE);
 
                 $i=10;
                 $gtotal=0;
@@ -413,9 +413,9 @@ class Inventory extends CORE_Controller
                         $excel->getActiveSheet()->setCellValue('E'.$i,number_format($product->quantity_in,2));      
                         $excel->getActiveSheet()->setCellValue('F'.$i,number_format($product->quantity_out,2));
                         $excel->getActiveSheet()->setCellValue('G'.$i,number_format($product->total_qty_balance,2));
-                        $excel->getActiveSheet()->setCellValue('H'.$i,number_format($product->total_qty_bulk,2)); 
-                        $excel->getActiveSheet()->setCellValue('I'.$i,number_format($product->purchase_cost,2)); 
-                        $excel->getActiveSheet()->setCellValue('J'.$i,number_format((round($product->purchase_cost,2) * round($product->total_qty_bulk,2)),2));
+                        // $excel->getActiveSheet()->setCellValue('H'.$i,number_format($product->total_qty_bulk,2)); 
+                        $excel->getActiveSheet()->setCellValue('H'.$i,number_format($product->purchase_cost,2)); 
+                        $excel->getActiveSheet()->setCellValue('I'.$i,number_format((round($product->purchase_cost,2) * round($product->total_qty_bulk,2)),2));
 
 
 
@@ -423,19 +423,19 @@ class Inventory extends CORE_Controller
                         $i++;                  
                 }
 
-                        $excel->getActiveSheet()->setCellValue('A'.$i,'Grand Total');
-                        $excel->getActiveSheet()->setCellValue('J'.$i,number_format($gtotal,2));
-                        $excel->getActiveSheet()->getStyle('J'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                        $excel->getActiveSheet()->setCellValue('H'.$i,'Grand Total');
+                        $excel->getActiveSheet()->setCellValue('I'.$i,$gtotal);
+                        $excel->getActiveSheet()->getStyle('I'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
 
 
                 $excel->getActiveSheet()
-                        ->getStyle('J'.$i)
+                        ->getStyle('I'.$i)
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                 $excel->getActiveSheet()
-                        ->getStyle('J'.$i)->getFont()->setBold(TRUE);
+                        ->getStyle('I'.$i)->getFont()->setBold(TRUE);
                  $excel->getActiveSheet()
-                        ->getStyle('A'.$i)->getFont()->setBold(TRUE);
+                        ->getStyle('H'.$i)->getFont()->setBold(TRUE);
 
                         $i++;
 
@@ -446,7 +446,7 @@ class Inventory extends CORE_Controller
 
                 }
 
-                $excel->getActiveSheet()->getStyle('A'.$i.':'.'J'.$i)->applyFromArray( $style_header );
+                $excel->getActiveSheet()->getStyle('A'.$i.':'.'I'.$i)->applyFromArray( $style_header );
 
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 header('Content-Disposition: attachment;filename="Inventory Report '.date('M-d-Y',NOW()).'.xlsx"');

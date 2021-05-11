@@ -17,7 +17,12 @@ class Purchases_model extends CORE_Model {
                 app_stat.approval_status,
                 ord_stat.order_status,
                 pr.pr_no,
-                DATE_FORMAT(po.delivery_date, '%m/%d/%Y') AS delivery_date
+                DATE_FORMAT(po.delivery_date, '%m/%d/%Y') AS delivery_date,
+                (CASE
+                    WHEN po.ship_out_date != null || po.ship_out_date != ''
+                    THEN DATE_FORMAT(po.ship_out_date, '%m/%d/%Y')
+                    ELSE ''
+                END) as ship_out_date
             FROM
                 purchase_order po
                     LEFT JOIN

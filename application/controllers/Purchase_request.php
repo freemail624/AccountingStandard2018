@@ -268,7 +268,7 @@ class Purchase_request extends CORE_Controller
                     $m_requests->department_id=$this->input->post('department',TRUE);
                     $m_requests->remarks=$this->input->post('remarks',TRUE);
                     $m_requests->tax_type_id=$this->input->post('tax_type',TRUE);
-                    $m_requests->approval_id=2;
+                    $m_requests->approval_id=1;
                     $m_requests->posted_by_user=$this->session->user_id;
                     $m_requests->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                     $m_requests->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));

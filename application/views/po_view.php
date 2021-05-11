@@ -222,7 +222,7 @@
                     <th></th>
                     <th style="text-align: center;">Email</th>
                     <th>PO#</th>
-                    <th>Request #</th>
+                    <th>Ship Out Date</th>
                     <th>Vendor</th>
                     <th>Terms</th>
                     <th>Approved</th>
@@ -324,10 +324,17 @@
                     <div class="col-sm-5">
                         <b class="required">*</b> Deliver to Address : <br />
                         <textarea name="deliver_to_address" class="form-control" placeholder="Deliver to Address" data-error-msg="Deliver address is required!" required data-default="<?php echo $company->deliver_to_address_default; ?>"></textarea>
-
                     </div>
-
-                    <div class="col-sm-4 col-sm-offset-3">
+                    <div class="col-sm-3">
+                        Ship Out Date:<br />
+                        <div class="input-group">
+                            <input type="text" name="ship_out_date" id="ship_out_date" class="date-picker form-control" placeholder="Ship out date">
+                             <span class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
                         Exchange Rate : 
                         <input type="text" class="numeric form-control" id="exchange_rate" name="exchange_rate">
                         <div class="hidden">
@@ -1059,7 +1066,7 @@ $(document).ready(function(){
                     }
                 },
                 { targets:[2],data: "po_no" },
-                { targets:[3],data: "pr_no" },
+                { targets:[3],data: "ship_out_date" },
                 { targets:[4],data: "supplier_name" },
                 { visible: false, targets:[5],data: "term_description" },
                 { visible: false, targets:[6],data: "approval_status" },

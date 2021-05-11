@@ -51,7 +51,10 @@
             text-align: right;
             font-weight: bolder;
         }
+        .select2-container{
+            min-width: 100%;
 
+        }
     </style>
 
 </head>
@@ -88,6 +91,17 @@
                                                     <h2 class="h2-panel-heading">Sales Report<small> | <a href="assets/manual/salesandpurchasing/Sales_Report.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                                         <div >
                                                             <div class="row">
+                                                                <div class="col-xs-12 col-lg-4">
+                                                                    Department * :<br />
+                                                                    <select class="form-control" id="cbo_departments" name="department_id" style="width: 100%">
+                                                                        <option value="0">All Departments</option>
+                                                                        <?php foreach($departments as $department){ ?>
+                                                                            <option value="<?php echo $department->department_id; ?>">
+                                                                            <?php echo $department->department_name; ?>
+                                                                            </option>
+                                                                        <?php }?>
+                                                                    </select>
+                                                                </div>
                                                                 <div class="col-xs-12 col-lg-4">
                                                                     Period Start * :<br />
                                                                     <div class="input-group">
@@ -401,15 +415,15 @@
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
 
-<!-- Select2-->
-<script src="assets/plugins/select2/select2.full.min.js"></script>
-<!---<script src="assets/plugins/dropdown-enhance/dist/js/bootstrap-select.min.js"></script>-->
-
 <!-- Date range use moment.js same as full calendar plugin -->
 <script src="assets/plugins/fullcalendar/moment.min.js"></script>
 <!-- Data picker -->
 <script src="assets/plugins/datapicker/bootstrap-datepicker.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
+
+<!-- Select2-->
+<script src="assets/plugins/select2/select2.full.min.js"></script>
+<!---<script src="assets/plugins/dropdown-enhance/dist/js/bootstrap-select.min.js"></script>-->
 
 <!-- numeric formatter -->
 <script src="assets/plugins/formatter/autoNumeric.js" type="text/javascript"></script>
@@ -418,6 +432,7 @@
 <script>
     $(document).ready(function(){
         var _cboAccounts; 
+        var _cboDepartments;
         var dtCustomerDetailed; 
         var dtCustomerSummary;
         var dtSalesmanDetailed;
@@ -438,10 +453,19 @@
                 calendarWeeks: true,
                 autoclose: true
             });
+
+            _cboDepartments=$("#cbo_departments").select2({
+                placeholder: "Please select a department.",
+                allowClear: false
+            });
+
+            _cboDepartments.select2('val',0);
+
             type=2;
             reloadCustomerList();
             reloadSalesmanList();
             reloadProductList();
+
         }();
 
         var bindEventControls=function(){
@@ -463,52 +487,52 @@
             });
 
             $(document).on('click','#btn_print_customer_detailed',function(){
-                window.open('Sales_detailed_summary/transaction/detailed-report-smcp?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&type=c');
+                window.open('Sales_detailed_summary/transaction/detailed-report-smcp?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&type=c&department_id='+_cboDepartments.select2('val'));
             });
             $(document).on('click','#btn_export_customer_detailed',function(){
-                window.open('Sales_detailed_summary/transaction/export-detailed-report-smcp?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&type=c');
+                window.open('Sales_detailed_summary/transaction/export-detailed-report-smcp?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&type=c&department_id='+_cboDepartments.select2('val'));
             });
 
             $(document).on('click','#btn_print_customer_summary',function(){
-                window.open('Sales_detailed_summary/transaction/summary-report-smc?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&type=c');
+                window.open('Sales_detailed_summary/transaction/summary-report-smc?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&type=c&department_id='+_cboDepartments.select2('val'));
             });
 
             $(document).on('click','#btn_export_customer_summary',function(){
-                window.open('Sales_detailed_summary/transaction/export-summary-report-smc?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&type=c');
+                window.open('Sales_detailed_summary/transaction/export-summary-report-smc?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&type=c&department_id='+_cboDepartments.select2('val'));
             });
 
             $(document).on('click','#btn_print_sm_detailed', function(){
-                window.open('Sales_detailed_summary/transaction/detailed-report-smcp?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&type=sp');
+                window.open('Sales_detailed_summary/transaction/detailed-report-smcp?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&type=sp&department_id='+_cboDepartments.select2('val'));
             });
 
             $(document).on('click','#btn_export_sm_detailed', function(){
-                window.open('Sales_detailed_summary/transaction/export-detailed-report-smcp?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&type=sp');
+                window.open('Sales_detailed_summary/transaction/export-detailed-report-smcp?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&type=sp&department_id='+_cboDepartments.select2('val'));
             });
 
             $(document).on('click','#btn_print_sm_summary', function(){
-                window.open('Sales_detailed_summary/transaction/summary-report-smc?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&type=sp');
+                window.open('Sales_detailed_summary/transaction/summary-report-smc?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&type=sp&department_id='+_cboDepartments.select2('val'));
             });
 
 
             $(document).on('click','#btn_export_sm_summary', function(){
-                window.open('Sales_detailed_summary/transaction/export-summary-report-smc?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&type=sp');
+                window.open('Sales_detailed_summary/transaction/export-summary-report-smc?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&type=sp&department_id='+_cboDepartments.select2('val'));
             });
 
 
             $(document).on('click','#btn_print_product_detailed', function(){
-                window.open('Sales_detailed_summary/transaction/detailed-report-smcp?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&type=p');
+                window.open('Sales_detailed_summary/transaction/detailed-report-smcp?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&type=p&department_id='+_cboDepartments.select2('val'));
             });
 
             $(document).on('click','#btn_export_product_detailed', function(){
-                window.open('Sales_detailed_summary/transaction/export-detailed-report-smcp?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&type=p');
+                window.open('Sales_detailed_summary/transaction/export-detailed-report-smcp?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&type=p&department_id='+_cboDepartments.select2('val'));
             });
 
             $(document).on('click','#btn_print_product_summary', function(){
-                window.open('Sales_detailed_summary/transaction/summary-report-smc?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&type=p');
+                window.open('Sales_detailed_summary/transaction/summary-report-smc?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&type=p&department_id='+_cboDepartments.select2('val'));
             });
 
             $(document).on('click','#btn_export_product_summary', function(){
-                window.open('Sales_detailed_summary/transaction/export-summary-report-smc?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&type=p');
+                window.open('Sales_detailed_summary/transaction/export-summary-report-smc?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&type=p&department_id='+_cboDepartments.select2('val'));
             });
 
             $('#btn_email_customer_detailed').on('click', function() {
@@ -519,7 +543,7 @@
             $.ajax({
                 "dataType":"json",
                 "type":"POST",
-                "url":"Sales_detailed_summary/transaction/email-detailed-report-smcp?startDate="+_date_from.val()+'&endDate='+_date_to.val()+'&type=c',
+                "url":"Sales_detailed_summary/transaction/email-detailed-report-smcp?startDate="+_date_from.val()+'&endDate='+_date_to.val()+'&type=c&department_id='+_cboDepartments.select2('val'),
                 "beforeSend": showSpinningProgress(btn)
             }).done(function(response){
                 showNotification(response);
@@ -536,7 +560,7 @@
             $.ajax({
                 "dataType":"json",
                 "type":"POST",
-                "url":"Sales_detailed_summary/transaction/email-detailed-report-smcp?startDate="+_date_from.val()+'&endDate='+_date_to.val()+'&type=sp',
+                "url":"Sales_detailed_summary/transaction/email-detailed-report-smcp?startDate="+_date_from.val()+'&endDate='+_date_to.val()+'&type=sp&department_id='+_cboDepartments.select2('val'),
                 "beforeSend": showSpinningProgress(btn)
             }).done(function(response){
                 showNotification(response);
@@ -553,7 +577,7 @@
             $.ajax({
                 "dataType":"json",
                 "type":"POST",
-                "url":"Sales_detailed_summary/transaction/email-detailed-report-smcp?startDate="+_date_from.val()+'&endDate='+_date_to.val()+'&type=p',
+                "url":"Sales_detailed_summary/transaction/email-detailed-report-smcp?startDate="+_date_from.val()+'&endDate='+_date_to.val()+'&type=p&department_id='+_cboDepartments.select2('val'),
                 "beforeSend": showSpinningProgress(btn)
             }).done(function(response){
                 showNotification(response);
@@ -572,7 +596,7 @@
             $.ajax({
                 "dataType":"json",
                 "type":"POST",
-                "url":"Sales_detailed_summary/transaction/email-summary-report-smc?startDate="+_date_from.val()+'&endDate='+_date_to.val()+'&type=c',
+                "url":"Sales_detailed_summary/transaction/email-summary-report-smc?startDate="+_date_from.val()+'&endDate='+_date_to.val()+'&type=c&department_id='+_cboDepartments.select2('val'),
                 "beforeSend": showSpinningProgress(btn)
             }).done(function(response){
                 showNotification(response);
@@ -589,7 +613,7 @@
             $.ajax({
                 "dataType":"json",
                 "type":"POST",
-                "url":"Sales_detailed_summary/transaction/email-summary-report-smc?startDate="+_date_from.val()+'&endDate='+_date_to.val()+'&type=sp',
+                "url":"Sales_detailed_summary/transaction/email-summary-report-smc?startDate="+_date_from.val()+'&endDate='+_date_to.val()+'&type=sp&department_id='+_cboDepartments.select2('val'),
                 "beforeSend": showSpinningProgress(btn)
             }).done(function(response){
                 showNotification(response);
@@ -606,7 +630,7 @@
             $.ajax({
                 "dataType":"json",
                 "type":"POST",
-                "url":"Sales_detailed_summary/transaction/email-summary-report-smc?startDate="+_date_from.val()+'&endDate='+_date_to.val()+'&type=p',
+                "url":"Sales_detailed_summary/transaction/email-summary-report-smc?startDate="+_date_from.val()+'&endDate='+_date_to.val()+'&type=p&department_id='+_cboDepartments.select2('val'),
                 "beforeSend": showSpinningProgress(btn)
             }).done(function(response){
                 showNotification(response);
@@ -637,6 +661,11 @@
             });
 
             $('.date_filter').on("change", function(){
+                var current_tab = $("ul#parent li.active").find('a').attr('id');
+                $('#'+current_tab).trigger('click');
+            });
+
+            $('#cbo_departments').on("change", function(){
                 var current_tab = $("ul#parent li.active").find('a').attr('id');
                 $('#'+current_tab).trigger('click');
             });
@@ -675,7 +704,8 @@
                     "data": function ( d ) {
                         return $.extend( {}, d, {
                             "startDate":_date_from.val(),
-                            "endDate":_date_to.val()
+                            "endDate":_date_to.val(),
+                            "department_id": _cboDepartments.select2('val')
                         });
                     }
                 },
@@ -751,7 +781,8 @@
                     "data": function ( d ) {
                         return $.extend( {}, d, {
                             "startDate":_date_from.val(),
-                            "endDate":_date_to.val()
+                            "endDate":_date_to.val(),
+                            "department_id": _cboDepartments.select2('val')
                         });
                     }
                 },
@@ -820,7 +851,8 @@
                     "data": function ( d ) {
                         return $.extend( {}, d, {
                             "startDate":_date_from.val(),
-                            "endDate":_date_to.val()
+                            "endDate":_date_to.val(),
+                            "department_id": _cboDepartments.select2('val')
                         });
                     }
                 },
@@ -899,7 +931,8 @@
                     "data": function ( d ) {
                         return $.extend( {}, d, {
                             "startDate":_date_from.val(),
-                            "endDate":_date_to.val()
+                            "endDate":_date_to.val(),
+                            "department_id": _cboDepartments.select2('val')
                         });
                     }
                 },
@@ -966,7 +999,8 @@
                     "data": function ( d ) {
                         return $.extend( {}, d, {
                             "startDate":_date_from.val(),
-                            "endDate":_date_to.val()
+                            "endDate":_date_to.val(),
+                            "department_id": _cboDepartments.select2('val')
                         });
                     }
                 },
@@ -1048,7 +1082,8 @@
                     "data": function ( d ) {
                         return $.extend( {}, d, {
                             "startDate":_date_from.val(),
-                            "endDate":_date_to.val()
+                            "endDate":_date_to.val(),
+                            "department_id": _cboDepartments.select2('val')
                         });
                     }
                 },

@@ -10,7 +10,8 @@ class Sales_detailed_summary extends CORE_Controller {
             'Sales_invoice_model',
             'Company_model',
             'Users_model',
-            'Customers_model'
+            'Customers_model',
+            'Departments_model'
         ));
         $this->load->library('excel');
         $this->load->model('Email_settings_model');
@@ -26,6 +27,7 @@ class Sales_detailed_summary extends CORE_Controller {
         $data['_top_navigation']=$this->load->view('template/elements/top_navigation','',TRUE);
 
         $data['customers']=$this->Customers_model->get_customer_list_for_sales_report();
+        $data['departments']=$this->Departments_model->get_list(array("is_deleted"=>FALSE));
 
         $data['title']='Sales Report';
         
@@ -42,8 +44,9 @@ class Sales_detailed_summary extends CORE_Controller {
                 $m_sales_invoice=$this->Sales_invoice_model;
                 $start=date("Y-m-d",strtotime($this->input->get('startDate',TRUE)));
                 $end=date("Y-m-d",strtotime($this->input->get('endDate',TRUE)));
+                $department_id=$this->input->get('department_id',TRUE);
 
-                $response['data']=$m_sales_invoice->get_sales_detailed_list($start,$end);
+                $response['data']=$m_sales_invoice->get_sales_detailed_list($start,$end,$department_id);
 
                 echo(
                 json_encode($response)
@@ -54,8 +57,9 @@ class Sales_detailed_summary extends CORE_Controller {
                 $m_sales_invoice=$this->Sales_invoice_model;
                 $start=date("Y-m-d",strtotime($this->input->get('startDate',TRUE)));
                 $end=date("Y-m-d",strtotime($this->input->get('endDate',TRUE)));
+                $department_id=$this->input->get('department_id',TRUE);
 
-                $response['data']=$m_sales_invoice->get_sales_summary_list($start,$end);
+                $response['data']=$m_sales_invoice->get_sales_summary_list($start,$end,$department_id);
 
                 echo(
                 json_encode($response)
@@ -66,8 +70,9 @@ class Sales_detailed_summary extends CORE_Controller {
                 $m_sales_invoice=$this->Sales_invoice_model;
                 $start=date("Y-m-d",strtotime($this->input->get('startDate',TRUE)));
                 $end=date("Y-m-d",strtotime($this->input->get('endDate',TRUE)));
+                $department_id=$this->input->get('department_id',TRUE);
 
-                $response['data']=$m_sales_invoice->get_sales_summary_list_salesperson($start,$end);
+                $response['data']=$m_sales_invoice->get_sales_summary_list_salesperson($start,$end,$department_id);
 
                 echo(
                 json_encode($response)
@@ -78,8 +83,9 @@ class Sales_detailed_summary extends CORE_Controller {
                 $m_sales_invoice=$this->Sales_invoice_model;
                 $start=date("Y-m-d",strtotime($this->input->get('startDate',TRUE)));
                 $end=date("Y-m-d",strtotime($this->input->get('endDate',TRUE)));
+                $department_id=$this->input->get('department_id',TRUE);
 
-                $response['data']=$m_sales_invoice->get_sales_product_summary_list($start,$end);
+                $response['data']=$m_sales_invoice->get_sales_product_summary_list($start,$end,$department_id);
 
                 echo(
                 json_encode($response)
@@ -95,11 +101,12 @@ class Sales_detailed_summary extends CORE_Controller {
 
                 $startDate=date('Y-m-d',strtotime($this->input->get('startDate')));
                 $endDate=date('Y-m-d',strtotime($this->input->get('endDate')));
+                $department_id=$this->input->get('department_id',TRUE);
                 $type=$this->input->get('type',TRUE);
 
-                $data['sales_summaries']=$m_sales_invoice->get_sales_summary_list($startDate,$endDate);
-                $data['sp_summaries']=$m_sales_invoice->get_sales_summary_list_salesperson($startDate,$endDate);
-                $data['product_summaries']=$m_sales_invoice->get_sales_product_summary_list($startDate,$endDate);
+                $data['sales_summaries']=$m_sales_invoice->get_sales_summary_list($startDate,$endDate,$department_id);
+                $data['sp_summaries']=$m_sales_invoice->get_sales_summary_list_salesperson($startDate,$endDate,$department_id);
+                $data['product_summaries']=$m_sales_invoice->get_sales_product_summary_list($startDate,$endDate,$department_id);
 
                 if ($type == 'c') {
                     $this->load->view('template/sales_report_customer_summary',$data);
@@ -123,11 +130,11 @@ class Sales_detailed_summary extends CORE_Controller {
 
                 $startDate=date('Y-m-d',strtotime($this->input->get('startDate')));
                 $endDate=date('Y-m-d',strtotime($this->input->get('endDate')));
+                $department_id=$this->input->get('department_id',TRUE);
                 $type=$this->input->get('type',TRUE);
 
-                $sales_summaries=$m_sales_invoice->get_sales_summary_list($startDate,$endDate);
-
-                $product_summaries=$m_sales_invoice->get_sales_product_summary_list($startDate,$endDate);
+                $sales_summaries=$m_sales_invoice->get_sales_summary_list($startDate,$endDate,$department_id);
+                $product_summaries=$m_sales_invoice->get_sales_product_summary_list($startDate,$endDate,$department_id);
 
                 $excel->setActiveSheetIndex(0);
 
@@ -560,11 +567,11 @@ class Sales_detailed_summary extends CORE_Controller {
 
                 $startDate=date('Y-m-d',strtotime($this->input->get('startDate')));
                 $endDate=date('Y-m-d',strtotime($this->input->get('endDate')));
+                $department_id=$this->input->get('department_id',TRUE);
                 $type=$this->input->get('type',TRUE);
 
-                $sales_summaries=$m_sales_invoice->get_sales_summary_list($startDate,$endDate);
-
-                $product_summaries=$m_sales_invoice->get_sales_product_summary_list($startDate,$endDate);
+                $sales_summaries=$m_sales_invoice->get_sales_summary_list($startDate,$endDate,$department_id);
+                $product_summaries=$m_sales_invoice->get_sales_product_summary_list($startDate,$endDate,$department_id);
 
                 $excel->setActiveSheetIndex(0);
 
@@ -833,14 +840,12 @@ class Sales_detailed_summary extends CORE_Controller {
 
                 $startDate=date('Y-m-d',strtotime($this->input->get('startDate')));
                 $endDate=date('Y-m-d',strtotime($this->input->get('endDate')));
+                $department_id=$this->input->get('department_id',TRUE);
                 $type=$this->input->get('type',TRUE);
 
-                $data['customers']=$m_sales_invoice->get_per_customer_sales_detailed($startDate,$endDate);
-
-                $data['salespersons']=$m_sales_invoice->get_per_salesperson_sales_detailed($startDate,$endDate);
-
-
-                $data['sales_details']=$m_sales_invoice->get_sales_detailed_list($startDate,$endDate);
+                $data['customers']=$m_sales_invoice->get_per_customer_sales_detailed($startDate,$endDate,null,$department_id);
+                $data['salespersons']=$m_sales_invoice->get_per_salesperson_sales_detailed($startDate,$endDate,$department_id);
+                $data['sales_details']=$m_sales_invoice->get_sales_detailed_list($startDate,$endDate,$department_id);
 
                 if ($type == 'c') {
                     $this->load->view('template/sales_report_customer_detailed',$data);
@@ -864,14 +869,12 @@ class Sales_detailed_summary extends CORE_Controller {
 
                 $startDate=date('Y-m-d',strtotime($this->input->get('startDate')));
                 $endDate=date('Y-m-d',strtotime($this->input->get('endDate')));
+                $department_id=$this->input->get('department_id',TRUE);
                 $type=$this->input->get('type',TRUE);
 
-                $customers=$m_sales_invoice->get_per_customer_sales_detailed($startDate,$endDate);
-
-                $salespersons=$m_sales_invoice->get_per_salesperson_sales_detailed($startDate,$endDate);
-
-
-                $sales_details=$m_sales_invoice->get_sales_detailed_list($startDate,$endDate);
+                $customers=$m_sales_invoice->get_per_customer_sales_detailed($startDate,$endDate,null,$department_id);
+                $salespersons=$m_sales_invoice->get_per_salesperson_sales_detailed($startDate,$endDate,$department_id);
+                $sales_details=$m_sales_invoice->get_sales_detailed_list($startDate,$endDate,$department_id);
                 
                 $excel->setActiveSheetIndex(0);
 
@@ -1430,14 +1433,12 @@ class Sales_detailed_summary extends CORE_Controller {
 
                 $startDate=date('Y-m-d',strtotime($this->input->get('startDate')));
                 $endDate=date('Y-m-d',strtotime($this->input->get('endDate')));
+                $department_id=$this->input->get('department_id',TRUE);
                 $type=$this->input->get('type',TRUE);
 
-                $customers=$m_sales_invoice->get_per_customer_sales_detailed($startDate,$endDate);
-
-                $salespersons=$m_sales_invoice->get_per_salesperson_sales_detailed($startDate,$endDate);
-
-
-                $sales_details=$m_sales_invoice->get_sales_detailed_list($startDate,$endDate);
+                $customers=$m_sales_invoice->get_per_customer_sales_detailed($startDate,$endDate,null,$department_id);
+                $salespersons=$m_sales_invoice->get_per_salesperson_sales_detailed($startDate,$endDate,$department_id);
+                $sales_details=$m_sales_invoice->get_sales_detailed_list($startDate,$endDate,$department_id);
                 
                 $excel->setActiveSheetIndex(0);
 
@@ -1823,7 +1824,4 @@ class Sales_detailed_summary extends CORE_Controller {
             break;
         }
     }
-
-
-
 }

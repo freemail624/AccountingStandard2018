@@ -269,6 +269,7 @@ class Purchases extends CORE_Controller
                     $m_purchases->other_amount=$this->get_numeric_value($this->input->post('other_amount',TRUE));
                     $m_purchases->grand_total_amount=$this->get_numeric_value($this->input->post('grand_total_amount',TRUE));
                     $m_purchases->exchange_rate=$this->get_numeric_value($this->input->post('exchange_rate',TRUE));
+                    $m_purchases->ship_out_date = date('Y-m-d',strtotime($this->input->post('ship_out_date',TRUE)));
 
                     $m_purchases->save();
 
@@ -384,6 +385,7 @@ class Purchases extends CORE_Controller
                     $m_purchases->other_amount=$this->get_numeric_value($this->input->post('other_amount',TRUE));
                     $m_purchases->grand_total_amount=$this->get_numeric_value($this->input->post('grand_total_amount',TRUE));
                     $m_purchases->exchange_rate=$this->get_numeric_value($this->input->post('exchange_rate',TRUE));
+                    $m_purchases->ship_out_date = date('Y-m-d',strtotime($this->input->post('ship_out_date',TRUE)));
                     
                     $m_purchases->modify($po_id);
 

@@ -206,10 +206,10 @@
                                                                 <i class="fa fa-refresh"></i></button>
 
 
-                                                            <button class="btn btn-primary hidden <?php echo (in_array('7-2',$this->session->user_rights)?'':'hidden'); ?>" id="btn_print_detailed" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Print" >
+                                                            <button class="btn btn-primary <?php echo (in_array('7-2',$this->session->user_rights)?'':'hidden'); ?>" id="btn_print_detailed" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Print" >
                                                                 <i class="fa fa-print"></i> Print Detailed</button>
 
-                                                            <button class="btn btn-success hidden <?php echo (in_array('7-2',$this->session->user_rights)?'':'hidden'); ?>" id="btn_export_detailed" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Export" >
+                                                            <button class="btn btn-success <?php echo (in_array('7-2',$this->session->user_rights)?'':'hidden'); ?>" id="btn_export_detailed" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Export" >
                                                                 <i class="fa fa-file-excel-o"></i> Export Detailed</button>
                                                         <br />
 
@@ -218,17 +218,32 @@
                                                                 <thead class="">
                                                                 <tr>
                                                                     <th width="5%"></th>
-                                                                    <th width="20%">PLU</th>
+                                                                    <th width="15%">PLU</th>
                                                                     <th width="25%">Product</th>
                                                                     <th width="10%" style="text-align: right">Quantity In</th>
                                                                     <th width="10%" style="text-align: right">Quantity Out</th>
                                                                     <th width="15%" style="text-align: right">Balance</th>
                                                                     <th width="15%" class="hidden" style="text-align: right">Bulk Balance</th>
+                                                                    <th>Cost Price</th>
+                                                                    <th>Total</th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
-
                                                                 </tbody>
+                                                                <tfoot>
+                                                                    <tr>
+                                                                        <td colspan="9" class="hidden"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan="8" style="text-align: right!important;"><b>Current Page Total : </b></td> 
+                                                                        <td id="td_page_total" align="right"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan="8" style="text-align: right!important;"><b>Grand Total : </b></td> 
+                                                                        <td id="td_grand_total" align="right"></td>
+                                                                    </tr>
+
+                                                                </tfoot>
                                                             </table>
 
                                                         </div>
@@ -446,9 +461,9 @@
         function reloadList(){
 
             dt=$('#tbl_inventory').DataTable({
-                "dom": '<"toolbar">frtip',
-                "bLengthChange":false,
-                "bPaginate":false,
+                "dom": 'Blfrtip',
+                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                "aaSorting": [],                
                 "ajax": {
                     "url": "Inventory/transaction/get-inventory",
                     "type": "POST",
@@ -503,13 +518,52 @@
                             return accounting.formatNumber(data.total_qty_bulk,2)+' '+data.product_unit_name;
                         }
 
-                    }                                                      
+                    },
+                    {
+                        targets:[7], sClass:'right-align',
+                        data: null,
+                        render: function(data, type, full, meta){
+                            return accounting.formatNumber(data.purchase_cost,2);
+                        }
+                    },
+                    {
+                        targets:[8], sClass:'right-align',
+                        data: "total_cost",
+                        render: function(data, type, full, meta){
+                            return accounting.formatNumber(data,2);
+                        }
+                    }                                                                                              
 
-                ]
+                ],
+                "footerCallback": function ( row, data, start, end, display ) {
+                    var api = this.api(), data;
 
-                ,
-                "rowCallBack": function(a,b,c){
-                    console.log(b);
+                    // Remove the formatting to get integer data for summation
+                    var intVal = function ( i ) {
+                        return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '')*1 :
+                            typeof i === 'number' ?
+                                i : 0;
+                    };
+
+                    // Total over all pages
+                    total = api
+                        .column( 8 )
+                        .data()
+                        .reduce( function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0 );
+
+                    // Total over this page
+                    pageTotal = api
+                        .column( 8, { page: 'current'} )
+                        .data()
+                        .reduce( function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0 );
+
+                    $('#td_page_total').html('<b>'+accounting.formatNumber(pageTotal,2)+'</b>');
+                    $('#td_grand_total').html('<b>'+accounting.formatNumber(total,2)+'</b>');
                 }
 
             });

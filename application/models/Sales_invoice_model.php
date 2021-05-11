@@ -690,7 +690,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
     }
 
 
-    function get_per_customer_sales_detailed($start=null,$end=null,$customer_id=null){
+    function get_per_customer_sales_detailed($start=null,$end=null,$customer_id=null,$department_id=0){
         $sql = "SELECT 
                 DISTINCT main.customer_id,
                 c.customer_name 
@@ -698,11 +698,14 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                 SELECT DISTINCT si.customer_id
                 FROM sales_invoice si WHERE si.is_active= TRUE AND si.is_deleted = FALSE
                 AND si.date_invoice BETWEEN '$start' AND '$end'
+                ".($department_id==0?"":" AND si.department_id=".$department_id)."
 
                 UNION ALL
                 SELECT DISTINCT ci.customer_id
                 FROM cash_invoice ci WHERE ci.is_active= TRUE AND ci.is_deleted = FALSE
                 AND ci.date_invoice BETWEEN '$start' AND '$end'
+                ".($department_id==0?"":" AND ci.department_id=".$department_id)."
+
                 ) as main
 
                 LEFT JOIN customers c ON c.customer_id = main.customer_id";
@@ -711,7 +714,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
 
     }
 
-    function get_per_salesperson_sales_detailed($start=null,$end=null){
+    function get_per_salesperson_sales_detailed($start=null,$end=null,$department_id=0){
         $sql = "SELECT 
                 DISTINCT IFNULL(main.salesperson_id,0) as salesperson_id,
                 IFNULL(CONCAT(s.firstname,' ',s.lastname),'None') as salesperson_name
@@ -719,11 +722,14 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                 SELECT DISTINCT IFNULL(si.salesperson_id,0) as salesperson_id
                 FROM sales_invoice si WHERE si.is_active= TRUE AND si.is_deleted = FALSE
                 AND si.date_invoice BETWEEN '$start' AND '$end'
+                ".($department_id==0?"":" AND si.department_id=".$department_id)."
 
                 UNION ALL
                 SELECT DISTINCT IFNULL(ci.salesperson_id,0) as salesperson_id
                 FROM cash_invoice ci WHERE ci.is_active= TRUE AND ci.is_deleted = FALSE
                 AND ci.date_invoice BETWEEN '$start' AND '$end'
+                ".($department_id==0?"":" AND ci.department_id=".$department_id)."
+
                 ) as main
 
                 LEFT JOIN salesperson s ON s.salesperson_id = main.salesperson_id";
@@ -732,7 +738,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
     }
 
 
-    function get_sales_detailed_list($start=null,$end=null){
+    function get_sales_detailed_list($start=null,$end=null,$department_id=0){
         $sql="SELECT 
             main.customer_id,
             IFNULL(main.salesperson_id,0) as salesperson_id,
@@ -763,7 +769,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
             WHERE
                 si.is_active = TRUE AND si.is_deleted = FALSE
                 AND si.date_invoice BETWEEN '$start' AND '$end'
-                
+                ".($department_id==0?"":" AND si.department_id=".$department_id)."
                 
             UNION ALL
 
@@ -781,17 +787,18 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                 INNER JOIN cash_invoice_items AS cii ON ci.cash_invoice_id = cii.cash_invoice_id
             WHERE
                 ci.is_active = TRUE AND ci.is_deleted = FALSE
-                AND ci.date_invoice BETWEEN '$start' AND '$end') as main
+                AND ci.date_invoice BETWEEN '$start' AND '$end'
+                ".($department_id==0?"":" AND ci.department_id=".$department_id).") as main
             LEFT JOIN customers AS c ON c.customer_id = main.customer_id
             LEFT JOIN products AS p ON p.product_id=main.product_id
             LEFT JOIN salesperson AS s ON s.salesperson_id=main.salesperson_id
 
-            ORDER BY main.date_invoice DESC
+            ORDER BY main.date_invoice DESC, main.inv_no DESC
             ";
         return $this->db->query($sql)->result();
     }
 
-    function get_sales_summary_list($start=null,$end=null){
+    function get_sales_summary_list($start=null,$end=null,$department_id=0){
         $sql="SELECT main.customer_id,
             c.customer_name,
             SUM(main.inv_line_total_after_global) as total_amount
@@ -807,6 +814,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
 
             WHERE si.is_active = TRUE AND si.is_deleted = FALSE
             AND si.date_invoice BETWEEN '$start' AND '$end'
+            ".($department_id==0?"":" AND si.department_id=".$department_id)."
              
              UNION ALL
              
@@ -819,6 +827,8 @@ GROUP BY n.customer_id HAVING total_balance > 0";
 
             WHERE ci.is_active = TRUE AND ci.is_deleted = FALSE
             AND ci.date_invoice BETWEEN '$start' AND '$end'
+            ".($department_id==0?"":" AND ci.department_id=".$department_id)."
+
             ) as main
             LEFT JOIN customers c ON c.customer_id = main.customer_id
 
@@ -826,7 +836,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
         return $this->db->query($sql)->result();
     }
 
-    function get_sales_summary_list_salesperson($start=null,$end=null){
+    function get_sales_summary_list_salesperson($start=null,$end=null,$department_id=0){
         $sql="SELECT 
             main.salesperson_id,
             IFNULL(CONCAT(s.firstname,' ',s.lastname),'None') as salesperson_name,
@@ -843,6 +853,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
 
             WHERE si.is_active = TRUE AND si.is_deleted = FALSE
             AND si.date_invoice BETWEEN '$start' AND '$end'
+            ".($department_id==0?"":" AND si.department_id=".$department_id)."
              
              UNION ALL
              
@@ -855,6 +866,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
 
             WHERE ci.is_active = TRUE AND ci.is_deleted = FALSE
             AND ci.date_invoice BETWEEN '$start' AND '$end'
+            ".($department_id==0?"":" AND ci.department_id=".$department_id)."
             ) as main
             LEFT JOIN salesperson s ON s.salesperson_id = main.salesperson_id
 
@@ -862,7 +874,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
         return $this->db->query($sql)->result();
     }
 
-    function get_sales_product_summary_list($start=null,$end=null){
+    function get_sales_product_summary_list($start=null,$end=null,$department_id=0){
         $sql="
         SELECT main.product_id,
         p.product_code,
@@ -881,7 +893,8 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                   INNER JOIN sales_invoice_items AS sii ON si.sales_invoice_id = sii.sales_invoice_id
               WHERE
                   si.is_active = TRUE AND si.is_deleted = FALSE
-                  AND si.date_invoice BETWEEN '$start' AND '$end'
+                  AND si.date_invoice BETWEEN '$start' AND '$end'  
+                  ".($department_id==0?"":" AND si.department_id=".$department_id)."
 
                 UNION ALL
 
@@ -894,7 +907,8 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                   
               WHERE
                   ci.is_active = TRUE AND ci.is_deleted = FALSE
-                  AND ci.date_invoice BETWEEN '$start' AND '$end') as main
+                  AND ci.date_invoice BETWEEN '$start' AND '$end'
+                  ".($department_id==0?"":" AND ci.department_id=".$department_id).") as main
 
                   LEFT JOIN products AS p ON p.product_id=main.product_id
 
