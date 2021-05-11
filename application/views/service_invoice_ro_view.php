@@ -329,7 +329,7 @@
                                     <input type="text" name="tel_no_home" class="form-control">
                                 </div>
                                 <div class="col-md-4">
-                                    <label style="font-size: 7pt;">Tel No.(Bus) : </label>
+                                    <label style="font-size: 7pt;">Tel No.(Business) : </label>
                                     <input type="text" name="tel_no_bus" class="form-control">
                                 </div>
                             </div>
@@ -1097,14 +1097,14 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="col-md-12" id="label">
-                                         <label class="control-label boldlabel">Tel No. (Bus) :</label>
+                                         <label class="control-label boldlabel">Tel No. (Business) :</label>
                                     </div>
                                     <div class="form-group">
                                         <div class="input-group">
                                             <span class="input-group-addon">
                                                 <i class="fa fa-phone"></i>
                                             </span>
-                                            <input type="text" name="tel_no_bus" id="tel_no_bus" class="form-control" placeholder="Tel No. (Bus)">
+                                            <input type="text" name="tel_no_bus" id="tel_no_bus" class="form-control" placeholder="Tel No. (Business)">
                                         </div>
                                     </div>
                                 </div> 
