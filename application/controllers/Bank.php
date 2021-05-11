@@ -8,6 +8,7 @@ class Bank extends CORE_Controller {
         $this->load->model('Bank_model');
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
+        $this->load->model('Account_title_model');
     }
 
     public function index() {
@@ -18,6 +19,8 @@ class Bank extends CORE_Controller {
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['title'] = 'Bank Management';
+        $data['accounts']=$this->Account_title_model->get_list('is_active=TRUE AND is_deleted=FALSE');
+
         (in_array('4-6',$this->session->user_rights)? 
         $this->load->view('bank_view', $data)
         :redirect(base_url('dashboard')));
@@ -28,7 +31,7 @@ class Bank extends CORE_Controller {
         switch ($txn) {
             case 'list':
                 $m_bank = $this->Bank_model;
-                $response['data'] = $m_bank->get_list(array('bank.is_deleted'=>0));
+                $response['data'] = $m_bank->get_bank_list();
                 echo json_encode($response);
                 break;
 
@@ -39,13 +42,14 @@ class Bank extends CORE_Controller {
                 $m_bank->bank_name = $this->input->post('bank_name', TRUE);
                 $m_bank->account_number = $this->input->post('account_number', TRUE);
                 $m_bank->account_type = $this->input->post('account_type', TRUE);
+                $m_bank->account_id = $this->input->post('account_id', TRUE);
                 $m_bank->save();
                 $bank_id = $m_bank->last_insert_id();
 
                 $response['title'] = 'Success!';
                 $response['stat'] = 'success';
                 $response['msg'] = 'Bank information successfully created.';
-                $response['row_added'] = $m_bank->get_list($bank_id);
+                $response['row_added'] = $m_bank->get_bank_list($bank_id);
 
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
@@ -92,6 +96,7 @@ class Bank extends CORE_Controller {
                 $m_bank->bank_name = $this->input->post('bank_name', TRUE);
                 $m_bank->account_number = $this->input->post('account_number', TRUE);
                 $m_bank->account_type = $this->input->post('account_type', TRUE);
+                $m_bank->account_id = $this->input->post('account_id', TRUE);
 
                 $m_bank->modify($bank_id);
 
@@ -107,7 +112,7 @@ class Bank extends CORE_Controller {
                 $response['title']='Success!';
                 $response['stat']='success';
                 $response['msg']='Bank information successfully updated.';
-                $response['row_updated']=$m_bank->get_list($bank_id);
+                $response['row_updated']=$m_bank->get_bank_list($bank_id);
                 echo json_encode($response);
 
                 break;

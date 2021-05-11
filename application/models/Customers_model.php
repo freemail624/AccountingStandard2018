@@ -119,14 +119,15 @@ class Customers_model extends CORE_Model{
                 c.customer_name,
                 IF(ISNULL(si.date_due),serv_inv.date_due,si.date_due) date_due,
                 IF(ISNULL(si.remarks),IFNULL(serv_inv.remarks, ji.remarks),IFNULL(si.remarks, ji.remarks)) remarks,
-                IF(ISNULL(ref_no), txn_no, ref_no) inv_no,
+                /* IF(ISNULL(ref_no), txn_no, ref_no) inv_no, */
+                si.sales_inv_no as inv_no,
                 IF(ji.is_sales = 1, SUM(ja.dr_amount), SUM(ja.dr_amount)) as journal_receivable_amount,
                 ji.is_sales
                 FROM
                 (journal_info ji
                 INNER JOIN (SELECT * FROM journal_accounts ja WHERE ja.account_id IN ($filter_accounts)) ja ON ja.journal_id = ji.journal_id)
                 LEFT JOIN customers c ON c.customer_id = ji.customer_id
-                LEFT JOIN sales_invoice si ON si.sales_inv_no = ji.ref_no AND ji.is_sales=1
+                LEFT JOIN sales_invoice si ON si.journal_id = ji.journal_id AND ji.is_sales=1
                 LEFT JOIN service_invoice serv_inv ON serv_inv.service_invoice_no = ji.ref_no AND ji.is_sales=0
                 WHERE
                 ji.is_deleted=FALSE

@@ -299,7 +299,7 @@
                     </div>
 
 
-                    <div class="col-lg-3 col-lg-offset-3">
+                    <div class="col-lg-5 col-lg-offset-1">
 
                         <div class="row" style="">
                             <div class="col-lg-12">
@@ -322,9 +322,20 @@
                             </div>
 
                             <div class="col-lg-12">
+                                <b class="required">*</b> Bank  : <br />
+                                <select class="form-control" id="cbo_bank" name="bank_id" data-error-msg="Bank is required!">
+                                    <?php foreach($banks as $bank){ ?>
+                                        <option value="<?php echo $bank->bank_id; ?>">
+                                            <?php echo $bank->bank_name.' - '.$bank->account_number; ?>
+                                        </option>
+                                    <?php }?>
+                                </select>
+                            </div>
+
+                            <div class="col-lg-12">
                                 <b class="required">*</b> Check #  : <br />
                                 <div class="input-group">
-                                    <input type="text" name="check_no" class="form-control">
+                                    <input type="text" name="check_no" id="check_no" class="form-control" data-error-msg="Check No is required!">
                                                                      <span class="input-group-addon">
                                                                         <i class="fa fa-code"></i>
                                                                     </span>
@@ -339,7 +350,7 @@
                                                                     <span class="input-group-addon">
                                                                          <i class="fa fa-calendar"></i>
                                                                     </span>
-                                    <input type="text" name="check_date" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date of Payment" data-error-msg="Payment Date is required!" required>
+                                    <input type="text" name="check_date" id="check_date" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date of Payment" data-error-msg="Check Date is required!" required>
                                 </div>
                             </div>
 
@@ -564,7 +575,7 @@
 
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboSuppliers; var _cboTaxType;
-    var _cboPaymentMethod; var _cboFilterActive;
+    var _cboPaymentMethod; var _cboFilterActive; var _cboBanks;
 
 
     var oTableItems={
@@ -665,6 +676,11 @@ $(document).ready(function(){
             allowClear: false
         });
 
+        _cboBanks = $('#cbo_bank').select2({
+            placeholder: "Please select a bank.",
+            allowClear: false
+        });
+
         _cboBranch = $('#cbo_branch').select2({
             placeholder: "Please select branch.",
             allowClear: false
@@ -685,7 +701,7 @@ $(document).ready(function(){
 
         _cboSuppliers=$("#cbo_suppliers").select2({
             placeholder: "Please select supplier to record payment.",
-            allowClear: true
+            allowClear: false
         });
 
         _cboSuppliers.select2('val',null);
@@ -750,6 +766,9 @@ $(document).ready(function(){
             //$('.toggle-fullscreen').click();
             clearFields($('#frm_payments'));
             _cboSuppliers.select2('val',null);
+            _cboBanks.select2('val',null);
+            _cboPaymentMethod.select2('val',1);
+
             showList(false);
             $('#cbo_branch').select2('val', $('#cbo_branch').data('default'));
             $('#cbo_suppliers').select2('open');
@@ -773,11 +792,17 @@ $(document).ready(function(){
 
 
 
-        _cboPaymentMethod.on("select2:select", function (e) {
+        _cboPaymentMethod.on("change", function (e) {
             var method_id=$(this).select2('val');
             if(method_id==2){
+                $('#cbo_bank').prop('required', true);
+                $('#check_no').prop('required', true);
+                $('#check_date').prop('required', true);
                 $('#div_check_details').show();
             }else{
+                $('#cbo_bank').prop('required', false);
+                $('#check_no').prop('required', false);
+                $('#check_date').prop('required', false);
                 $('#div_check_details').hide();
             }
         });

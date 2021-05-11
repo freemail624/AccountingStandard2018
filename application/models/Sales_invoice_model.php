@@ -177,7 +177,7 @@ $sql="SELECT main.* FROM(
             p.cos_account_id as account_id,
             '' as memo,
             0 as cr_amount,
-            SUM(sii.inv_qty * p.purchase_cost) as dr_amount
+            SUM(sii.inv_qty * sii.cost_upon_invoice) as dr_amount
             FROM `sales_invoice_items` as sii
             INNER JOIN products as p ON sii.product_id=p.product_id
             WHERE sii.sales_invoice_id=$sales_invoice_id AND p.cos_account_id >0
@@ -187,7 +187,7 @@ $sql="SELECT main.* FROM(
             
             -- SELECT acc_discount.account_id,acc_discount.memo,
             -- 0 as cr_amount,SUM(acc_discount.dr_amount) as dr_amount
-            --  FROM
+            --  FROMx`
             -- (SELECT sii.product_id,
 
             -- (SELECT receivable_discount_account_id FROM account_integration) as account_id
@@ -218,7 +218,7 @@ $sql="SELECT main.* FROM(
             SELECT
             p.expense_account_id as account_id,
             '' as memo,
-            SUM(sii.inv_qty * p.purchase_cost) cr_amount,
+            SUM(sii.inv_qty * sii.cost_upon_invoice) cr_amount,
             0 as dr_amount
 
             FROM `sales_invoice_items` as sii
@@ -231,7 +231,7 @@ $sql="SELECT main.* FROM(
             SELECT
             p.income_account_id as account_id,
             '' as memo,
-            SUM(sii.inv_non_tax_amount) cr_amount,
+            SUM(sii.inv_non_tax_amount) + SUM(sii.inv_qty*sii.inv_discount) cr_amount,
             0 as dr_amount
 
             FROM `sales_invoice_items` as sii
@@ -271,7 +271,8 @@ $sql="SELECT main.* FROM(
 $sql="
 SELECT 
 ji.journal_id,
-IFNULL(ji.ref_no,txn_no) as invoice_no,
+/*IFNULL(ji.ref_no,txn_no) as invoice_no,*/
+si.sales_inv_no AS invoice_no,
 c.customer_name,
 ji.is_sales,
 ji.date_txn,
@@ -280,6 +281,7 @@ IFNULL(payment.payment_amount,0) as payment_amount,
 (IFNULL(receivables.dr_amount,0) - IFNULL(payment.payment_amount,0)) as balance
  FROM journal_info ji
 
+LEFT JOIN sales_invoice si ON si.journal_id = ji.journal_id
 LEFT JOIN customers c ON c.customer_id = ji.customer_id
 LEFT JOIN (
 SELECT ja.journal_id, SUM(dr_amount) as dr_amount FROM journal_accounts ja

@@ -102,6 +102,7 @@
                                                         <th>Bank</th>
                                                         <th>Bank Account</th>
                                                         <th>Type of Account</th>
+                                                        <th>Account</th>
                                                         <th><center>Action</center></th>
                                                     </tr>
                                                     </thead>
@@ -184,7 +185,7 @@
                 </div>
             </div><!---modal-->
 
-            <div id="modal_bank" class="modal fade" tabindex="-1" role="dialog">
+            <div id="modal_bank" class="modal fade" role="dialog">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -231,7 +232,24 @@
                                             <option value="2">Savings Account</option>
                                         </select>
                                     </div>
-                                </div><br/>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label"><strong><B> * </B> Account :</strong></label>
+                                    <div class="col-md-8">
+                                        <select name="account_id" class="form-control" id="account_id" data-error-msg="Account is required!" placeholder="Account" required>
+                                            <option value="" disabled selected>Select Account</option>
+                                            <?php foreach($accounts as $account){ ?>
+                                                <option value="<?php echo $account->account_id; ?>">
+                                                    <?php echo $account->account_title; ?>
+                                                </option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
+
+
+
                             </form>
                         </div>
                         <div class="modal-footer">
@@ -269,7 +287,7 @@
 <script>
 
 $(document).ready(function(){
-    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboAccountType;
+    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboAccountType; var _cboAccounts;
 
     var initializeControls=function(){
         dt=$('#tbl_bank').DataTable({
@@ -293,8 +311,9 @@ $(document).ready(function(){
 
                     }
                 },
+                { targets:[4],data: "account_title" }, 
                 {
-                    targets:[4],
+                    targets:[5],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
@@ -312,9 +331,15 @@ $(document).ready(function(){
         }();
 
         _cboAccountType = $('#account_type').select2({
-            placeholder: "Please select account type.",
+            placeholder: "Please select an account type.",
             allowClear: false
         });
+
+        _cboAccounts = $('#account_id').select2({
+            placeholder: "Please select an account.",
+            allowClear: false
+        });
+
     }();
 
     var bindEventHandlers=(function(){
@@ -346,6 +371,7 @@ $(document).ready(function(){
             _txnMode="new";
             clearFields();
             _cboAccountType.select2('val','');
+            _cboAccounts.select2('val',null);
             $('#bank_title').text('New Bank');
             $('#modal_bank').modal('show');
             //showList(false);
@@ -368,6 +394,7 @@ $(document).ready(function(){
             $('#bank_title').text('Edit Unit');
             $('#modal_bank').modal('show');
             _cboAccountType.select2('val',data.account_type);
+            _cboAccounts.select2('val',data.account_id);
             //showList(false);
         });
 

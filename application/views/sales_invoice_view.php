@@ -1247,12 +1247,14 @@ $(document).ready(function(){
             }
             if (event.keyCode == 13) {
              
-                // $('.tt-suggestion:first').click();
-    _objTypeHead.typeahead('close');           //     -- changed due to barcode scan not working
-    _objTypeHead.typeahead('val','');         //  -- changed due to barcode scan not working
+            // $('.tt-suggestion:first').click();
+            _objTypeHead.typeahead('close');           //     -- changed due to barcode scan not working
+            _objTypeHead.typeahead('val','');         //  -- changed due to barcode scan not working
             }
         }).bind('typeahead:select', function(ev, suggestion) {
-
+            
+            _objTypeHead.typeahead('close');           //     -- changed due to barcode scan not working
+            _objTypeHead.typeahead('val','');         //  -- changed due to barcode scan not working
 
             if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
                 showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
@@ -1965,10 +1967,10 @@ $(document).ready(function(){
             _selectedID=data.sales_invoice_id;
             _is_journal_posted=data.is_journal_posted;
 
-            if(_is_journal_posted > 0){
-                showNotification({title:"<b style='color:white;'> Error!</b>",stat:"error",msg:"Cannot Edit: Invoice is already Posted in Sales Journal."});
-                return;
-            }
+            // if(_is_journal_posted > 0){
+            //     showNotification({title:"<b style='color:white;'> Error!</b>",stat:"error",msg:"Cannot Edit: Invoice is already Posted in Sales Journal."});
+            //     return;
+            // }
 
             getproduct().done(function(data){
                 products.clear();
@@ -2132,9 +2134,9 @@ $(document).ready(function(){
                         showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Cannot Delete: Sales Return exists on this invoice."});
                     return;
                     }
-                    if(_is_journal_posted > 0){
-                        showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Cannot Delete: Invoice is already Posted in Sales Journal."});
-                    }else {
+                    // if(_is_journal_posted > 0){
+                    //     showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Cannot Delete: Invoice is already Posted in Sales Journal."});
+                    // }else {
 
                         checkInvoice().done(function(response){
 
@@ -2146,7 +2148,7 @@ $(document).ready(function(){
                             }
                         });
                         
-                    }
+                    // }
                 });
 
 

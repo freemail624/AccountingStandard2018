@@ -28,7 +28,8 @@ class Loading extends CORE_Controller
         $this->load->model('Loading_model');
         $this->load->model('Loading_item_model');
         $this->load->model('Agent_model');
-
+        $this->load->model('Journal_info_model');
+        $this->load->model('Journal_account_model');
 
     }
 
@@ -172,6 +173,32 @@ class Loading extends CORE_Controller
                 $total_after_discount=$this->input->post('total_after_discount',TRUE);
                 $total_inv_qty=$this->input->post('total_inv_qty',TRUE);
             
+                $invoices = $m_loading->get_invoice_list($loading_id);
+
+                /* DELETE JOURNAL */
+                if(count($invoices) > 0){
+
+                    foreach($invoices as $invoice){
+
+                        $inv_journal_id = $invoice->journal_id;
+                        if($inv_journal_id > 0){
+
+                            $this->db->where('journal_id', $inv_journal_id);
+                            $this->db->delete('journal_info');
+
+                            $this->db->where('journal_id', $inv_journal_id);
+                            $this->db->delete('journal_accounts');
+
+                            $m_sales_invoice=$this->Sales_invoice_model;
+                            $m_sales_invoice->journal_id=0;
+                            $m_sales_invoice->is_journal_posted=FALSE;
+                            $m_sales_invoice->modify($invoice->invoice_id);
+                            
+                        }
+
+                    }
+                }
+
                 if($is_switch == 1){
                     // Update 1st Truck
                     $truck = $this->Sales_invoice_model->get_open_sales_invoice_list($agent_id,$loading_date,1);
@@ -202,7 +229,69 @@ class Loading extends CORE_Controller
 
                     // Update truck on sales invoice
                     $m_sales_invoice->agent_id = $agent_id;
-                    $m_sales_invoice->modify($this->get_numeric_value($invoice_id[$i]));                    
+                    $m_sales_invoice->modify($this->get_numeric_value($invoice_id[$i]));
+
+                    /* Auto Post Sales Journal */
+                    $info=$m_sales_invoice->get_list($invoice_id[$i]);
+                    $accounts=$m_sales_invoice->get_journal_entries_2($invoice_id[$i]);
+
+                    $m_journal=$this->Journal_info_model;
+                    $m_journal_accounts=$this->Journal_account_model;
+
+                    $m_journal->customer_id=$info[0]->customer_id;
+                    $m_journal->department_id=$info[0]->department_id;
+                    $m_journal->remarks=$info[0]->remarks;
+                    $m_journal->date_txn=date('Y-m-d');
+                    $m_journal->book_type='SJE';
+                    $m_journal->is_sales=1;
+                    $m_journal->set('date_created','NOW()');
+                    $m_journal->created_by_user=$this->session->user_id;
+                    $m_journal->save();
+
+                    $journal_id=$m_journal->last_insert_id();
+
+                    foreach($accounts as $account){
+                        $m_journal_accounts->journal_id=$journal_id;
+                        $m_journal_accounts->account_id=$account->account_id;
+                        $m_journal_accounts->memo=$account->memo;
+                        $m_journal_accounts->dr_amount=$this->get_numeric_value($account->dr_amount);
+                        $m_journal_accounts->cr_amount=$this->get_numeric_value($account->cr_amount);
+                        $m_journal_accounts->save();
+                    }
+
+                    //update transaction number base on formatted last insert id
+                    $m_journal->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
+                    $m_journal->modify($journal_id);
+
+                    //if sales invoice is available, sales invoice is recorded as journal so mark this as posted
+                    if($invoice_id[$i]!=null){
+                        $m_sales_invoice=$this->Sales_invoice_model;
+                        $m_sales_invoice->journal_id=$journal_id;
+                        $m_sales_invoice->is_journal_posted=TRUE;
+                        $m_sales_invoice->modify($invoice_id[$i]);
+                    // AUDIT TRAIL START
+                    $sales_invoice=$m_sales_invoice->get_list($invoice_id[$i],'sales_inv_no');
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=8; //CRUD
+                    $m_trans->trans_type_id=17; // TRANS TYPE
+                    $m_trans->trans_log='Finalized Sales Invoice No.'.$sales_invoice[0]->sales_inv_no.' For Sales Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
+                    $m_trans->save();
+                    //AUDIT TRAIL END
+                    }
+
+                    // AUDIT TRAIL START
+
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=1; //CRUD
+                    $m_trans->trans_type_id=4; // TRANS TYPE
+                    $m_trans->trans_log='Created Sales Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
+                    $m_trans->save();
+                    //AUDIT TRAIL END
+
 
                 }
 
@@ -218,6 +307,7 @@ class Loading extends CORE_Controller
                 $m_trans->trans_type_id=69; // TRANS TYPE
                 $m_trans->trans_log='Created Loading Report No: LOADING-'.date('Ymd').'-'.$loading_id;
                 $m_trans->save();
+
 
                 $m_loading->commit();
 
@@ -263,11 +353,39 @@ class Loading extends CORE_Controller
                 $address=$this->input->post('address',TRUE);
                 $total_after_discount=$this->input->post('total_after_discount',TRUE);
                 $total_inv_qty=$this->input->post('total_inv_qty',TRUE);
-            
+        
+
+                $invoices = $m_loading->get_invoice_list($loading_id);
+
+                /* DELETE JOURNAL */
+                if(count($invoices) > 0){
+
+                    foreach($invoices as $invoice){
+
+                        $inv_journal_id = $invoice->journal_id;
+                        if($inv_journal_id > 0){
+
+                            $this->db->where('journal_id', $inv_journal_id);
+                            $this->db->delete('journal_info');
+
+                            $this->db->where('journal_id', $inv_journal_id);
+                            $this->db->delete('journal_accounts');
+
+                            $m_sales_invoice=$this->Sales_invoice_model;
+                            $m_sales_invoice->journal_id=0;
+                            $m_sales_invoice->is_journal_posted=FALSE;
+                            $m_sales_invoice->modify($invoice->invoice_id);
+                            
+                        }
+
+                    }
+                }
+
+
                 $m_loading_items->delete_via_fk($loading_id); //delete previous items then insert those new
 
                 for($i=0;$i<count($invoice_id);$i++){
-                    
+
                     // For Transfer of product to other loading report
                     if($this->get_numeric_value($for_transfer[$i]) >= 1){
                         $m_loading_items->loading_id=$this->get_numeric_value($transfer_id[$i]);
@@ -292,6 +410,68 @@ class Loading extends CORE_Controller
                     // Update truck on sales invoice
                     $m_sales_invoice->agent_id = $agent_id;
                     $m_sales_invoice->modify($this->get_numeric_value($invoice_id[$i])); 
+
+                    /* Auto Post Sales Journal */
+                    $info=$m_sales_invoice->get_list($invoice_id[$i]);
+                    $accounts=$m_sales_invoice->get_journal_entries_2($invoice_id[$i]);
+
+                    $m_journal=$this->Journal_info_model;
+                    $m_journal_accounts=$this->Journal_account_model;
+
+                    $m_journal->customer_id=$info[0]->customer_id;
+                    $m_journal->department_id=$info[0]->department_id;
+                    $m_journal->remarks=$info[0]->remarks;
+                    $m_journal->date_txn=date('Y-m-d');
+                    $m_journal->book_type='SJE';
+                    $m_journal->is_sales=1;
+                    $m_journal->set('date_created','NOW()');
+                    $m_journal->created_by_user=$this->session->user_id;
+                    $m_journal->save();
+
+                    $journal_id=$m_journal->last_insert_id();
+
+                    foreach($accounts as $account){
+                        $m_journal_accounts->journal_id=$journal_id;
+                        $m_journal_accounts->account_id=$account->account_id;
+                        $m_journal_accounts->memo=$account->memo;
+                        $m_journal_accounts->dr_amount=$this->get_numeric_value($account->dr_amount);
+                        $m_journal_accounts->cr_amount=$this->get_numeric_value($account->cr_amount);
+                        $m_journal_accounts->save();
+                    }
+
+                    //update transaction number base on formatted last insert id
+                    $m_journal->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
+                    $m_journal->modify($journal_id);
+
+                    //if sales invoice is available, sales invoice is recorded as journal so mark this as posted
+                    if($invoice_id[$i]!=null){
+                        $m_sales_invoice=$this->Sales_invoice_model;
+                        $m_sales_invoice->journal_id=$journal_id;
+                        $m_sales_invoice->is_journal_posted=TRUE;
+                        $m_sales_invoice->modify($invoice_id[$i]);
+                        // AUDIT TRAIL START
+                        $sales_invoice=$m_sales_invoice->get_list($invoice_id[$i],'sales_inv_no');
+                        $m_trans=$this->Trans_model;
+                        $m_trans->user_id=$this->session->user_id;
+                        $m_trans->set('trans_date','NOW()');
+                        $m_trans->trans_key_id=8; //CRUD
+                        $m_trans->trans_type_id=17; // TRANS TYPE
+                        $m_trans->trans_log='Finalized Sales Invoice No.'.$sales_invoice[0]->sales_inv_no.' For Sales Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
+                        $m_trans->save();
+                        //AUDIT TRAIL END
+                    }
+
+                    // AUDIT TRAIL START
+
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=1; //CRUD
+                    $m_trans->trans_type_id=4; // TRANS TYPE
+                    $m_trans->trans_log='Created Sales Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
+                    $m_trans->save();
+                    //AUDIT TRAIL END
+
                 }
 
                 //******************************************************************************************
@@ -320,6 +500,7 @@ class Loading extends CORE_Controller
             //***************************************************************************************
             case 'delete':
                 $m_loading=$this->Loading_model;
+                $m_loading_items=$this->Loading_item_model;
                 $loading_id=$this->input->post('loading_id',TRUE);
 
                 $m_loading->begin();
@@ -338,6 +519,32 @@ class Loading extends CORE_Controller
                 $m_trans->trans_type_id=69; // TRANS TYPE
                 $m_trans->trans_log='Deleted Loading No: '.$loading[0]->loading_no;
                 $m_trans->save();
+
+                $invoices = $m_loading->get_invoice_list($loading_id);
+
+                /* DELETE JOURNAL */
+                if(count($invoices) > 0){
+
+                    foreach($invoices as $invoice){
+
+                        $inv_journal_id = $invoice->journal_id;
+                        if($inv_journal_id > 0){
+
+                            $this->db->where('journal_id', $inv_journal_id);
+                            $this->db->delete('journal_info');
+
+                            $this->db->where('journal_id', $inv_journal_id);
+                            $this->db->delete('journal_accounts');
+
+                            $m_sales_invoice=$this->Sales_invoice_model;
+                            $m_sales_invoice->journal_id=0;
+                            $m_sales_invoice->is_journal_posted=FALSE;
+                            $m_sales_invoice->modify($invoice->invoice_id);
+                            
+                        }
+
+                    }
+                }
 
                 $m_loading->commit();
             

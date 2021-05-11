@@ -27,7 +27,8 @@ class Cash_invoice extends CORE_Controller
         $this->load->model('Order_source_model');
         $this->load->model('Account_integration_model');
         $this->load->model('Receipt_model');
-
+        $this->load->model('Journal_info_model');
+        $this->load->model('Journal_account_model');
     }
 
     public function index() {
@@ -303,6 +304,51 @@ class Cash_invoice extends CORE_Controller
                 $m_trans->trans_type_id=65; // TRANS TYPE
                 $m_trans->trans_log='Created Cash Invoice No: CI-INV-'.date('Ymd').'-'.$cash_invoice_id;
                 $m_trans->save();
+
+                /* Auto Post Cash Invoice */
+                $info=$m_invoice->get_list($cash_invoice_id);
+                $accounts=$m_invoice->get_journal_entries($cash_invoice_id);
+
+                $m_journal=$this->Journal_info_model;
+                $m_journal_accounts=$this->Journal_account_model;
+
+                $m_journal->customer_id=$info[0]->customer_id;
+                $m_journal->remarks=$info[0]->remarks;
+                $m_journal->date_txn=date('Y-m-d');
+                $m_journal->book_type='CRJ';
+                $m_journal->department_id=$info[0]->department_id;
+                $m_journal->payment_method_id=1;
+                $m_journal->amount=$this->get_numeric_value($this->input->post('total_after_discount',TRUE));
+                // $m_journal->or_no=$this->input->post('or_no');
+                // $m_journal->check_no=$this->input->post('check_no');
+                // $m_journal->bank_id=$this->input->post('bank');
+                // $m_journal->ref_no=$this->input->post('ref_no');
+                $m_journal->set('date_created','NOW()');
+                $m_journal->created_by_user=$this->session->user_id;
+                $m_journal->save();
+
+                $journal_id=$m_journal->last_insert_id();
+
+                foreach ($accounts as $account){
+                    $m_journal_accounts->journal_id=$journal_id;
+                    $m_journal_accounts->account_id=$account->account_id;
+                    $m_journal_accounts->memo=$account->memo;
+                    $m_journal_accounts->dr_amount=$this->get_numeric_value($account->dr_amount);
+                    $m_journal_accounts->cr_amount=$this->get_numeric_value($account->cr_amount);
+                    $m_journal_accounts->save();
+                }
+
+                //update transaction number base on formatted last insert id
+                $m_journal->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
+                $m_journal->modify($journal_id);
+
+                if($cash_invoice_id!=null){
+                    $m_cash_invoice=$this->Cash_invoice_model;
+                    $m_cash_invoice->journal_id=$journal_id;
+                    $m_cash_invoice->is_journal_posted=TRUE;
+                    $m_cash_invoice->modify($cash_invoice_id);
+                }
+
                 $m_invoice->commit();
 
                 if($m_invoice->status()===TRUE){
@@ -424,6 +470,61 @@ class Cash_invoice extends CORE_Controller
                     $m_trans->trans_log='Updated Cash Invoice No: '.$cash_inv[0]->cash_inv_no;
                     $m_trans->save();
 
+                    /* Auto Post Cash Invoice */
+                    $info=$m_invoice->get_list($cash_invoice_id);
+                    $accounts=$m_invoice->get_journal_entries($cash_invoice_id);
+
+                    $m_journal=$this->Journal_info_model;
+                    $m_journal_accounts=$this->Journal_account_model;
+
+                    /* DELETE JOURNAL */
+                    if($info[0]->journal_id > 0){
+
+                        $this->db->where('journal_id', $info[0]->journal_id);
+                        $this->db->delete('journal_info');
+
+                        $this->db->where('journal_id', $info[0]->journal_id);
+                        $this->db->delete('journal_accounts');
+                        
+                    }
+
+                    $m_journal->customer_id=$info[0]->customer_id;
+                    $m_journal->remarks=$info[0]->remarks;
+                    $m_journal->date_txn=date('Y-m-d');
+                    $m_journal->book_type='CRJ';
+                    $m_journal->department_id=$info[0]->department_id;
+                    $m_journal->payment_method_id=1;
+                    $m_journal->amount=$this->get_numeric_value($this->input->post('total_after_discount',TRUE));
+                    // $m_journal->or_no=$this->input->post('or_no');
+                    // $m_journal->check_no=$this->input->post('check_no');
+                    // $m_journal->bank_id=$this->input->post('bank');
+                    // $m_journal->ref_no=$this->input->post('ref_no');
+                    $m_journal->set('date_created','NOW()');
+                    $m_journal->created_by_user=$this->session->user_id;
+                    $m_journal->save();
+
+                    $journal_id=$m_journal->last_insert_id();
+
+                    foreach ($accounts as $account){
+                        $m_journal_accounts->journal_id=$journal_id;
+                        $m_journal_accounts->account_id=$account->account_id;
+                        $m_journal_accounts->memo=$account->memo;
+                        $m_journal_accounts->dr_amount=$this->get_numeric_value($account->dr_amount);
+                        $m_journal_accounts->cr_amount=$this->get_numeric_value($account->cr_amount);
+                        $m_journal_accounts->save();
+                    }
+
+                    //update transaction number base on formatted last insert id
+                    $m_journal->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
+                    $m_journal->modify($journal_id);
+
+                    if($cash_invoice_id!=null){
+                        $m_cash_invoice=$this->Cash_invoice_model;
+                        $m_cash_invoice->journal_id=$journal_id;
+                        $m_cash_invoice->is_journal_posted=TRUE;
+                        $m_cash_invoice->modify($cash_invoice_id);
+                    }
+
                     $m_invoice->commit();
 
 
@@ -460,6 +561,7 @@ class Cash_invoice extends CORE_Controller
                 $m_invoice->modify($cash_invoice_id);
 
 
+                $info=$m_invoice->get_list($cash_invoice_id);
 
                 $so_info=$m_invoice->get_list($cash_invoice_id,'cash_invoice.sales_order_id');// get purchase order first
 
@@ -480,6 +582,17 @@ class Cash_invoice extends CORE_Controller
                 $m_trans->trans_type_id=65; // TRANS TYPE
                 $m_trans->trans_log='Deleted Cash Invoice No: '.$cash_inv[0]->cash_inv_no;
                 $m_trans->save();
+
+                /* DELETE JOURNAL */
+                if($info[0]->journal_id > 0){
+
+                    $this->db->where('journal_id', $info[0]->journal_id);
+                    $this->db->delete('journal_info');
+
+                    $this->db->where('journal_id', $info[0]->journal_id);
+                    $this->db->delete('journal_accounts');
+                    
+                }
 
                 $response['title']='Success!';
                 $response['stat']='success';

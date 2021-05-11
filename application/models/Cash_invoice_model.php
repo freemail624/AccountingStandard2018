@@ -13,6 +13,8 @@ class Cash_invoice_model extends CORE_Model
 
 	function get_journal_entries($cash_invoice_id){
 		$sql="SELECT main.* FROM (
+
+		/* Cash */
 		SELECT acc_receivable.account_id,
 		acc_receivable.memo,
 		0 as cr_amount,SUM(acc_receivable.dr_amount) as dr_amount
@@ -30,7 +32,7 @@ class Cash_invoice_model extends CORE_Model
 		WHERE cii.cash_invoice_id=$cash_invoice_id AND p.income_account_id>0
 		) as acc_receivable GROUP BY acc_receivable.account_id
 
-
+		/* Cost of Sale */
         UNION ALL 
 
         SELECT 
@@ -43,7 +45,7 @@ class Cash_invoice_model extends CORE_Model
         WHERE cii.cash_invoice_id=$cash_invoice_id AND p.cos_account_id >0
         GROUP BY p.cos_account_id
 
-
+        /* Sales Discount */
 		UNION ALL
 
 	        SELECT
@@ -57,6 +59,7 @@ class Cash_invoice_model extends CORE_Model
 	        WHERE cii.cash_invoice_id=$cash_invoice_id AND p.sd_account_id>0
 	        GROUP BY p.sd_account_id
 
+	    /* Inventory */
         UNION ALL
 
         SELECT
@@ -70,27 +73,12 @@ class Cash_invoice_model extends CORE_Model
         WHERE cii.cash_invoice_id=$cash_invoice_id AND p.expense_account_id>0
         GROUP BY p.expense_account_id
 
-		-- SELECT acc_discount.account_id,acc_discount.memo,
-		-- 0 as cr_amount,SUM(acc_discount.dr_amount) as dr_amount
-		--  FROM
-		-- (SELECT cii.product_id,
-
-		-- (SELECT receivable_discount_account_id FROM account_integration) as account_id
-		-- ,
-		-- '' as memo,
-		-- 0 cr_amount,
-		-- SUM((cii.inv_line_total_price - cii.inv_line_total_after_global) + cii.inv_line_total_discount) as dr_amount
-
-		-- FROM `cash_invoice_items` as cii
-		-- INNER JOIN products as p ON cii.product_id=p.product_id
-		-- WHERE cii.cash_invoice_id=$cash_invoice_id AND p.income_account_id>0
-		-- ) as acc_discount GROUP BY acc_discount.account_id
-
+        /* Sales */
 		UNION ALL
 		SELECT
 		p.income_account_id as account_id,
 		'' as memo,
-		SUM(cii.inv_non_tax_amount) cr_amount,
+		SUM(cii.inv_non_tax_amount) + SUM(cii.inv_qty*cii.inv_discount) cr_amount,
 		0 as dr_amount
 
 		FROM `cash_invoice_items` as cii
@@ -98,6 +86,7 @@ class Cash_invoice_model extends CORE_Model
 		WHERE cii.cash_invoice_id=$cash_invoice_id AND p.income_account_id>0
 		GROUP BY p.income_account_id
 
+		/* Output Tax */
 		UNION ALL
 
 		SELECT output_tax.account_id,output_tax.memo,

@@ -1067,6 +1067,8 @@ $(document).ready(function(){
                     _objTypeHead.typeahead('val','');
                 }
             }).bind('typeahead:select', function(ev, suggestion) {
+                    _objTypeHead.typeahead('close');
+                    _objTypeHead.typeahead('val','');
                 //var tax_rate=suggestion.tax_rate; // tax rate is based the tax type set to selected product
                 //var _defLookUp=_lookUpPrice.select2('val');
                 /*if(_defLookUp=="2"){

@@ -27,7 +27,7 @@ class Profit_model extends CORE_Model
                 main.invoice_status
 
                 FROM(
-                SELECT 
+                SELECT charge.* FROM (SELECT 
                 sii.product_id,
                 SUM(sii.inv_qty) as inv_qty,
                 SUM(sii.inv_line_total_price) as inv_gross,
@@ -52,10 +52,10 @@ class Profit_model extends CORE_Model
                     GROUP BY li.invoice_id) as loading ON loading.invoice_id = si.sales_invoice_id
 
 
-
                 WHERE (si.date_invoice BETWEEN '$start' AND '$end') AND si.is_active = TRUE AND si.is_deleted = FALSE
                 ".($customer_id==0?"":" AND si.customer_id='".$customer_id."'")."
-                GROUP BY sii.product_id
+                GROUP BY sii.sales_invoice_id, sii.product_id) as charge
+                WHERE charge.invoice_status > 0
 
                 UNION ALL
 
@@ -112,7 +112,7 @@ class Profit_model extends CORE_Model
                 main.invoice_status
 
                 FROM(
-                SELECT 
+                SELECT charge.* FROM (SELECT 
                 sii.product_id,
                 SUM(sii.inv_qty) as inv_qty,
                 SUM(sii.inv_line_total_price) as inv_gross,
@@ -142,7 +142,11 @@ class Profit_model extends CORE_Model
                 ".($customer_id==0?"":" AND si.customer_id='".$customer_id."'")."
                 ".($agent_id==0?"":" AND si.agent_id='".$agent_id."'")."
 
-                GROUP BY sii.product_id) as main
+                GROUP BY sii.sales_invoice_id, sii.product_id) as charge
+                WHERE charge.invoice_status > 0
+
+
+                ) as main
 
                 LEFT JOIN products p ON p.product_id = main.product_id
                 LEFT JOIN units u ON u.unit_id = p.parent_unit_id

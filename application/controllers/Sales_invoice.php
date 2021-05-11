@@ -28,8 +28,8 @@ class Sales_invoice extends CORE_Controller
         $this->load->model('Loading_item_model');
         $this->load->model('Agent_model');
         $this->load->model('Account_integration_model');
-
-
+        $this->load->model('Journal_info_model');
+        $this->load->model('Journal_account_model');
     }
 
     public function index() {
@@ -544,6 +544,68 @@ class Sales_invoice extends CORE_Controller
                             $m_loading_items->total_inv_qty = $this->get_numeric_value($loading[0]->total_inv_qty);
                             $m_loading_items->address = $loading[0]->address;
                             $m_loading_items->modify($checkInvoice[0]->loading_item_id);
+
+                            /* Auto Post Sales Journal */
+                            $info=$m_invoice->get_list($sales_invoice_id);
+                            $accounts=$m_invoice->get_journal_entries_2($sales_invoice_id);
+
+                            $m_journal=$this->Journal_info_model;
+                            $m_journal_accounts=$this->Journal_account_model;
+
+                            /* DELETE JOURNAL */
+                            if($info[0]->journal_id > 0){
+
+                                $this->db->where('journal_id', $info[0]->journal_id);
+                                $this->db->delete('journal_info');
+
+                                $this->db->where('journal_id', $info[0]->journal_id);
+                                $this->db->delete('journal_accounts');
+                                
+                            }
+
+                            $m_journal->customer_id=$info[0]->customer_id;
+                            $m_journal->department_id=$info[0]->department_id;
+                            $m_journal->remarks=$info[0]->remarks;
+                            $m_journal->date_txn=date('Y-m-d');
+                            $m_journal->book_type='SJE';
+                            $m_journal->is_sales=1;
+                            $m_journal->set('date_created','NOW()');
+                            $m_journal->created_by_user=$this->session->user_id;
+                            $m_journal->save();
+
+                            $journal_id=$m_journal->last_insert_id();
+
+                            foreach($accounts as $account){
+                                $m_journal_accounts->journal_id=$journal_id;
+                                $m_journal_accounts->account_id=$account->account_id;
+                                $m_journal_accounts->memo=$account->memo;
+                                $m_journal_accounts->dr_amount=$this->get_numeric_value($account->dr_amount);
+                                $m_journal_accounts->cr_amount=$this->get_numeric_value($account->cr_amount);
+                                $m_journal_accounts->save();
+                            }
+
+                            //update transaction number base on formatted last insert id
+                            $m_journal->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
+                            $m_journal->modify($journal_id);
+
+                            //if sales invoice is available, sales invoice is recorded as journal so mark this as posted
+                            if($sales_invoice_id!=null){
+                                $m_invoice=$this->Sales_invoice_model;
+                                $m_invoice->journal_id=$journal_id;
+                                $m_invoice->is_journal_posted=TRUE;
+                                $m_invoice->modify($sales_invoice_id);
+                            // AUDIT TRAIL START
+                            $sales_invoice=$m_invoice->get_list($sales_invoice_id,'sales_inv_no');
+                            $m_trans=$this->Trans_model;
+                            $m_trans->user_id=$this->session->user_id;
+                            $m_trans->set('trans_date','NOW()');
+                            $m_trans->trans_key_id=8; //CRUD
+                            $m_trans->trans_type_id=17; // TRANS TYPE
+                            $m_trans->trans_log='Finalized Sales Invoice No.'.$sales_invoice[0]->sales_inv_no.' For Sales Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
+                            $m_trans->save();
+                            //AUDIT TRAIL END
+                            }
+
                         }
                     }
 

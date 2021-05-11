@@ -607,6 +607,8 @@ dt_si = $('#tbl_si_list').DataTable({
             }
         }).bind('typeahead:select', function(ev, suggestion) {
             //console.log(suggestion);
+                _objTypeHead.typeahead('close');           //     -- changed due to barcode scan not working
+                _objTypeHead.typeahead('val','');         //  -- changed due to barcode scan not working
 
             if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
                 showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
@@ -717,8 +719,7 @@ dt_si = $('#tbl_si_list').DataTable({
 
             $('.qty').focus();
             
-            // return prodstat;   
-            //alert("dd")
+            return prodstat;   
         });
         $('div.tt-menu').on('click','table.tt-suggestion',function(){
             _objTypeHead.typeahead('val','');

@@ -831,6 +831,9 @@ $(document).ready(function(){
             }
         }).bind('typeahead:select', function(ev, suggestion) {
 
+                _objTypeHead.typeahead('close');           //     -- changed due to barcode scan not working
+                _objTypeHead.typeahead('val','');         //  -- changed due to barcode scan not working
+
             if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
                 showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
                 return;
@@ -845,28 +848,28 @@ $(document).ready(function(){
                 product_id = suggestion.parent_id;
             }
 
-            getInvetory(product_id).done(function(response){
-                data = response.data[0];
-                var CurrentQty = data.CurrentQty;
-                var CurrentQtyTotal = 0;
+            // getInvetory(product_id).done(function(response){
+            //     data = response.data[0];
+            //     var CurrentQty = data.CurrentQty;
+            //     var CurrentQtyTotal = 0;
 
-                if(suggestion.is_parent == 1){
-                    CurrentQtyTotal = (CurrentQty / suggestion.bulk_conversion_rate);
-                }
-                else if(suggestion.is_parent <= 0 && suggestion.parent_id <= 0){
-                    CurrentQtyTotal = CurrentQty;
-                }
-                else{
-                    CurrentQtyTotal = (CurrentQty / suggestion.conversion_rate);
-                }
+            //     if(suggestion.is_parent == 1){
+            //         CurrentQtyTotal = (CurrentQty / suggestion.bulk_conversion_rate);
+            //     }
+            //     else if(suggestion.is_parent <= 0 && suggestion.parent_id <= 0){
+            //         CurrentQtyTotal = CurrentQty;
+            //     }
+            //     else{
+            //         CurrentQtyTotal = (CurrentQty / suggestion.conversion_rate);
+            //     }
 
-                if(getFloat(CurrentQtyTotal) <= 0 && _cboAdjustments.val() == "OUT"){
-                    showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
-                }else if(getFloat(CurrentQtyTotal) <= getFloat(suggestion.product_warn) && _cboAdjustments.val() == "OUT"){
-                    showNotification({title: suggestion.product_desc ,stat:"info",msg:"This item has low stock remaining.<br>It might result to negative inventory."});
-                }
+            //     if(getFloat(CurrentQtyTotal) <= 0 && _cboAdjustments.val() == "OUT"){
+            //         showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
+            //     }else if(getFloat(CurrentQtyTotal) <= getFloat(suggestion.product_warn) && _cboAdjustments.val() == "OUT"){
+            //         showNotification({title: suggestion.product_desc ,stat:"info",msg:"This item has low stock remaining.<br>It might result to negative inventory."});
+            //     }
 
-            });
+            // });
 
             var tax_rate=suggestion.tax_rate;
 
@@ -930,27 +933,17 @@ $(document).ready(function(){
 
             reInitializeNumeric();
             reComputeTotal();
-
-            //alert("dd")
         });
 
         $('div.tt-menu').on('click','table.tt-suggestion',function(){
             _objTypeHead.typeahead('val','');
         });
-
         $("input#touchspin4").TouchSpin({
             verticalbuttons: true,
             verticalupclass: 'fa fa-fw fa-plus',
             verticaldownclass: 'fa fa-fw fa-minus'
         });
-
-        // InitializeCustomerDT();
     }();
-
-    function InitializeCustomerDT() {
-
-    };
-
 
     $('#link_browse_inv').click(function(){
          iCus= _cboCustomers.select2('val');

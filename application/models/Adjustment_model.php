@@ -92,7 +92,7 @@ parent::__construct();
         -- Sales Return
 		SELECT
 		p.sales_return_account_id as account_id,
-		SUM(IFNULL(adj.adjust_non_tax_amount,0)) as dr_amount,
+		SUM(IFNULL(adj.adjust_non_tax_amount,0)) + SUM(IFNULL(adj.adjust_line_total_discount,0)) as dr_amount,
 		0 as cr_amount,
 		'' as memo
 		FROM adjustment_items adj

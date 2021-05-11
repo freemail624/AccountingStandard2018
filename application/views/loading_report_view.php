@@ -1136,9 +1136,9 @@ $(document).ready(function(){
                     $.each(rows,function(i,value){
                         attr = "";
 
-                         if (value.is_journal_posted == 1){
-                            attr = "hidden";
-                         }
+                         // if (value.is_journal_posted == 1){
+                         //    attr = "hidden";
+                         // }
 
                         var classhidden="hidden";
                         if(_txnMode=="edit"){
@@ -1174,23 +1174,24 @@ $(document).ready(function(){
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.loading_id;
 
-            $.ajax({
-                "url":"Loading/transaction/check-invoices-posted?id="+_selectedID,
-                type : "GET",
-                cache : false,
-                dataType : 'json',
-                processData : false,
-                contentType : false,
-                }).done(function(response){
-                    var row = response.data[0];
+            // $.ajax({
+            //     "url":"Loading/transaction/check-invoices-posted?id="+_selectedID,
+            //     type : "GET",
+            //     cache : false,
+            //     dataType : 'json',
+            //     processData : false,
+            //     contentType : false,
+            //     }).done(function(response){
+            //         var row = response.data[0];
 
-                    if(row.total_posted > 0){
-                        showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Cannot Delete: Invoices is already Posted in Sales Journal."});
-                    }else {
-                        $('#modal_confirmation').modal('show');
-                    }
-            });
-
+            //         if(row.total_posted > 0){
+            //             showNotification({title:"<b style='color:white;'> Error!</b> ",stat:"error",msg:"Cannot Delete: Invoices is already Posted in Sales Journal."});
+            //         }else {
+            //             $('#modal_confirmation').modal('show');
+            //         }
+            // });
+            
+            $('#modal_confirmation').modal('show');
         });
 
     

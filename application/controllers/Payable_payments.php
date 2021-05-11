@@ -16,7 +16,11 @@ class Payable_payments extends CORE_Controller
         $this->load->model('Departments_model');
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
+        $this->load->model('Bank_model');
         $this->load->model('Account_integration_model');
+        $this->load->model('Journal_info_model');
+        $this->load->model('Journal_account_model');
+
     }
 
     public function index() {
@@ -33,6 +37,7 @@ class Payable_payments extends CORE_Controller
         $data['methods']=$this->Payment_method_model->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
         $data['departments']=$this->Departments_model->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
         $data['accounts']=$this->Account_integration_model->get_list(1);
+        $data['banks']=$this->Bank_model->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
         $data['title'] = 'AP Payment';
         
         (in_array('2-3',$this->session->user_rights)? 
@@ -106,6 +111,7 @@ class Payable_payments extends CORE_Controller
                 $m_payment->payment_method_id=$payment_method_id;
 
                 if($payment_method_id==2){ //if check, insert additional infos
+                    $m_payment->bank_id=$this->input->post('bank_id',TRUE);
                     $m_payment->check_date_type=($this->input->post('check_date_type',TRUE)?1:2);
                     $m_payment->check_no=$this->input->post('check_no',TRUE);
                     $m_payment->check_date=date('Y-m-d',strtotime($this->input->post('check_date',TRUE)));
@@ -133,7 +139,6 @@ class Payable_payments extends CORE_Controller
 
                 }
 
-
                 //******************************************************************************************
                 // IMPORTANT!!!
                 //update payable amount field of supplier table
@@ -148,7 +153,82 @@ class Payable_payments extends CORE_Controller
                 $m_trans->trans_log='Posted Payment No: '.$receipt_no.' to Record Payment';
                 $m_trans->save();
 
+                // Expense Payment - Journal
+                $m_journal=$this->Journal_info_model;
+                $m_journal_accounts=$this->Journal_account_model;
 
+                $payment_info=$m_payment->get_list($payment_id);
+
+                $ref_type = $payment_info[0]->receipt_type;
+                $ref_type_count = COUNT($m_journal->get_list(array('ref_type'=>$ref_type)))+1;
+
+                $m_journal->ref_type=$ref_type;
+                $m_journal->ref_no=str_pad($ref_type_count, 8, "0", STR_PAD_LEFT);
+
+                $m_journal->supplier_id=$payment_info[0]->supplier_id;
+                $m_journal->remarks=$payment_info[0]->remarks;
+                $m_journal->date_txn=date('Y-m-d');
+                $m_journal->book_type='CDJ';
+                $m_journal->department_id=$payment_info[0]->department_id;
+                $m_journal->payment_method_id=$payment_info[0]->payment_method_id;
+                $m_journal->bank_id=$payment_info[0]->bank_id;
+                $m_journal->check_no=$payment_info[0]->check_no;
+                $m_journal->check_date=date('Y-m-d',strtotime($payment_info[0]->check_date));
+                $m_journal->amount=$this->get_numeric_value($payment_info[0]->total_paid_amount);
+
+                //for audit details
+                $m_journal->set('date_created','NOW()');
+                $m_journal->created_by_user=$this->session->user_id;
+                $m_journal->save();
+
+                $journal_id=$m_journal->last_insert_id();
+
+                $accounts=$m_payment->get_journal_entries($payment_id);
+
+                foreach($accounts as $account){
+                    $m_journal_accounts->journal_id=$journal_id;
+                    $m_journal_accounts->account_id=$account->account_id;
+                    $m_journal_accounts->memo=$account->memo;
+                    $m_journal_accounts->dr_amount=$this->get_numeric_value($account->dr_amount);
+                    $m_journal_accounts->cr_amount=$this->get_numeric_value($account->cr_amount);
+                    $m_journal_accounts->save();
+                }
+
+                //update transaction number base on formatted last insert id
+                $m_journal->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
+                $m_journal->modify($journal_id);
+
+                //if dr invoice is available, purchase invoice is recorded as journal
+                if($payment_id!=null){
+                    $m_payable_payment=$this->Payable_payment_model;
+                    $m_payable_payment->journal_id=$journal_id;
+                    $m_payable_payment->is_journal_posted=TRUE;
+                    $m_payable_payment->is_posted=TRUE;
+                    $m_payable_payment->modify($payment_id);
+
+                    // AUDIT TRAIL START
+                    $payment_info=$m_payable_payment->get_list($payment_id,'payment_id,receipt_no');
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=8; //CRUD
+                    $m_trans->trans_type_id=13; // TRANS TYPE
+                    $m_trans->trans_log='Finalized Payment No.'.$payment_info[0]->receipt_no.' ('.$payment_info[0]->payment_id.')For Cash Disbursement';
+                    $m_trans->save();
+                    //AUDIT TRAIL END
+
+                }
+
+                // AUDIT TRAIL START
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=1; //CRUD
+                $m_trans->trans_type_id=2; // TRANS TYPE
+                $m_trans->trans_log='Created Cash Disbursement Entry TXN-'.date('Ymd').'-'.$journal_id;
+                $m_trans->save();
+                //AUDIT TRAIL END
 
                 $m_payment->commit();
 
@@ -178,8 +258,9 @@ class Payable_payments extends CORE_Controller
                 $m_payment->modify($payment_id);
 
                 //get the supplier id of the payment transaction being cancelled
-                $id=$m_payment->get_list($payment_id,'payable_payments.supplier_id');
+                $id=$m_payment->get_list($payment_id,'payable_payments.supplier_id, payable_payments.journal_id');
                 $supplier_id=$id[0]->supplier_id;
+                $journal_id=$id[0]->journal_id;
 
                 //******************************************************************************************
                 // IMPORTANT!!!
@@ -195,6 +276,13 @@ class Payable_payments extends CORE_Controller
                 $m_trans->trans_type_id=13; // TRANS TYPE
                 $m_trans->trans_log='Cancelled Payment No: '.$payment_info[0]->receipt_no.' from Record Payment';
                 $m_trans->save();
+
+                // remove journal
+                $m_journal = $this->Journal_info_model;
+                $m_journal->is_deleted = TRUE;
+                $m_journal->modify($journal_id);
+
+
                 $m_payment->commit();
 
                 if($m_payment->status()===TRUE){
