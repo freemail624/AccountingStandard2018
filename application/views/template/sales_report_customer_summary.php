@@ -36,7 +36,7 @@
         </tr>
     </table><hr>
     <div class="">
-        <h3><strong>SALES REPORT PER CUSTOMER (SUMMARY)</strong></h3>
+        <h3><strong>SALES REPORT PER CUSTOMER (SUMMARY) - <?php echo $department_name; ?></strong></h3>
     </div>
     <table width="100%" border="1" cellspacing="0" cellpadding="2">
     	<thead>

@@ -36,7 +36,7 @@
         </tr>
     </table><hr>
     <div class="">
-        <h3><strong>SALES REPORT PER CUSTOMER (DETAILED)</strong></h3>
+        <h3><strong>SALES REPORT PER CUSTOMER (DETAILED) - <?php echo $department_name; ?></strong></h3>
     </div>
 
 	<?php foreach($customers as $customer) { ?>

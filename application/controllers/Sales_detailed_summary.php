@@ -108,6 +108,12 @@ class Sales_detailed_summary extends CORE_Controller {
                 $data['sp_summaries']=$m_sales_invoice->get_sales_summary_list_salesperson($startDate,$endDate,$department_id);
                 $data['product_summaries']=$m_sales_invoice->get_sales_product_summary_list($startDate,$endDate,$department_id);
 
+                if($department_id > 0){
+                    $data['department_name'] = $this->Departments_model->get_list($department_id)[0]->department_name;
+                }else{
+                    $data['department_name'] = "All Departments";
+                }
+
                 if ($type == 'c') {
                     $this->load->view('template/sales_report_customer_summary',$data);
                 } else if ($type == 'sp') {
@@ -136,6 +142,12 @@ class Sales_detailed_summary extends CORE_Controller {
                 $sales_summaries=$m_sales_invoice->get_sales_summary_list($startDate,$endDate,$department_id);
                 $product_summaries=$m_sales_invoice->get_sales_product_summary_list($startDate,$endDate,$department_id);
 
+                if($department_id > 0){
+                    $department_name = $this->Departments_model->get_list($department_id)[0]->department_name;
+                }else{
+                    $department_name = "All Departments";
+                }
+
                 $excel->setActiveSheetIndex(0);
 
                 if ($type == 'c') {
@@ -150,7 +162,7 @@ class Sales_detailed_summary extends CORE_Controller {
                      ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no);
 
                     $excel->getActiveSheet()->getStyle('A5')->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER CUSTOMER (SUMMARY)');
+                    $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER CUSTOMER (SUMMARY) - '.$department_name);
 
                     $excel->getActiveSheet()->getColumnDimension('A')->setWidth('40');
                     $excel->getActiveSheet()->getColumnDimension('B')->setWidth('25');
@@ -290,7 +302,7 @@ class Sales_detailed_summary extends CORE_Controller {
                      ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no);
 
                     $excel->getActiveSheet()->getStyle('A5')->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER SALESPERSON (SUMMARY)');
+                    $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER SALESPERSON (SUMMARY) - '.$department_name);
 
                     $i = 8;
                     $sum = 0;
@@ -430,7 +442,7 @@ class Sales_detailed_summary extends CORE_Controller {
                  ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no);
 
                 $excel->getActiveSheet()->getStyle('A5')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER PRODUCT (SUMMARY)');
+                $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER PRODUCT (SUMMARY) - '.$department_name);
 
                 $i = 8;
                 $sum = 0;
@@ -573,6 +585,12 @@ class Sales_detailed_summary extends CORE_Controller {
                 $sales_summaries=$m_sales_invoice->get_sales_summary_list($startDate,$endDate,$department_id);
                 $product_summaries=$m_sales_invoice->get_sales_product_summary_list($startDate,$endDate,$department_id);
 
+                if($department_id > 0){
+                    $department_name = $this->Departments_model->get_list($department_id)[0]->department_name;
+                }else{
+                    $department_name = "All Departments";
+                }
+
                 $excel->setActiveSheetIndex(0);
 
                 $excel->setActiveSheetIndex(0);
@@ -589,7 +607,7 @@ class Sales_detailed_summary extends CORE_Controller {
                      ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no);
 
                     $excel->getActiveSheet()->getStyle('A5')->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER CUSTOMER (SUMMARY)');
+                    $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER CUSTOMER (SUMMARY) - '.$department_name);
 
                     $excel->getActiveSheet()->getColumnDimension('A')->setWidth('40');
                     $excel->getActiveSheet()->getColumnDimension('B')->setWidth('25');
@@ -672,7 +690,7 @@ class Sales_detailed_summary extends CORE_Controller {
                      ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no);
 
                     $excel->getActiveSheet()->getStyle('A5')->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER SALESPERSON (SUMMARY)');
+                    $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER SALESPERSON (SUMMARY) - '.$department_name);
 
                     $i = 8;
                     $sum = 0;
@@ -758,7 +776,7 @@ class Sales_detailed_summary extends CORE_Controller {
                  ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no);
 
                 $excel->getActiveSheet()->getStyle('A5')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER PRODUCT (SUMMARY)');
+                $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER PRODUCT (SUMMARY) - '.$department_name);
 
                 $i = 8;
                 $sum = 0;
@@ -847,6 +865,12 @@ class Sales_detailed_summary extends CORE_Controller {
                 $data['salespersons']=$m_sales_invoice->get_per_salesperson_sales_detailed($startDate,$endDate,$department_id);
                 $data['sales_details']=$m_sales_invoice->get_sales_detailed_list($startDate,$endDate,$department_id);
 
+                if($department_id > 0){
+                    $data['department_name'] = $this->Departments_model->get_list($department_id)[0]->department_name;
+                }else{
+                    $data['department_name'] = "All Departments";
+                }
+
                 if ($type == 'c') {
                     $this->load->view('template/sales_report_customer_detailed',$data);
                 } else if ($type == 'sp') {
@@ -876,6 +900,12 @@ class Sales_detailed_summary extends CORE_Controller {
                 $salespersons=$m_sales_invoice->get_per_salesperson_sales_detailed($startDate,$endDate,$department_id);
                 $sales_details=$m_sales_invoice->get_sales_detailed_list($startDate,$endDate,$department_id);
                 
+                if($department_id > 0){
+                    $department_name = $this->Departments_model->get_list($department_id)[0]->department_name;
+                }else{
+                    $department_name = "All Departments";
+                }
+
                 $excel->setActiveSheetIndex(0);
 
                 if ($type == 'c'){
@@ -890,7 +920,7 @@ class Sales_detailed_summary extends CORE_Controller {
                                          ->setCellValue('A2',$company_info[0]->company_address)
                                          ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no);
                  $excel->getActiveSheet()->getStyle('A5')->getFont()->setBold(TRUE);
-                 $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER CUSTOMER (DETAILED)');
+                 $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER CUSTOMER (DETAILED) - '.$department_name);
 
                 $i = 7;
 
@@ -1078,7 +1108,7 @@ class Sales_detailed_summary extends CORE_Controller {
                                          ->setCellValue('A2',$company_info[0]->company_address)
                                          ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no);
                  $excel->getActiveSheet()->getStyle('A5')->getFont()->setBold(TRUE);
-                 $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER SALESPERSON (DETAILED)');
+                 $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER SALESPERSON (DETAILED) - '.$department_name);
 
                 $i = 7;
 
@@ -1248,7 +1278,7 @@ class Sales_detailed_summary extends CORE_Controller {
                                          ->setCellValue('A2',$company_info[0]->company_address)
                                          ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no);
                  $excel->getActiveSheet()->getStyle('A5')->getFont()->setBold(TRUE);
-                 $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER PRODUCT (DETAILED)');
+                 $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER PRODUCT (DETAILED) - '.$department_name);
 
 
                  $excel->getActiveSheet()
@@ -1440,6 +1470,12 @@ class Sales_detailed_summary extends CORE_Controller {
                 $salespersons=$m_sales_invoice->get_per_salesperson_sales_detailed($startDate,$endDate,$department_id);
                 $sales_details=$m_sales_invoice->get_sales_detailed_list($startDate,$endDate,$department_id);
                 
+                if($department_id > 0){
+                    $department_name = $this->Departments_model->get_list($department_id)[0]->department_name;
+                }else{
+                    $department_name = "All Departments";
+                }
+
                 $excel->setActiveSheetIndex(0);
 
                 if ($type == 'c'){
@@ -1454,7 +1490,7 @@ class Sales_detailed_summary extends CORE_Controller {
                                          ->setCellValue('A2',$company_info[0]->company_address)
                                          ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no);
                  $excel->getActiveSheet()->getStyle('A5')->getFont()->setBold(TRUE);
-                 $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER CUSTOMER (DETAILED)');
+                 $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER CUSTOMER (DETAILED) - '.$department_name);
 
                 $i = 7;
 
@@ -1587,7 +1623,7 @@ class Sales_detailed_summary extends CORE_Controller {
                                          ->setCellValue('A2',$company_info[0]->company_address)
                                          ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no);
                  $excel->getActiveSheet()->getStyle('A5')->getFont()->setBold(TRUE);
-                 $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER SALESPERSON (DETAILED)');
+                 $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER SALESPERSON (DETAILED) - '.$department_name);
 
                 $i = 7;
 
@@ -1702,7 +1738,7 @@ class Sales_detailed_summary extends CORE_Controller {
                                          ->setCellValue('A2',$company_info[0]->company_address)
                                          ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no);
                  $excel->getActiveSheet()->getStyle('A5')->getFont()->setBold(TRUE);
-                 $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER PRODUCT (DETAILED)');
+                 $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER PRODUCT (DETAILED) - '.$department_name);
 
 
                  $excel->getActiveSheet()
