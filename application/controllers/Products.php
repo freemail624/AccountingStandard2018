@@ -523,12 +523,27 @@ class Products extends CORE_Controller
                 $department_id=($this->input->get('depid')==null||$this->input->get('depid')==0?0:$this->input->get('depid'));
                 $as_of_date=$this->input->get('date');
 
-                if($as_of_date==null){$date = null; }else{$date = date('Y-m-d',strtotime($as_of_date));}
+                if($as_of_date==null){
+                    $date = null; 
+                    $from_date = null;
+                    $prev_date = null;
+                }else{
+                    $date = date('Y-m-d',strtotime($as_of_date));
+                    $from_date = date('Y-m-01',strtotime($as_of_date));
+                    $prev_date = date("Y-m-d",strtotime(date('Y-m-01',strtotime($as_of_date)) . "-1 days"));
+                }
 
                 $m_products=$this->Products_model;
-                $data['products']=$m_products->get_product_history($product_id,$department_id,$date,$account);
-                $data['products_parent']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$disaccount);
+
+                $balance_as_of=$m_products->product_list($account,$prev_date,$product_id,null,null,1,null,$department_id,$ci_account,$disaccount,null,null)[0];
+
+                // $data['products']=$m_products->get_product_history($product_id,$department_id,$date,$account);
+                $data['products_parent']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$disaccount,$balance_as_of->total_qty_bulk,$from_date);
+
+                $data['balance_as_of'] =$balance_as_of;
                 $data['product_id']=$product_id;
+                $data['as_of_date'] = $from_date;
+
                 //$this->load->view('Template/product_history_menus',$data);
 
                 $this->load->view('template/product_history_inventory',$data);
@@ -548,21 +563,30 @@ class Products extends CORE_Controller
 
                 $product_id=$this->input->get('id');
                 $department_id=($this->input->get('depid')==null||$this->input->get('depid')==0?0:$this->input->get('depid'));
-                $as_of_date=$this->input->get('date');
+                $as_of_date=date('Y-m-d');
 
                 if($as_of_date==null){
-                    $date = null;
+                    $date = null; 
+                    $from_date = null;
+                    $prev_date = null;
                 }else{
                     $date = date('Y-m-d',strtotime($as_of_date));
+                    $from_date = date('Y-m-01',strtotime($as_of_date));
+                    $prev_date = date("Y-m-d",strtotime(date('Y-m-01',strtotime($as_of_date)) . "-1 days"));
                 }
+
 
                 $cat=$this->input->get('cat');
                 $data['product_id'] = $product_id;
                 $m_products=$this->Products_model;
+                $balance_as_of=$m_products->product_list($account,$prev_date,$product_id,null,null,1,null,$department_id,$ci_account,$dis_account,null,null)[0];
+
                 //$product_id,$depid=0,$as_of_date=null,$account,$is_parent=null,$ciaccount // OREDR OF PARAMETER
-                $data['products_parent']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account);
-                $data['products_child']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account);
+                $data['products_parent']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account,$balance_as_of->total_qty_bulk,$from_date);
+                $data['products_child']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account,$balance_as_of->total_qty_bulk,$from_date);
                 $data['product_id']=$product_id;
+                $data['balance_as_of'] =$balance_as_of;
+                $data['as_of_date'] = $prev_date;
                 //$this->load->view('Template/product_history_menus',$data);
 
 
@@ -963,12 +987,24 @@ function Export_Stock(){
                 $cat=$this->input->get('cat');
 
                 $department_id=($this->input->get('depid')==null||$this->input->get('depid')==0?0:$this->input->get('depid'));
-                $as_of_date=$this->input->get('date');
-                if($as_of_date==null){ $date = null; }else{$date = date('Y-m-d',strtotime($as_of_date));}
+                $as_of_date=date('Y-m-d');
+
+                if($as_of_date==null){
+                    $date = null; 
+                    $from_date = null;
+                    $prev_date = null;
+                }else{
+                    $date = date('Y-m-d',strtotime($as_of_date));
+                    $from_date = date('Y-m-01',strtotime($as_of_date));
+                    $prev_date = date("Y-m-d",strtotime(date('Y-m-01',strtotime($as_of_date)) . "-1 days"));
+                }
+
                 $m_products=$this->Products_model;
 
-                $products_parent=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account);
-                $products_child=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account);
+                $balance_as_of=$m_products->product_list($account,$prev_date,$product_id,null,null,1,null,$department_id,$ci_account,$dis_account,null,null)[0];
+
+                $products_parent=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account,$balance_as_of->total_qty_bulk,$from_date);
+                $products_child=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account,$balance_as_of->total_qty_bulk,$from_date);
 
                 $info=$m_products->get_list(
                     array('product_id'=>$product_id),
@@ -1030,7 +1066,22 @@ function Export_Stock(){
 
             $excel->getActiveSheet()->getStyle('D12:G12')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-          $i = 12;  foreach ($products_parent as $parent) {
+            $i = 12;  
+            $i++;
+
+            $excel->getActiveSheet()->setCellValue('A'.$i,$prev_date);
+            $excel->getActiveSheet()->setCellValue('B'.$i,'System');
+
+            $excel->getActiveSheet()->getStyle('D'.$i.':G'.$i)->getNumberFormat()->setFormatCode('#,##0.00');
+
+            $excel->getActiveSheet()->setCellValue('F'.$i,number_format($balance_as_of->CurrentQty,2).' '.$product_info->parent_unit_name);
+            $excel->getActiveSheet()->setCellValue('G'.$i,number_format($balance_as_of->total_qty_balance,2).' '.$product_info->bulk_unit_name);
+            $excel->getActiveSheet()->setCellValue('I'.$i,'System Generated Balance');
+
+            // STYLE
+             $excel->getActiveSheet()->getStyle('D'.$i.':G'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+            foreach ($products_parent as $parent) {
                                 $i++;
                                 $excel->getActiveSheet()->setCellValue('A'.$i,$parent->txn_date);
                                 $excel->getActiveSheet()->setCellValue('B'.$i,$parent->ref_no);

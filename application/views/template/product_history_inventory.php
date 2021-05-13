@@ -19,11 +19,22 @@
 
            </thead>
            <tbody>
-                <?php if(count($products_parent)==0){ ?>
-                    <tr>
-                        <td colspan="9" style="border: 1px solid lightgrey;padding: 10px;" align="center">No transaction found.</td>
-                    </tr>
-                <?php } ?>
+
+               <tr>
+                   <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo date("M d, Y",strtotime($as_of_date . "-1 days")); ?></td>
+                   <td style="border: 1px solid lightgrey;padding: 5px;">Balance</td>
+                   <td style="border: 1px solid lightgrey;padding: 5px;">System</td>
+                   <td style="border: 1px solid lightgrey;padding: 5px;"><strong>System Generated Balance</strong></td>
+                   <td style="border: 1px solid lightgrey;padding: 5px;"></td>
+                   <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"></td>
+                   <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"></td>
+                   <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;font-weight: bolder;"><?php echo number_format($balance_as_of->total_qty_bulk,2); ?></td>
+                   <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;font-weight: bolder;">
+                    <?php 
+                        echo number_format($balance_as_of->total_qty_bulk,2);
+                     ?></td>
+               </tr>
+
 
                 <?php foreach($products_parent as $product){ ?>
                <tr>

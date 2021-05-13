@@ -100,7 +100,7 @@
                             <div class="panel-body">
                                 <h2 style="margin-bottom: 30px;">Stock Card / Bin Card</h1><hr>
                                 <div class="row container-fluid">
-                                        <div class="col-xs-12 col-sm-6">
+                                        <div class="col-xs-12 col-sm-4">
                                             <label><b class="required">*</b> Product :</label><br>
                                             <select id="cbo_product" class="form-control" style="width: 100%">
                                                 <?php foreach($products as $product) { ?>
@@ -108,6 +108,16 @@
                                                         <?php echo $product->product_desc; ?>
                                                     </option>
                                                 <?php } ?>
+                                            </select>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-4">
+                                            <label><b class="required">*</b> Department :</label>
+                                            <select class="form-control" id="cbo_departments">
+                                                <?php foreach($departments as $department){ ?>
+                                                    <option value="<?php echo $department->department_id; ?>">
+                                                        <?php echo $department->department_name; ?>
+                                                    </option>
+                                                <?php }?>
                                             </select>
                                         </div>
 <!--                                         <div class="col-xs-4 col-sm-2">
@@ -152,15 +162,16 @@
                                 <table id="tbl_stock" class="table table-striped" style="width: 100%;,margin-top: 20px;">
                                 <thead>
                                     <tr>
-                                        <th style="width: 10%;">Date</th>
-                                        <th style="width: 15%;">Document No.</th>
+                                        <th style="width: 8%;">Date</th>
+                                        <th style="width: 13%;">Document No.</th>
+                                        <th style="width: 15%">Txn Type</th>
                                         <th style="width: 5%">Package</th>
-                                        <th style="width: 8%;text-align: right;font-weight: bold;">IN</th>
-                                        <th style="width: 8%;text-align: right;font-weight: bold;">OUT</th>
-                                        <th style="width: 12%;text-align: right;font-weight: bold;">Balance</th>
-                                        <th style="width: 12%;text-align: right;font-weight: bold;">Bulk Balance</th>
+                                        <th style="width: 5%;text-align: right;font-weight: bold;">IN</th>
+                                        <th style="width: 5%;text-align: right;font-weight: bold;">OUT</th>
+                                        <th style="width: 10%;text-align: right;font-weight: bold;">Balance</th>
+                                        <th style="width: 10%;text-align: right;font-weight: bold;">Bulk Balance</th>
                                         <th style="text-align: left;width: 10%;">Location</th>
-                                        <th style="text-align: left;width: 20%">Remarks</th>
+                                        <th style="text-align: left;width: 19%">Remarks</th>
                                     </tr>
                                 </thead>
                                     <tbody id="parent" style="width: 100%;">
@@ -207,11 +218,15 @@
 <script>
 
 $(document).ready(function(){
-    var _cboProduct;
+    var _cboProduct; var _cboDepartments;
     var _cboCat;
     var initializeControls=function() {
         _cboProduct = $('#cbo_product').select2({
             searchPlaceholder: 'Select Product '
+        });
+
+        _cboDepartments = $('#cbo_departments').select2({
+            searchPlaceholder: 'Select Department '
         });
 
         // _cboCat = $('#cbo_cat').select2({
@@ -228,12 +243,17 @@ $(document).ready(function(){
             reinitializeBalances();
         });
 
+        _cboDepartments.on('select2:select',function(){
+            // _cboCat.select2('val','bulk');
+            reinitializeBalances();
+        });
+
         $('#btn_print').click(function(){
-            window.open('Products/transaction/history-product?id='+_cboProduct.val()+'&type=stockcard_print')
+            window.open('Products/transaction/history-product?id='+_cboProduct.val()+'&type=stockcard_print&depid='+_cboDepartments.val())
         });;
 
         $('#btn_export').click(function(){
-            window.open('Products/Export_Stock?id='+_cboProduct.val()+'&type=stockcard_print')
+            window.open('Products/Export_Stock?id='+_cboProduct.val()+'&type=stockcard_print&depid='+_cboDepartments.val())
 
         });
 
@@ -263,7 +283,7 @@ $(document).ready(function(){
 
         $('#tbl_stock #parent').html('');
         $.ajax({
-            url : 'Products/transaction/history-product?id='+_cboProduct.val()+'&type=stockcard',
+            url : 'Products/transaction/history-product?id='+_cboProduct.val()+'&type=stockcard&depid='+_cboDepartments.val(),
             type : "GET",
             cache : false,
             dataType : 'json',
@@ -276,11 +296,29 @@ $(document).ready(function(){
                 $('#purchase_cost').html(accounting.formatNumber(response.product_info.purchase_cost,2));
                 $('#sale_price').html(accounting.formatNumber(response.product_info.sale_price,2));
                 $('#product_code').html(response.product_info.product_code);
+
+                /* System Generated Balance */
+                $('#tbl_stock #parent').append(
+                    '<tr>'+
+                        '<td>'+response.as_of_date+'</td>'+
+                        '<td>System</td>'+
+                        '<td></td>'+
+                        '<td></td>'+
+                        '<td></td>'+
+                        '<td></td>'+
+                        '<td align="right">'+response.balance_as_of.CurrentQty+'</td>'+
+                        '<td align="right">'+response.balance_as_of.total_qty_balance+'</td>'+
+                        '<td></td>'+
+                        '<td><strong>System Generated Balance</strong></td>'+
+                    '</tr>'
+                );
+
                 $.each(response.products_parent, function(index,value){
                     $('#tbl_stock #parent').append(
                         '<tr>'+
                             '<td>'+value.txn_date+'</td>'+
                             '<td>'+value.ref_no+'</td>'+
+                            '<td>'+value.type+'</td>'+
                             '<td>'+value.identifier+'</td>'+
                             '<td align="right">'+accounting.formatNumber(value.parent_in_qty,2)+'</td>'+
                             '<td align="right">'+accounting.formatNumber(value.parent_out_qty,2)+'</td>'+

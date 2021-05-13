@@ -78,27 +78,32 @@
 
            </thead>
            <tbody>
-                <?php if(count($products_parent)==0){ ?>
-                    <tr>
-                        <td colspan="9" style="border: 1px solid lightgrey;padding: 10px;" align="center">No transaction found.</td>
-                    </tr>
-                <?php } ?>
-
-                <?php foreach($products_parent as $product){ ?>
                <tr>
-                   <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo date("M d, Y",strtotime($product->txn_date)); ?></td>
-                   <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo $product->ref_no; ?></td>
-                   <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo $product->identifier; ?></td>
+                     <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo date("M d, Y",strtotime($as_of_date)); ?></td>
+                     <td style="border: 1px solid lightgrey;padding: 5px;">System</td>
+                     <td style="border: 1px solid lightgrey;padding: 5px;"></td>
+                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"></td>
+                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"></td>
+                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($balance_as_of->CurrentQty,2).' '.$info[0]->parent_unit_name; ?></td>
+                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($balance_as_of->total_qty_balance,2).' '.$info[0]->bulk_unit_name; ?></td>
+                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: left;"></td>
+                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: left;"><strong>System Generated Balance</strong></td>
+                 </tr>
+                <?php foreach($products_parent as $product){ ?>
+                 <tr>
+                     <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo date("M d, Y",strtotime($product->txn_date)); ?></td>
+                     <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo $product->ref_no; ?></td>
+                     <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo $product->identifier; ?></td>
 
 
 
-                   <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_in_qty,2); ?></td>
-                   <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_out_qty,2); ?></td>
-                   <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_balance,2).' '.$info[0]->parent_unit_name; ?></td>
-                   <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_bulk_balance,2).' '.$info[0]->bulk_unit_name; ?></td>
-                   <td style="border: 1px solid lightgrey;padding: 5px;text-align: left;"><?php echo $product->department_name ?></td>
-                   <td style="border: 1px solid lightgrey;padding: 5px;text-align: left;"><?php echo $product->remarks; ?></td>
-               </tr>
+                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_in_qty,2); ?></td>
+                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_out_qty,2); ?></td>
+                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_balance,2).' '.$info[0]->parent_unit_name; ?></td>
+                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_bulk_balance,2).' '.$info[0]->bulk_unit_name; ?></td>
+                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: left;"><?php echo $product->department_name ?></td>
+                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: left;"><?php echo $product->remarks; ?></td>
+                 </tr>
                 <?php } ?>
            </tbody>
        </table>

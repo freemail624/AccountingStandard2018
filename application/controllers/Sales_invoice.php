@@ -566,7 +566,7 @@ class Sales_invoice extends CORE_Controller
                             $m_journal->customer_id=$info[0]->customer_id;
                             $m_journal->department_id=$info[0]->department_id;
                             $m_journal->remarks=$info[0]->remarks;
-                            $m_journal->date_txn=date('Y-m-d');
+                            $m_journal->date_txn=date('Y-m-d',strtotime($loading[0]->loading_date));
                             $m_journal->book_type='SJE';
                             $m_journal->is_sales=1;
                             $m_journal->set('date_created','NOW()');
@@ -585,7 +585,7 @@ class Sales_invoice extends CORE_Controller
                             }
 
                             //update transaction number base on formatted last insert id
-                            $m_journal->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
+                            $m_journal->txn_no='TXN-'.date('Ymd',strtotime($loading[0]->loading_date)).'-'.$journal_id;
                             $m_journal->modify($journal_id);
 
                             //if sales invoice is available, sales invoice is recorded as journal so mark this as posted
@@ -601,7 +601,7 @@ class Sales_invoice extends CORE_Controller
                             $m_trans->set('trans_date','NOW()');
                             $m_trans->trans_key_id=8; //CRUD
                             $m_trans->trans_type_id=17; // TRANS TYPE
-                            $m_trans->trans_log='Finalized Sales Invoice No.'.$sales_invoice[0]->sales_inv_no.' For Sales Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
+                            $m_trans->trans_log='Finalized Sales Invoice No.'.$sales_invoice[0]->sales_inv_no.' For Sales Journal Entry TXN-'.date('Ymd',strtotime($loading[0]->loading_date)).'-'.$journal_id;
                             $m_trans->save();
                             //AUDIT TRAIL END
                             }

@@ -292,11 +292,17 @@ class Products_model extends CORE_Model {
                 INNER JOIN
                 sales_invoice_items sii ON sii.sales_invoice_id = si.sales_invoice_id
                 LEFT JOIN departments d ON d.department_id = si.department_id
-                WHERE si.is_active = TRUE AND si.is_deleted = FALSE  ".($depid==0?"":" AND si.department_id=".$depid)."
+                LEFT JOIN 
+                (SELECT li.invoice_id, l.loading_date FROM loading_items li LEFT JOIN loading l ON l.loading_id = li.loading_id
+                WHERE l.is_deleted = FALSE AND l.is_active = TRUE) as loading 
+                ON loading.invoice_id = si.sales_invoice_id
+
+                WHERE si.is_active = TRUE AND si.is_deleted = FALSE AND loading.invoice_id > 0
+                ".($depid==0?"":" AND si.department_id=".$depid)."
                 AND sii.product_id = $product_id
 
 
-                ".($as_of_date==null?"":" AND si.date_invoice<='".$as_of_date."'")."
+                ".($as_of_date==null?"":" AND loading.loading_date<='".$as_of_date."'")."
 
 
                 ":" ")."
@@ -328,11 +334,11 @@ class Products_model extends CORE_Model {
         return $this->db->query($sql)->result();
     }
 
-     function get_product_history_with_child($product_id,$depid=0,$as_of_date=null,$account,$is_parent=null,$ciaccount,$disaccount=null){
+     function get_product_history_with_child($product_id,$depid=0,$as_of_date=null,$account,$is_parent=null,$ciaccount,$disaccount=null,$balance,$from_date){
 
-        $this->db->query("SET @pBalance:=0.00;");
-        $this->db->query("SET @cBalance:=0.00;");
-        $this->db->query("SET @bulkBalance:=0.00;");
+        $this->db->query("SET @pBalance:=$balance;");
+        $this->db->query("SET @cBalance:=$balance;");
+        $this->db->query("SET @bulkBalance:=$balance;");
         $sql="
 
             SELECT main.*,
@@ -375,7 +381,7 @@ class Products_model extends CORE_Model {
             LEFT JOIN user_accounts u on u.user_id = ai.posted_by_user
             WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
             AND aii.product_id=$product_id ".($depid==0?"":" AND ai.department_id=".$depid)."
-            ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND ai.date_adjusted BETWEEN '".$from_date."' AND '".$as_of_date."'")."
 
             UNION ALL
 
@@ -410,7 +416,7 @@ class Products_model extends CORE_Model {
             WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
             AND p.parent_id = $product_id
             ".($depid==0?"":" AND ai.department_id=".$depid)."
-            ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND ai.date_adjusted BETWEEN '".$from_date."' AND '".$as_of_date."'")."
             GROUP BY ai.adjustment_id
 
             UNION ALL
@@ -450,7 +456,7 @@ class Products_model extends CORE_Model {
             LEFT JOIN products p on p.product_id = pir.product_id
             WHERE pir.is_active=TRUE AND pir.is_deleted=FALSE
             AND pir.product_id=$product_id
-            ".($as_of_date==null?"":" AND DATE_FORMAT(pir.start_datetime,'%Y-%m-%d')<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND DATE_FORMAT(pir.start_datetime,'%Y-%m-%d') BETWEEN '".$from_date."' AND '".$as_of_date."'")."
             ) as posrin
             ".($depid==0?"":" WHERE posrin.department_id=".$depid)."
                 
@@ -489,7 +495,7 @@ class Products_model extends CORE_Model {
             LEFT JOIN products bulk ON bulk.product_id = p.parent_id
             WHERE pir.is_active=TRUE AND pir.is_deleted=FALSE
             AND p.parent_id = $product_id
-            ".($as_of_date==null?"":" AND DATE_FORMAT(pir.start_datetime,'%Y-%m-%d')<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND DATE_FORMAT(pir.start_datetime,'%Y-%m-%d') BETWEEN '".$from_date."' AND '".$as_of_date."'")."
             GROUP BY pir.invoice_id) as chldposrin
             ".($depid==0?"":" WHERE chldposrin.department_id=".$depid)."
 
@@ -529,7 +535,7 @@ class Products_model extends CORE_Model {
             LEFT JOIN departments d on d.department_id = ai.department_id
             WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
             AND aii.product_id=$product_id ".($depid==0?"":" AND ai.department_id=".$depid)."
-            ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND ai.date_adjusted BETWEEN '".$from_date."' AND '".$as_of_date."'")."
 
             UNION ALL
 
@@ -566,7 +572,7 @@ class Products_model extends CORE_Model {
             AND p.parent_id = $product_id
 
             ".($depid==0?"":" AND ai.department_id=".$depid)."
-            ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND ai.date_adjusted BETWEEN '".$from_date."' AND '".$as_of_date."'")."
             GROUP BY ai.adjustment_id
 
             UNION ALL
@@ -606,7 +612,7 @@ class Products_model extends CORE_Model {
             AND di.is_finalized = TRUE
             ".($depid==0?"":" AND di.department_id=".$depid)."
             AND dii.product_id=$product_id
-            ".($as_of_date==null?"":" AND di.date_delivered<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND di.date_delivered BETWEEN '".$from_date."' AND '".$as_of_date."'")."
 
 
             UNION ALL
@@ -643,7 +649,7 @@ class Products_model extends CORE_Model {
             AND di.is_finalized = TRUE
             ".($depid==0?"":" AND di.department_id=".$depid)."
             AND p.parent_id = $product_id
-            ".($as_of_date==null?"":" AND di.date_delivered<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND di.date_delivered BETWEEN '".$from_date."' AND '".$as_of_date."'")."
             GROUP BY di.dr_invoice_id
 
             UNION ALL
@@ -679,7 +685,7 @@ class Products_model extends CORE_Model {
             LEFT JOIN departments d on d.department_id = ii.issued_department_id
             WHERE ii.is_active=TRUE AND ii.is_deleted=FALSE
             ".($depid==0?"":" AND ii.issued_department_id=".$depid)."
-            AND iit.product_id=$product_id ".($as_of_date==null?"":" AND ii.date_issued<='".$as_of_date."'")."
+            AND iit.product_id=$product_id ".($as_of_date==null?"":" AND ii.date_issued BETWEEN '".$from_date."' AND '".$as_of_date."'")."
 
 
             UNION ALL
@@ -713,7 +719,7 @@ class Products_model extends CORE_Model {
             WHERE ii.is_active=TRUE AND ii.is_deleted=FALSE
             ".($depid==0?"":" AND ii.issued_department_id=".$depid)."
             AND p.parent_id = $product_id
-            ".($as_of_date==null?"":" AND ii.date_issued<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND ii.date_issued BETWEEN '".$from_date."' AND '".$as_of_date."'")."
             GROUP BY ii.issuance_id
 
             UNION ALL
@@ -750,7 +756,7 @@ class Products_model extends CORE_Model {
             LEFT JOIN departments d on d.department_id = ii.from_department_id
             WHERE ii.is_active=TRUE AND ii.is_deleted=FALSE
             ".($depid==0?"":" AND ii.from_department_id=".$depid)."
-            AND iit.product_id=$product_id ".($as_of_date==null?"":" AND ii.date_issued<='".$as_of_date."'")."
+            AND iit.product_id=$product_id ".($as_of_date==null?"":" AND ii.date_issued BETWEEN '".$from_date."' AND '".$as_of_date."'")."
         
             UNION ALL
 
@@ -784,7 +790,7 @@ class Products_model extends CORE_Model {
             WHERE ii.is_active=TRUE AND ii.is_deleted=FALSE
             ".($depid==0?"":" AND ii.from_department_id=".$depid)."
             AND p.parent_id = $product_id
-            ".($as_of_date==null?"":" AND ii.date_issued<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND ii.date_issued BETWEEN '".$from_date."' AND '".$as_of_date."'")."
             GROUP BY ii.issuance_department_id
 
             UNION ALL
@@ -822,7 +828,7 @@ class Products_model extends CORE_Model {
             LEFT JOIN departments d on d.department_id = ii.to_department_id
             WHERE ii.is_active=TRUE AND ii.is_deleted=FALSE
             ".($depid==0?"":" AND ii.to_department_id=".$depid)."
-            AND iit.product_id=$product_id ".($as_of_date==null?"":" AND ii.date_issued<='".$as_of_date."'")."
+            AND iit.product_id=$product_id ".($as_of_date==null?"":" AND ii.date_issued BETWEEN '".$from_date."' AND '".$as_of_date."'")."
 
 
             UNION ALL
@@ -858,7 +864,7 @@ class Products_model extends CORE_Model {
             WHERE ii.is_active=TRUE AND ii.is_deleted=FALSE
             ".($depid==0?"":" AND ii.to_department_id=".$depid)."
             AND p.parent_id = $product_id
-            ".($as_of_date==null?"":" AND ii.date_issued<='".$as_of_date."'")."            
+            ".($as_of_date==null?"":" AND ii.date_issued BETWEEN '".$from_date."' AND '".$as_of_date."'")."         
             GROUP BY ii.issuance_department_id
 
             ".($account==TRUE?" 
@@ -898,10 +904,15 @@ class Products_model extends CORE_Model {
             sales_invoice_items sii ON sii.sales_invoice_id = si.sales_invoice_id
             LEFT JOIN products p on p.product_id = sii.product_id
             LEFT JOIN departments d on d.department_id = si.department_id
-            WHERE si.is_active = TRUE AND si.is_deleted = FALSE
+            LEFT JOIN 
+            (SELECT li.invoice_id, l.loading_date FROM loading_items li LEFT JOIN loading l ON l.loading_id = li.loading_id
+                WHERE l.is_deleted = FALSE AND l.is_active = TRUE) as loading 
+                ON loading.invoice_id = si.sales_invoice_id
+
+            WHERE si.is_active = TRUE AND si.is_deleted = FALSE AND loading.invoice_id > 0 
             ".($depid==0?"":" AND si.department_id=".$depid)."
             AND sii.product_id = $product_id
-            ".($as_of_date==null?"":" AND si.date_invoice<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND loading.loading_date BETWEEN '".$from_date."' AND '".$as_of_date."'")."
                 
             UNION ALL
 
@@ -935,10 +946,14 @@ class Products_model extends CORE_Model {
             LEFT JOIN products p on p.product_id = sii.product_id
             LEFT JOIN products bulk ON bulk.product_id = p.parent_id
             LEFT JOIN departments d on d.department_id = si.department_id
-            WHERE si.is_active = TRUE AND si.is_deleted = FALSE
+            LEFT JOIN 
+            (SELECT li.invoice_id, l.loading_date FROM loading_items li LEFT JOIN loading l ON l.loading_id = li.loading_id
+                WHERE l.is_deleted = FALSE AND l.is_active = TRUE) as loading 
+                ON loading.invoice_id = si.sales_invoice_id            
+            WHERE si.is_active = TRUE AND si.is_deleted = FALSE AND loading.invoice_id > 0 
             ".($depid==0?"":" AND si.department_id=".$depid)."
             AND p.parent_id = $product_id
-            ".($as_of_date==null?"":" AND si.date_invoice<='".$as_of_date."'")."            
+            ".($as_of_date==null?"":" AND loading.loading_date BETWEEN '".$from_date."' AND '".$as_of_date."'")."          
             GROUP BY si.sales_invoice_id
 
             ":" ")."
@@ -984,7 +999,7 @@ class Products_model extends CORE_Model {
             WHERE ci.is_active = TRUE AND ci.is_deleted = FALSE
             ".($depid==0?"":" AND ci.department_id=".$depid)."
             AND cii.product_id = $product_id
-            ".($as_of_date==null?"":" AND ci.date_invoice<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND ci.date_invoice BETWEEN '".$from_date."' AND '".$as_of_date."'")."
 
 
             UNION  ALL                
@@ -1022,7 +1037,7 @@ class Products_model extends CORE_Model {
             WHERE ci.is_active = TRUE AND ci.is_deleted = FALSE
             ".($depid==0?"":" AND ci.department_id=".$depid)."
             AND p.parent_id = $product_id
-            ".($as_of_date==null?"":" AND ci.date_invoice<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND ci.date_invoice BETWEEN '".$from_date."' AND '".$as_of_date."'")."
             GROUP BY ci.cash_invoice_id
 
             UNION ALL
@@ -1062,7 +1077,7 @@ class Products_model extends CORE_Model {
             LEFT JOIN products p on p.product_id = pis.product_id
             WHERE pis.is_active = TRUE AND pis.is_deleted = FALSE
             AND pis.product_id = $product_id
-            ".($as_of_date==null?"":" AND DATE_FORMAT(pis.start_datetime,'%Y-%m-%d')<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND DATE_FORMAT(pis.start_datetime,'%Y-%m-%d') BETWEEN '".$from_date."' AND '".$as_of_date."'")."
             ) as posout
             ".($depid==0?"":" WHERE posout.department_id=".$depid)."
             
@@ -1100,7 +1115,7 @@ class Products_model extends CORE_Model {
             LEFT JOIN products bulk ON bulk.product_id = p.parent_id
             WHERE pis.is_active = TRUE AND pis.is_deleted = FALSE
             AND p.parent_id = $product_id
-            ".($as_of_date==null?"":" AND DATE_FORMAT(pis.start_datetime,'%Y-%m-%d')<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND DATE_FORMAT(pis.start_datetime,'%Y-%m-%d') BETWEEN '".$from_date."' AND '".$as_of_date."'")."
             GROUP BY pis.invoice_id) as chldposout
             ".($depid==0?"":" WHERE chldposout.department_id=".$depid)."
 
@@ -1144,7 +1159,7 @@ class Products_model extends CORE_Model {
             WHERE dis.is_active=TRUE AND dis.is_deleted=FALSE 
             ".($depid==0?"":" AND dis.department_id=".$depid)."
             AND dii.product_id=$product_id
-            ".($as_of_date==null?"":" AND dis.date_invoice<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND dis.date_invoice BETWEEN '".$from_date."' AND '".$as_of_date."'")."
 
             UNION ALL
 
@@ -1179,7 +1194,7 @@ class Products_model extends CORE_Model {
             WHERE dis.is_active=TRUE AND dis.is_deleted=FALSE 
             ".($depid==0?"":" AND dis.department_id=".$depid)."
             AND p.parent_id = $product_id
-            ".($as_of_date==null?"":" AND dis.date_invoice<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND dis.date_invoice BETWEEN '".$from_date."' AND '".$as_of_date."'")."
             GROUP BY dis.dispatching_invoice_id
 
             ":" ")."
@@ -2268,12 +2283,20 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                         WHEN sii.is_parent = 1 THEN COALESCE(SUM(IFNULL(sii.inv_qty, 0)),0) * p.bulk_conversion_rate
                         WHEN sii.is_parent = 0 AND p.parent_id = 0 THEN COALESCE(SUM(IFNULL(sii.inv_qty, 0)),0)
                         ELSE 0
-                    END) as parent_out_qty
+                    END) as parent_out_qty,
+                    COALESCE(loading.invoice_id,0) as invoice_id,
+                    loading.loading_date
                 FROM sales_invoice si
                 INNER JOIN sales_invoice_items sii ON sii.sales_invoice_id = si.sales_invoice_id
                 LEFT JOIN products p ON p.product_id = sii.product_id
-                WHERE  si.is_deleted = 0 
-                ".($as_of_date==null?"":" AND si.date_invoice<='".$as_of_date."'")."
+                LEFT JOIN 
+                (SELECT li.invoice_id, l.loading_date FROM loading_items li LEFT JOIN loading l ON l.loading_id = li.loading_id
+                WHERE l.is_deleted = FALSE AND l.is_active = TRUE) as loading 
+                ON loading.invoice_id = si.sales_invoice_id
+
+                WHERE si.is_deleted = 0 AND
+                invoice_id > 0
+                ".($as_of_date==null?"":" AND loading_date<='".$as_of_date."'")."
                 ".($depid==null||$depid==0?"":" AND si.department_id IN (".$depid.")")."
                 GROUP BY sii.product_id) as si on si.product_id = pQ.product_id
 
@@ -2281,14 +2304,20 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 LEFT JOIN
                 (SELECT 
                     chldp.parent_id,
-                    SUM(chldsii.inv_qty * chldp.conversion_rate) AS child_out_qty
+                    SUM(chldsii.inv_qty * chldp.conversion_rate) AS child_out_qty,
+                    COALESCE(loading.invoice_id,0) as invoice_id,
+                    loading.loading_date
                 FROM
                     sales_invoice chldsi
                 INNER JOIN sales_invoice_items chldsii ON chldsii.sales_invoice_id = chldsi.sales_invoice_id
                 LEFT JOIN products chldp ON chldp.product_id = chldsii.product_id
+                LEFT JOIN 
+                (SELECT li.invoice_id, l.loading_date FROM loading_items li LEFT JOIN loading l ON l.loading_id = li.loading_id
+                WHERE l.is_deleted = FALSE AND l.is_active = TRUE) as loading 
+                ON loading.invoice_id = chldsi.sales_invoice_id
                 WHERE
-                    chldsi.is_deleted = 0
-                    ".($as_of_date==null?"":" AND chldsi.date_invoice<='".$as_of_date."'")."
+                    chldsi.is_deleted = 0 AND invoice_id > 0
+                    ".($as_of_date==null?"":" AND loading_date<='".$as_of_date."'")."
                     ".($depid==null||$depid==0?"":" AND chldsi.department_id IN (".$depid.")")."
                 GROUP BY chldp.parent_id) AS chldsi ON chldsi.parent_id = pQ.product_id
 

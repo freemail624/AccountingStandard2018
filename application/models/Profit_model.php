@@ -43,7 +43,7 @@ class Profit_model extends CORE_Model
                 LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
                 LEFT JOIN
                 (SELECT 
-                    li.invoice_id
+                    li.invoice_id, l.loading_date
                 FROM
                     loading_items li
                     LEFT JOIN loading l ON l.loading_id = li.loading_id
@@ -52,7 +52,7 @@ class Profit_model extends CORE_Model
                     GROUP BY li.invoice_id) as loading ON loading.invoice_id = si.sales_invoice_id
 
 
-                WHERE (si.date_invoice BETWEEN '$start' AND '$end') AND si.is_active = TRUE AND si.is_deleted = FALSE
+                WHERE (loading.loading_date BETWEEN '$start' AND '$end') AND si.is_active = TRUE AND si.is_deleted = FALSE
                 ".($customer_id==0?"":" AND si.customer_id='".$customer_id."'")."
                 GROUP BY sii.sales_invoice_id, sii.product_id) as charge
                 WHERE charge.invoice_status > 0
@@ -128,7 +128,7 @@ class Profit_model extends CORE_Model
                 LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
                 LEFT JOIN
                 (SELECT 
-                    li.invoice_id
+                    li.invoice_id, l.loading_date
                 FROM
                     loading_items li
                     LEFT JOIN loading l ON l.loading_id = li.loading_id
@@ -137,7 +137,7 @@ class Profit_model extends CORE_Model
                     GROUP BY li.invoice_id) as loading ON loading.invoice_id = si.sales_invoice_id
 
 
-                WHERE (si.date_invoice BETWEEN '$start' AND '$end') AND si.is_active = TRUE AND si.is_deleted = FALSE
+                WHERE (loading.loading_date BETWEEN '$start' AND '$end') AND si.is_active = TRUE AND si.is_deleted = FALSE
 
                 ".($customer_id==0?"":" AND si.customer_id='".$customer_id."'")."
                 ".($agent_id==0?"":" AND si.agent_id='".$agent_id."'")."
@@ -265,7 +265,7 @@ class Profit_model extends CORE_Model
             LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
             LEFT JOIN 
             (SELECT 
-                li.invoice_id
+                li.invoice_id, l.loading_date
             FROM
                 loading_items li
                 LEFT JOIN loading l ON l.loading_id = li.loading_id
@@ -273,7 +273,7 @@ class Profit_model extends CORE_Model
                 WHERE l.is_deleted = FALSE AND l.is_active = TRUE
                 GROUP BY li.invoice_id) as loading ON loading.invoice_id = si.sales_invoice_id
 
-            WHERE (si.date_invoice BETWEEN '$start' AND '$end') AND si.is_active = TRUE AND si.is_deleted = FALSE
+            WHERE (loading.loading_date BETWEEN '$start' AND '$end') AND si.is_active = TRUE AND si.is_deleted = FALSE
 
             ".($customer_id==0?"":" AND si.customer_id='".$customer_id."'")."
             
@@ -374,7 +374,7 @@ class Profit_model extends CORE_Model
             LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
             LEFT JOIN
             (SELECT 
-                li.invoice_id
+                li.invoice_id, l.loading_date
             FROM
                 loading_items li
                 LEFT JOIN loading l ON l.loading_id = li.loading_id
@@ -382,7 +382,7 @@ class Profit_model extends CORE_Model
                 WHERE l.is_deleted = FALSE AND l.is_active = TRUE
                 GROUP BY li.invoice_id) as loading ON loading.invoice_id = si.sales_invoice_id
 
-            WHERE (si.date_invoice BETWEEN '$start' AND '$end') AND si.is_active = TRUE AND si.is_deleted = FALSE
+            WHERE (loading.loading_date BETWEEN '$start' AND '$end') AND si.is_active = TRUE AND si.is_deleted = FALSE
 
             ".($customer_id==0?"":" AND si.customer_id='".$customer_id."'")."
             ".($agent_id==0?"":" AND si.agent_id='".$agent_id."'")."
