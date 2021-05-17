@@ -138,6 +138,24 @@ class Loading extends CORE_Controller
 
             //***************************************create new Items************************************************
 
+            case 'update_invoices':
+                $m_loading=$this->Loading_model;
+                $m_sales_invoice=$this->Sales_invoice_model;
+                $m_loading_items=$this->Loading_item_model;
+
+                $invoices = $m_loading->get_invoices();
+
+                foreach($invoices as $invoice){
+                    $m_sales_invoice->si_loading_id = $invoice->loading_id;
+                    $m_sales_invoice->modify($invoice->invoice_id);
+                }
+
+                $response['title'] = 'Success!';
+                $response['stat'] = 'success';
+                $response['msg'] = 'Invoices successfully updated.';
+                echo json_encode($response);                
+
+                break;
             
             case 'create':
                 $m_sales_invoice=$this->Sales_invoice_model;
@@ -190,6 +208,7 @@ class Loading extends CORE_Controller
                             $this->db->delete('journal_accounts');
 
                             $m_sales_invoice=$this->Sales_invoice_model;
+                            $m_sales_invoice->si_loading_id=0;
                             $m_sales_invoice->journal_id=0;
                             $m_sales_invoice->is_journal_posted=FALSE;
                             $m_sales_invoice->modify($invoice->invoice_id);
@@ -229,6 +248,7 @@ class Loading extends CORE_Controller
 
                     // Update truck on sales invoice
                     $m_sales_invoice->agent_id = $agent_id;
+                    $m_sales_invoice->si_loading_id = $loading_id;
                     $m_sales_invoice->modify($this->get_numeric_value($invoice_id[$i]));
 
                     /* Auto Post Sales Journal */
@@ -372,6 +392,7 @@ class Loading extends CORE_Controller
                             $this->db->delete('journal_accounts');
 
                             $m_sales_invoice=$this->Sales_invoice_model;
+                            $m_sales_invoice->si_loading_id=0;
                             $m_sales_invoice->journal_id=0;
                             $m_sales_invoice->is_journal_posted=FALSE;
                             $m_sales_invoice->modify($invoice->invoice_id);
@@ -409,6 +430,7 @@ class Loading extends CORE_Controller
 
                     // Update truck on sales invoice
                     $m_sales_invoice->agent_id = $agent_id;
+                    $m_sales_invoice->si_loading_id = $loading_id;
                     $m_sales_invoice->modify($this->get_numeric_value($invoice_id[$i])); 
 
                     /* Auto Post Sales Journal */
@@ -537,6 +559,7 @@ class Loading extends CORE_Controller
                             $this->db->delete('journal_accounts');
 
                             $m_sales_invoice=$this->Sales_invoice_model;
+                            $m_sales_invoice->si_loading_id = 0;
                             $m_sales_invoice->journal_id=0;
                             $m_sales_invoice->is_journal_posted=FALSE;
                             $m_sales_invoice->modify($invoice->invoice_id);

@@ -154,7 +154,7 @@
         <h2 class="h2-panel-heading">Loading Report</h2><hr>
             <div class="row"> 
                 <div class="col-lg-3"><br> 
-                <button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Record New Loading" ><i class="fa fa-plus"></i> Record New Loading</button> 
+                <button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Record New Loading" ><i class="fa fa-plus"></i> Record New Loading</button> <button id="btn_update_invoice" class="hidden">Update</button>
                 </div> 
                 <div class="col-lg-3"> 
                         From :<br /> 
@@ -1207,6 +1207,13 @@ $(document).ready(function(){
         $('#btn_cancel').click(function(){
             showList(true);
         });
+
+        $('#btn_update_invoice').click(function(){
+            updateInvoices().done(function(response){
+                showNotification(response);
+            });
+        });
+
         $('#btn_save').click(function(){
             if(validateRequiredFields($('#frm_loading'))){
                 if(validateTableItems()){
@@ -1305,6 +1312,16 @@ $(document).ready(function(){
         }
 
         return stat;
+    };
+
+    var updateInvoices=function(){
+        var _data=$('#').serializeArray();
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Loading/transaction/update_invoices",
+            "data":_data
+        });        
     };
 
     var createLoading=function(){

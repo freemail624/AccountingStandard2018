@@ -12,6 +12,18 @@ class Loading_model extends CORE_Model{
         parent::__construct();
     }
 
+    function get_invoices(){
+        $sql="SELECT 
+                li.loading_id,
+                li.invoice_id
+            FROM
+                loading_items li
+                LEFT JOIN loading l ON l.loading_id = li.loading_id
+                LEFT JOIN sales_invoice si ON si.sales_invoice_id = li.invoice_id
+                WHERE l.is_deleted = FALSE AND l.is_active = TRUE";
+        return $this->db->query($sql)->result();
+    }
+
     function get_invoice_list($loading_id){
         $sql="SELECT 
                 li.*,
@@ -22,7 +34,6 @@ class Loading_model extends CORE_Model{
                 WHERE loading_id = $loading_id";
         return $this->db->query($sql)->result();
     }
-
 
     function get_loading($loading_id=null,$tsd=null,$ted=null){
         $sql="SELECT 
