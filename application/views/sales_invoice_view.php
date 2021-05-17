@@ -155,7 +155,7 @@
                 </div> 
                 <div class="col-lg-3">
                     Customer : <br />
-                    <select id="cbo_customers_tbl">
+                    <select id="cbo_customers_tbl" style="width: 100%;">
                         <option value="0">All Customers</option>
                         <?php foreach($customers as $customer){ ?>
                             <option value="<?php echo $customer->customer_id; ?>">

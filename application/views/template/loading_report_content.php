@@ -75,6 +75,9 @@
 				</table>				
 			</td>
 		</tr>
+	</table>
+
+	<table width="100%" cellpadding="4" cellspacing="4" class="tbl-info">
 		<tr>
 			<td width="50%" valign="top">
 			<br/>

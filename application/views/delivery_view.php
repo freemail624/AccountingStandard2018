@@ -201,6 +201,7 @@
                     <th>PO #</th>
                     <th>Terms</th>
                     <th>Delivered</th>
+                    <th>Department</th>
                     <th><center>Is Finalized?</center></th>
                     <th style="width: 100px;"><center>Action</center></th>
                     <th></th>
@@ -948,7 +949,7 @@ $(document).ready(function(){
         dt=$('#tbl_delivery_invoice').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 9, "desc" ]],
+            "order": [[ 10, "desc" ]],
             "language": {
                 "searchPlaceholder":"Search Purchase Invoice"
             },
@@ -967,7 +968,8 @@ $(document).ready(function(){
                 { targets:[4],data: "po_no" },
                 { targets:[5],data: "term_description" },
                 { targets:[6],data: "date_delivered" },
-                { targets:[7],data: null,
+                { targets:[7], data: "department_name" },
+                { targets:[8],data: null,
                     render: function (data, type, full, meta){
                         var _attribute='';
                         //console.log(data.is_email_sent);
@@ -981,7 +983,7 @@ $(document).ready(function(){
                     }
                 },
                 {
-                    targets:[8], data: null,
+                    targets:[9], data: null,
                     render: function (data, type, full, meta){
                         var btn_finalized="";
 
@@ -995,7 +997,7 @@ $(document).ready(function(){
                         return '<div style="text-align: right;">'+btn_finalized+'&nbsp;'+btn_edit+'&nbsp;'+btn_trash+'</div>';
                     }
                 },
-                { targets:[9],data: "dr_invoice_id", visible:false }
+                { targets:[10],data: "dr_invoice_id", visible:false }
             ]
         });
 
