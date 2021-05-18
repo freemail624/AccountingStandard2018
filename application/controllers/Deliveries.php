@@ -456,7 +456,8 @@ class Deliveries extends CORE_Controller
                 for ($i=0; $i < count($dr_products); $i++) { 
                     
                     $product_id = $dr_products[$i]->product_id;
-                    $product=$m_products->product_list(1,null,$product_id,null,null,null,null,$filter_departments,1,null,null,1);
+                    $as_of_date = date('Y-m-d');
+                    $product=$m_products->product_list(1,$as_of_date,$product_id,null,null,null,null,$filter_departments,1,null,null,1);
                     $on_hand_stock = $product[0]->total_qty_bulk;
                     $purchase_cost = $product[0]->purchase_cost;
 
