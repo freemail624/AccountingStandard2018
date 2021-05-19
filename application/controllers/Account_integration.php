@@ -135,6 +135,26 @@ class Account_integration extends CORE_Controller
 
                 break;
 
+            case 'save_approval':
+
+                $m_integration=$this->Account_integration_model;
+                $m_integration->po_for_accounting_approval=$this->get_numeric_value($this->input->post('po_for_accounting_approval',TRUE));
+                $m_integration->po_for_final_approval=$this->get_numeric_value($this->input->post('po_for_final_approval',TRUE));
+                $m_integration->modify(1);
+
+                $response['stat']="success";
+                $response['title']="Success!";
+                $response['msg']="Approval successfully integrated.";
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=57; // TRANS TYPE
+                $m_trans->trans_log='Updated Approval General Configuration';
+                $m_trans->save();
+                echo json_encode($response);
+                break;
 
             case 'save_supplier':
                 $m_integration=$this->Account_integration_model;

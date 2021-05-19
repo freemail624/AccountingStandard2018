@@ -29,6 +29,10 @@
 /*        h4{
             color:white;
         }*/
+        .numeric{
+            text-align: right;
+        }
+
         .toolbar{
             float: left;
         }
@@ -155,11 +159,50 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                 <li><a href="#accounts_integration_adjustment" data-toggle="tab" style="font-family: tahoma;">Adjustments</a></li>
                 <li><a href="#accounts_integration_item_transfer" data-toggle="tab" style="font-family: tahoma;">Item Transfer</a></li>
                 <!-- <li class=""><a href="#sched_expense_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-gear"></i> Expense Group (Schedule of Expense)</a></li> -->
+                <li><a href="#accounts_integration_approval" data-toggle="tab" style="font-family: tahoma;">Approvals</a></li>
                 <li class=""><a href="#account_year_setting" data-toggle="tab" style="font-family: tahoma;"> Accounting Period</a></li>
                 <!-- <li class=""><a href="#invoice_counter_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-code"></i> Invoice Number</a></li> -->
 
             </ul>
             <div class="tab-content">
+
+<!-- APPROVAL START -->
+            <div class="tab-pane" id="accounts_integration_approval" style="min-height: 300px;">
+                <form id="frm_account_integration_approval" role="form" class="form-horizontal row-border">
+                        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Approvals </strong></span></h4>
+
+                            <div class="form-group">
+                                <label class="col-md-3 control-label"> * Purchase Order 
+                                    <small>| FOR FINAL APPROVAL</small> 
+                                    <br/> 
+                                    <hr style="margin: 0;padding: 0;">
+                                    BELOW:
+                                </label>
+                                <div class="col-md-5">
+                                <input type="text" name="po_for_accounting_approval" class="form-control numeric" value="<?php echo $current_accounts->po_for_accounting_approval ?>">
+                                    <span class="help-block m-b-none">Please input the amount for final approval.</span>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label class="col-md-3 control-label"> * Purchase Order <small>| FOR FINAL APPROVAL (GM)</small> 
+                                    <br/> 
+                                    <hr style="margin: 0;padding: 0;">ABOVE:</label>
+                                <div class="col-md-5">
+                                <input type="text" name="po_for_final_approval" class="form-control numeric" value="<?php echo $current_accounts->po_for_final_approval ?>">
+                                    <span class="help-block m-b-none">Please input the amount for final approval (GM).</span>
+                                </div>
+                            </div>
+
+                </form>
+                    <div class="col-sm-offset-3">
+                        <button id="btn_save_approval" type="button" class="btn btn-primary" style="font-family: tahoma;text-transform: none;"><span class=""></span> Save Approval Settings Changes</button>
+                    </div>
+            </div>
+
+<!-- APPROVAL END -->
+
 <!-- ITEM TRANSFER START -->
             <div class="tab-pane" id="accounts_integration_item_transfer" style="min-height: 300px;">
                 <form id="frm_account_integration_item_transfer" role="form" class="form-horizontal row-border">
@@ -805,15 +848,14 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
 <!-- Select2 -->
 <script src="assets/plugins/select2/select2.full.min.js"></script>
 
-
-
+<!-- numeric formatter -->
+<script src="assets/plugins/formatter/autoNumeric.js" type="text/javascript"></script>
+<script src="assets/plugins/formatter/accounting.js" type="text/javascript"></script>
 
 
 <script>
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _accounts;
-
-
 
     var initializeControls=function(){
 
@@ -850,7 +892,8 @@ $(document).ready(function(){
             autoclose: true
 
         });
-
+        
+        $('.numeric').autoNumeric('init');
 
         // $('#cbo_inventory').select2('val', 0);
 
@@ -905,6 +948,15 @@ $(document).ready(function(){
                     showSpinningProgress($('#btn_save_item_transfer_accounts'));
                 });
             });
+
+            $('#btn_save_approval').click(function(){
+                saveApproval().done(function(response){
+                    showNotification(response);
+                }).always(function(){
+                    showSpinningProgress($('#btn_save_approval'));
+                });
+            });            
+
             $('#btn_save_material_issuance_accounts').click(function(){
                 saveSettingsMaterialIssuance().done(function(response){
                     showNotification(response);
@@ -1085,6 +1137,19 @@ $(document).ready(function(){
         });
     };
 
+    var saveApproval=function(){
+        var _data=$('#frm_account_integration_approval').serializeArray();
+        console.log(_data);
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Account_integration/transaction/save_approval",
+            "data":_data,
+            "beforeSend": showSpinningProgress($('#btn_save_approval'))
+
+        });
+    };
 
     var saveSettingsItemTransfer=function(){
         var _data=$('#frm_account_integration_item_transfer').serializeArray();

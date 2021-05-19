@@ -8,6 +8,33 @@ class Purchases_model extends CORE_Model {
         parent::__construct();
     }
 
+    function get_po_for_approval($filter_by){
+        $sql="SELECT 
+
+        po.*,
+        s.supplier_name,
+        COUNT(pa.po_attachment_id) as attachment,
+        CONCAT_WS(' ',po.terms,po.duration)As term_description,
+        CONCAT_WS(' ',ua.user_fname,ua.user_lname)as posted_by
+
+        FROM
+        purchase_order po
+        LEFT JOIN suppliers s ON po.supplier_id = s.supplier_id
+        LEFT JOIN user_accounts ua ON ua.user_id = po.posted_by_user
+        LEFT JOIN po_attachments pa ON pa.purchase_order_id = po.purchase_order_id
+
+        WHERE po.is_active = TRUE AND
+            po.is_deleted = FALSE AND
+            po.approval_id = 2 AND 
+            po.is_reviewed = TRUE AND
+            po.is_checked = FALSE AND
+            po.total_after_discount $filter_by
+
+        GROUP BY po.purchase_order_id
+        ORDER BY po.purchase_order_id DESC
+        ";
+        return $this->db->query($sql)->result();
+    }
 
     function get_po_balance_qty($id){
         $sql="SELECT SUM(x.Balance)as Balance

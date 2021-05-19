@@ -220,20 +220,21 @@ class TAccount extends CORE_Controller
 
                 $excel->getActiveSheet()->getColumnDimension('A')->setWidth('35');
                 $excel->getActiveSheet()->getColumnDimension('B')->setWidth('20');
-                $excel->getActiveSheet()->getColumnDimension('C')->setWidth('37');
-                $excel->getActiveSheet()->getColumnDimension('D')->setWidth('20');
-                $excel->getActiveSheet()->getColumnDimension('E')->setWidth('60');
-                $excel->getActiveSheet()->getColumnDimension('F')->setWidth('25');
-                $excel->getActiveSheet()->getColumnDimension('G')->setWidth('18');
+                $excel->getActiveSheet()->getColumnDimension('C')->setWidth('35');
+                $excel->getActiveSheet()->getColumnDimension('D')->setWidth('37');
+                $excel->getActiveSheet()->getColumnDimension('E')->setWidth('20');
+                $excel->getActiveSheet()->getColumnDimension('F')->setWidth('60');
+                $excel->getActiveSheet()->getColumnDimension('G')->setWidth('25');
                 $excel->getActiveSheet()->getColumnDimension('H')->setWidth('18');
+                $excel->getActiveSheet()->getColumnDimension('I')->setWidth('18');
 
                 $excel->getActiveSheet()
-                        ->getStyle('G')
+                        ->getStyle('H')
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
                 $excel->getActiveSheet()
-                        ->getStyle('H')
+                        ->getStyle('I')
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
@@ -241,18 +242,20 @@ class TAccount extends CORE_Controller
                                         ->getStyle('A9')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('B9','Date')
                                         ->getStyle('B9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('C9','Particular')
+                $excel->getActiveSheet()->setCellValue('C9','TIN')
                                         ->getStyle('C9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('D9','Reference')
-                                        ->getStyle('D9')->getFont()->setBold(TRUE);                                        
-                $excel->getActiveSheet()->setCellValue('E9','Remarks')
-                                        ->getStyle('E9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('F9','Account')
+                $excel->getActiveSheet()->setCellValue('D9','Particular')
+                                        ->getStyle('D9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('E9','Reference')
+                                        ->getStyle('E9')->getFont()->setBold(TRUE);                                        
+                $excel->getActiveSheet()->setCellValue('F9','Remarks')
                                         ->getStyle('F9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('G9','Dr')
+                $excel->getActiveSheet()->setCellValue('G9','Account')
                                         ->getStyle('G9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('H9','Cr')
+                $excel->getActiveSheet()->setCellValue('H9','Dr')
                                         ->getStyle('H9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('I9','Cr')
+                                        ->getStyle('I9')->getFont()->setBold(TRUE);
                 $i = 10;
 
                 $sum_dr = 0;
@@ -261,26 +264,27 @@ class TAccount extends CORE_Controller
                 foreach ($journal_list as $journal){
 
                 $excel->getActiveSheet()
-                        ->getStyle('G'.$i)
+                        ->getStyle('H'.$i)
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
                 $excel->getActiveSheet()
-                        ->getStyle('H'.$i)
+                        ->getStyle('I'.$i)
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
                     $excel->getActiveSheet()->setCellValue('A'.$i,$journal->txn_no)
                                             ->getStyle('A'.$i)->getFont()->setBold(FALSE);
                     $excel->getActiveSheet()->setCellValue('B'.$i,$journal->date_txn);
-                    $excel->getActiveSheet()->setCellValue('C'.$i,$journal->description);
-                    $excel->getActiveSheet()->setCellValue('D'.$i,$journal->reference_desc);
-                    $excel->getActiveSheet()->setCellValue('E'.$i,$journal->remarks);
-                    $excel->getActiveSheet()->setCellValue('F'.$i,$journal->account_title);
-                    $excel->getActiveSheet()->setCellValue('G'.$i,$journal->dr_amount);
-                    $excel->getActiveSheet()->setCellValue('H'.$i,$journal->cr_amount);
+                    $excel->getActiveSheet()->setCellValue('C'.$i,$journal->tin_no);
+                    $excel->getActiveSheet()->setCellValue('D'.$i,$journal->description);
+                    $excel->getActiveSheet()->setCellValue('E'.$i,$journal->reference_desc);
+                    $excel->getActiveSheet()->setCellValue('F'.$i,$journal->remarks);
+                    $excel->getActiveSheet()->setCellValue('G'.$i,$journal->account_title);
+                    $excel->getActiveSheet()->setCellValue('H'.$i,$journal->dr_amount);
+                    $excel->getActiveSheet()->setCellValue('I'.$i,$journal->cr_amount);
                     
-                    $excel->getActiveSheet()->getStyle('G'.$i.':H'.$i)->getNumberFormat()
+                    $excel->getActiveSheet()->getStyle('H'.$i.':I'.$i)->getNumberFormat()
                                             ->setFormatCode('###,##0.00;(###,##0.00)');
 
                     $sum_dr+=$journal->dr_amount;
@@ -300,13 +304,13 @@ class TAccount extends CORE_Controller
                                             ->mergeCells('A'.$i.':'.'E'.$i)
                                             ->getStyle('A'.$i)->getFont()->setBold(FALSE);
 
-                    $excel->getActiveSheet()->setCellValue('G'.$i,"=SUM(G10:G".$last_row.")")
-                                            ->getStyle('G'.$i)->getFont()->setBold(TRUE);
-
-                    $excel->getActiveSheet()->setCellValue('H'.$i,"=SUM(H10:H".$last_row.")")
+                    $excel->getActiveSheet()->setCellValue('H'.$i,"=SUM(G10:H".$last_row.")")
                                             ->getStyle('H'.$i)->getFont()->setBold(TRUE);
 
-                    $excel->getActiveSheet()->getStyle('G'.$i.':H'.$i)->getNumberFormat()
+                    $excel->getActiveSheet()->setCellValue('I'.$i,"=SUM(H10:I".$last_row.")")
+                                            ->getStyle('I'.$i)->getFont()->setBold(TRUE);
+
+                    $excel->getActiveSheet()->getStyle('H'.$i.':I'.$i)->getNumberFormat()
                                             ->setFormatCode('###,##0.00;(###,##0.00)');
 
                 $i++;
@@ -407,20 +411,21 @@ class TAccount extends CORE_Controller
 
                 $excel->getActiveSheet()->getColumnDimension('A')->setWidth('35');
                 $excel->getActiveSheet()->getColumnDimension('B')->setWidth('20');
-                $excel->getActiveSheet()->getColumnDimension('C')->setWidth('37');
-                $excel->getActiveSheet()->getColumnDimension('D')->setWidth('20');
-                $excel->getActiveSheet()->getColumnDimension('E')->setWidth('60');
-                $excel->getActiveSheet()->getColumnDimension('F')->setWidth('25');
-                $excel->getActiveSheet()->getColumnDimension('G')->setWidth('18');
+                $excel->getActiveSheet()->getColumnDimension('C')->setWidth('35');
+                $excel->getActiveSheet()->getColumnDimension('D')->setWidth('37');
+                $excel->getActiveSheet()->getColumnDimension('E')->setWidth('20');
+                $excel->getActiveSheet()->getColumnDimension('F')->setWidth('60');
+                $excel->getActiveSheet()->getColumnDimension('G')->setWidth('25');
                 $excel->getActiveSheet()->getColumnDimension('H')->setWidth('18');
+                $excel->getActiveSheet()->getColumnDimension('I')->setWidth('18');
 
                 $excel->getActiveSheet()
-                        ->getStyle('G')
+                        ->getStyle('H')
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
                 $excel->getActiveSheet()
-                        ->getStyle('H')
+                        ->getStyle('I')
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
@@ -428,18 +433,20 @@ class TAccount extends CORE_Controller
                                         ->getStyle('A9')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('B9','Date')
                                         ->getStyle('B9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('C9','Particular')
+                $excel->getActiveSheet()->setCellValue('C9','TIN')
                                         ->getStyle('C9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('D9','Reference')
-                                        ->getStyle('D9')->getFont()->setBold(TRUE);                                        
-                $excel->getActiveSheet()->setCellValue('E9','Remarks')
-                                        ->getStyle('E9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('F9','Account')
+                $excel->getActiveSheet()->setCellValue('D9','Particular')
+                                        ->getStyle('D9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('E9','Reference')
+                                        ->getStyle('E9')->getFont()->setBold(TRUE);                                        
+                $excel->getActiveSheet()->setCellValue('F9','Remarks')
                                         ->getStyle('F9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('G9','Dr')
+                $excel->getActiveSheet()->setCellValue('G9','Account')
                                         ->getStyle('G9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('H9','Cr')
+                $excel->getActiveSheet()->setCellValue('H9','Dr')
                                         ->getStyle('H9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('I9','Cr')
+                                        ->getStyle('I9')->getFont()->setBold(TRUE);
                 $i = 10;
 
                 $sum_dr = 0;
@@ -448,26 +455,27 @@ class TAccount extends CORE_Controller
                 foreach ($journal_list as $journal){
 
                 $excel->getActiveSheet()
-                        ->getStyle('G'.$i)
+                        ->getStyle('H'.$i)
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
                 $excel->getActiveSheet()
-                        ->getStyle('H'.$i)
+                        ->getStyle('I'.$i)
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
                     $excel->getActiveSheet()->setCellValue('A'.$i,$journal->txn_no)
                                             ->getStyle('A'.$i)->getFont()->setBold(FALSE);
                     $excel->getActiveSheet()->setCellValue('B'.$i,$journal->date_txn);
-                    $excel->getActiveSheet()->setCellValue('C'.$i,$journal->description);
-                    $excel->getActiveSheet()->setCellValue('D'.$i,$journal->reference_desc);
-                    $excel->getActiveSheet()->setCellValue('E'.$i,$journal->remarks);
-                    $excel->getActiveSheet()->setCellValue('F'.$i,$journal->account_title);
-                    $excel->getActiveSheet()->setCellValue('G'.$i,$journal->dr_amount);
-                    $excel->getActiveSheet()->setCellValue('H'.$i,$journal->cr_amount);
+                    $excel->getActiveSheet()->setCellValue('C'.$i,$journal->tin_no);
+                    $excel->getActiveSheet()->setCellValue('D'.$i,$journal->description);
+                    $excel->getActiveSheet()->setCellValue('E'.$i,$journal->reference_desc);
+                    $excel->getActiveSheet()->setCellValue('F'.$i,$journal->remarks);
+                    $excel->getActiveSheet()->setCellValue('G'.$i,$journal->account_title);
+                    $excel->getActiveSheet()->setCellValue('H'.$i,$journal->dr_amount);
+                    $excel->getActiveSheet()->setCellValue('I'.$i,$journal->cr_amount);
                     
-                    $excel->getActiveSheet()->getStyle('G'.$i.':H'.$i)->getNumberFormat()
+                    $excel->getActiveSheet()->getStyle('H'.$i.':I'.$i)->getNumberFormat()
                                             ->setFormatCode('###,##0.00;(###,##0.00)');
 
                     $sum_dr+=$journal->dr_amount;
@@ -487,13 +495,13 @@ class TAccount extends CORE_Controller
                                             ->mergeCells('A'.$i.':'.'E'.$i)
                                             ->getStyle('A'.$i)->getFont()->setBold(FALSE);
 
-                    $excel->getActiveSheet()->setCellValue('G'.$i,"=SUM(G10:G".$last_row.")")
-                                            ->getStyle('G'.$i)->getFont()->setBold(TRUE);
-
-                    $excel->getActiveSheet()->setCellValue('H'.$i,"=SUM(H10:H".$last_row.")")
+                    $excel->getActiveSheet()->setCellValue('H'.$i,"=SUM(G10:H".$last_row.")")
                                             ->getStyle('H'.$i)->getFont()->setBold(TRUE);
 
-                    $excel->getActiveSheet()->getStyle('G'.$i.':H'.$i)->getNumberFormat()
+                    $excel->getActiveSheet()->setCellValue('I'.$i,"=SUM(H10:I".$last_row.")")
+                                            ->getStyle('I'.$i)->getFont()->setBold(TRUE);
+
+                    $excel->getActiveSheet()->getStyle('H'.$i.':I'.$i)->getNumberFormat()
                                             ->setFormatCode('###,##0.00;(###,##0.00)');
 
                 $i++;

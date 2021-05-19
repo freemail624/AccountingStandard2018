@@ -55,6 +55,7 @@
 	    <thead>
 		    <th align="left" width="15%">Txn #</th>
 		    <th align="left">Date</th>
+		    <th align="left" width="10%">TIN</th>
 		    <th align="left">Particular</th>
 		    <th align="left">Reference</th>
 		    <th align="left" width="25%">Remarks</th>
@@ -69,6 +70,7 @@
 	    	<tr>
 	    		<td style="padding: 5px;"><?php echo $journal->txn_no; ?></td>
 	    		<td style="padding: 5px;"><?php echo $journal->date_txn; ?></td>
+	    		<td style="padding: 5px;"><?php echo $journal->tin_no; ?></td>
 	    		<td style="padding: 5px;"><?php echo $journal->description; ?></td>
 	    		<td style="padding: 5px;"><?php echo $journal->reference_desc; ?></td>
 	    		<td style="padding: 5px;"><?php echo $journal->remarks; ?></td>
@@ -80,7 +82,7 @@
 	    	</tr>
 		<?php } ?>
 			<tr>
-				<td colspan="6" align="right">Total:</td>
+				<td colspan="7" align="right">Total:</td>
 				<td style="padding: 5px;" align="right"><strong><?php echo number_format($sum_dr,2); ?></strong></td>
 				<td style="padding: 5px;" align="right"><strong><?php echo number_format($sum_cr,2); ?></strong></td>
 			</tr>

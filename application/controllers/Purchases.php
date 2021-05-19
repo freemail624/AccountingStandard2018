@@ -21,7 +21,7 @@ class Purchases extends CORE_Controller
         $this->load->model('Email_settings_model');
         $this->load->model('Trans_model');
         $this->load->model('Approval_status_model');
-        
+        $this->load->model('Account_integration_model');
 
         $this->load->library('M_pdf');
 
@@ -159,51 +159,25 @@ class Purchases extends CORE_Controller
 
                 case 'po-for-approved':  //is called on DASHBOARD, returns PO list for approval
                     //approval id 2 are those pending
+                    $m_integration=$this->Account_integration_model;
                     $m_purchases=$this->Purchases_model;
-                    $response['data']=$m_purchases->get_list(
-                        //filter
-                        'purchase_order.is_active=TRUE AND purchase_order.is_deleted=FALSE AND purchase_order.approval_id=2 AND purchase_order.is_reviewed = TRUE AND purchase_order.is_checked = TRUE',
-                        //fields
-                        'purchase_order.*,suppliers.supplier_name,COUNT(po_attachments.po_attachment_id) as attachment,
-                        CONCAT_WS(" ",purchase_order.terms,purchase_order.duration)As term_description,
-                        CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by',
-                        //joins
-                        array(
-                            array('suppliers','suppliers.supplier_id=purchase_order.supplier_id','left'),
-                            array('user_accounts','user_accounts.user_id=purchase_order.posted_by_user','left'),
-                            array('po_attachments','po_attachments.purchase_order_id=purchase_order.purchase_order_id','left')
-                        ),
 
-                        //order by
-                        'purchase_order.purchase_order_id DESC',
-                        //group by
-                        'purchase_order.purchase_order_id'
-                    );
+                    $po_for_final_approval_amt = $m_integration->get_list(1)[0]->po_for_final_approval;
+                    $filter = " >= ".$po_for_final_approval_amt;
+
+                    $response['data']=$m_purchases->get_po_for_approval($filter);
                     echo json_encode($response);
                     break;
 
                 case 'po-for-checking':  //is called on DASHBOARD, returns PO list for approval
                     //approval id 2 are those pending
+                    $m_integration=$this->Account_integration_model;
                     $m_purchases=$this->Purchases_model;
-                    $response['data']=$m_purchases->get_list(
-                        //filter
-                        'purchase_order.is_active=TRUE AND purchase_order.is_deleted=FALSE AND purchase_order.approval_id=2 AND purchase_order.is_reviewed = TRUE AND purchase_order.is_checked = FALSE',
-                        //fields
-                        'purchase_order.*,suppliers.supplier_name,COUNT(po_attachments.po_attachment_id) as attachment,
-                        CONCAT_WS(" ",purchase_order.terms,purchase_order.duration)As term_description,
-                        CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by',
-                        //joins
-                        array(
-                            array('suppliers','suppliers.supplier_id=purchase_order.supplier_id','left'),
-                            array('user_accounts','user_accounts.user_id=purchase_order.posted_by_user','left'),
-                            array('po_attachments','po_attachments.purchase_order_id=purchase_order.purchase_order_id','left')
-                        ),
 
-                        //order by
-                        'purchase_order.purchase_order_id DESC',
-                        //group by
-                        'purchase_order.purchase_order_id'
-                    );
+                    $po_for_accounting_approval_amt = $m_integration->get_list(1)[0]->po_for_accounting_approval;
+                    $filter = " <= ".$po_for_accounting_approval_amt;
+
+                    $response['data']=$m_purchases->get_po_for_approval($filter);
                     echo json_encode($response);
                     break;
 

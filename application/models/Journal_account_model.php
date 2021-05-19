@@ -607,6 +607,11 @@ class Journal_account_model extends CORE_Model{
               IFNULL(s.supplier_name,''),
               IFNULL(c.customer_name,'')
             )as description,
+            (CASE
+                WHEN ji.supplier_id > 0
+                THEN s.tin_no
+                ELSE c.tin_no
+            END) as tin_no,
             ji.remarks,
             at.account_title,
             ja.dr_amount,

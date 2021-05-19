@@ -520,7 +520,12 @@ class Templates extends CORE_Controller {
                         $info=$m_purchases->get_list(
                                 $filter_value,
                                 'purchase_order.*,CONCAT_WS(" ",purchase_order.terms,purchase_order.duration)as term_description,suppliers.supplier_name,suppliers.address,suppliers.email_address,suppliers.contact_no,
-                                    CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as user',
+                                    CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as user,
+
+                                    DATE_FORMAT(purchase_order.date_invoice,"%d %M %Y") as date_invoice,
+                                    DATE_FORMAT(purchase_order.date_delivery,"%d %M %Y") as date_delivery
+
+                                    ',
                                 array(
                                     array('user_accounts','user_accounts.user_id=purchase_order.approved_by_user','left'),
                                     array('suppliers','suppliers.supplier_id=purchase_order.supplier_id','left')
@@ -609,8 +614,9 @@ class Templates extends CORE_Controller {
                             $file_name=$info[0]->po_no;
                             $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                             $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                            $pdf = $this->m_pdf->load("Letter-L");
                             $content=$this->load->view('template/po_content_new_tsb',$data,TRUE); //load the template
-                            $pdf->setFooter('{PAGENO}');
+                            // $pdf->setFooter('{PAGENO}');
                             $pdf->WriteHTML($content);
                             //download it.
                             $pdf->Output();
@@ -2794,6 +2800,7 @@ class Templates extends CORE_Controller {
                 $m_purchases_items=$this->Delivery_invoice_item_model;
                 $m_purchases_info=$this->Delivery_invoice_model;
                 $m_departments=$this->Departments_model;
+                $m_company=$this->Company_model;
 
                 $purchase_info=$m_purchases_info->get_list(
                     array(
@@ -2895,10 +2902,26 @@ class Templates extends CORE_Controller {
                     )
                 );
                 $data['valid_particular']=(count($valid_supplier)>0);
+                $company=$m_company->get_list();
+                $data['company_info']=$company[0];
 
+                $type = $this->input->get('type');
 
+                if($type==null || $type == ""){
+                    echo $this->load->view('template/ap_journal_for_review',$data,TRUE); //details of the journal
+                }
 
-                echo $this->load->view('template/ap_journal_for_review',$data,TRUE); //details of the journal
+                if($type == "RR"){
+                    $file_name=$purchase_info[0]->dr_invoice_no;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load('Letter'); //pass the instance of the mpdf class
+                    $content=$this->load->view('template/ap_journal_rr',$data,TRUE);
+                    // $pdf->setFooter('{PAGENO}');
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output();
+
+                }
 
 
                 break;

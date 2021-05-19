@@ -488,7 +488,7 @@
                                                     <div class="col-xs-12 col-sm-12 <?php echo (in_array('7-4',$this->session->user_rights)?'':'hidden'); ?>">
                                                       <div class="data-container table-responsive" style="min-height: 300px; max-height: 700px;overflow-x: hidden;">
                                                       <div class="row">
-                                                        <div class="col-sm-9"><h3 class="po_title" style=""><i class="fa fa-file-text-o"  style="color: #067cb2;"></i> <span >PURCHASE ORDER  <small>| FOR ACCOUNTING APPROVAL</small> </span></h3>
+                                                        <div class="col-sm-9"><h3 class="po_title" style=""><i class="fa fa-file-text-o"  style="color: #067cb2;"></i> <span >PURCHASE ORDER  <small>| FOR FINAL APPROVAL</small> </span></h3>
                                                         </div>
                                                         <div class="col-sm-3">
                                                         <input type="text" id="search_tbl_po_list_checking" class="form-control">
@@ -517,7 +517,7 @@
                                                     <div class="col-xs-12 col-sm-12 <?php echo (in_array('7-1',$this->session->user_rights)?'':'hidden'); ?>">
                                                       <div class="data-container table-responsive" style="min-height: 300px; max-height: 700px;overflow-x: hidden;">
                                                       <div class="row">
-                                                        <div class="col-sm-9"><h3 class="po_title" style=""><i class="fa fa-file-text-o"  style="color: #067cb2;"></i> <span >PURCHASE ORDER <small>| FOR FINAL APPROVAL</small></span></h3>
+                                                        <div class="col-sm-9"><h3 class="po_title" style=""><i class="fa fa-file-text-o"  style="color: #067cb2;"></i> <span >PURCHASE ORDER <small>| FOR FINAL APPROVAL (GM)</small></span></h3>
                                                         </div>
                                                         <div class="col-sm-3">
                                                         <input type="text" id="search_tbl_po_list" class="form-control">
@@ -1113,8 +1113,9 @@ Chart.defaults.global.defaultFontColor = "#000000";
 
                             var btn_approved='<button class="btn btn-primary btn-sm" name="checked_po"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Mark this PO as reviewed"><i class="fa fa-check" style="color: white;"></i> <span class=""></span></button>';
                             var btn_conversation='<a id="link_conversation" href="Po_messages?id='+full.purchase_order_id+'" target="_blank" class="btn btn-info btn-sm"  style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Open Conversation"><i class="fa fa-envelope"></i> </a>';
+                            var btn_disapproved='<button class="btn btn-danger btn-sm" name="disapprove_po" data-toggle="tooltip" data-placement="top" title="Disapprove this PO"><i class="fa fa-times" style="color: white;"></i> <span class=""></span></button>';
 
-                            return '<center>'+btn_approved+'&nbsp;'+btn_conversation+'</center>';
+                            return '<center>'+btn_approved+'&nbsp;'+btn_conversation+'&nbsp;'+btn_disapproved+'</center>';
                         }
                     }
                 ]
@@ -1321,6 +1322,7 @@ Chart.defaults.global.defaultFontColor = "#000000";
 
                 var data=dt.row(_selectRowObj).data();
                 _selectedID=data.purchase_order_id;
+                _status=2;
                 $('#modal_confirmation_approval').modal('show');
                 $('#approval_po_no').text(data.po_no);
                 $('#approval_remarks').val('');
@@ -1331,28 +1333,54 @@ Chart.defaults.global.defaultFontColor = "#000000";
                  approvePurchaseOrder().done(function(response){
                     showNotification(response);
                     if(response.stat=="success"){
+
+                      if(_status == 1){
+                        dtchecking.row(_selectRowObj).remove().draw();
+                      }else{
                         dt.row(_selectRowObj).remove().draw();
-                        $('#modal_confirmation_approval').modal('hide');
+                      }
+
+                      $('#modal_confirmation_approval').modal('hide');
                     }
 
                 });
               });
 
+            $('#tbl_po_list_checking > tbody').on('click','button[name="disapprove_po"]',function(){
+                _selectRowObj=$(this).closest('tr'); //hold dom of tr which is selected
+                var data=dtchecking.row(_selectRowObj).data();
+                _selectedID=data.purchase_order_id;
+                _status=1;
+                $('#modal_confirmation').modal('show');
+                $('#disapproved_po_no').text(data.po_no);
+                $('#disapproval_remarks').val('');
+
+            });     
+
             $('#tbl_po_list > tbody').on('click','button[name="disapprove_po"]',function(){
                 _selectRowObj=$(this).closest('tr'); //hold dom of tr which is selected
                 var data=dt.row(_selectRowObj).data();
                 _selectedID=data.purchase_order_id;
+                _status=2;
                 $('#modal_confirmation').modal('show');
                 $('#disapproved_po_no').text(data.po_no);
                 $('#disapproval_remarks').val('');
 
             });
 
+
+
               $('#btn_yes_disapprove').click(function(){
                  disapprovePurchaseOrder().done(function(response){
                     showNotification(response);
                     if(response.stat=="success"){
-                        dt.row(_selectRowObj).remove().draw();
+
+                        if(_status == 1){
+                          dtchecking.row(_selectRowObj).remove().draw();
+                        }else{
+                          dt.row(_selectRowObj).remove().draw();
+                        }
+
                         $('#modal_confirmation').modal('hide');
                     }
                 });
@@ -1374,7 +1402,10 @@ Chart.defaults.global.defaultFontColor = "#000000";
                     showNotification(response);
                     if(response.stat=="success"){
                         dtreview.row(_selectRowObj).remove().draw();
-                        dtchecking.row.add(response.data).draw();
+
+                        $('#tbl_po_list_checking').DataTable().ajax.reload();
+                        $('#tbl_po_list').DataTable().ajax.reload();
+
                         $('#modal_confirmation_review').modal('hide');
                     }
 
@@ -1385,10 +1416,11 @@ Chart.defaults.global.defaultFontColor = "#000000";
             // showNotification({title:"Approving PO and Sending Email!",stat:"info",msg:"Please wait for a few seconds."});
                 _selectRowObj=$(this).closest('tr'); //hold dom of tr which is selected
                 var data=dtchecking.row(_selectRowObj).data();
-                _selectedIDchecked=data.purchase_order_id;
-                $('#modal_confirmation_check').modal('show');
-                $('#check_po_no').text(data.po_no);
-                $('#checking_remarks').val('');
+                _selectedID=data.purchase_order_id;
+                _status=1;
+                $('#modal_confirmation_approval').modal('show');
+                $('#approval_po_no').text(data.po_no);
+                $('#approval_remarks').val('');
 
             });           
 

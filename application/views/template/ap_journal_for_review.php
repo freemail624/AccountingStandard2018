@@ -165,7 +165,10 @@
                                 <div class="col-sm-6">  
                                     <button name="btn_finalize_journal_review" class="btn btn-primary <?php if(!$valid_particular){ echo "disabled"; }?>"><i class="fa fa-check-circle"></i> <span class=""></span> Finalize and Post this Journal</button>
                                 </div>
-                                <div class="col-sm-6">  
+                                <div class="col-sm-3">
+                                    <button name="btn_print_rr" style="float: right;margin-top: 5px;" class="btn btn-success <?php if(!$valid_particular){ echo "disabled"; }?>"><i class="fa fa-print"></i> <span class=""></span> Print RR</button>
+                                </div>
+                                <div class="col-sm-3">  
                                     <div class="input-group" style="float: right;">
                                         <input type="text" name="closing_reason" class="form-control" placeholder="Close Notes/Remarks" >
                                          <span class="input-group-addon " style="padding: 0px;background-color: #ff0039!important;">

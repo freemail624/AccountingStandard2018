@@ -165,7 +165,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
     }
 
     function get_journal_entries_2($purchase_invoice_id){
-        $sql="SELECT main.* FROM(SELECT
+        $sql="SELECT main.*, at.account_title FROM(SELECT
             p.expense_account_id as account_id,
             '' as memo,
             SUM(dii.dr_non_tax_amount) dr_amount,
@@ -213,7 +213,10 @@ GROUP BY n.supplier_id HAVING total_balance > 0
             WHERE dii.dr_invoice_id=$purchase_invoice_id AND p.expense_account_id>0
             ) as acc_payable GROUP BY acc_payable.account_id
             
-            )as main WHERE main.dr_amount>0 OR main.cr_amount>0";
+            )as main 
+
+            LEFT JOIN account_titles at ON at.account_id = main.account_id
+            WHERE main.dr_amount>0 OR main.cr_amount>0";
 
         return $this->db->query($sql)->result();
 

@@ -1997,6 +1997,11 @@
                 }// END of ISZERO
             });
 
+
+            parent.on('click','button[name="btn_print_rr"]',function(){
+                window.open('Templates/layout/ap-journal-for-review?type=RR&id='+_dataParentID);
+            });
+
             var finalizeJournalReview=function(){
                 var _data_review=parent.find('form').serializeArray();
 
