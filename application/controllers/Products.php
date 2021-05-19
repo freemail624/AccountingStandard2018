@@ -1,4 +1,5 @@
 <?php
+ini_set('memory_limit', '8000M');
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Products extends CORE_Controller
@@ -90,9 +91,32 @@ class Products extends CORE_Controller
             case 'list':
                 $m_products = $this->Products_model;
 
+                $search_value = $_GET["search"]["value"];
+                $length = $_GET['length'];
+                $start = $_GET['start'];
+                
+                $order = $_GET["order"];
+                $order_column = $_GET['order']['0']['column'];
+                $order_dir = $_GET['order']['0']['dir'];
+
                 $item_type_id=$this->input->get('item_type_id');
-                $response['data']=$m_products->product_list(1,null,null,null,null,$item_type_id,null,null,1,null,null,null,null);
-                // $response['data']=$this->response_rows(array('products.is_deleted'=>FALSE));
+
+                $data=$m_products->product_list(1,null,null,null,null,$item_type_id,null,null,1,null,null,null,null,
+                    $search_value,
+                    $length,
+                    $start,
+                    $order,
+                    $order_column,
+                    $order_dir
+                );
+
+                $response = array(
+                    "draw"            => intval($_GET["draw"]),
+                    "recordsTotal"    => $m_products->get_all_data(),
+                    "recordsFiltered" => count($data),
+                    "data"            => $data
+                );
+
                 echo json_encode($response);
                 break;
 

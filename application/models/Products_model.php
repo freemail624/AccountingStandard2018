@@ -2449,7 +2449,20 @@ Product Pick List
         return $this->db->query($sql)->result();
     }
 
-function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=null,$category_id=null,$item_type_id=null,$pick_list=null,$depid=null,$account_cii,$account_dis=null,$CurrentQtyCount=null,$is_parent=null,$is_nonsalable=null){
+    function get_all_data()
+    {
+        $sql="SELECT * FROM products WHERE is_deleted = FALSE AND is_active = TRUE";
+        return $this->db->query($sql)->num_rows();
+    }
+
+    function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=null,$category_id=null,$item_type_id=null,$pick_list=null,$depid=null,$account_cii,$account_dis=null,$CurrentQtyCount=null,$is_parent=null,$is_nonsalable=null,
+        $search_value=null,
+        $length=null,
+        $start=null,
+        $order=null,
+        $order_column=null,
+        $order_dir=null
+    ){
     $sql="SELECT
             productmain.*, FORMAT(productmain.total_qty_balance,2) as on_hand_per_batch
         FROM
@@ -2872,12 +2885,36 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 ".($category_id==null?"":" AND core.category_id='".$category_id."'")."
                 ".($item_type_id==null || $item_type_id==0?"":" AND core.item_type_id='".$item_type_id."'")."
 
-                ORDER BY core.product_desc) as main ) as productmain
+
+                ".($search_value==null?"":" 
+                        AND (core.product_code='".$search_value."'
+                        OR core.product_desc='".$search_value."')
+                ")."
+
+
+
+                ) as main ) as productmain
                 ".($pick_list==TRUE?" WHERE productmain.total_qty_bulk < productmain.product_warn  ":" ")."
                 ".($CurrentQtyCount==null?" ":" WHERE productmain.CurrentQty ".$CurrentQtyCount)."
 
+                LIMIT 10
+
+
+
+
 
     ";
+
+                // ".($length==null OR $length==-1 ?"":" 
+                //     LIMIT '".$length."' OFFSET '".$start."'
+                // ")."
+
+/*                ".($order==null?"
+                    ORDER BY core.product_desc ASC
+                ":" 
+                    ORDER BY '".$order_column."' '".$order_dir."'
+                ")."
+*/
 
  return $this->db->query($sql)->result();
 

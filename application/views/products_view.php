@@ -1305,8 +1305,7 @@ $(document).ready(function(){
 
         dt=$('#tbl_products').DataTable({
             "dom": '<"toolbar">frtip',
-            "bLengthChange":false,
-            "pageLength":15,
+            "serverSide": true,
             "order": [[ 1, "asc" ]],
             "ajax" : { 
                 "url":"Products/transaction/list", 
