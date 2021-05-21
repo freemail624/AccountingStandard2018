@@ -23,7 +23,7 @@
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
 
     <style>
-        .toolbar{
+        .toolbar {
             float: left;
         }
 
@@ -31,11 +31,12 @@
             background: url('assets/img/Folder_Closed.png') no-repeat center center;
             cursor: pointer;
         }
+
         tr.details td.details-control {
             background: url('assets/img/Folder_Opened.png') no-repeat center center;
         }
 
-        .child_table{
+        .child_table {
             padding: 5px;
             border: 1px #ff0000 solid;
         }
@@ -46,28 +47,41 @@
         }
 
         @keyframes spin {
-            from { transform: scale(1) rotate(0deg); }
-            to { transform: scale(1) rotate(360deg); }
+            from {
+                transform: scale(1) rotate(0deg);
+            }
+
+            to {
+                transform: scale(1) rotate(360deg);
+            }
         }
 
         @-webkit-keyframes spin2 {
-            from { -webkit-transform: rotate(0deg); }
-            to { -webkit-transform: rotate(360deg); }
+            from {
+                -webkit-transform: rotate(0deg);
+            }
+
+            to {
+                -webkit-transform: rotate(360deg);
+            }
         }
 
         .group-heading-soa {
             background-color: #bcf6ff;
         }
 
-        .hidden{
+        .hidden {
             display: none;
         }
+
         table thead tr th {
             font-weight: bold;
         }
-        .class-title{
+
+        .class-title {
             font-weight: bold;
         }
+
         .ellipsis {
             overflow: hidden;
             white-space: nowrap;
@@ -79,38 +93,36 @@
 </head>
 
 <body class="animated-content">
-<?php echo $_top_navigation; ?>
-<div id="wrapper">
-    <div id="layout-static">
+    <?php echo $_top_navigation; ?>
+    <div id="wrapper">
+        <div id="layout-static">
 
-        <?php echo $_side_bar_navigation;?>
+            <?php echo $_side_bar_navigation; ?>
 
-        <div class="static-content-wrapper white-bg">
-            <div class="static-content"  >
-                <div class="page-content"><!-- #page-content -->
-                    <ol class="breadcrumb">
-                        <li><a href="dashboard">Dashboard</a></li>
-                        <li><a href="stock_card">Stock Card / Bin Card</a></li>
-                    </ol>
-                    <div class="container-fluid">
-                        <div class="panel panel-default">
-                            <!-- <div class="panel-heading">
+            <div class="static-content-wrapper white-bg">
+                <div class="static-content">
+                    <div class="page-content">
+                        <!-- #page-content -->
+                        <ol class="breadcrumb">
+                            <li><a href="dashboard">Dashboard</a></li>
+                            <li><a href="stock_card">Stock Card / Bin Card</a></li>
+                        </ol>
+                        <div class="container-fluid">
+                            <div class="panel panel-default">
+                                <!-- <div class="panel-heading">
                                 <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Statement of Account</b>
                             </div> -->
-                            <div class="panel-body">
-                                <h2 style="margin-bottom: 30px;">Stock Card / Bin Card</h1><hr>
-                                <div class="row container-fluid">
-                                        <div class="col-xs-12 col-sm-6">
-                                            <label><b class="required">*</b> Product :</label><br>
-                                            <select id="cbo_product" class="form-control" style="width: 100%">
-                                                <?php foreach($products as $product) { ?>
-                                                    <option value="<?php echo $product->product_id; ?>" data-bulk="<?php echo $product->is_bulk; ?>">
-                                                        <?php echo $product->product_desc; ?>
-                                                    </option>
-                                                <?php } ?>
-                                            </select>
-                                        </div>
-<!--                                         <div class="col-xs-4 col-sm-2">
+                                <div class="panel-body">
+                                    <h2 style="margin-bottom: 30px;">Stock Card / Bin Card</h1>
+                                        <hr>
+                                        <div class="row container-fluid">
+                                            <div class="col-xs-12 col-sm-6">
+                                                <label><b class="required">*</b> Product :</label><br>
+                                                <select id="cbo_product" class="form-control" style="width: 100%">
+
+                                                </select>
+                                            </div>
+                                            <!--                                         <div class="col-xs-4 col-sm-2">
                                             <label>Category</label><br>
                                             <select id="cbo_cat" class="form-control" style="width: 100%">
                                                     <option value="">All</option>
@@ -118,58 +130,58 @@
                                                     <option value="Retail" id="retail">Retail</option>
                                             </select>
                                         </div> -->
-                                        <div class="col-xs-4 col-sm-2"><br><br>
-                                            <button id="btn_print" class="btn btn-primary btn-block" style="margin-top: 5px;vertical-align: middle;"><i class="fa fa-print"></i> Print Report</button>
+                                            <div class="col-xs-4 col-sm-2"><br><br>
+                                                <button id="btn_print" class="btn btn-primary btn-block" style="margin-top: 5px;vertical-align: middle;"><i class="fa fa-print"></i> Print Report</button>
+                                            </div>
+                                            <div class="col-xs-4 col-sm-2"><br><br>
+                                                <button id="btn_export" class="btn btn-success btn-block" style="margin-top: 5px;"><i class="fa fa-file-excel-o"></i> Export</button>
+                                            </div>
+
+                                        </div><br>
+                                        <div class="container-fluid">
+                                            <table style="width: 100%" class="table table-striped">
+                                                <tr>
+                                                    <td style="width: 15%;" class="class-title">Product Code</td>
+                                                    <td style="width: 35%;" id="product_code"></td>
+                                                    <td style="width: 15%;" class="class-title">Purchase Cost</td>
+                                                    <td style="width: 35%;" id="purchase_cost"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width: 15%;" class="class-title">Product Description</td>
+                                                    <td style="width: 35%;" id="product_desc"></td>
+
+                                                    <td style="width: 15%;" class="class-title">Suggested Retail Price</td>
+                                                    <td style="width: 35%;" id="sale_price"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width: 15%;" class="class-title">Unit of Measurement</td>
+                                                    <td style="width: 35%;" id="unit_of_measurement"></td>
+
+                                                    <td style="width: 15%;" class="class-title"></td>
+                                                    <td style="width: 35%;" id=""></td>
+                                                </tr>
+                                            </table>
+                                            <table id="tbl_stock" class="table table-striped" style="width: 100%;,margin-top: 20px;">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="width: 10%;">Date</th>
+                                                        <th style="width: 15%;">Document No.</th>
+                                                        <th style="width: 5%">Package</th>
+                                                        <th style="width: 8%;text-align: right;font-weight: bold;">IN</th>
+                                                        <th style="width: 8%;text-align: right;font-weight: bold;">OUT</th>
+                                                        <th style="width: 12%;text-align: right;font-weight: bold;">Balance</th>
+                                                        <th class="hidden" style="width: 12%;text-align: right;font-weight: bold;">Bulk Balance</th>
+                                                        <th style="text-align: left;width: 10%;">Location</th>
+                                                        <th style="text-align: left;width: 20%">Remarks</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="parent" style="width: 100%;">
+
+                                                </tbody>
+                                            </table>
                                         </div>
-                                        <div class="col-xs-4 col-sm-2"><br><br>
-                                            <button id="btn_export" class="btn btn-success btn-block" style="margin-top: 5px;"><i class="fa fa-file-excel-o"></i> Export</button>
-                                        </div>
-
-                                </div><br>
-                                <div class="container-fluid">
-                                <table style="width: 100%" class="table table-striped">
-                                    <tr>
-                                        <td style="width: 15%;" class="class-title">Product Code</td>
-                                        <td style="width: 35%;" id="product_code"></td>
-                                        <td  style="width: 15%;" class="class-title">Purchase Cost</td>
-                                        <td  style="width: 35%;" id="purchase_cost"></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="width: 15%;" class="class-title">Product Description</td>
-                                        <td style="width: 35%;" id="product_desc"></td>
-
-                                        <td  style="width: 15%;" class="class-title">Suggested Retail Price</td>
-                                        <td  style="width: 35%;" id="sale_price"></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="width: 15%;" class="class-title">Unit of Measurement</td>
-                                        <td style="width: 35%;" id="unit_of_measurement"></td>
-
-                                        <td  style="width: 15%;" class="class-title"></td>
-                                        <td  style="width: 35%;" id=""></td>
-                                    </tr>
-                                </table>
-                                <table id="tbl_stock" class="table table-striped" style="width: 100%;,margin-top: 20px;">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 10%;">Date</th>
-                                        <th style="width: 15%;">Document No.</th>
-                                        <th style="width: 5%">Package</th>
-                                        <th style="width: 8%;text-align: right;font-weight: bold;">IN</th>
-                                        <th style="width: 8%;text-align: right;font-weight: bold;">OUT</th>
-                                        <th style="width: 12%;text-align: right;font-weight: bold;">Balance</th>
-                                        <th class="hidden" style="width: 12%;text-align: right;font-weight: bold;">Bulk Balance</th>
-                                        <th style="text-align: left;width: 10%;">Location</th>
-                                        <th style="text-align: left;width: 20%">Remarks</th>
-                                    </tr>
-                                </thead>
-                                    <tbody id="parent" style="width: 100%;">
-
-                                    </tbody>
-                                </table>
                                 </div>
-                                </div>
-                                <div class="row">   
+                                <div class="row">
                                     <div class="container-fluid">
                                     </div>
                                 </div>
@@ -182,123 +194,157 @@
             <footer role="contentinfo">
                 <div class="clearfix">
                     <ul class="list-unstyled list-inline pull-left">
-                        <li><h6 style="margin: 0;">&copy; 2017 - JDEV IT Business Solutions</h6></li>
+                        <li>
+                            <h6 style="margin: 0;">&copy; 2017 - JDEV IT Business Solutions</h6>
+                        </li>
                     </ul>
                     <button class="pull-right btn btn-link btn-xs hidden-print" id="back-to-top"><i class="ti ti-arrow-up"></i></button>
                 </div>
             </footer>
         </div>
     </div>
-</div>
+    </div>
 
 
-<?php echo $_switcher_settings; ?>
+    <?php echo $_switcher_settings; ?>
 
-<script src="assets/plugins/spinner/dist/spin.min.js"></script>
-<script src="assets/plugins/spinner/dist/ladda.min.js"></script>
-<!-- numeric formatter -->
-<script src="assets/plugins/formatter/autoNumeric.js" type="text/javascript"></script>
-<script src="assets/plugins/formatter/accounting.js" type="text/javascript"></script>
-<script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
-<script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
-<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
-<script src="assets/plugins/select2/select2.full.min.js"></script>
+    <script src="assets/plugins/spinner/dist/spin.min.js"></script>
+    <script src="assets/plugins/spinner/dist/ladda.min.js"></script>
+    <!-- numeric formatter -->
+    <script src="assets/plugins/formatter/autoNumeric.js" type="text/javascript"></script>
+    <script src="assets/plugins/formatter/accounting.js" type="text/javascript"></script>
+    <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
+    <script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
+    <script src="assets/plugins/select2/select2.full.min.js"></script>
 
-<script>
-
-$(document).ready(function(){
-    var _cboProduct;
-    var _cboCat;
-    var initializeControls=function() {
-        _cboProduct = $('#cbo_product').select2({
-            searchPlaceholder: 'Select Product '
-        });
-
-        // _cboCat = $('#cbo_cat').select2({
-        //     minimumResultsForSearch : -1
-        // });
-
-
-        reinitializeBalances();
-    }();
-
-    var bindEventHandlers=function(){
-        _cboProduct.on('select2:select',function(){
-            // _cboCat.select2('val','bulk');
-            reinitializeBalances();
-        });
-
-        $('#btn_print').click(function(){
-            window.open('Products/transaction/history-product?id='+_cboProduct.val()+'&type=stockcard_print')
-        });;
-
-        $('#btn_export').click(function(){
-            window.open('Products/Export_Stock?id='+_cboProduct.val()+'&type=stockcard_print')
-
-        });
-
-        // _cboCat.on("select2:select", function (e) {
-        //     reinitializeBalances();
-        // });        
-    }();
-
-    var showSpinningProgress=function(e){
-        $(e).toggleClass('disabled');
-        $(e).find('span').toggleClass('glyphicon glyphicon-refresh spinning');
-    };
-
-
-    var showNotification=function(obj){
-        PNotify.removeAll(); //remove all notifications
-        new PNotify({
-            title:  obj.title,
-            text:  obj.msg,
-            type:  obj.stat
-        });
-    };
-
-    function reinitializeBalances() {   
-        ii =  _cboProduct.val()
-        var prodbulk=$('#cbo_product').find('option[value="' + ii + '"]');
-
-        $('#tbl_stock #parent').html('');
-        $.ajax({
-            url : 'Products/transaction/history-product?id='+_cboProduct.val()+'&type=stockcard',
-            type : "GET",
-            cache : false,
-            dataType : 'json',
-            processData : false,
-            contentType : false,
-            success : function(response){
-
-                $('#unit_of_measurement').html(response.product_info.product_unit_name);
-                $('#product_desc').html(response.product_info.product_desc);
-                $('#purchase_cost').html(accounting.formatNumber(response.product_info.purchase_cost,2));
-                $('#sale_price').html(accounting.formatNumber(response.product_info.sale_price,2));
-                $('#product_code').html(response.product_info.product_code);
-                $.each(response.products_parent, function(index,value){
-                    $('#tbl_stock #parent').append(
-                        '<tr>'+
-                            '<td>'+value.txn_date+'</td>'+
-                            '<td>'+value.ref_no+'</td>'+
-                            '<td>'+value.identifier+'</td>'+
-                            '<td align="right">'+accounting.formatNumber(value.parent_in_qty,2)+'</td>'+
-                            '<td align="right">'+accounting.formatNumber(value.parent_out_qty,2)+'</td>'+
-                            '<td align="right">'+accounting.formatNumber(value.parent_balance,2)+' '+response.product_info.parent_unit_name+'</td>'+
-                            '<td class="hidden" align="right">'+accounting.formatNumber(value.parent_bulk_balance,2)+' '+response.product_info.product_unit_name+'</td>'+
-                            '<td>'+value.department_name+'</td>'+
-                            '<td>'+value.remarks+'</td>'+
-                        '</tr>'
-                    );
+    <script>
+        $(document).ready(function() {
+            var _cboProduct;
+            var _cboCat;
+            var initializeControls = function() {
+                _cboProduct = $('#cbo_product').select2({
+                    searchPlaceholder: 'Select Product ',
+                    ajax: {
+                        url: "<?php echo base_url('Products/transaction/list') ?>",
+                        type: "post",
+                        dataType: 'json',
+                        delay: 500,
+                        data: function(params) {
+                            return {
+                                // searchTerm: params.term // search term
+                                search: { 
+                                    value: params.term
+                                },
+                                start: ((params.page || 1) * 10) - 10,
+                                length: 10,
+                                order: [{
+                                    column: 2,
+                                    dir: 'asc'
+                                }]
+                            };
+                        },
+                        processResults: function(response) {
+                            return {
+                                results: response.data.map(res => {
+                                    return {
+                                        id: res.product_id,
+                                        text: res.product_desc
+                                    }
+                                }),
+                                pagination: {
+                                    more: true
+                                }
+                            };
+                        },
+                        cache: true
+                    }
                 });
 
-            }
+                // _cboCat = $('#cbo_cat').select2({
+                //     minimumResultsForSearch : -1
+                // });
 
+
+                reinitializeBalances();
+            }();
+
+            var bindEventHandlers = function() {
+                _cboProduct.on('select2:select', function() {
+                    // _cboCat.select2('val','bulk');
+                    reinitializeBalances();
+                });
+
+                $('#btn_print').click(function() {
+                    window.open('Products/transaction/history-product?id=' + _cboProduct.val() + '&type=stockcard_print')
+                });;
+
+                $('#btn_export').click(function() {
+                    window.open('Products/Export_Stock?id=' + _cboProduct.val() + '&type=stockcard_print')
+
+                });
+
+                // _cboCat.on("select2:select", function (e) {
+                //     reinitializeBalances();
+                // });        
+            }();
+
+            var showSpinningProgress = function(e) {
+                $(e).toggleClass('disabled');
+                $(e).find('span').toggleClass('glyphicon glyphicon-refresh spinning');
+            };
+
+
+            var showNotification = function(obj) {
+                PNotify.removeAll(); //remove all notifications
+                new PNotify({
+                    title: obj.title,
+                    text: obj.msg,
+                    type: obj.stat
+                });
+            };
+
+            function reinitializeBalances() {
+                ii = _cboProduct.val()
+                var prodbulk = $('#cbo_product').find('option[value="' + ii + '"]');
+
+                $('#tbl_stock #parent').html('');
+                $.ajax({
+                    url: 'Products/transaction/history-product?id=' + _cboProduct.val() + '&type=stockcard',
+                    type: "GET",
+                    cache: false,
+                    dataType: 'json',
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+
+                        $('#unit_of_measurement').html(response.product_info.product_unit_name);
+                        $('#product_desc').html(response.product_info.product_desc);
+                        $('#purchase_cost').html(accounting.formatNumber(response.product_info.purchase_cost, 2));
+                        $('#sale_price').html(accounting.formatNumber(response.product_info.sale_price, 2));
+                        $('#product_code').html(response.product_info.product_code);
+                        $.each(response.products_parent, function(index, value) {
+                            $('#tbl_stock #parent').append(
+                                '<tr>' +
+                                '<td>' + value.txn_date + '</td>' +
+                                '<td>' + value.ref_no + '</td>' +
+                                '<td>' + value.identifier + '</td>' +
+                                '<td align="right">' + accounting.formatNumber(value.parent_in_qty, 2) + '</td>' +
+                                '<td align="right">' + accounting.formatNumber(value.parent_out_qty, 2) + '</td>' +
+                                '<td align="right">' + accounting.formatNumber(value.parent_balance, 2) + ' ' + response.product_info.parent_unit_name + '</td>' +
+                                '<td class="hidden" align="right">' + accounting.formatNumber(value.parent_bulk_balance, 2) + ' ' + response.product_info.product_unit_name + '</td>' +
+                                '<td>' + value.department_name + '</td>' +
+                                '<td>' + value.remarks + '</td>' +
+                                '</tr>'
+                            );
+                        });
+
+                    }
+
+                });
+            };
         });
-    };
-});
-
-</script>
+    </script>
 
 </body>
 

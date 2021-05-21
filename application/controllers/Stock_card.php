@@ -28,7 +28,7 @@
 	        $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', true);
 	        $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', true);
 	        $data['title'] = 'Stock Card / Bin Card';
-	        $data['products']= $this->Products_model->product_list(1,null,null,null,null,null,null,null,1,null,null,1);
+	        // $data['products']= $this->Products_model->product_list(1,null,null,null,null,null,null,null,1,null,null,1);
 
 	        if(in_array('5-1',$this->session->user_rights)){
 	        	$this->load->view('stock_card_view',$data);
