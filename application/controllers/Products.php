@@ -128,12 +128,14 @@ class Products extends CORE_Controller
                     $order,
                     $order_column,
                     $order_dir
-                );
+                ); 
+
+                $recordsTotal = $m_products->get_all_data($item_type_id);
 
                 $response = array(
                     "draw"            => intval($draw),
-                    "recordsTotal"    => count($data) == 0 ? null : $m_products->get_all_data($item_type_id),
-                    "recordsFiltered" => count($data) == 0 ? null : $m_products->get_all_data($item_type_id),
+                    "recordsTotal"    => $recordsTotal,
+                    "recordsFiltered" => $search_value == null || $search_value == "" ? $recordsTotal : count($data) ,
                     "data"            => $data
                 );
 
