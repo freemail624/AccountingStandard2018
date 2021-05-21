@@ -264,7 +264,6 @@
         <div>
         <hr>
             <label class="control-label" style="font-family: Tahoma;"><strong>Enter PLU or Search Item :</strong></label>
-        <button id="refreshproducts" class="btn-primary btn pull-right" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>  Refresh</button>
         <div id="custom-templates">
             <input class="typeahead" id="typeaheadsearch" type="text" placeholder="Enter PLU or Search Item">
             <i class="pull-right">Note: Unit Price will depend on chosen Customer Type</i>
@@ -931,15 +930,30 @@ $(document).ready(function(){
             }
         });
 
-        products = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name'),
+        // products = new Bloodhound({
+        //     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name'),
+        //     queryTokenizer: Bloodhound.tokenizers.whitespace,
+        //     local : products
+        // });
+
+        var products = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace(''),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
-            local : products
-        });
+            remote: {
+            cache: false,
+            url: 'Products/transaction/product-lookup/',
+
+             replace: function(url, uriEncodedQuery) {
+                return url + '?description='+uriEncodedQuery+'&type=1';
+             }
+            }
+         });
+
         var _objTypeHead=$('#custom-templates .typeahead');
         _objTypeHead.typeahead(null, {
         name: 'products',
         display: 'product_code',
+        limit: 10,
         source: products,
         templates: {
             header: [
@@ -1249,17 +1263,6 @@ $(document).ready(function(){
             }
         });
 
-         $('#refreshproducts').click(function(){
-            getproduct().done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                    showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-            }).always(function(){
-                $('#typeaheadsearch').val('');
-                });
-         });
-
         //create new department
         $('#btn_create_department').click(function(){
             var btn=$(this);
@@ -1363,18 +1366,7 @@ $(document).ready(function(){
             $('#due_default').datepicker('setDate', 'today');
             $('#typeaheadsearch').val('');
             $('textarea[name="remarks"]').val($('textarea[name="remarks"]').data('default'));
-            
-            getproduct().done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                countproducts = data.data.length;
-                    if(countproducts > 100){
-                    showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-                    }
-
-            }).always(function(){  });
-
+        
             /*$('#cbo_prodType').select2('val', 3);
             $('#cboLookupPrice').select2('val', 1);*/
             reComputeTotal(); //this is to make sure, display summary are recomputed as 0
@@ -1626,17 +1618,7 @@ $(document).ready(function(){
             else
             {
 
-            getproduct().done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                countproducts = data.data.length;
-                    if(countproducts > 100){
-                    showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-                    }
-
-            }).always(function(){ });
-                $('#typeaheadsearch').val('');
+            $('#typeaheadsearch').val('');
 
             _txnMode="edit";
             _selectRowObj=$(this).closest('tr');
@@ -1912,19 +1894,6 @@ $(document).ready(function(){
                 }
         });
         return stat;
-    };
-    var getproduct=function(){
-       return $.ajax({
-           "dataType":"json",
-           "type":"POST",
-           "url":"products/transaction/list",
-           "beforeSend": function(){
-                countproducts = products.local.length;
-                if(countproducts > 100){
-                    showNotification({title:"Please Wait !",stat:"info",msg:"Refreshing your Products List."});
-                }
-           }
-      });
     };
 
     var createCustomer=function(){

@@ -367,7 +367,6 @@
 <div class="row ">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <label class="control-label" style="font-family: Tahoma;"><strong>Enter PLU or Search Item :</strong></label>
-        <button id="refreshproducts" class="btn-primary btn pull-right" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>  Refresh</button>
         <div id="custom-templates">
             <input class="typeahead" id="typeaheadsearch" type="text" placeholder="Enter PLU or Search Item">
         </div><br />
@@ -1120,39 +1119,31 @@ $(document).ready(function(){
             }
         });
 
+        // products = new Bloodhound({
+        //     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_unit_name','purchase_cost'),
+        //     queryTokenizer: Bloodhound.tokenizers.whitespace,
+        //     local : products
+        // });
 
-
-        products = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_unit_name','purchase_cost'),
-            queryTokenizer: Bloodhound.tokenizers.whitespace,
-            local : products
-        });
-
-        /*var products = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1'),
+        var products = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace(''),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             remote: {
-                cache: false,
-                url: 'Purchases/transaction/product-lookup/',
+            cache: false,
+            url: 'Products/transaction/product-lookup/',
 
-                replace: function(url, uriEncodedQuery) {
-                    //var prod_type=$('#cbo_prodType').select2('val');
-                    //var prod_type=$('#cbo_prodType').select2('val');
-                    //var sid=$('#cbo_suppliers').select2('val');
-                    //var prod_type=$('#cbo_prodType').select2('val');
-
-                    return url + '?description='+uriEncodedQuery;
-                }
+             replace: function(url, uriEncodedQuery) {
+                return url + '?description='+uriEncodedQuery+'&type=1';
+             }
             }
-
-            //local : raw_data
-        });*/
+         });
 
         var _objTypeHead=$('#custom-templates .typeahead');
 
         _objTypeHead.typeahead(null, {
                 name: 'products',
                 display: 'product_code',
+                limit : 10,
                 source: products,
                 templates: {
                     header: [
@@ -1445,17 +1436,6 @@ $(document).ready(function(){
             $('#custom_duties').val('0.00');
             $('#other_amount').val('0.00');
             reComputeTotal();
-
-            getproduct().done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                countproducts = data.data.length;
-                    if(countproducts > 100){
-                    showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-                    }
-
-            }).always(function(){  });
             showList(false);
             $('#cbo_suppliers').select2('open');
         });
@@ -1694,16 +1674,6 @@ $(document).ready(function(){
                 showNotification({title:"Error!",stat:"error",msg:"Cannot Edit: Invoice is already Posted in Purchase Journal."});
             } 
             else {
-                getproduct().done(function(data){
-                    products.clear();
-                    products.local = data.data;
-                    products.initialize(true);
-                    countproducts = data.data.length;
-                        if(countproducts > 100){
-                        showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-                        }
-
-                }).always(function(){ });
                 $('#typeaheadsearch').val('');
 
                _txnMode="edit";
@@ -2013,16 +1983,6 @@ $(document).ready(function(){
 
         });
 
-
-        $('#refreshproducts').click(function(){
-            getproduct().done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                    showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-            }).always(function(){});
-        });
-
         $('#link_browse_po').click(function(){
             $('#btn_receive_po').click();
         });
@@ -2110,20 +2070,6 @@ $(document).ready(function(){
             "data":_data,
             "beforeSend": showSpinningProgress($('#btn_create_new_department'))
         });
-    };
-
-    var getproduct=function(){
-       return $.ajax({
-           "dataType":"json",
-           "type":"POST",
-           "url":"products/transaction/parent-list",
-           "beforeSend": function(){
-                countproducts = products.local.length;
-                if(countproducts > 100){
-                    showNotification({title:"Please Wait !",stat:"info",msg:"Refreshing your Products List."});
-                }
-           }
-      });
     };
 
     var createTerm=function(){

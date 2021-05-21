@@ -331,7 +331,6 @@
         <div>
         <hr>
             <label class="control-label" style="font-family: Tahoma;"><strong>Enter PLU or Search Item :</strong></label>
-        <button id="refreshproducts" class="btn-primary btn pull-right" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>  Refresh</button>
         <div id="custom-templates">
             <input class="typeahead" id="typeaheadsearch" type="text" placeholder="Enter PLU or Search Item">
         </div><br />
@@ -1126,15 +1125,30 @@ $(document).ready(function(){
             }
         });
 
-        products = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name','unq_id'),
+        // products = new Bloodhound({
+        //     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name','unq_id'),
+        //     queryTokenizer: Bloodhound.tokenizers.whitespace,
+        //     local : products
+        // });
+
+        var products = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace(''),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
-            local : products
-        });
+            remote: {
+            cache: false,
+            url: 'Products/transaction/product-lookup/',
+
+             replace: function(url, uriEncodedQuery) {
+                return url + '?description='+uriEncodedQuery+'&type=1';
+             }
+            }
+         });
+
         var _objTypeHead=$('#custom-templates .typeahead');
         _objTypeHead.typeahead(null, {
         name: 'products',
         display: 'product_desc',
+        limit: 10,
         source: products,
         templates: {
             header: [
@@ -1144,7 +1158,7 @@ $(document).ready(function(){
                 '<td width="25%" align="left"><b>Description</b></td>'+
                 '<td width="20%" align="left" class="hidden"><b>Expiration</b></td>'+
                 '<td width="10%" align="left" class="hidden"><b>LOT#</b></td>'+
-                '<td width="17%" align="right"><b>On Hand</b></td>'+
+                '<td width="17%" align="right" class="hidden"><b>On Hand</b></td>'+
                 '<td width="13%" align="right" style="padding-right: 1%;"><b>SRP</b></td>'+
                 '</tr></table>'
             ].join('\n'),
@@ -1154,8 +1168,8 @@ $(document).ready(function(){
                 '<td width="25%" align="left">{{product_desc}}</td>'+
                 '<td width="20%" align="left" class="hidden">{{exp_date}}</td>'+
                 '<td width="10%" align="left" class="hidden">{{batch_no}}</td>'+
-                '<td width="17%" align="right">{{on_hand_per_batch}}</td>'+
-                '<td width="13%" align="right" style="padding-right: 1%;">{{srp}}</td>'+
+                '<td width="17%" align="right" class="hidden">{{on_hand_per_batch}}</td>'+
+                '<td width="13%" align="right" style="padding-right: 1%;">{{sale_price}}</td>'+
                 '</tr></table>')
         }
         }).on('keyup', this, function (event) {
@@ -1512,17 +1526,6 @@ $(document).ready(function(){
             }
         });
 
-         $('#refreshproducts').click(function(){
-            getproduct().done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                    showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-            }).always(function(){
-                $('#typeaheadsearch').val('');
-                });
-         });
-
         //create new department
         $('#btn_create_department').click(function(){
             var btn=$(this);
@@ -1656,18 +1659,6 @@ $(document).ready(function(){
             $('input[id="checkcheck"]').prop('checked', false);
             $('#for_dispatching').val('0');
             $('textarea[name="remarks"]').val($('textarea[name="remarks"]').data('default'));
-
-            getproduct().done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                countproducts = data.data.length;
-                    if(countproducts > 100){
-                    showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-                    }
-            }).always(function(){ 
-                $('#typeaheadsearch').val('');
-            });
 
             /*$('#cbo_prodType').select2('val', 3);
             $('#cboLookupPrice').select2('val', 1);*/
@@ -1816,19 +1807,6 @@ $(document).ready(function(){
                 $('input[id="checkcheck"]').prop('checked', false);
                 $('#for_dispatching').val('0');
             }
-
-            getproduct().done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                countproducts = data.data.length;
-                    if(countproducts > 100){
-                    showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-                    }
-
-            }).always(function(){
-                $('#typeaheadsearch').val('');
-            });
 
             _txnMode="edit";
             $('.cash_invoice_title').html('Edit Cash Invoice');
@@ -2292,19 +2270,6 @@ $(document).ready(function(){
                 }
         });
         return stat;
-    };
-    var getproduct=function(){
-       return $.ajax({
-           "dataType":"json",
-           "type":"POST",
-           "url":"products/transaction/sales-list",
-           "beforeSend": function(){
-                countproducts = products.local.length;
-                if(countproducts > 100){
-                    showNotification({title:"Please Wait !",stat:"info",msg:"Refreshing your Products List."});
-                }
-           }
-      });
     };
 
     var createCustomer=function(){

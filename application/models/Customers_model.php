@@ -29,6 +29,12 @@ class Customers_model extends CORE_Model{
         $this->db->query($sql);
     }
 
+    function get_all_data()
+    {
+        $sql="SELECT * FROM customers WHERE is_deleted = FALSE AND is_active = TRUE";
+        return $this->db->query($sql)->num_rows();
+    }
+
     function get_customer($customer_name,$customer_id=null){
         $sql="SELECT * FROM customers 
             WHERE is_deleted = FALSE AND 
@@ -36,6 +42,17 @@ class Customers_model extends CORE_Model{
             ".($customer_id==null?"":" AND customer_id!=$customer_id")."";
         return $this->db->query($sql)->result();
     }
+
+
+    function get_customers($customer_name=null){
+        $sql="SELECT * FROM customers 
+            WHERE is_deleted = FALSE 
+            ".($customer_name==null?"":" AND customer_name LIKE '%".$customer_name."%'")."
+            LIMIT 5
+            ";
+        return $this->db->query($sql)->result();
+    }
+
 
     function get_customer_list_for_sales_report(){
         $sql="SELECT 

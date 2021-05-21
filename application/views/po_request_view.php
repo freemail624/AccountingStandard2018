@@ -261,7 +261,6 @@
     <div>
     <hr>
         <label class="control-label" style="font-family: Tahoma;"><strong>Enter PLU or Search Item :</strong></label>
-        <button id="refreshproducts" class="btn-primary btn pull-right" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>  Refresh</button>
         <div id="custom-templates">
             <input class="typeahead" id="typeaheadsearch" type="text" placeholder="Enter PLU or Search Item">
         </div><br />
@@ -920,37 +919,31 @@ $(document).ready(function(){
         });
 
 
-        products = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_unit_name'),
+        // products = new Bloodhound({
+        //     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_unit_name'),
+        //     queryTokenizer: Bloodhound.tokenizers.whitespace,
+        //     local : products
+        // });
+
+        var products = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace(''),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
-            local : products
-        });
+            remote: {
+            cache: false,
+            url: 'Products/transaction/product-lookup/',
 
-        /*var products = new Bloodhound({
-         datumTokenizer: Bloodhound.tokenizers.obj.whitespace(''),
-         queryTokenizer: Bloodhound.tokenizers.whitespace,
-         remote: {
-         cache: false,
-         url: 'Purchases/transaction/product-lookup/',
-
-         replace: function(url, uriEncodedQuery) {
-         //var prod_type=$('#cbo_prodType').select2('val');
-         //var prod_type=$('#cbo_prodType').select2('val');
-         //var sid=$('#cbo_suppliers').select2('val');
-         //var prod_type=$('#cbo_prodType').select2('val');
-
-         return url + '?description='+uriEncodedQuery;
-         }
-         }
-         });*/
-
-
+             replace: function(url, uriEncodedQuery) {
+                return url + '?description='+uriEncodedQuery+'&type=1';
+             }
+            }
+         });
 
         var _objTypeHead=$('#custom-templates .typeahead');
 
         _objTypeHead.typeahead(null, {
             name: 'products',
             display: 'product_code',
+            limit : 10,
             source: products,
             templates: {
                 header: [
@@ -1185,27 +1178,10 @@ $(document).ready(function(){
             $('textarea[name="deliver_to_address"]').val($('textarea[name="deliver_to_address"]').data('default'));
             //$('#cbo_prodType').select2('val',3);
             $('#typeaheadsearch').val('');
-            getproduct().done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                countproducts = data.data.length;
-                    if(countproducts > 100){
-                    showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-                    }
-            }).always(function(){  });
             showList(false);
             // $('#cbo_suppliers').select2('open');
         });
-         $('#refreshproducts').click(function(){
-            getproduct().done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                    showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-            }).always(function(){
-                });
-         });
+
         $('#btn_create_new_department').click(function(){
 
             var btn=$(this);
@@ -1267,16 +1243,7 @@ $(document).ready(function(){
                 showNotification({"title":"Error!","stat":"error","msg":"Sorry, you cannot edit purchase request that is already been received."});
                 return;
             }
-                getproduct().done(function(data){
-                    products.clear();
-                    products.local = data.data;
-                    products.initialize(true);
-                    countproducts = data.data.length;
-                        if(countproducts > 100){
-                        showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-                        }
 
-                }).always(function(){ });
                 $('#typeaheadsearch').val('');
 
             $('input,textarea').each(function(){
@@ -1615,21 +1582,6 @@ $(document).ready(function(){
 
         return stat;
     };
-
-    var getproduct=function(){
-       return $.ajax({
-           "dataType":"json",
-           "type":"POST",
-           "url":"products/transaction/parent-list",
-           "beforeSend": function(){
-                countproducts = products.local.length;
-                if(countproducts > 100){
-                    showNotification({title:"Please Wait !",stat:"info",msg:"Refreshing your Products List."});
-                }
-           }
-      });
-    };
-
 
     var createDepartment=function(){
         var _data=$('#frm_department').serializeArray();

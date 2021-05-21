@@ -1,4 +1,4 @@
-<?php
+ <?php
 ini_set('memory_limit', '8000M');
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -121,8 +121,9 @@ class Products extends CORE_Controller
                     $order_column = null;
                 }
 
-                $data=$m_products->get_all_products($item_type_id,
+                $data=$m_products->get_all_products(
                     $search_value,
+                    $item_type_id,
                     $length,
                     $start,
                     $order,
@@ -142,6 +143,35 @@ class Products extends CORE_Controller
                 echo json_encode($response);
                 exit();
 
+                break;
+
+            case 'product-lookup':
+                $m_products=$this->Products_model;
+                $search_value=$this->input->get('description',TRUE);
+                $item_type_id=$this->input->get('type',TRUE);
+                $length=$this->input->get('type',TRUE);
+                $data=$m_products->get_all_products($search_value,$item_type_id,$length); 
+                echo json_encode($data);
+                break;
+
+            case 'product-lookup-list':
+                $m_products=$this->Products_model;
+                $searchTerm = $this->input->post('searchTerm', TRUE);
+                $length = $this->input->post('length', TRUE);
+                $products=$m_products->get_all_products($searchTerm,1); 
+
+                $data = array();
+
+                foreach($products as $product){
+                    $data[] = array(
+                        "id"=>$product->product_id, 
+                        "text"=>$product->product_code.' - '.$product->product_desc
+                    );
+                }
+                $response['data'] = $data;
+                $response['total'] = $m_products->get_all_data(1);
+
+                echo json_encode($response);
                 break;
 
             case 'sales-list':

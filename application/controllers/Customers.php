@@ -51,6 +51,26 @@ class Customers extends CORE_Controller {
     function transaction($txn=null){
         switch($txn){
             //****************************************************************************************************************
+            case 'customer-list':
+                $m_customers=$this->Customers_model;
+                $searchTerm = $this->input->post('searchTerm', TRUE);
+                $customers = $m_customers->get_customers($searchTerm);
+
+                $data = array();
+
+                foreach($customers as $customer){
+                    $data[] = array(
+                        "id"=>$customer->customer_id, 
+                        "text"=>$customer->customer_name
+                    );
+                }
+
+                $response['data'] = $data;
+                $response['total'] = $m_customers->get_all_data();
+                
+                echo json_encode($response);
+                break;
+
             case 'list':
                 $m_customers=$this->Customers_model;
 

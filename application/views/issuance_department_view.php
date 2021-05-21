@@ -208,7 +208,6 @@ echo $_side_bar_navigation;
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <br />
                     <label class="control-label" style="font-family: Tahoma;"><strong>Enter PLU or Search Item :</strong></label>
-                    <button id="refreshproducts" class="btn-primary btn pull-right" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>  Refresh</button>
         
                     <div id="custom-templates">
                         <input class="typeahead" id="typeaheadsearch" type="text" placeholder="Enter PLU or Search Item">
@@ -629,15 +628,30 @@ dt_si = $('#tbl_si_list').DataTable({
             }
         });
         
-         products = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name','unq_id'),
+        //  products = new Bloodhound({
+        //     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name','unq_id'),
+        //     queryTokenizer: Bloodhound.tokenizers.whitespace,
+        //     local : products
+        // });
+
+        var products = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace(''),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
-            local : products
-        });
+            remote: {
+            cache: false,
+            url: 'Products/transaction/product-lookup/',
+
+             replace: function(url, uriEncodedQuery) {
+                return url + '?description='+uriEncodedQuery+'&type=1';
+             }
+            }
+         });
+
         var _objTypeHead=$('#custom-templates .typeahead');
         _objTypeHead.typeahead(null, {
             name: 'products',
             display: 'description',
+            limit: 10,
             source: products,
             templates: {
                 header: [
@@ -647,7 +661,7 @@ dt_si = $('#tbl_si_list').DataTable({
                     '<td width="25%" align="left"><b>Description</b></td>'+
                     '<td width="20%" align="left" class="hidden"><b>Expiration</b></td>'+
                     '<td width="10%" align="left" class="hidden"><b>LOT#</b></td>'+
-                    '<td width="17%" align="right"><b>On Hand</b></td>'+
+                    '<td width="17%" align="right" class="hidden"><b>On Hand</b></td>'+
                     '<td width="13%" align="right" style="padding-right: 1%;"><b>Cost Price</b></td>'+
                     '</tr></table>'
                 ].join('\n'),
@@ -657,7 +671,7 @@ dt_si = $('#tbl_si_list').DataTable({
                     '<td width="25%" align="left">{{product_desc}}</td>'+
                     '<td width="20%" align="left" class="hidden">{{exp_date}}</td>'+
                     '<td width="10%" align="left" class="hidden">{{batch_no}}</td>'+
-                    '<td width="17%" align="right">{{on_hand_per_batch}}</td>'+
+                    '<td width="17%" align="right" class="hidden">{{on_hand_per_batch}}</td>'+
                     '<td width="13%" align="right" style="padding-right: 1%;">{{purchase_cost}}</td>'+
                     '</tr></table>')
             }
@@ -908,18 +922,6 @@ dt_si = $('#tbl_si_list').DataTable({
             $('#cbo_departments').select2('val', $('#cbo_departments').data('default'));
             $('#cbo_departments_to').select2('val', null);
             
-            getproduct().done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                countproducts = data.data.length;
-                    if(countproducts > 100){
-                    showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-                    }
-
-            }).always(function(){ 
-                $('#typeaheadsearch').val('');
-            });
             showList(false);
             $('#cbo_departments_to').select2('open');
             reComputeTotal();
@@ -950,19 +952,6 @@ dt_si = $('#tbl_si_list').DataTable({
                 showNotification({title:"<b style='color:white;'> Error!</b>",stat:"error",msg:"Cannot Edit: Invoice is already Posted in General Journal."});
                 return;
             }
-
-            getproduct().done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                countproducts = data.data.length;
-                    if(countproducts > 100){
-                    showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-                    }
-
-            }).always(function(){ 
-                $('#typeaheadsearch').val('');
-            });
 
             $('input,textarea').each(function(){
                 var _elem=$(this);
@@ -1166,16 +1155,7 @@ dt_si = $('#tbl_si_list').DataTable({
         $('#btn_cancel').click(function(){
             showList(true);
         });
-        $('#refreshproducts').click(function(){
-            getproduct().done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                    showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-            }).always(function(){
-                $('#typeaheadsearch').val('');
-            });
-         });
+
         $('#btn_save').click(function(){ 
             if(_cboDepartments.val() == _cboDepartmentsTo.val()){ // DEPARTMENT FROM AND TO MUST NOT BE THE SAME
                     showNotification({title:"Error !",stat:"error",msg:"Departments must not be the same."});
@@ -1530,20 +1510,6 @@ dt_si = $('#tbl_si_list').DataTable({
 
     var reInitializeNumeric=function(){
         $('.numeric').autoNumeric('init');
-    };
-
-    var getproduct=function(){
-       return $.ajax({
-           "dataType":"json",
-           "type":"POST",
-           "url":"products/transaction/list",
-           "beforeSend": function(){
-                countproducts = products.local.length;
-                if(countproducts > 100){
-                    showNotification({title:"Please Wait !",stat:"info",msg:"Refreshing your Products List."});
-                }
-           }
-      });
     };
 
     var checkProduct= function(check_id){

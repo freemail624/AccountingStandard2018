@@ -75,7 +75,7 @@
 
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboItemTypes; var _selectedProductType; var _isTaxExempt=0;
-    var _cboSupplier; var _cboCategory; var _cboTax; var _cboInventory; var _cboMeasurement; var _cboCredit; var _cboDebit;
+    var _cboSupplier; var _cboProducts; var _cboTax; var _cboInventory; var _cboMeasurement; var _cboCredit; var _cboDebit;
     var _cboTaxGroup;
     var _section_id; var _menu_id;
     /*$(document).ready(function(){
@@ -148,8 +148,32 @@ $(document).ready(function(){
             autoclose: true
         });
 
-        _cboCategory=$('#product_id').select2({
-            allowClear: false
+        _cboProducts=$('#product_id').select2({
+          ajax: {
+            url: "Products/transaction/product-lookup-list",
+            type: "post",
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+              return {
+                searchTerm: params.term, // search term
+                page: params.page
+              };
+            },
+           processResults: function (response, params) {
+            params.page = params.page || 1;
+
+             return {
+                results: response.data,
+                pagination: {
+                    more: (params.page * 10) < response.total
+                }
+             };
+           },
+           cache: true
+          },
+          placeholder: 'Select a product',
+          minimumInputLength: 1
         });
 
 
@@ -311,7 +335,6 @@ $(document).ready(function(){
                                                     Product :
                                                     <select name="category_id" id="product_id" data-error-msg="Product is required." required>
                                                         <option value="">All Products</option>
-                                                        <?php foreach($products as $row) { echo '<option value="'.$row->product_id.'">'.$row->product_code.' - '.$row->product_desc.'</option>'; } ?>
                                                     </select>
 
                                                 </div>

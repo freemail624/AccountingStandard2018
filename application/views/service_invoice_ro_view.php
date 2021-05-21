@@ -574,7 +574,6 @@
                 </div>
                 <div class="tab-content tab-content-view">
                     <div class="tab-pane active" id="pms">
-                        <button class="refreshproducts btn-success btn pull-right" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;border-radius: 50%;padding: 5px;z-index: 99999!important;"><i class="fa fa-refresh"></i></button>
                         <br/><br/>
                         <form id="frm_items_pms">
 
@@ -643,7 +642,6 @@
                         </form>
                     </div>
                     <div class="tab-pane" id="body">
-                        <button class="refreshproducts btn-success btn pull-right" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;border-radius: 50%;padding: 5px;z-index: 99999!important;"><i class="fa fa-refresh"></i></button>
                         <br/><br/>      
                         <form id="frm_items_bpr">
 
@@ -713,7 +711,6 @@
                         </form>
                     </div>
                     <div class="tab-pane" id="general_jobs">
-                        <button class="refreshproducts btn-success btn pull-right" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;border-radius: 50%;padding: 5px;z-index: 99999!important;"><i class="fa fa-refresh"></i></button>
                         <br/><br/>         
                         <form id="frm_items_gb">
 
@@ -1724,15 +1721,30 @@ $(document).ready(function(){
             }
         });
 
-        products = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name','unq_id'),
+        // products = new Bloodhound({
+        //     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name','unq_id'),
+        //     queryTokenizer: Bloodhound.tokenizers.whitespace,
+        //     local : products
+        // });
+
+        var products = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace(''),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
-            local : products
-        });
+            remote: {
+            cache: false,
+            url: 'Products/transaction/product-lookup/',
+
+             replace: function(url, uriEncodedQuery) {
+                return url + '?description='+uriEncodedQuery;
+             }
+            }
+         });
+
         var _objTypeHead=$('#custom-templates .typeahead');
         _objTypeHead.typeahead(null, {
         name: 'products',
         display: 'product_code',
+        limit : 10,
         source: products,
         templates: {
             header: [
@@ -1742,7 +1754,7 @@ $(document).ready(function(){
                 '<td width="25%" align="left"><b>Description</b></td>'+
                 '<td width="20%" align="left" class="hidden"><b>Expiration</b></td>'+
                 '<td width="10%" align="left" class="hidden"><b>LOT#</b></td>'+
-                '<td width="17%" align="right"><b>On Hand</b></td>'+
+                '<td width="17%" align="right" class="hidden"><b>On Hand</b></td>'+
                 '<td width="13%" align="right" style="padding-right: 1%;"><b>SRP</b></td>'+
                 '</tr></table>'
             ].join('\n'),
@@ -1752,8 +1764,8 @@ $(document).ready(function(){
                 '<td width="25%" align="left">{{product_desc}}</td>'+
                 '<td width="20%" align="left" class="hidden">{{exp_date}}</td>'+
                 '<td width="10%" align="left" class="hidden">{{batch_no}}</td>'+
-                '<td width="17%" align="right">{{on_hand_per_batch}}</td>'+
-                '<td width="13%" align="right" style="padding-right: 1%;">{{srp}}</td>'+
+                '<td width="17%" align="right" class="hidden">{{on_hand_per_batch}}</td>'+
+                '<td width="13%" align="right" style="padding-right: 1%;">{{sale_price}}</td>'+
                 '</tr></table>')
         }
         }).on('keyup', this, function (event) {
@@ -2346,17 +2358,6 @@ $(document).ready(function(){
             $('#modal_new_vehicle').modal('show');
         });
 
-        $('.refreshproducts').click(function(){
-            getproduct().done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                    showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-            }).always(function(){
-                $('.typeaheadsearch').val('');
-            });
-        });
-
         $('#btn_save_customer').click(function(){
             var btn=$(this);
             if(validateRequiredFields($('#frm_customer'))){
@@ -2520,19 +2521,7 @@ $(document).ready(function(){
             // $('#txt_overall_discount_amount').val('0.00'); 
             // $('#repair_order_grand_total').val('0.00'); 
             // $('input[id="checkcheck"]').prop('checked', false);
-
-            getproduct().done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                countproducts = data.data.length;
-                if(countproducts > 100){
-                showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-                }
-            }).always(function(){ 
-                $('.typeaheadsearch').val('');
-            });
-                    
+ 
             $('#btn_pms').trigger('click');
             countTblItems(1);
             countTblItems(2);
@@ -2673,18 +2662,6 @@ $(document).ready(function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.service_invoice_id;
-
-            getproduct().done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                countproducts = data.data.length;
-                if(countproducts > 100){
-                showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-                }
-            }).always(function(){ 
-                $('.typeaheadsearch').val('');
-            });
 
             _txnMode="edit";
             $('.service_invoice_title').html('Edit Repair Order');                
@@ -3024,20 +3001,6 @@ $(document).ready(function(){
         var timestamp = new Date();
         var formattedDate = moment(timestamp).format('MM/DD/YYYY hh:mm A');
         return formattedDate;
-    };
-
-    var getproduct=function(){
-       return $.ajax({
-           "dataType":"json",
-           "type":"POST",
-           "url":"products/transaction/sales-list",
-           "beforeSend": function(){
-                countproducts = products.local.length;
-                if(countproducts > 100){
-                    showNotification({title:"Please Wait !",stat:"info",msg:"Refreshing your Products List."});
-                }
-           }
-      });
     };
 
     var createCustomer=function(){

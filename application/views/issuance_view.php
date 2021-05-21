@@ -146,162 +146,161 @@ echo $_side_bar_navigation;
             <strong><a id="btn_receive_si" href="#" style="text-decoration: none; color: white;">Create from Sales Invoice</a></strong>
         </div>-->    
         <form id="frm_issuances" role="form" class="form-horizontal">
-            <div>
-                <div class="row">
-                    <div class="col-xs-12 col-lg-4">
-                         Repair Order No : <br />
-                        <div class="input-group">
-                            <input type="text" name="repair_order_no" class="form-control" placeholder="Repair Order No" readonly>
-                             <span class="input-group-addon">
-                                <a href="#" id="link_browse_ro"><b>...</b></a>
-                            </span>
-                        </div>  
-                    </div>
-                    <div class="col-lg-4"></div>
-                    <div class="col-lg-4">
-                        Plate No :<br />
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="fa fa-user"></i>
-                            </span>
-                            <input type="text" name="plate_no" class="form-control" readonly>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-xs-12 col-lg-5">
+                             Repair Order No : <br />
+                            <div class="input-group">
+                                <input type="text" name="repair_order_no" class="form-control" placeholder="Repair Order No" readonly>
+                                 <span class="input-group-addon">
+                                    <a href="#" id="link_browse_ro"><b>...</b></a>
+                                </span>
+                            </div>  
+                        </div>
+                        <div class="col-lg-3"></div>
+                        <div class="col-lg-4">
+                            Plate No :<br />
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-user"></i>
+                                </span>
+                                <input type="text" name="plate_no" class="form-control" readonly>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-1">
-                        Customer # :<br />
-                        <input type="text" name="customer_no" class="form-control" readonly>
-                        <input type="text" name="repair_order_id" class="form-control hidden" readonly>
-                    </div>
-                    <div class="col-lg-3">
-                        Customer :<br />
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="fa fa-user"></i>
-                            </span>
-                            <input type="text" name="customer_name" class="form-control" readonly>
+                    <div class="row">
+                        <div class="col-lg-2">
+                            Customer # :<br />
+                            <input type="text" name="customer_no" class="form-control" readonly>
+                            <input type="text" name="repair_order_id" class="form-control hidden" readonly>
+                        </div>
+                        <div class="col-lg-3">
+                            Customer :<br />
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-user"></i>
+                                </span>
+                                <input type="text" name="customer_name" class="form-control" readonly>
+                            </div>
+                        </div>
+                        <div class="col-lg-3"></div>
+                        <div class="col-lg-4">
+                            Date issued : <br />
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </span>
+                                <input type="text" name="date_issued" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date issued" data-error-msg="Please set the date this items are issued!" required>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-lg-4"></div>
-                    <div class="col-lg-4">
-                        Date issued : <br />
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="fa fa-calendar"></i>
-                            </span>
-                            <input type="text" name="date_issued" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date issued" data-error-msg="Please set the date this items are issued!" required>
+                    <div class="row hidden">
+                        <div class="col-xs-12 col-lg-4">
+                            <b class="required" style="display: none;">*</b>  Department : <br />
+                            <select style="display: none;" name="department" id="cbo_departments" data-error-msg="Department is required.">
+                                <option value="0">[ Create New Department ]</option>
+                                <?php foreach($departments as $department){ ?>
+                                <option value="<?php echo $department->department_id; ?>" data-tax-type="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
+                                <?php } ?>
+                            </select>
                         </div>
+                        <div class="col-lg-4"></div>
                     </div>
-                </div>
-                <div class="row hidden">
-                    <div class="col-xs-12 col-lg-4">
-                        <b class="required" style="display: none;">*</b>  Department : <br />
-                        <select style="display: none;" name="department" id="cbo_departments" data-error-msg="Department is required.">
-                            <option value="0">[ Create New Department ]</option>
-                            <?php foreach($departments as $department){ ?>
-                            <option value="<?php echo $department->department_id; ?>" data-tax-type="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
-                            <?php } ?>
-                        </select>
-                    </div>
-                    <div class="col-lg-4"></div>
                 </div>
             </div>
         </form>
-    </div>
-</div>
-    <br />
-    <div>
+
         <div class="row">
-            <div class="container-fluid">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <br />
+            <div class="col-md-12">
+                <br />
+                <div class="hidden">
                     <label class="control-label" style="font-family: Tahoma;"><strong>Enter PLU or Search Item :</strong></label>
-                    <button id="refreshproducts" class="btn-primary btn pull-right" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>  Refresh</button>
-        
                     <div id="custom-templates">
                         <input class="typeahead" id="typeaheadsearch" type="text" placeholder="Enter PLU or Search Item">
-                    </div><br />
-                    <form id="frm_items">
-                        <div class="table-responsive" style="min-height: 200px;padding: 1px;max-height: 400px;overflow: auto;">
-                            <table id="tbl_items" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
-                                <thead class="">
-                                    <tr>
-                                        <th width="5%">Qty</th>
-                                        <th width="10%">UM</th>
-                                        <th width="70%">Item</th>
-                                        <th style="text-align: right;" class="hidden">Unit Price</th>
-                                        <th style="text-align: right; display: none;">Discount</th>
-                                        <th style="display: none;">T.D</th> <!-- total discount -->
-                                        <th style="display: none;">Tax %</th>
-                                        <th style="text-align: right;" class="hidden">Total</th>
-                                        <th style="display: none;">V.I</th> <!-- vat input -->
-                                        <th style="display: none;">N.V</th> <!-- net of vat -->
-                                        <th style="display: none;">Item ID</td><!-- product id -->acc
-                                        <th width="10%"><center>Action</center></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                    </div><br />    
+                </div>
+                <form id="frm_items">
+                    <div class="table-responsive" style="min-height: 200px;padding: 1px;max-height: 400px;overflow: auto;">
+                        <table id="tbl_items" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
+                            <thead class="">
+                                <tr>
+                                    <th width="5%">Qty</th>
+                                    <th width="10%">UM</th>
+                                    <th width="70%">Item</th>
+                                    <th style="text-align: right;" class="hidden">Unit Price</th>
+                                    <th style="text-align: right; display: none;">Discount</th>
+                                    <th style="display: none;">T.D</th> <!-- total discount -->
+                                    <th style="display: none;">Tax %</th>
+                                    <th style="text-align: right;" class="hidden">Total</th>
+                                    <th style="display: none;">V.I</th> <!-- vat input -->
+                                    <th style="display: none;">N.V</th> <!-- net of vat -->
+                                    <th style="display: none;">Item ID</td><!-- product id -->
+                                    <th width="10%"><center>Action</center></th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td colspan="4" style="height: 50px;">&nbsp;</td>
-                                    </tr>
-                                    <tr class="hidden">
-                                        <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount :</strong></td>
-                                        <td align="right" colspan="1" id="td_discount" color="red">0.00</td>
-                                        <td colspan="2" id="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
-                                        <td align="right" colspan="1" id="td_before_tax" color="red">0.00</td>
-                                    </tr>
-                                    <tr class="hidden">
-                                        <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
-                                        <td align="right" colspan="1" id="td_tax" color="red">0.00</td>
-                                        <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
-                                        <td align="right" colspan="1" id="td_after_tax" color="red">0.00</td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                    </form>
-                    <div class="row">
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <label control-label><strong>Remarks :</strong></label>
-                            <div class="col-lg-12" style="padding: 0%;">
-                                <textarea name="remarks" id="remarks" class="form-control" placeholder="Remarks"></textarea>
-                            </div>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4" style="height: 50px;">&nbsp;</td>
+                                </tr>
+                                <tr class="hidden">
+                                    <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount :</strong></td>
+                                    <td align="right" colspan="1" id="td_discount" color="red">0.00</td>
+                                    <td colspan="2" id="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
+                                    <td align="right" colspan="1" id="td_before_tax" color="red">0.00</td>
+                                </tr>
+                                <tr class="hidden">
+                                    <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
+                                    <td align="right" colspan="1" id="td_tax" color="red">0.00</td>
+                                    <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
+                                    <td align="right" colspan="1" id="td_after_tax" color="red">0.00</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </form>
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <label control-label><strong>Remarks :</strong></label>
+                        <div class="col-lg-12" style="padding: 0%;">
+                            <textarea name="remarks" id="remarks" class="form-control" placeholder="Remarks"></textarea>
                         </div>
                     </div>
-                    <div class="row" style="display: none;">
-                        <div class="col-lg-4 col-lg-offset-8">
-                            <div class="table-responsive">
-                                <table id="tbl_issuance_summary" class="table invoice-total" style="font-family: tahoma;">
-                                    <tbody>
-                                        <tr>
-                                            <td>Discount :</td>
-                                            <td align="right">0.00</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Total before Tax :</td>
-                                            <td align="right">0.00</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Tax :</td>
-                                            <td align="right">0.00</td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Total After Tax :</strong></td>
-                                            <td align="right"><b>0.00</b></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                </div>
+                <div class="row" style="display: none;">
+                    <div class="col-lg-4 col-lg-offset-8">
+                        <div class="table-responsive">
+                            <table id="tbl_issuance_summary" class="table invoice-total" style="font-family: tahoma;">
+                                <tbody>
+                                    <tr>
+                                        <td>Discount :</td>
+                                        <td align="right">0.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total before Tax :</td>
+                                        <td align="right">0.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tax :</td>
+                                        <td align="right">0.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Total After Tax :</strong></td>
+                                        <td align="right"><b>0.00</b></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
+</div>
 </div>
 <div class="panel-footer">
     <div class="row">
@@ -731,15 +730,30 @@ $(document).ready(function(){
             }
         });
         
-         products = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1'),
+        //  products = new Bloodhound({
+        //     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1'),
+        //     queryTokenizer: Bloodhound.tokenizers.whitespace,
+        //     local : products
+        // });
+
+        var products = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace(''),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
-            local : products
-        });
+            remote: {
+            cache: false,
+            url: 'Products/transaction/product-lookup/',
+
+             replace: function(url, uriEncodedQuery) {
+                return url + '?description='+uriEncodedQuery+'&type=1';
+             }
+            }
+         });
+
         var _objTypeHead=$('#custom-templates .typeahead');
         _objTypeHead.typeahead(null, {
             name: 'products',
             display: 'description',
+            limit: 10,
             source: products,
             templates: {
                 header: [
@@ -1108,16 +1122,6 @@ $(document).ready(function(){
             //$('.toggle-fullscreen').click();
             clearFields($('#frm_issuances'));
             $('#typeaheadsearch').val('');
-            getproduct().done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                countproducts = data.data.length;
-                    if(countproducts > 100){
-                    showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-                    }
-
-            }).always(function(){  });
             showList(false);
             reComputeTotal();
         });
@@ -1143,19 +1147,7 @@ $(document).ready(function(){
                 showNotification({title:"<b style='color:white;'> Error!</b>",stat:"error",msg:"Cannot Edit: Invoice is already Posted in General Journal."});
             }else{
 
-                getproduct().done(function(data){
-                    products.clear();
-                    products.local = data.data;
-                    products.initialize(true);
-                    countproducts = data.data.length;
-                        if(countproducts > 100){
-                        showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-                        }
-
-                }).always(function(){ });
-                $('#typeaheadsearch').val('');
-
-
+            $('#typeaheadsearch').val('');
             $('input,textarea').each(function(){
                 var _elem=$(this);
                 $.each(data,function(name,value){
@@ -1329,15 +1321,7 @@ $(document).ready(function(){
         $('#btn_cancel').click(function(){
             showList(true);
         });
-        $('#refreshproducts').click(function(){
-            getproduct().done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                    showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-            }).always(function(){
-                });
-         });
+
         $('#btn_save').click(function(){
             if(validateRequiredFields($('#frm_issuances'))){
                 if(_txnMode=="new"){
@@ -1514,20 +1498,6 @@ $(document).ready(function(){
     };
     var reInitializeNumeric=function(){
         $('.numeric').autoNumeric('init');
-    };
-
-    var getproduct=function(){
-       return $.ajax({
-           "dataType":"json",
-           "type":"POST",
-           "url":"products/transaction/list",
-           "beforeSend": function(){
-                countproducts = products.local.length;
-                if(countproducts > 100){
-                    showNotification({title:"Please Wait !",stat:"info",msg:"Refreshing your Products List."});
-                }
-           }
-      });
     };
 
 });

@@ -195,15 +195,9 @@
                 <div class="row">
                     <div class="col-md-12">
                         <label><b class="required">*</b> Customer :</label> <br />
-                        <select name="customer" id="cbo_customers" data-error-msg="Customer is required." required>
+                        <select name="customer" id="cbo_customers" class="form-control" data-error-msg="Customer is required." required>
                             <option value="0">[ Create New Customer ]</option>
-                            <?php $customers = $this->db->where('is_deleted',FALSE); ?>
-                            <?php $customers = $this->db->where('is_active',TRUE);?>
-                            <?php $customers = $this->db->get('customers');?>
-                            <?php foreach($customers->result() as $customer){ ?>
-                            <option value="<?php echo $customer->customer_id; ?>" data-customer_type="<?php echo $customer->customer_type_id; ?>"><?php echo $customer->customer_name; ?></option>
-                            <?php } ?>
-                        </select>                                    
+                        </select>                              
                     </div>
                 </div>                    
             </div>
@@ -264,7 +258,6 @@
             <label class="control-label" style="font-family: Tahoma;">
                 <strong>Enter PLU or Search Item :</strong>
             </label>
-            <button id="refreshproducts" class="btn-primary btn pull-right" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>  Refresh</button>
             <div id="custom-templates">
                 <input class="typeahead" id="typeaheadsearch" type="text" placeholder="Enter PLU or Search Item">
             </div><br />
@@ -804,10 +797,37 @@ $(document).ready(function(){
                 '<i class="fa fa-plus"></i> New Sales Order</button>';
                 $("div.toolbar").html(_btnNew);
         }();
-        _cboCustomers=$("#cbo_customers").select2({
-            placeholder: "Please select customer.",
-            allowClear: false
+            
+        _cboCustomers=$('#cbo_customers').select2({
+          ajax: {
+            url: "Customers/transaction/customer-list",
+            type: "post",
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+              return {
+                searchTerm: params.term, // search term
+                page: params.page
+              };
+            },
+           processResults: function (response, params) {
+            params.page = params.page || 1;
+
+             return {
+                results: response.data,
+                pagination: {
+                    more: (params.page * 10) < response.total
+                }
+             };
+           },
+           cache: true
+          },
+          placeholder: 'Select a customer',
+          minimumInputLength: 1
         });
+
+
+
         /*_lookUpPrice = $('#cboLookupPrice').select2({
             allowClear: false
         });
@@ -889,43 +909,36 @@ $(document).ready(function(){
             }
         });
 
-
-         $('#refreshproducts').click(function(){
-            getproduct().done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                    showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-            }).always(function(){
-                $('#typeaheadsearch').val('');
-                });
-         });
         $('#custom-templates .typeahead').keypress(function(event){
             if (event.keyCode == 13) {
                 $('.tt-suggestion:first').click();
             }
         });
-        /*var products = new Bloodhound({
+
+        // products = new Bloodhound({
+        //     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name'),
+        //     queryTokenizer: Bloodhound.tokenizers.whitespace,
+        //     local : products
+        // });
+
+        var products = new Bloodhound({
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace(''),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             remote: {
-                cache: false,
-                url: 'Sales_order/transaction/list/',
-                replace: function(url, uriEncodedQuery) {
-                    //var prod_type=$('#cbo_prodType').select2('val');
-                    return url + '?description='+uriEncodedQuery;
-                }
+            cache: false,
+            url: 'Products/transaction/product-lookup/',
+
+             replace: function(url, uriEncodedQuery) {
+                return url + '?description='+uriEncodedQuery+'&type=1';
+             }
             }
-        });*/
-        products = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name'),
-            queryTokenizer: Bloodhound.tokenizers.whitespace,
-            local : products
-        });
+         });        
+
         var _objTypeHead=$('#custom-templates .typeahead');
         _objTypeHead.typeahead(null, {
                 name: 'products',
                 display: 'product_code',
+                limit: 10,
                 source: products,
                 templates: {
                     header: [
@@ -1006,28 +1019,28 @@ $(document).ready(function(){
                     product_id = suggestion.parent_id;
                 }
 
-                getInvetory(product_id).done(function(response){
-                    data = response.data[0];
-                    var CurrentQty = data.CurrentQty;
-                    var CurrentQtyTotal = 0;
+                // getInvetory(product_id).done(function(response){
+                //     data = response.data[0];
+                //     var CurrentQty = data.CurrentQty;
+                //     var CurrentQtyTotal = 0;
 
-                    if(suggestion.is_parent == 1){
-                        CurrentQtyTotal = (CurrentQty / suggestion.bulk_conversion_rate);
-                    }
-                    else if(suggestion.is_parent <= 0 && suggestion.parent_id <= 0){
-                        CurrentQtyTotal = CurrentQty;
-                    }
-                    else{
-                        CurrentQtyTotal = (CurrentQty / suggestion.conversion_rate);
-                    }
+                //     if(suggestion.is_parent == 1){
+                //         CurrentQtyTotal = (CurrentQty / suggestion.bulk_conversion_rate);
+                //     }
+                //     else if(suggestion.is_parent <= 0 && suggestion.parent_id <= 0){
+                //         CurrentQtyTotal = CurrentQty;
+                //     }
+                //     else{
+                //         CurrentQtyTotal = (CurrentQty / suggestion.conversion_rate);
+                //     }
 
-                    if(getFloat(CurrentQtyTotal) <= 0){
-                        showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
-                    }else if(getFloat(CurrentQtyTotal) <= getFloat(suggestion.product_warn) ){
-                        showNotification({title: suggestion.product_desc ,stat:"info",msg:"This item has low stock remaining.<br>It might result to negative inventory."});
-                    }
+                //     if(getFloat(CurrentQtyTotal) <= 0){
+                //         showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
+                //     }else if(getFloat(CurrentQtyTotal) <= getFloat(suggestion.product_warn) ){
+                //         showNotification({title: suggestion.product_desc ,stat:"info",msg:"This item has low stock remaining.<br>It might result to negative inventory."});
+                //     }
 
-                });
+                // });
 
 
                 var tax_rate=suggestion.tax_rate; //base on the tax rate set to current product
@@ -1296,17 +1309,7 @@ $(document).ready(function(){
             $('#cbo_department').select2('val', null);
             $('#cbo_customers').select2('val', null);
             $('#cbo_customer_type').select2('val', 0);
-            $('textarea[name="remarks"]').val($('textarea[name="remarks"]').data('default'));
-            getproduct().done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                countproducts = data.data.length;
-                    if(countproducts > 100){
-                    showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-                    }
-
-            }).always(function(){  });            
+            $('textarea[name="remarks"]').val($('textarea[name="remarks"]').data('default'));         
             showList(false);
             $('#cbo_customers').select2('open');
         });
@@ -1323,17 +1326,7 @@ $(document).ready(function(){
             }
 
             //$('.sales_order_title').html('Edit Sales Order');
-                getproduct().done(function(data){
-                    products.clear();
-                    products.local = data.data;
-                    products.initialize(true);
-                    countproducts = data.data.length;
-                        if(countproducts > 100){
-                        showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-                        }
-
-                }).always(function(){ });
-                $('#typeaheadsearch').val('');
+            $('#typeaheadsearch').val('');
 
             $('#span_so_no').html(data.so_no);
             $('input[name="slip_no"]').html(data.so_no);
@@ -1653,20 +1646,6 @@ $(document).ready(function(){
         });
         return stat;
     };
-    var getproduct=function(){
-       return $.ajax({
-           "dataType":"json",
-           "type":"POST",
-           "url":"products/transaction/sales-list",
-           "beforeSend": function(){
-                countproducts = products.local.length;
-                if(countproducts > 100){
-                    showNotification({title:"Please Wait !",stat:"info",msg:"Refreshing your Products List."});
-                }
-           }
-      });
-    };
-
 
     var createCustomer=function(){
         var _data=$('#frm_customer').serializeArray();

@@ -310,7 +310,6 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
                 <label class="control-label" style="font-family: Tahoma;"><strong>Enter PLU or Search Item :</strong></label>
-                <button id="refreshproducts" class="btn-primary btn pull-right" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>  Refresh</button>
                 <div id="custom-templates">
                     <input class="typeahead" id="typeaheadsearch" type="text" placeholder="Enter PLU or Search Item">
                 </div><br />
@@ -878,17 +877,31 @@ $(document).ready(function(){
         });
         _cboSuppliers.select2('val',null);        
 
-        products = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name','unq_id'),
+        // products = new Bloodhound({
+        //     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name','unq_id'),
+        //     queryTokenizer: Bloodhound.tokenizers.whitespace,
+        //     local : products
+        // });
+
+        var products = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace(''),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
-            local : products
-        });
+            remote: {
+            cache: false,
+            url: 'Products/transaction/product-lookup/',
+
+             replace: function(url, uriEncodedQuery) {
+                return url + '?description='+uriEncodedQuery+'&type=1';
+             }
+            }
+         });
 
         var _objTypeHead=$('#custom-templates .typeahead');
 
         _objTypeHead.typeahead(null, {
             name: 'products',
             display: 'description',
+            limit : 10,
             source: products,
             templates: {
                 header: [
@@ -898,7 +911,7 @@ $(document).ready(function(){
                     '<td width="25%" align="left"><b>Description</b></td>'+
                     '<td width="20%" align="left" class="hidden"><b>Expiration</b></td>'+
                     '<td width="10%" align="left" class="hidden"><b>LOT#</b></td>'+
-                    '<td width="10%" align="right"><b>On Hand</b></td>'+
+                    '<td width="10%" align="right" class="hidden"><b>On Hand</b></td>'+
                     '<td width="10%" align="right"><b>SRP</b></td>'+
                     '<td width="10%" align="right" style="padding-right: 1%;"><b>Cost Price</b></td>'+
                     '</tr></table>'
@@ -909,9 +922,9 @@ $(document).ready(function(){
                     '<td width="25%" align="left">{{product_desc}}</td>'+
                     '<td width="20%" align="left" class="hidden">{{exp_date}}</td>'+
                     '<td width="10%" align="left" class="hidden">{{batch_no}}</td>'+
-                    '<td width="10%" align="right">{{on_hand_per_batch}}</td>'+
-                    '<td width="10%" align="right">{{srp}}</td>'+
-                    '<td width="10%" align="right" style="padding-right: 1%;">{{srp_cost}}</td>'+
+                    '<td width="10%" align="right" class="hidden">{{on_hand_per_batch}}</td>'+
+                    '<td width="10%" align="right">{{sale_price}}</td>'+
+                    '<td width="10%" align="right" style="padding-right: 1%;">{{purchase_cost}}</td>'+
                     '</tr></table>')
 
             }
@@ -1238,22 +1251,8 @@ $(document).ready(function(){
 
         });
 
-         $('#refreshproducts').click(function(){
-            getproduct().done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                    showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-                    $('#typeaheadsearch').val('');
-            }).always(function(){
-                $('#typeaheadsearch').val('');
-            });
-            $('#typeaheadsearch').val('');
-         });
-
 
          $('#cbo_adjustments').on("change", function(){
-            $('#refreshproducts').trigger('click');
             $('#typeaheadsearch').val('');
          });
 
@@ -1340,19 +1339,6 @@ $(document).ready(function(){
             $("#dr_invoice_no").prop('required',false);
             $('#note').text('');
             $('#dr_note').text('');
-
-            getproduct().done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                countproducts = data.data.length;
-                    if(countproducts > 100){
-                    showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-                    }
-
-            }).always(function(){
-                $('#typeaheadsearch').val('');
-            });
 
             showList(false);
             reInitializeNumeric();
@@ -1588,18 +1574,6 @@ $(document).ready(function(){
             $('#cbo_departments').select2('val',data.department_id);
             $('#cbo_customers').select2('val',data.customer_id);
             $('#cbo_suppliers').select2('val',data.supplier_id);
-
-            // getproduct(getAdjustmentStatus()).done(function(data){
-            //     products.clear();
-            //     products.local = data.data;
-            //     products.initialize(true);
-            //     countproducts = data.data.length;
-            //     // if(countproducts > 100){
-            //     // showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-            //     // }
-
-            // }).always(function(){ $('#typeaheadsearch').val(''); });
-
 
             $.ajax({
                 url : 'Adjustments/transaction/items/'+data.adjustment_id,
@@ -1973,20 +1947,6 @@ $(document).ready(function(){
         });
 
         return stat;
-    };
-
-    var getproduct=function(type){
-       return $.ajax({
-           "dataType":"json",
-           "type":"POST",
-           "url":"products/transaction/list",
-           "beforeSend": function(){
-                countproducts = products.local.length;
-                if(countproducts > 100){
-                    showNotification({title:"Please Wait !",stat:"info",msg:"Refreshing your Products List."});
-                }
-           }
-      });
     };
 
     var createAdjustment=function(){

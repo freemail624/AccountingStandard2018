@@ -62,7 +62,6 @@ class Purchase_monitoring extends CORE_Controller
         $data['item_types'] = $this->Item_type_model->get_list(array('item_types.is_deleted'=>FALSE));
         $data['accounts'] = $this->Account_title_model->get_list('is_active= TRUE AND is_deleted = FALSE','account_id,account_title');
         $data['tax_types']=$this->Tax_model->get_list(array('tax_types.is_deleted'=>FALSE));
-        $data['products']=$this->Products_model->get_list(array('products.is_deleted'=>FALSE));
 
         (in_array('2-7',$this->session->user_rights)? 
         $this->load->view('purchase_monitoring_view', $data)

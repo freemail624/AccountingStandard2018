@@ -2449,7 +2449,20 @@ Product Pick List
         return $this->db->query($sql)->result();
     }
 
-    function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=null,$category_id=null,$item_type_id=null,$pick_list=null,$depid=null,$account_cii,$account_dis=null,$CurrentQtyCount=null,$is_parent=null,$is_nonsalable=null,
+    function product_list(
+        $account,
+        $as_of_date=null,
+        $product_id=null,
+        $supplier_id=null,
+        $category_id=null,
+        $item_type_id=null,
+        $pick_list=null,
+        $depid=null,
+        $account_cii,
+        $account_dis=null,
+        $CurrentQtyCount=null,
+        $is_parent=null,
+        $is_nonsalable=null,
         $search_value=null,
         $length=null,
         $start=null,
@@ -2917,8 +2930,9 @@ Product Pick List
         return $this->db->query($sql)->num_rows();
     }
 
-    function get_all_products($item_type_id=0,
+    function get_all_products(
         $search_value=null,
+        $item_type_id=0,
         $length=0,
         $start=0,
         $order=null,
@@ -2927,6 +2941,14 @@ Product Pick List
 
         $sql="SELECT 
             p.*,
+            IFNULL(tt.tax_rate,0) as tax_rate,
+            FORMAT(p.sale_price,4) as sale_price,
+            FORMAT(p.dealer_price,4) as dealer_price,
+            FORMAT(p.distributor_price,4) as distributor_price,
+            FORMAT(p.discounted_price,4) as discounted_price,
+            FORMAT(p.public_price,4) as public_price,
+            FORMAT(p.purchase_cost,4) as purchase_cost,
+            FORMAT(p.purchase_cost,4)as cost,
             s.supplier_name,
             u.unit_name as product_unit_name,
             c.category_name,
@@ -2937,15 +2959,17 @@ Product Pick List
             LEFT JOIN units u ON u.unit_id = p.parent_unit_id
             LEFT JOIN categories c ON c.category_id = p.category_id
             LEFT JOIN bins ON bins.bin_id= p.bin_id
+            LEFT JOIN tax_types tt ON tt.tax_type_id=p.tax_type_id
             
             WHERE p.is_deleted = FALSE AND 
                 p.is_active = TRUE
 
             ".($item_type_id==0?"":" AND p.item_type_id='".$item_type_id."'")."
-            ".($search_value==null?"":" AND (p.product_code='".$search_value."' OR p.product_desc='".$search_value."')")."
+            ".($search_value==null?"":" AND (p.product_code LIKE '".$search_value."%' OR p.product_desc LIKE '%".$search_value."%' OR p.product_desc1 LIKE '%".$search_value."%')")."
             ".($order_column==null?" ORDER BY p.product_desc ASC ":" ORDER BY ".$order_column." ".$order_dir."")."
-            ".($length==null?"":" LIMIT ".$length." OFFSET ".$start." ")."
-                
+            ".($length==null?"":" LIMIT ".$length." ")."
+            ".($start==null || $start==0?"":" OFFSET ".$start." ")."
+            
         ";
         return $this->db->query($sql)->result();
     }
