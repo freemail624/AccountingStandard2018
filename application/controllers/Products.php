@@ -91,17 +91,37 @@ class Products extends CORE_Controller
             case 'list':
                 $m_products = $this->Products_model;
 
-                $search_value = $_GET["search"]["value"];
-                $length = $_GET['length'];
-                $start = $_GET['start'];
-                
-                $order = $_GET["order"];
-                $order_column = $_GET['order']['0']['column'];
-                $order_dir = $_GET['order']['0']['dir'];
+                $draw = $this->input->post('draw', TRUE);
+                $search =  $this->input->post('search', TRUE);
+                $length = $this->input->post('length', TRUE);
+                $start = $this->input->post('start', TRUE);
+                $order = $this->input->post('order', TRUE);
+                $search_value = $search['value'];
+                $column = $order[0]['column'];
+                $order_dir = $order[0]['dir'];
 
                 $item_type_id=$this->input->get('item_type_id');
 
-                $data=$m_products->product_list(1,null,null,null,null,$item_type_id,null,null,1,null,null,null,null,
+                $valid_columns = array(
+                    0=>'details-control',
+                    1=>'product_code',
+                    2=>'product_desc',
+                    3=>'product_unit_name',
+                    4=>'category_name',
+                    5=>'bin_code',
+                    6=>'purchase_cost',
+                    7=>'sale_price',
+                    8=>'is_parent',
+                    9=>'actions'
+                );
+
+                $order_column = $valid_columns[$column];
+
+                if($column == 0 OR $column == 8 OR $column == 9){
+                    $order_column = null;
+                }
+
+                $data=$m_products->get_all_products($item_type_id,
                     $search_value,
                     $length,
                     $start,
@@ -111,13 +131,17 @@ class Products extends CORE_Controller
                 );
 
                 $response = array(
-                    "draw"            => intval($_GET["draw"]),
-                    "recordsTotal"    => $m_products->get_all_data(),
-                    "recordsFiltered" => count($data),
+                    "draw"            => intval($draw),
+                    "recordsTotal"    => $m_products->get_all_data($item_type_id),
+                    "recordsFiltered" => $m_products->get_all_data($item_type_id),
                     "data"            => $data
                 );
 
+                // $m_products->get_all_data(),
+
                 echo json_encode($response);
+                exit();
+
                 break;
 
             case 'sales-list':

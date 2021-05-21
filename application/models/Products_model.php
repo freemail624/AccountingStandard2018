@@ -2449,12 +2449,6 @@ Product Pick List
         return $this->db->query($sql)->result();
     }
 
-    function get_all_data()
-    {
-        $sql="SELECT * FROM products WHERE is_deleted = FALSE AND is_active = TRUE";
-        return $this->db->query($sql)->num_rows();
-    }
-
     function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=null,$category_id=null,$item_type_id=null,$pick_list=null,$depid=null,$account_cii,$account_dis=null,$CurrentQtyCount=null,$is_parent=null,$is_nonsalable=null,
         $search_value=null,
         $length=null,
@@ -2891,37 +2885,70 @@ Product Pick List
                         OR core.product_desc='".$search_value."')
                 ")."
 
+                ".($order_column==null?"
+                    ORDER BY core.product_desc ASC
+                ":" 
+                    ORDER BY ".$order_column." ".$order_dir."
+                ")."
 
 
                 ) as main ) as productmain
                 ".($pick_list==TRUE?" WHERE productmain.total_qty_bulk < productmain.product_warn  ":" ")."
                 ".($CurrentQtyCount==null?" ":" WHERE productmain.CurrentQty ".$CurrentQtyCount)."
 
-                LIMIT 10
-
-
-
+                 ".($length==null?"":" 
+                     LIMIT ".$length." OFFSET ".$start."
+                 ")."
 
 
     ";
 
-                // ".($length==null OR $length==-1 ?"":" 
-                //     LIMIT '".$length."' OFFSET '".$start."'
-                // ")."
-
-/*                ".($order==null?"
-                    ORDER BY core.product_desc ASC
-                ":" 
-                    ORDER BY '".$order_column."' '".$order_dir."'
-                ")."
-*/
-
- return $this->db->query($sql)->result();
 
 
-}
+     return $this->db->query($sql)->result();
 
 
+    }
+
+    function get_all_data($item_type_id=0)
+    {
+        $sql="SELECT * FROM products WHERE is_deleted = FALSE AND is_active = TRUE
+        ".($item_type_id==null || $item_type_id==0?"":" AND item_type_id='".$item_type_id."'")."";
+        return $this->db->query($sql)->num_rows();
+    }
+
+    function get_all_products($item_type_id=0,
+        $search_value=null,
+        $length=0,
+        $start=0,
+        $order=null,
+        $order_column=null,
+        $order_dir=null){
+
+        $sql="SELECT 
+            p.*,
+            s.supplier_name,
+            u.unit_name as product_unit_name,
+            c.category_name,
+            bins.bin_code
+        FROM
+            products p
+            LEFT JOIN suppliers s ON s.supplier_id = p.supplier_id
+            LEFT JOIN units u ON u.unit_id = p.parent_unit_id
+            LEFT JOIN categories c ON c.category_id = p.category_id
+            LEFT JOIN bins ON bins.bin_id= p.bin_id
+            
+            WHERE p.is_deleted = FALSE AND 
+                p.is_active = TRUE
+
+            ".($item_type_id==null || $item_type_id==0?"":" AND p.item_type_id='".$item_type_id."'")."
+            ".($search_value==null?"":" AND (p.product_code='".$search_value."' OR p.product_desc='".$search_value."')")."
+            ".($order_column==null?" ORDER BY p.product_desc ASC ":" ORDER BY ".$order_column." ".$order_dir."")."
+            ".($length==null?"":" LIMIT ".$length." OFFSET ".$start." ")."
+                
+        ";
+        return $this->db->query($sql)->result();
+    }
 
 
 

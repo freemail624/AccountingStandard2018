@@ -1304,22 +1304,23 @@ $(document).ready(function(){
         });
 
         dt=$('#tbl_products').DataTable({
-            "dom": '<"toolbar">frtip',
+            "destroy": true,
+            "processing": true,
             "serverSide": true,
-            "order": [[ 1, "asc" ]],
+            "bLengthChange": false,
             "ajax" : { 
-                "url":"Products/transaction/list", 
-                "bDestroy": true,             
-                "data": function ( d ) { 
-                        return $.extend( {}, d, { 
-                            "item_type_id":_cboItemTypeTbl.select2('val')
-                        }); 
-                    } 
-            },              
-            oLanguage: { 
-                    sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>' 
-            }, 
-            processing : true,                
+                "url":"<?php echo base_url('Products/transaction/list') ?>", 
+                 "dataType": "json",
+                 "type": "POST",  
+                 "data": function ( d ){
+                    return $.extend( {}, d, {
+                        "item_type_id":_cboItemTypeTbl.select2('val')
+                    });
+                 }
+            },     
+            oLanguage:{
+                sProcessing: '<center><br/><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+            },
             "columns": [
                 {
                     "targets": [0],
@@ -1345,7 +1346,8 @@ $(document).ready(function(){
                         return  accounting.formatNumber(parseFloat(data),2);
                     }                    
                 },                
-                {   visible:false,targets:[8],data: null,
+                {   visible:false,
+                    "orderable":false,targets:[8],data: null, 
                     render: function (data, type, full, meta){
                         var _attribute='';
                         //console.log(data.is_email_sent);
@@ -1361,6 +1363,7 @@ $(document).ready(function(){
                 },
                 {
                     targets:[9],
+                    "orderable": false,
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"   data-toggle="tooltip" data-placement="top" title="Edit" style="margin-left:-5px;"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info"  data-toggle="tooltip" data-placement="top" title="Move to trash" style="margin-right:-5px;"><i class="fa fa-trash-o"></i> </button>';
@@ -2172,42 +2175,43 @@ $(document).ready(function(){
         }        
 
         $('#btn_new').click(function(){
-            _txnMode="new";
+            // _txnMode="new";
 
-            clearFields($('#frm_product'));
-            _cboCategory.select2('val',null);
-            _cboSupplier.select2('val',null);
-            _cboBrands.select2('val',null);
-            _cboBins.select2('val',0);
-            _cboTax.select2('val',null);
-            _cboInventory.select2('val',null);
-            _cboMeasurement.select2('val',null);
-            _cboBulkUnitId.select2('val',null);
-            _cboParentId.select2('val',null);
-            // _child_unit_id.select2('val',null);
-            _cboCredit.select2('val',0);
-            _cboDebit.select2('val',0);
-            _cboCostofSale.select2('val',0);
-            _cboSalesReturn.select2('val',0);
-            _cboSalesDiscount.select2('val',0);
-            _cboPurchaseReturn.select2('val',0);
-            _cboPurchaseDiscount.select2('val',0);
-            // _cboPrimaryUnit.select2('val',1);
-            $('#child_unit_desc').prop('required',false);
-            $('#child_unit_id').prop('required',false);
-            $('#is_tax_exempt').attr('checked', false);
-            $('#is_bulk').attr('checked', false);
-            $('#is_nonsalable').attr('checked', false);
-            $('#is_basyo').attr('checked', false);
+            // clearFields($('#frm_product'));
+            // _cboCategory.select2('val',null);
+            // _cboSupplier.select2('val',null);
+            // _cboBrands.select2('val',null);
+            // _cboBins.select2('val',0);
+            // _cboTax.select2('val',null);
+            // _cboInventory.select2('val',null);
+            // _cboMeasurement.select2('val',null);
+            // _cboBulkUnitId.select2('val',null);
+            // _cboParentId.select2('val',null);
+            // // _child_unit_id.select2('val',null);
+            // _cboCredit.select2('val',0);
+            // _cboDebit.select2('val',0);
+            // _cboCostofSale.select2('val',0);
+            // _cboSalesReturn.select2('val',0);
+            // _cboSalesDiscount.select2('val',0);
+            // _cboPurchaseReturn.select2('val',0);
+            // _cboPurchaseDiscount.select2('val',0);
+            // // _cboPrimaryUnit.select2('val',1);
+            // $('#child_unit_desc').prop('required',false);
+            // $('#child_unit_id').prop('required',false);
+            // $('#is_tax_exempt').attr('checked', false);
+            // $('#is_bulk').attr('checked', false);
+            // $('#is_nonsalable').attr('checked', false);
+            // $('#is_basyo').attr('checked', false);
 
-            if($('#product_costing').val()== 1){
-                $('.product_costing').prop('readonly',false);
-            }else if($('#product_costing').val()== 0){
-                $('.product_costing').prop('readonly',true);
-            }
+            // if($('#product_costing').val()== 1){
+            //     $('.product_costing').prop('readonly',false);
+            // }else if($('#product_costing').val()== 0){
+            //     $('.product_costing').prop('readonly',true);
+            // }
 
-            showPanelActive('entry');
-            setParentPanel(false);
+            // showPanelActive('entry');
+            // setParentPanel(false);
+            alert();
         });
 
         $('#is_parent').on("change", function () {
