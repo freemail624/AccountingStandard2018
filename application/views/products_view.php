@@ -439,11 +439,11 @@
                                                                     <label><b class="required elem_child"></b> Parent :</label>
                                                                     <select class="form-control" name="parent_id" id="parent_id" data-error-msg="Parent Product is required.">
                                                                         <option value="0">None</option>
-                                                                        <?php foreach($products as $product){ ?>
-                                                                            <option value="<?php echo $product->product_id; ?>">
-                                                                                <?php echo $product->product_desc; ?>
+<!--                                                                         <?php //foreach($products as $product){ ?>
+                                                                            <option value="<?php //echo $product->product_id; ?>">
+                                                                                <?php //echo $product->product_desc; ?>
                                                                             </option>
-                                                                        <?php }?>
+                                                                        <?php //}?> -->
                                                                     </select>
                                                                 </div>
                                                                 <div class="hidden form-group" style="margin-bottom:0px;">
@@ -1304,7 +1304,6 @@ $(document).ready(function(){
         });
 
         dt=$('#tbl_products').DataTable({
-            "destroy": true,
             "processing": true,
             "serverSide": true,
             "bLengthChange": false,
@@ -1392,22 +1391,6 @@ $(document).ready(function(){
 
         });
         $("form").attr('autocomplete', 'off');
-        var showPanelActive = function(p){
-            if (p == 'list'){
-                $('#product_list_panel').show();
-                $('#product_entry_panel').hide();
-                $('#btn_save_product').hide();
-                $('#btn_cancel_product').hide();
-            }
-            else if (p == 'entry'){
-                $('#product_list_panel').hide();
-                $('#product_entry_panel').show();
-                $('#btn_save_product').show();
-                $('#btn_cancel_product').show();
-            }
-        }
-        
-        showPanelActive('list');  
 
         $('.numeric').autoNumeric('init',{mDec:2});
         $('.numeric5').autoNumeric('init',{mDec:5});
@@ -2175,43 +2158,42 @@ $(document).ready(function(){
         }        
 
         $('#btn_new').click(function(){
-            // _txnMode="new";
+            _txnMode="new";
 
-            // clearFields($('#frm_product'));
-            // _cboCategory.select2('val',null);
-            // _cboSupplier.select2('val',null);
-            // _cboBrands.select2('val',null);
-            // _cboBins.select2('val',0);
-            // _cboTax.select2('val',null);
-            // _cboInventory.select2('val',null);
-            // _cboMeasurement.select2('val',null);
-            // _cboBulkUnitId.select2('val',null);
-            // _cboParentId.select2('val',null);
-            // // _child_unit_id.select2('val',null);
-            // _cboCredit.select2('val',0);
-            // _cboDebit.select2('val',0);
-            // _cboCostofSale.select2('val',0);
-            // _cboSalesReturn.select2('val',0);
-            // _cboSalesDiscount.select2('val',0);
-            // _cboPurchaseReturn.select2('val',0);
-            // _cboPurchaseDiscount.select2('val',0);
-            // // _cboPrimaryUnit.select2('val',1);
-            // $('#child_unit_desc').prop('required',false);
-            // $('#child_unit_id').prop('required',false);
-            // $('#is_tax_exempt').attr('checked', false);
-            // $('#is_bulk').attr('checked', false);
-            // $('#is_nonsalable').attr('checked', false);
-            // $('#is_basyo').attr('checked', false);
+            clearFields($('#frm_product'));
+            _cboCategory.select2('val',null);
+            _cboSupplier.select2('val',null);
+            _cboBrands.select2('val',null);
+            _cboBins.select2('val',0);
+            _cboTax.select2('val',null);
+            _cboInventory.select2('val',null);
+            _cboMeasurement.select2('val',null);
+            _cboBulkUnitId.select2('val',null);
+            _cboParentId.select2('val',null);
+            // _child_unit_id.select2('val',null);
+            _cboCredit.select2('val',0);
+            _cboDebit.select2('val',0);
+            _cboCostofSale.select2('val',0);
+            _cboSalesReturn.select2('val',0);
+            _cboSalesDiscount.select2('val',0);
+            _cboPurchaseReturn.select2('val',0);
+            _cboPurchaseDiscount.select2('val',0);
+            // _cboPrimaryUnit.select2('val',1);
+            $('#child_unit_desc').prop('required',false);
+            $('#child_unit_id').prop('required',false);
+            $('#is_tax_exempt').attr('checked', false);
+            $('#is_bulk').attr('checked', false);
+            $('#is_nonsalable').attr('checked', false);
+            $('#is_basyo').attr('checked', false);
 
-            // if($('#product_costing').val()== 1){
-            //     $('.product_costing').prop('readonly',false);
-            // }else if($('#product_costing').val()== 0){
-            //     $('.product_costing').prop('readonly',true);
-            // }
+            if($('#product_costing').val()== 1){
+                $('.product_costing').prop('readonly',false);
+            }else if($('#product_costing').val()== 0){
+                $('.product_costing').prop('readonly',true);
+            }
 
-            // showPanelActive('entry');
-            // setParentPanel(false);
-            alert();
+            showPanelActive('entry');
+            setParentPanel(false);
         });
 
         $('#is_parent').on("change", function () {

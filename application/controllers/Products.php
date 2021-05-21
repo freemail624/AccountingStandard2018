@@ -62,7 +62,7 @@ class Products extends CORE_Controller
         $data['brands']= $this->Brands_model->get_brand_list();
         $data['bins']= $this->Bins_model->get_bin_list();
 
-        $data['products']=$this->Products_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
+        // $data['products']=$this->Products_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
 
         // (in_array('5-1',$this->session->user_rights)? 
         // $this->load->view('products_view', $data)
@@ -100,7 +100,7 @@ class Products extends CORE_Controller
                 $column = $order[0]['column'];
                 $order_dir = $order[0]['dir'];
 
-                $item_type_id=$this->input->get('item_type_id');
+                $item_type_id=$this->input->post('item_type_id', TRUE);
 
                 $valid_columns = array(
                     0=>'details-control',
@@ -132,12 +132,10 @@ class Products extends CORE_Controller
 
                 $response = array(
                     "draw"            => intval($draw),
-                    "recordsTotal"    => $m_products->get_all_data($item_type_id),
-                    "recordsFiltered" => $m_products->get_all_data($item_type_id),
+                    "recordsTotal"    => count($data) == 0 ? null : $m_products->get_all_data($item_type_id),
+                    "recordsFiltered" => count($data) == 0 ? null : $m_products->get_all_data($item_type_id),
                     "data"            => $data
                 );
-
-                // $m_products->get_all_data(),
 
                 echo json_encode($response);
                 exit();

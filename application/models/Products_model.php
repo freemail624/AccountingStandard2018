@@ -2913,7 +2913,7 @@ Product Pick List
     function get_all_data($item_type_id=0)
     {
         $sql="SELECT * FROM products WHERE is_deleted = FALSE AND is_active = TRUE
-        ".($item_type_id==null || $item_type_id==0?"":" AND item_type_id='".$item_type_id."'")."";
+        ".($item_type_id==0?"":" AND item_type_id='".$item_type_id."'")."";
         return $this->db->query($sql)->num_rows();
     }
 
@@ -2941,7 +2941,7 @@ Product Pick List
             WHERE p.is_deleted = FALSE AND 
                 p.is_active = TRUE
 
-            ".($item_type_id==null || $item_type_id==0?"":" AND p.item_type_id='".$item_type_id."'")."
+            ".($item_type_id==0?"":" AND p.item_type_id='".$item_type_id."'")."
             ".($search_value==null?"":" AND (p.product_code='".$search_value."' OR p.product_desc='".$search_value."')")."
             ".($order_column==null?" ORDER BY p.product_desc ASC ":" ORDER BY ".$order_column." ".$order_dir."")."
             ".($length==null?"":" LIMIT ".$length." OFFSET ".$start." ")."
