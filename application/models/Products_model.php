@@ -2920,7 +2920,6 @@ Product Pick List
 
      return $this->db->query($sql)->result();
 
-
     }
 
     function get_all_data($item_type_id=0)
@@ -2967,8 +2966,8 @@ Product Pick List
             ".($item_type_id==0?"":" AND p.item_type_id='".$item_type_id."'")."
             ".($search_value==null?"":" AND (p.product_code LIKE '".$search_value."%' OR p.product_desc LIKE '%".$search_value."%' OR p.product_desc1 LIKE '%".$search_value."%')")."
             ".($order_column==null?" ORDER BY p.product_desc ASC ":" ORDER BY ".$order_column." ".$order_dir."")."
-            ".($length==null?"":" LIMIT ".$length." ")."
-            ".($start==null || $start==0?"":" OFFSET ".$start." ")."
+            ".($length==null?"":" LIMIT ".$length." OFFSET ".$start."")."
+
             
         ";
         return $this->db->query($sql)->result();

@@ -150,26 +150,37 @@ $(document).ready(function(){
 
         _cboProducts=$('#product_id').select2({
           ajax: {
-            url: "Products/transaction/product-lookup-list",
+            url: "Products/transaction/list",
             type: "post",
             dataType: 'json',
-            delay: 250,
-            data: function (params) {
-              return {
-                searchTerm: params.term, // search term
-                page: params.page
-              };
+            delay: 500,
+            data: function(params) {
+                return {
+                    search: { 
+                        value: params.term
+                    },
+                    start: ((params.page || 1) * 10) - 10,
+                    length: 10,
+                    order: [{
+                        column: 2,
+                        dir: 'asc'
+                    }]
+                };
             },
-           processResults: function (response, params) {
-            params.page = params.page || 1;
-
-             return {
-                results: response.data,
-                pagination: {
-                    more: (params.page * 10) < response.total
-                }
-             };
-           },
+            processResults: function(response) {
+                const { data, recordsFiltered } = response
+                return {
+                    results: data.map(res => {
+                        return {
+                            id: res.product_id,
+                            text: res.product_code + ' - ' + res.product_desc
+                        }
+                    }),
+                    pagination: {
+                        more: data.recordsFiltered > data.length 
+                    }
+                };
+            },
            cache: true
           },
           placeholder: 'Select a product',
@@ -334,7 +345,7 @@ $(document).ready(function(){
                                                 <div class="col-sm-8" >
                                                     Product :
                                                     <select name="category_id" id="product_id" data-error-msg="Product is required." required>
-                                                        <option value="">All Products</option>
+                                                        <option value="0">All Products</option>
                                                     </select>
 
                                                 </div>

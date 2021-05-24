@@ -91,6 +91,7 @@ class Products extends CORE_Controller
             case 'list':
                 $m_products = $this->Products_model;
 
+                $item_type_id=$this->input->post('item_type_id', TRUE);
                 $draw = $this->input->post('draw', TRUE);
                 $search =  $this->input->post('search', TRUE);
                 $length = $this->input->post('length', TRUE);
@@ -100,7 +101,6 @@ class Products extends CORE_Controller
                 $column = $order[0]['column'];
                 $order_dir = $order[0]['dir'];
 
-                $item_type_id=$this->input->post('item_type_id', TRUE);
 
                 $valid_columns = array(
                     0=>'details-control',
@@ -153,27 +153,7 @@ class Products extends CORE_Controller
                 $data=$m_products->get_all_products($search_value,$item_type_id,$length); 
                 echo json_encode($data);
                 break;
-
-            case 'product-lookup-list':
-                $m_products=$this->Products_model;
-                $searchTerm = $this->input->post('searchTerm', TRUE);
-                $length = $this->input->post('length', TRUE);
-                $products=$m_products->get_all_products($searchTerm,1); 
-
-                $data = array();
-
-                foreach($products as $product){
-                    $data[] = array(
-                        "id"=>$product->product_id, 
-                        "text"=>$product->product_code.' - '.$product->product_desc
-                    );
-                }
-                $response['data'] = $data;
-                $response['total'] = $m_products->get_all_data(1);
-
-                echo json_encode($response);
-                break;
-
+                
             case 'sales-list':
                 $m_products = $this->Products_model;
                 $response['data']=$m_products->product_list(1,null,null,null,null,null,null,null,1,null,null,null,1);

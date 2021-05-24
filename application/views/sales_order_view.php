@@ -1342,9 +1342,13 @@ $(document).ready(function(){
             $('#txt_overall_discount').val(accounting.formatNumber($('#txt_overall_discount').val(),2));
             $('#cbo_departments').select2('val',data.department_id);
             $('#cbo_department').select2('val',data.department_id);
-            $('#cbo_customers').select2('val',data.customer_id);
             $('#cbo_salesperson').select2('val',data.salesperson_id);
             $('#cbo_customer_type').select2('val',data.customer_type_id);
+
+            $('#cbo_customers').append('<option value="'+data.customer_id+'" selected data-customer_type = "'+data.customer_type_id+'">'+ data.customer_name + '</option>');
+            
+            $('#cbo_customers').select2('val',data.customer_id);
+
             $.ajax({
                 url : 'Sales_order/transaction/items/'+data.sales_order_id,
                 type : "GET",
@@ -1359,6 +1363,7 @@ $(document).ready(function(){
                     var rows=response.data;
                     $('#tbl_items > tbody').html('');
                       a=0;
+
                     $.each(rows,function(i,value){
                         _customer_type_ = _cboCustomerType.val();
                         var temp_sale_price=0.00;
@@ -1423,6 +1428,8 @@ $(document).ready(function(){
                         _line_unit.select2('val',value.unit_id);
                         a++;
                     });
+
+
                     reComputeTotal();
                     changetxn = 'active';
                 }

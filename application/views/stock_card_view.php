@@ -224,9 +224,8 @@
             var _cboCat;
             var initializeControls = function() {
                 _cboProduct = $('#cbo_product').select2({
-                    placeholder: 'Select Product ',
                     ajax: {
-                        url: "<?php echo base_url('Products/transaction/list') ?>",
+                        url: "Products/transaction/list",
                         type: "post",
                         dataType: 'json',
                         delay: 500,
@@ -258,7 +257,9 @@
                             };
                         },
                         cache: true
-                    }
+                    },
+                    placeholder: 'Select Product ',
+                    minimumInputLength: 1
                 });
 
                 // _cboCat = $('#cbo_cat').select2({

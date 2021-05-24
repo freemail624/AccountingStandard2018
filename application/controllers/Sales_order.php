@@ -196,8 +196,6 @@ class Sales_order extends CORE_Controller
                     ),
                     'sales_order_items.sales_order_item_id DESC'
                 );
-
-
                 echo json_encode($response);
                 break;
 
