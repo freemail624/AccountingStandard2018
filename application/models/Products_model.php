@@ -2922,10 +2922,12 @@ Product Pick List
 
     }
 
-    function get_all_data($item_type_id=0)
+    function get_all_data($item_type_id=0,$search_value=null)
     {
-        $sql="SELECT * FROM products WHERE is_deleted = FALSE AND is_active = TRUE
-        ".($item_type_id==0?"":" AND item_type_id='".$item_type_id."'")."";
+        $sql="SELECT p.* FROM products p WHERE p.is_deleted = FALSE AND p.is_active = TRUE
+        ".($item_type_id==0?"":" AND p.item_type_id='".$item_type_id."'")."
+        ".($search_value==null?"":" AND (p.product_code LIKE '".$search_value."%' OR p.product_desc LIKE '%".$search_value."%' OR p.product_desc1 LIKE '%".$search_value."%')")."
+        ";
         return $this->db->query($sql)->num_rows();
     }
 

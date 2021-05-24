@@ -29,12 +29,6 @@ class Customers_model extends CORE_Model{
         $this->db->query($sql);
     }
 
-    function get_all_data()
-    {
-        $sql="SELECT * FROM customers WHERE is_deleted = FALSE AND is_active = TRUE";
-        return $this->db->query($sql)->num_rows();
-    }
-
     function get_customer($customer_name,$customer_id=null){
         $sql="SELECT * FROM customers 
             WHERE is_deleted = FALSE AND 
@@ -42,13 +36,31 @@ class Customers_model extends CORE_Model{
             ".($customer_id==null?"":" AND customer_id!=$customer_id")."";
         return $this->db->query($sql)->result();
     }
+    
+    function get_all_data($search_value=null)
+    {
+        $sql="SELECT c.* FROM customers c WHERE c.is_deleted = FALSE AND c.is_active = TRUE
 
+            ".($search_value==null?"":" AND (c.customer_no LIKE '".$search_value."%' OR c.customer_name LIKE '%".$search_value."%' OR c.contact_name LIKE '%".$search_value."%')")."
+        ";
+        return $this->db->query($sql)->num_rows();
+    }
 
-    function get_customers($customer_name=null){
-        $sql="SELECT * FROM customers 
-            WHERE is_deleted = FALSE 
-            ".($customer_name==null?"":" AND customer_name LIKE '%".$customer_name."%'")."
-            LIMIT 5
+    function get_customers( 
+            $search_value=null,
+            $length=null,
+            $start=0,
+            $order_column=null,
+            $order_dir=null){
+
+        $sql="SELECT c.* FROM customers c
+            WHERE c.is_deleted = FALSE AND c.is_active = TRUE
+
+            ".($search_value==null?"":" AND (c.customer_no LIKE '".$search_value."%' OR c.customer_name LIKE '%".$search_value."%' OR c.contact_name LIKE '%".$search_value."%')")."
+
+            ".($order_column==null?" ORDER BY c.customer_name ASC ":" ORDER BY ".$order_column." ".$order_dir."")."
+            ".($length==null?"":" LIMIT ".$length."")."
+            ".($start==0?"":" OFFSET ".$start."")."
             ";
         return $this->db->query($sql)->result();
     }

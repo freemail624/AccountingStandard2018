@@ -137,6 +137,18 @@
     .breadcrumb li a {
         text-decoration: none;
     }
+
+    div.dataTables_processing{  
+        position: absolute!important;  
+        top: 0%!important;  
+        right: -45%!important;  
+        left: auto!important;  
+        width: 100%!important;  
+        height: 40px!important;  
+        background: none!important;  
+        background-color: transparent!important;  
+    }   
+
 </style>
 
 <link rel="stylesheet" type="text/css" href="assets/css/light-theme.css">

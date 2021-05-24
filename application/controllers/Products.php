@@ -132,11 +132,12 @@ class Products extends CORE_Controller
                 ); 
 
                 $recordsTotal = $m_products->get_all_data($item_type_id);
+                $recordsFiltered = $m_products->get_all_data($item_type_id,$search_value);
 
                 $response = array(
                     "draw"            => intval($draw),
                     "recordsTotal"    => $recordsTotal,
-                    "recordsFiltered" => $search_value == null || $search_value == "" ? $recordsTotal : count($data) ,
+                    "recordsFiltered" => $recordsFiltered,
                     "data"            => $data
                 );
 

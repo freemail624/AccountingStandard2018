@@ -72,10 +72,17 @@
             dt=$('#tbl_customers').DataTable({
                 "fnInitComplete": function (oSettings, json) {
                 },
-                "dom": '<"toolbar">frtip',
+                "processing": true,
+                "serverSide": true,
                 "bLengthChange": false,
-                "pageLength": 15,
-                "ajax" : "Customers/transaction/list",
+                "ajax" : { 
+                    "url":"<?php echo base_url('Customers/transaction/list') ?>", 
+                     "dataType": "json",
+                     "type": "POST"
+                }, 
+                oLanguage:{
+                    sProcessing: '<center><br/><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+                },
                 "language": {
                     searchPlaceholder: "Search Customer Name"
                 },
@@ -92,7 +99,7 @@
                     { targets:[3],data: "address" },
                     { targets:[4],data: "contact_no" },
                     {
-                        targets:[5],
+                        targets:[5], "orderable": false,
                         render: function (data, type, full, meta){
                             var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"   data-toggle="tooltip" data-placement="top" title="Edit" style="margin-left:-5px;"><i class="fa fa-pencil"></i> </button>';
                             var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info"  data-toggle="tooltip" data-placement="top" title="Move to trash" style="margin-right:-5px;"><i class="fa fa-trash-o"></i> </button>';

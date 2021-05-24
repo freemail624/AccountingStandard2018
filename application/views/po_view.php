@@ -1041,17 +1041,50 @@ $(document).ready(function(){
         });
 
         $('.numeric').autoNumeric('init');
-
         $('#mobile_no').keypress(validateNumber);
-
         $('#landline').keypress(validateNumber);
 
         _cboSuppliers=$('#cbo_suppliers').select2({
-            placeholder: "Please select supplier first to filter product lookup.",
-            allowClear: true
+          ajax: {
+            url: "Suppliers/transaction/list",
+            type: "post",
+            dataType: 'json',
+            delay: 500,
+            data: function(params) {
+                return {
+                    search: { 
+                        value: params.term
+                    },
+                    start: ((params.page || 1) * 10) - 10,
+                    length: 10,
+                    order: [{
+                        column: 1,
+                        dir: 'asc'
+                    }]
+                };
+            },
+            processResults: function(response) {
+                const { data, recordsFiltered } = response
+                return {
+                    results: data.map(res => {
+                        return {
+                            id: res.supplier_id,
+                            text: res.supplier_name
+                        }
+                    }),
+                    pagination: {
+                        more: data.recordsFiltered > data.length 
+                    }
+                };
+            },
+           cache: true
+          },
+          placeholder: 'Select a supplier',
+          minimumInputLength: 1
         });
 
-        _cboSuppliers.select2('val',null);
+
+
 
 
         /*_productType = $('#cbo_prodType').select2({

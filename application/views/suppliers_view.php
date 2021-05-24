@@ -70,10 +70,17 @@ $(document).ready(function(){
     var initializeControls=function(){
         var initializeControls=function() {
             dt=$('#tbl_suppliers').DataTable({
-                "dom": '<"toolbar">frtip',
-                "bLengthChange":false,
-                "pageLength":15,
-                "ajax" : "Suppliers/transaction/list",
+                "processing": true,
+                "serverSide": true,
+                "bLengthChange": false,
+                "ajax" : { 
+                    "url":"Suppliers/transaction/list", 
+                     "dataType": "json",
+                     "type": "POST"
+                },        
+                oLanguage:{
+                    sProcessing: '<center><br/><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+                },         
                 "columns": [
                     {
                         "targets": [0],
@@ -88,7 +95,7 @@ $(document).ready(function(){
                     { targets:[4],data: "contact_no" },
                     { targets:[5],data: "tax_type" },
                     {
-                        targets:[6],
+                        targets:[6],"orderable": false,
                         render: function (data, type, full, meta){
                             var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"   data-toggle="tooltip" data-placement="top" title="Edit" style="margin-left:-5px;"><i class="fa fa-pencil"></i> </button>';
                             var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info"  data-toggle="tooltip" data-placement="top" title="Move to trash" style="margin-right:-5px;"><i class="fa fa-trash-o"></i> </button>';

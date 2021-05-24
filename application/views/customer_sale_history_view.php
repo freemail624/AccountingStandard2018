@@ -155,8 +155,6 @@
                         <div class="col-lg-6" >
                             <b class="required"></b>Product : <br />
                             <select id="product_id" class="form-control">
-                                <option value="0"> ALL PRODUCTS</option>
-                                <?php foreach($products as $row) { echo '<option value="'.$row->product_id.'">'.$row->product_desc.'</option>'; } ?>
                             </select>
 
                         </div>
@@ -275,26 +273,37 @@ $(document).ready(function(){
         });
         _cboCustomers=$("#cbo_customers").select2({
           ajax: {
-            url: "Customers/transaction/customer-list",
+            url: "Customers/transaction/list",
             type: "post",
             dataType: 'json',
-            delay: 250,
-            data: function (params) {
-              return {
-                searchTerm: params.term, // search term
-                page: params.page
-              };
+            delay: 500,
+            data: function(params) {
+                return {
+                    search: { 
+                        value: params.term
+                    },
+                    start: ((params.page || 1) * 10) - 10,
+                    length: 10,
+                    order: [{
+                        column: 1,
+                        dir: 'asc'
+                    }]
+                };
             },
-           processResults: function (response, params) {
-            params.page = params.page || 1;
-
-             return {
-                results: response.data,
-                pagination: {
-                    more: (params.page * 10) < response.total
-                }
-             };
-           },
+            processResults: function(response) {
+                const { data, recordsFiltered } = response
+                return {
+                    results: data.map(res => {
+                        return {
+                            id: res.customer_id,
+                            text: res.customer_no + ' - ' + res.customer_name
+                        }
+                    }),
+                    pagination: {
+                        more: data.recordsFiltered > data.length 
+                    }
+                };
+            },
            cache: true
           },
           placeholder: 'Select a customer',
@@ -322,6 +331,7 @@ $(document).ready(function(){
             },
             processResults: function(response) {
                 const { data, recordsFiltered } = response
+                console.log(response);
                 return {
                     results: data.map(res => {
                         return {
@@ -330,7 +340,7 @@ $(document).ready(function(){
                         }
                     }),
                     pagination: {
-                        more: data.recordsFiltered > data.length 
+                        more: recordsFiltered > data.length 
                     }
                 };
             },

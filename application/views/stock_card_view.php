@@ -234,7 +234,8 @@
                                 // searchTerm: params.term // search term
                                 search: { 
                                     value: params.term
-                                },
+                                },        
+                                page: params.page || 1,    
                                 start: ((params.page || 1) * 10) - 10,
                                 length: 10,
                                 order: [{
@@ -243,16 +244,22 @@
                                 }]
                             };
                         },
-                        processResults: function(response) {
+                        processResults: function(response, params) {
+                            const { data, recordsFiltered } = response
+                            params.page = params.page || 1;
+
+                            console.log(params.page);
+                            console.log(recordsFiltered);
+
                             return {
-                                results: response.data.map(res => {
+                                results: data.map(res => {
                                     return {
                                         id: res.product_id,
-                                        text: res.product_desc
+                                        text: res.product_code + ' - ' + res.product_desc
                                     }
                                 }),
                                 pagination: {
-                                    more: true
+                                    more: (params.page * 10) < recordsFiltered
                                 }
                             };
                         },

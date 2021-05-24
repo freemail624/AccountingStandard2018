@@ -51,32 +51,52 @@ class Customers extends CORE_Controller {
     function transaction($txn=null){
         switch($txn){
             //****************************************************************************************************************
-            case 'customer-list':
-                $m_customers=$this->Customers_model;
-                $searchTerm = $this->input->post('searchTerm', TRUE);
-                $customers = $m_customers->get_customers($searchTerm);
-
-                $data = array();
-
-                foreach($customers as $customer){
-                    $data[] = array(
-                        "id"=>$customer->customer_id, 
-                        "text"=>$customer->customer_name
-                    );
-                }
-
-                $response['data'] = $data;
-                $response['total'] = $m_customers->get_all_data();
-                
-                echo json_encode($response);
-                break;
-
             case 'list':
                 $m_customers=$this->Customers_model;
 
-                $response['data']=$m_customers->get_list('is_active=TRUE AND is_deleted=FALSE');
+                $draw = $this->input->post('draw', TRUE);
+                $search =  $this->input->post('search', TRUE);
+                $length = $this->input->post('length', TRUE);
+                $start = $this->input->post('start', TRUE);
+                $order = $this->input->post('order', TRUE);
+                $search_value = $search['value'];
+                $column = $order[0]['column'];
+                $order_dir = $order[0]['dir'];
+
+                $valid_columns = array(
+                    0=>'details-control',
+                    1=>'customer_name',
+                    2=>'address',
+                    3=>'contact_no',
+                    4=>'actions'
+                );                
+
+                $order_column = $valid_columns[$column];
+
+                if($column == 0 OR $column == 4){
+                    $order_column = null;
+                }
+
+                $data=$m_customers->get_customers(
+                    $search_value,
+                    $length,
+                    $start,
+                    $order_column,
+                    $order_dir
+                ); 
+
+                $recordsTotal = $m_customers->get_all_data();
+                $recordsFiltered = $m_customers->get_all_data($search_value);
+
+                $response = array(
+                    "draw"            => intval($draw),
+                    "recordsTotal"    => $recordsTotal,
+                    "recordsFiltered" => $recordsFiltered,
+                    "data"            => $data
+                );
 
                 echo json_encode($response);
+                exit();
 
                 break;
 

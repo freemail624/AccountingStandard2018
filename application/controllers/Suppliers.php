@@ -41,16 +41,51 @@ class Suppliers extends CORE_Controller {
         switch($txn) {
             case 'list':
                 $m_suppliers=$this->Suppliers_model;
-                $response['data']=$m_suppliers->get_list(
-                        array('suppliers.is_deleted'=>FALSE),
-                        'suppliers.*,tax_types.tax_type,tax_types.tax_rate',
 
-                        array(
-                            array('tax_types','tax_types.tax_type_id=suppliers.tax_type_id','left')
-                        )
+                $draw = $this->input->post('draw', TRUE);
+                $search =  $this->input->post('search', TRUE);
+                $length = $this->input->post('length', TRUE);
+                $start = $this->input->post('start', TRUE);
+                $order = $this->input->post('order', TRUE);
+                $search_value = $search['value'];
+                $column = $order[0]['column'];
+                $order_dir = $order[0]['dir'];
 
+                $valid_columns = array(
+                    0=>'details-control',
+                    1=>'supplier_name',
+                    2=>'contact_name',
+                    3=>'address',
+                    4=>'contact_no',
+                    5=>'tax_type_id'
+                );    
+
+                $order_column = $valid_columns[$column];
+
+                if($column == 0 OR $column == 6){
+                    $order_column = null;
+                }
+
+                $data=$m_suppliers->get_suppliers(
+                    $search_value,
+                    $length,
+                    $start,
+                    $order_column,
+                    $order_dir
+                ); 
+
+                $recordsTotal = $m_suppliers->get_all_data();
+                $recordsFiltered = $m_suppliers->get_all_data($search_value);
+
+                $response = array(
+                    "draw"            => intval($draw),
+                    "recordsTotal"    => $recordsTotal,
+                    "recordsFiltered" => $recordsFiltered,
+                    "data"            => $data
                 );
+
                 echo json_encode($response);
+                exit();
 
                 break;
 

@@ -39,6 +39,40 @@ class Suppliers_model extends CORE_Model {
         $this->db->query($sql);
     }
 
+    function get_all_data($search_value=null)
+    {
+        $sql="SELECT s.* FROM suppliers s WHERE s.is_deleted = FALSE AND s.is_active = TRUE
+
+            ".($search_value==null?"":" AND (s.supplier_code LIKE '".$search_value."%' OR s.supplier_name LIKE '%".$search_value."%' OR s.contact_name LIKE '%".$search_value."%')")."
+        ";
+        return $this->db->query($sql)->num_rows();
+    }
+
+    function get_suppliers( 
+            $search_value=null,
+            $length=null,
+            $start=0,
+            $order_column=null,
+            $order_dir=null){
+
+        $sql="SELECT s.*,
+            tax_types.tax_type,tax_types.tax_rate
+            FROM suppliers s
+            LEFT JOIN tax_types ON tax_types.tax_type_id=s.tax_type_id
+            WHERE s.is_deleted = FALSE AND s.is_active = TRUE
+
+            ".($search_value==null?"":" AND (s.supplier_code LIKE '".$search_value."%' OR s.supplier_name LIKE '%".$search_value."%' OR s.contact_name LIKE '%".$search_value."%')")."
+
+            ".($order_column==null?" ORDER BY s.supplier_name ASC ":" ORDER BY ".$order_column." ".$order_dir."")."
+            ".($length==null?"":" LIMIT ".$length."")."
+            ".($start==0?"":" OFFSET ".$start."")."
+            ";
+
+            return $this->db->query($sql)->result();
+
+    }
+
+
     function get_supplier_list($supplier_id=null) {
         $sql="  SELECT
                   a.*,b.photo_path
