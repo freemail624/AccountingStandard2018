@@ -1647,7 +1647,7 @@ $(document).ready(function(){
             showList(false);
             // $('#cbo_customers').select2('open');
             $('#tbl_items > tbody').html('');
-            $('#cbo_departments').select2('val', $('#cbo_departments').data('default'));
+            initializeDepartment(1);
             $('#cbo_department').select2('val', null);
             $('#cbo_customers').select2('val', $('#cbo_customers').data('default'));
             $('#cbo_customers').trigger('select2:select');
@@ -1860,6 +1860,7 @@ $(document).ready(function(){
                 });
             });
             $('#cbo_order_source').select2('val',data.order_source_id);
+            initializeDepartment();
             $('#cbo_departments').select2('val',data.department_id);
             $('#cbo_department').select2('val',data.department_id);
             $('#cbo_customers').select2('val',data.customer_id);
@@ -2346,6 +2347,7 @@ $(document).ready(function(){
         var tbl_summary=$('#tbl_cash_invoice_summary');
         _data.push({name : "remarks", value : $('textarea[name="remarks"]').val()});
         _data.push({name : "for_dispatching", value : $('#for_dispatching').val()});
+        _data.push({name : "department", value : $('#cbo_departments').select2('val') });
         _data.push({name : "total_after_discount", value: $('#td_total_after_discount').text()});
         _data.push({name : "summary_discount", value : tbl_summary.find(oTableDetails.discount).text()});
         _data.push({name : "summary_before_discount", value :tbl_summary.find(oTableDetails.before_tax).text()});
@@ -2368,6 +2370,7 @@ $(document).ready(function(){
         var tbl_summary=$('#tbl_cash_invoice_summary');
         _data.push({name : "remarks", value : $('textarea[name="remarks"]').val()});
         _data.push({name : "for_dispatching", value : $('#for_dispatching').val()});
+        _data.push({name : "department", value : $('#cbo_departments').select2('val') });
         _data.push({name : "total_after_discount", value: $('#td_total_after_discount').text()});
         _data.push({name : "summary_discount", value : tbl_summary.find(oTableDetails.discount).text()});
         _data.push({name : "summary_before_discount", value :tbl_summary.find(oTableDetails.before_tax).text()});
@@ -2432,6 +2435,19 @@ $(document).ready(function(){
     };
     function format ( d ) {
         //return
+    };
+    var initializeDepartment = function(status){
+        
+        var user_department_id = <?php echo $this->session->user_department_id; ?>;
+        
+        if(user_department_id == 0 || user_department_id == null){
+            status == null ? "" : $('#cbo_departments').select2('val', null);
+            $('#cbo_departments').prop("disabled", false);
+        }else{
+            status == null ? "" : $('#cbo_departments').select2('val', user_department_id);
+            $('#cbo_departments').prop("disabled", true);
+        }
+
     };
     function validateNumber(event) {
         var key = window.event ? event.keyCode : event.which;

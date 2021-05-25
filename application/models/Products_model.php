@@ -2452,7 +2452,8 @@ Product Pick List
 function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=null,$category_id=null,$item_type_id=null,$pick_list=null,$depid=null,$account_cii,$account_dis=null,$CurrentQtyCount=null,$is_parent=null,$is_nonsalable=null){
     $sql="SELECT
             productmain.*, FORMAT(productmain.total_qty_balance,2) as on_hand_per_batch,
-            (productmain.total_qty_balance * productmain.purchase_cost) as total_cost
+            (productmain.total_qty_balance * productmain.purchase_cost) as total_cost,
+            (productmain.total_qty_balance * productmain.sale_price) as total_srp
         FROM
         (SELECT main.*,
             (main.quantity_in - main.quantity_out) as total_qty_balance,

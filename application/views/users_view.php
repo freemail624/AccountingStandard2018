@@ -218,8 +218,9 @@
                                                             <label class="col-md-2 col-md-offset-1 control-label"><strong><b class="required">*</b> Department :</strong></label>
 
                                                             <div class="col-md-7">
-                                                                <select name="" id="cbo_departments" data-error-msg="Department is required." required>
-                                                                    <option value="0">[ Create Department ]</option>
+                                                                <select name="" id="cbo_departments" class="department_id" data-error-msg="Department is required." required>
+                                                                    <option value="new">[ Create Department ]</option>
+                                                                    <option value="0">None</option>
                                                                     <?php foreach ($departments as $department) { ?>
                                                                         <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
                                                                     <?php } ?>
@@ -543,7 +544,7 @@
                                                                     </div>
                                                                     <div class="modal-footer">
                                                                         <button id="btn_create_department" class="btn btn-primary">Create</button>
-                                                                        <button id="btn_close_department" class="btn btn-default">Cancel</button>
+                                                                        <button id="btn_close_department" class="btn btn-default" data-dismiss="modal">Cancel</button>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -735,10 +736,10 @@
 
                                                         _cboDepartment = $("#cbo_departments").select2({
                                                             placeholder: "Please select department",
-                                                            allowClear: true
+                                                            allowClear: false
                                                         });
 
-                                                        _cboDepartment.select2('val', null)
+                                                        _cboDepartment.select2('val', 0);
 
 
 
@@ -780,7 +781,7 @@
                                                             $('input[name="user_pword"]').prop('disabled', false);
                                                             $('input[name="user_pword"]').prop('required', true);
                                                             clearFields($('#frm_users'));
-                                                            _cboDepartment.select2('val', null)
+                                                            _cboDepartment.select2('val', 0);
                                                             showList(false);
                                                         });
 
@@ -934,7 +935,7 @@
                                                         _cboDepartment.on("select2:select", function(e) {
 
                                                             var i = $(this).select2('val');
-                                                            if (i == 0) {
+                                                            if (i == 'new') {
                                                                 $(this).select2('val', null)
                                                                 $('#modal_department').modal('show');
                                                                 clearFields($('#modal_department').find('form'));
@@ -1047,17 +1048,33 @@
                                                         $('input[required],textarea[required],select[required]', f).each(function() {
 
                                                             if ($(this).is('select')) {
-                                                                if ($(this).select2('val') == 0 || $(this).select2('val') == null) {
-                                                                    showNotification({
-                                                                        title: "Error!",
-                                                                        stat: "error",
-                                                                        msg: $(this).data('error-msg')
-                                                                    });
-                                                                    $(this).closest('div.form-group').addClass('has-error');
-                                                                    $(this).focus();
-                                                                    stat = false;
-                                                                    return false;
+
+                                                                if($(this).hasClass('department_id')){
+                                                                    if ($(this).select2('val') == null) {
+                                                                        showNotification({
+                                                                            title: "Error!",
+                                                                            stat: "error",
+                                                                            msg: $(this).data('error-msg')
+                                                                        });
+                                                                        $(this).closest('div.form-group').addClass('has-error');
+                                                                        $(this).focus();
+                                                                        stat = false;
+                                                                        return false;
+                                                                    }
+                                                                }else{
+                                                                    if ($(this).select2('val') == 0 || $(this).select2('val') == null) {
+                                                                        showNotification({
+                                                                            title: "Error!",
+                                                                            stat: "error",
+                                                                            msg: $(this).data('error-msg')
+                                                                        });
+                                                                        $(this).closest('div.form-group').addClass('has-error');
+                                                                        $(this).focus();
+                                                                        stat = false;
+                                                                        return false;
+                                                                    }
                                                                 }
+
                                                             } else {
                                                                 if ($(this).val() == "") {
                                                                     showNotification({

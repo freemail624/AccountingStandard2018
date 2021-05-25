@@ -142,7 +142,7 @@
 
                     <ol class="breadcrumb" style="margin-bottom: 0px;">
                         <li><a href="dashboard">Dashboard</a></li>
-                        <li><a href="Inventory">Inventory Report</a></li>
+                        <li><a href="Inventory">Warehouse Inventory Report</a></li>
                     </ol>
 
                     <div class="container-fluid">
@@ -159,7 +159,8 @@
                                                <!--  <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;;"><b style="color:white;font-size: 12pt;><i class="fa fa-bars"></i> Inventory Report</b></div></a> -->
                                                 <div id="collapseTwo" class="collapse in">
                                                     <div class="panel-body">
-                                                    <h2 class="h2-panel-heading">Inventory Report<small> | <a href="assets/manual/inventory/Inventory_Report.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
+                                                    <h2 class="h2-panel-heading">Warehouse Inventory Report</h2><hr>
+                                                    <!-- <small> | <a href="assets/manual/inventory/Inventory_Report.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small> -->
 
                                                             <div class="row">
                                                                 <div class="col-lg-6">
@@ -224,7 +225,7 @@
                                                                     <th width="10%" style="text-align: right">Quantity Out</th>
                                                                     <th width="15%" style="text-align: right">Balance</th>
                                                                     <th width="15%" class="hidden" style="text-align: right">Bulk Balance</th>
-                                                                    <th>Cost Price</th>
+                                                                    <th>SRP</th>
                                                                     <th>Total</th>
                                                                 </tr>
                                                                 </thead>
@@ -523,12 +524,12 @@
                         targets:[7], sClass:'right-align',
                         data: null,
                         render: function(data, type, full, meta){
-                            return accounting.formatNumber(data.purchase_cost,2);
+                            return accounting.formatNumber(data.sale_price,2);
                         }
                     },
                     {
                         targets:[8], sClass:'right-align',
-                        data: "total_cost",
+                        data: "total_srp",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }

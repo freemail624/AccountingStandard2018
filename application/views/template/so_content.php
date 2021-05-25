@@ -169,11 +169,12 @@
         </table> <br />
         <table cellpadding="6" style="width: 100%">
             <tr>
-                <td class="border">
-                    Remarks: <?php echo $sales_order->remarks ?>
+                <td class="border" valign="top" style="min-height: 80px;height: 80px;">
+                    Remarks: <br/>
+                    <?php echo $sales_order->remarks ?>
                 </td>
             </tr>
-        </table> <br /><br /><br /><br /><br /><br />
+        </table> <br /><br /><br /><br />
         <table cellpadding="6" style="width: 100%">
             <tr>
                 <td style="width: 30%;" class="bottom"></td>

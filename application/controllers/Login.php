@@ -232,6 +232,7 @@ class Login extends CORE_Controller {
                                 'user_id'=>$result->row()->user_id,
                                 'user_group_id'=>$result->row()->user_group_id,
                                 'user_fullname'=>$result->row()->user_fullname,
+                                'user_department_id'=>$result->row()->department_id,
                                 'user_email'=>$result->row()->user_email,
                                 'user_photo'=>$result->row()->photo_path,
                                 'company_top_navigation'=>$company[0]->company_name,

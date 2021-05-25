@@ -219,12 +219,13 @@
         </table> <br />
         <table cellpadding="6" style="width: 100%">
             <tr>
-                <td class="border">
-                    Remarks: <?php echo $purchase_info->remarks ?>
+                <td class="border" valign="top" style="min-height: 80px;height: 80px;">
+                    Remarks: <br/>
+                    <?php echo $purchase_info->remarks ?>
                 </td>
             </tr>
         </table> <br />
-        <table width="100%">
+        <table cellpadding="5" width="100%">
             <tr>
                 <td width="15%" class="td_height border">Ship-out Date : </td>
                 <td width="25%" class="td_height border"><?php echo date('m/d/Y', strtotime($purchase_info->ship_out_date)) ?></td>

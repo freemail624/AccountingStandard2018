@@ -335,8 +335,7 @@ class Templates extends CORE_Controller {
                                 )
                                 
                             );
-
-
+                            
                         //show only inside grid with menu buttons
                         if($type=='fullview'||$type==null){
                             echo $this->load->view('template/po_content_new_wo_header',$data,TRUE);

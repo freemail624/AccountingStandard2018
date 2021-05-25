@@ -72,7 +72,7 @@
         </tr>
     </table><hr>
 
-    <h3 style="margin-bottom: 0px;">Inventory Report - <?php echo $department; ?>
+    <h3 style="margin-bottom: 0px;">Warehouse Inventory Report - <?php echo $department; ?>
         </h3>
     <i>As of <?php echo $date; ?></i>
 
@@ -90,7 +90,7 @@
                 <td valign="top" width="10%" align="right">Quantity Out</td>
                 <td valign="top" width="10%" align="right">Balance</td>
                 <!-- <td valign="top" width="10%" align="right">Bulk Balance</td> -->
-                <td valign="top" width="10%" align="right">Unit Cost</td>
+                <td valign="top" width="10%" align="right">SRP</td>
                 <td valign="top" width="10%" align="right">Total</td>
             </tr>
         </thead>
@@ -106,12 +106,12 @@
                 <td valign="top" align="right"><?php echo number_format($product->quantity_out,2); ?></td>
                 <td valign="top" align="right"><?php echo number_format($product->total_qty_balance,2); ?></td>
                 <!-- <td valign="top" align="right"><?php echo number_format($product->total_qty_bulk,2); ?></td> -->
-                <td valign="top" align="right"><?php echo number_format($product->purchase_cost,2); ?></td>
-                <td valign="top" align="right"><?php echo number_format((round($product->purchase_cost,2) * round($product->total_qty_bulk,2)),2); ?></td>
+                <td valign="top" align="right"><?php echo number_format($product->sale_price,2); ?></td>
+                <td valign="top" align="right"><?php echo number_format((round($product->sale_price,2) * round($product->total_qty_bulk,2)),2); ?></td>
             </tr>
             <?php 
 
-            $gtotal += (round($product->purchase_cost,2) * round($product->total_qty_bulk,2)); } ?>
+            $gtotal += (round($product->sale_price,2) * round($product->total_qty_bulk,2)); } ?>
 
             <tr>
                 <td colspan="8"><strong>Grand Total:</strong></td>
