@@ -314,10 +314,7 @@
                                                 <div class="row">
                                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                         <label class="control-label"><strong>Please select Customer first <b class="required">*</b> :</strong></label>
-                                                        <select name="customer_id" id="cbo_Customers" data-error-msg="Customer is required." required>
-                                                            <?php foreach($customers as $customer){ ?>
-                                                                <option value="<?php echo $customer->customer_id; ?>"><?php echo $customer->customer_name; ?></option>
-                                                            <?php } ?>
+                                                        <select name="customer_id" id="cbo_customers" data-error-msg="Customer is required." required>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -589,9 +586,46 @@
             });
 
 
-            _cboCustomers=$("#cbo_Customers").select2({
-                placeholder: "Please select Customer to record payment.",
-                allowClear: true
+            _cboCustomers=$("#cbo_customers").select2({
+                ajax: {
+                url: "Customers/transaction/list",
+                type: "post",
+                dataType: 'json',
+                delay: 500,
+                data: function(params) {
+                    return {
+                        search: {
+                            value: params.term
+                        },
+                        start: ((params.page || 1) * 10) - 10,
+                        length: 10,
+                        order: [{
+                            column: 1,
+                            dir: 'asc'
+                        }]
+                    };
+                },
+                processResults: function(response) {
+                    const {
+                        data,
+                        recordsFiltered
+                    } = response
+                    return {
+                        results: data.map(res => {
+                            return {
+                                id: res.customer_id,
+                                text: res.customer_no + ' - ' + res.customer_name
+                            }
+                        }),
+                        pagination: {
+                            more: ((params.page || 1) * 10) < recordsFiltered
+                        }
+                    };
+                },
+                cache: true
+            },
+            placeholder: 'Select a customer',
+            minimumInputLength: 1
             });
 
             _cboCustomers.select2('val',null);
@@ -666,7 +700,7 @@
                 showList(false);
                 $('#cbo_branch').select2('val', $('#cbo_branch').data('default'));
                 _cboReceiptType.select2('val',1); //set official receipt as default
-                $('#cbo_Customers').select2('open');
+                $('#cbo_customers').select2('open');
 
             });
 

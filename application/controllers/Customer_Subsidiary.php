@@ -35,7 +35,7 @@
 	        $data['title'] = 'Customer Subsidiary';
 
             $m_integration=$this->Account_integration_model;
-	        $data['customers'] = $this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE AND customer_name!=""',"customers.*",null,'customer_name');
+	        // $data['customers'] = $this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE AND customer_name!=""',"customers.*",null,'customer_name');
 	        $data['account_titles'] = $this->Account_title_model->get_list('account_titles.is_deleted=FALSE AND account_titles.is_active=TRUE',null,null,'account_title');
             $ar_account=$m_integration->get_list();
             $data['ar_account']=$ar_account[0]->receivable_account_id;

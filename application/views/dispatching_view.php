@@ -223,9 +223,6 @@
                             <b class="required">*</b><label>Customer :</label> <br />
                             <select name="customer" id="cbo_customers" data-error-msg="Customer is required." required>
                                 <option value="0">[ Create New Customer ]</option>
-                                <?php foreach($customers as $customer){ ?>
-                                    <option data-address="<?php echo $customer->address; ?>" data-contact="<?php echo $customer->contact_name; ?>" value="<?php echo $customer->customer_id; ?>" data-term-default="<?php echo ($customer->term=="none"?"":$customer->term); ?>" data-customer_type="<?php echo $customer->customer_type_id; ?>"><?php echo $customer->customer_name; ?></option>
-                                <?php } ?>
                             </select>
                         </div>
                         <div class="col-sm-3">
@@ -899,8 +896,47 @@ $(document).ready(function(){
             allowClear: true
         });
         _cboCustomers=$("#cbo_customers").select2({
-            placeholder: "Please select customer.",
-            allowClear: true
+            ajax: {
+                url: "Customers/transaction/list",
+                type: "post",
+                dataType: 'json',
+                delay: 500,
+                data: function(params) {
+                    return {
+                        search: {
+                            value: params.term
+                        },
+                        start: ((params.page || 1) * 10) - 10,
+                        length: 10,
+                        order: [{
+                            column: 1,
+                            dir: 'asc'
+                        }]
+                    };
+                },
+                processResults: function(response) {
+                    const {
+                        data,
+                        recordsFiltered
+                    } = response
+                    return {
+                        results: data.map(res => {
+                            return {
+                                id: res.customer_id,
+                                text: res.customer_no + ' - ' + res.customer_name,
+                                address: res.address,
+                                contact: res.contact_name,
+                            }
+                        }),
+                        pagination: {
+                            more: ((params.page || 1) * 10) < recordsFiltered
+                        }
+                    };
+                },
+                cache: true
+            },
+            placeholder: 'Select a customer',
+            minimumInputLength: 1
         });
         _cboCustomerType=$("#cbo_customer_type").select2({
             allowClear: false
@@ -1233,11 +1269,12 @@ $(document).ready(function(){
                  _cboCustomerTypeCreate.select2('val',0);
  
             }
+            const { data } = e.params;
             var obj_customers=$('#cbo_customers').find('option[value="' + i + '"]');
-            $('#txt_address').val(obj_customers.data('address'));
-            $('#contact_person').val(obj_customers.data('contact'));
-            $('#cbo_customer_type').select2('val',obj_customers.data('customer_type'));
-            if(i==0){ _cboCustomerType.select2('val',0); }
+            $('#txt_address').val(data.address);
+            $('#contact_person').val(data.contact);
+            // $('#cbo_customer_type').select2('val',obj_customers.data('customer_type'));
+            // if(i==0){ _cboCustomerType.select2('val',0); }
         });
         $('#btn_create_salesperson').click(function(){
             var btn=$(this);
@@ -1383,7 +1420,8 @@ $(document).ready(function(){
                     }
                 });
 
-                $('#cbo_customers').select2('val',data.customer_id);
+                $('#cbo_customers').append('<option value="' + data.customer_id + '" selected data-customer_type = "' + data.customer_type_id + '">' + data.customer_name + '</option>');
+                $('#cbo_customers').select2('val', data.customer_id);
                 $('#cbo_departments').select2('val',data.department_id);
                 $('#cbo_department').select2('val',data.department_id);
                 $('#cbo_salesperson').select2('val',data.salesperson_id);
@@ -1496,7 +1534,8 @@ $(document).ready(function(){
                     }
                 });
 
-                $('#cbo_customers').select2('val',data.customer_id);
+                $('#cbo_customers').append('<option value="' + data.customer_id + '" selected data-customer_type = "' + data.customer_type_id + '">' + data.customer_name + '</option>');
+                $('#cbo_customers').select2('val', data.customer_id);
                 $('#cbo_departments').select2('val',data.department_id);
                 $('#cbo_department').select2('val',data.department_id);
                 $('#cbo_salesperson').select2('val',data.salesperson_id);
@@ -1637,7 +1676,8 @@ $(document).ready(function(){
             $('#cbo_customer_type').select2('val',data.customer_type_id);
             $('#cbo_departments').select2('val',data.department_id);
             $('#cbo_department').select2('val',data.department_id);
-            $('#cbo_customers').select2('val',data.customer_id);
+            $('#cbo_customers').append('<option value="' + data.customer_id + '" selected data-customer_type = "' + data.customer_type_id + '">' + data.customer_name + '</option>');
+            $('#cbo_customers').select2('val', data.customer_id);
             $('#cbo_salesperson').select2('val',data.salesperson_id);
 
             $.ajax({

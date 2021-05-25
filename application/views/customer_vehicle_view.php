@@ -169,12 +169,7 @@
                                                 <div class="col-lg-3">
                                                     Customer :
                                                     <select class="form-control" id="cbo_customers_tbl">
-                                                        <option value="0">All Customers</option>
-                                                        <?php foreach($customers as $customer){ ?>
-                                                            <option value="<?php echo $customer->customer_id ?>">
-                                                                <?php echo $customer->customer_no.' - '.$customer->customer_name; ?>
-                                                            </option>
-                                                        <?php }?>
+                                                        <!-- <option value="0">All Customers</option> -->
                                                     </select>
                                                 </div>
                                                 <div class="col-lg-3">
@@ -243,12 +238,6 @@
                                                 <div class="form-group">
                                                     <label><b class="required">*</b> Customer : </label>
                                                     <select name="customer_id" id="cbo_customers" class="form-control" required data-error-msg="Customer is required!" style="width: 100%;">
-                                                        <option value="0">[ Create New Customer ]</option>
-                                                        <?php foreach($customers as $customer){?>
-                                                            <option value="<?php echo $customer->customer_id; ?>">
-                                                                <?php echo $customer->customer_no.' - '.$customer->customer_name; ?>
-                                                            </option>
-                                                        <?php } ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -614,8 +603,46 @@
         var initializeControls=function() {
 
             _cboCustomersTbl=$("#cbo_customers_tbl").select2({
-                placeholder: "Please select a customer.",
-                allowClear: false
+                ajax: {
+                    url: "Customers/transaction/list",
+                    type: "post",
+                    dataType: 'json',
+                    delay: 500,
+                    data: function(params) {
+                        return {
+                            search: {
+                                value: params.term
+                            },
+                            start: ((params.page || 1) * 10) - 10,
+                            length: 10,
+                            order: [{
+                                column: 1,
+                                dir: 'asc'
+                            }]
+                        };
+                    },
+                    processResults: function(response, params) {
+                        const {
+                            data,
+                            recordsFiltered
+                        } = response
+                        return {
+                            results: data.map(res => {
+                                return {
+                                    id: res.customer_id,
+                                    text: res.customer_no + ' - ' + res.customer_name
+                                }
+                            }),
+                            pagination: {
+                                more: ((params.page || 1) * 10) < recordsFiltered
+                            }
+                        };
+                    },
+                    cache: true
+                },
+                placeholder: 'All',
+                allowClear: true,
+                minimumInputLength: 1
             });
 
             dt=$('#tbl_vehicles').DataTable({
@@ -684,8 +711,45 @@
             });
 
             _cboCustomers=$("#cbo_customers").select2({
-                placeholder: "Please select a customer.",
-                allowClear: false
+                ajax: {
+                    url: "Customers/transaction/list",
+                    type: "post",
+                    dataType: 'json',
+                    delay: 500,
+                    data: function(params) {
+                        return {
+                            search: {
+                                value: params.term
+                            },
+                            start: ((params.page || 1) * 10) - 10,
+                            length: 10,
+                            order: [{
+                                column: 1,
+                                dir: 'asc'
+                            }]
+                        };
+                    },
+                    processResults: function(response, params) {
+                        const {
+                            data,
+                            recordsFiltered
+                        } = response
+                        return {
+                            results: data.map(res => {
+                                return {
+                                    id: res.customer_id,
+                                    text: res.customer_no + ' - ' + res.customer_name
+                                }
+                            }),
+                            pagination: {
+                                more: ((params.page || 1) * 10) < recordsFiltered
+                            }
+                        };
+                    },
+                    cache: true
+                },
+                placeholder: 'Please select customer',
+                minimumInputLength: 1
             });
 
             _cboMakes=$("#cbo_makes").select2({
@@ -722,6 +786,10 @@
 
             _cboCustomersTbl.on("change", function (e) {
                 $('#tbl_vehicles').DataTable().ajax.reload();
+            });
+            _cboCustomersTbl.on("select2:unselecting", function(e) {
+                $('#cbo_customers_tbl').select2('val', 0)
+                $('#tbl_vehicles').DataTable().ajax.reload()
             });
 
             /* Customer Modal */
@@ -884,6 +952,7 @@
                     var data=dt.row(_selectRowObj).data();
                     _selectedID=data.vehicle_id;
 
+                    _cboCustomers.append('<option value="' + data.customer_id + '" selected data-customer_type = "' + data.customer_type_id + '">' + data.customer_name + '</option>');
                     _cboCustomers.select2('val', data.customer_id);
                     _cboMakes.select2('val', data.make_id);
                     _cboYears.select2('val', data.vehicle_year_id);

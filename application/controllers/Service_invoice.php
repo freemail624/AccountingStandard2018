@@ -52,9 +52,9 @@ class Service_invoice extends CORE_Controller
         );
 
         //data required by active view
-        $data['customers']=$this->Customers_model->get_list(
-            array('customers.is_active'=>TRUE,'customers.is_deleted'=>FALSE)
-        );
+        // $data['customers']=$this->Customers_model->get_list(
+        //     array('customers.is_active'=>TRUE,'customers.is_deleted'=>FALSE)
+        // );
 
         $data['insurances']=$this->Insurance_model->get_list(
             'is_deleted=FALSE'

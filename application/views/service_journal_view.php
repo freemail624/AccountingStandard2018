@@ -343,9 +343,6 @@
                                     <div class="col-lg-10">
                                         <select id="cbo_customers" name="customer_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Customer is required." required>
                                             <option value="0">[ Create New Customer ]</option>
-                                            <?php foreach($customers as $customer){ ?>
-                                                <option value='<?php echo $customer->customer_id; ?>'><?php echo $customer->customer_name; ?></option>
-                                            <?php } ?>
                                         </select>
                                     </div>
 
@@ -880,8 +877,45 @@ $(document).ready(function(){
 
 
         _cboCustomers=$('#cbo_customers').select2({
-            placeholder: "Please select customer.",
-            allowClear: true
+            ajax: {
+                url: "Customers/transaction/list",
+                type: "post",
+                dataType: 'json',
+                delay: 500,
+                data: function(params) {
+                    return {
+                        search: {
+                            value: params.term
+                        },
+                        start: ((params.page || 1) * 10) - 10,
+                        length: 10,
+                        order: [{
+                            column: 1,
+                            dir: 'asc'
+                        }]
+                    };
+                },
+                processResults: function(response) {
+                    const {
+                        data,
+                        recordsFiltered
+                    } = response
+                    return {
+                        results: data.map(res => {
+                            return {
+                                id: res.customer_id,
+                                text: res.customer_no + ' - ' + res.customer_name
+                            }
+                        }),
+                        pagination: {
+                            more: ((params.page || 1) * 10) < recordsFiltered
+                        }
+                    };
+                },
+                cache: true
+            },
+            placeholder: 'Select a customer',
+            minimumInputLength: 1
         });
         _cboCustomers.select2('val',null);
 

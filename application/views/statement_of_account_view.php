@@ -93,11 +93,6 @@
                                         <div class="col-xs-12 col-sm-6">
                                             <label><b class="required">*</b> Customer :</label><br>
                                             <select id="cbo_customers" class="form-control" style="width: 100%">
-                                                <?php foreach($customers as $customer) { ?>
-                                                    <option value="<?php echo $customer->customer_id; ?>">
-                                                        <?php echo $customer->customer_name; ?>
-                                                    </option>
-                                                <?php } ?>
                                             </select>
                                         </div>
                                         <div class="col-xs-12 col-sm-3"><br>
@@ -232,7 +227,45 @@ $(document).ready(function(){
 
     var initializeControls=function() {
         _cboCustomers = $('#cbo_customers').select2({
-            searchPlaceholder: 'Select Customer'
+            ajax: {
+                url: "Customers/transaction/list",
+                type: "post",
+                dataType: 'json',
+                delay: 500,
+                data: function(params) {
+                    return {
+                        search: {
+                            value: params.term
+                        },
+                        start: ((params.page || 1) * 10) - 10,
+                        length: 10,
+                        order: [{
+                            column: 1,
+                            dir: 'asc'
+                        }]
+                    };
+                },
+                processResults: function(response, params) {
+                    const {
+                        data,
+                        recordsFiltered
+                    } = response
+                    return {
+                        results: data.map(res => {
+                            return {
+                                id: res.customer_id,
+                                text: res.customer_no + ' - ' + res.customer_name
+                            }
+                        }),
+                        pagination: {
+                            more: ((params.page || 1) * 10) < recordsFiltered
+                        }
+                    };
+                },
+                cache: true
+            },
+            placeholder: 'Select customer',
+                minimumInputLength: 1
         });
 
         reinitializeBalances();

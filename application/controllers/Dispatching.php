@@ -47,9 +47,9 @@ class Dispatching extends CORE_Controller
         );
 
         //data required by active view
-        $data['customers']=$this->Customers_model->get_list(
-            array('customers.is_active'=>TRUE,'customers.is_deleted'=>FALSE)
-        );
+        // $data['customers']=$this->Customers_model->get_list(
+        //     array('customers.is_active'=>TRUE,'customers.is_deleted'=>FALSE)
+        // );
 
         $data['customer_type']=$this->Customer_type_model->get_list(
             'is_deleted=FALSE'

@@ -1073,7 +1073,7 @@ $(document).ready(function(){
                         }
                     }),
                     pagination: {
-                        more: data.recordsFiltered > data.length 
+                        more: ((params.page || 1) * 10) < recordsFiltered 
                     }
                 };
             },

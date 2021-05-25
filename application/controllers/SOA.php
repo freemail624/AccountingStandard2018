@@ -31,7 +31,7 @@
 	        $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', true);
 	        $data['title'] = 'Statement of Account';
 
-	        $data['customers'] = $this->Customers_model->get_list('is_deleted=FALSE AND is_active=TRUE');
+	        // $data['customers'] = $this->Customers_model->get_list('is_deleted=FALSE AND is_active=TRUE');
 
 	        $this->load->view('statement_of_account_view',$data);
 		}

@@ -281,9 +281,6 @@
                                     <label><b class="required">*</b> Customer :</label> <br />
                                     <select name="customer_id" id="cbo_customers" data-error-msg="Customer is required." required>
                                         <option value="0">[ Create New Customer ]</option>
-                                        <?php foreach($customers as $customer){ ?>
-                                            <option data-customer-no="<?php echo $customer->customer_no; ?>" data-address="<?php echo $customer->address; ?>" data-contact="<?php echo $customer->contact_name; ?>" value="<?php echo $customer->customer_id; ?>" data-term-default="<?php echo ($customer->term=="none"?"":$customer->term); ?>" data-customer_type="<?php echo $customer->customer_type_id; ?>" data-contact-no="<?php echo $customer->contact_no; ?>" data-tel-no-home="<?php echo $customer->tel_no_home; ?>" data-tel-no-bus="<?php echo $customer->tel_no_bus; ?>"><?php echo $customer->customer_name; ?></option>
-                                        <?php } ?>
                                     </select>
                                 </div>
                             </div>
@@ -1647,8 +1644,51 @@ $(document).ready(function(){
         });
 
         _cboCustomers=$("#cbo_customers").select2({
-            placeholder: "Please select customer.",
-            allowClear: false
+            ajax: {
+                url: "Customers/transaction/list",
+                type: "post",
+                dataType: 'json',
+                delay: 500,
+                data: function(params) {
+                    return {
+                        search: {
+                            value: params.term
+                        },
+                        start: ((params.page || 1) * 10) - 10,
+                        length: 10,
+                        order: [{
+                            column: 1,
+                            dir: 'asc'
+                        }]
+                    };
+                },
+                processResults: function(response) {
+                    const {
+                        data,
+                        recordsFiltered
+                    } = response
+                    return {
+                        results: data.map(res => {
+                            return {
+                                id: res.customer_id,
+                                text: res.customer_no + ' - ' + res.customer_name,
+                                customerName: res.customerName,
+                                customerNo: res.customer_no,
+                                address: res.address,
+                                contactNo: res.contact_no,
+                                telNoHome: res.tel_no_home,
+                                telNoBus: res.tel_no_bus
+                            }
+                        }),
+                        pagination: {
+                            more: ((params.page || 1) * 10) < recordsFiltered
+                        }
+                    };
+                },
+                cache: true
+            },
+            placeholder: 'Select a customer',
+            minimumInputLength: 1
         });
         
         _cboVehicles=$("#cbo_vehicles").select2({
@@ -2133,7 +2173,7 @@ $(document).ready(function(){
             });
         };
 
-        _cboCustomers.on("change", function (e) {
+        _cboCustomers.on("select2:select", function (e) {
             var i=$(this).val();
             var _modelVehicleOpen = false;
 
@@ -2160,13 +2200,13 @@ $(document).ready(function(){
                 var obj_customers=$('#cbo_customers').find('option[value="' + i + '"]');
 
                 if(_checkVehicle == true){
-
-                    $('.customer_name').html(obj_customers.text());
-                    $('input[name="customer_no"]').val(obj_customers.data('customer-no'));
-                    $('textarea[name="address"]').val(obj_customers.data('address'));
-                    $('input[name="mobile_no"]').val(obj_customers.data('contact-no'));
-                    $('input[name="tel_no_home"]').val(obj_customers.data('tel-no-home'));
-                    $('input[name="tel_no_bus"]').val(obj_customers.data('tel-no-bus'));
+                    const { data } = e.params
+                    $('.customer_name').html(data.customerName);
+                    $('input[name="customer_no"]').val(data.customerNo);
+                    $('textarea[name="address"]').val(data.address);
+                    $('input[name="mobile_no"]').val(data.contactNo);
+                    $('input[name="tel_no_home"]').val(data.telNoHome);
+                    $('input[name="tel_no_bus"]').val(data.telNoBus);
 
                 }
 
@@ -2456,7 +2496,7 @@ $(document).ready(function(){
             $('#cbo_advisors').select2('val', null);
             $('#cbo_insurance').select2('val', null);
 
-            $('.date-picker').datepicker('setDate', 'today');
+            // $('.date-picker').datepicker('setDate', 'today');
             $('.datetime-picker').val(getCurrentDatetime());
 
             // $('#td_discount').html('0.00');
@@ -2504,7 +2544,8 @@ $(document).ready(function(){
 
             _checkVehicle = false;
 
-            $('#cbo_customers').select2('val',data.customer_id);
+            $('#cbo_customers').append('<option value="' + data.customer_id + '" selected data-customer_type = "' + data.customer_type_id + '">' + data.customer_name + '</option>');
+            $('#cbo_customers').select2('val', data.customer_id);
             _vehicleIDSelected = data.vehicle_id;
             $('#cbo_advisors').select2('val',data.advisor_id);
             $('#cbo_insurance').select2('val',data.insurance_id);

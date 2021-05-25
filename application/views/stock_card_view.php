@@ -235,7 +235,6 @@
                                 search: { 
                                     value: params.term
                                 },        
-                                page: params.page || 1,    
                                 start: ((params.page || 1) * 10) - 10,
                                 length: 10,
                                 order: [{
@@ -247,10 +246,6 @@
                         processResults: function(response, params) {
                             const { data, recordsFiltered } = response
                             params.page = params.page || 1;
-
-                            console.log(params.page);
-                            console.log(recordsFiltered);
-
                             return {
                                 results: data.map(res => {
                                     return {
@@ -259,7 +254,7 @@
                                     }
                                 }),
                                 pagination: {
-                                    more: (params.page * 10) < recordsFiltered
+                                    more: ((params.page || 1) * 10) < recordsFiltered
                                 }
                             };
                         },

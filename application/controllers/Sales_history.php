@@ -47,9 +47,9 @@ class Sales_history extends CORE_Controller
         );
 
         //data required by active view
-        $data['customers']=$this->Customers_model->get_list(
-            array('customers.is_active'=>TRUE,'customers.is_deleted'=>FALSE)
-        );
+        // $data['customers']=$this->Customers_model->get_list(
+        //     array('customers.is_active'=>TRUE,'customers.is_deleted'=>FALSE)
+        // );
 
         $data['refproducts']=$this->Refproduct_model->get_list(
             'is_deleted=FALSE'

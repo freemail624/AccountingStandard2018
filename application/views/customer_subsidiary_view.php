@@ -82,9 +82,6 @@
                                                                 <div class="col-lg-4">
                                                                     Customers * : <br />
                                                                     <select id="cbo_customers" class="form-control">
-                                                                        <?php foreach($customers as $customer) { ?>
-                                                                            <option value="<?php echo $customer->customer_id; ?>"><?php echo $customer->customer_name; ?></option>
-                                                                        <?php } ?>
                                                                     </select>
 
                                                                 </div>
@@ -218,9 +215,47 @@
             });
 
             _cboCustomers=$("#cbo_customers").select2({
-                placeholder: "Please select customer.",
-                allowClear: true
+                ajax: {
+                    url: "Customers/transaction/list",
+                    type: "post",
+                    dataType: 'json',
+                    delay: 500,
+                    data: function(params) {
+                        return {
+                            search: {
+                                value: params.term
+                            },
+                            start: ((params.page || 1) * 10) - 10,
+                            length: 10,
+                            order: [{
+                                column: 1,
+                                dir: 'asc'
+                            }]
+                        };
+                    },
+                    processResults: function(response, params) {
+                        const {
+                            data,
+                            recordsFiltered
+                        } = response
+                        return {
+                            results: data.map(res => {
+                                return {
+                                    id: res.customer_id,
+                                    text: res.customer_no + ' - ' + res.customer_name
+                                }
+                            }),
+                            pagination: {
+                                more: ((params.page || 1) * 10) < recordsFiltered
+                            }
+                        };
+                    },
+                    cache: true
+                },
+                placeholder: 'Please select customer',
+                minimumInputLength: 1
             });
+            // _cboCustomers.select2('val', 0)
 
             $('.date-picker').datepicker({
                 todayBtn: "linked",
@@ -343,7 +378,7 @@
                     "bDestroy": true,
                     "data": function ( d ) {
                         return $.extend( {}, d, {
-                            "customerId" : _cboCustomers.select2('val'),
+                            "customerId" : _cboCustomers.select2('val') ?? 0,
                             "accountId": _cboAccounts.select2('val'),
                             "startDate":_date_from.val(),
                             "endDate":_date_to.val()

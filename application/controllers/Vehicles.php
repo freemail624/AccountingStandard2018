@@ -24,7 +24,7 @@ class Vehicles extends CORE_Controller {
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['title'] = 'Vehicles Management';
 
-        $data['customers'] = $this->Customers_model->get_customer_list();
+        // $data['customers'] = $this->Customers_model->get_customer_list();
         $data['makes'] = $this->Makes_model->get_makes_list();
         $data['years'] = $this->Vehicle_year_model->get_vehicle_year_list();
         $data['models'] = $this->Vehicle_model->get_models_list();
