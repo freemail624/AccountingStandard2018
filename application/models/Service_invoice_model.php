@@ -10,8 +10,45 @@ class Service_invoice_model extends CORE_Model
         parent::__construct();
     }
 
-    function get_service_invoice_list($service_invoice_id=null,$start_date=null,$end_date=null)
+    function get_all_data($search_value=null,$start_date=null,$end_date=null)
     {
+        $sql="SELECT si.* 
+        FROM
+            service_invoice si
+                LEFT JOIN
+            repair_order ro ON ro.repair_order_id = si.repair_order_id
+                LEFT JOIN
+            customers c ON c.customer_id = si.customer_id
+                LEFT JOIN
+            customer_vehicles v ON v.vehicle_id = si.vehicle_id
+                LEFT JOIN
+            advisors ON advisors.advisor_id = si.advisor_id
+
+    		WHERE si.is_deleted = FALSE AND si.is_active = TRUE
+
+            ".($start_date==null?"":" AND DATE_FORMAT(si.document_date, '%Y-%m-%d') BETWEEN '$start_date' AND '$end_date'")."
+            ".($search_value==null?"":" 
+            AND (LOWER(si.service_invoice_no) LIKE LOWER('".$search_value."%') OR 
+            LOWER(ro.repair_order_no) LIKE LOWER('%".$search_value."%') OR 
+            LOWER(c.customer_name) LIKE LOWER('%".$search_value."%') OR
+            LOWER(v.plate_no) LIKE LOWER('%".$search_value."%') OR 
+            LOWER(CONCAT_WS(' ',advisors.advisor_fname,advisors.advisor_mname,advisors.advisor_lname)) LIKE LOWER('%".$search_value."%'))")."
+
+
+        ";
+        return $this->db->query($sql)->num_rows();
+    }
+
+    function get_service_invoice_list(
+            $service_invoice_id=null,
+            $start_date=null,
+            $end_date=null,
+            $search_value=null,
+		    $length=null,
+		    $start=0,
+		    $order_column=null,
+		    $order_dir=null){
+
         $query = $this->db->query("SELECT 
             c.customer_no,
             c.customer_name,
@@ -50,7 +87,17 @@ class Service_invoice_model extends CORE_Model
                 ".($start_date==null?"":" AND DATE_FORMAT(si.document_date, '%Y-%m-%d') BETWEEN '$start_date' AND '$end_date'")."
                 ".($service_invoice_id==null?"":" AND si.service_invoice_id='".$service_invoice_id."'")."
 
-            ORDER BY si.service_invoice_id DESC
+                ".($search_value==null?"":" 
+                AND (LOWER(si.service_invoice_no) LIKE LOWER('".$search_value."%') OR 
+                LOWER(ro.repair_order_no) LIKE LOWER('%".$search_value."%') OR 
+                LOWER(c.customer_name) LIKE LOWER('%".$search_value."%') OR
+                LOWER(v.plate_no) LIKE LOWER('%".$search_value."%') OR 
+                LOWER(CONCAT_WS(' ',advisors.advisor_fname,advisors.advisor_mname,advisors.advisor_lname)) LIKE LOWER('%".$search_value."%'))")."
+    
+                ".($order_column==null?" ORDER BY si.service_invoice_id DESC ":" ORDER BY ".$order_column." ".$order_dir."")."
+                ".($length==null?"":" LIMIT ".$length."")."
+                ".($start==0?"":" OFFSET ".$start."")."
+
             ");
         return $query->result();
     }

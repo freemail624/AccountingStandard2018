@@ -82,12 +82,67 @@ class Service_invoice extends CORE_Controller
     function transaction($txn = null,$id_filter=null) {
         switch ($txn){
 
-            case 'list':  //this returns JSON of Issuance to be rendered on Datatable
+            case 'list':  
+                //this returns JSON of Issuance to be rendered on Datatable
                 $m_invoice=$this->Service_invoice_model;
-                $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
-                $ted = date('Y-m-d',strtotime($this->input->get('ted')));
-                $response['data']=$m_invoice->get_service_invoice_list(null,$tsd,$ted);
+
+                $service_invoice_id = $this->input->post('service_invoice_id', TRUE);
+                $tsd =  $this->input->post('tsd', TRUE);
+                $ted = $this->input->post('ted', TRUE);
+                $start_date = $tsd == null ? null :  date('Y-m-d',strtotime($tsd));
+                $end_date = $ted == null ? null :  date('Y-m-d',strtotime($ted));
+                $draw = $this->input->post('draw', TRUE);
+                $search =  $this->input->post('search', TRUE);
+                $length = $this->input->post('length', TRUE);
+                $start = $this->input->post('start', TRUE);
+                $order = $this->input->post('order', TRUE);
+                $search_value = $search['value'];
+                $column = $order[0]['column'];
+                $order_dir = $order[0]['dir'];
+
+                $valid_columns = array(
+                    0=>'details-control',
+                    1=>'service_invoice_no',
+                    2=>'repair_order_no',
+                    3=>'customer_no',
+                    4=>'document_date',
+                    5=>'customer_name',
+                    6=>'plate_no',
+                    7=>'date_time_promised',
+                    8=>'advisor_fullname',
+                    9=>'action'
+                ); 
+
+                $order_column = $valid_columns[$column];
+
+                if($column == 0 OR $column == 9){
+                    $order_column = null;
+                }
+               
+                $data=$m_invoice->get_service_invoice_list(
+                    $service_invoice_id,
+                    $start_date,
+                    $end_date,
+                    $search_value,
+                    $length,
+                    $start,
+                    $order_column,
+                    $order_dir
+                );  
+
+                $recordsTotal = $m_invoice->get_all_data(null,$start_date,$end_date);
+                $recordsFiltered = $m_invoice->get_all_data($search_value,$start_date,$end_date);
+
+                $response = array(
+                    "draw"            => intval($draw),
+                    "recordsTotal"    => $recordsTotal,
+                    "recordsFiltered" => $recordsFiltered,
+                    "data"            => $data
+                );
+
                 echo json_encode($response);
+                exit();
+
                 break;
 
             case 'list-invoice' :

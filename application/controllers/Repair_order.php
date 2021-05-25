@@ -92,7 +92,6 @@ class Repair_order extends CORE_Controller
         $data['invoice_counter']=$this->Invoice_counter_model->get_list(array('user_id'=>$this->session->user_id));
         $data['order_sources'] = $this->Order_source_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
         $data['accounts']=$this->Account_integration_model->get_list(1);
-        $data['vehicles'] = $this->Customer_vehicles_model->get_vehicles();
         $data['advisors'] = $this->Advisor_model->get_advisors_list();
         $data['makes'] = $this->Makes_model->get_makes_list();
         $data['years'] = $this->Vehicle_year_model->get_vehicle_year_list();

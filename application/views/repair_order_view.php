@@ -339,11 +339,6 @@
                                         <label><b class="required">*</b> Plate No. / Conduction No : </label>
                                         <select name="vehicle_id" id="cbo_vehicles" data-error-msg="Vehicle is required." required disabled>
                                             <option value="0">[ Create New Vehicle ]</option>
-                                            <?php foreach($vehicles as $vehicle){ ?>
-                                                <option value="<?php echo $vehicle->vehicle_id; ?>" data-vehicle-year-make="<?php echo $vehicle->vehicle_year.'/'.$vehicle->make_desc; ?>" data-model-name="<?php echo $vehicle->model_name; ?>" data-color-name="<?php echo $vehicle->color; ?>" data-chassis-no="<?php echo $vehicle->chassis_no; ?>" data-engine-no="<?php echo $vehicle->engine_no; ?>" data-delivery-date="<?php echo $vehicle->delivery_date; ?>" data-crp-no-type="<?php echo $vehicle->crp_no_type; ?>">
-                                                    <?php echo $vehicle->crp_no; ?>
-                                                </option>
-                                            <?php } ?>
                                         </select>    
                                     </div>                                
                                 </div>
@@ -2545,6 +2540,8 @@ $(document).ready(function(){
             $('#cbo_customers').append('<option value="' + data.customer_id + '" selected data-customer_type = "' + data.customer_type_id + '">' + data.customer_name + '</option>');
             $('#cbo_customers').select2('val', data.customer_id);
             _vehicleIDSelected = data.vehicle_id;
+            _cboCustomers.trigger("select2:select");
+
             $('#cbo_advisors').select2('val',data.advisor_id);
             $('#cbo_insurance').select2('val',data.insurance_id);
 
