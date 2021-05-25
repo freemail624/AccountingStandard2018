@@ -228,7 +228,10 @@
         <table cellpadding="5" width="100%">
             <tr>
                 <td width="15%" class="td_height border">Ship-out Date : </td>
-                <td width="25%" class="td_height border"><?php echo date('m/d/Y', strtotime($purchase_info->ship_out_date)) ?></td>
+                <td width="25%" class="td_height border">
+                    <?php echo $purchase_info->ship_out_date == null ? "" : 
+                    date('m/d/Y', strtotime($purchase_info->ship_out_date)) ?>
+                </td>
                 <td width="25%" class="td_height"></td>
                 <td width="35%" class="td_height"></td>
             </tr>
