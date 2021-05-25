@@ -1212,7 +1212,7 @@
                                 }]
                             };
                         },
-                        processResults: function(response) {
+                        processResults: function(response, params) {
                             const {
                                 data,
                                 recordsFiltered
