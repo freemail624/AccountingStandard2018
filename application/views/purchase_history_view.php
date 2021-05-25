@@ -118,10 +118,6 @@
                                             <div class="col-sm-3">
                                                 <b class="required">*</b> <label>Supplier </label>:<br />
                                                 <select name="supplier" id="supplier" style="width: 100%;">
-                                                    <option value="0"> ALL</option>
-                                                    <?php foreach($suppliers as $supplier){ ?>
-                                                        <option value="<?php echo $supplier->supplier_id; ?>"><?php echo $supplier->supplier_name; ?></option>
-                                                    <?php } ?>
                                                 </select>
                                             </div>
                                             <div class="col-sm-3">
@@ -258,13 +254,48 @@ $(document).ready(function(){
         });
 
         _supplier=$('#supplier').select2({
-            placeholder: "Please Select a Supplier",
-            allopwClear: true
+            ajax: {
+                url: "Suppliers/transaction/list",
+                type: "post",
+                dataType: 'json',
+                delay: 500,
+                data: function(params) {
+                    return {
+                        search: { 
+                            value: params.term
+                        },
+                        start: ((params.page || 1) * 10) - 10,
+                        length: 10,
+                        order: [{
+                            column: 1,
+                            dir: 'asc'
+                        }]
+                    };
+                },
+                processResults: function(response, params) {
+                    const { data, recordsFiltered } = response
+                    return {
+                        results: data.map(res => {
+                            return {
+                                id: res.supplier_id,
+                                text: res.supplier_name
+                            }
+                        }),
+                        pagination: {
+                            more: ((params.page || 1) * 10) < recordsFiltered 
+                        }
+                    };
+                },
+            cache: true
+            },
+            placeholder: 'All',
+            minimumInputLength: 1,
+            allowClear: true
         });
 
-        _supplier=$('#department').select2({
+        _department=$('#department').select2({
             placeholder: "Please Select a Department",
-            allopwClear: true
+            allowClear: true
         });
         $('.date-picker').datepicker({
             todayBtn: "linked",
@@ -311,23 +342,6 @@ $(document).ready(function(){
             }
         } );
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         $('#from_date').change(function(){
             $('#tbl_delivery_invoice').DataTable().ajax.reload()          
         });
@@ -338,6 +352,10 @@ $(document).ready(function(){
             $('#tbl_delivery_invoice').DataTable().ajax.reload()          
         });
         $('#supplier').change(function(){
+            $('#tbl_delivery_invoice').DataTable().ajax.reload()          
+        });
+        $('#supplier').on('select2:unselect', function(e){
+            $('#supplier').select2('val', 0)
             $('#tbl_delivery_invoice').DataTable().ajax.reload()          
         });
         $('#btn_print').click(function(){

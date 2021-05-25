@@ -295,14 +295,6 @@
                         <div class="col-md-12">
                             <b class="required">*</b> <label>Supplier </label>:<br />
                             <select name="supplier" id="cbo_suppliers" data-error-msg="Supplier is required." required>
-                                <option value="0">[ Create New Supplier ]</option>
-                                <?php foreach($suppliers as $supplier){ ?>
-                                    <option value="<?php echo $supplier->supplier_id; ?>" 
-                                        data-tax-type="<?php echo $supplier->tax_type_id; ?>" 
-                                        data-address="<?php echo $supplier->address; ?>" data-contact-person="<?php echo $supplier->contact_name; ?>">
-                                        <?php echo $supplier->supplier_name; ?>
-                                    </option>
-                                <?php } ?>
                             </select>
                         </div>
                     </div>
@@ -1081,8 +1073,42 @@ $(document).ready(function(){
         $('#contact_no').keypress(validateNumber);
 
         _cboSuppliers=$("#cbo_suppliers").select2({
-            placeholder: "Please select supplier.",
-            allowClear: false
+            ajax: {
+                url: "Suppliers/transaction/list",
+                type: "post",
+                dataType: 'json',
+                delay: 500,
+                data: function(params) {
+                    return {
+                        search: { 
+                            value: params.term
+                        },
+                        start: ((params.page || 1) * 10) - 10,
+                        length: 10,
+                        order: [{
+                            column: 1,
+                            dir: 'asc'
+                        }]
+                    };
+                },
+                processResults: function(response, params) {
+                    const { data, recordsFiltered } = response
+                    return {
+                        results: data.map(res => {
+                            return {
+                                id: res.supplier_id,
+                                text: res.supplier_name
+                            }
+                        }),
+                        pagination: {
+                            more: ((params.page || 1) * 10) < recordsFiltered 
+                        }
+                    };
+                },
+            cache: true
+            },
+            placeholder: 'Select a supplier',
+            minimumInputLength: 1
         });
 
         _cboSuppliers.select2('val',null);
@@ -1683,11 +1709,6 @@ $(document).ready(function(){
 
                 $('#span_invoice_no').html(data.dr_invoice_no);
 
-                $('textarea[name="remarks"]').val(data.remarks);
-                $('#cbo_suppliers').select2('val',data.supplier_id);
-                $('#cbo_departments').select2('val',data.department_id);
-                $('#cbo_terms').select2('val',data.term_id);
-
                 $('input,textarea').each(function(){
                     var _elem=$(this);
                     $.each(data,function(name,value){
@@ -1700,6 +1721,12 @@ $(document).ready(function(){
                         }
                     });
                 });
+
+                $('textarea[name="remarks"]').val(data.remarks);
+                $('#cbo_suppliers').append('<option value="'+data.supplier_id+'" data-tax-type="'+data.tax_type_id+'" selected>'+data.supplier_name+'</option>');
+                $('#cbo_suppliers').select2('val',data.supplier_id);
+                $('#cbo_departments').select2('val',data.department_id);
+                $('#cbo_terms').select2('val',data.term_id);
 
                 resetSummary();
 

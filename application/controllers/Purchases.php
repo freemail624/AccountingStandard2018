@@ -49,13 +49,6 @@ class Purchases extends CORE_Controller
         );
 
         //data required by active view
-        $data['suppliers']=$this->Suppliers_model->get_list(
-            array('suppliers.is_deleted'=>FALSE, 'suppliers.is_active'=>TRUE),
-            'suppliers.*,IFNULL(tax_types.tax_rate,0)as tax_rate',
-            array(
-                array('tax_types','tax_types.tax_type_id=suppliers.tax_type_id','left')
-            )
-        );
 
         $data['terms']=$this->Terms_model->get_list(array("is_deleted"=>FALSE));
         $data['tax_types']=$this->Tax_types_model->get_list('is_deleted=0');

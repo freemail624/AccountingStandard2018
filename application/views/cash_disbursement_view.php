@@ -382,10 +382,6 @@
                                     <div class="col-sm-12">
                                         <b class="required"> * </b> <label>Supplier  :</label><br />
                                         <select id="cbo_suppliers" name="supplier_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Supplier name is required." required>
-                                            <option value="0">[ Create New Supplier ]</option>
-                                            <?php foreach($suppliers as $supplier){ ?>
-                                                <option value='<?php echo $supplier->supplier_id; ?>'><?php echo $supplier->supplier_name; ?></option>
-                                            <?php } ?>
                                         </select>
                                     </div>
                                 </div>
@@ -1340,8 +1336,42 @@ $(document).ready(function(){
         });
 
         _cboSuppliers=$('#cbo_suppliers').select2({
-            placeholder: "Please select supplier.",
-            allowClear: true
+            ajax: {
+                url: "Suppliers/transaction/list",
+                type: "post",
+                dataType: 'json',
+                delay: 500,
+                data: function(params) {
+                    return {
+                        search: { 
+                            value: params.term
+                        },
+                        start: ((params.page || 1) * 10) - 10,
+                        length: 10,
+                        order: [{
+                            column: 1,
+                            dir: 'asc'
+                        }]
+                    };
+                },
+                processResults: function(response, params) {
+                    const { data, recordsFiltered } = response
+                    return {
+                        results: data.map(res => {
+                            return {
+                                id: res.supplier_id,
+                                text: res.supplier_name
+                            }
+                        }),
+                        pagination: {
+                            more: ((params.page || 1) * 10) < recordsFiltered 
+                        }
+                    };
+                },
+            cache: true
+            },
+            placeholder: 'Select a supplier',
+            minimumInputLength: 1
         });
         _cboSuppliers.select2('val',null);
 
@@ -1572,7 +1602,7 @@ $(document).ready(function(){
                 }).done(function(response){
                     row.child( response,'no-padding' ).show();
 
-                    reInitializeSpecificDropDown($('.cbo_customer_list'));
+                    reInitializeSpecificDropDown($('.cbo_supplier_list'), true);
                     reInitializeSpecificDropDown($('.cbo_department_list'));
                     reInitializeSpecificDropDown($('.cbo_payment_method'));
 
@@ -2120,11 +2150,53 @@ $(document).ready(function(){
     };
 
 
-    function reInitializeSpecificDropDown(elem){
-        elem.select2({
-            placeholder: "Please select item.",
-            allowClear: false
-        });
+    function reInitializeSpecificDropDown(elem, isSupplier = false){
+        if (isSupplier) {
+            elem.select2({
+                ajax: {
+                    url: "Suppliers/transaction/list",
+                    type: "post",
+                    dataType: 'json',
+                    delay: 500,
+                    data: function(params) {
+                        return {
+                            search: { 
+                                value: params.term
+                            },
+                            start: ((params.page || 1) * 10) - 10,
+                            length: 10,
+                            order: [{
+                                column: 1,
+                                dir: 'asc'
+                            }]
+                        };
+                    },
+                    processResults: function(response, params) {
+                        const { data, recordsFiltered } = response
+                        return {
+                            results: data.map(res => {
+                                return {
+                                    id: res.supplier_id,
+                                    text: res.supplier_name
+                                }
+                            }),
+                            pagination: {
+                                more: ((params.page || 1) * 10) < recordsFiltered 
+                            }
+                        };
+                    },
+                cache: true
+                },
+                placeholder: 'Select a supplier',
+                minimumInputLength: 1
+            })
+        } else {
+            elem.select2({
+                placeholder: "Please select item.",
+                allowClear: false
+            });
+        }
+        
     };
 
     function validateNumber(event) {

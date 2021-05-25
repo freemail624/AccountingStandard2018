@@ -34,9 +34,6 @@
 	        $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', true);
 	        $data['title'] = 'Petty Cash Journal';
         	$data['payment_methods']=$this->Payment_method_model->get_list('is_deleted=0');
-	        $data['suppliers']=$this->Suppliers_model->get_list(
-	        	'is_deleted=FALSE AND is_active=TRUE'
-	        );
 
 	        $data['tax_types']=$this->Tax_model->get_list(array('tax_types.is_deleted'=>FALSE));
 

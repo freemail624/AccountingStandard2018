@@ -91,9 +91,7 @@
                                                 <div class="col-lg-7">
                                                     Customer * :<br />
                                                     <select name="customer_id" class="cbo_customer_list">
-                                                        <?php foreach($customers as $customer){ ?>
-                                                            <option value="<?php echo $customer->customer_id; ?>" <?php echo ($payment_info->customer_id===$customer->customer_id?'selected':''); ?>><?php echo $customer->customer_name; ?></option>
-                                                        <?php } ?>
+                                                        <option value="<?php echo $payment_info->customer_id; ?>"><?php echo $payment_info->customer_no . ' - ' . $payment_info->customer_name; ?></option>
                                                     </select>
                                                 </div>
                                                 <div class="col-lg-4 col-lg-offset-1">

@@ -365,9 +365,6 @@
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <label><strong>Please select Supplier :</strong></label>
                         <select name="supplier_id" id="cbo_suppliers" data-error-msg="Supplier is required." required>
-                            <?php foreach($suppliers as $supplier){ ?>
-                                <option value="<?php echo $supplier->supplier_id; ?>" data-tax-type="<?php echo $supplier->tax_type_id; ?>"><?php echo $supplier->supplier_name; ?></option>
-                            <?php } ?>
                         </select>
                     </div>
                 </div>
@@ -684,8 +681,42 @@ $(document).ready(function(){
         });
 
         _cboSuppliers=$("#cbo_suppliers").select2({
-            placeholder: "Please select supplier to record payment.",
-            allowClear: true
+            ajax: {
+                url: "Suppliers/transaction/list",
+                type: "post",
+                dataType: 'json',
+                delay: 500,
+                data: function(params) {
+                    return {
+                        search: { 
+                            value: params.term
+                        },
+                        start: ((params.page || 1) * 10) - 10,
+                        length: 10,
+                        order: [{
+                            column: 1,
+                            dir: 'asc'
+                        }]
+                    };
+                },
+                processResults: function(response, params) {
+                    const { data, recordsFiltered } = response
+                    return {
+                        results: data.map(res => {
+                            return {
+                                id: res.supplier_id,
+                                text: res.supplier_name
+                            }
+                        }),
+                        pagination: {
+                            more: ((params.page || 1) * 10) < recordsFiltered 
+                        }
+                    };
+                },
+            cache: true
+            },
+            placeholder: 'Please select supplier to record payment.',
+            minimumInputLength: 1
         });
 
         _cboSuppliers.select2('val',null);

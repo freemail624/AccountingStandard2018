@@ -475,10 +475,6 @@
                                                 <input type="text" name="ref_no" class="form-control" placeholder="PCV-XXXXX" readonly>
                                                 <strong>* Supplier :</strong><br>
                                                 <select id="cbo_supplier" class="form-control" name="supplier_id" style="width: 100%;" data-error-msg="Supplier is required" required>
-                                                    <option value="create_supplier">[Create New Supplier]</option>
-                                                    <?php foreach($suppliers as $supplier) { ?>
-                                                        <option value="<?php echo $supplier->supplier_id; ?>"><?php echo $supplier->supplier_name; ?></option>
-                                                    <?php } ?>
                                                 </select>
                                                 <strong>* Department :</strong><br>
                                                 <select id="cbo_department" class="form-control" name="department_id" style="width: 100%;" data-error-msg="Department is required" required>
@@ -614,7 +610,42 @@
             });
 
             _cboSupplier = $('#cbo_supplier').select2({
-                placeholder: "Please select Supplier"
+                ajax: {
+                    url: "Suppliers/transaction/list",
+                    type: "post",
+                    dataType: 'json',
+                    delay: 500,
+                    data: function(params) {
+                        return {
+                            search: { 
+                                value: params.term
+                            },
+                            start: ((params.page || 1) * 10) - 10,
+                            length: 10,
+                            order: [{
+                                column: 1,
+                                dir: 'asc'
+                            }]
+                        };
+                    },
+                    processResults: function(response, params) {
+                        const { data, recordsFiltered } = response
+                        return {
+                            results: data.map(res => {
+                                return {
+                                    id: res.supplier_id,
+                                    text: res.supplier_name
+                                }
+                            }),
+                            pagination: {
+                                more: ((params.page || 1) * 10) < recordsFiltered 
+                            }
+                        };
+                    },
+                cache: true
+                },
+                placeholder: 'Select a supplier',
+                minimumInputLength: 1
             });
 
             _cboDepartment = $('#cbo_department').select2({

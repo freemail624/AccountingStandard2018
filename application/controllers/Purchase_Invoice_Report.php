@@ -31,18 +31,12 @@
             $data['title'] = 'Purchase Invoice Report';
 
         //data required by active view
-        $data['suppliers']=$this->Suppliers_model->get_list(
-            'suppliers.is_active=TRUE AND suppliers.is_deleted=FALSE',
-            'suppliers.*,IFNULL(tax_types.tax_rate,0)as tax_rate',
-            array(
-                array('tax_types','tax_types.tax_type_id=suppliers.tax_type_id','left')
-            )
-        );
 
 
-        (in_array('8-4',$this->session->user_rights)? 
-        $this->load->view('purchase_invoice_report_view',$data)
-        :redirect(base_url('dashboard')));
+
+            (in_array('8-4',$this->session->user_rights)? 
+            $this->load->view('purchase_invoice_report_view',$data)
+            :redirect(base_url('dashboard')));
             
         }
 

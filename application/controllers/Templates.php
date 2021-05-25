@@ -2753,17 +2753,6 @@ class Templates extends CORE_Controller {
 
                 $data['departments']=$m_departments->get_list('is_active=TRUE AND is_deleted=FALSE');
 
-                $data['suppliers']=$m_suppliers->get_list(
-                    array(
-                        'suppliers.is_active'=>TRUE,
-                        'suppliers.is_deleted'=>FALSE
-                    ),
-
-                    array(
-                        'suppliers.supplier_id',
-                        'suppliers.supplier_name'
-                    )
-                );
                 $data['entries']=$m_purchases_info->get_journal_entries_2($purchase_invoice_id);
                 $data['accounts']=$m_accounts->get_list(
                     array(
@@ -2839,6 +2828,7 @@ class Templates extends CORE_Controller {
                         'sales_invoice.total_after_discount',
                         'DATE_FORMAT(sales_invoice.date_invoice,"%m/%d/%Y")as date_invoice',
                         'DATE_FORMAT(sales_invoice.date_created,"%m/%d/%Y %r")as date_created',
+                        'customers.customer_no',
                         'customers.customer_name',
                         'customers.address',
                         'customers.email_address',
@@ -2859,17 +2849,6 @@ class Templates extends CORE_Controller {
 
                 $data['departments']=$m_departments->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
 
-                $data['customers']=$m_customers->get_list(
-                    array(
-                        'customers.is_active'=>TRUE,
-                        'customers.is_deleted'=>FALSE
-                    ),
-
-                    array(
-                        'customers.customer_id',
-                        'customers.customer_name'
-                    )
-                );
                 $data['entries']=$m_sales_invoice->get_journal_entries_2($sales_invoice_id);
                 $data['accounts']=$m_accounts->get_list(
                     array(
@@ -3204,6 +3183,7 @@ class Templates extends CORE_Controller {
                         'DATE_FORMAT(receivable_payments.check_date,"%m/%d/%Y") as date_check',
                         'DATEDIFF(receivable_payments.check_date,NOW()) as rem_day_for_due',
                         'departments.department_name',
+                        'customers.customer_no',
                         'customers.customer_name',
                         'payment_methods.payment_method'
                     ),
@@ -3225,17 +3205,6 @@ class Templates extends CORE_Controller {
                         'departments.is_deleted'=>FALSE
                     ));
 
-                $data['customers']=$m_customers->get_list(
-                    array(
-                        'customers.is_active'=>TRUE,
-                        'customers.is_deleted'=>FALSE
-                    ),
-
-                    array(
-                        'customers.customer_id',
-                        'customers.customer_name'
-                    )
-                );
                 $data['entries']=$m_payments->get_journal_entries($payment_id);
 
                 $data['accounts']=$m_accounts->get_list(
@@ -3299,6 +3268,7 @@ class Templates extends CORE_Controller {
                 'DATE_FORMAT(cash_invoice.date_due,"%m/%d/%Y") as date_due',
                 'departments.department_id',
                 'departments.department_name',
+                'customers.customer_no',
                 'customers.customer_name',
                 'cash_invoice.salesperson_id',
                 'cash_invoice.address',
@@ -3318,17 +3288,6 @@ class Templates extends CORE_Controller {
                 $data['methods']=$m_methods->get_list();
                 $data['departments']=$m_departments->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
 
-                $data['customers']=$m_customers->get_list(
-                    array(
-                        'customers.is_active'=>TRUE,
-                        'customers.is_deleted'=>FALSE
-                    ),
-
-                    array(
-                        'customers.customer_id',
-                        'customers.customer_name'
-                    )
-                );
                 $data['entries']=$m_cash_invoice->get_journal_entries($cash_invoice_id);
 
                 $data['accounts']=$m_accounts->get_list(
@@ -3406,17 +3365,6 @@ class Templates extends CORE_Controller {
                 $data['methods']=$m_methods->get_list();
                 $data['departments']=$m_departments->get_list();
 
-                $data['suppliers']=$m_suppliers->get_list(
-                    array(
-                        'is_active'=>TRUE,
-                        'is_deleted'=>FALSE
-                    ),
-
-                    array(
-                        'suppliers.supplier_id',
-                        'suppliers.supplier_name'
-                    )
-                );
                 $data['entries']=$m_payments->get_journal_entries($payment_id);
 
                 $data['accounts']=$m_accounts->get_list(

@@ -253,10 +253,6 @@
                     <div class="col-sm-5">
                         <b class="required">*</b> Supplier : <br />
                         <select name="supplier" id="cbo_suppliers" data-error-msg="Supplier is required." required>
-                            <option value="0">[ Create New Supplier ]</option>
-                            <?php foreach($suppliers as $supplier){ ?>
-                                <option value="<?php echo $supplier->supplier_id; ?>" data-tax-type="<?php echo $supplier->tax_type_id; ?>" data-contact-person="<?php echo $supplier->contact_name; ?>"><?php echo $supplier->supplier_name; ?></option>
-                            <?php } ?>
                         </select>
                     </div>
                     <div class="col-sm-3">
@@ -1540,7 +1536,7 @@ $(document).ready(function(){
             });
 
             $('#txt_overall_discount').val(accounting.formatNumber($('#txt_overall_discount').val(),2));
-
+            $('#cbo_suppliers').append('<option value="'+data.supplier_id+'" data-tax-type="'+data.tax_type_id+'" selected>'+data.supplier_name+'</option>');
             $('#cbo_suppliers').select2('val',data.supplier_id);
             $('#cbo_departments').select2('val',data.department_id);
             $('#cbo_terms').select2('val',data.term_id);

@@ -80,9 +80,7 @@
                                     <label class="col-lg-2"> <b class="required">*</b> Supplier : </label>
                                     <div class="col-lg-10">
                                         <select name="supplier_id" class="cbo_supplier_list" data-error-msg="Input Tax Account is required." required>
-                                            <?php foreach($suppliers as $supplier){ ?>
-                                                <option value="<?php echo $supplier->supplier_id; ?>" <?php echo ($purchase_info->supplier_id===$supplier->supplier_id?'selected':''); ?>><?php echo $supplier->supplier_name; ?></option>
-                                            <?php } ?>
+                                            <option value="<?php echo $purchase_info->supplier_id; ?>"><?php echo $purchase_info->supplier_name; ?></option>
                                         </select>
                                     </div>
                                     <br /><br />

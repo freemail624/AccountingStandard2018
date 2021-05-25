@@ -77,9 +77,7 @@
             <label class="col-lg-2"> * Customer :</label>
             <div class="col-lg-10">
                 <select name="customer_id" class="cbo_customer_list" data-error-msg="Customer is required." required>
-                    <?php foreach($customers as $customer){ ?>
-                        <option value="<?php echo $customer->customer_id; ?>" <?php echo ($sales_info->customer_id===$customer->customer_id?'selected':''); ?>><?php echo $customer->customer_name; ?></option>
-                    <?php } ?>
+                    <option value="<?php echo $sales_info->customer_id; ?>"><?php echo $sales_info->customer_no . ' - ' . $sales_info->customer_name; ?></option>
                 </select>
             </div>
             <br /><br />

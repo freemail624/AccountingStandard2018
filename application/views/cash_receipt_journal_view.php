@@ -1178,7 +1178,7 @@ $(document).ready(function(){
                 }).done(function(response){
                     row.child( response,'no-padding' ).show();
 
-                    reInitializeSpecificDropDown($('.cbo_customer_list'));
+                    reInitializeSpecificDropDown($('.cbo_customer_list'), true);
                     reInitializeSpecificDropDown($('.cbo_department_list'));
                     reInitializeSpecificDropDown($('.cbo_payment_method'));
 
@@ -1230,7 +1230,7 @@ $(document).ready(function(){
                 }).done(function(response){
                     row.child( response,'no-padding' ).show();
 
-                    reInitializeSpecificDropDown($('.cbo_customer_list'));
+                    reInitializeSpecificDropDown($('.cbo_customer_list'), true);
                     reInitializeSpecificDropDown($('.cbo_department_list'));
                     reInitializeSpecificDropDown($('.cbo_payment_method'));
 
@@ -1667,11 +1667,56 @@ $(document).ready(function(){
     };
 
 
-    function reInitializeSpecificDropDown(elem){
-        elem.select2({
-            placeholder: "Please select item.",
-            allowClear: false
-        });
+    function reInitializeSpecificDropDown(elem, isCustomer = false){
+        if (isCustomer) {
+            elem.select2({
+                ajax: {
+                url: "Customers/transaction/list",
+                type: "post",
+                dataType: 'json',
+                delay: 500,
+                data: function(params) {
+                    return {
+                        search: {
+                            value: params.term
+                        },
+                        start: ((params.page || 1) * 10) - 10,
+                        length: 10,
+                        order: [{
+                            column: 1,
+                            dir: 'asc'
+                        }]
+                    };
+                },
+                processResults: function(response, params) {
+                    const {
+                        data,
+                        recordsFiltered
+                    } = response
+                    return {
+                        results: data.map(res => {
+                            return {
+                                id: res.customer_id,
+                                text: res.customer_no + ' - ' + res.customer_name
+                            }
+                        }),
+                        pagination: {
+                            more: ((params.page || 1) * 10) < recordsFiltered
+                        }
+                    };
+                },
+                cache: true
+            },
+            placeholder: 'Select a customer',
+            minimumInputLength: 1
+            })
+        } else {
+            elem.select2({
+                placeholder: "Please select item.",
+                allowClear: false
+            });
+        }
+        
     };
 
     function validateNumber(event) {
