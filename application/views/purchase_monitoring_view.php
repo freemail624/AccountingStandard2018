@@ -169,6 +169,7 @@ $(document).ready(function(){
             },
             processResults: function(response) {
                 const { data, recordsFiltered } = response
+                console.log(response);
                 return {
                     results: data.map(res => {
                         return {

@@ -182,6 +182,7 @@
                                                 <thead class="">
                                                 <tr>
                                                     <th>&nbsp;&nbsp;</th>
+                                                    <th>Customer No</th>
                                                     <th>Customer</th>
                                                     <th>Model</th>
                                                     <th>Conduction No</th>
@@ -645,26 +646,27 @@
                 minimumInputLength: 1
             });
 
+
             dt=$('#tbl_vehicles').DataTable({
-                "dom": '<"toolbar">frtip',
+                "processing": true,
+                "serverSide": true,
                 "bLengthChange": false,
-                "pageLength": 15,
                 "ajax" : { 
-                    "url":"Vehicles/transaction/list", 
-                    "bDestroy": true,             
-                    "data": function ( d ) { 
+                    "url":"<?php echo base_url('Vehicles/transaction/list') ?>", 
+                     "dataType": "json",
+                     "type": "POST",
+                     "data": function ( d ) { 
                             return $.extend( {}, d, { 
                                 "customer_id":_cboCustomersTbl.select2('val')
                             }); 
                         } 
-                },  
+                }, 
                 "language": {
                     searchPlaceholder: "Search Vehicle"
                 },
                 oLanguage: { 
                         sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>' 
-                }, 
-                processing : true,                 
+                },                
                 "columns": [
                     {
                         "visible": false,
@@ -674,12 +676,13 @@
                         "data":           null,
                         "defaultContent": ""
                     },
-                    { targets:[1],data: "customer_name" },
-                    { targets:[2],data: "model_name" },
-                    { targets:[3],data: "conduction_no" },
-                    { targets:[4],data: "plate_no" },
+                    { targets:[1],data: "customer_no" },
+                    { targets:[2],data: "customer_name" },
+                    { targets:[3],data: "model_name" },
+                    { targets:[4],data: "conduction_no" },
+                    { targets:[5],data: "plate_no" },
                     {
-                        targets:[5], data:null,
+                        targets:[6], data:null,
                         render: function (data, type, full, meta){
                             var status;
 
@@ -693,7 +696,7 @@
                         }
                     },
                     {
-                        targets:[6],
+                        targets:[7],"orderable": false,
                         render: function (data, type, full, meta){
                             var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"   data-toggle="tooltip" data-placement="top" title="Edit" style="margin-left:-5px;"><i class="fa fa-pencil"></i> </button>';
                             var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info"  data-toggle="tooltip" data-placement="top" title="Move to trash" style="margin-right:-5px;"><i class="fa fa-trash-o"></i> </button>';

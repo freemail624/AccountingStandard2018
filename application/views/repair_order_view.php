@@ -242,7 +242,6 @@
                     <th>Date Time Promised</th>
                     <th>Advisor</th>
                     <th><center>Action</center></th>
-                    <th>Order ID</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -1562,12 +1561,13 @@ $(document).ready(function(){
     };
     var initializeControls=function(){
         dt=$('#tbl_repair_order').DataTable({
-            "dom": '<"toolbar">frtip',
-            "bLengthChange":false,
-            "order": [[ 9, "desc" ]],
+            "processing": true,
+            "serverSide": true,
+            "bLengthChange": false,
             "ajax" : { 
                 "url":"Repair_order/transaction/list", 
-                "bDestroy": true,             
+                "dataType": "json",
+                "type": "POST",
                 "data": function ( d ) { 
                         return $.extend( {}, d, { 
                             "tsd":$('#txt_start_date_sales').val(), 
@@ -1580,8 +1580,7 @@ $(document).ready(function(){
             },
             oLanguage: { 
                     sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>' 
-            }, 
-            processing : true,             
+            },           
             "columns": [
                 {
                     "targets": [0],
@@ -1598,14 +1597,13 @@ $(document).ready(function(){
                 { targets:[6],data: "date_time_promised" },
                 { targets:[7],data: "advisor_fullname" },
                 {
-                    targets:[8],data:null,
+                    targets:[8],data:null, orderable:false,
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-right:0" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
                         return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                     }
-                },
-                { targets:[9],data: "repair_order_id", visible:false }
+                }
             ]
         });
 

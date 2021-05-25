@@ -10,9 +10,45 @@ class Repair_order_model extends CORE_Model
         parent::__construct();
     }
 
-
-    function get_repair_order($repair_order_id=null,$start_date=null,$end_date=null)
+    function get_all_data($search_value=null,$start_date=null,$end_date=null)
     {
+        $sql="SELECT ro.* FROM 
+
+		    repair_order ro
+		        LEFT JOIN
+		    customers c ON c.customer_id = ro.customer_id
+		        LEFT JOIN
+		    customer_vehicles v ON v.vehicle_id = ro.vehicle_id
+		        LEFT JOIN
+		    advisors ON advisors.advisor_id = ro.advisor_id
+		    	LEFT JOIN
+		    insurance ON insurance.insurance_id = ro.insurance_id
+
+    		WHERE c.is_deleted = FALSE AND c.is_active = TRUE
+
+	    	".($start_date==null?"":" AND DATE_FORMAT(ro.document_date, '%Y-%m-%d') BETWEEN '".$start_date."' AND '".$end_date."'")."
+            ".($search_value==null?"":" 
+            	AND (ro.repair_order_no LIKE '".$search_value."%' OR 
+            	c.customer_no LIKE '%".$search_value."%' OR 
+            	c.customer_name LIKE '%".$search_value."%' OR
+            	v.plate_no LIKE '%".$search_value."%' OR 
+            	CONCAT_WS(' ',advisors.advisor_fname,advisors.advisor_mname,advisors.advisor_lname) LIKE '%".$search_value."%')")."
+
+
+        ";
+        return $this->db->query($sql)->num_rows();
+    }
+
+    function get_repair_order(
+		    $repair_order_id=null,
+		    $start_date=null,
+		    $end_date=null,
+		    $search_value=null,
+		    $length=null,
+		    $start=0,
+		    $order_column=null,
+		    $order_dir=null){
+
         $query = $this->db->query("SELECT 
 		    c.customer_no,
 		    c.customer_name,
@@ -47,10 +83,19 @@ class Repair_order_model extends CORE_Model
 
 		    WHERE ro.is_deleted = FALSE AND
 		    	ro.is_active = TRUE
-	    		".($start_date==null?"":" AND DATE_FORMAT(ro.document_date, '%Y-%m-%d') BETWEEN '$start_date' AND '$end_date'")."
+	    		".($start_date==null?"":" AND DATE_FORMAT(ro.document_date, '%Y-%m-%d') BETWEEN '".$start_date."' AND '".$end_date."'")."
 	    		".($repair_order_id==null?"":" AND ro.repair_order_id='".$repair_order_id."'")."
 
-	    	ORDER BY ro.repair_order_id DESC
+	            ".($search_value==null?"":" 
+	            	AND (ro.repair_order_no LIKE '".$search_value."%' OR 
+	            	c.customer_no LIKE '%".$search_value."%' OR 
+	            	c.customer_name LIKE '%".$search_value."%' OR
+	            	v.plate_no LIKE '%".$search_value."%' OR 
+	            	CONCAT_WS(' ',advisors.advisor_fname,advisors.advisor_mname,advisors.advisor_lname) LIKE '%".$search_value."%')")."
+
+	            ".($order_column==null?" ORDER BY ro.repair_order_id DESC ":" ORDER BY ".$order_column." ".$order_dir."")."
+	            ".($length==null?"":" LIMIT ".$length."")."
+	            ".($start==0?"":" OFFSET ".$start."")."
 		    ");
         return $query->result();
     }

@@ -51,11 +51,6 @@ class Service_invoice extends CORE_Controller
             'salesperson_id, acr_name, CONCAT(firstname, " ", middlename, " ", lastname) AS fullname, firstname, middlename, lastname'
         );
 
-        //data required by active view
-        // $data['customers']=$this->Customers_model->get_list(
-        //     array('customers.is_active'=>TRUE,'customers.is_deleted'=>FALSE)
-        // );
-
         $data['insurances']=$this->Insurance_model->get_list(
             'is_deleted=FALSE'
         );
@@ -73,7 +68,6 @@ class Service_invoice extends CORE_Controller
                 array('service_unit','service_unit.service_unit_id=services.service_unit','left')
                 )   
             );
-        $data['vehicles'] = $this->Customer_vehicles_model->get_vehicles();
         $data['advisors'] = $this->Advisor_model->get_advisors_list();
         $data['makes'] = $this->Makes_model->get_makes_list();
         $data['years'] = $this->Vehicle_year_model->get_vehicle_year_list();

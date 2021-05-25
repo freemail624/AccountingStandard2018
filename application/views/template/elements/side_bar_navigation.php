@@ -73,8 +73,8 @@
                                 <li class="<?php echo (in_array('3-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Dispatching">Warehouse Dispatching</a></li>
                                 <li class="<?php echo (in_array('3-8',$this->session->user_rights)?'':'hidden'); ?>"><a href="Loading">Loading Report</a></li>
                                 <li class="<?php echo (in_array('3-7',$this->session->user_rights)?'':'hidden'); ?>"><a href="Customer_sale_history">Customer Sales History</a></li>
-                                <li class="<?php echo (in_array('3-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Sales_history">Sales/Cash Invoice History</a></li>
-                                <li><a href="Sales_invoice_other">Other Sales Invoice</a></li>
+<!--                                 <li class="<?php //echo (in_array('3-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Sales_history">Sales/Cash Invoice History</a></li>
+                                <li><a href="Sales_invoice_other">Other Sales Invoice</a></li> -->
                                 <li class="<?php echo (in_array('3-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Receivable_payments">Collection Entry</a></li>
                             </ul>
                         </li>

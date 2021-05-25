@@ -564,9 +564,7 @@ $(document).ready(function(){
 
                                     <div id="div_supplier_list">
                                         <div class="panel panel-default">
-
-
-                                                  <div class="panel-body table-responsive">
+                                            <div class="panel-body table-responsive" style="width: 100%;overflow-x: hidden;">
                                             <h2 class="h2-panel-heading">Suppliers<small> | <a href="assets/manual/masterfiles/Supplier_Management.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                             <div class="row">
                                                 <div class="col-lg-3"><br>

@@ -2926,7 +2926,10 @@ Product Pick List
     {
         $sql="SELECT p.* FROM products p WHERE p.is_deleted = FALSE AND p.is_active = TRUE
         ".($item_type_id==0?"":" AND p.item_type_id='".$item_type_id."'")."
-        ".($search_value==null?"":" AND (p.product_code LIKE '".$search_value."%' OR p.product_desc LIKE '%".$search_value."%' OR p.product_desc1 LIKE '%".$search_value."%')")."
+            ".($search_value==null?"":" 
+                    AND (LOWER(p.product_code) LIKE LOWER('".$search_value."%') OR 
+                    LOWER(p.product_desc) LIKE LOWER('%".$search_value."%') OR 
+                    LOWER(p.product_desc1) LIKE LOWER('%".$search_value."%'))")."
         ";
         return $this->db->query($sql)->num_rows();
     }
@@ -2966,7 +2969,10 @@ Product Pick List
                 p.is_active = TRUE
 
             ".($item_type_id==0?"":" AND p.item_type_id='".$item_type_id."'")."
-            ".($search_value==null?"":" AND (p.product_code LIKE '".$search_value."%' OR p.product_desc LIKE '%".$search_value."%' OR p.product_desc1 LIKE '%".$search_value."%')")."
+            ".($search_value==null?"":" 
+                    AND (LOWER(p.product_code) LIKE LOWER('".$search_value."%') OR 
+                    LOWER(p.product_desc) LIKE LOWER('%".$search_value."%') OR 
+                    LOWER(p.product_desc1) LIKE LOWER('%".$search_value."%'))")."
             ".($order_column==null?" ORDER BY p.product_desc ASC ":" ORDER BY ".$order_column." ".$order_dir."")."
             ".($length==null?"":" LIMIT ".$length." OFFSET ".$start."")."
 

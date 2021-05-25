@@ -24,7 +24,6 @@ class Vehicles extends CORE_Controller {
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['title'] = 'Vehicles Management';
 
-        // $data['customers'] = $this->Customers_model->get_customer_list();
         $data['makes'] = $this->Makes_model->get_makes_list();
         $data['years'] = $this->Vehicle_year_model->get_vehicle_year_list();
         $data['models'] = $this->Vehicle_model->get_models_list();
@@ -39,10 +38,58 @@ class Vehicles extends CORE_Controller {
     function transaction($txn = null) {
         switch ($txn) {
             case 'list':
-                $m_vehicle = $this->Customer_vehicles_model;
-                $customer_id = $this->input->get('customer_id');
-                $response['data'] = $m_vehicle->get_vehicles(null,$customer_id);
+                $m_vehicles = $this->Customer_vehicles_model;
+
+                $customer_id = $this->input->post('customer_id');
+                $vehicle_id = $this->input->post('vehicle_id');
+                $draw = $this->input->post('draw', TRUE);
+                $search =  $this->input->post('search', TRUE);
+                $length = $this->input->post('length', TRUE);
+                $start = $this->input->post('start', TRUE);
+                $order = $this->input->post('order', TRUE);
+                $search_value = $search['value'];
+                $column = $order[0]['column'];
+                $order_dir = $order[0]['dir'];
+
+                $valid_columns = array(
+                    0=>'details-control',
+                    1=>'customer_no',
+                    2=>'customer_name',
+                    3=>'model_id',
+                    4=>'conduction_no',
+                    5=>'plate_no',
+                    6=>'crp_no'
+                );     
+
+                $order_column = $valid_columns[$column];
+
+                if($column == 0 OR $column == 4){
+                    $order_column = null;
+                }
+
+                $data=$m_vehicles->get_vehicles(
+                    $vehicle_id,
+                    $customer_id,
+                    $search_value,
+                    $length,
+                    $start,
+                    $order_column,
+                    $order_dir
+                ); 
+
+                $recordsTotal = $m_vehicles->get_all_data($customer_id);
+                $recordsFiltered = $m_vehicles->get_all_data($customer_id,$search_value);
+
+                $response = array(
+                    "draw"            => intval($draw),
+                    "recordsTotal"    => $recordsTotal,
+                    "recordsFiltered" => $recordsFiltered,
+                    "data"            => $data
+                );
+
                 echo json_encode($response);
+                exit();
+
                 break;
 
             case 'get-customer-vehicles':

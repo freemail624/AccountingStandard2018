@@ -150,8 +150,7 @@ class Products extends CORE_Controller
                 $m_products=$this->Products_model;
                 $search_value=$this->input->get('description',TRUE);
                 $item_type_id=$this->input->get('type',TRUE);
-                $length=$this->input->get('type',TRUE);
-                $data=$m_products->get_all_products($search_value,$item_type_id,$length); 
+                $data=$m_products->get_all_products($search_value,$item_type_id); 
                 echo json_encode($data);
                 break;
                 
