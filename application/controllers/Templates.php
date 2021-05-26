@@ -5495,28 +5495,6 @@ class Templates extends CORE_Controller {
 
                 $data['departments']=$m_departments->get_list('is_active=TRUE AND is_deleted=FALSE');
 
-                $data['suppliers']=$m_suppliers->get_list(
-                    array(
-                        'suppliers.is_active'=>TRUE,
-                        'suppliers.is_deleted'=>FALSE
-                    ),
-
-                    array(
-                        'suppliers.supplier_id',
-                        'suppliers.supplier_name'
-                    )
-                );
-
-                $data['customers']=$m_customers->get_list(
-                    array('is_active'=>TRUE,
-                          'is_deleted'=> FALSE
-                        ),
-                    array(
-                        'customers.customer_id',
-                        'customers.customer_name'
-                        )
-                );
-
                 $adjustment_type=$adjustment_info[0]->adjustment_type;
                 $inv_type_id=$adjustment_info[0]->inv_type_id;
 
@@ -5560,6 +5538,7 @@ class Templates extends CORE_Controller {
                 //validate if customer is not deleted
                 $valid_particular = 0;
                 $particular_id = 0;
+                $particular_name = '';
 
                 if($adjustment_info[0]->inv_type_id == 1 || $adjustment_info[0]->inv_type_id == 2){
                      $valid_particular=$m_customers->get_list(
@@ -5569,7 +5548,8 @@ class Templates extends CORE_Controller {
                             'is_deleted'=>FALSE
                         )
                     );
-                    $particular_id = $adjustment_info[0]->customer_id;
+                    $particular_id = 'C-'.$adjustment_info[0]->customer_id;
+                    $particular_name = $valid_particular[0]->customer_no.' - '.$valid_particular[0]->customer_name . ' (Customer)';
                 }else if($adjustment_info[0]->inv_type_id == 3){
                      $valid_particular=$m_suppliers->get_list(
                         array(
@@ -5578,7 +5558,8 @@ class Templates extends CORE_Controller {
                             'is_deleted'=>FALSE
                         )
                     );
-                    $particular_id = $adjustment_info[0]->supplier_id;
+                    $particular_id = 'S-'.$adjustment_info[0]->supplier_id;
+                    $particular_name = $valid_particular[0]-> supplier_name . ' (Supplier)';
                 }else{
                      $valid_particular=$m_suppliers->get_list(
                         array(
@@ -5588,11 +5569,13 @@ class Templates extends CORE_Controller {
                         )
                     );
 
-                    $particular_id = $supplier_id[0]->adj_supplier_id;
+                    $particular_id = 'S-' . $supplier_id[0]->adj_supplier_id;
+                    $particular_name = $valid_particular[0]->supplier_name. ' (Supplier)';
                 }            
 
                 $data['valid_particular']=(count($valid_particular)>0);
                 $data['particular_id']=$particular_id;
+                $data['particular_name']=$particular_name;
                 echo $this->load->view('template/adjustment_for_review',$data,TRUE); //details of the journal
 
 
@@ -5732,29 +5715,6 @@ class Templates extends CORE_Controller {
 
                 $data['departments']=$m_departments->get_list('is_active=TRUE AND is_deleted=FALSE');
 
-                $data['suppliers']=$m_suppliers->get_list(
-                    array(
-                        'suppliers.is_active'=>TRUE,
-                        'suppliers.is_deleted'=>FALSE
-                    ),
-
-                    array(
-                        'suppliers.supplier_id',
-                        'suppliers.supplier_name'
-                    )
-                );
-
-                $data['customers']=$this->Customers_model->get_list(
-                    array(
-                        'customers.is_active'=>TRUE,
-                        'customers.is_deleted'=>FALSE
-                    ),
-
-                    array(
-                        'customers.customer_id',
-                        'customers.customer_name'
-                    )
-                );
                 $data['accounts']=$m_accounts->get_list(
                     array(
                         'account_titles.is_active'=>TRUE,

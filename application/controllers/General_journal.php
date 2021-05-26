@@ -69,6 +69,76 @@ class General_journal extends CORE_Controller
                 $response['data']=$this->get_response_rows(null,$additional);
                 echo json_encode($response);
                 break;
+            case 'particulars':
+                $m_customers = $this->Customers_model;
+                $m_suppliers = $this->Suppliers_model;
+
+                $draw = $this->input->post('draw', TRUE);
+                $search =  $this->input->post('search', TRUE);
+                $length = $this->input->post('length', TRUE);
+                $start = $this->input->post('start', TRUE);
+                $order = $this->input->post('order', TRUE);
+                $search_value = $search['value'];
+                $column = $order[0]['column'];
+                $order_dir = $order[0]['dir'];
+
+                $valid_columns_customer = array(
+                    0 => 'details-control',
+                    1 => 'customer_name',
+                    2 => 'address',
+                    3 => 'contact_no',
+                    4 => 'actions'
+                );
+
+                $valid_columns_supplier = array(
+                    0 => 'details-control',
+                    1 => 'supplier_name',
+                    2 => 'contact_name',
+                    3 => 'address',
+                    4 => 'actions'
+                );    
+
+                $order_column_customer = $valid_columns_customer[$column];
+                $order_column_supplier = $valid_columns_supplier[$column];
+
+                if ($column == 0 or $column == 4) {
+                    $order_column_customer = null;
+                    $order_column_supplier = null;
+                }
+
+                $data['customers'] = $m_customers->get_customers(
+                    $search_value,
+                    $length,
+                    $start,
+                    $order_column_customer,
+                    $order_dir
+                );
+
+                $data['suppliers'] = $m_suppliers->get_suppliers(
+                    $search_value,
+                    $length,
+                    $start,
+                    $order_column_supplier,
+                    $order_dir
+                ); 
+
+                $recordsTotalCustomer = $m_customers->get_all_data();
+                $recordsFilteredCustomer = $m_customers->get_all_data($search_value);
+                $recordsTotalSupplier = $m_suppliers->get_all_data();
+                $recordsFilteredSupplier = $m_suppliers->get_all_data($search_value);
+
+                $response = array(
+                    "draw"            => intval($draw),
+                    "recordsTotal"    => $recordsTotalCustomer + $recordsTotalSupplier,
+                    "recordsFilteredCustomer" => $recordsFilteredCustomer,
+                    "recordsFilteredSupplier" => $recordsFilteredSupplier,
+                    "data"            => $data
+                );
+
+                echo json_encode($response);
+                exit();
+
+                break;
             case 'get-entries':
                 $journal_id=$this->input->get('id');
                 $m_accounts=$this->Account_title_model;

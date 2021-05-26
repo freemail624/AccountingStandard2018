@@ -313,21 +313,6 @@
                                         <label class="col-lg-2"> <b class="required">*</b> Particular :</label>
                                         <div class="col-lg-10">
                                             <select id="cbo_particulars" name="particular_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Particular is required." required>
-
-                                                <optgroup label="Customers">
-                                                    <option value="create_customer">[Create New Customer]</option>
-                                                    <?php foreach($customers as $customer){ ?>
-                                                        <option value='C-<?php echo $customer->customer_id; ?>'><?php echo $customer->customer_name; ?></option>
-                                                    <?php } ?>
-                                                </optgroup>
-
-                                                <optgroup label="Suppliers">
-                                                    <option value="create_supplier">[Create New Supplier]</option>
-                                                    <?php foreach($suppliers as $supplier){ ?>
-                                                        <option value='S-<?php echo $supplier->supplier_id; ?>'><?php echo $supplier->supplier_name; ?></option>
-                                                    <?php } ?>
-                                                </optgroup>
-
                                             </select>
                                         </div>
 
@@ -1114,9 +1099,59 @@ $(document).ready(function(){
         _cboDepartments.select2('val',null);
 
         _cboParticulars=$('#cbo_particulars').select2({
-            placeholder: "Please select particular.",
-            allowClear: true
-        });
+            ajax: {
+                url: "General_journal/transaction/particulars",
+                type: "post",
+                dataType: 'json',
+                delay: 500,
+                data: function(params) {
+                    return {
+                        search: {
+                            value: params.term
+                        },
+                        start: ((params.page || 1) * 10) - 10,
+                        length: 10,
+                        order: [{
+                            column: 1,
+                            dir: 'asc'
+                        }]
+                    };
+                },
+                processResults: function(response, params) {
+                    const {
+                        data: { suppliers, customers },
+                        recordsFilteredCustomer,
+                        recordsFilteredSupplier
+                    } = response
+
+                    const suppliersData = suppliers.map(s => {
+                        return {
+                            id: 'S-'+s.supplier_id,
+                            text: s.supplier_name + ' (Supplier)'
+                        }
+                    })
+                    
+                    const customersData = customers.map(c => {
+                        return {
+                            id: 'C-'+c.customer_id,
+                            text: c.customer_no + ' - ' + c.customer_name + ' (Customer)'
+                        }
+                    })
+                    return {
+                        results: [
+                            ...customersData,
+                            ...suppliersData
+                        ],
+                        pagination: {
+                            more: ((params.page || 1) * 10) < recordsFilteredCustomer || ((params.page || 1) * 10) < recordsFilteredSupplier
+                        }
+                    };
+                },
+                cache: true
+            },
+            placeholder: 'Select a particular',
+            minimumInputLength: 1
+        })
         _cboParticulars.select2('val',null);
 
         _cboCustomerType=$("#cbo_customer_type").select2({
@@ -1282,7 +1317,7 @@ $(document).ready(function(){
                     }).done(function(response){
                         row.child( response,'no-padding' ).show();
 
-                        reInitializeSpecificDropDown($('.cbo_supplier_list'));
+                        reInitializeSpecificDropDown($('.cbo_supplier_list'), true, true);
                         reInitializeSpecificDropDown($('.cbo_department_list'));
 
                         reInitializeNumeric();
@@ -1334,7 +1369,7 @@ $(document).ready(function(){
                     }).done(function(response){
                         row.child( response,'no-padding' ).show();
 
-                        reInitializeSpecificDropDown($('.cbo_supplier_list'));
+                        reInitializeSpecificDropDown($('.cbo_supplier_list'), true);
                         reInitializeSpecificDropDown($('.cbo_department_list'));
 
                         reInitializeNumeric();
@@ -2096,11 +2131,110 @@ $(document).ready(function(){
     };
 
 
-    function reInitializeSpecificDropDown(elem){
-        elem.select2({
-            placeholder: "Please select item.",
-            allowClear: false
-        });
+    function reInitializeSpecificDropDown(elem, isParticular = false, isSupplier = false){
+        if (isParticular) {
+            if (isSupplier) {
+                elem.select2({
+                    ajax: {
+                        url: "Suppliers/transaction/list",
+                        type: "post",
+                        dataType: 'json',
+                        delay: 500,
+                        data: function(params) {
+                            return {
+                                search: { 
+                                    value: params.term
+                                },
+                                start: ((params.page || 1) * 10) - 10,
+                                length: 10,
+                                order: [{
+                                    column: 1,
+                                    dir: 'asc'
+                                }]
+                            };
+                        },
+                        processResults: function(response, params) {
+                            const { data, recordsFiltered } = response
+                            return {
+                                results: data.map(res => {
+                                    return {
+                                        id: res.supplier_id,
+                                        text: res.supplier_name
+                                    }
+                                }),
+                                pagination: {
+                                    more: ((params.page || 1) * 10) < recordsFiltered 
+                                }
+                            };
+                        },
+                    cache: true
+                    },
+                    placeholder: 'Select a supplier',
+                    minimumInputLength: 1
+                })
+            } else {
+                elem.select2({
+                    ajax: {
+                        url: "General_journal/transaction/particulars",
+                        type: "post",
+                        dataType: 'json',
+                        delay: 500,
+                        data: function(params) {
+                            return {
+                                search: {
+                                    value: params.term
+                                },
+                                start: ((params.page || 1) * 10) - 10,
+                                length: 10,
+                                order: [{
+                                    column: 1,
+                                    dir: 'asc'
+                                }]
+                            };
+                        },
+                        processResults: function(response, params) {
+                            const {
+                                data: { suppliers, customers },
+                                recordsFilteredCustomer,
+                                recordsFilteredSupplier
+                            } = response
+
+                            const suppliersData = suppliers.map(s => {
+                                return {
+                                    id: 'S-'+s.supplier_id,
+                                    text: s.supplier_name + ' (Supplier)'
+                                }
+                            })
+                            
+                            const customersData = customers.map(c => {
+                                return {
+                                    id: 'C-'+c.customer_id,
+                                    text: c.customer_no + ' - ' + c.customer_name + ' (Customer)'
+                                }
+                            })
+                            return {
+                                results: [
+                                    ...customersData,
+                                    ...suppliersData
+                                ],
+                                pagination: {
+                                    more: ((params.page || 1) * 10) < recordsFilteredCustomer || ((params.page || 1) * 10) < recordsFilteredSupplier
+                                }
+                            };
+                        },
+                        cache: true
+                    },
+                    placeholder: 'Select a particular',
+                    minimumInputLength: 1
+                })
+            }
+            
+        } else { 
+            elem.select2({
+                placeholder: "Please select item.",
+                allowClear: false
+            });
+        }
     };
 
     var showSpinningProgress=function(e){

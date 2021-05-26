@@ -52,17 +52,7 @@
                                     <div class="col-lg-10">
 
                                             <select id="cbo_particulars" name="particular_id" class=" cbo_supplier_list selectpicker show-tick form-control" data-live-search="true" data-error-msg="Particular is required." required>
-                                                <optgroup label="Customers">
-                                                    <?php foreach($customers as $customer){ ?>
-                                                        <option value='C-<?php echo $customer->customer_id; ?>'><?php echo $customer->customer_name; ?></option>
-                                                    <?php } ?>
-                                                </optgroup>
-
-                                                <optgroup label="Suppliers">
-                                                    <?php foreach($suppliers as $supplier){ ?>
-                                                        <option value='S-<?php echo $supplier->supplier_id; ?>' <?php echo ($supplier_info->iss_supplier_id===$supplier->supplier_id?'selected':''); ?>><?php echo $supplier->supplier_name; ?></option>
-                                                    <?php } ?>
-                                                </optgroup>
+                                                <option value='S-<?php echo $supplier_info->supplier_id; ?>'><?php echo $supplier_info->supplier_name; ?></option>
                                             </select>
                                     </div>
                                     <br /><br />
