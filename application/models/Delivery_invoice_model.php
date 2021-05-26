@@ -287,8 +287,175 @@ GROUP BY n.supplier_id HAVING total_balance > 0
                 FROM
                     (SELECT 
                     dii.product_id,
+                        (SELECT
+                               payable_account_id
+                            FROM
+                                account_integration) AS account_id,
+                        '' AS memo,
+                        0 dr_amount,
+                        di.grand_total_amount AS cr_amount
+                FROM
+                    `delivery_invoice_items` AS dii
+                INNER JOIN products AS p ON dii.product_id = p.product_id
+                LEFT JOIN delivery_invoice di ON di.dr_invoice_id = dii.dr_invoice_id
+                WHERE
+                    dii.dr_invoice_id = $purchase_invoice_id
+                        AND p.expense_account_id > 0) AS acc_payable
+                GROUP BY acc_payable.account_id
+                
+                UNION ALL
+
+                SELECT 
+                    p.pd_account_id AS account_id,
+                        '' AS memo,
+                        0 dr_amount,
+                        (di.total_discount + di.total_overall_discount_amount) AS cr_amount
+                FROM
+                    `delivery_invoice_items` AS dii
+                INNER JOIN products AS p ON dii.product_id = p.product_id
+                LEFT JOIN delivery_invoice di ON di.dr_invoice_id = dii.dr_invoice_id
+                WHERE
+                    dii.dr_invoice_id = $purchase_invoice_id
+                        AND p.pd_account_id > 0
+                GROUP BY p.pd_account_id 
+
+                
+                ) AS main
+            WHERE
+                main.dr_amount > 0 OR main.cr_amount > 0";
+
+        return $this->db->query($sql)->result();
+
+
+
+    }
+
+    function get_journal_entries_3($purchase_invoice_id){
+        $sql="SELECT 
+                main.*
+            FROM
+                (SELECT 
+                    p.expense_account_id AS account_id,
+                        '' AS memo,
+                        (SUM(dii.dr_non_tax_amount) + di.total_discount + di.total_overall_discount_amount) as  dr_amount,
+                        0 AS cr_amount
+                FROM
+                    `delivery_invoice_items` AS dii
+                INNER JOIN products AS p ON dii.product_id = p.product_id
+                LEFT JOIN delivery_invoice di ON di.dr_invoice_id = dii.dr_invoice_id
+                WHERE
+                    dii.dr_invoice_id = $purchase_invoice_id
+                        AND p.expense_account_id > 0
+                GROUP BY p.expense_account_id 
+                
+
+                UNION ALL 
+                
+                SELECT 
+                    input_tax.account_id,
+                        input_tax.memo,
+                        SUM(input_tax.dr_amount) AS dr_amount,
+                        0 AS cr_amount
+                FROM
+                    (SELECT 
+                    dii.product_id,
                         (SELECT 
-                                payable_account_id
+                                input_tax_account_id
+                            FROM
+                                account_integration) AS account_id,
+                        '' AS memo,
+                        SUM(dii.dr_tax_amount) AS dr_amount,
+                        0 AS cr_amount
+                FROM
+                    `delivery_invoice_items` AS dii
+                INNER JOIN products AS p ON dii.product_id = p.product_id
+                WHERE
+                    dii.dr_invoice_id = $purchase_invoice_id
+                        AND p.expense_account_id > 0) AS input_tax
+                GROUP BY input_tax.account_id 
+
+
+                UNION ALL
+
+                SELECT 
+                    shipping_cost.account_id,
+                        shipping_cost.memo,
+                        SUM(shipping_cost.dr_amount) AS dr_amount,
+                        0 AS cr_amount
+                FROM
+                    (SELECT 
+                        (SELECT 
+                                shipping_cost_account_id
+                            FROM
+                                account_integration) AS account_id,
+                        '' AS memo,
+                        SUM(di.shipping_cost) AS dr_amount,
+                        0 AS cr_amount
+                FROM
+                    delivery_invoice di
+                WHERE
+                    di.dr_invoice_id = $purchase_invoice_id) AS shipping_cost
+                GROUP BY shipping_cost.account_id 
+
+                UNION ALL
+
+                SELECT 
+                    custom_duties.account_id,
+                        custom_duties.memo,
+                        SUM(custom_duties.dr_amount) AS dr_amount,
+                        0 AS cr_amount
+                FROM
+                    (SELECT 
+                        (SELECT 
+                                custom_duties_account_id
+                            FROM
+                                account_integration) AS account_id,
+                        '' AS memo,
+                        SUM(di.custom_duties) AS dr_amount,
+                        0 AS cr_amount
+                FROM
+                    delivery_invoice di
+                WHERE
+                    di.dr_invoice_id = $purchase_invoice_id) AS custom_duties
+                GROUP BY custom_duties.account_id 
+
+
+                UNION ALL
+
+                SELECT 
+                    other_expense.account_id,
+                        other_expense.memo,
+                        SUM(other_expense.dr_amount) AS dr_amount,
+                        0 AS cr_amount
+                FROM
+                    (SELECT 
+                        (SELECT 
+                                other_expense_account_id
+                            FROM
+                                account_integration) AS account_id,
+                        '' AS memo,
+                        SUM(di.other_amount) AS dr_amount,
+                        0 AS cr_amount
+                FROM
+                    delivery_invoice di
+                WHERE
+                    di.dr_invoice_id = $purchase_invoice_id) AS other_expense
+                GROUP BY other_expense.account_id 
+
+
+
+                UNION ALL 
+                
+                SELECT 
+                    acc_payable.account_id,
+                        acc_payable.memo,
+                        0 AS dr_amount,
+                        acc_payable.cr_amount AS cr_amount
+                FROM
+                    (SELECT 
+                    dii.product_id,
+                        (SELECT 
+                                payment_to_supplier_id
                             FROM
                                 account_integration) AS account_id,
                         '' AS memo,

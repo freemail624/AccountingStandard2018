@@ -193,14 +193,14 @@
 
         <div class="panel panel-default">
             <div class="panel-body panel-responsive" >
-            <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo" style="text-decoration: none;">
+            <a data-toggle="collapse" data-parent="#accordionA" href="#collapse3" style="text-decoration: none;">
 <!--             <div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Review Expense (Pending)</b></div> -->
             <h2 class="h2-panel-heading"> Review Deliveries (Expense) <small> | Pending  </small><!-- <a href="assets/manual/financing/Review_Expense_Pending.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2>
             </a> -->
             </h2>
             </a>
             <hr>
-            <div id="collapseTwo" class="collapse in">
+            <div id="collapse3" class="collapse in">
                     <div style="padding: 1%;border-radius: 5px;padding-bottom: 2%;">
                         <table id="tbl_delivery_for_review" class="table table-striped" cellspacing="0" width="100%">
                             <thead class="">
@@ -318,13 +318,13 @@
 
         <div class="panel panel-default" style="border-radius:6px;">
 
-                    <div class="panel-body panel-responsive" style="min-height: 400px;">
-            <a data-toggle="collapse" data-parent="#accordionA" href="#collapseOne" style="text-decoration: none;">
+                    <div class="panel-body panel-responsive">
+            <a data-toggle="collapse" data-parent="#accordionA" href="#collapse4" style="text-decoration: none;">
 <!--             <div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Check Summary</b></div> -->
     <h2 class="h2-panel-heading"> Check Summary</h2>
             </a>
-                <div id="collapseOne" class="collapse in">
-                        <div >
+                <div id="collapse4" class="collapse in">
+                        <div class="row">
                             <table id="tbl_check_list" class="table table-striped" cellspacing="0" width="100%">
                                 <thead style="display:none;background-color:#161616!important;">
                                 <tr>
@@ -1599,7 +1599,57 @@ $(document).ready(function(){
             }
         } );
 
+        $('#tbl_delivery_for_review tbody').on( 'click', 'tr td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = dtDelivery.row( tr );
+            var idx = $.inArray( tr.attr('id'), detailRows );
 
+            if ( row.child.isShown() ) {
+                tr.removeClass( 'details' );
+                row.child.hide();
+
+                // Remove from the 'open' array
+                detailRows.splice( idx, 1 );
+            }
+            else {
+                tr.addClass( 'details' );
+                //console.log(row.data());
+                var d=row.data();
+
+                $.ajax({
+                    "dataType":"html",
+                    "type":"POST",
+                    "url":"Templates/layout/dr-journal-for-review?id="+ d.dr_invoice_id,
+                    "beforeSend" : function(){
+                        row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                    }
+                }).done(function(response){
+                    row.child( response,'no-padding' ).show();
+
+                    reInitializeSpecificDropDown($('.cbo_customer_list'));
+                    reInitializeSpecificDropDown($('.cbo_department_list'));
+                    reInitializeSpecificDropDown($('.cbo_payment_method'));
+
+
+                    reInitializeNumeric();
+
+                    var tbl=$('#tbl_entries_for_delivery_review_'+ d.dr_invoice_id);
+                    var parent_tab_pane=$('#journal_review_'+ d.dr_invoice_id);
+
+                    reInitializeDropDownAccounts(tbl,false);
+                    reInitializeChildEntriesTable(tbl);
+                    reInitializeDRChildElements(parent_tab_pane);
+
+                    // Add to the 'open' array
+                    if ( idx === -1 ) {
+                        detailRows.push( tr.attr('id') );
+                    }
+
+                });
+            }
+        } );
+
+        
         $('#tbl_expense_for_review tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
             var row = dtReview.row( tr );
@@ -2338,6 +2388,71 @@ $(document).ready(function(){
 
     };
     //***************************************************************************************************************88
+
+
+    var reInitializeDRChildElements=function(parent){
+        var _dataParentID=parent.data('parent-id');
+        var btn=parent.find('button[name="btn_finalize_journal_review"]');
+
+        //initialize datepicker
+        parent.find('input.date-picker').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: true,
+            autoclose: true
+
+        });
+
+
+        parent.on('click','button[name="btn_finalize_journal_review"]',function(){
+
+            var _curBtn=$(this);
+            if(isBalance('#tbl_entries_for_delivery_review_'+_dataParentID)){
+                finalizeDRJournalReview().done(function(response){
+                    showNotification(response);
+                    
+                    if(response.stat=="success"){
+                        dt.row.add(response.row_added[0]).draw();
+                        var _parentRow=_curBtn.parents('table.table_dr_journal_entries_review').parents('tr').prev();
+                        dtDelivery.row(_parentRow).remove().draw();
+                    }
+
+                }).always(function(){
+                    showSpinningProgress(_curBtn);
+                });
+            }else{
+                showNotification({title:"Not Balance!",stat:"error",msg:'Please make sure Debit and Credit amount are equal.'});
+                stat=false;
+            }
+
+
+        });
+
+        var finalizeDRJournalReview=function(){
+            var _data_review=parent.find('form').serializeArray();
+            var chck_status = parent.find('form').find('input[type="checkbox"]').is(':checked');
+            if (chck_status == true){ 
+                _data_review.push({name : "2307_apply" ,value : 1});
+            }else{
+                _data_review.push({name : "2307_apply" ,value : 0});
+            }
+
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Cash_disbursement/transaction/create",
+                "data":_data_review,
+                "beforeSend": showSpinningProgress(btn)
+
+            });
+        };
+
+
+
+    };
+
+
 
 
     var reInitializeChildElements=function(parent){

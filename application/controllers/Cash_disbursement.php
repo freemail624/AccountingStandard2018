@@ -263,7 +263,7 @@ class Cash_disbursement extends CORE_Controller
                 }
 
 
-                //if dr invoice is available, purchase invoice is recorded as journal
+                //if payment is available, payment is recorded as journal
                 $payment_id=$this->input->post('payment_id',TRUE);
                 if($payment_id!=null){
                     $m_payable_payment=$this->Payable_payment_model;
@@ -272,18 +272,41 @@ class Cash_disbursement extends CORE_Controller
                     $m_payable_payment->is_posted=TRUE;
                     $m_payable_payment->modify($payment_id);
 
-                // AUDIT TRAIL START
-                $payment_info=$m_payable_payment->get_list($payment_id,'payment_id,receipt_no');
-                $m_trans=$this->Trans_model;
-                $m_trans->user_id=$this->session->user_id;
-                $m_trans->set('trans_date','NOW()');
-                $m_trans->trans_key_id=8; //CRUD
-                $m_trans->trans_type_id=13; // TRANS TYPE
-                $m_trans->trans_log='Finalized Payment No.'.$payment_info[0]->receipt_no.' ('.$payment_info[0]->payment_id.')For Cash Disbursement';
-                $m_trans->save();
-                //AUDIT TRAIL END
+                    // AUDIT TRAIL START
+                    $payment_info=$m_payable_payment->get_list($payment_id,'payment_id,receipt_no');
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=8; //CRUD
+                    $m_trans->trans_type_id=13; // TRANS TYPE
+                    $m_trans->trans_log='Finalized Payment No.'.$payment_info[0]->receipt_no.' ('.$payment_info[0]->payment_id.')For Cash Disbursement';
+                    $m_trans->save();
+                    //AUDIT TRAIL END
 
                 }
+
+                //if dr invoice is available, purchase invoice is recorded as journal
+                $dr_invoice_id=$this->input->post('dr_invoice_id',TRUE);
+                if($dr_invoice_id!=null){
+                    $m_delivery=$this->Delivery_invoice_model;
+                    $m_delivery->journal_id=$journal_id;
+                    $m_delivery->is_journal_posted=TRUE;
+                    $m_delivery->modify($dr_invoice_id);
+
+                    // AUDIT TRAIL START
+                    $delivery_info=$m_delivery->get_list($dr_invoice_id,'dr_invoice_id,dr_invoice_no');
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=8; //CRUD
+                    $m_trans->trans_type_id=13; // TRANS TYPE
+                    $m_trans->trans_log='Finalized Purchase Invoice No.'.$delivery_info[0]->dr_invoice_no.' ('.$delivery_info[0]->dr_invoice_id.')For Cash Disbursement';
+                    $m_trans->save();
+                    //AUDIT TRAIL END
+
+                }
+
+
 
                 // AUDIT TRAIL START
 

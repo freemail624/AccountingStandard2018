@@ -7,6 +7,8 @@ class Templates extends CORE_Controller {
 
         $this->validate_session();
 
+        $this->load->model('Asset_settings_model');
+
         $this->load->model('Purchases_model');
         $this->load->model('Purchase_items_model');
 
@@ -2643,7 +2645,7 @@ class Templates extends CORE_Controller {
                 $m_purchases_items=$this->Delivery_invoice_item_model;
                 $m_purchases_info=$this->Delivery_invoice_model;
                 $m_departments=$this->Departments_model;
-                $current_accounts= $this->Account_integration_model->get_list();
+                $m_fixed_asset_accounts=$this->Asset_settings_model;
 
                 $purchase_info=$m_purchases_info->get_list(
                     array(
@@ -2692,8 +2694,14 @@ class Templates extends CORE_Controller {
                 $data['purchase_info']=$purchase_info[0];
 
                 // Count Fixed Asset Items in DR
-                $fixed_asset_account_id = $current_accounts[0]->fixed_asset_account_id;
-                $count = $m_purchases_items->get_fixed_asset_items($purchase_invoice_id,$fixed_asset_account_id);
+
+                $fixed_accounts=$m_fixed_asset_accounts->get_list(null,'asset_account_id');
+                $acc = [];
+                foreach ($fixed_accounts as $account) { $acc[]=$account->asset_account_id; }
+                $filter_accounts =  implode(",", $acc);
+
+
+                $count = $m_purchases_items->get_fixed_asset_items($purchase_invoice_id,$filter_accounts);
                 $data['fixed_asset_count'] = count($count);
 
                 $data['departments']=$m_departments->get_list('is_active=TRUE AND is_deleted=FALSE');
@@ -2750,6 +2758,135 @@ class Templates extends CORE_Controller {
 
 
                 echo $this->load->view('template/ap_journal_for_review',$data,TRUE); //details of the journal
+
+
+                break;
+
+            case 'dr-journal-for-review':
+                $purchase_invoice_id=$this->input->get('id',TRUE);
+
+                $m_suppliers=$this->Suppliers_model;
+                $m_accounts=$this->Account_title_model;
+                $m_purchases_items=$this->Delivery_invoice_item_model;
+                $m_purchases_info=$this->Delivery_invoice_model;
+                $m_departments=$this->Departments_model;
+                $current_accounts= $this->Account_integration_model->get_list();
+                $m_methods=$this->Payment_method_model;
+                $m_fixed_asset_accounts=$this->Asset_settings_model;
+
+                $purchase_info=$m_purchases_info->get_list(
+                    array(
+                        'delivery_invoice.is_active'=>TRUE,
+                        'delivery_invoice.is_deleted'=>FALSE,
+                        'delivery_invoice.dr_invoice_id'=>$purchase_invoice_id
+                    ),
+
+                    array(
+                        'delivery_invoice.payment_method_id',
+                        'delivery_invoice.dr_invoice_id',
+                        'delivery_invoice.purchase_order_id',
+                        'delivery_invoice.dr_invoice_no',
+                        'delivery_invoice.supplier_id',
+                        'delivery_invoice.department_id',
+                        'delivery_invoice.external_ref_no',
+                        'delivery_invoice.remarks',
+                        'delivery_invoice.total_discount',
+                        'delivery_invoice.total_before_tax',
+                        'delivery_invoice.total_tax_amount',
+                        'delivery_invoice.total_after_tax',
+                        'delivery_invoice.total_overall_discount_amount',
+                        'delivery_invoice.total_after_discount',
+                        'delivery_invoice.shipping_cost',
+                        'delivery_invoice.custom_duties',
+                        'delivery_invoice.other_amount',
+                        'delivery_invoice.grand_total_amount',
+                        'terms.term_description',
+                        'DATE_FORMAT(delivery_invoice.date_delivered,"%m/%d/%Y")as date_delivered',
+                        'DATE_FORMAT(delivery_invoice.date_created,"%m/%d/%Y %r")as date_created',
+                        'suppliers.supplier_name',
+                        'suppliers.address',
+                        'suppliers.email_address',
+                        'suppliers.contact_no',
+                        'purchase_order.po_no',
+                        'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by'
+                    ),
+
+                    array(
+                        array('suppliers','suppliers.supplier_id=delivery_invoice.supplier_id','left'),
+                        array('terms','terms.term_id=delivery_invoice.term_id','left'),
+                        array('purchase_order','purchase_order.purchase_order_id=delivery_invoice.purchase_order_id','left'),
+                        array('user_accounts','user_accounts.user_id=delivery_invoice.posted_by_user','left')
+                    )
+
+                );
+                $data['purchase_info']=$purchase_info[0];
+                $data['methods']=$m_methods->get_list();
+
+                // Count Fixed Asset Items in DR
+
+                $fixed_accounts=$m_fixed_asset_accounts->get_list(null,'asset_account_id');
+                $acc = [];
+                foreach ($fixed_accounts as $account) { $acc[]=$account->asset_account_id; }
+                $filter_accounts =  implode(",", $acc);
+                $count = $m_purchases_items->get_fixed_asset_items($purchase_invoice_id,$filter_accounts);
+                $data['fixed_asset_count'] = count($count);
+
+
+                $data['departments']=$m_departments->get_list('is_active=TRUE AND is_deleted=FALSE');
+
+                $data['suppliers']=$m_suppliers->get_list(
+                    array(
+                        'suppliers.is_active'=>TRUE,
+                        'suppliers.is_deleted'=>FALSE
+                    ),
+
+                    array(
+                        'suppliers.supplier_id',
+                        'suppliers.supplier_name'
+                    )
+                );
+                
+                $data['entries']=$m_purchases_info->get_journal_entries_3($purchase_invoice_id);
+                $data['accounts']=$m_accounts->get_list(
+                    array(
+                        'account_titles.is_active'=>TRUE,
+                        'account_titles.is_deleted'=>FALSE
+                    )
+                );
+                $data['items']=$m_purchases_items->get_list(
+                    array(
+                        'delivery_invoice_items.dr_invoice_id'=>$purchase_invoice_id
+                    ),
+
+                    array(
+                        'delivery_invoice_items.*',
+                        'products.product_desc',
+                        'units.unit_name',
+                        'IFNULL(m.po_price,0) AS po_price'
+                    ),
+
+                    array(
+                        array('delivery_invoice','delivery_invoice.dr_invoice_id=delivery_invoice_items.dr_invoice_id','left'),
+                        array('products','products.product_id=delivery_invoice_items.product_id','left'),
+                        array('units','units.unit_id=delivery_invoice_items.unit_id','left'),
+                        array('(SELECT po_price,purchase_order_id,product_id FROM purchase_order_items as poi WHERE purchase_order_id='.$purchase_info[0]->purchase_order_id.' GROUP BY poi.product_id) as m','m.purchase_order_id=delivery_invoice.purchase_order_id AND delivery_invoice_items.product_id=m.product_id','left')
+                    )
+
+                );
+
+                //validate if customer is not deleted
+                $valid_supplier=$m_suppliers->get_list(
+                    array(
+                        'supplier_id'=>$purchase_info[0]->supplier_id,
+                        'is_active'=>TRUE,
+                        'is_deleted'=>FALSE
+                    )
+                );
+                $data['valid_particular']=(count($valid_supplier)>0);
+
+
+
+                echo $this->load->view('template/dr_journal_for_review',$data,TRUE); //details of the journal
 
 
                 break;
