@@ -48,11 +48,14 @@ class Account_integration extends CORE_Controller
         $current_accounts_purchasing= $this->Purchasing_integration_model->get_list();
         $data['current_accounts_purchasing'] =$current_accounts_purchasing[0];
         $data['departments'] = $this->Departments_model->get_list(array('is_active'=>TRUE, 'is_deleted'=>FALSE));
-        $data['customers']=$this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
-        $data['suppliers']=$this->Suppliers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['categories']=$this->Categories_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['order_sources']=$this->Order_source_model->get_list('is_active=TRUE AND is_deleted=FALSE');
-        $data['products']=$this->Products_model->product_list(1,null,null,null,null,null,null,null,1);
+
+        $adj_supplier_id=$this->Purchasing_integration_model->get_list(1)[0]->adj_supplier_id;
+        $iss_supplier_id=$this->Purchasing_integration_model->get_list(1)[0]->iss_supplier_id;
+        $data['adj_supplier']=$this->Suppliers_model->get_list($adj_supplier_id);
+        $data['iss_supplier']=$this->Suppliers_model->get_list($iss_supplier_id);
+
         //grand parent account only
         $data['expenses']=$this->Account_title_model->get_list(
             'account_titles.is_active=1 AND account_titles.is_deleted=0 AND at.account_type_id=5 AND account_titles.account_id IN(SELECT x.grand_parent_id FROM account_titles as x WHERE x.parent_account_id=0)',

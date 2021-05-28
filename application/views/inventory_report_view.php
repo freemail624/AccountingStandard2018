@@ -193,13 +193,13 @@
                                                                 </div>
                                                             </div>
                                                             <br>
-                                                            <button class="btn btn-primary" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Print" >
+                                                            <button class="btn btn-primary hidden" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Print" >
                                                                 <i class="fa fa-print"></i> Print Report</button>&nbsp;
 
                                                             <button class="btn btn-success" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Export" >
                                                                 <i class="fa fa-file-excel-o"></i> Export</button>
 
-                                                            <button class="btn btn-success" id="btn_email" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Email" >
+                                                            <button class="btn btn-success hidden" id="btn_email" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Email" >
                                                                 <i class="fa fa-share"></i> Email</button>
 
                                                             <button class="btn btn-green" id="btn_refresh" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Reload" >
@@ -361,7 +361,7 @@
             });
 
             $(document).on('click','#btn_export',function(){
-                window.open('Inventory/transaction/export-inventory?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val()+'&ccf='+$('#cbo_current_count').val());
+                window.open('Inventory/transaction/new-export-inventory?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val()+'&ccf='+$('#cbo_current_count').val());
             });
 
             $(document).on('click','#btn_email',function(){
@@ -446,21 +446,31 @@
         function reloadList(){
 
             dt=$('#tbl_inventory').DataTable({
-                "dom": '<"toolbar">frtip',
-                "bLengthChange":false,
-                "bPaginate":false,
+                "processing": true,
+                "serverSide": true,
+                "bLengthChange": false,
                 "ajax": {
                     "url": "Inventory/transaction/get-inventory",
-                    "type": "POST",
-                    "bDestroy": true,
+                    "dataType": "json",
+                    "type": "POST",  
                     "data": function ( d ) {
                         return $.extend( {}, d, {
                             "depid": $('#cbo_department').val(),
                             "date" : $('#txt_date').val(),
-                            "ccf" : $('#cbo_current_count').val()
+                            "ccf" : $('#cbo_current_count').val(),
+                            "item_type_id" : 1,
+                            "is_parent" : 0,
+                            "is_nonsalable" : 0,
+                            "pick_list" : false,
+                            "supplier_id" : 0,
+                            "product_id" : 0,
+                            "category_id" : 0
 
                         });
                     }
+                },   
+                oLanguage:{
+                    sProcessing: '<center><br/><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
                 },
                 "columns": [
                     {   
@@ -506,21 +516,11 @@
                     }                                                      
 
                 ]
-
-                ,
-                "rowCallBack": function(a,b,c){
-                    console.log(b);
-                }
-
             });
         };
-
-
-
     });
 </script>
 
 
 </body>
-
 </html>

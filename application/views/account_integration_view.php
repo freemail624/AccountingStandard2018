@@ -182,10 +182,12 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                         <div class="form-group">
                             <label class="col-md-3 control-label"> <b class="required"> * </b>Issuance Supplier :</label>
                             <div class="col-md-7">
-                                <select name="iss_supplier_id" class="cbo_accounts" data-error-msg="Issuance Supplier is required." required>
-                                    <?php foreach($suppliers as $supplier){ ?>
-                                        <option value="<?php echo $supplier->supplier_id; ?>" <?php echo ($current_accounts_purchasing->iss_supplier_id==$supplier->supplier_id?'selected':''); ?>  ><?php echo $supplier->supplier_name; ?></option>
-                                    <?php } ?>
+                                <select name="iss_supplier_id" id="cbo_iss_suppliers" class="cbo_accounts" data-error-msg="Issuance Supplier is required." required>
+                                    <?php if(count(iss_supplier)>0){ ?>
+                                        <option value="<?php echo $iss_supplier[0]->supplier_id; ?>">
+                                            <?php echo $iss_supplier[0]->supplier_name; ?>
+                                        </option>
+                                    <?php }?>
                                 </select>
                                 <span class="help-block m-b-none">Please Choose a default Supplier for Inventory Transfer Items </span>
                             </div>
@@ -315,10 +317,12 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                         <div class="form-group">
                             <label class="col-md-3 control-label"> <b class="required"> * </b> Adjustment Supplier :</label>
                             <div class="col-md-7">
-                                <select name="adj_supplier_id" class="cbo_accounts" data-error-msg="Adjustment Supplier is required." required>
-                                    <?php foreach($suppliers as $supplier){ ?>
-                                        <option value="<?php echo $supplier->supplier_id; ?>" <?php echo ($current_accounts_purchasing->adj_supplier_id==$supplier->supplier_id?'selected':''); ?>  ><?php echo $supplier->supplier_name; ?></option>
-                                    <?php } ?>
+                                <select name="adj_supplier_id" id="cbo_suppliers" class="cbo_accounts" data-error-msg="Adjustment Supplier is required." required>
+                                    <?php if(count(adj_supplier)>0){ ?>
+                                        <option value="<?php echo $adj_supplier[0]->supplier_id; ?>">
+                                            <?php echo $adj_supplier[0]->supplier_name; ?>
+                                        </option>
+                                    <?php }?>
                                 </select>
                                 <span class="help-block m-b-none">Please Choose a default Supplier for Adjusting Inventory.</span>
                             </div>
@@ -929,7 +933,7 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
 
 <script>
 $(document).ready(function(){
-    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _accounts;
+    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _accounts; var _cboIssSuppliers;
 
 
 
@@ -953,6 +957,84 @@ $(document).ready(function(){
             allowClear: false
         });
 
+        _cboSuppliers=$('#cbo_suppliers').select2({
+          ajax: {
+            url: "Suppliers/transaction/list",
+            type: "post",
+            dataType: 'json',
+            delay: 500,
+            data: function(params) {
+                return {
+                    search: { 
+                        value: params.term
+                    },
+                    start: ((params.page || 1) * 10) - 10,
+                    length: 10,
+                    order: [{
+                        column: 1,
+                        dir: 'asc'
+                    }]
+                };
+            },
+            processResults: function(response, params) {
+                const { data, recordsFiltered } = response
+                return {
+                    results: data.map(res => {
+                        return {
+                            id: res.supplier_id,
+                            text: res.supplier_name
+                        }
+                    }),
+                    pagination: {
+                        more: ((params.page || 1) * 10) < recordsFiltered 
+                    }
+                };
+            },
+           cache: true
+          },
+          placeholder: 'Select a supplier',
+          minimumInputLength: 1
+        });
+
+        _cboIssSuppliers=$('#cbo_iss_suppliers').select2({
+          ajax: {
+            url: "Suppliers/transaction/list",
+            type: "post",
+            dataType: 'json',
+            delay: 500,
+            data: function(params) {
+                return {
+                    search: { 
+                        value: params.term
+                    },
+                    start: ((params.page || 1) * 10) - 10,
+                    length: 10,
+                    order: [{
+                        column: 1,
+                        dir: 'asc'
+                    }]
+                };
+            },
+            processResults: function(response, params) {
+                const { data, recordsFiltered } = response
+                return {
+                    results: data.map(res => {
+                        return {
+                            id: res.supplier_id,
+                            text: res.supplier_name
+                        }
+                    }),
+                    pagination: {
+                        more: ((params.page || 1) * 10) < recordsFiltered 
+                    }
+                };
+            },
+           cache: true
+          },
+          placeholder: 'Select a supplier',
+          minimumInputLength: 1
+        });
+        
         var createToolBarButton=function() {
             var _btnNew='<button class="btn btn-primary"  id="btn_close_accounting" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Close Accounting Period" >'+
                 '<i class="fa fa-bars"></i> Close Accounting Period</button>';
