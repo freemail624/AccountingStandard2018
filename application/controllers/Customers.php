@@ -145,7 +145,7 @@ class Customers extends CORE_Controller {
                 $m_customers->tel_no_home=$this->input->post('tel_no_home',TRUE);
                 $m_customers->tel_no_bus=$this->input->post('tel_no_bus',TRUE);
 
-                $number = '00000'; // the number to format
+                $number = '000000'; // the number to format
                 $format = COUNT($m_customers->get_list())+1+$account_integration[0]->customer_start_no;
                 $customer_no = str_pad(intval($number) + $format, strlen($number), '0', STR_PAD_LEFT);
                 $m_customers->customer_no=$customer_no;

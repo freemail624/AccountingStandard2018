@@ -1,4 +1,5 @@
 <?php
+ini_set('memory_limit', '-1');
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Inventory extends CORE_Controller
@@ -43,6 +44,39 @@ class Inventory extends CORE_Controller
         switch($txn){
             case 'get-inventory':
                 $m_products = $this->Products_model;
+                
+                $is_parent = $this->input->post('is_parent', TRUE);
+                $is_nonsalable = $this->input->post('is_nonsalable', TRUE);
+                $pick_list = $this->input->post('pick_list', TRUE);
+                $item_type_id = $this->input->post('item_type_id', TRUE);
+                $product_id = $this->input->post('product_id', TRUE);
+                $supplier_id = $this->input->post('supplier_id', TRUE);
+                $category_id = $this->input->post('category_id', TRUE);
+                $draw = $this->input->post('draw', TRUE);
+                $search =  $this->input->post('search', TRUE);
+                $length = $this->input->post('length', TRUE);
+                $start = $this->input->post('start', TRUE);
+                $order = $this->input->post('order', TRUE);
+                $search_value = $search['value'];
+                $column = $order[0]['column'];
+                $order_dir = $order[0]['dir'];
+
+                $valid_columns = array(
+                    0=>'details-control',
+                    1=>'product_code',
+                    2=>'product_desc',
+                    3=>'quantity_in',
+                    4=>'quantity_out',
+                    5=>'productmain.total_qty_balance',
+                    6=>'total_qty_bulk'
+                );
+
+                $order_column = $valid_columns[$column];
+
+                if($column == 0){
+                    $order_column = null;
+                }
+
                 $ccf = null;
                 $date = date('Y-m-d',strtotime($this->input->post('date',TRUE)));
                 $depid = $this->input->post('depid',TRUE);
@@ -64,11 +98,46 @@ class Inventory extends CORE_Controller
                 }else if($currentcountfilter == 4){ 
                     $ccf = ' = 0';
                 }
+            
+                $recordsTotal = $m_products->get_all_data($item_type_id);
+                $recordsFiltered = $m_products->get_all_data($item_type_id,$search_value);
 
-                $response['data']=$m_products->product_list($account,$date,null,null,null,1,null,$depid,$account_cii,$account_dis,$ccf,1);
-                // $response['data'] = $m_products->get_product_list_inventory($date,$depid,$account);
+                if($length == null){
+                    $length_value = $recordsTotal;
+                }else{
+                    $length_value = $length;
+                }
+
+                $data=$m_products->product_list(
+                    $account, 
+                    $date, 
+                    $product_id,
+                    $supplier_id, 
+                    $category_id, 
+                    $item_type_id, 
+                    $pick_list, 
+                    $depid, 
+                    $account_cii,
+                    $account_dis, 
+                    $currentcountfilter,
+                    $is_parent,
+                    $is_nonsalable, 
+                    $search_value, 
+                    $length_value, 
+                    $start,
+                    $order_column,
+                    $order_dir);
+
+                $response = array(
+                    "draw"            => intval($draw),
+                    "recordsTotal"    => $recordsTotal,
+                    "recordsFiltered" => $recordsFiltered,
+                    "data"            => $data
+                );
 
                 echo json_encode($response);
+                exit();
+
                 break;
 
             case 'preview-inventory-with-total':
@@ -102,6 +171,101 @@ class Inventory extends CORE_Controller
                 $company_info=$m_company_info->get_list();
                 $data['company_info']=$company_info[0];
                 $this->load->view('template/batch_inventory_report_with_total',$data);
+                break;
+
+
+            case 'new-export-inventory':
+                $this->load->view('template/elements/xlsxwriter.class.php', '', true);
+
+                $filename = "Inventory Report ".date('M-d-Y',NOW()).".xlsx";
+                header('Content-disposition: attachment; filename="'.XLSXWriter::sanitize_filename($filename).'"');
+                header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                header('Content-Transfer-Encoding: binary');
+                header('Cache-Control: must-revalidate');
+                header('Pragma: public');
+
+                $account_integration =$this->Account_integration_model;
+                $a_i=$account_integration->get_list();
+                $account =$a_i[0]->sales_invoice_inventory;
+                $ci_account =$a_i[0]->cash_invoice_inventory;
+                $account_dis =$a_i[0]->dispatching_invoice_inventory;
+                $m_products = $this->Products_model;
+                $m_department = $this->Departments_model;
+
+                $date = date('Y-m-d',strtotime($this->input->get('date',TRUE)));
+                $depid = $this->input->get('depid',TRUE);
+                $info = $m_department->get_department_list($depid);
+                $currentcountfilter = $this->input->get('ccf',TRUE);
+                // Current Quantity Current Count Filter , 1 for ALL, 2 for Greater than 0, 3 for Less than Zero
+                if($currentcountfilter  == 1){ $ccf = null; }else if ($currentcountfilter  == 2) { $ccf = ' > 0'; }
+                else if($currentcountfilter  == 3){ $ccf = ' < 0'; }else if($currentcountfilter  == 4){ $ccf = ' = 0';}
+
+                if($currentcountfilter  == 1){ $ccf_data = 'All Count Items'; }else if ($currentcountfilter  == 2) { $ccf_data = 'Items Greater than Zero'; }
+                else if($currentcountfilter  == 3){ $ccf_data = 'Items Less than Zero'; }else if($currentcountfilter  == 4){ $ccf_data = 'Items Equal to Zero';}
+
+                $m_company_info=$this->Company_model;
+                $company_info=$m_company_info->get_list();
+                $data['company_info']=$company_info[0];
+
+                $length = $m_products->get_all_data(1);
+                $offset = 0;
+
+                $products=$m_products->product_list(
+                        $account, 
+                        $date, 0, 0, 0, 1, FALSE,
+                        $depid, 
+                        $ci_account,
+                        $account_dis, 
+                        $currentcountfilter, 0, 0, null, 
+                        $length, 
+                        $offset, null, null);
+
+                $data['date'] = date('m/d/Y',strtotime($date));
+
+                if(isset($info[0])){
+                    $department =$info[0]->department_name;
+                }else{
+                    $department= 'All';
+                }
+
+                $writer = new XLSXWriter();
+
+                $styles2 = array( 'font'=>'Calibri','font-size'=>11);
+                $title=array(
+                    'Product Code'=>'string', 
+                    'Description'=>'string', 
+                    'Quantity In'=>'0.00', 
+                    'Quantity Out'=>'0.00', 
+                    'Balance'=>'0.00');
+                $sheet1="sheet1";
+
+                $styles1=array ("font" =>"Calibri", 
+                                "font-size" =>11, 
+                                "font-style" =>"bold", 
+                                "fill" =>"#eee",
+                                "halign" =>["left","left","right","right","right"], 
+                                "border" =>"left, right, top, bottom",
+                                "widths"=>[20,40,15,15,20]
+                            );
+
+                $writer->writesheetheader ($sheet1, $title, $styles1);
+
+                foreach($products as $product)
+                {
+                    $writer->writeSheetRow($sheet1, 
+                        array(
+                            $product->product_code,
+                            $product->product_desc,
+                            $product->quantity_in,
+                            $product->quantity_out,
+                            $product->total_qty_balance
+                        ),
+                        $styles2
+                    );
+                }
+
+                $writer->writetostdout();
+                exit(0);
                 break;
 
             case 'export-inventory':
@@ -257,7 +421,9 @@ class Inventory extends CORE_Controller
                 header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
                 header ('Pragma: public'); // HTTP/1.0
 
-                $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+                // $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+                $objWriter = PHPExcel_IOFactory::createWriter($excel, $excel->sFileFormat);
+                //echo "Peak memory usage: " . (memory_get_peak_usage(true) / 1024 / 1024) . " MB";exit;
                 $objWriter->save('php://output');            
                      
             break;
