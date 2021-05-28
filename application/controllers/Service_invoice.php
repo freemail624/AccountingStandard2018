@@ -240,6 +240,7 @@ class Service_invoice extends CORE_Controller
                 $m_invoice->insurance_id=$this->input->post('insurance_id',TRUE);
                 $m_invoice->advisor_remarks=$this->input->post('advisor_remarks',TRUE);
                 $m_invoice->customer_remarks=$this->input->post('customer_remarks',TRUE);
+                $m_invoice->discount_type = $this->input->post('discount_type', TRUE);
 
                 // $m_invoice->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                 // $m_invoice->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
@@ -289,7 +290,7 @@ class Service_invoice extends CORE_Controller
                 $order_qty=$this->input->post('order_qty',TRUE);
                 $order_price=$this->input->post('order_price',TRUE);
                 $order_gross=$this->input->post('order_gross',TRUE);
-                $order_discount=$this->input->post('order_discount',TRUE);
+                $service_discount=$this->input->post('service_discount',TRUE);
                 $order_line_total_discount=$this->input->post('order_line_total_discount',TRUE);
                 $order_tax_rate=$this->input->post('order_tax_rate',TRUE);
                 $order_line_total_price=$this->input->post('order_line_total_price',TRUE);
@@ -313,7 +314,7 @@ class Service_invoice extends CORE_Controller
                     $m_invoice_item->service_qty=$this->get_numeric_value($order_qty[$i]);
                     $m_invoice_item->service_price=$this->get_numeric_value($order_price[$i]);
                     $m_invoice_item->service_gross=$this->get_numeric_value($order_gross[$i]);
-                    $m_invoice_item->service_discount=$this->get_numeric_value($order_discount[$i]);
+                    $m_invoice_item->service_discount=$this->get_numeric_value($service_discount[$i]);
                     $m_invoice_item->service_line_total_discount=$this->get_numeric_value($order_line_total_discount[$i]);
                     $m_invoice_item->service_tax_rate=$this->get_numeric_value($order_tax_rate[$i]);
                     $m_invoice_item->service_line_total_price=$this->get_numeric_value($order_line_total_price[$i]);
@@ -516,6 +517,7 @@ class Service_invoice extends CORE_Controller
                 $m_invoice->insurance_id=$this->input->post('insurance_id',TRUE);
                 $m_invoice->advisor_remarks=$this->input->post('advisor_remarks',TRUE);
                 $m_invoice->customer_remarks=$this->input->post('customer_remarks',TRUE);
+                $m_invoice->discount_type = $this->input->post('discount_type', TRUE);
 
                 $m_invoice->sdesc_1=$this->input->post('sdesc_1',TRUE);
                 $m_invoice->sdesc_2=$this->input->post('sdesc_2',TRUE);
@@ -556,7 +558,7 @@ class Service_invoice extends CORE_Controller
                 $order_qty=$this->input->post('order_qty',TRUE);
                 $order_price=$this->input->post('order_price',TRUE);
                 $order_gross=$this->input->post('order_gross',TRUE);
-                $order_discount=$this->input->post('order_discount',TRUE);
+                $service_discount=$this->input->post('service_discount',TRUE);
                 $order_line_total_discount=$this->input->post('order_line_total_discount',TRUE);
                 $order_tax_rate=$this->input->post('order_tax_rate',TRUE);
                 $order_line_total_price=$this->input->post('order_line_total_price',TRUE);
@@ -580,7 +582,7 @@ class Service_invoice extends CORE_Controller
                     $m_invoice_item->service_qty=$this->get_numeric_value($order_qty[$i]);
                     $m_invoice_item->service_price=$this->get_numeric_value($order_price[$i]);
                     $m_invoice_item->service_gross=$this->get_numeric_value($order_gross[$i]);
-                    $m_invoice_item->service_discount=$this->get_numeric_value($order_discount[$i]);
+                    $m_invoice_item->service_discount=$this->get_numeric_value($service_discount[$i]);
                     $m_invoice_item->service_line_total_discount=$this->get_numeric_value($order_line_total_discount[$i]);
                     $m_invoice_item->service_tax_rate=$this->get_numeric_value($order_tax_rate[$i]);
                     $m_invoice_item->service_line_total_price=$this->get_numeric_value($order_line_total_price[$i]);
