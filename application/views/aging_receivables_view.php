@@ -17,6 +17,7 @@
 
         <?php echo $_def_css_files; ?>
 
+        <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
         <link rel="stylesheet" href="assets/plugins/spinner/dist/ladda-themeless.min.css">
         <link type="text/css" href="assets/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet">
         <link type="text/css" href="assets/plugins/datatables/dataTables.themify.css" rel="stylesheet">
@@ -107,7 +108,7 @@
                                             <div class="panel-body table-responsive">
                                             <h2 class="h2-panel-heading">Aging of Receivables</h2><hr>
                                             <div class="row">
-                                                <div class="col-lg-6">
+                                                <div class="col-lg-3">
                                                 &nbsp;<br>
                                                     <button class="btn btn-primary" id="btn_print" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Print Aging Receivables" ><i class="fa fa-print"></i> Print Report</button>
 
@@ -123,6 +124,15 @@
                                                                 <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
                                                             <?php } ?>
                                                         </select>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    Date :<br />
+                                                    <div class="input-group">
+                                                        <input type="text" id="as_of_date" class="date-picker form-control" value="<?php echo date('m/d/Y'); ?>">
+                                                         <span class="input-group-addon">
+                                                                <i class="fa fa-calendar"></i>
+                                                         </span>
+                                                    </div>
                                                 </div>
                                                 <div class="col-lg-3">
                                                         Search :<br />
@@ -193,6 +203,11 @@
     <script src="assets/plugins/formatter/autoNumeric.js" type="text/javascript"></script>
     <script src="assets/plugins/formatter/accounting.js" type="text/javascript"></script>
 
+    <!-- Date range use moment.js same as full calendar plugin -->
+    <script src="assets/plugins/fullcalendar/moment.min.js"></script>
+    <!-- Data picker -->
+    <script src="assets/plugins/datapicker/bootstrap-datepicker.js"></script>
+
     <script src="assets/plugins/select2/select2.full.min.js"></script>
 
     <script>
@@ -200,6 +215,15 @@
     $(document).ready(function() {
         var dt; var _txnMode; var _selectedID; var _selectRowObj; var _taxTypeGroup;
         var _cboDepartment;
+
+        $('.date-picker').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: true,
+            autoclose: true
+
+        });
 
         var initializeControls=function() {
 
@@ -221,7 +245,8 @@
                     "bDestroy": true,            
                     "data": function ( d ) {
                             return $.extend( {}, d, {
-                                "id": _cboDepartment.val()
+                                "id": _cboDepartment.val(),
+                                "as_of_date" : $('#as_of_date').val()
                             });
                         }
                 }, 
@@ -361,6 +386,10 @@
                 $('#tbl_aging').DataTable().ajax.reload();
            });
 
+            $('#as_of_date').on("change", function (e) {
+                $('#tbl_aging').DataTable().ajax.reload();
+            });
+
             $("#searchbox").keyup(function(){         
                 dt
                     .search(this.value)
@@ -369,15 +398,17 @@
 
             $('#btn_print').click(function(){
                 var id = $('#cbo_departments').val();
-                window.open('Aging_receivables/transaction/print?id='+id);   
+                var as_of_date = $('#as_of_date').val();
+                window.open('Aging_receivables/transaction/print?id='+id+'&as_of_date='+as_of_date);   
             });
 
             $('#btn_export').click(function(){
                 var id = $('#cbo_departments').val();
-                window.open('Aging_receivables/transaction/export?id='+id);   
+                window.open('Aging_receivables/transaction/export?id='+id+'&as_of_date='+as_of_date);   
             });
 
             $('#btn_email').click(function(){
+                var as_of_date = $('#as_of_date').val();
                 showNotification({title:"Sending!",stat:"info",msg:"Please wait for a few seconds."});
 
                 var btn=$(this);

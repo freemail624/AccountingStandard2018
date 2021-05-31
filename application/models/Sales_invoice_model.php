@@ -479,7 +479,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
         return $this->db->query($sql)->result();
     }
 
-    function get_aging_receivables_billing($department_id=0)
+    function get_aging_receivables_billing($department_id=0,$as_of_date=null)
     {
         $sql = "SELECT aging.* FROM (SELECT 
         p.tenant_id,
@@ -534,13 +534,16 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                         m.tenant_id,
                         m.days,
                         m.billing_date,
-                        IF(m.days >= 0 AND m.days <= 30, m.total_amount_due,'') AS 30days,
+                        IF(m.days >= 0 AND m.days < 30, m.total_amount_due,'') AS 30days,
                         IF(m.days >= 31 AND m.days <= 60, m.total_amount_due,'') AS 60days,
                         IF(m.days >= 61 AND m.days <= 90, m.total_amount_due,'') AS 90days,
                         IF(m.days >= 91, m.total_amount_due,'') AS over_90days
                         FROM 
                             (SELECT main.*,
-                            ABS(DATEDIFF(NOW(),main.billing_date)) AS days
+                            ABS(
+                            DATEDIFF(
+                            IF(isnull($as_of_date), NOW(), '$as_of_date')
+                            ,main.billing_date)) AS days
                             FROM 
                                 (SELECT 
                                 bi.tenant_id,

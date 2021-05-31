@@ -56,7 +56,13 @@
 				case 'list': 
 					$m_sales = $this->Sales_invoice_model;
 					$department_id = $this->input->get('id', TRUE);
-					$response['data'] = $m_sales->get_aging_receivables_billing($department_id);
+					$as_of_date = $this->input->get('as_of_date', TRUE);
+
+					if($as_of_date != null){
+						$as_of_date = date("Y-m-d", strtotime($this->input->get('as_of_date', TRUE)));
+					}
+
+					$response['data'] = $m_sales->get_aging_receivables_billing($department_id,$as_of_date);
 
 					echo json_encode($response);
 					break;		
@@ -101,7 +107,13 @@
 					$data['company_info'] = $company_info[0];
 
 					$department_id = $this->input->get('id', TRUE);
-					$data['receivables'] = $m_sales->get_aging_receivables_billing($department_id);
+					$as_of_date = $this->input->get('as_of_date', TRUE);
+
+					if($as_of_date != null){
+						$as_of_date = date("Y-m-d", strtotime($this->input->get('as_of_date', TRUE)));
+					}
+
+					$data['receivables'] = $m_sales->get_aging_receivables_billing($department_id,$as_of_date);
 
 					if($department_id == 0){
 						$data['department_name'] = "All Departments";
@@ -139,7 +151,13 @@
 					$data['company_info'] = $company_info[0];
 
 					$department_id = $this->input->get('id', TRUE);
-					$receivables = $m_sales->get_aging_receivables_billing($department_id);
+					$as_of_date = $this->input->get('as_of_date', TRUE);
+
+					if($as_of_date != null){
+						$as_of_date = date("Y-m-d", strtotime($this->input->get('as_of_date', TRUE)));
+					}
+
+					$receivables = $m_sales->get_aging_receivables_billing($department_id,$as_of_date);
 
 					if($department_id == 0){
 						$department_name = "All Departments";
