@@ -556,8 +556,8 @@ class Products extends CORE_Controller
                 $a_i=$account_integration->get_list();
 
                 $account =$a_i[0]->sales_invoice_inventory;
-                $ci_account =$a_i[0]->cash_invoice_inventory;
-                $dis_account =$a_i[0]->dispatching_invoice_inventory;
+                $account_cii =$a_i[0]->cash_invoice_inventory;
+                $account_dis =$a_i[0]->dispatching_invoice_inventory;
 
                 $product_id=$this->input->get('id');
                 $department_id=($this->input->get('depid')==null||$this->input->get('depid')==0?0:$this->input->get('depid'));
@@ -573,13 +573,30 @@ class Products extends CORE_Controller
                 $data['product_id'] = $product_id;
                 $m_products=$this->Products_model;
                 //$product_id,$depid=0,$as_of_date=null,$account,$is_parent=null,$ciaccount // OREDR OF PARAMETER
-                $data['products_parent']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account);
-                $data['products_child']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account);
+                $data['products_parent']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$account_cii,$account_dis);
+                $data['products_child']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$account_cii,$account_dis);
                 $data['product_id']=$product_id;
                 //$this->load->view('Template/product_history_menus',$data);
 
-
-                $product_info = $m_products->product_list(1,null,$product_id,null,null,null,null,null,null,1);
+                $product_info=$m_products->product_list(
+                    $account, 
+                    $date, 
+                    $product_id,
+                    $supplier_id=0, 
+                    $category_id=0, 
+                    $item_type_id=1, 
+                    $pick_list=FALSE, 
+                    $depid=0, 
+                    $account_cii,
+                    $account_dis, 
+                    $currentcountfilter=1,
+                    $is_parent=0,
+                    $is_nonsalable=0, 
+                    $search_value=null, 
+                    $length_value=1, 
+                    $start=0,
+                    $order_column=null,
+                    $order_dir=null);
 
                 $data['product_info'] = $product_info[0];
                 $type=$this->input->get('type');
@@ -635,8 +652,8 @@ class Products extends CORE_Controller
                 $a_i=$account_integration->get_list();
 
                 $account =$a_i[0]->sales_invoice_inventory;
-                $ci_account =$a_i[0]->cash_invoice_inventory;
-                $dis_account =$a_i[0]->dispatching_invoice_inventory;
+                $account_cii =$a_i[0]->cash_invoice_inventory;
+                $account_dis =$a_i[0]->dispatching_invoice_inventory;
 
                 $product_id=$this->input->get('id');
                 $department_id=($this->input->get('depid')==null||$this->input->get('depid')==0?0:$this->input->get('depid'));
@@ -654,13 +671,30 @@ class Products extends CORE_Controller
 
 
                 //$product_id,$depid=0,$as_of_date=null,$account,$is_parent=null,$ciaccount // OREDR OF PARAMETER
-                $data['products_parent']=$m_products->get_product_history_with_child1($product_id,$department_id,$date,$account,1,$ci_account,$dis_account);
-                $data['products_child']=$m_products->get_product_history_with_child1($product_id,$department_id,$date,$account,1,$ci_account,$dis_account);
+                $data['products_parent']=$m_products->get_product_history_with_child1($product_id,$department_id,$date,$account,1,$account_cii,$account_dis);
+                $data['products_child']=$m_products->get_product_history_with_child1($product_id,$department_id,$date,$account,1,$account_cii,$account_dis);
                 $data['product_id']=$product_id;
                 //$this->load->view('Template/product_history_menus',$data);
 
-
-                $product_info = $m_products->product_list(1,null,$product_id,null,null,null,null,null,null,1);
+                $product_info=$m_products->product_list(
+                    $account, 
+                    $date, 
+                    $product_id,
+                    $supplier_id=0, 
+                    $category_id=0, 
+                    $item_type_id=1, 
+                    $pick_list=FALSE, 
+                    $depid=0, 
+                    $account_cii,
+                    $account_dis, 
+                    $currentcountfilter=1,
+                    $is_parent=0,
+                    $is_nonsalable=0, 
+                    $search_value=null, 
+                    $length_value=1, 
+                    $start=0,
+                    $order_column=null,
+                    $order_dir=null);
 
                 $data['product_info'] = $product_info[0];
                 $type=$this->input->get('type');

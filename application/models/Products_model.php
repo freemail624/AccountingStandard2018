@@ -2491,7 +2491,12 @@ Product Pick List
         '$order_dir'
 
     )";
-    return $this->db->query($sql)->result();
+        $query = $this->db->query($sql);
+        mysqli_next_result($this->db->conn_id);
+
+        $data = $query->result();
+        $query->free_result();
+        return $data; 
 
     }
 

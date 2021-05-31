@@ -976,27 +976,27 @@ $(document).ready(function(){
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace(''),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             remote: {
-            cache: false,
-            url: 'Products/transaction/product-lookup/',
-
-             replace: function(url, uriEncodedQuery) {
-                return url + '?description='+uriEncodedQuery+'&type=1';
-             }
+                cache: false,
+                url: 'Products/transaction/product-lookup/',
+                rateLimitWait : 500,
+                replace: function(url, uriEncodedQuery) {
+                    return url + '?description='+uriEncodedQuery+'&type=1';
+                }
             }
          });
 
         var _objTypeHead=$('#custom-templates .typeahead');
-        _objTypeHead.typeahead(null, {
-        name: 'products',
-        display: 'product_code',
-        limit: 10,
-        source: products,
-        templates: {
-            header: [
-                '<table class="tt-head"><tr><td width=15%" style="padding-left: 1%;"><b>PLU</b></td><td width="20%" align="left"><b>Description</b></td><td width="5%" align="left"><b>Unit</b></td><td width="10%"  style="padding-right: 2%;text-align:right;"><b>SRP</b></td></tr></table>'
-            ].join('\n'),
-            suggestion: Handlebars.compile('<table class="tt-items"><tr><td width="15%" style="padding-left: 1%;">{{product_code}}</td><td width="20%" align="left">{{product_desc}}</td><td width="5%" align="left">{{product_unit_name}}</td><td width="10%" align="right" style="padding-right: 2%;">{{sale_price}}</td></tr></table>')
-        }
+        _objTypeHead.typeahead({minLength: 3}, {
+            name: 'products',
+            display: 'product_code',
+            limit: 10,
+            source: products,
+            templates: {
+                header: [
+                    '<table class="tt-head"><tr><td width=15%" style="padding-left: 1%;"><b>PLU</b></td><td width="20%" align="left"><b>Description</b></td><td width="5%" align="left"><b>Unit</b></td><td width="10%"  style="padding-right: 2%;text-align:right;"><b>SRP</b></td></tr></table>'
+                ].join('\n'),
+                suggestion: Handlebars.compile('<table class="tt-items"><tr><td width="15%" style="padding-left: 1%;">{{product_code}}</td><td width="20%" align="left">{{product_desc}}</td><td width="5%" align="left">{{product_unit_name}}</td><td width="10%" align="right" style="padding-right: 2%;">{{sale_price}}</td></tr></table>')
+            }
         }).on('keyup', this, function (event) {
             if (_objTypeHead.typeahead('val') == '') {
                 return false;
@@ -1004,8 +1004,8 @@ $(document).ready(function(){
             if (event.keyCode == 13) {
              
                 // $('.tt-suggestion:first').click();
-    _objTypeHead.typeahead('close');        //     -- changed due to barcode scan not working
-    _objTypeHead.typeahead('val','');         //  -- changed due to barcode scan not working
+                 _objTypeHead.typeahead('close');        //     -- changed due to barcode scan not working
+                _objTypeHead.typeahead('val','');         //  -- changed due to barcode scan not working
             }
         }).bind('typeahead:select', function(ev, suggestion) {
 

@@ -1281,7 +1281,7 @@
                     remote: {
                         cache: false,
                         url: 'Products/transaction/product-lookup/',
-
+                        rateLimitWait : 500,
                         replace: function(url, uriEncodedQuery) {
                             return url + '?description=' + uriEncodedQuery + '&type=1';
                         }
@@ -1289,7 +1289,7 @@
                 });
 
                 var _objTypeHead = $('#custom-templates .typeahead');
-                _objTypeHead.typeahead(null, {
+                _objTypeHead.typeahead({minLength: 3}, {
                     name: 'products',
                     display: 'product_code',
                     limit: 10,

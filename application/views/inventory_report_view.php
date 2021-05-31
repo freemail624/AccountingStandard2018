@@ -223,7 +223,6 @@
                                                                     <th width="10%" style="text-align: right">Quantity In</th>
                                                                     <th width="10%" style="text-align: right">Quantity Out</th>
                                                                     <th width="15%" style="text-align: right">Balance</th>
-                                                                    <th width="15%" class="hidden" style="text-align: right">Bulk Balance</th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -502,18 +501,10 @@
                         targets:[5], sClass:'right-align',
                         data: null,
                         render: function(data, type, full, meta){
-                            return accounting.formatNumber(data.total_qty_balance,2)+' '+data.parent_unit_name;
+                            return accounting.formatNumber(data.total_qty_balance,2);
                         }
 
-                    },
-                    {
-                        visible:false, targets:[6], sClass:'right-align',
-                        data: null,
-                        render: function(data, type, full, meta){
-                            return accounting.formatNumber(data.total_qty_bulk,2)+' '+data.product_unit_name;
-                        }
-
-                    }                                                      
+                    }                                                    
 
                 ]
             });

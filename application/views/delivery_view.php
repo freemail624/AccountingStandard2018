@@ -301,7 +301,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <b class="required">*</b> <label>Deliver to </label>:<br />
-                            <textarea name="deliver_to_address" class="form-control" rows="5" placeholder="Deliver to address"></textarea>
+                            <textarea name="deliver_to_address" rows="5" class="form-control" placeholder="Deliver to Address" data-error-msg="Deliver address is required!" required data-default="<?php echo $company->deliver_to_address_default; ?>"></textarea>
                         </div>
                     </div>
                 </div>
@@ -1015,7 +1015,7 @@ $(document).ready(function(){
                 { targets:[4],data: "po_no" },
                 { targets:[5],data: "term_description" },
                 { targets:[6],data: "date_delivered" },
-                { visible: false, targets:[7],data: null,
+                { targets:[7],data: null,
                     render: function (data, type, full, meta){
                         var _attribute='';
                         //console.log(data.is_email_sent);
@@ -1040,7 +1040,7 @@ $(document).ready(function(){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
 
-                        return '<div style="text-align: right;">'+btn_edit+'&nbsp;'+btn_trash+'</div>';
+                        return '<div style="text-align: right;">'+btn_finalized+'&nbsp;'+btn_edit+'&nbsp;'+btn_trash+'</div>';
                     }
                 },
                 { targets:[9],data: "dr_invoice_id", visible:false }
@@ -1155,18 +1155,18 @@ $(document).ready(function(){
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace(''),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             remote: {
-            cache: false,
-            url: 'Products/transaction/product-lookup/',
-
-             replace: function(url, uriEncodedQuery) {
-                return url + '?description='+uriEncodedQuery+'&type=1';
-             }
+                cache: false,
+                url: 'Products/transaction/product-lookup/',
+                rateLimitWait : 500,
+                replace: function(url, uriEncodedQuery) {
+                    return url + '?description='+uriEncodedQuery+'&type=1';
+                }
             }
          });
 
         var _objTypeHead=$('#custom-templates .typeahead');
 
-        _objTypeHead.typeahead(null, {
+        _objTypeHead.typeahead({minLength: 3}, {
                 name: 'products',
                 display: 'product_code',
                 limit : 10,
@@ -1416,7 +1416,7 @@ $(document).ready(function(){
                 // $('input[name="contact_person"]').text(obj_supplier.data('contact-person'));
                 _cboTaxType.select2('val',$(this).find('option:selected').data('tax-type'));
                 $('input[name="contact_person"]').val($(this).find('option:selected').data('contact-person'));
-                $('textarea[name="deliver_to_address"]').val($(this).find('option:selected').data('address'));
+                // $('textarea[name="deliver_to_address"]').val($(this).find('option:selected').data('address'));
 
                 $('#typeaheadsearch').focus();
             }
@@ -1445,6 +1445,8 @@ $(document).ready(function(){
             $('#span_invoice_no').html('INV-XXXX');
             clearFields($('#frm_deliveries'));
             $('#cbo_departments').select2('val', $('#cbo_departments').data('default') );
+            $('textarea[name="deliver_to_address"]').val($('textarea[name="deliver_to_address"]').data('default'));
+
             $('#cbo_suppliers').select2('val', null);
             $('#cbo_terms').select2('val', null);
             $('#img_user').attr('src','assets/img/anonymous-icon.png');

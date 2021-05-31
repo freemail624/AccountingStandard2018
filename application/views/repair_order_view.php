@@ -1746,42 +1746,42 @@ $(document).ready(function(){
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace(''),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             remote: {
-            cache: false,
-            url: 'Products/transaction/product-lookup/',
-
-             replace: function(url, uriEncodedQuery) {
-                return url + '?description='+uriEncodedQuery;
-             }
+                cache: false,
+                url: 'Products/transaction/product-lookup/',
+                rateLimitWait : 500,
+                replace: function(url, uriEncodedQuery) {
+                    return url + '?description='+uriEncodedQuery;
+                }
             }
          });
 
         var _objTypeHead=$('#custom-templates .typeahead');
-        _objTypeHead.typeahead(null, {
-        name: 'products',
-        display: 'product_code',
-        limit : 10,
-        source: products,
-        templates: {
-            header: [
-                '<table class="tt-head"><tr>'+
-                '<td width="15%" style="padding-left: 1%;"><b>PLU</b></td>'+
-                '<td width="10%" class="hidden"><b>UniqID</b></td>'+
-                '<td width="25%" align="left"><b>Description</b></td>'+
-                '<td width="20%" align="left" class="hidden"><b>Expiration</b></td>'+
-                '<td width="10%" align="left" class="hidden"><b>LOT#</b></td>'+
-                '<td width="10%" align="right" class="hidden"><b>On Hand</b></td>'+
-                '<td width="10%" align="right" style="padding-right: 1%;"><b>SRP</b></td>'+
-                '</tr></table>'
-            ].join('\n'),
-            suggestion: Handlebars.compile('<table class="tt-items"><tr>'+
-                '<td width="15%" style="padding-left: 1%;">{{product_code}}</td>'+
-                '<td width="10%" class="hidden">{{unq_id}}</td>'+
-                '<td width="25%" align="left">{{product_desc}}</td>'+
-                '<td width="20%" align="left" class="hidden">{{exp_date}}</td>'+
-                '<td width="10%" align="left" class="hidden">{{batch_no}}</td>'+
-                '<td width="10%" align="right" class"hidden>{{on_hand_per_batch}}</td>'+
-                '<td width="10%" align="right" style="padding-right: 1%;">{{sale_price}}</td>'+
-                '</tr></table>')
+        _objTypeHead.typeahead({minLength: 3}, {
+            name: 'products',
+            display: 'product_code',
+            limit : 10,
+            source: products,
+            templates: {
+                header: [
+                    '<table class="tt-head"><tr>'+
+                    '<td width="15%" style="padding-left: 1%;"><b>PLU</b></td>'+
+                    '<td width="10%" class="hidden"><b>UniqID</b></td>'+
+                    '<td width="25%" align="left"><b>Description</b></td>'+
+                    '<td width="20%" align="left" class="hidden"><b>Expiration</b></td>'+
+                    '<td width="10%" align="left" class="hidden"><b>LOT#</b></td>'+
+                    '<td width="10%" align="right" class="hidden"><b>On Hand</b></td>'+
+                    '<td width="10%" align="right" style="padding-right: 1%;"><b>SRP</b></td>'+
+                    '</tr></table>'
+                ].join('\n'),
+                suggestion: Handlebars.compile('<table class="tt-items"><tr>'+
+                    '<td width="15%" style="padding-left: 1%;">{{product_code}}</td>'+
+                    '<td width="10%" class="hidden">{{unq_id}}</td>'+
+                    '<td width="25%" align="left">{{product_desc}}</td>'+
+                    '<td width="20%" align="left" class="hidden">{{exp_date}}</td>'+
+                    '<td width="10%" align="left" class="hidden">{{batch_no}}</td>'+
+                    '<td width="10%" align="right" class"hidden>{{on_hand_per_batch}}</td>'+
+                    '<td width="10%" align="right" style="padding-right: 1%;">{{sale_price}}</td>'+
+                    '</tr></table>')
         }
         }).on('keyup', this, function (event) {
             if (_objTypeHead.typeahead('val') == '') {

@@ -1336,13 +1336,13 @@ $(document).ready(function(){
                 {
                     targets:[6],data: "purchase_cost",
                     render: function (data, type, full, meta) {
-                        return  accounting.formatNumber(parseFloat(data),2);
+                        return accounting.formatNumber(accounting.unformat(data),2);
                     }                    
                 },
                 {
                     targets:[7],data: "sale_price",
                     render: function (data, type, full, meta) {
-                        return  accounting.formatNumber(parseFloat(data),2);
+                        return  accounting.formatNumber(accounting.unformat(data),2);
                     }                    
                 },                
                 {   visible:false,
