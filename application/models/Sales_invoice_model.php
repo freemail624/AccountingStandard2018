@@ -534,7 +534,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                         m.tenant_id,
                         m.days,
                         m.billing_date,
-                        IF(m.days >= 0 AND m.days < 30, m.total_amount_due,'') AS 30days,
+                        IF(m.days >= 0 AND m.days <= 30, m.total_amount_due,'') AS 30days,
                         IF(m.days >= 31 AND m.days <= 60, m.total_amount_due,'') AS 60days,
                         IF(m.days >= 61 AND m.days <= 90, m.total_amount_due,'') AS 90days,
                         IF(m.days >= 91, m.total_amount_due,'') AS over_90days
@@ -557,7 +557,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                 LEFT JOIN
                 (SELECT 
                 bp.tenant_id,
-                IFNULL(SUM(bp.amount_paid),0) as total_payment 
+                IFNULL(SUM(bp.amount_paid),0) + IFNULL(SUM(bp.used_security_deposit),0) as total_payment 
                 FROM b_payment_info bp 
                 WHERE bp.is_canceled = FALSE
                 GROUP BY bp.tenant_id) as bp ON bp.tenant_id = o.tenant_id
