@@ -60,6 +60,8 @@
 
 					if($as_of_date != null){
 						$as_of_date = date("Y-m-d", strtotime($this->input->get('as_of_date', TRUE)));
+					}else{
+						$as_of_date = date("Y-m-d");
 					}
 
 					$response['data'] = $m_sales->get_aging_receivables_billing($department_id,$as_of_date);
@@ -111,6 +113,8 @@
 
 					if($as_of_date != null){
 						$as_of_date = date("Y-m-d", strtotime($this->input->get('as_of_date', TRUE)));
+					}else{
+						$as_of_date = date("Y-m-d");
 					}
 
 					$data['receivables'] = $m_sales->get_aging_receivables_billing($department_id,$as_of_date);
@@ -155,6 +159,8 @@
 
 					if($as_of_date != null){
 						$as_of_date = date("Y-m-d", strtotime($this->input->get('as_of_date', TRUE)));
+					}else{
+						$as_of_date = date("Y-m-d");
 					}
 
 					$receivables = $m_sales->get_aging_receivables_billing($department_id,$as_of_date);

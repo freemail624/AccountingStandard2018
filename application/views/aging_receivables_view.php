@@ -404,6 +404,7 @@
 
             $('#btn_export').click(function(){
                 var id = $('#cbo_departments').val();
+                var as_of_date = $('#as_of_date').val();
                 window.open('Aging_receivables/transaction/export?id='+id+'&as_of_date='+as_of_date);   
             });
 
