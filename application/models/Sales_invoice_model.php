@@ -479,6 +479,22 @@ GROUP BY n.customer_id HAVING total_balance > 0";
         return $this->db->query($sql)->result();
     }
 
+/*    -- Over 90 Days
+    CONVERT( IF(@balance < (o.over_ninetydays ) , (o.over_ninetydays - @balance ), (o.over_ninetydays - o.over_ninetydays  ) )  , DECIMAL (20 , 2 ))as  balance_over_ninetydays,
+    CONVERT( IF(@balance < o.over_ninetydays , @balance := @balance-@balance , @balance:= @balance-o.over_ninetydays ), DECIMAL (20 , 2 )) as rem_after_over_ninety,
+    
+    -- 90 Days
+    CONVERT( IF(@balance < (o.ninety_days ) , (o.ninety_days - @balance ), (o.ninety_days - o.ninety_days  ) )  , DECIMAL (20 , 2 ))as  balance_ninety_days,
+    CONVERT( IF(@balance < o.ninety_days , @balance := @balance-@balance , @balance:= @balance-o.ninety_days ), DECIMAL (20 , 2 )) as rem_after_ninety,
+
+    -- 60 Days
+    CONVERT( IF(@balance < (o.sixty_days ) , (o.sixty_days - @balance ), (o.sixty_days - o.sixty_days  ) )  , DECIMAL (20 , 2 ))as  balance_sixty_days,
+    CONVERT( IF(@balance < o.sixty_days , @balance := @balance-@balance , @balance:= @balance-o.sixty_days ), DECIMAL (20 , 2 )) as rem_after_sixty,
+
+    -- 30 Days
+    CONVERT( IF(@balance < (o.thirty_days ) , (o.thirty_days - @balance ), (o.thirty_days - o.thirty_days  ) )  , DECIMAL (20 , 2 ))as  balance_thirty_days,
+    CONVERT( IF(@balance < o.thirty_days , @balance := @balance-@balance , @balance:= @balance-o.thirty_days ), DECIMAL (20 , 2 )) as rem_after_thirty,*/
+
     function get_aging_receivables_billing($department_id=0,$as_of_date=null)
     {
         $sql = "SELECT aging.* FROM (SELECT 
@@ -497,22 +513,128 @@ GROUP BY n.customer_id HAVING total_balance > 0";
 
             FROM (SELECT 
                 @balance:=  IFNULL(bp.total_payment,0) as total_payment,
-
+                    
                 -- Over 90 Days
-                CONVERT( IF(@balance < (o.over_ninetydays ) , (o.over_ninetydays - @balance ), (o.over_ninetydays - o.over_ninetydays  ) )  , DECIMAL (20 , 2 ))as  balance_over_ninetydays,
-                CONVERT( IF(@balance < o.over_ninetydays , @balance := @balance-@balance , @balance:= @balance-o.over_ninetydays ), DECIMAL (20 , 2 )) as rem_after_over_ninety,
+                  CONVERT( 
+                    (CASE
+                        WHEN @balance < o.over_ninetydays
+                            THEN (o.over_ninetydays - @balance)
+                        WHEN @balance > o.over_ninetydays
+                            THEN (o.over_ninetydays - o.over_ninetydays)
+                        ELSE ''
+                    END)
+                    , DECIMAL (20 , 2 ))as  balance_over_ninetydays,
+                
+                    CONVERT( 
+                    (CASE
+                        WHEN @balance < o.over_ninetydays
+                            THEN @balance:=0
+                        WHEN @balance > o.over_ninetydays
+                            THEN @balance:=(@balance - o.over_ninetydays)
+                        ELSE @balance:=0
+                    END)
+                    , DECIMAL (20 , 2 ))as  rem_after_over_ninety,
                 
                 -- 90 Days
-                CONVERT( IF(@balance < (o.ninety_days ) , (o.ninety_days - @balance ), (o.ninety_days - o.ninety_days  ) )  , DECIMAL (20 , 2 ))as  balance_ninety_days,
-                CONVERT( IF(@balance < o.ninety_days , @balance := @balance-@balance , @balance:= @balance-o.ninety_days ), DECIMAL (20 , 2 )) as rem_after_ninety,
-            
+                  CONVERT( 
+                    (CASE
+                        WHEN @balance < o.ninety_days
+                            THEN (o.ninety_days - @balance)
+                        WHEN @balance > o.ninety_days
+                            THEN 
+                                (CASE 
+                                    WHEN o.ninety_days >= 0
+                                        THEN 0
+                                    ELSE o.ninety_days
+                                END)
+                                    
+                        ELSE o.ninety_days
+                    END)
+                    , DECIMAL (20 , 2 ))as  balance_ninety_days,
+                    
+                    CONVERT( 
+                    (CASE
+                        WHEN @balance < o.ninety_days
+                            THEN @balance:=0
+                        WHEN @balance > o.ninety_days
+                            THEN 
+                                (CASE 
+                                    WHEN o.ninety_days >= 0
+                                        THEN @balance:=(@balance - o.ninety_days)
+                                    ELSE @balance:=0
+                                END)
+                                    
+                        ELSE o.ninety_days
+                    END)
+                    , DECIMAL (20 , 2 ))as  rem_after_ninety_days,
+                    
+                    
                 -- 60 Days
-                CONVERT( IF(@balance < (o.sixty_days ) , (o.sixty_days - @balance ), (o.sixty_days - o.sixty_days  ) )  , DECIMAL (20 , 2 ))as  balance_sixty_days,
-                CONVERT( IF(@balance < o.sixty_days , @balance := @balance-@balance , @balance:= @balance-o.sixty_days ), DECIMAL (20 , 2 )) as rem_after_sixty,
-
+                  CONVERT( 
+                    (CASE
+                        WHEN @balance < o.sixty_days
+                            THEN (o.sixty_days - @balance)
+                        WHEN @balance > o.sixty_days
+                            THEN 
+                                (CASE 
+                                    WHEN o.sixty_days >= 0
+                                        THEN 0
+                                    ELSE o.sixty_days
+                                END)
+                                    
+                        ELSE o.sixty_days
+                    END)
+                    , DECIMAL (20 , 2 ))as  balance_sixty_days,
+                      
+               CONVERT( 
+                    (CASE
+                        WHEN @balance < o.sixty_days
+                            THEN @balance:=0
+                        WHEN @balance > o.sixty_days
+                            THEN 
+                                (CASE 
+                                    WHEN o.sixty_days >= 0
+                                        THEN @balance:=(@balance - o.sixty_days)
+                                    ELSE @balance:=0
+                                END)
+                                    
+                        ELSE o.sixty_days
+                    END)
+                    , DECIMAL (20 , 2 ))as  rem_after_sixty_days,
+                    
+                      
                 -- 30 Days
-                CONVERT( IF(@balance < (o.thirty_days ) , (o.thirty_days - @balance ), (o.thirty_days - o.thirty_days  ) )  , DECIMAL (20 , 2 ))as  balance_thirty_days,
-                CONVERT( IF(@balance < o.thirty_days , @balance := @balance-@balance , @balance:= @balance-o.thirty_days ), DECIMAL (20 , 2 )) as rem_after_thirty,
+                  CONVERT( 
+                    (CASE
+                        WHEN @balance < o.thirty_days
+                            THEN (o.thirty_days - @balance)
+                        WHEN @balance > o.thirty_days
+                            THEN 
+                                (CASE 
+                                    WHEN o.thirty_days >= 0
+                                        THEN 0
+                                    ELSE o.thirty_days
+                                END)
+                                    
+                        ELSE o.thirty_days
+                    END)
+                    , DECIMAL (20 , 2 ))as  balance_thirty_days,
+                
+                CONVERT( 
+                    (CASE
+                        WHEN @balance < o.thirty_days
+                            THEN @balance:=0
+                        WHEN @balance > o.thirty_days
+                            THEN 
+                                (CASE 
+                                    WHEN o.thirty_days >= 0
+                                        THEN @balance:=(@balance - o.thirty_days)
+                                    ELSE @balance:=0
+                                END)
+                                    
+                        ELSE o.thirty_days
+                    END)
+                    , DECIMAL (20 , 2 ))as  rem_after_thirty_days,
                 
                 o.*
                 
@@ -534,7 +656,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                         m.tenant_id,
                         m.days,
                         m.billing_date,
-                        IF(m.days >= 0 AND m.days < 30, m.total_amount_due,'') AS 30days,
+                        IF(m.days >= 0 AND m.days <= 30, m.total_amount_due,'') AS 30days,
                         IF(m.days >= 31 AND m.days <= 60, m.total_amount_due,'') AS 60days,
                         IF(m.days >= 61 AND m.days <= 90, m.total_amount_due,'') AS 90days,
                         IF(m.days >= 91, m.total_amount_due,'') AS over_90days
