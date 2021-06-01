@@ -217,31 +217,20 @@
                             <?php } ?>
                         </select>
 
-                        <div class="hidden">
-                            Supplier * : <br />
-                            <select name="supplier" id="cbo_suppliers" data-error-msg="Supplier is required.">
-                                <option value="0">[ Create New Supplier ]</option>
-                                <?php foreach($suppliers as $supplier){ ?>
-                                    <option value="<?php echo $supplier->supplier_id; ?>" data-tax-type="<?php echo $supplier->tax_type_id; ?>" data-contact-person="<?php echo $supplier->contact_name; ?>"><?php echo $supplier->supplier_name; ?></option>
-                                <?php } ?>
-                            </select> 
-                            Contact Person : <br />
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                    <i class="fa fa-users"></i>
-                                </span>
-                                <input type="text" name="contact_person" class="form-control" placeholder="Contact Person">
-                            </div>
-                            Tax type : <br />
-                            <select name="tax_type" id="cbo_tax_type">
-                                <?php foreach($tax_types as $tax_type){ ?>
-                                    <option value="<?php echo $tax_type->tax_type_id; ?>" data-tax-rate="<?php echo $tax_type->tax_rate; ?>"><?php echo $tax_type->tax_type; ?></option>
-                                <?php } ?>
-                            </select>                            
+                            <div>
+                                <label><b class="required">*</b> Supplier :</label> <br />
+                                <select name="supplier" id="cbo_suppliers" data-error-msg="Supplier is required." required data-error-msg="Supplier is required!">
+                                </select> 
+                            </div>                            
                             Deliver to Address * : <br />
                             <textarea name="deliver_to_address" class="form-control" placeholder="Deliver to Address" data-error-msg="Deliver address is required!" data-default="<?php echo $company->deliver_to_address_default; ?>"></textarea>
-                            Terms : <br />
-                            <input type="text" name="terms" class="form-control">
+                            <div class="hidden">
+                                Tax type : <br />
+                                <select name="tax_type" id="cbo_tax_type">
+                                    <?php foreach($tax_types as $tax_type){ ?>
+                                        <option value="<?php echo $tax_type->tax_type_id; ?>" data-tax-rate="<?php echo $tax_type->tax_rate; ?>"><?php echo $tax_type->tax_type; ?></option>
+                                    <?php } ?>
+                                </select>
                         </div>
 
                     </div>
@@ -253,6 +242,21 @@
                             </span>
                             <input type="text" name="pr_no" class="form-control" placeholder="PR-YYYYMMDD-XXX" readonly>
                         </div>
+                        Contact Person : <br />
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <i class="fa fa-users"></i>
+                            </span>
+                            <input type="text" name="contact_person" class="form-control" placeholder="Contact Person">
+                        </div>
+                        Terms : <br />
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <i class="fa fa-code"></i>
+                            </span>
+                            <input type="text" name="terms" class="form-control">
+                        </div>                        
+
                     </div>
                 </div>
             </div>
@@ -873,11 +877,43 @@ $(document).ready(function(){
         $('#landline').keypress(validateNumber);
 
         _cboSuppliers=$('#cbo_suppliers').select2({
-            placeholder: "Please select supplier first to filter product lookup.",
-            allowClear: true
+          ajax: {
+            url: "Suppliers/transaction/list",
+            type: "post",
+            dataType: 'json',
+            delay: 500,
+            data: function(params) {
+                return {
+                    search: { 
+                        value: params.term
+                    },
+                    start: ((params.page || 1) * 10) - 10,
+                    length: 10,
+                    order: [{
+                        column: 1,
+                        dir: 'asc'
+                    }]
+                };
+            },
+            processResults: function(response, params) {
+                const { data, recordsFiltered } = response
+                return {
+                    results: data.map(res => {
+                        return {
+                            id: res.supplier_id,
+                            text: res.supplier_name
+                        }
+                    }),
+                    pagination: {
+                        more: ((params.page || 1) * 10) < recordsFiltered 
+                    }
+                };
+            },
+           cache: true
+          },
+          placeholder: 'Select a supplier',
+          minimumInputLength: 1
         });
-
-        _cboSuppliers.select2('val',null);
 
 
         /*_productType = $('#cbo_prodType').select2({
@@ -931,7 +967,7 @@ $(document).ready(function(){
             remote: {
             cache: false,
             url: 'Products/transaction/product-lookup/',
-
+            rateLimitWait : 500,
              replace: function(url, uriEncodedQuery) {
                 return url + '?description='+uriEncodedQuery+'&type=1';
              }
@@ -939,8 +975,7 @@ $(document).ready(function(){
          });
 
         var _objTypeHead=$('#custom-templates .typeahead');
-
-        _objTypeHead.typeahead(null, {
+        _objTypeHead.typeahead({minLength: 3}, {
             name: 'products',
             display: 'product_code',
             limit : 10,
@@ -1257,6 +1292,8 @@ $(document).ready(function(){
 
             $('#txt_overall_discount').val(accounting.formatNumber($('#txt_overall_discount').val(),2));
 
+            
+            $('#cbo_suppliers').append('<option value="'+data.supplier_id+'" data-tax-type="'+data.tax_type_id+'" selected>'+data.supplier_name+'</option>');
             $('#cbo_suppliers').select2('val',data.supplier_id);
             $('#cbo_departments').select2('val',data.department_id);
 

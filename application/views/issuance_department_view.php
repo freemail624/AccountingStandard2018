@@ -638,17 +638,17 @@ dt_si = $('#tbl_si_list').DataTable({
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace(''),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             remote: {
-            cache: false,
-            url: 'Products/transaction/product-lookup/',
-
-             replace: function(url, uriEncodedQuery) {
-                return url + '?description='+uriEncodedQuery+'&type=1';
-             }
+                cache: false,
+                url: 'Products/transaction/product-lookup/',
+                rateLimitWait : 500,
+                replace: function(url, uriEncodedQuery) {
+                    return url + '?description='+uriEncodedQuery+'&type=1';
+                }
             }
          });
 
         var _objTypeHead=$('#custom-templates .typeahead');
-        _objTypeHead.typeahead(null, {
+        _objTypeHead.typeahead({minLength: 3}, {
             name: 'products',
             display: 'description',
             limit: 10,

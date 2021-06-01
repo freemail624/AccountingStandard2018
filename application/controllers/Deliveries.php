@@ -444,16 +444,42 @@ class Deliveries extends CORE_Controller
                 $m_delivery_invoice=$this->Delivery_invoice_model;
                 $m_delivery_invoice_items=$this->Delivery_invoice_item_model;
                 $m_products=$this->Products_model;
-                $dr_invoice_id=$this->input->post('dr_invoice_id',TRUE);
 
+                $account_integration =$this->Account_integration_model;
+                $a_i=$account_integration->get_list();
+                $account =$a_i[0]->sales_invoice_inventory;
+                $account_cii =$a_i[0]->cash_invoice_inventory; // Cash Invoice 
+                $account_dis =$a_i[0]->dispatching_invoice_inventory; // Cash Invoice 
+
+                $dr_invoice_id=$this->input->post('dr_invoice_id',TRUE);
                 $pi_info=$m_delivery_invoice->get_list($dr_invoice_id,'dr_invoice_no');
                 $dr_products = $m_delivery_invoice_items->get_list(array('dr_invoice_id'=>$dr_invoice_id));
+                $date = date('Y-m-d');
 
                 // Updating the average cost of Parent Products
                 for ($i=0; $i < count($dr_products); $i++) { 
                     
                     $product_id = $dr_products[$i]->product_id;
-                    $product=$m_products->product_list(1,null,$product_id,null,null,null,null,null,1,null,null,1);
+                    $product=$m_products->product_list(
+                        $account, 
+                        $date, 
+                        $product_id,
+                        $supplier_id=0, 
+                        $category_id=0, 
+                        $item_type_id=1, 
+                        $pick_list=FALSE, 
+                        $depid=0, 
+                        $account_cii,
+                        $account_dis, 
+                        $currentcountfilter=1,
+                        $is_parent=0,
+                        $is_nonsalable=0, 
+                        $search_value=null, 
+                        $length_value=1, 
+                        $start=0,
+                        $order_column=null,
+                        $order_dir=null);
+    
                     $on_hand_stock = $product[0]->total_qty_bulk;
 
                     $cost = $m_delivery_invoice->get_ave_cost($product_id,$dr_invoice_id,$on_hand_stock);

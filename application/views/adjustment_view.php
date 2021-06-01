@@ -887,12 +887,12 @@ $(document).ready(function(){
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace(''),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             remote: {
-            cache: false,
-            url: 'Products/transaction/product-lookup/',
-
-             replace: function(url, uriEncodedQuery) {
-                return url + '?description='+uriEncodedQuery+'&type=1';
-             }
+                cache: false,
+                url: 'Products/transaction/product-lookup/',
+                rateLimitWait : 500,
+                replace: function(url, uriEncodedQuery) {
+                    return url + '?description='+uriEncodedQuery+'&type=1';
+                }
             }
          });
 

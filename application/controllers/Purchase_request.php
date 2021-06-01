@@ -36,7 +36,6 @@ class Purchase_request extends CORE_Controller
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
 
-
         $data['refproducts']=$this->Refproduct_model->get_list(
             'is_deleted=FALSE'
         );
@@ -44,15 +43,6 @@ class Purchase_request extends CORE_Controller
         //data required by active view
         $data['departments']=$this->Departments_model->get_list(
             array('departments.is_active'=>TRUE,'departments.is_deleted'=>FALSE)
-        );
-
-        //data required by active view
-        $data['suppliers']=$this->Suppliers_model->get_list(
-            array('suppliers.is_deleted'=>FALSE, 'suppliers.is_active'=>TRUE),
-            'suppliers.*,IFNULL(tax_types.tax_rate,0)as tax_rate',
-            array(
-                array('tax_types','tax_types.tax_type_id=suppliers.tax_type_id','left')
-            )
         );
 
         $data['tax_types']=$this->Tax_types_model->get_list('is_deleted=0');
