@@ -16,7 +16,10 @@ class Sales_invoice_item_model extends CORE_Model
         return $this->db->query($sql)->result();
     }
 
-
+    function get_adj_return_list($id){
+        $sql="SELECT * FROM sales_invoice_items WHERE cost_upon_invoice <= 0";
+        return $this->db->query($sql)->result();
+    }
 }
 
 

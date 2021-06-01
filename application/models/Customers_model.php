@@ -117,6 +117,7 @@ class Customers_model extends CORE_Model{
                 ji.txn_no,
                 ji.journal_id,
                 c.customer_name,
+                si.sales_invoice_id,
                 IF(ISNULL(si.date_due),serv_inv.date_due,si.date_due) date_due,
                 IF(ISNULL(si.remarks),IFNULL(serv_inv.remarks, ji.remarks),IFNULL(si.remarks, ji.remarks)) remarks,
                 /* IF(ISNULL(ref_no), txn_no, ref_no) inv_no, */

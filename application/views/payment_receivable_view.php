@@ -328,28 +328,28 @@
                                                     <table id="tbl_items" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
                                                         <thead class="">    
                                                             <tr>        
+                                                                <th width="10%">Returns</th>
                                                                 <th width="12%">Invoice #</th>
                                                                 <th width="12%">Due Date</th>
-                                                                <th width="30%">Remarks</th>
+                                                                <th width="35%">Remarks</th>
                                                                 <th width="12%" style="text-align: right;">Amount due</th>
+                                                                <th class="hidden">Amount Return</th>
                                                                 <th width="14%">Payment</th>
                                                                 <th width="5%">Action</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-
                                                         </tbody>
                                                         <tfoot>
-                                                        <tr>
-                                                            <td colspan="6" style="height: 50px;">&nbsp;</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td colspan="3" align="right"><b>Total : </b></td>
-                                                            <td id="td_total_payables" align="right"><b>0.00</b></td>
-                                                            <td id="td_total_payments" align="right"><b>0.00</b></td>
-                                                            <td></td>
-                                                        </tr>
-
+                                                            <tr>
+                                                                <td colspan="7" style="height: 50px;">&nbsp;</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="4" align="right"><b>Total : </b></td>
+                                                                <td id="td_total_payables" align="right"><b>0.00</b></td>
+                                                                <td id="td_total_payments" align="right"><b>0.00</b></td>
+                                                                <td></td>
+                                                            </tr>
                                                         </tfoot>
                                                     </table>
                                                 </div>
@@ -401,7 +401,6 @@
         </div> <!-- #page-content -->
     </div>
 
-
     <div id="modal_confirmation" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
         <div class="modal-dialog modal-sm">
             <div class="modal-content"><!---content-->
@@ -418,6 +417,46 @@
                 <div class="modal-footer">
                     <button id="btn_yes" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Yes</button>
                     <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">No</button>
+                </div>
+            </div><!---content-->
+        </div>
+    </div>
+
+    <div id="modal_returns" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+        <div class="modal-dialog modal-md">
+            <div class="modal-content"><!---content-->
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                    <h4 class="modal-title" style="color:white;">
+                        Sales Invoice # <span class="si_label"></span> Returns
+                    </h4>
+
+                </div>
+
+                <div class="modal-body">
+                    <table width="100%" class="table tbl_returns table-striped">
+                        <thead>
+                            <tr>
+                                <th>Return Qty</th>
+                                <th style="text-align: right;">Qty</th>
+                                <th>Product</th>
+                                <th style="text-align: right;">Unit Price</th>
+                                <th style="text-align: right;">Amount Return</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="4" align="right"><strong>Total :</strong></td>
+                                <td class="total_amount_return" align="right"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="modal-footer">
+                    <button id="btn_yes_return" type="button" class="btn btn-success" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Return</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
                 </div>
             </div><!---content-->
         </div>
@@ -485,7 +524,8 @@
 
     $(document).ready(function(){
         var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboCustomers; var _cboTaxType;
-        var _cboReceiptType; var _cboPaymentMethod; var _cboBranch; var _cboFilterActive;
+        var _cboReceiptType; var _cboPaymentMethod; var _cboBranch; var _cboFilterActive; 
+        var _SIAmountDue=0; var _SIAmountReturn=0;
 
         var oTableItems={
             qty : 'td:eq(0)',
@@ -715,6 +755,8 @@
                     $('#tbl_items > tbody').html(response);
                     reInitializeNumeric();
                     reComputeDetails();
+                    initializeBtnReturns();
+                    initializeTable();
                 });
 
 
@@ -756,6 +798,48 @@
 
             });
 
+            var initializeBtnReturns = function(){
+                $('.btn_return').on('click', function(){
+                    var row = $(this).closest('tr');
+                    _rowObj = $(this).closest('tr');
+                    var sales_invoice_id = $(this).data('sales_invoice_id');
+                    var sales_invoice_no = $(this).data('sales_invoice_no');
+
+                    _SIAmountDue=getFloat(row.find('input[name="receivable_amount[]"]').val());
+
+                    $('.si_label').html(sales_invoice_no);
+
+                    $.ajax({
+                        url: 'Sales_invoice/transaction/item-returns?id=' + sales_invoice_id,
+                        type: "GET",
+                        cache: false,
+                        dataType: 'html',
+                        processData: false,
+                        contentType: false,
+                        beforeSend: function () {
+                            $('#tbl_entries > tbody').html('<tr><td align="center" colspan="5"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                        }
+                    }).done(function(response){
+
+                        $('.tbl_returns > tbody').html();
+                        $('.tbl_returns > tbody').html(response);
+                        reInitializeNumeric();
+                        reComputeReturns();
+                    });
+
+                    $('#modal_returns').modal('show');
+
+                });
+            };
+
+            var initializeTable = function(){
+                $('#btn_yes_return').on('click', function(){
+                    _rowObj.find('input.return_amount_invoice').val(_SIAmountReturn);
+                    _rowObj.find('input.amount_due').val(accounting.formatNumber(_SIAmountDue-_SIAmountReturn,2));
+                    _rowObj.find('input.payment_amount').val("");
+                    reComputeDetails();
+                });
+            };
 
             $('#tbl_payments > tbody').on('click','button.btn_cancel_or',function(e){
                 _selectRowObj=$(this).closest('tr');
@@ -792,6 +876,34 @@
                 reComputeDetails();
 
             });
+
+
+            $('.tbl_returns > tbody').on('keyup','input.numeric',function(e){
+                var row=$(this).closest('tr');
+
+                var return_qty=getFloat($(this).val());
+                var sales_qty=getFloat(row.find('input[name="sales_qty[]"]').val());
+                var price=getFloat(row.find('input[name="unit_price[]"]').val());
+
+                if(return_qty>sales_qty){
+                    showNotification({
+                        "title": "Invalid!",
+                        "stat" : "error",
+                        "msg" : "Sorry, Return Qty must not be greater than the original qty of invoice."
+                    });
+
+                    $(this).val('');
+                    row.find('input[name="return_amount[]"]').val("");
+                    reComputeReturns();
+                    return;
+                }
+
+                var return_amount = accounting.unformat(return_qty) * accounting.unformat(price);
+                row.find('input[name="return_amount[]"]').val(accounting.formatNumber(return_amount,2));
+
+                reComputeReturns();
+
+            }); 
 
 
         })();
@@ -913,6 +1025,7 @@
                 var row=$(this);
                 total_payment+=getFloat(row.find('input[name="payment_amount[]"]').val());
                 total_payable+=getFloat(row.find('input[name="receivable_amount[]"]').val());
+
             });
 
             $('#td_total_payment').html('<b>'+accounting.formatNumber(total_payment,2)+'</b>');
@@ -921,6 +1034,20 @@
 
             $('#td_total_payments').html('<b>'+accounting.formatNumber(total_payment,2)+'</b>');
             $('#td_total_payables').html('<b>'+accounting.formatNumber(total_payable,2)+'</b>');
+
+        };
+
+        var reComputeReturns=function(){
+            var rows=$('.tbl_returns > tbody > tr');
+            var total_amount_return=0;
+
+            $.each(rows,function(i,value){
+                var row=$(this);
+                total_amount_return+=getFloat(row.find('input[name="return_amount[]"]').val());
+            });
+
+            $('.total_amount_return').html('<b>'+accounting.formatNumber(total_amount_return,2)+'</b>');
+            _SIAmountReturn = total_amount_return;
 
         };
 

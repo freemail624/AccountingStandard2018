@@ -172,6 +172,53 @@ class Sales_invoice extends CORE_Controller
                 break;
 
             ////****************************************items/products of selected Items***********************************************
+
+            case 'item-returns':
+                $m_items=$this->Sales_invoice_item_model;
+                $id = $this->input->get('id', true);
+                $data['items']=$m_items->get_adj_return_list($id
+                    array('sales_invoice_id'=>$id),
+                    array(
+                        'sales_invoice_items.*',
+                        'products.product_code',
+                        'products.product_desc',
+                        'products.sale_price',
+                        'products.is_bulk',
+                        'products.is_basyo',
+                        'products.child_unit_id',
+                        'products.parent_unit_id',
+                        'products.child_unit_desc',
+                        'products.discounted_price',
+                        'products.dealer_price',
+                        'products.distributor_price',
+                        'products.public_price',
+                        '(CASE
+                            WHEN products.is_parent = TRUE 
+                                THEN products.bulk_unit_id
+                            ELSE products.parent_unit_id
+                        END) as product_unit_id',
+                        '(CASE
+                            WHEN products.is_parent = TRUE 
+                                THEN blkunit.unit_name
+                            ELSE chldunit.unit_name
+                        END) as product_unit_name',                        
+                        '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.parent_unit_id) as parent_unit_name',
+                        '(SELECT units.unit_name  FROM units WHERE  units.unit_id = products.child_unit_id) as child_unit_name',
+                        '(SELECT count(*) FROM account_integration WHERE basyo_product_id = products.product_id) as is_product_basyo'
+                    ),
+                    array(
+                        array('products','products.product_id=sales_invoice_items.product_id','left'),
+                        array('units','units.unit_id=sales_invoice_items.unit_id','left'),
+                        array('units blkunit','blkunit.unit_id=products.bulk_unit_id','left'),
+                        array('units chldunit','chldunit.unit_id=products.parent_unit_id','left'),                        
+                    ),
+                    'sales_invoice_items.sales_item_id ASC'
+                );
+
+
+                echo $this->load->view('template/sales_return_items',$data,TRUE);
+                break;
+
             case 'items': //items on the specific PO, loads when edit button is called
                 $m_items=$this->Sales_invoice_item_model;
                 $response['data']=$m_items->get_list(
