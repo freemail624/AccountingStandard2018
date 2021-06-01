@@ -13,7 +13,11 @@
 	<?php foreach($receivables as $item){ ?>
 		<?php if ($item->is_sales == '1') { ?>
 	    <tr>
-	    	<td><button type="button" class="btn_return btn btn-primary" data-sales_invoice_id="<?php echo $item->sales_invoice_id; ?>" data-sales_invoice_no="<?php echo $item->inv_no; ?>">Returns <span class="returns_count"></span></button></td>
+	    	<td><button type="button" class="btn_return btn btn-primary" data-sales_invoice_id="<?php echo $item->sales_invoice_id; ?>" data-sales_invoice_no="<?php echo $item->inv_no; ?>">Returns 
+		    	<span class="returns_count">
+		    		<?php if($item->adjust_qty > 0){ echo '('.$item->adjust_qty.')'; } ?>
+		    	</span>
+	    	</button></td>
 	        <td><?php echo $item->inv_no; ?></td>
 	        <td><?php echo $item->date_due; ?></td>
 	        <td><?php echo $item->remarks; ?></td>

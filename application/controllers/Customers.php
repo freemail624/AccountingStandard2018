@@ -469,6 +469,23 @@ class Customers extends CORE_Controller {
 
                 break;
 
+            case 'get-balance-invoice':
+                $m_invoice = $this->Sales_invoice_model;
+                $m_customers=$this->Customers_model;
+
+                $sales_invoice_id = $this->input->get('id');
+                $customer_id = $m_invoice->get_list($sales_invoice_id)[0]->customer_id;
+                $accounts=$this->Soa_settings_model->get_list(null,'soa_account_id');
+
+                $acc = [];
+                foreach ($accounts as $account) { $acc[]=$account->soa_account_id; }
+                $filter_accounts =  implode(",", $acc);
+
+                $response['data']=$m_customers->get_customer_receivable_list_3($customer_id,$filter_accounts,$sales_invoice_id);
+                echo json_encode($response);
+
+                break; 
+
         }
     }
 

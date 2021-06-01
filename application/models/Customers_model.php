@@ -105,7 +105,78 @@ class Customers_model extends CORE_Model{
     //     return $this->db->query($sql)->result();
     // }
 
-    function get_customer_receivable_list($customer_id,$filter_accounts)
+    function get_customer_receivable_list($customer_id,$filter_accounts,$sales_invoice_id=null)
+    {
+        $sql = "SELECT
+                unpaid.*,
+                COALESCE(adjustments.adjust_qty,0) as adjust_qty,
+                IFNULL(paid.receivable_amount,0) receivable_amount,
+                IFNULL(paid.payment_amount,0) payment_amount,
+                (IFNULL(unpaid.journal_receivable_amount,0) - IFNULL(paid.payment_amount,0) - IFNULL(adjustments.adjust_line_total_price,0)) amount_due
+                FROM
+                (SELECT
+                ji.txn_no,
+                ji.journal_id,
+                c.customer_name,
+                si.sales_invoice_id,
+                IF(ISNULL(si.date_due),serv_inv.date_due,si.date_due) date_due,
+                IF(ISNULL(si.remarks),IFNULL(serv_inv.remarks, ji.remarks),IFNULL(si.remarks, ji.remarks)) remarks,
+                /* IF(ISNULL(ref_no), txn_no, ref_no) inv_no, */
+                si.sales_inv_no as inv_no,
+                IF(ji.is_sales = 1, SUM(ja.dr_amount), SUM(ja.dr_amount)) as journal_receivable_amount,
+                ji.is_sales
+                FROM
+                (journal_info ji
+                INNER JOIN (SELECT * FROM journal_accounts ja WHERE ja.account_id IN ($filter_accounts)) ja ON ja.journal_id = ji.journal_id)
+                LEFT JOIN customers c ON c.customer_id = ji.customer_id
+                LEFT JOIN sales_invoice si ON si.journal_id = ji.journal_id AND ji.is_sales=1
+                LEFT JOIN service_invoice serv_inv ON serv_inv.service_invoice_no = ji.ref_no AND ji.is_sales=0
+                WHERE
+                ji.is_deleted=FALSE
+                AND ji.is_active=TRUE
+                AND ji.book_type = 'SJE'
+                AND ji.customer_id = $customer_id
+                AND ji.hotel_integration_id = 0
+                AND ji.pos_integration_id = 0
+                 ".($sales_invoice_id==null?"":" AND si.sales_invoice_id=$sales_invoice_id")."
+                GROUP BY ji.journal_id) unpaid
+
+                LEFT JOIN 
+
+                (SELECT
+                rpl.journal_id,
+                SUM(IFNULL(rpl.receivable_amount,0)) receivable_amount,
+                SUM(IFNULL(rpl.payment_amount,0)) payment_amount
+                FROM
+                receivable_payments rp
+                INNER JOIN receivable_payments_list rpl ON rpl.payment_id = rp.payment_id
+                WHERE
+                rp.is_active=TRUE
+                AND rp.is_deleted=FALSE
+                AND rp.customer_id = $customer_id
+                GROUP BY rpl.journal_id) paid
+
+                ON unpaid.journal_id = paid.journal_id
+
+                LEFT JOIN
+
+                (SELECT SUM(aii.adjust_qty) as adjust_qty, SUM(aii.adjust_line_total_price) as adjust_line_total_price, si.sales_invoice_id FROM 
+                    adjustment_items aii
+                    LEFT JOIN adjustment_info ai ON ai.adjustment_id = aii.adjustment_id
+                    LEFT JOIN sales_invoice si ON si.sales_inv_no = ai.inv_no
+                    WHERE ai.is_deleted = FALSE AND ai.is_active = TRUE AND
+                    si.customer_id = $customer_id
+                    ".($sales_invoice_id==null?"":" AND si.sales_invoice_id=$sales_invoice_id")."
+                ) adjustments ON adjustments.sales_invoice_id = unpaid.sales_invoice_id
+
+
+                HAVING amount_due > 0";
+
+                return $this->db->query($sql)->result();
+    }
+
+
+    function get_customer_receivable_list_3($customer_id,$filter_accounts,$sales_invoice_id=null)
     {
         $sql = "SELECT
                 unpaid.*,
@@ -137,6 +208,7 @@ class Customers_model extends CORE_Model{
                 AND ji.customer_id = $customer_id
                 AND ji.hotel_integration_id = 0
                 AND ji.pos_integration_id = 0
+                 ".($sales_invoice_id==null?"":" AND si.sales_invoice_id=$sales_invoice_id")."
                 GROUP BY ji.journal_id) unpaid
 
                 LEFT JOIN 
@@ -155,6 +227,7 @@ class Customers_model extends CORE_Model{
                 GROUP BY rpl.journal_id) paid
 
                 ON unpaid.journal_id = paid.journal_id
+
                 HAVING amount_due > 0";
 
                 return $this->db->query($sql)->result();

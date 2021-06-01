@@ -19,6 +19,7 @@ class Adjustments extends CORE_Controller
         $this->load->model('Customers_model');
         $this->load->model('Suppliers_model');
         $this->load->model('Sales_invoice_model');
+        $this->load->model('Sales_invoice_item_model');
         $this->load->model('Cash_invoice_model');
         $this->load->model('Account_integration_model');
 
@@ -186,6 +187,169 @@ class Adjustments extends CORE_Controller
                 echo json_encode($response);
                 break;
 
+            case 'create-return':
+
+                $m_adjustment=$this->Adjustment_model;
+                $m_adjustment_items =$this->Adjustment_item_model;
+                $m_invoice=$this->Sales_invoice_model;
+                $m_items=$this->Sales_invoice_item_model;
+                $sales_invoice_id = $this->get_numeric_value($this->input->post('sales_invoice_id', TRUE));
+
+                $invoice = $m_invoice->get_list($sales_invoice_id)[0];
+                $adjustments = $m_adjustment->get_sales_inve_adj($sales_invoice_id);
+
+                /* Item Returns */
+                $product_id = $this->input->post('product_id', TRUE);
+                $adjust_qty=$this->input->post('return_qty',TRUE);
+
+                $summary_discount = 0;
+                $summary_before_tax = 0;
+                $summary_tax_amount = 0;
+                $summary_after_tax = 0;
+
+                for($i=0;$i<count($product_id);$i++){
+
+                    if($adjust_qty[$i] > 0){
+
+                        $item = $m_items->get_item($sales_invoice_id,$this->get_numeric_value($product_id[$i]))[0];
+
+                        $adjust_price=$this->get_numeric_value($item->inv_price);
+                        $adjust_discount=$this->get_numeric_value($item->inv_discount);
+                        $adjust_line_total_discount=$this->get_numeric_value($adjust_qty[$i]) * $this->get_numeric_value($item->inv_discount);
+                        $adjust_tax_rate=$this->get_numeric_value($item->inv_tax_rate);
+                        $adjust_line_total_price = ($this->get_numeric_value($adjust_qty[$i])*$this->get_numeric_value($adjust_price)) - $this->get_numeric_value($adjust_line_total_discount);
+                        $is_parent = $item->is_parent;
+
+                        if($adjust_tax_rate=="0"){
+                            $adjust_non_tax_amount= $adjust_line_total_price / (1+(($adjust_tax_rate)/100));
+                            $adjust_tax_amount= $adjust_line_total_price - $adjust_non_tax_amount;
+                        }else{
+                            $adjust_non_tax_amount= $adjust_line_total_price;
+                            $adjust_tax_amount = 0;
+                        }
+
+                        $summary_discount += $adjust_line_total_discount;
+                        $summary_before_tax += $adjust_line_total_price;
+                        $summary_after_tax += $adjust_line_total_price;
+                        $summary_tax_amount += $adjust_tax_amount;
+
+                    }
+                }
+
+                $m_adjustment->begin();
+
+                $m_adjustment->set('date_created','NOW()'); //treat NOW() as function and not string
+                $m_adjustment->department_id=$invoice->department_id;
+                $m_adjustment->adjustment_type='IN';
+                $m_adjustment->customer_id=$invoice->customer_id;
+                $m_adjustment->inv_no=$invoice->sales_inv_no;
+
+                $m_adjustment->is_returns=TRUE;
+                $m_adjustment->date_adjusted=date('Y-m-d');
+
+                $m_adjustment->total_discount=$this->get_numeric_value($summary_discount);
+                $m_adjustment->total_before_tax=$this->get_numeric_value($summary_before_tax);
+                $m_adjustment->total_tax_amount=$this->get_numeric_value($summary_after_tax);
+                $m_adjustment->total_after_tax=$this->get_numeric_value($summary_tax_amount);
+
+                $m_adjustment->inv_type_id = 1;
+                $m_adjustment->posted_by_user=$this->session->user_id;
+
+                if(count($adjustments) > 0){
+                    $adjustment_id = $adjustments[0]->adjustment_id;
+                    $m_adjustment->modify($adjustment_id);
+                    $m_adjustment_items->delete_via_fk($adjustment_id); //delete previous items then insert those new
+                }else{
+                    $m_adjustment->save();
+                    $adjustment_id=$m_adjustment->last_insert_id();
+                }
+
+                /* Item Returns */
+                $product_id = $this->input->post('product_id', TRUE);
+                $adjust_qty=$this->input->post('return_qty',TRUE);
+
+                for($a=0;$a<count($product_id);$a++){
+
+                    if($this->get_numeric_value($adjust_qty[$a]) > 0){
+
+                        $item = $m_items->get_item($sales_invoice_id,$this->get_numeric_value($product_id[$a]))[0];
+
+                        $adjust_price=$this->get_numeric_value($item->inv_price);
+                        $adjust_discount=$this->get_numeric_value($item->inv_discount);
+                        $adjust_line_total_discount=$this->get_numeric_value($adjust_qty[$a]) * $this->get_numeric_value($item->inv_discount);
+                        $adjust_tax_rate=$this->get_numeric_value($item->inv_tax_rate);
+                        $adjust_line_total_price = (
+                            $this->get_numeric_value($adjust_qty[$a])*
+                            $this->get_numeric_value($adjust_price)
+                        ) - $this->get_numeric_value($adjust_line_total_discount);
+
+                        $is_parent = $item->is_parent;
+
+                        if($adjust_tax_rate=="0"){
+                            $adjust_non_tax_amount= $adjust_line_total_price / (1+(($adjust_tax_rate)/100));
+                            $adjust_tax_amount= $adjust_line_total_price - $adjust_non_tax_amount;
+                        }else{
+                            $adjust_non_tax_amount= $adjust_line_total_price;
+                            $adjust_tax_amount = 0;
+                        }
+
+                        $m_adjustment_items->adjustment_id=$adjustment_id;
+                        $m_adjustment_items->product_id=$this->get_numeric_value($product_id[$a]);
+                        $m_adjustment_items->adjust_qty=$this->get_numeric_value($adjust_qty[$a]);
+                        $m_adjustment_items->adjust_price=$this->get_numeric_value($adjust_price);
+                        $m_adjustment_items->adjust_discount=$this->get_numeric_value($adjust_discount);
+                        $m_adjustment_items->adjust_line_total_discount=$this->get_numeric_value($adjust_line_total_discount);
+                        $m_adjustment_items->adjust_tax_rate=$this->get_numeric_value($adjust_tax_rate);
+                        $m_adjustment_items->adjust_line_total_price=$this->get_numeric_value($adjust_line_total_price);
+                        $m_adjustment_items->adjust_tax_amount=$this->get_numeric_value($adjust_tax_amount);
+                        $m_adjustment_items->adjust_non_tax_amount=$this->get_numeric_value($adjust_non_tax_amount);
+                        $m_adjustment_items->is_parent=$this->get_numeric_value($is_parent);
+                        $m_adjustment_items->unit_id=$item->unit_id;
+
+                        $m_adjustment_items->save();
+
+                    }
+
+                }   
+
+
+                if(count($adjustments) == 0){
+                    //update invoice number base on formatted last insert id
+                    $m_adjustment->adjustment_code='ADJ-'.date('Ymd').'-'.$adjustment_id;
+                    $m_adjustment->modify($adjustment_id);
+                }
+
+                if(count($adjustments) == 0){
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=1; //CRUD
+                    $m_trans->trans_type_id=15; // TRANS TYPE
+                    $m_trans->trans_log='Created Adjustment No: ADJ-'.date('Ymd').'-'.$adjustment_id;
+                    $m_trans->save();
+                }else{
+                    $adj_info=$m_adjustment->get_list($adjustment_id,'adjustment_code');
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=2; //CRUD
+                    $m_trans->trans_type_id=15; // TRANS TYPE
+                    $m_trans->trans_log='Updated Adjustment No: '.$adj_info[0]->adjustment_code;
+                    $m_trans->save();
+                }
+
+                $m_adjustment->commit();
+
+                if($m_adjustment->status()===TRUE){
+                    $response['title'] = 'Success!';
+                    $response['stat'] = 'success';
+                    $response['msg'] = 'Items successfully Adjusted.';
+
+                    echo json_encode($response);
+                }
+
+
+                break;
 
             //***************************************create new Items************************************************
             case 'create':

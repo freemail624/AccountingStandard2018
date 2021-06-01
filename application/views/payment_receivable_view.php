@@ -434,24 +434,26 @@
                 </div>
 
                 <div class="modal-body">
-                    <table width="100%" class="table tbl_returns table-striped">
-                        <thead>
-                            <tr>
-                                <th>Return Qty</th>
-                                <th style="text-align: right;">Qty</th>
-                                <th>Product</th>
-                                <th style="text-align: right;">Unit Price</th>
-                                <th style="text-align: right;">Amount Return</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="4" align="right"><strong>Total :</strong></td>
-                                <td class="total_amount_return" align="right"></td>
-                            </tr>
-                        </tfoot>
-                    </table>
+                    <form id="frm_returns">
+                        <table width="100%" class="table tbl_returns table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Return Qty</th>
+                                    <th style="text-align: right;">Qty</th>
+                                    <th>Product</th>
+                                    <th style="text-align: right;">Unit Price</th>
+                                    <th style="text-align: right;">Amount Return</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4" align="right"><strong>Total :</strong></td>
+                                    <td class="total_amount_return" align="right"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </form>
                 </div>
 
                 <div class="modal-footer">
@@ -525,7 +527,7 @@
     $(document).ready(function(){
         var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboCustomers; var _cboTaxType;
         var _cboReceiptType; var _cboPaymentMethod; var _cboBranch; var _cboFilterActive; 
-        var _SIAmountDue=0; var _SIAmountReturn=0;
+        var _SIAmountDue=0; var _SIAmountReturn=0; var _selectedSIiD; var _SIReturnQty;
 
         var oTableItems={
             qty : 'td:eq(0)',
@@ -756,7 +758,6 @@
                     reInitializeNumeric();
                     reComputeDetails();
                     initializeBtnReturns();
-                    initializeTable();
                 });
 
 
@@ -802,15 +803,17 @@
                 $('.btn_return').on('click', function(){
                     var row = $(this).closest('tr');
                     _rowObj = $(this).closest('tr');
-                    var sales_invoice_id = $(this).data('sales_invoice_id');
+                    _selectedSIiD= $(this).data('sales_invoice_id');
                     var sales_invoice_no = $(this).data('sales_invoice_no');
 
-                    _SIAmountDue=getFloat(row.find('input[name="receivable_amount[]"]').val());
+                    getBalanceInvoice(_selectedSIiD).done(function(response){
+                        _SIAmountDue = response.data[0].amount_due;
+                    });
 
                     $('.si_label').html(sales_invoice_no);
 
                     $.ajax({
-                        url: 'Sales_invoice/transaction/item-returns?id=' + sales_invoice_id,
+                        url: 'Sales_invoice/transaction/item-returns?id=' + _selectedSIiD,
                         type: "GET",
                         cache: false,
                         dataType: 'html',
@@ -824,6 +827,7 @@
                         $('.tbl_returns > tbody').html();
                         $('.tbl_returns > tbody').html(response);
                         reInitializeNumeric();
+                        $('input.return_qty').trigger("keyup");
                         reComputeReturns();
                     });
 
@@ -832,14 +836,30 @@
                 });
             };
 
-            var initializeTable = function(){
-                $('#btn_yes_return').on('click', function(){
-                    _rowObj.find('input.return_amount_invoice').val(_SIAmountReturn);
-                    _rowObj.find('input.amount_due').val(accounting.formatNumber(_SIAmountDue-_SIAmountReturn,2));
-                    _rowObj.find('input.payment_amount').val("");
-                    reComputeDetails();
+            $('#btn_yes_return').on('click', function(){
+
+                createReturn().done(function(response){
+                    showNotification(response);
+
+                    $('#btn_yes_return').attr('disabled',true);
+
+                    if(response.stat=="success"){
+                        $('#btn_yes_return').attr('disabled',false);
+                        _rowObj.find('input.return_amount_invoice').val(_SIAmountReturn);
+                        _rowObj.find('input.amount_due').val(accounting.formatNumber(_SIAmountDue-_SIAmountReturn,2));
+                        _rowObj.find('span.returns_count').html('('+accounting.formatNumber(_SIReturnQty,2)+')');
+                        _rowObj.find('input.payment_amount').val("");
+                        reComputeDetails();
+                        
+                    }
+
+                }).always(function(){
+                    showSpinningProgress($('#btn_yes_return'));
                 });
-            };
+
+
+
+            });
 
             $('#tbl_payments > tbody').on('click','button.btn_cancel_or',function(e){
                 _selectRowObj=$(this).closest('tr');
@@ -938,6 +958,27 @@
             return stat;
         };
 
+        
+        var getBalanceInvoice=function(id){
+            return $.ajax({
+                "dataType":"json",
+                "type":"GET",
+                "url":"Customers/transaction/get-balance-invoice?id="+id
+            });
+        };
+
+        var createReturn=function(){
+            var _data=$('#frm_returns').serializeArray();
+            _data.push({name:"sales_invoice_id",value: _selectedSIiD});
+
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Adjustments/transaction/create-return",
+                "data":_data,
+                "beforeSend": showSpinningProgress($('#btn_yes_return'))
+            });
+        };
 
         var postPayment=function(){
             var _data=$('#frm_payments,#frm_payment_items').serializeArray();
@@ -1039,14 +1080,17 @@
 
         var reComputeReturns=function(){
             var rows=$('.tbl_returns > tbody > tr');
-            var total_amount_return=0;
+            var total_amount_return=0; var total_return_qty = 0;
 
             $.each(rows,function(i,value){
                 var row=$(this);
                 total_amount_return+=getFloat(row.find('input[name="return_amount[]"]').val());
+                total_return_qty+=getFloat(row.find('input[name="return_qty[]"]').val());
+
             });
 
             $('.total_amount_return').html('<b>'+accounting.formatNumber(total_amount_return,2)+'</b>');
+            _SIReturnQty = total_return_qty;
             _SIAmountReturn = total_amount_return;
 
         };

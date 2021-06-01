@@ -9,6 +9,18 @@ function __construct()
 {
 parent::__construct();
 }
+
+	function get_sales_inve_adj($sales_invoice_id){
+		$sql="SELECT *
+		FROM
+		    adjustment_info ai
+		    LEFT JOIN sales_invoice si ON si.sales_inv_no = ai.inv_no
+		    WHERE ai.is_deleted = FALSE AND ai.is_returns = TRUE
+			AND si.sales_invoice_id = $sales_invoice_id";
+		
+        return $this->db->query($sql)->result();
+	}
+
 // OUT ADJUSTMENT
  function get_journal_entries_2($adjustment_id){
         $sql="SELECT 
