@@ -53,6 +53,11 @@ class Service_invoice_model extends CORE_Model
             c.customer_no,
             c.customer_name,
             c.tin_no,
+            i.contact_person as insurance_contact_person,
+            i.insurer_company,
+            i.address as insurance_address,
+            i.contact_no as insurance_contact_no,
+            i.email_address as insurance_email_address,
             si.*,
             ro.repair_order_no,
             v.plate_no,
@@ -75,6 +80,8 @@ class Service_invoice_model extends CORE_Model
             service_invoice si
                 LEFT JOIN
             repair_order ro ON ro.repair_order_id = si.repair_order_id
+                LEFT JOIN
+            insurance i ON i.insurance_id = si.insurance_id
                 LEFT JOIN
             customers c ON c.customer_id = si.customer_id
                 LEFT JOIN

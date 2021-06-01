@@ -11,7 +11,7 @@ class Service_invoice_item_model extends CORE_Model
         parent::__construct();
     }
 
-	function get_invoice_tbl_count_items($service_invoice_id)
+	function get_invoice_tbl_count_items($service_invoice_id, $is_insured = null)
     {
         $query = $this->db->query("SELECT 
 			    DISTINCT tbl_no, vehicle_service_id,
@@ -52,11 +52,12 @@ class Service_invoice_item_model extends CORE_Model
 			    service_invoice_items sii
         		LEFT JOIN service_invoice si ON si.service_invoice_id = sii.service_invoice_id
 			    WHERE sii.service_invoice_id = $service_invoice_id
+					" . ($is_insured === null ? "" : " AND sii.is_insured=" . $is_insured) . "
 			    ORDER BY tbl_no ASC");
         return $query->result();
     }
 
-    function get_service_invoice_items($service_invoice_id)
+    function get_service_invoice_items($service_invoice_id, $is_insured = null)
     {
         $query = $this->db->query("SELECT 
 			    sii.*,
@@ -96,6 +97,7 @@ class Service_invoice_item_model extends CORE_Model
 			        LEFT JOIN
 			    units chldunit ON chldunit.unit_id = p.parent_unit_id
 			    WHERE sii.service_invoice_id = $service_invoice_id
+					" . ($is_insured === null ? "" : " AND sii.is_insured=" . $is_insured) . "
 			    ORDER BY sii.service_item_id ASC");
         return $query->result();
     }

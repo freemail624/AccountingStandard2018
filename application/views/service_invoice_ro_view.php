@@ -242,6 +242,10 @@
             width: 100%;
             display: flex;
         }
+
+        label.no-format {
+            margin: 0;
+        }
     </style>
     <link type="text/css" href="assets/css/light-theme.css" rel="stylesheet">
 </head>
@@ -682,6 +686,9 @@
                                                                                                     <th class="hidden">Net of Vat (Price w/out Tax)</th>
                                                                                                     <td class="hidden">Item ID</td>
                                                                                                     <th class="hidden">Total after Global</th>
+                                                                                                    <th width="10%" class="is_insured">
+                                                                                                        <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured1<?php echo $i; ?>" class="no-format">Is Insured?</label>
+                                                                                                    </th>
                                                                                                     <th width="5%">
                                                                                                         <center>Action</center>
                                                                                                     </th>
@@ -691,7 +698,7 @@
                                                                                             </tbody>
                                                                                             <tfoot>
                                                                                                 <tr>
-                                                                                                    <td colspan="7" style="height: 0px;min-height: 335px;">&nbsp;</td>
+                                                                                                    <td colspan="8" style="height: 0px;min-height: 335px;">&nbsp;</td>
                                                                                                 </tr>
                                                                                             </tfoot>
                                                                                         </table>
@@ -752,6 +759,9 @@
                                                                                                     <th class="hidden">Net of Vat (Price w/out Tax)</th>
                                                                                                     <td class="hidden">Item ID</td>
                                                                                                     <th class="hidden">Total after Global</th>
+                                                                                                    <th width="10%" class="is_insured">
+                                                                                                        <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured1<?php echo $i; ?>" class="no-format">Is Insured?</label>
+                                                                                                    </th>
                                                                                                     <th width="5%">
                                                                                                         <center>Action</center>
                                                                                                     </th>
@@ -761,7 +771,7 @@
                                                                                             </tbody>
                                                                                             <tfoot>
                                                                                                 <tr>
-                                                                                                    <td colspan="7" style="height: 0px;min-height: 335px;">&nbsp;</td>
+                                                                                                    <td colspan="8" style="height: 0px;min-height: 335px;">&nbsp;</td>
                                                                                                 </tr>
                                                                                             </tfoot>
                                                                                         </table>
@@ -823,6 +833,9 @@
                                                                                                     <th class="hidden">Net of Vat (Price w/out Tax)</th>
                                                                                                     <td class="hidden">Item ID</td>
                                                                                                     <th class="hidden">Total after Global</th>
+                                                                                                    <th width="10%" class="is_insured">
+                                                                                                        <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured1<?php echo $i; ?>" class="no-format">Is Insured?</label>
+                                                                                                    </th>
                                                                                                     <th width="5%">
                                                                                                         <center>Action</center>
                                                                                                     </th>
@@ -832,7 +845,7 @@
                                                                                             </tbody>
                                                                                             <tfoot>
                                                                                                 <tr>
-                                                                                                    <td colspan="7" style="height: 0px;min-height: 335px;">&nbsp;</td>
+                                                                                                    <td colspan="8" style="height: 0px;min-height: 335px;">&nbsp;</td>
                                                                                                 </tr>
                                                                                             </tfoot>
                                                                                         </table>
@@ -1742,9 +1755,10 @@
                 net_vat: 'td:eq(13)',
                 item_id: 'td:eq(14)',
                 total_after_global: ' td:eq(15)',
-                bulk_price: 'td:eq(17)',
-                retail_price: 'td:eq(18)',
-                discount_type: 'td:eq(19)'
+                is_insured: ' td:eq(16)',
+                bulk_price: 'td:eq(18)',
+                retail_price: 'td:eq(19)',
+                discount_type: 'td:eq(20)'
             };
             var oTableSearch = {
                 sBatch: 'td:eq(2)',
@@ -2186,7 +2200,9 @@
                         vehicle_service_id: _vehicleService,
                         tbl_no: tbl_no,
                         discount_type: 0,
-                        discount: 0
+                        discount: 0,
+                        is_insured: 0,
+                        is_checked: ''
                     }));
 
                     _line_unit = $('.line_unit' + a).select2({
@@ -2197,6 +2213,8 @@
                     reComputeTotal(_vehicleService);
                     countTblItems(_vehicleService);
                     checkTableLength();
+                    checkInsurance();
+                    checkInsuredInput()
                     // $('.qty').focus();
 
                     return prodstat;
@@ -2555,6 +2573,8 @@
                         clearFields($('#frm_insurance'));
                         $('#modal_new_insurance').modal('show');
                     }
+
+                    checkInsurance()
                 });
 
                 $('#btn_cancel_insurance').on('click', function() {
@@ -2761,7 +2781,7 @@
                 });
 
                 $('#btn_receive_ro').click(function() {
-                    $('#tbl_ro_list tbody').html('<tr><td colspan="7"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
+                    $('#tbl_ro_list tbody').html('<tr><td colspan="8"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
                     dt_ro.ajax.reload(null, false);
                     $('#modal_ro_list').modal('show');
                 });
@@ -2797,6 +2817,8 @@
                     _vehicleIDSelected = null;
                     reComputeTotal(); //this is to make sure, display summary are recomputed as 0
                     checkTableLength()
+                    checkInsurance()
+                    $('.cb_is_insured').prop('checked', false)
                 });
 
                 $('#tbl_ro_list > tbody').on('click', 'button[name="accept_ro"]', function() {
@@ -2846,7 +2868,7 @@
                         processData: false,
                         contentType: false,
                         beforeSend: function() {
-                            $('.tbl_items > tbody').html('<tr><td align="center" colspan="7"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                            $('.tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
                         },
                         success: function(response) {
                             var rows = response.data;
@@ -2904,7 +2926,9 @@
                                     vehicle_service_id: value.vehicle_service_id,
                                     tbl_no: value.tbl_no,
                                     discount_type: 0,
-                                    discount: 0
+                                    discount: 0,
+                                    is_insured: 0,
+                                    is_checked: ''
                                 }));
 
                                 changetxn = 'inactive';
@@ -2922,6 +2946,9 @@
                             countTblItems(2);
                             countTblItems(3);
                             reInitializeNumeric();
+                            checkTableLength();
+                            checkInsurance();
+                            checkInsuredInput()
                         }
                     });
 
@@ -2983,7 +3010,7 @@
                         processData: false,
                         contentType: false,
                         beforeSend: function() {
-                            $('.tbl_items > tbody').html('<tr><td align="center" colspan="7"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                            $('.tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
                         },
                         success: function(response) {
                             var rows = response.data;
@@ -3003,7 +3030,7 @@
                                 }
 
                                 var tbl_selected = $('#tbl_items_' + value.tbl_no + ' > tbody');
-
+                                var is_checked = value.is_insured == 1 ? 'checked' : '';
                                 tbl_selected.append(newRowItem({
                                     order_qty: value.service_qty,
                                     product_code: value.product_code,
@@ -3038,7 +3065,9 @@
                                     vehicle_service_id: value.vehicle_service_id,
                                     tbl_no: value.tbl_no,
                                     discount_type: 0,
-                                    discount: value.service_discount
+                                    discount: value.service_discount,
+                                    is_insured: value.is_insured,
+                                    is_checked: is_checked
                                 }));
 
                                 changetxn = 'inactive';
@@ -3056,6 +3085,9 @@
                             countTblItems(3);
                             reInitializeNumeric();
                             checkTableLength();
+                            checkInsurance();
+                            checkInsuredInput()
+                            $('.tbl_items tbody tr').find('input[name="is_insured_cb[]"]').trigger('change')
                         }
                     });
 
@@ -3160,7 +3192,7 @@
                     var global_discount = $('#txt_overall_discount').val();
                     var line_total = price * qty; //ok not included in the output (view) and not saved in the database
 
-                    var line_total_discount = discount_type == 2 ? discount * qty : line_total * (discount / 100);
+                    var line_total_discount = discount_type == 2 ? discount : line_total * (discount / 100);
                     // var line_total_discount=line_total*(discount/100);
                     var new_line_total = line_total - (line_total_discount);
                     var total_after_global = new_line_total - (new_line_total * (global_discount / 100));
@@ -3440,6 +3472,7 @@
 
             var updateServiceInvoice = function() {
                 var _data = $('#frm_service_invoice,#frm_items_pms,#frm_items_bpr,#frm_items_gb').serializeArray();
+                console.log(_data)
                 _data.push({
                     name: "advisor_remarks",
                     value: $('textarea[name="advisor_remarks"]').val()
@@ -3638,20 +3671,25 @@
                     // [15] Total After Global
                     '<td class="hidden"><input name="order_line_total_after_global[]" type="text" class="numeric form-control" value="' + d.order_line_total_after_global + '" readonly>' +
                     '</td>' +
-                    // [16] Action
+                    // [16] Is Insured
+                    '<td align="center">' +
+                    '<input name="is_insured_cb[]" data-table_no="' + d.tbl_no + '" data-table="tbl_items_' + d.tbl_no + '" type="checkbox" class="form-control is_insured_input" style="height: 25px!important; width: 25px!important;" ' + d.is_checked + '>' +
+                    '<input name="is_insured[]" type="text" class="form-control hidden" value="' + d.is_insured + '" readonly>' +
+                    '</td>' +
+                    // [17] Action
                     '<td align="center">' +
                     '<button type="button" name="search_item" class="btn btn-warning hidden" style="margin-right: 5px;"><i class="fa fa-search"></i></button>' +
                     '<button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button>' +
                     '</td>' +
-                    // [17] Bulk Price
+                    // [18] Bulk Price
                     '<td class="hidden">' +
                     '<input type="text" class="numeric form-control" value="' + accounting.formatNumber(d.bulk_price, 2) + '" readonly>' +
                     '</td>' +
-                    // [18] Retail Price
+                    // [19] Retail Price
                     '<td class="hidden">' +
                     '<input type="text" class="numeric form-control" value="' + accounting.formatNumber(d.retail_price, 2) + '" readonly>' +
                     '</td>' +
-                    // [19] discount type
+                    // [20] discount type
                     '<td class="hidden">' +
                     '<input type="text" id="discount_type-' + d.tbl_no + '-' + d.product_id + '" class="numeric form-control" value="' + d.discount_type + '" readonly>' +
                     '</td>' +
@@ -3999,6 +4037,38 @@
             var removeDiscounts = function() {
                 $('.tbl_items tbody tr').find('input[name="service_discount[]"]').val("0.00")
                 $('.discount_type_label').html('')
+            }
+
+            var checkInsurance = function() {
+                const value = _cboInsurance.select2('val')
+                if (value) {
+                    $('.cb_is_insured').prop('disabled', false)
+                    $('.is_insured_input').prop('disabled', false)
+                } else {
+                    $('.cb_is_insured').prop('disabled', true)
+                    $('.is_insured_input').prop('disabled', true)
+                }
+            }
+
+            $('.cb_is_insured').click(function(e) {
+                const table = $(this).data('table')
+                $('#' + table + ' tbody tr').find('input[name="is_insured_cb[]"]').prop('checked', this.checked)
+            })
+
+            var checkInsuredInput = function() {
+                $('.tbl_items tbody tr').find('input[name="is_insured_cb[]"]').on('change', function(e) {
+                    const value = this.checked ? 1 : 0
+                    $(this).closest('tr').find('input[name="is_insured[]"]').val(value)
+                    const table = $(this).data('table')
+                    const tableNo = $(this).data('table_no')
+                    const checkedLength = $('#' + table + ' tbody tr').find('input[name="is_insured_cb[]"]:checked').length
+                    const tableLength = $('#' + table + ' tbody tr').length
+                    if (checkedLength == tableLength) {
+                        $('#cb_is_insured' + tableNo).prop('checked', true)
+                    } else {
+                        $('#cb_is_insured' + tableNo).prop('checked', false)
+                    }
+                })
             }
 
             $()

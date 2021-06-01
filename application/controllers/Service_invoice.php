@@ -303,6 +303,7 @@ class Service_invoice extends CORE_Controller
                 $vehicle_service_id=$this->input->post('vehicle_service_id',TRUE);
                 $tbl_no=$this->input->post('tbl_no',TRUE);                
                 $is_parent=$this->input->post('is_parent',TRUE);
+                $is_insured=$this->input->post('is_insured',TRUE);
             
                 $m_products=$this->Products_model;
 
@@ -325,6 +326,7 @@ class Service_invoice extends CORE_Controller
                     $m_invoice_item->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
                     $m_invoice_item->vehicle_service_id=$this->get_numeric_value($vehicle_service_id[$i]);
                     $m_invoice_item->tbl_no=$this->get_numeric_value($tbl_no[$i]);
+                    $m_invoice_item->is_insured=$this->get_numeric_value($is_insured[$i]);
 
                     //unit id retrieval is change, because of TRIGGER restriction
                     $m_invoice_item->is_parent=$this->get_numeric_value($is_parent[$i]);
@@ -571,6 +573,7 @@ class Service_invoice extends CORE_Controller
                 $vehicle_service_id=$this->input->post('vehicle_service_id',TRUE);
                 $tbl_no=$this->input->post('tbl_no',TRUE);                
                 $is_parent=$this->input->post('is_parent',TRUE);
+                $is_insured=$this->input->post('is_insured', TRUE);
 
                 $m_products=$this->Products_model;
 
@@ -593,6 +596,7 @@ class Service_invoice extends CORE_Controller
                     $m_invoice_item->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
                     $m_invoice_item->vehicle_service_id=$this->get_numeric_value($vehicle_service_id[$i]);
                     $m_invoice_item->tbl_no=$this->get_numeric_value($tbl_no[$i]);
+                    $m_invoice_item->is_insured = $this->get_numeric_value($is_insured[$i]);
 
                     //unit id retrieval is change, because of TRIGGER restriction
                     $m_invoice_item->is_parent=$this->get_numeric_value($is_parent[$i]);

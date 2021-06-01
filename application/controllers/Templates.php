@@ -658,10 +658,12 @@ class Templates extends CORE_Controller {
 
                 $type=$this->input->get('type',TRUE);
                 $info=$m_info->get_service_invoice_list($filter_value);
-                $data['item_info']=$m_items->get_service_invoice_items($filter_value);
+                $data['item_info']=$m_items->get_service_invoice_items($filter_value, 0);
+                $data['insured_item_info']=$m_items->get_service_invoice_items($filter_value, 1);
                 $data['service']=$info[0];
                 $data['vehicle_services']=$m_services->get_vehicle_services();
-                $data['tbl_count']=$m_items->get_invoice_tbl_count_items($filter_value);
+                $data['tbl_count']=$m_items->get_invoice_tbl_count_items($filter_value, 0);
+                $data['insured_tbl_count']=$m_items->get_invoice_tbl_count_items($filter_value, 1);
 
                 $m_company=$this->Company_model;
                 $company=$m_company->get_list();
