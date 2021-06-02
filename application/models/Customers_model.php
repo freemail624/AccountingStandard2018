@@ -105,7 +105,7 @@ class Customers_model extends CORE_Model{
     //     return $this->db->query($sql)->result();
     // }
 
-    function get_customer_receivable_list($customer_id,$filter_accounts,$sales_invoice_id=null)
+    function get_customer_receivable_list($customer_id,$filter_accounts)
     {
         $sql = "SELECT
                 unpaid.*,
@@ -138,7 +138,6 @@ class Customers_model extends CORE_Model{
                 AND ji.customer_id = $customer_id
                 AND ji.hotel_integration_id = 0
                 AND ji.pos_integration_id = 0
-                 ".($sales_invoice_id==null?"":" AND si.sales_invoice_id=$sales_invoice_id")."
                 GROUP BY ji.journal_id) unpaid
 
                 LEFT JOIN 
@@ -166,7 +165,7 @@ class Customers_model extends CORE_Model{
                     LEFT JOIN sales_invoice si ON si.sales_inv_no = ai.inv_no
                     WHERE ai.is_deleted = FALSE AND ai.is_active = TRUE AND
                     si.customer_id = $customer_id
-                    ".($sales_invoice_id==null?"":" AND si.sales_invoice_id=$sales_invoice_id")."
+                    GROUP BY si.sales_invoice_id
                 ) adjustments ON adjustments.sales_invoice_id = unpaid.sales_invoice_id
 
 
