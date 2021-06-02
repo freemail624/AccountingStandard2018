@@ -111,8 +111,8 @@
                                             </select>
                                         </div>
                                         <div class="col-xs-12 col-sm-4">
-                                            <label><b class="required">*</b> Department :</label>
-                                            <select class="form-control" id="cbo_departments">
+                                            <label><b class="required">*</b> Department :</label><br/>
+                                            <select class="form-control" id="cbo_departments" style="width: 100%;">
                                                 <?php foreach($departments as $department){ ?>
                                                     <option value="<?php echo $department->department_id; ?>">
                                                         <?php echo $department->department_name; ?>
@@ -306,8 +306,8 @@ $(document).ready(function(){
                         '<td></td>'+
                         '<td></td>'+
                         '<td></td>'+
-                        '<td align="right">'+response.balance_as_of.CurrentQty+'</td>'+
                         '<td align="right">'+response.balance_as_of.total_qty_balance+'</td>'+
+                        '<td align="right">'+response.balance_as_of.total_qty_bulk+'</td>'+
                         '<td></td>'+
                         '<td><strong>System Generated Balance</strong></td>'+
                     '</tr>'

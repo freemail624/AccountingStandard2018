@@ -538,7 +538,7 @@ class Products extends CORE_Controller
                 $balance_as_of=$m_products->product_list($account,$prev_date,$product_id,null,null,1,null,$department_id,$ci_account,$disaccount,null,null)[0];
 
                 // $data['products']=$m_products->get_product_history($product_id,$department_id,$date,$account);
-                $data['products_parent']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$disaccount,$balance_as_of->total_qty_bulk,$from_date);
+                $data['products_parent']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$disaccount,$balance_as_of->total_qty_bulk,$from_date,$balance_as_of->total_qty_balance);
 
                 $data['balance_as_of'] =$balance_as_of;
                 $data['product_id']=$product_id;
@@ -582,8 +582,8 @@ class Products extends CORE_Controller
                 $balance_as_of=$m_products->product_list($account,$prev_date,$product_id,null,null,1,null,$department_id,$ci_account,$dis_account,null,null)[0];
 
                 //$product_id,$depid=0,$as_of_date=null,$account,$is_parent=null,$ciaccount // OREDR OF PARAMETER
-                $data['products_parent']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account,$balance_as_of->total_qty_bulk,$from_date);
-                $data['products_child']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account,$balance_as_of->total_qty_bulk,$from_date);
+                $data['products_parent']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account,$balance_as_of->total_qty_bulk,$from_date,$balance_as_of->total_qty_balance);
+                $data['products_child']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account,$balance_as_of->total_qty_bulk,$from_date,$balance_as_of->total_qty_balance);
                 $data['product_id']=$product_id;
                 $data['balance_as_of'] =$balance_as_of;
                 $data['as_of_date'] = $prev_date;
@@ -1003,8 +1003,8 @@ function Export_Stock(){
 
                 $balance_as_of=$m_products->product_list($account,$prev_date,$product_id,null,null,1,null,$department_id,$ci_account,$dis_account,null,null)[0];
 
-                $products_parent=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account,$balance_as_of->total_qty_bulk,$from_date);
-                $products_child=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account,$balance_as_of->total_qty_bulk,$from_date);
+                $products_parent=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account,$balance_as_of->total_qty_bulk,$from_date,$balance_as_of->total_qty_balance);
+                $products_child=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account,$balance_as_of->total_qty_bulk,$from_date,$balance_as_of->total_qty_balance);
 
                 $info=$m_products->get_list(
                     array('product_id'=>$product_id),

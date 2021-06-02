@@ -334,10 +334,10 @@ class Products_model extends CORE_Model {
         return $this->db->query($sql)->result();
     }
 
-     function get_product_history_with_child($product_id,$depid=0,$as_of_date=null,$account,$is_parent=null,$ciaccount,$disaccount=null,$balance,$from_date){
+     function get_product_history_with_child($product_id,$depid=0,$as_of_date=null,$account,$is_parent=null,$ciaccount,$disaccount=null,$balance,$from_date,$child_balance){
 
-        $this->db->query("SET @pBalance:=$balance;");
-        $this->db->query("SET @cBalance:=$balance;");
+        $this->db->query("SET @pBalance:=$child_balance;");
+        $this->db->query("SET @cBalance:=$child_balance;");
         $this->db->query("SET @bulkBalance:=$balance;");
         $sql="
 
@@ -358,8 +358,8 @@ class Products_model extends CORE_Model {
             aii.product_id,
             'Bulk' AS identifier,  
             (CASE
-                WHEN aii.is_parent = 1 THEN (IFNULL(aii.adjust_qty, 0) * p.bulk_conversion_rate)
-                WHEN aii.is_parent = 0 AND p.parent_id = 0 THEN IFNULL(aii.adjust_qty, 0)
+                WHEN p.is_parent = 1 THEN (IFNULL(aii.adjust_qty, 0) * p.bulk_conversion_rate)
+                WHEN p.is_parent = 0 AND p.parent_id = 0 THEN IFNULL(aii.adjust_qty, 0)
                 ELSE 0
             END) as parent_in_qty,
             0 as child_in_qty,
@@ -514,8 +514,8 @@ class Products_model extends CORE_Model {
             0 as parent_in_qty,
             0 as child_in_qty,
             (CASE
-                WHEN aii.is_parent = 1 THEN (IFNULL(aii.adjust_qty, 0) * p.bulk_conversion_rate)
-                WHEN aii.is_parent = 0 AND p.parent_id = 0 THEN IFNULL(aii.adjust_qty, 0)
+                WHEN p.is_parent = 1 THEN (IFNULL(aii.adjust_qty, 0) * p.bulk_conversion_rate)
+                WHEN p.is_parent = 0 AND p.parent_id = 0 THEN IFNULL(aii.adjust_qty, 0)
                 ELSE 0
             END) as parent_out_qty,
             0 as child_out_qty,
@@ -587,8 +587,8 @@ class Products_model extends CORE_Model {
             dii.product_id,
             'Bulk' AS identifier,
             (CASE
-                WHEN dii.is_parent = 1 THEN (IFNULL(dii.dr_qty, 0) * p.bulk_conversion_rate)
-                WHEN dii.is_parent = 0 AND p.parent_id = 0 THEN IFNULL(dii.dr_qty, 0)
+                WHEN p.is_parent = 1 THEN (IFNULL(dii.dr_qty, 0) * p.bulk_conversion_rate)
+                WHEN p.is_parent = 0 AND p.parent_id = 0 THEN IFNULL(dii.dr_qty, 0)
                 ELSE 0
             END) as parent_in_qty,
             0 as child_in_qty,
@@ -666,8 +666,8 @@ class Products_model extends CORE_Model {
             0 as parent_in_qty,
             0 as child_in_qty,
             (CASE
-                WHEN iit.is_parent = 1 THEN (IFNULL(iit.issue_qty, 0) * p.bulk_conversion_rate)
-                WHEN iit.is_parent = 0 AND p.parent_id = 0 THEN IFNULL(iit.issue_qty, 0)
+                WHEN p.is_parent = 1 THEN (IFNULL(iit.issue_qty, 0) * p.bulk_conversion_rate)
+                WHEN p.is_parent = 0 AND p.parent_id = 0 THEN IFNULL(iit.issue_qty, 0)
                 ELSE 0
             END) as parent_out_qty,
             0 as child_out_qty,
@@ -736,8 +736,8 @@ class Products_model extends CORE_Model {
             0 as parent_in_qty,
             0 as child_in_qty,
             (CASE
-                WHEN iit.is_parent = 1 THEN (IFNULL(iit.issue_qty, 0) * p.bulk_conversion_rate)
-                WHEN iit.is_parent = 0 AND p.parent_id = 0 THEN IFNULL(iit.issue_qty, 0)
+                WHEN p.is_parent = 1 THEN (IFNULL(iit.issue_qty, 0) * p.bulk_conversion_rate)
+                WHEN p.is_parent = 0 AND p.parent_id = 0 THEN IFNULL(iit.issue_qty, 0)
                 ELSE 0
             END) as parent_out_qty,
             0 as child_out_qty,
@@ -805,8 +805,8 @@ class Products_model extends CORE_Model {
             iit.product_id,
             'Bulk' AS identifier,
             (CASE
-                WHEN iit.is_parent = 1 THEN (IFNULL(iit.issue_qty, 0) * p.bulk_conversion_rate)
-                WHEN iit.is_parent = 0 AND p.parent_id = 0 THEN IFNULL(iit.issue_qty, 0)
+                WHEN p.is_parent = 1 THEN (IFNULL(iit.issue_qty, 0) * p.bulk_conversion_rate)
+                WHEN p.is_parent = 0 AND p.parent_id = 0 THEN IFNULL(iit.issue_qty, 0)
                 ELSE 0
             END) as parent_in_qty,
             0 as child_in_qty, 
@@ -883,8 +883,8 @@ class Products_model extends CORE_Model {
             0 as parent_in_qty,
             0 as child_in_qty,
             (CASE
-                WHEN sii.is_parent = 1 THEN (IFNULL(sii.inv_qty, 0) * p.bulk_conversion_rate)
-                WHEN sii.is_parent = 0 AND p.parent_id = 0 THEN IFNULL(sii.inv_qty, 0)
+                WHEN p.is_parent = 1 THEN (IFNULL(sii.inv_qty, 0) * p.bulk_conversion_rate)
+                WHEN p.is_parent = 0 AND p.parent_id = 0 THEN IFNULL(sii.inv_qty, 0)
                 ELSE 0
             END) as parent_out_qty,
             0 as child_out_qty,
@@ -969,8 +969,8 @@ class Products_model extends CORE_Model {
             0 as parent_in_qty,
             0 as child_in_qty,
             (CASE
-                WHEN cii.is_parent = 1 THEN (IFNULL(cii.inv_qty, 0) * p.bulk_conversion_rate)
-                WHEN cii.is_parent = 0 AND p.parent_id = 0 THEN IFNULL(cii.inv_qty, 0)
+                WHEN p.is_parent = 1 THEN (IFNULL(cii.inv_qty, 0) * p.bulk_conversion_rate)
+                WHEN p.is_parent = 0 AND p.parent_id = 0 THEN IFNULL(cii.inv_qty, 0)
                 ELSE 0
             END) as parent_out_qty,
             0 as child_out_qty,
@@ -1131,8 +1131,8 @@ class Products_model extends CORE_Model {
             0 as parent_in_qty,
             0 as child_in_qty,
             (CASE
-                WHEN dii.is_parent = 1 THEN (IFNULL(dii.inv_qty, 0) * p.bulk_conversion_rate)
-                WHEN dii.is_parent = 0 AND p.parent_id = 0 THEN IFNULL(dii.inv_qty, 0)
+                WHEN p.is_parent = 1 THEN (IFNULL(dii.inv_qty, 0) * p.bulk_conversion_rate)
+                WHEN p.is_parent = 0 AND p.parent_id = 0 THEN IFNULL(dii.inv_qty, 0)
                 ELSE 0
             END) as parent_out_qty,
             0 as child_out_qty,
@@ -2203,8 +2203,8 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 (SELECT 
                     aii.product_id,
                     (CASE
-                        WHEN aii.is_parent = 1 THEN COALESCE(SUM(IFNULL(aii.adjust_qty, 0)),0) * p.bulk_conversion_rate
-                        WHEN aii.is_parent = 0 AND p.parent_id = 0 THEN COALESCE(SUM(IFNULL(aii.adjust_qty, 0)),0)
+                        WHEN p.is_parent = 1 THEN COALESCE(SUM(IFNULL(aii.adjust_qty, 0)),0) * p.bulk_conversion_rate
+                        WHEN p.is_parent = 0 AND p.parent_id = 0 THEN COALESCE(SUM(IFNULL(aii.adjust_qty, 0)),0)
                         ELSE 0
                     END) as parent_in_qty
                 FROM adjustment_info AS ai
@@ -2238,8 +2238,8 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 LEFT JOIN
                 (SELECT dii.product_id,
                         (CASE
-                            WHEN dii.is_parent = 1 THEN COALESCE(SUM(IFNULL(dii.dr_qty, 0)),0) * p.bulk_conversion_rate
-                            WHEN dii.is_parent = 0 AND p.parent_id = 0 THEN COALESCE(SUM(IFNULL(dii.dr_qty, 0)),0)
+                            WHEN p.is_parent = 1 THEN COALESCE(SUM(IFNULL(dii.dr_qty, 0)),0) * p.bulk_conversion_rate
+                            WHEN p.is_parent = 0 AND p.parent_id = 0 THEN COALESCE(SUM(IFNULL(dii.dr_qty, 0)),0)
                             ELSE 0
                         END) as parent_in_qty
                 FROM delivery_invoice as di
@@ -2274,8 +2274,8 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 (SELECT 
                     sii.product_id,
                     (CASE
-                        WHEN sii.is_parent = 1 THEN COALESCE(SUM(IFNULL(sii.inv_qty, 0)),0) * p.bulk_conversion_rate
-                        WHEN sii.is_parent = 0 AND p.parent_id = 0 THEN COALESCE(SUM(IFNULL(sii.inv_qty, 0)),0)
+                        WHEN p.is_parent = 1 THEN COALESCE(SUM(IFNULL(sii.inv_qty, 0)),0) * p.bulk_conversion_rate
+                        WHEN p.is_parent = 0 AND p.parent_id = 0 THEN COALESCE(SUM(IFNULL(sii.inv_qty, 0)),0)
                         ELSE 0
                     END) as parent_out_qty
 
@@ -2310,8 +2310,8 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 (SELECT 
                     iii.product_id,
                     (CASE
-                        WHEN iii.is_parent = 1 THEN COALESCE(SUM(IFNULL(iii.issue_qty, 0)),0) * p.bulk_conversion_rate
-                        WHEN iii.is_parent = 0 AND p.parent_id = 0 THEN COALESCE(SUM(IFNULL(iii.issue_qty, 0)),0)
+                        WHEN p.is_parent = 1 THEN COALESCE(SUM(IFNULL(iii.issue_qty, 0)),0) * p.bulk_conversion_rate
+                        WHEN p.is_parent = 0 AND p.parent_id = 0 THEN COALESCE(SUM(IFNULL(iii.issue_qty, 0)),0)
                         ELSE 0
                     END) as parent_out_qty
                 FROM issuance_info as ii 
@@ -2342,8 +2342,8 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 (SELECT 
                     iii.product_id,
                     (CASE
-                        WHEN iii.is_parent = 1 THEN COALESCE(SUM(IFNULL(iii.issue_qty, 0)),0) * p.bulk_conversion_rate
-                        WHEN iii.is_parent = 0 AND p.parent_id = 0 THEN COALESCE(SUM(IFNULL(iii.issue_qty, 0)),0)
+                        WHEN p.is_parent = 1 THEN COALESCE(SUM(IFNULL(iii.issue_qty, 0)),0) * p.bulk_conversion_rate
+                        WHEN p.is_parent = 0 AND p.parent_id = 0 THEN COALESCE(SUM(IFNULL(iii.issue_qty, 0)),0)
                         ELSE 0
                     END) as parent_out_qty
                 FROM
@@ -2375,8 +2375,8 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 (SELECT 
                     iii.product_id,
                     (CASE
-                        WHEN iii.is_parent = 1 THEN COALESCE(SUM(IFNULL(iii.issue_qty, 0)),0) * p.bulk_conversion_rate
-                        WHEN iii.is_parent = 0 AND p.parent_id = 0 THEN COALESCE(SUM(IFNULL(iii.issue_qty, 0)),0)
+                        WHEN p.is_parent = 1 THEN COALESCE(SUM(IFNULL(iii.issue_qty, 0)),0) * p.bulk_conversion_rate
+                        WHEN p.is_parent = 0 AND p.parent_id = 0 THEN COALESCE(SUM(IFNULL(iii.issue_qty, 0)),0)
                         ELSE 0
                     END) as parent_in_qty
                 FROM
@@ -2408,8 +2408,8 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 (SELECT
                     aii.product_id,
                     (CASE
-                        WHEN aii.is_parent = 1 THEN COALESCE(SUM(IFNULL(aii.adjust_qty, 0)),0) * p.bulk_conversion_rate
-                        WHEN aii.is_parent = 0 AND p.parent_id = 0 THEN COALESCE(SUM(IFNULL(aii.adjust_qty, 0)),0)
+                        WHEN p.is_parent = 1 THEN COALESCE(SUM(IFNULL(aii.adjust_qty, 0)),0) * p.bulk_conversion_rate
+                        WHEN p.is_parent = 0 AND p.parent_id = 0 THEN COALESCE(SUM(IFNULL(aii.adjust_qty, 0)),0)
                         ELSE 0
                     END) as parent_out_qty
                 FROM
@@ -2443,8 +2443,8 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 (SELECT 
                     cii.product_id,
                     (CASE
-                        WHEN cii.is_parent = 1 THEN COALESCE(SUM(IFNULL(cii.inv_qty, 0)),0) * p.bulk_conversion_rate
-                        WHEN cii.is_parent = 0 AND p.parent_id = 0 THEN COALESCE(SUM(IFNULL(cii.inv_qty, 0)),0)
+                        WHEN p.is_parent = 1 THEN COALESCE(SUM(IFNULL(cii.inv_qty, 0)),0) * p.bulk_conversion_rate
+                        WHEN p.is_parent = 0 AND p.parent_id = 0 THEN COALESCE(SUM(IFNULL(cii.inv_qty, 0)),0)
                         ELSE 0
                     END) as parent_out_qty
                 FROM
@@ -2478,8 +2478,8 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 (SELECT 
                     dii.product_id,
                     (CASE
-                        WHEN dii.is_parent = 1 THEN COALESCE(SUM(IFNULL(dii.inv_qty, 0)),0) * p.bulk_conversion_rate
-                        WHEN dii.is_parent = 0 AND p.parent_id = 0 THEN COALESCE(SUM(IFNULL(dii.inv_qty, 0)),0)
+                        WHEN p.is_parent = 1 THEN COALESCE(SUM(IFNULL(dii.inv_qty, 0)),0) * p.bulk_conversion_rate
+                        WHEN p.is_parent = 0 AND p.parent_id = 0 THEN COALESCE(SUM(IFNULL(dii.inv_qty, 0)),0)
                         ELSE 0
                     END) as parent_out_qty
                 FROM

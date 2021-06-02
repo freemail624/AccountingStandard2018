@@ -28,7 +28,7 @@
                    <td style="border: 1px solid lightgrey;padding: 5px;"></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"></td>
-                   <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;font-weight: bolder;"><?php echo number_format($balance_as_of->total_qty_bulk,2); ?></td>
+                   <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;font-weight: bolder;"><?php echo number_format($balance_as_of->total_qty_balance,2); ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;font-weight: bolder;">
                     <?php 
                         echo number_format($balance_as_of->total_qty_bulk,2);
