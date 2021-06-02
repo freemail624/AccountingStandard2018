@@ -200,7 +200,7 @@
                                                         <th>Category</th>
                                                         <th style="text-align:right;">Cost Price</th>
                                                         <th style="text-align:right;">Retail Price</th>
-                                                        <th style="text-align:right;"><center>Is Parent?</th></th>
+                                                        <th class="hidden" style="text-align:right;"><center>Is Parent?</th></th>
                                                         <th><center>Action</center></th>
                                                     </tr>
                                                     </thead>
@@ -236,9 +236,10 @@
                                                             </div>
 
                                                             <div class="form-group" style="margin-bottom:0px;">
-                                                                <label class=""><b class="required">*</b> Brand :</label>
-                                                                <select name="brand_id" id="brand" data-error-msg="Brand is required." required>
-                                                                    <option value="0">[ Create Brand ]</option>
+                                                                <label class="">Brand :</label>
+                                                                <select name="brand_id" id="brand" data-error-msg="Brand is required.">
+                                                                    <option value="new">[ Create Brand ]</option>
+                                                                    <option value="0">None</option>
                                                                     <?php
                                                                     foreach($brands as $brand)
                                                                     {
@@ -248,10 +249,37 @@
                                                                 </select>
                                                             </div>
 
-                                                            
                                                             <div class="form-group" style="margin-bottom:0px;">
+                                                                <label class="">Size :</label>
+                                                                <select name="size_id" id="size_id" data-error-msg="Size is required.">
+                                                                    <option value="new">[ Create New Size ]</option>
+                                                                    <option value="0">None</option>
+                                                                    <?php foreach($sizes as $size){?>
+                                                                        <option value="<?php echo $size->size_id; ?>">
+                                                                            <?php echo $size->size_desc; ?>
+                                                                        </option>
+                                                                    <?php }?>
+                                                                </select>
+                                                            </div>
+
+                                                            <div class="form-group" style="margin-bottom:0px;">
+                                                                <label class="">Model :</label>
+                                                                <select name="model_id" id="model_id" data-error-msg="Model is required.">
+                                                                    <option value="new">[ Create New Model ]</option>
+                                                                    <option value="0">None</option>
+                                                                    <?php foreach($models as $model){?>
+                                                                        <option value="<?php echo $model->model_id; ?>">
+                                                                            <?php echo $model->model_name; ?>
+                                                                        </option>
+                                                                    <?php }?>
+                                                                </select>
+                                                            </div>
+
+
+                                                            
+                                                            <div class="hidden form-group" style="margin-bottom:0px;">
                                                                 <label class=""><b class="required">*</b> Supplier :</label>
-                                                                <select name="supplier_id" id="new_supplier" data-error-msg="Supplier is required." required>
+                                                                <select name="supplier_id" id="new_supplier" data-error-msg="Supplier is required.">
                                                                     <option value="">Please select supplier</option>
                                                                     <option value="sup">[ Create Supplier ]</option>
                                                                     <?php
@@ -265,25 +293,14 @@
                                                             <div class="form-group" style="margin-bottom:0px;">
                                                                 <label class=""><b class="required">*</b> Category :</label>
                                                                 <select name="category_id" id="product_category" data-error-msg="Category is required." required>
-                                                                    <option value="">Please Select...</option>
                                                                     <option value="cat">[ Create Category ]</option>
+                                                                    <option value="0">None</option>
                                                                     <?php
                                                                     foreach($categories as $row)
                                                                     {
                                                                         echo '<option value="'.$row->category_id.'">'.$row->category_name.'</option>';
                                                                     }
                                                                     ?>
-                                                                </select>
-                                                            </div>
-
-
-                                                            <div class="form-group" style="margin-bottom:0px;">
-                                                                <label class=""><b class="required">*</b> Tax:</label>
-                                                                <select name="tax_type_id" id="cbo_tax" data-error-msg="Tax Type is required." required>
-                                                                    <option value="">Please Select...</option>
-                                                                    <?php foreach($tax_types as $tax_type) { ?>
-                                                                        <option value="<?php echo $tax_type->tax_type_id; ?>"><?php echo $tax_type->tax_type; ?></option>
-                                                                    <?php    } ?>
                                                                 </select>
                                                             </div>
 
@@ -302,21 +319,19 @@
                                                             </div> 
 
                                                             <div class="form-group" style="margin-bottom:0px;">
-                                                                <label class=""><b class="required">*</b> Inventory type :</label>
-
-                                                                <select name="item_type_id" id="cbo_item_type" data-error-msg="Inverntory type is required." required>
-                                                                    <option value="">None</option>
-                                                                    <?php foreach($item_types as $item_type){ ?>
-                                                                        <option value="<?php echo $item_type->item_type_id ?>"><?php echo $item_type->item_type; ?></option>
-                                                                    <?php } ?>
+                                                                <label class=""><b class="required">*</b> Tax:</label>
+                                                                <select name="tax_type_id" id="cbo_tax" data-error-msg="Tax Type is required." required>
+                                                                    <option value="">Please Select...</option>
+                                                                    <?php foreach($tax_types as $tax_type) { ?>
+                                                                        <option value="<?php echo $tax_type->tax_type_id; ?>"><?php echo $tax_type->tax_type; ?></option>
+                                                                    <?php    } ?>
                                                                 </select>
-
                                                             </div>
 
                                                             <div class="form-group" style="margin-bottom:0px; vertical-align: middle;text-align: left;"><br>
                                                             <label  for="is_tax_exempt" style="text-align: left;vertical-align: middle;"><input type="checkbox" name="is_tax_exempt" class="" id="is_tax_exempt" style="transform: scale(2.0);">  &nbsp;&nbsp;Tax Exempt ?</label>
 
-                                                            <label  class="" for="is_parent" style="text-align: left;vertical-align: middle;margin-left: 20px;">
+                                                            <label  class="hidden" for="is_parent" style="text-align: left;vertical-align: middle;margin-left: 20px;">
                                                             <input type="checkbox" name="is_parent" class="" id="is_parent" style="transform: scale(2.0);">  &nbsp;&nbsp;Is Parent ?</label>
 
                                                             <label  for="is_nonsalable" style="text-align: left;float:right;vertical-align: middle;"><input type="checkbox" name="is_nonsalable" class="" id="is_nonsalable" style="transform: scale(2.0);">  &nbsp;&nbsp;Nonsalable ?</label>
@@ -330,14 +345,26 @@
                                                         <div class="row">
                                                             <div class="col-lg-12">
                                                                 <div class="col-lg-6" style="margin:0px;">
-                                                                
+                                                            
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    <label class=""><b class="required">*</b> Inventory type :</label>
+
+                                                                    <select name="item_type_id" id="cbo_item_type" data-error-msg="Inverntory type is required." required>
+                                                                        <option value="">None</option>
+                                                                        <?php foreach($item_types as $item_type){ ?>
+                                                                            <option value="<?php echo $item_type->item_type_id ?>"><?php echo $item_type->item_type; ?></option>
+                                                                        <?php } ?>
+                                                                    </select>
+
+                                                                </div>
+
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                     <label class="">Purchase Cost :</label>
                                                                     <div class="input-group">
                                                                             <span class="input-group-addon">
                                                                                 <i class="fa fa-toggle-off"></i>
                                                                             </span>
-                                                                        <input type="text" name="purchase_cost" id="purchase_cost" class="form-control numeric product_costing">
+                                                                        <input type="text" name="purchase_cost" id="purchase_cost" class="for_services form-control numeric product_costing">
                                                                     </div>
 
                                                                 </div>
@@ -352,7 +379,7 @@
                                                                     </div>
                                                                 </div>
 
-                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                <div class="hidden form-group" style="margin-bottom:0px;">
                                                                     <label><b class="required elem_parent"></b> Bulk Unit :</label>
                                                                     <select class="form-control" name="bulk_unit_id" id="bulk_unit_id" data-error-msg="Bulk Unit is required.">
                                                                         <option value="unt">[ Create New Unit ]</option>
@@ -363,7 +390,7 @@
                                                                         <?php }?>
                                                                     </select>
                                                                 </div>
-                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                <div class="hidden form-group" style="margin-bottom:0px;">
                                                                     <label><b class="required elem_parent"></b> Bulk Conversion Rate: </label>
                                                                     <div class="input-group">
                                                                             <span class="input-group-addon">
@@ -372,7 +399,7 @@
                                                                         <input type="text" name="bulk_conversion_rate" id="bulk_conversion_rate" class="form-control numeric5" data-error-msg="Bulk conversion rate is required.">
                                                                     </div>
                                                                 </div>
-                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                <div class="hidden form-group" style="margin-bottom:0px;">
                                                                     <label><b class="required elem_child"></b> Parent :</label>
                                                                     <select class="form-control" name="parent_id" id="parent_id" data-error-msg="Parent Product is required.">
                                                                         <option value="0">None</option>
@@ -383,7 +410,7 @@
                                                                         <?php }?>
                                                                     </select>
                                                                 </div>
-                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                <div class="hidden form-group" style="margin-bottom:0px;">
                                                                     <label>Conversion Rate: </label>
                                                                     <div class="input-group">
                                                                             <span class="input-group-addon">
@@ -399,7 +426,7 @@
                                                                             <span class="input-group-addon">
                                                                                 <i class="fa fa-toggle-off"></i>
                                                                             </span>
-                                                                        <input type="text" name="public_price" id="public_price" class="form-control numeric product_costing">
+                                                                        <input type="text" name="public_price" id="public_price" class="for_services form-control numeric product_costing">
                                                                     </div>
                                                                 </div>
 
@@ -409,7 +436,7 @@
                                                                             <span class="input-group-addon">
                                                                                 <i class="fa fa-toggle-off"></i>
                                                                             </span>
-                                                                        <input type="text" name="discounted_price" id="discounted_price" class="form-control numeric product_costing">
+                                                                        <input type="text" name="discounted_price" id="discounted_price" class="for_services form-control numeric product_costing">
                                                                     </div>
                                                                 </div>
 
@@ -421,7 +448,7 @@
                                                                             <span class="input-group-addon">
                                                                                 <i class="fa fa-toggle-off"></i>
                                                                             </span>
-                                                                        <input type="text" name="dealer_price" id="dealer_price" class="form-control numeric product_costing">
+                                                                        <input type="text" name="dealer_price" id="dealer_price" class="for_services form-control numeric product_costing">
                                                                     </div>
                                                                 </div>
 
@@ -433,7 +460,28 @@
                                                                             <span class="input-group-addon">
                                                                                 <i class="fa fa-toggle-off"></i>
                                                                             </span>
-                                                                        <input type="text" name="distributor_price" id="distributor_price" class="form-control numeric product_costing">
+                                                                        <input type="text" name="distributor_price" id="distributor_price" class="for_services form-control numeric product_costing">
+                                                                    </div>
+                                                                </div>
+
+
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    <label class="">Shoppe Price :</label>
+                                                                    <div class="input-group">
+                                                                            <span class="input-group-addon">
+                                                                                <i class="fa fa-toggle-off"></i>
+                                                                            </span>
+                                                                        <input type="text" name="shopee_price" id="shopee_price" class="for_services form-control numeric product_costing">
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    <label class="">Lazada Price :</label>
+                                                                    <div class="input-group">
+                                                                            <span class="input-group-addon">
+                                                                                <i class="fa fa-toggle-off"></i>
+                                                                            </span>
+                                                                        <input type="text" name="lazada_price" id="lazada_price" class="for_services form-control numeric product_costing">
                                                                     </div>
                                                                 </div>
 
@@ -491,25 +539,7 @@
                                                                     ?>
                                                                 </select> 
                                                             </div> -->
-                                                                <div class="form-group" style="margin-bottom:0px;">
-                                                                    <label class="">Shoppe Price :</label>
-                                                                    <div class="input-group">
-                                                                            <span class="input-group-addon">
-                                                                                <i class="fa fa-toggle-off"></i>
-                                                                            </span>
-                                                                        <input type="text" name="shopee_price" id="shopee_price" class="form-control numeric product_costing">
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="form-group" style="margin-bottom:0px;">
-                                                                    <label class="">Lazada Price :</label>
-                                                                    <div class="input-group">
-                                                                            <span class="input-group-addon">
-                                                                                <i class="fa fa-toggle-off"></i>
-                                                                            </span>
-                                                                        <input type="text" name="lazada_price" id="lazada_price" class="form-control numeric product_costing">
-                                                                    </div>
-                                                                </div>
+                                                                
 
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                     <label class="">Warning Quantity (Minimum Stock):</label>
@@ -517,7 +547,7 @@
                                                                             <span class="input-group-addon">
                                                                                 <i class="fa fa-toggle-off"></i>
                                                                             </span>
-                                                                        <input type="text" name="product_warn" id="product_warn" class="form-control numeric">
+                                                                        <input type="text" name="product_warn" id="product_warn" class="for_services form-control numeric">
                                                                     </div>
                                                                 </div>
 
@@ -528,10 +558,10 @@
                                                                             <span class="input-group-addon">
                                                                                 <i class="fa fa-toggle-off"></i>
                                                                             </span>
-                                                                        <input type="text" name="product_ideal" id="product_ideal" class="form-control numeric">
+                                                                        <input type="text" name="product_ideal" id="product_ideal" class="for_services form-control numeric">
                                                                     </div>
                                                                 </div>
-                                                                
+
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                             <label class="">Link to Credit Account (For Sales Journal):</label>
 
@@ -548,7 +578,7 @@
 
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                             <label class="">Inventory Account (For Sales &amp; Purchase Journal): </label>
-                                                                            <select name="expense_account_id" id="expense_account_id" data-error-msg="Link to Account is required." required>
+                                                                            <select name="expense_account_id" id="expense_account_id" data-error-msg="Link to Account is required." required class="for_services">
                                                                                 <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
                                                                                 <option value="0">None</option>
                                                                                 <?php foreach($accounts as $account){ ?>
@@ -559,7 +589,7 @@
 
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                             <label class="">Cost of Sales Account:</label>
-                                                                            <select name="cos_account_id" id="cos_account_id" data-error-msg="Link to Cost of sales account is required." required>
+                                                                            <select name="cos_account_id" id="cos_account_id" data-error-msg="Link to Cost of sales account is required." required class="for_services">
                                                                                 <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
                                                                                 <option value="0">None</option>
                                                                                 <?php foreach($accounts as $account){ ?>
@@ -570,7 +600,7 @@
 
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                             <label class="">Sales Return Account:</label>
-                                                                            <select name="sales_return_account_id" id="sales_return_account_id" data-error-msg="Link to sales return account is required." required>
+                                                                            <select name="sales_return_account_id" id="sales_return_account_id" data-error-msg="Link to sales return account is required." required class="for_services">
                                                                                 <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
                                                                                 <option value="0">None</option>
                                                                                 <?php foreach($accounts as $account){ ?>
@@ -593,7 +623,7 @@
 
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                             <label class="">Purchase Return Account:</label>
-                                                                            <select name="po_return_account_id" id="po_return_account_id" data-error-msg="Link to purchase return account is required." required>
+                                                                            <select name="po_return_account_id" id="po_return_account_id" data-error-msg="Link to purchase return account is required." required class="for_services">
                                                                                 <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
                                                                                 <option value="0">None</option>
                                                                                 <?php foreach($accounts as $account){ ?>
@@ -605,7 +635,7 @@
 
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                             <label class="">Purchase Discount Account:</label>
-                                                                            <select name="pd_account_id" id="pd_account_id" data-error-msg="Link to purchase discount account is required." required>
+                                                                            <select name="pd_account_id" id="pd_account_id" data-error-msg="Link to purchase discount account is required." required class="for_services">
                                                                                 <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
                                                                                 <option value="0">None</option>
                                                                                 <?php foreach($accounts as $account){ ?>
@@ -1040,6 +1070,62 @@
                 </div>
             </div>
 
+            <div id="modal_new_size" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background: #2ecc71">
+                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                             <h2 id="size_title" class="" style="color:white;">Size | New</h2>
+                        </div>
+                        <div class="modal-body">
+                            <form id="frm_sizes" role="form" class="form-horizontal">
+                                <div class="row" style="margin: 1%;">
+                                    <div class="col-lg-12">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            <label class=""><B> * </B> Size :</label>
+                                            <textarea name="size_desc" class="form-control" data-error-msg="Size is required!" placeholder="Size" required></textarea>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="btn_save_size" class="btn btn-primary">Save</button>
+                            <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="modal_new_model" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background: #2ecc71">
+                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                             <h2 id="model_title" class="" style="color:white;">Model | New</h2>
+                        </div>
+                        <div class="modal-body">
+                            <form id="frm_models" role="form" class="form-horizontal">
+                                <div class="row" style="margin: 1%;">
+                                    <div class="col-lg-12">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            <label class=""><B> * </B> Model :</label>
+                                            <textarea name="model_name" class="form-control" data-error-msg="Model is required!" placeholder="Model" required></textarea>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="btn_save_model" class="btn btn-primary">Save</button>
+                            <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="modal_filter" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
                 <div class="modal-dialog modal-md">
                     <div class="modal-content">
@@ -1210,6 +1296,8 @@ $(document).ready(function(){
     var _cboBrands;
     var _cboBulkUnitId;
     var _cboParentId;
+    var _cboSizes;
+    var _cboModels;
 
     /*$(document).ready(function(){
         $('#modal_filter').modal('show');
@@ -1250,7 +1338,7 @@ $(document).ready(function(){
                         return  accounting.formatNumber(parseFloat(data),2);
                     }                    
                 },                
-                {   targets:[7],data: null,
+                {   visible:false, targets:[7],data: null,
                     render: function (data, type, full, meta){
                         var _attribute='';
                         //console.log(data.is_email_sent);
@@ -1322,6 +1410,16 @@ $(document).ready(function(){
             placeholder: "Please select supplier.",
             allowClear: false
         });
+
+        _cboSizes=$('#size_id').select2({
+            placeholder: "Please select a size.",
+            allowClear: false
+        });
+
+        _cboModels=$('#model_id').select2({
+            placeholder: "Please select a model.",
+            allowClear: false
+        });        
 
         _section_id=$('#section_id').select2({
             placeholder: "Please select Section.",
@@ -1414,16 +1512,36 @@ $(document).ready(function(){
     
         $("#brand").on("change", function () {     
             $modal = $('#modal_new_brand');
-            if($(this).val() == '0'){
+            if($(this).val() == 'new'){
          
                 $modal.modal('show');
-                _cboBrands.select2('val',null);
+                _cboBrands.select2('val',0);
 
                 clearFieldsCategory($('#frm_brands'));
             }
         });
+    
+        $("#size_id").on("change", function () {     
+            $modal = $('#modal_new_size');
+            if($(this).val() == 'new'){
+         
+                $modal.modal('show');
+                _cboSizes.select2('val',0);
 
+                clearFieldsCategory($('#frm_sizes'));
+            }
+        });
 
+        $("#model_id").on("change", function () {     
+            $modal = $('#modal_new_model');
+            if($(this).val() == 'new'){
+         
+                $modal.modal('show');
+                _cboModels.select2('val',0);
+
+                clearFieldsCategory($('#frm_models'));
+            }
+        });
 
         // NEW PRODUCT CATEGORY
         $("#product_category").on("change", function () {        
@@ -1431,7 +1549,7 @@ $(document).ready(function(){
             if($(this).val() === 'cat'){
          
                 $modal.modal('show');
-                _cboCategory.select2('val',null);
+                _cboCategory.select2('val',0);
                 // $('#modal_create_product').modal('toggle');
                 //clearFieldsModal($('#frm_category_group'));
                 clearFieldsCategory($('#frm_category_group'));
@@ -1441,31 +1559,45 @@ $(document).ready(function(){
                     if ($(this).val() != 0 || $(this).val() != ""){
                         getAccount($(this).val(),1).done(function(response){
                             var row = response.data[0];
-                            if(response.data.length > 0){ $('#income_account_id').select2('val',row.account_id); }
+                            if(response.data.length > 0){ $('#income_account_id').select2('val',row.account_id); }else{
+                                $('#income_account_id').select2('val',0);
+                            }
                         });
                         getAccount($(this).val(),2).done(function(response){
                             var row = response.data[0];
-                            if(response.data.length > 0){ $('#expense_account_id').select2('val',row.account_id); }
+                            if(response.data.length > 0){ $('#expense_account_id').select2('val',row.account_id); }else{
+                                $('#expense_account_id').select2('val',0);
+                            }
                         });
                         getAccount($(this).val(),3).done(function(response){
                             var row = response.data[0];
-                            if(response.data.length > 0){ $('#cos_account_id').select2('val',row.account_id); }
+                            if(response.data.length > 0){ $('#cos_account_id').select2('val',row.account_id); }else{
+                                $('#cos_account_id').select2('val',0);
+                            }
                         });
                         getAccount($(this).val(),4).done(function(response){
                             var row = response.data[0];
-                            if(response.data.length > 0){ $('#sales_return_account_id').select2('val',row.account_id); }
+                            if(response.data.length > 0){ $('#sales_return_account_id').select2('val',row.account_id); }else{
+                                $('#sales_return_account_id').select2('val',0);
+                            }
                         });       
                         getAccount($(this).val(),5).done(function(response){
                             var row = response.data[0];
-                            if(response.data.length > 0){ $('#sd_account_id').select2('val',row.account_id); }
+                            if(response.data.length > 0){ $('#sd_account_id').select2('val',row.account_id); }else{
+                                $('#sd_account_id').select2('val',0);
+                            }
                         });       
                         getAccount($(this).val(),6).done(function(response){
                             var row = response.data[0];
-                            if(response.data.length > 0){ $('#po_return_account_id').select2('val',row.account_id); }
+                            if(response.data.length > 0){ $('#po_return_account_id').select2('val',row.account_id); }else{
+                                $('#po_return_account_id').select2('val',0);
+                            }
                         });     
                         getAccount($(this).val(),7).done(function(response){
                             var row = response.data[0];
-                            if(response.data.length > 0){ $('#pd_account_id').select2('val',row.account_id); }
+                            if(response.data.length > 0){ $('#pd_account_id').select2('val',row.account_id); }else{
+                                $('#pd_account_id').select2('val',0);
+                            }
                         });     
 
                     }
@@ -1684,6 +1816,26 @@ $(document).ready(function(){
 
         });*/
     
+    // $('#cbo_item_type').on("change", function (e) {
+    //     /* If inventory type is service */
+    //     if($(this).val()==3){
+    //         $('.for_services').attr('disabled', true);
+    //         $('.for_services').val('');
+
+    //         _cboCredit.select2('val',0);
+    //         _cboDebit.select2('val',0);
+    //         _cboCostofSale.select2('val',0);
+    //         _cboSalesReturn.select2('val',0);
+    //         _cboSalesDiscount.select2('val',0);
+    //         _cboPurchaseReturn.select2('val',0);
+    //         _cboPurchaseDiscount.select2('val',0);
+
+    //     }else{
+    //         $('.for_services').attr('disabled', false);
+    //     }
+
+    // });
+
     $('#btn_save_brand').click(function(){
 
         var btn=$(this);
@@ -1705,6 +1857,62 @@ $(document).ready(function(){
                 var _group=response.row_added[0];
                 $('#brand').append('<option value="'+_group.brand_id+'" selected>'+_group.brand_name+'</option>');
                 $('#brand').select2('val',_group.brand_id);
+
+            }).always(function(){
+                showSpinningProgress(btn);
+            });
+        }
+    });
+
+    $('#btn_save_size').click(function(){
+
+        var btn=$(this);
+
+        if(validateRequiredFields($('#frm_sizes'))){
+            var data=$('#frm_sizes').serializeArray();
+
+            $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Sizes/transaction/create",
+                "data":data,
+                "beforeSend" : function(){
+                    showSpinningProgress(btn);
+                }
+            }).done(function(response){
+                showNotification(response);
+                $('#modal_new_size').modal('hide');
+                var _data=response.row_added[0];
+                $('#size_id').append('<option value="'+_data.size_id+'">'+_data.size_desc+'</option>');
+                $('#size_id').select2('val',_data.size_id);
+
+            }).always(function(){
+                showSpinningProgress(btn);
+            });
+        }
+    });
+
+    $('#btn_save_model').click(function(){
+
+        var btn=$(this);
+
+        if(validateRequiredFields($('#frm_models'))){
+            var data=$('#frm_models').serializeArray();
+
+            $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Models/transaction/create",
+                "data":data,
+                "beforeSend" : function(){
+                    showSpinningProgress(btn);
+                }
+            }).done(function(response){
+                showNotification(response);
+                $('#modal_new_model').modal('hide');
+                var _data=response.row_added[0];
+                $('#model_id').append('<option value="'+_data.model_id+'">'+_data.model_name+'</option>');
+                $('#model_id').select2('val',_data.model_id);
 
             }).always(function(){
                 showSpinningProgress(btn);
@@ -2009,17 +2217,16 @@ $(document).ready(function(){
             _txnMode="new";
 
             clearFields($('#frm_product'));
-            _cboCategory.select2('val',null);
+            _cboCategory.select2('val',0);
             _cboSupplier.select2('val',null);
-            _cboBrands.select2('val',null);
+            _cboBrands.select2('val',0);
             _cboTax.select2('val',null);
             _cboInventory.select2('val',null);
             _cboMeasurement.select2('val',null);
             _cboBulkUnitId.select2('val',null);
             _cboParentId.select2('val',0);
-
-
-
+            _cboSizes.select2('val', 0);
+            _cboModels.select2('val', 0);
             // _child_unit_id.select2('val',null);
             _cboCredit.select2('val',0);
             _cboDebit.select2('val',0);

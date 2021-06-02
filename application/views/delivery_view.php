@@ -342,7 +342,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <b class="required">*</b> <label>Deliver to </label>:<br />
-                            <textarea name="deliver_to_address" class="form-control" rows="8" style="min-height: 155px;" placeholder="Deliver to address"></textarea>
+                            <textarea name="deliver_to_address" class="form-control" rows="5" placeholder="Deliver to address"></textarea>
                         </div>
                     </div>
                 </div>
@@ -382,25 +382,25 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <label>Exchange Rate :</label> 
-                            <input type="text" class="numeric form-control" id="exchange_rate" name="exchange_rate">
                             <div class="hidden">
-                                <label>Tax type :</label><br />
-                                <select name="tax_type" id="cbo_tax_type"  data-error-msg="Tax Type is required !">
-                                    <?php foreach($tax_types as $tax_type){ ?>
-                                        <option value="<?php echo $tax_type->tax_type_id; ?>" data-tax-rate="<?php echo $tax_type->tax_rate; ?>"><?php echo $tax_type->tax_type; ?></option>
-                                    <?php } ?>
+                                <label>Exchange Rate :</label> 
+                                <input type="text" class="numeric form-control" id="exchange_rate" name="exchange_rate">
+
+                                <label>Payment Method :</label>
+                                <select class="form-control" id="cbo_payment_method" name="payment_method_id">
+                                    <option value="1">Cash</option>
+                                    <option value="2">Charge</option>
                                 </select>
+                                
+                                <div class="hidden">
+                                    <label>Tax type :</label><br />
+                                    <select name="tax_type" id="cbo_tax_type"  data-error-msg="Tax Type is required !">
+                                        <?php foreach($tax_types as $tax_type){ ?>
+                                            <option value="<?php echo $tax_type->tax_type_id; ?>" data-tax-rate="<?php echo $tax_type->tax_rate; ?>"><?php echo $tax_type->tax_type; ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>  
                             </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <label>Payment Method :</label>
-                            <select class="form-control" id="cbo_payment_method" name="payment_method_id">
-                                <option value="1">Cash</option>
-                                <option value="2">Charge</option>
-                            </select>
                         </div>
                     </div>
                 </div>
@@ -426,7 +426,7 @@
                     <th width="8%">Qty</th>
                     <th width="10%" style="">UM</th>
                     <th width="15%">Description</th>
-                    <th width="10%" style="text-align: right;">RMB</th>
+                    <th width="10%" class="hidden" style="text-align: right;">RMB</th>
                     <th width="10%" style="text-align: right;">Unit Price</th>
                     <th width="10%" style="text-align: right;">Discount</th>
                     <th class="hidden">Total Discount</th>
@@ -1485,7 +1485,7 @@ $(document).ready(function(){
             $('#cbo_departments').select2('val', $('#cbo_departments').data('default') );
             $('#cbo_suppliers').select2('val', null);
             $('#cbo_terms').select2('val', null);
-            $('#cbo_payment_method').select2('val', 1);
+            $('#cbo_payment_method').select2('val', 2);
             $('#img_user').attr('src','assets/img/anonymous-icon.png');
             $('#td_discount').html('0.00');
             $('#td_before_tax').html('0.00');
@@ -2383,7 +2383,7 @@ $(document).ready(function(){
         '<td>'+d.product_desc+'<input type="text" style="display: none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
 
         // 4. RMB PRICE
-        '<td ><input name="rmb_price[]" type="text" class="rmb_price numeric4 form-control" value="'+accounting.formatNumber(d.rmb_price,4)+'" style="text-align:right;"></td>'+
+        '<td class="hidden"><input name="rmb_price[]" type="text" class="rmb_price numeric4 form-control" value="'+accounting.formatNumber(d.rmb_price,4)+'" style="text-align:right;"></td>'+
 
         // 5. UNIT PRICE
         '<td ><input name="dr_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.dr_price,2)+'" style="text-align:right;"></td>'+

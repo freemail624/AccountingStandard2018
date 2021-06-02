@@ -70,10 +70,10 @@ class Rights_link_model extends CORE_Model{
                                           (62,'9','9-11','Schedule of Expense'),
                                           (63,'9','9-15','AR Reports'),
                                           (64,'9','9-12','Cost of Goods'),
-                                          (65,'13','13-1','Service Invoice'),
-                                          (66,'13','13-2','Service Journal'),
-                                          (67,'13','13-3','Service Unit Management'),
-                                          (68,'13','13-4','Service Management'),
+                                          -- (65,'13','13-1','Service Invoice'),
+                                          -- (66,'13','13-2','Service Journal'),
+                                          -- (67,'13','13-3','Service Unit Management'),
+                                          -- (68,'13','13-4','Service Management'),
                                           (69,'9','9-17','Aging of Receivables'),
                                           (70,'9','9-18','Aging of Payables'),
                                           (71,'9','9-19','Statement of Account'),
@@ -118,7 +118,9 @@ class Rights_link_model extends CORE_Model{
                                           -- (110,'15','15-7','Batch Inventory'),
                                           (111,'15','15-8','Barcode Generator'),
                                           (112,'2','2-4','Purchase Request for Approval'),
-                                          (113,'15','15-9','Admin Inventory Report')
+                                          (113,'15','15-9','Admin Inventory Report'),
+                                          (114,'4','4-10','Size Management'),
+                                          (115,'4','4-11','Model Management')
 
 
                                           ON DUPLICATE KEY UPDATE

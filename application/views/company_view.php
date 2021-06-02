@@ -444,7 +444,7 @@
                                                 <div class="row">
                                                     <div class="col-sm-10 col-sm-offset-3">
                                                         <button id="btn_save" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>  Save Changes</button>
-                                                        <button id="btn_cancel" class="btn-default btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"">Cancel</button>
+                                                        <button id="btn_cancel" class="hidden btn-default btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"">Cancel</button>
                                                     </div>
                                                 </div>
 
