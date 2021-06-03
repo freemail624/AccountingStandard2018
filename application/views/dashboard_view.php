@@ -430,6 +430,29 @@
                                                       </div>
                                                     </div>
                                                 </div>
+
+                                                <div class="row" style="margin-top: 20px;">
+                                                    <div class="col-xs-12<?php echo (in_array('2-4',$this->session->user_rights)?'':'hidden'); ?>">
+                                                      <div class="data-container table-responsive" style="padding: 20px 15px 20px 15px;">
+                                                            <h6 class="visible-xs hidden-sm hidden-md hidden-lg po_title" style="top: 5px"><i class="fa fa-file-text-o"></i> <span >ADJUSTMENT APPROVAL</span></h6>
+                                                            <h3 class="hidden-xs po_title" style="top: 5px"><i class="fa fa-file-text-o"  style="color: #067cb2;"></i> <span >ADJUSTMENT APPROVAL</span></h3>
+                                                            <table id="tbl_adj_list" class="table table-striped" cellspacing="0" width="100%">
+                                                                <thead>
+                                                                    <th></th>
+                                                                    <th>Adjustment #</th>
+                                                                    <th>Transaction Type</th>
+                                                                    <th>Invoice No</th>
+                                                                    <th>Date Adjusted</th>
+                                                                    <th>Posted by </th>
+                                                                    <th style="width: 15%!important;"><center>Action</center></th>
+                                                                </thead>
+                                                                <tbody>
+                                                                </tbody>
+                                                            </table>
+                                                      </div>
+                                                    </div>
+                                                </div>
+
                                             </div>
                                         </div>
                                     </div>
@@ -815,6 +838,38 @@ Chart.defaults.global.defaultFontColor = "#000000";
                 ]
             });
 
+            dt_adj=$('#tbl_adj_list').DataTable({
+                "dom": '<"toolbar">frtip',
+                "bLengthChange":false,
+                "order": [[ 7, "asc" ]],
+                "ajax" : "Adjustments/transaction/for-approval",
+                "language": {
+                  "searchPlaceholder":"Search"
+                },
+                "columns": [
+                    {
+                        "targets": [0],
+                        "class":          "details-control",
+                        "orderable":      false,
+                        "data":           null,
+                        "defaultContent": ""
+                    },
+                    { targets:[1],data: "adjustment_code" },
+                    { targets:[2],data: "transaction_type" },
+                    { targets:[3],data: "inv_no" },
+                    { targets:[4],data: "date_adjusted" },
+                    { targets:[5],data: "posted_by" },
+                    {
+                        targets:[6],
+                        render: function (data, type, full, meta){
+
+                            var btn_approved='<button class="btn btn-success btn-sm" name="approve"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Approve"><i class="fa fa-check" style="color: white;"></i> <span class=""></span></button>';
+                            return '<center>'+btn_approved+'</center>';
+                        }
+                    },
+                    { visible: false, targets:[7],data: "adjustment_id" },
+                ]
+            }); 
 
              $('div.dataTables_filter input').addClass('dash_search_field');
         })();
@@ -900,7 +955,46 @@ Chart.defaults.global.defaultFontColor = "#000000";
 
 
                 }
-            } );            
+            } );   
+
+
+            $('#tbl_adj_list tbody').on( 'click', 'tr td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = dt_adj.row( tr );
+                var idx = $.inArray( tr.attr('id'), detailRows );
+
+                if ( row.child.isShown() ) {
+                    tr.removeClass( 'details' );
+                    row.child.hide();
+
+                    // Remove from the 'open' array
+                    detailRows.splice( idx, 1 );
+                }
+                else {
+                    tr.addClass( 'details' );
+                    //console.log(row.data());
+                    var d=row.data();
+
+                    $.ajax({
+                        "dataType":"html",
+                        "type":"POST",
+                        "url":"Templates/layout/adjustments/"+ d.adjustment_id,
+                        "beforeSend" : function(){
+                            row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                        }
+                    }).done(function(response){
+                        row.child( response,'no-padding' ).show();
+                        // Add to the 'open' array
+                        if ( idx === -1 ) {
+                            detailRows.push( tr.attr('id') );
+                        }
+                    });
+
+
+
+
+                }
+            } );             
 
 
             //*****************************************************************************************
@@ -936,6 +1030,21 @@ Chart.defaults.global.defaultFontColor = "#000000";
                 });
             });
 
+            $('#tbl_adj_list > tbody').on('click','button[name="approve"]',function(){
+
+                _selectRowObj=$(this).closest('tr'); //hold dom of tr which is selected
+
+                var data=dt_adj.row(_selectRowObj).data();
+                _selectedID=data.adjustment_id;
+
+                 approveAdjustment().done(function(response){
+                    showNotification(response);
+                    if(response.stat=="success"){
+                        dt_adj.row(_selectRowObj).remove().draw();
+                    }
+
+                });
+            });
 
 
             //****************************************************************************************
@@ -990,6 +1099,17 @@ Chart.defaults.global.defaultFontColor = "#000000";
 
             });
         };
+
+        var approveAdjustment=function(){
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Adjustments/transaction/mark-approved",
+                "data":{adjustment_id : _selectedID}
+
+            });
+        };
+
 
         var showNotification=function(obj){
             PNotify.removeAll(); //remove all notifications

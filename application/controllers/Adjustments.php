@@ -72,28 +72,63 @@ class Adjustments extends CORE_Controller
                 echo json_encode($response);
                 break;
 
+
+            case 'for-approval':
+                $m_adjustment=$this->Adjustment_model;
+                $response['data']=$this->response_rows(
+                    "adjustment_info.is_active=TRUE AND adjustment_info.is_deleted=FALSE AND adjustment_info.approval_id = 2"
+                );
+                echo json_encode($response);
+                break;  
+
+            case 'mark-approved': //called on DASHBOARD when approved button is clicked
+                $m_adjustment=$this->Adjustment_model;
+                $adjustment_id=$this->input->post('adjustment_id',TRUE);
+
+                $m_adjustment->set('date_approved','NOW()'); //treat NOW() as function and not string, set date of approval
+                $m_adjustment->approved_by_user=$this->session->user_id; //deleted by user
+                $m_adjustment->approval_id=1; //1 means approved
+
+                if($m_adjustment->modify($adjustment_id)){
+
+                    $adj_info=$m_adjustment->get_list($adjustment_id,'adjustment_code');
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=12; //CRUD
+                    $m_trans->trans_type_id=15; // TRANS TYPE
+                    $m_trans->trans_log='Approved Adjustment No: '.$adj_info[0]->adjustment_code;
+                    $m_trans->save();
+
+                    $response['title']='Success!';
+                    $response['stat']='success';
+                    $response['msg']='Adjustment No : '.$adj_info[0]->adjustment_code.' successfully approved.';
+                    echo json_encode($response);
+                }
+                break;
+
             case'close-invoice':  
-            $m_sales=$this->Adjustment_model;
-            $adjustment_id =$this->input->post('adjustment_id');
-            $m_sales->closing_reason = $this->input->post('closing_reason');
-            $m_sales->closed_by_user = $this->session->user_id;
-            $m_sales->is_closed = TRUE;
-            $m_sales->modify($adjustment_id);
+                $m_sales=$this->Adjustment_model;
+                $adjustment_id =$this->input->post('adjustment_id');
+                $m_sales->closing_reason = $this->input->post('closing_reason');
+                $m_sales->closed_by_user = $this->session->user_id;
+                $m_sales->is_closed = TRUE;
+                $m_sales->modify($adjustment_id);
 
 
-            $adj_inv_info=$m_sales->get_list($adjustment_id,'adjustment_code');
-            $m_trans=$this->Trans_model;
-            $m_trans->user_id=$this->session->user_id;
-            $m_trans->set('trans_date','NOW()');
-            $m_trans->trans_key_id=11; //CRUD
-            $m_trans->trans_type_id=15; // TRANS TYPE
-            $m_trans->trans_log='Closed/Did Not Post Adjustment No: '.$adj_inv_info[0]->adjustment_code.' from General Journal Pending with reason: '.$this->input->post('closing_reason');
-            $m_trans->save();
-            $response['title'] = 'Success!';
-            $response['stat'] = 'success';
-            $response['msg'] = 'Adjustments successfully closed.';
-            echo json_encode($response);    
-            break;
+                $adj_inv_info=$m_sales->get_list($adjustment_id,'adjustment_code');
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=11; //CRUD
+                $m_trans->trans_type_id=15; // TRANS TYPE
+                $m_trans->trans_log='Closed/Did Not Post Adjustment No: '.$adj_inv_info[0]->adjustment_code.' from General Journal Pending with reason: '.$this->input->post('closing_reason');
+                $m_trans->save();
+                $response['title'] = 'Success!';
+                $response['stat'] = 'success';
+                $response['msg'] = 'Adjustments successfully closed.';
+                echo json_encode($response);    
+                break;
 
             case 'check-invoice-for-returns': // for sales
                 $invoice_id=$this->input->get('id');
@@ -443,6 +478,9 @@ class Adjustments extends CORE_Controller
         return $this->Adjustment_model->get_list(
             $filter_value,
             array(
+                'CONCAT_WS(" ",user.user_fname,user.user_mname,user.user_lname) as posted_by',
+                'adjustment_info.approval_id',
+                'status.approval_status',
                 'adjustment_info.inv_type_id',
                 'adjustment_info.adjustment_id',
                 'adjustment_info.adjustment_code',
@@ -464,11 +502,13 @@ class Adjustments extends CORE_Controller
                 '(CASE 
                     WHEN adjustment_info.is_returns = 1 THEN "Sales Returns" 
                     WHEN adjustment_info.is_dr_return = 1 THEN "Purchase Returns" 
-                    ELSE "Adjustments" END ) as transaction_type',
+                    ELSE CONCAT("Adjustment"," ",adjustment_info.adjustment_type) END ) as transaction_type',
                 'departments.department_name'
             ),
             array(
-                array('departments','departments.department_id=adjustment_info.department_id','left')
+                array('departments','departments.department_id=adjustment_info.department_id','left'),
+                array('approval_status status','status.approval_id=adjustment_info.approval_id','left'),
+                array('user_accounts user','user.user_id=adjustment_info.posted_by_user','left')
             ),
             'adjustment_info.adjustment_id DESC'
         );

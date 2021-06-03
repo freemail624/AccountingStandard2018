@@ -69,7 +69,9 @@
                 background: none!important; 
                 background-color: transparent!important; 
         } 
-    
+        .numeric{
+            text-align: right;
+        }
 </style>
     <script>
 
@@ -156,10 +158,23 @@ $(document).ready(function(){
       
     }();
     
-        
-
     var bindEventHandlers=(function(){
-        $("#product_id").on("change", function () {        
+        $("#product_id").on("change", function () {     
+
+            if($(this).val() == ""){
+                $('#stocks_count').val('0.00');
+            }else{
+                getOnHand().done(function(response){
+                    var data = response.data[0];
+
+                    if (response.data.length > 0){
+                        $('#stocks_count').val(accounting.formatNumber(data.on_hand_per_batch,2));
+                    }else{
+                        $('#stocks_count').val('0.00');
+                    }
+                });
+            }
+
             $('#tbl_products').DataTable().ajax.reload()
         });
         $("#end_date").on("change", function () {        
@@ -194,8 +209,13 @@ $(document).ready(function(){
         // });
     })();
 
-
-
+    var getOnHand=function(){
+        var id = $('#product_id').val();
+        return $.ajax({
+            "dataType":"json",
+            "url":"Products/transaction/get-on-hand?id="+id
+        });
+    };
 
     var showList=function(b){
         if(b){
@@ -307,13 +327,22 @@ $(document).ready(function(){
                                             <div class="panel-body table-responsive" id="product_list_panel">
                                             <h2 class="h2-panel-heading">Purchase Monitoring<small> | <a href="assets/manual/purchasing/Purchase_Monitoring.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                                 <div class="row">
-                                                <div class="col-sm-8" >
+                                                <div class="col-sm-6" >
                                                     Product :
                                                     <select name="category_id" id="product_id" data-error-msg="Product is required." required>
                                                         <option value="">All Products</option>
                                                         <?php foreach($products as $row) { echo '<option value="'.$row->product_id.'">'.$row->product_code.' - '.$row->product_desc.'</option>'; } ?>
                                                     </select>
 
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    Stocks :
+                                                    <div class="input-group">
+                                                         <span class="input-group-addon">
+                                                             <i class="fa fa-code"></i>
+                                                        </span>
+                                                        <input type="text" id="stocks_count" class="numeric form-control" placeholder="Stocks" readonly value="0.00">
+                                                    </div>
                                                 </div>
                                                 <div class="col-sm-2">
                                                     From :

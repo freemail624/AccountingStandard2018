@@ -28,7 +28,7 @@ class Inventory extends CORE_Controller
         $data['_switcher_settings'] = $this->load->view('template/elements/switcher', '', true);
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', true);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', true);
-        $data['title'] = 'Warehouse Inventory Report';
+        $data['title'] = 'Inventory Report';
 
         $data['departments']=$this->Departments_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
         
@@ -307,7 +307,7 @@ class Inventory extends CORE_Controller
                 $excel->getActiveSheet()->getColumnDimensionByColumn('A4')->setWidth('40');
 
                 //name the worksheet
-                $excel->getActiveSheet()->setTitle("Warehouse Inventory Report");
+                $excel->getActiveSheet()->setTitle("Inventory Report");
                 $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->mergeCells('A1:B1');
                 $excel->getActiveSheet()->mergeCells('A2:C2');
@@ -319,7 +319,7 @@ class Inventory extends CORE_Controller
                                         ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no)
                                         ->setCellValue('A4',$company_info[0]->email_address);
 
-                $excel->getActiveSheet()->setCellValue('A6','Warehouse Inventory Report - '.$department)
+                $excel->getActiveSheet()->setCellValue('A6','Inventory Report - '.$department)
                                         ->getStyle('A6')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('A7','As of '.$date)
                                         ->getStyle('A7')->getFont()->setItalic(TRUE);
@@ -373,7 +373,7 @@ class Inventory extends CORE_Controller
                                         ->getStyle('G9')->getFont()->setBold(TRUE);
                 // $excel->getActiveSheet()->setCellValue('H9','Bulk Balance')
                 //                         ->getStyle('H9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('H9','SRP')
+                $excel->getActiveSheet()->setCellValue('H9','Cost Price')
                                         ->getStyle('H9')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('I9','Total')
                                         ->getStyle('I9')->getFont()->setBold(TRUE);
@@ -410,16 +410,16 @@ class Inventory extends CORE_Controller
 
                         $excel->getActiveSheet()->getStyle('E'.$i.':J'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
                                          
-                        $excel->getActiveSheet()->setCellValue('E'.$i,number_format($product->quantity_in,2));      
-                        $excel->getActiveSheet()->setCellValue('F'.$i,number_format($product->quantity_out,2));
-                        $excel->getActiveSheet()->setCellValue('G'.$i,number_format($product->total_qty_balance,2));
+                        $excel->getActiveSheet()->setCellValue('E'.$i,$product->quantity_in);      
+                        $excel->getActiveSheet()->setCellValue('F'.$i,$product->quantity_out);
+                        $excel->getActiveSheet()->setCellValue('G'.$i,$product->total_qty_balance);
                         // $excel->getActiveSheet()->setCellValue('H'.$i,number_format($product->total_qty_bulk,2)); 
-                        $excel->getActiveSheet()->setCellValue('H'.$i,number_format($product->sale_price,2)); 
-                        $excel->getActiveSheet()->setCellValue('I'.$i,number_format((round($product->sale_price,2) * round($product->total_qty_bulk,2)),2));
+                        $excel->getActiveSheet()->setCellValue('H'.$i,$product->purchase_cost); 
+                        $excel->getActiveSheet()->setCellValue('I'.$i,$product->purchase_cost * $product->total_qty_bulk);
 
 
 
-                        $gtotal += (round($product->sale_price,2) * round($product->total_qty_bulk,2));
+                        $gtotal += $product->purchase_cost * $product->total_qty_bulk;
                         $i++;                  
                 }
 
@@ -449,7 +449,7 @@ class Inventory extends CORE_Controller
                 $excel->getActiveSheet()->getStyle('A'.$i.':'.'I'.$i)->applyFromArray( $style_header );
 
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                header('Content-Disposition: attachment;filename="Warehouse Inventory Report '.date('M-d-Y',NOW()).'.xlsx"');
+                header('Content-Disposition: attachment;filename="Inventory Report '.date('M-d-Y',NOW()).'.xlsx"');
                 header('Cache-Control: max-age=0');
                 // If you're serving to IE 9, then the following may be needed
                 header('Cache-Control: max-age=1');

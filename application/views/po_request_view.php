@@ -921,7 +921,7 @@ $(document).ready(function(){
 
 
         products = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_unit_name'),
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name','unq_id','size_desc','model_name'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             local : products
         });
@@ -954,11 +954,29 @@ $(document).ready(function(){
             source: products,
             templates: {
                 header: [
-                    '<table class="tt-head"><tr><td width=20%" style="padding-left: 1%;"><b>PLU</b></td><td width="20%" align="left"><b>Description 1</b></td><td width="20%" align="left"><b>Unit</b></td><td width="10%" align="right" style="padding-right: 2%;"><b>Cost</b></td></tr></table>'
+                    '<table class="tt-head">'+
+                        '<tr>'+
+                            '<td width="15%" style="padding-left: 1%;"><b>PLU</b></td>'+
+                            '<td width="30%" align="left"><b>Description 1</b></td>'+
+                            '<td width="10%" align="left"><b>Unit</b></td>'+
+                            '<td width="15%" align="left"><b>Size</b></td>'+
+                            '<td width="20%" align="left"><b>Model</b></td>'+
+                            '<td width="10%" align="right" style="padding-right: 2%;"><b>Cost</b></td>'+
+                        '</tr>'+
+                    '</table>'
                 ].join('\n'),
 
-                suggestion: Handlebars.compile('<table class="tt-items"><tr><td width="20%" style="padding-left: 1%">{{product_code}}</td><td width="20%" align="left">{{product_desc}}</td><td width="20%" align="left">{{product_unit_name}}</td><td width="10%" align="right" style="padding-right: 2%;">{{purchase_cost}}</td></tr></table>')
-
+                suggestion: Handlebars.compile(
+                    '<table class="tt-items">'+
+                        '<tr>'+
+                            '<td width="15%" style="padding-left: 1%">{{product_code}}</td>'+
+                            '<td width="30%" align="left">{{product_desc}}</td>'+
+                            '<td width="10%" align="left">{{product_unit_name}}</td>'+
+                            '<td width="15%" align="left">{{size_desc}}</td>'+
+                            '<td width="20%" align="left">{{model_name}}</td>'+
+                            '<td width="10%" align="right" style="padding-right: 2%;">{{purchase_cost}}</td>'+
+                        '</tr>'+
+                    '</table>')
             }
         }).on('keyup', this, function (event) {
             if (_objTypeHead.typeahead('val') == '')

@@ -177,6 +177,7 @@
                     <th>Department</th>
                     <th style="width: 20%">Remarks</th>
                     <th>Amount</th>
+                    <th>Receipt Type</th>
                     <th width="20%"><center>Action</center></th>
                     <th>Invoice #</th>
                 </tr>
@@ -229,13 +230,24 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <label><b class="required">*</b>  Order Source :</label><br />
-                                <select name="order_source_id" id="cbo_order_source" data-default="<?php echo $accounts[0]->default_order_source_id; ?>" data-error-msg="Order Source is required." required>
-                                    <option value="0">[ Create New Order Source ]</option>
-                                    <?php foreach($order_sources as $order_source){ ?>
-                                        <option value="<?php echo $order_source->order_source_id; ?>"><?php echo $order_source->order_source_name; ?></option>
+                                <div class="hidden">
+                                    <label> Order Source :</label><br />
+                                    <select name="order_source_id" id="cbo_order_source" data-default="<?php echo $accounts[0]->default_order_source_id; ?>" data-error-msg="Order Source is required.">
+                                        <option value="0">[ Create New Order Source ]</option>
+                                        <?php foreach($order_sources as $order_source){ ?>
+                                            <option value="<?php echo $order_source->order_source_id; ?>"><?php echo $order_source->order_source_name; ?></option>
+                                        <?php } ?>
+                                    </select>   
+                                </div>
+
+                                <label> Receipt Type :</label><br />
+                                <select name="inv_receipt_type_id" id="cbo_order_receipt_types">
+                                    <?php foreach($inv_receipt_types as $receipt_type){ ?>
+                                        <option value="<?php echo $receipt_type->inv_receipt_type_id; ?>">
+                                            <?php echo $receipt_type->inv_receipt_type; ?>
+                                        </option>
                                     <?php } ?>
-                                </select>                                
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -246,7 +258,7 @@
                                 <select name="customer" id="cbo_customers" data-error-msg="Customer is required." required>
                                     <option value="0">[ Create New Customer ]</option>
                                     <?php foreach($customers as $customer){ ?>
-                                        <option data-address="<?php echo $customer->address; ?>" data-contact="<?php echo $customer->contact_name; ?>" value="<?php echo $customer->customer_id; ?>" data-term-default="<?php echo ($customer->term=="none"?"":$customer->term); ?>" data-customer_type="<?php echo $customer->customer_type_id; ?>"><?php echo $customer->customer_name; ?></option>
+                                        <option data-address="<?php echo $customer->address; ?>" data-contact="<?php echo $customer->contact_name; ?>" value="<?php echo $customer->customer_id; ?>" data-term-default="<?php echo ($customer->term=="none"?"":$customer->term); ?>" data-customer_type="<?php echo $customer->customer_type_id; ?>" data-referred_by="<?php echo $customer->referred_by; ?>"><?php echo $customer->customer_name; ?></option>
                                     <?php } ?>
                                 </select>    
                             </div>
@@ -308,6 +320,17 @@
                                      <span class="input-group-addon">
                                          <i class="fa fa-calendar"></i>
                                     </span>
+                                </div>                                
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label> Referred By :</label> <br />
+                                <div class="input-group">
+                                     <span class="input-group-addon">
+                                         <i class="fa fa-user"></i>
+                                    </span>
+                                    <input type="text" id="referred_by" class="form-control" placeholder="Referred By" readonly>
                                 </div>                                
                             </div>
                         </div>
@@ -669,6 +692,19 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
+                                     <label class="control-label boldlabel" style="text-align:right;">Referred By :</label>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-user"></i>
+                                        </span>
+                                        <input type="text" name="referred_by" id="referred_by" class="form-control" placeholder="Referred By">
+                                    </div>
+                                </div>
+                            </div>                            
+                            <div class="col-md-12">
+                                <div class="col-md-4" id="label">
                                      <label class="control-label boldlabel" style="text-align:right;">Customer Type :</label>
                                 </div>
                                 <div class="col-md-8" style="padding: 0px;">
@@ -974,7 +1010,7 @@
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboDepartments; var _cboCustomers; var dt_so; var products; var changetxn;
     var _cboCustomerType; var prodstat;
-    var _cboCustomerTypeCreate; var _cboSource;
+    var _cboCustomerTypeCreate; var _cboSource; var _cboReceiptType;
     var _line_unit; var global_item_desc = ''; var _selectRowTblItems;
 
     var oTableItems={
@@ -1012,7 +1048,7 @@ $(document).ready(function(){
         dt=$('#tbl_sales_invoice').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 9, "desc" ]],
+            "order": [[ 10, "desc" ]],
             "ajax" : { 
                 "url":"Sales_invoice/transaction/list", 
                 "bDestroy": true,             
@@ -1046,8 +1082,9 @@ $(document).ready(function(){
                         return accounting.formatNumber(data.total_after_tax,2);
                     }
                 },
+                { targets:[8],data: "inv_receipt_type" },
                 {
-                    targets:[8],data:null,
+                    targets:[9],data:null,
                     render: function (data, type, full, meta){
                         var btn_attachments='<a href="Sales_attachments?id='+data.sales_invoice_id+'" target="_blank" class="btn btn-default btn-sm" name="attachment_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Attachments"><i class="fa fa-paperclip"></i> '+data.total_attachments+'</a>';
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-right:0" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
@@ -1055,7 +1092,7 @@ $(document).ready(function(){
                         return '<center>'+btn_attachments+"&nbsp;"+btn_edit+"&nbsp;"+btn_trash+'</center>';
                     }
                 },
-                { targets:[9],data: "sales_invoice_id", visible:false }
+                { targets:[10],data: "sales_invoice_id", visible:false }
             ]
         });
         dt_so=$('#tbl_so_list').DataTable({
@@ -1108,6 +1145,13 @@ $(document).ready(function(){
             placeholder: "Please select Order Source.",
             allowClear: false
         });
+
+        _cboReceiptType=$("#cbo_order_receipt_types").select2({
+            placeholder: "Please select a receipt type.",
+            allowClear: false
+        });
+
+
         _cboSalesperson.select2('val',null);
         _cboDepartments.select2('val', null);
         _cboDepartment.select2('val', null);
@@ -1131,7 +1175,7 @@ $(document).ready(function(){
         });
 
         products = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name','unq_id'),
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name','unq_id','size_desc','model_name'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             local : products
         });
@@ -1143,23 +1187,22 @@ $(document).ready(function(){
         templates: {
             header: [
                 '<table class="tt-head"><tr>'+
-                '<td width=15%" style="padding-left: 1%;"><b>PLU</b></td>'+
-                '<td class="hidden"><b>UniqID</b></td>'+
-                '<td width="25%" align="left"><b>Description</b></td>'+
-                '<td width="20%" class="hidden" align="left"><b>Expiration</b></td>'+
-                '<td width="10%" class="hidden" align="left"><b>LOT#</b></td>'+
-                '<td width="17%" align="right"><b>On Hand</b></td>'+
-                '<td width="13%" align="right" style="padding-right: 1%;"><b>SRP</b></td>'+
+                    '<td width="15%" style="padding-left: 1%;"><b>PLU</b></td>'+
+                    '<td width="25%" align="left"><b>Description</b></td>'+
+                    '<td width="20%" align="left"><b>Size</b></td>'+
+                    '<td width="20%" align="left"><b>Model</b></td>'+
+                    '<td width="10%" ><b>On Hand</b></td>'+
+                    '<td width="10%" align="right" style="padding-right: 2%;"><b>SRP</b></td>'+
                 '</tr></table>'
             ].join('\n'),
-            suggestion: Handlebars.compile('<table class="tt-items"><tr>'+
-                '<td width="15%" style="padding-left: 1%;">{{product_code}}</td>'+
-                '<td class="hidden">{{unq_id}}</td>'+
-                '<td width="25%" align="left">{{product_desc}}</td>'+
-                '<td width="20%" class="hidden" align="left">{{exp_date}}</td>'+
-                '<td width="10%" class="hidden" align="left">{{batch_no}}</td>'+
-                '<td width="17%" align="right">{{on_hand_per_batch}}</td>'+
-                '<td width="13%" align="right" style="padding-right: 1%;">{{srp}}</td>'+
+            suggestion: Handlebars.compile(
+                '<table class="tt-items"><tr>'+
+                    '<td width="15%" style="padding-left: 1%;">{{product_code}}</td>'+
+                    '<td width="25%" align="left">{{product_desc}}</td>'+
+                    '<td width="20%" align="left">{{size_desc}}</td>'+
+                    '<td width="20%" align="left">{{model_name}}</td>'+
+                    '<td width="10%" >{{on_hand_per_batch}}</td>'+
+                    '<td width="10%" align="right" style="padding-right: 2%;">{{srp}}</td>'+
                 '</tr></table>')
         }
         }).on('keyup', this, function (event) {
@@ -1398,6 +1441,18 @@ $(document).ready(function(){
             var nextDate = moment(dd, 'MM/DD/YYYY').add('days', term_days).format('MM/DD/YYYY');
             $('input[name="date_due"]').val(nextDate);
         });*/
+
+
+        // date_invoice
+
+        $('input[name="date_invoice"]').on("change", function(){
+            var d=$(this).val();
+            var dd= moment(d);
+            term_days = 60;
+            var nextDate = moment(dd, 'MM/DD/YYYY').add('days', term_days).format('MM/DD/YYYY');
+            $('input[name="date_due"]').val(nextDate);
+        });
+
         _cboSource.on("select2:select", function (e) {
             var i=$(this).select2('val');
                 if(i==0){ 
@@ -1497,10 +1552,14 @@ $(document).ready(function(){
                 $('#modal_new_customer').modal('show');
                  _cboCustomerTypeCreate.select2('val',0);
                 _cboCustomerType.select2('val',0);
+                $('#txt_address').val("");
+                $('#contact_person').val("");
+                $('#referred_by').val("");
             }else{
                 var obj_customers=$('#cbo_customers').find('option[value="' + i + '"]');
                 $('#txt_address').val(obj_customers.data('address'));
                 $('#contact_person').val(obj_customers.data('contact'));
+                $('#referred_by').val(obj_customers.data('referred_by'));
                 $('#cbo_customer_type').select2('val',obj_customers.data('customer_type'));
             }
         });       
@@ -1633,10 +1692,11 @@ $(document).ready(function(){
                     if(response.stat == 'success'){
                         $('#modal_new_customer').modal('hide');
                         var _customer=response.row_added[0];
-                        $('#cbo_customers').append('<option value="'+_customer.customer_id+'" selected data-contact="'+_customer.contact_name+'" data-customer_type="'+_customer.customer_type_id+'">'+ _customer.customer_name + '</option>');
+                        $('#cbo_customers').append('<option value="'+_customer.customer_id+'" selected data-contact="'+_customer.contact_name+'" data-customer_type="'+_customer.customer_type_id+'" data-referred_by="'+_customer.referred_by+'">'+ _customer.customer_name + '</option>');
                         $('#cbo_customers').select2('val',_customer.customer_id);
                         $('#txt_address').val(_customer.address);
                         $('#contact_person').val(_customer.contact_name);
+                        $('#referred_by').val(_customer.referred_by);
                         $('#cbo_customer_type').select2('val',_customer.customer_type_id);
                     }
 
@@ -1664,6 +1724,7 @@ $(document).ready(function(){
             $('#cbo_customers').select2('val', null);
             $('#cbo_customer_type').select2('val', 0);
             $('#cbo_salesperson').select2('val', null);
+            _cboReceiptType.select2('val',1);
             $('#img_user').attr('src','assets/img/anonymous-icon.png');
             $('#td_discount').html('0.00');
             $('#td_total_before_tax').html('0.00');
@@ -1672,7 +1733,8 @@ $(document).ready(function(){
             $('#txt_overall_discount').val('0.00'); 
             $('#txt_overall_discount_amount').val('0.00'); 
             $('#invoice_default').datepicker('setDate', 'today');
-            $('#due_default').datepicker('setDate', 'today');
+            // $('#due_default').datepicker('setDate', 'today');
+            $('input[name="date_invoice"]').trigger("change");
             $('input[id="checkcheck"]').prop('checked', false);
             $('#for_dispatching').val('0');
             $('textarea[name="remarks"]').val($('textarea[name="remarks"]').data('default'));
@@ -1714,6 +1776,7 @@ $(document).ready(function(){
                 var obj_customers=$('#cbo_customers').find('option[value="' + data.customer_id + '"]');
                 $('#txt_address').val(obj_customers.data('address'));
                 $('#contact_person').val(obj_customers.data('contact'));
+                $('#referred_by').val(obj_customers.data('referred_by'));
 
             });
             $('#modal_so_list').modal('hide');
@@ -1869,6 +1932,8 @@ $(document).ready(function(){
             $('#cbo_departments').select2('val',data.department_id);
             $('#cbo_department').select2('val',data.department_id);
             $('#cbo_customers').select2('val',data.customer_id);
+            _cboReceiptType.select2('val',data.inv_receipt_type_id);
+            $('#referred_by').val($('#cbo_customers option:selected').data('referred_by'));
             $('#cbo_salesperson').select2('val',data.salesperson_id);
 
             $.ajax({

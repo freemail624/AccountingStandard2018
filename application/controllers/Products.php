@@ -152,6 +152,14 @@ class Products extends CORE_Controller
                 echo json_encode($response);
                 break;
 
+            case 'get-on-hand':
+                $m_products = $this->Products_model;
+                $product_id = $this->input->get('id', TRUE);
+                $as_of_date = date('Y-m-d');
+                $response['data']=$m_products->product_list(1,$as_of_date,$product_id,null,null,null,null,null,1,null,null,null,null);
+                echo json_encode($response);
+                break;
+
             case 'get-account':
                 $category_id=$this->input->post('category_id', TRUE);
                 $category_type_id=$this->input->post('type_id', TRUE);
@@ -481,6 +489,10 @@ class Products extends CORE_Controller
                 if($as_of_date==null){$date = null; }else{$date = date('Y-m-d',strtotime($as_of_date));}
 
                 $m_products=$this->Products_model;
+
+                $balance_as_of = $m_products->get_product_balance_as_of_date($product_id,date('Y-m-01'),$depid)[0]; 
+                $data['balance_as_of'] =$balance_as_of;
+                
                 $data['products']=$m_products->get_product_history($product_id,$department_id,$date,$account);
                 $data['products_parent']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$disaccount);
                 $data['product_id']=$product_id;

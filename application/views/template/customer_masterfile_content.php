@@ -56,6 +56,7 @@
                 <th width="20%">Address</th>
                 <th>Email Address</th>
                 <th>TIN</th>
+                <th>Referred By</th>
             </tr>
             </thead>
             <tbody>
@@ -68,6 +69,7 @@
                 <td><?php echo $customer->address ?></td>
                 <td><?php echo $customer->email_address ?></td>
                 <td><?php echo $customer->tin_no ?></td>
+                <td><?php echo $customer->referred_by ?></td>
             </tr>
             <?php } ?>
 

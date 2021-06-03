@@ -180,6 +180,7 @@
                     <th>Department</th>
                     <th style="width: 20%;">Remarks</th>
                     <th>Adjustment</th>
+                    <th>Status</th>
                     <th><center>Action</center></th>
                     <th></th>
 
@@ -519,13 +520,13 @@
                     <thead class="">
                     <tr>
                         <th></th>
-                        <th>Invoice #</th>
-                        <th>Item</th>
-                        <th>Expiration</th>
-                        <th>LOT#</th>
-                        <th>Qty</th>
-                        <th>Unit</th>
-                        <th><center>Action</center></th>
+                        <th width="20%">Invoice #</th>
+                        <th width="30%">Item</th>
+                        <th class="hidden">Expiration</th>
+                        <th class="hidden">LOT#</th>
+                        <th width="10%">Qty</th>
+                        <th width="10%">Unit</th>
+                        <th width="10%"><center>Action</center></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -554,13 +555,13 @@
                     <thead class="">
                     <tr>
                         <th></th>
-                        <th>Invoice #</th>
-                        <th>Item</th>
-                        <th>Expiration</th>
-                        <th>LOT#</th>
-                        <th>Qty</th>
-                        <th>Unit</th>
-                        <th><center>Action</center></th>
+                        <th width="20%">Invoice #</th>
+                        <th width="30%">Item</th>
+                        <th class="hidden">Expiration</th>
+                        <th class="hidden">LOT#</th>
+                        <th width="10%">Qty</th>
+                        <th width="10%">Unit</th>
+                        <th width="10%"><center>Action</center></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -750,8 +751,8 @@ $(document).ready(function(){
                 { visible:false,targets:[0],data: "product_id" },
                 { targets:[1],data: "inv_no" },
                 { targets:[2],data: "product_desc" },
-                { targets:[3],data: "exp_date" },
-                { targets:[4],data: "batch_no" },
+                { visible: false, targets:[3],data: "exp_date" },
+                { visible: false, targets:[4],data: "batch_no" },
                 { targets:[5],data:null,
                     render: function (data, type, full, meta){
                         return accounting.formatNumber(data.inv_qty,2);
@@ -784,8 +785,8 @@ $(document).ready(function(){
                 { visible:false,targets:[0],data: "product_id" },
                 { targets:[1],data: "dr_invoice_no" },
                 { targets:[2],data: "product_desc" },
-                { targets:[3],data: "exp_date" },
-                { targets:[4],data: "batch_no" },
+                { visible: false, targets:[3],data: "exp_date" },
+                { visible: false, targets:[4],data: "batch_no" },
                 { sClass:"text-right", targets:[5],data:null,
                     render: function (data, type, full, meta){
                         return accounting.formatNumber(data.dr_qty,2);
@@ -804,7 +805,7 @@ $(document).ready(function(){
         dt=$('#tbl_issuances').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 8, "desc" ]],
+            "order": [[ 10, "desc" ]],
             "ajax" : "Adjustments/transaction/list",
             "columns": [
                 {
@@ -821,8 +822,9 @@ $(document).ready(function(){
                 { targets:[5],data: "department_name" },
                 { targets:[6],data: "remarks" },
                 { targets:[7],data: "adjustment_type" },
+                { targets:[8],data: "approval_status" },
                 {
-                    targets:[8],
+                    targets:[9],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
@@ -830,7 +832,7 @@ $(document).ready(function(){
                         return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                     }
                 },
-                { targets:[8],data: "adjustment_id",visible:false }
+                { targets:[10],data: "adjustment_id",visible:false }
             ]
 
         });
@@ -879,7 +881,7 @@ $(document).ready(function(){
         _cboSuppliers.select2('val',null);        
 
         products = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name','unq_id'),
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name','unq_id','size_desc','model_name'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             local : products
         });
@@ -893,27 +895,25 @@ $(document).ready(function(){
             templates: {
                 header: [
                     '<table class="tt-head"><tr>'+
-                    '<td width=15%" style="padding-left: 1%;"><b>PLU</b></td>'+
-                    '<td class="hidden"><b>UniqID</b></td>'+
-                    '<td width="25%" align="left"><b>Description</b></td>'+
-                    '<td width="20%" class="hidden" align="left"><b>Expiration</b></td>'+
-                    '<td width="10%" class="hidden" align="left"><b>LOT#</b></td>'+
-                    '<td width="10%" align="right" class="hidden"><b>On Hand</b></td>'+
-                    '<td width="10%" align="right"><b>SRP</b></td>'+
-                    '<td width="10%" align="right" style="padding-right: 1%;"><b>Cost Price</b></td>'+
+                        '<td width="10%" style="padding-left: 1%;"><b>PLU</b></td>'+
+                        '<td width="25%" align="left"><b>Description</b></td>'+
+                        '<td width="15%" align="left"><b>Size</b></td>'+
+                        '<td width="20%" align="left"><b>Model</b></td>'+
+                        '<td width="10%" align="right"><b>On Hand</b></td>'+
+                        '<td width="10%" align="right"><b>SRP</b></td>'+
+                        '<td width="10%" align="right" style="padding-right: 2%;"><b>Cost Price</b></td>'+
                     '</tr></table>'
                 ].join('\n'),
-                suggestion: Handlebars.compile('<table class="tt-items"><tr>'+
-                    '<td width="15%" style="padding-left: 1%;">{{product_code}}</td>'+
-                    '<td class="hidden">{{unq_id}}</td>'+
-                    '<td width="25%" align="left">{{product_desc}}</td>'+
-                    '<td width="20%" class="hidden" align="left">{{exp_date}}</td>'+
-                    '<td width="10%" class="hidden" align="left">{{batch_no}}</td>'+
-                    '<td width="10%" align="right" class="hidden">{{on_hand_per_batch}}</td>'+
-                    '<td width="10%" align="right">{{srp}}</td>'+
-                    '<td width="10%" align="right" style="padding-right: 1%;">{{srp_cost}}</td>'+
+                suggestion: Handlebars.compile(
+                    '<table class="tt-items"><tr>'+
+                        '<td width="10%" style="padding-left: 1%;">{{product_code}}</td>'+
+                        '<td width="25%" align="left">{{product_desc}}</td>'+
+                        '<td width="15%" align="left">{{size_desc}}</td>'+
+                        '<td width="20%" align="left">{{model_name}}</td>'+
+                        '<td width="10%" align="right">{{on_hand_per_batch}}</td>'+
+                        '<td width="10%" align="right">{{srp}}</td>'+
+                        '<td width="10%" align="right" style="padding-right: 2%;">{{srp_cost}}</td>'+
                     '</tr></table>')
-
             }
         }).on('keyup', this, function (event) {
             if (event.keyCode == 13) {
@@ -1341,18 +1341,18 @@ $(document).ready(function(){
             $('#note').text('');
             $('#dr_note').text('');
 
-            getproduct(getAdjustmentStatus()).done(function(data){
-                products.clear();
-                products.local = data.data;
-                products.initialize(true);
-                countproducts = data.data.length;
-                    if(countproducts > 100){
-                    showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
-                    }
+            // getproduct(getAdjustmentStatus()).done(function(data){
+            //     products.clear();
+            //     products.local = data.data;
+            //     products.initialize(true);
+            //     countproducts = data.data.length;
+            //         if(countproducts > 100){
+            //         showNotification({title:"Success !",stat:"success",msg:"Products List successfully updated."});
+            //         }
 
-            }).always(function(){
-                $('#typeaheadsearch').val('');
-            });
+            // }).always(function(){
+            //     $('#typeaheadsearch').val('');
+            // });
 
             showList(false);
             reInitializeNumeric();

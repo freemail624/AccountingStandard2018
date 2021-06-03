@@ -121,7 +121,7 @@
         <table width="100%" cellpadding="5" class="table table-striped">
             <tr>
                 <td valign="top" class="default-color top left right">DELIVERY DATE</td>
-                <td valign="top" class="default-color top left right">ARRIVAL DATE</td>
+                <td valign="top" class="default-color top left right">TERMS</td>
                 <td valign="top" class="default-color top left right">PR NUMBER
                 </td>
             </tr>
@@ -142,7 +142,6 @@
             <tr>
                 <td width="15%" class="default-color border" valign="top">QTY</td>
                 <td width="30%" class="default-color border" valign="top">DESCRIPTION</td>
-                <td width="20%" class="default-color border" valign="top" align="right">RMB PRICE</td>
                 <td width="20%" class="default-color border" valign="top" align="right">UNIT PRICE</td>
                 <td width="20%" class="default-color border" valign="top" align="right">TOTAL</td>
             </tr>
@@ -151,14 +150,13 @@
                 <tr>
                     <td class="left right"><?php echo number_format($item->po_qty, 2); ?></td>
                     <td class="left right"><?php echo $item->product_desc; ?></td>
-                    <td class="left right" align="right"><?php echo number_format($item->rmb_price, 2); ?></td>
                     <td class="left right" align="right">P <?php echo number_format($item->po_price, 2); ?></td>
                     <td class="left right" align="right"><?php echo number_format($item->po_line_total_after_global, 2); ?></td>
                 </tr>
             <?php $rmbTotal += $item->rmb_price;
             } ?>
             <tr>
-                <td colspan="3" class="top" rowspan="6" valign="top">
+                <td colspan="2" class="top" rowspan="6" valign="top">
                     <table width="100%" style="font-size: 8pt;">
                         <tr>
                             <td valign="top">1.</td>
@@ -181,12 +179,6 @@
                     </table>
 
                 </td>
-                <td class="border" align="right">SUB-TOTAL RMB</td>
-                <td class="border" align="right">
-                    <?php echo number_format($rmbTotal, 2); ?>
-                </td>
-            </tr>
-            <tr>
                 <td class="border" align="right">SUB-TOTAL</td>
                 <td class="border" align="right">
                     <?php echo number_format($purchase_info->total_after_discount, 2); ?>
@@ -227,25 +219,19 @@
         </table> <br />
         <table cellpadding="5" width="100%">
             <tr>
-                <td width="15%" class="td_height border">Ship-out Date : </td>
-                <td width="25%" class="td_height border">
-                    <?php echo $purchase_info->ship_out_date == null ? "" : 
-                    date('m/d/Y', strtotime($purchase_info->ship_out_date)) ?>
+                <td width="15%" class="td_height"><!-- Ship-out Date :  --></td>
+                <td width="25%" class="td_height">
+<!--                     <?php //echo $purchase_info->ship_out_date == null ? "" : 
+                    //date('m/d/Y', strtotime($purchase_info->ship_out_date)) ?> -->
                 </td>
                 <td width="25%" class="td_height"></td>
                 <td width="35%" class="td_height"></td>
             </tr>
             <tr>
-                <td class="td_height border">Total Cartons : </td>
-                <td class="td_height bottom border"></td>
                 <td class="td_height"></td>
-                <td class="td_height bottom"></td>
-            </tr>
-            <tr>
-                <td class="td_height border">Total CBM : </td>
-                <td class="td_height bottom border"></td>
                 <td class="td_height"></td>
-                <td valign="top" class="td_height" align="center">Checked By</td>
+                <td class="td_height"></td>
+                <td valign="top" class="td_height top" align="center">Checked By</td>
             </tr>
         </table>
 
@@ -326,7 +312,7 @@
         <table width="100%" cellpadding="5" class="table table-striped">
             <tr>
                 <td valign="top" class="default-color top left right">DELIVERY DATE</td>
-                <td valign="top" class="default-color top left right">ARRIVAL DATE</td>
+                <td valign="top" class="default-color top left right">TERMS</td>
                 <td valign="top" class="default-color top left right">PR NUMBER
                 </td>
             </tr>
@@ -354,32 +340,13 @@
                     <td class="left right bottom"><?php echo $item->product_desc; ?></td>
                 </tr>
             <?php } ?>
-        </table> <br />
-
+        </table> <br /><br /><br /><br />
         <table width="100%">
-            <!-- <tr>
-                    <td valign="bottom" width="20%" class="td_height">Date of Arrival : </td>
-                    <td valign="bottom" width="25%" class="td_height bottom"></td>
-                    <td valign="bottom" width="25%" class="td_height"></td>
-                    <td valign="bottom" width="30%" class="td_height"></td>
-                </tr> -->
             <tr>
-                <td valign="bottom" width="20%" class="td_height">Total Cartons : </td>
-                <td valign="bottom" width="25%" class="td_height bottom"></td>
-                <td valign="bottom" width="25%" class="td_height"></td>
-                <td valign="bottom" width="30%" class="td_height bottom"></td>
-            </tr>
-            <tr>
-                <td valign="bottom" class="td_height">Total CBM : </td>
-                <td valign="bottom" class="td_height bottom"></td>
-                <td valign="bottom" class="td_height"></td>
-                <td valign="top" class="td_height" align="center">Checked By</td>
-            </tr>
-            <tr>
-                <td valign="bottom" class="td_height">Shipping Receipt No. : </td>
-                <td valign="bottom" class="td_height bottom"></td>
-                <td valign="bottom" class="td_height"></td>
-                <td valign="bottom" class="td_height"></td>
+                <td width="25%" valign="bottom" class="td_height"></td>
+                <td width="25%" valign="bottom" class="td_height"></td>
+                <td width="25%" valign="bottom" class="td_height"></td>
+                <td width="25%" valign="top" class="td_height top" align="center">Checked By</td>
             </tr>
         </table>
 

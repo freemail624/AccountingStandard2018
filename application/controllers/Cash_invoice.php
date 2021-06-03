@@ -24,6 +24,7 @@ class Cash_invoice extends CORE_Controller
         $this->load->model('Sales_invoice_model');
         $this->load->model('Customer_type_model');
         $this->load->model('Order_source_model');
+        $this->load->model('Inv_receipt_types_model'); 
         $this->load->model('Account_integration_model');
     }
 
@@ -55,7 +56,7 @@ class Cash_invoice extends CORE_Controller
         $data['refproducts']=$this->Refproduct_model->get_list(
             'is_deleted=FALSE'
         );
-
+        $data['inv_receipt_types'] =$this->Inv_receipt_types_model->get_list(); 
 
         $tax_rate=$this->Company_model->get_list(
             null,
@@ -223,6 +224,7 @@ class Cash_invoice extends CORE_Controller
                 $m_invoice->total_after_discount=$this->get_numeric_value($this->input->post('total_after_discount',TRUE));
                 $m_invoice->total_tendered=$this->get_numeric_value($this->input->post('total_tendered',TRUE));
                 $m_invoice->total_change=$this->get_numeric_value($this->input->post('total_change',TRUE));
+                $m_invoice->inv_receipt_type_id=$this->get_numeric_value($this->input->post('inv_receipt_type_id',TRUE));
                 $m_invoice->posted_by_user=$this->session->user_id;
                 $m_invoice->save();
 
@@ -348,6 +350,7 @@ class Cash_invoice extends CORE_Controller
                     $m_invoice->total_after_discount=$this->get_numeric_value($this->input->post('total_after_discount',TRUE));
                     $m_invoice->total_tendered=$this->get_numeric_value($this->input->post('total_tendered',TRUE));
                     $m_invoice->total_change=$this->get_numeric_value($this->input->post('total_change',TRUE));
+                    $m_invoice->inv_receipt_type_id=$this->get_numeric_value($this->input->post('inv_receipt_type_id',TRUE));
                     $m_invoice->address=$this->input->post('address',TRUE);
                     $m_invoice->modified_by_user=$this->session->user_id;
                     $m_invoice->modify($cash_invoice_id);
@@ -525,6 +528,7 @@ class Cash_invoice extends CORE_Controller
         return $this->Cash_invoice_model->get_list(
             'cash_invoice.is_active = TRUE AND cash_invoice.is_deleted = FALSE '.($id_filter==null?'':' AND cash_invoice.cash_invoice_id='.$id_filter).''.($additional==null?'':$additional).''. ($show_unposted==FALSE?"":" AND cash_invoice.is_journal_posted=FALSE "), 
             array(
+                'inv_receipt_types.inv_receipt_type',               
                 'cash_invoice.*',
                 'DATE_FORMAT(cash_invoice.date_invoice,"%m/%d/%Y") as date_invoice',
                 'DATE_FORMAT(cash_invoice.date_due,"%m/%d/%Y") as date_due',
@@ -540,6 +544,7 @@ class Cash_invoice extends CORE_Controller
                 array('departments','departments.department_id=cash_invoice.department_id','left'),
                 array('customers','customers.customer_id=cash_invoice.customer_id','left'),
                 array('sales_order','sales_order.sales_order_id=cash_invoice.sales_order_id','left'),
+                array('inv_receipt_types','inv_receipt_types.inv_receipt_type_id=cash_invoice.inv_receipt_type_id','left'),
             ),
             'cash_invoice.cash_invoice_id DESC'
         );

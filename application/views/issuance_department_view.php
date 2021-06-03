@@ -630,7 +630,7 @@ dt_si = $('#tbl_si_list').DataTable({
         });
         
          products = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name','unq_id'),
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('product_code','product_desc','product_desc1','product_unit_name','unq_id','size_desc','model_name'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             local : products
         });
@@ -642,23 +642,22 @@ dt_si = $('#tbl_si_list').DataTable({
             templates: {
                 header: [
                     '<table class="tt-head"><tr>'+
-                    '<td width=15%" style="padding-left: 1%;"><b>PLU</b></td>'+
-                    '<td class="hidden"><b>UniqID</b></td>'+
-                    '<td width="25%" align="left"><b>Description</b></td>'+
-                    '<td width="20%" class="hidden" align="left"><b>Expiration</b></td>'+
-                    '<td width="10%" class="hidden" align="left"><b>LOT#</b></td>'+
-                    '<td width="17%" align="right" class="hidden"><b>On Hand</b></td>'+
-                    '<td width="13%" align="right" style="padding-right: 1%;"><b>Cost Price</b></td>'+
+                        '<td width="15%" style="padding-left: 1%;"><b>PLU</b></td>'+
+                        '<td width="25%" align="left"><b>Description</b></td>'+
+                        '<td width="20%" align="left"><b>Size</b></td>'+
+                        '<td width="20%" align="left"><b>Model</b></td>'+
+                        '<td width="10%" ><b>On Hand</b></td>'+
+                        '<td width="10%" align="right" style="padding-right: 2%;"><b>Cost Price</b></td>'+
                     '</tr></table>'
                 ].join('\n'),
-                suggestion: Handlebars.compile('<table class="tt-items"><tr>'+
-                    '<td width="15%" style="padding-left: 1%;">{{product_code}}</td>'+
-                    '<td class="hidden">{{unq_id}}</td>'+
-                    '<td width="25%" align="left">{{product_desc}}</td>'+
-                    '<td width="20%" class="hidden" align="left">{{exp_date}}</td>'+
-                    '<td width="10%" class="hidden" align="left">{{batch_no}}</td>'+
-                    '<td width="17%" align="right" class="hidden">{{on_hand_per_batch}}</td>'+
-                    '<td width="13%" align="right" style="padding-right: 1%;">{{purchase_cost}}</td>'+
+                suggestion: Handlebars.compile(
+                    '<table class="tt-items"><tr>'+
+                        '<td width="15%" style="padding-left: 1%;">{{product_code}}</td>'+
+                        '<td width="25%" align="left">{{product_desc}}</td>'+
+                        '<td width="20%" align="left">{{size_desc}}</td>'+
+                        '<td width="20%" align="left">{{model_name}}</td>'+
+                        '<td width="10%" >{{on_hand_per_batch}}</td>'+
+                        '<td width="10%" align="right" style="padding-right: 2%;">{{purchase_cost}}</td>'+
                     '</tr></table>')
             }
         }).on('keyup', this, function (event) {

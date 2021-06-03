@@ -38,7 +38,7 @@ class Rights_link_model extends CORE_Model{
                                           (28,'9','9-2','Income Statement'),
                                           (29,'4','4-1','Account Classification'),
                                           (30,'8','8-1','Sales Report'),
-                                          (31,'15','15-4','Warehouse Inventory Report'),
+                                          (31,'15','15-4','Inventory Report'),
                                           (32,'5','5-4','Salesperson Management'),
                                           (34,'8','8-3','Export Sales Summary'),
                                           (35,'9','9-3','Export Trial Balance'),
@@ -118,7 +118,7 @@ class Rights_link_model extends CORE_Model{
                                           -- (110,'15','15-7','Batch Inventory'),
                                           (111,'15','15-8','Barcode Generator'),
                                           (112,'2','2-4','Purchase Request for Approval'),
-                                          (113,'15','15-9','Admin Inventory Report'),
+                                          -- (113,'15','15-9','Admin Inventory Report'),
                                           (114,'4','4-10','Size Management'),
                                           (115,'4','4-11','Model Management')
 

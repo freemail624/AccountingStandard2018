@@ -450,6 +450,7 @@ parent::__construct();
 			is_journal_posted=FALSE
 			AND ai.adjustment_type = "IN"
 			AND ai.is_closed = FALSE
+			AND ai.approval_id = 1
 
 			UNION ALL
 
@@ -472,7 +473,8 @@ parent::__construct();
 			ai.is_deleted=FALSE AND 
 			is_journal_posted=FALSE
 			AND ai.adjustment_type = "OUT"
-			AND ai.is_closed = FALSE) as main
+			AND ai.is_closed = FALSE
+			AND ai.approval_id = 1) as main
 
 			ORDER BY main.adjustment_id';
         return $this->db->query($sql)->result();

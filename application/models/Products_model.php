@@ -372,6 +372,7 @@ class Products_model extends CORE_Model {
             LEFT JOIN departments d on d.department_id = ai.department_id
             LEFT JOIN user_accounts u on u.user_id = ai.posted_by_user
             WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+            AND ai.approval_id = 1
             AND aii.product_id=$product_id ".($depid==0?"":" AND ai.department_id=".$depid)."
             ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
 
@@ -404,7 +405,7 @@ class Products_model extends CORE_Model {
             LEFT JOIN departments d on d.department_id = ai.department_id
             LEFT JOIN user_accounts u on u.user_id = ai.posted_by_user
             WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
-            AND p.parent_id = $product_id
+            AND p.parent_id = $product_id AND ai.approval_id = 1
             ".($depid==0?"":" AND ai.department_id=".$depid)."
             ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
             GROUP BY ai.adjustment_id
@@ -443,7 +444,7 @@ class Products_model extends CORE_Model {
             LEFT JOIN products p on p.product_id = aii.product_id
             LEFT JOIN user_accounts u on u.user_id = ai.posted_by_user
             LEFT JOIN departments d on d.department_id = ai.department_id
-            WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+            WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE AND ai.approval_id = 1
             AND aii.product_id=$product_id ".($depid==0?"":" AND ai.department_id=".$depid)."
             ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
 
@@ -478,7 +479,7 @@ class Products_model extends CORE_Model {
             LEFT JOIN user_accounts u on u.user_id = ai.posted_by_user
             LEFT JOIN departments d on d.department_id = ai.department_id
             WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
-            AND p.parent_id = $product_id
+            AND p.parent_id = $product_id AND ai.approval_id = 1
 
             ".($depid==0?"":" AND ai.department_id=".$depid)."
             ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
@@ -2483,7 +2484,8 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 tax_types.tax_rate,
                 (SELECT uc.unit_name as child_unit_name FROM units as uc WHERE uc.unit_id = core.parent_unit_id) as parent_unit_name,
                 (SELECT uc.unit_name as child_unit_name FROM units as uc WHERE uc.unit_id = core.child_unit_id) as child_unit_name,
-
+                COALESCE(sizes.size_desc,'') as size_desc,
+                COALESCE(models.model_name,'') as model_name,
                 ROUND((
                     ReceiveQtyP+
                     ReceiveQtyC+
@@ -2575,7 +2577,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                     LEFT JOIN
                         products p ON p.product_id = aii.product_id
                 WHERE ai.adjustment_type='IN' 
-                AND ai.is_deleted=0 
+                AND ai.is_deleted=0 AND ai.approval_id = 1
                 ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
                 ".($depid==null||$depid==0?"":" AND ai.department_id=".$depid)."
                 GROUP BY aii.product_id) as aiin ON aiin.product_id = pQ.product_id
@@ -2590,7 +2592,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 LEFT JOIN products chldp ON chldp.product_id = chldaii.product_id
                 WHERE
                     chldai.is_deleted = 0
-                    AND chldai.adjustment_type = 'IN'
+                    AND chldai.adjustment_type = 'IN' AND chldai.approval_id = 1
                     ".($as_of_date==null?"":" AND chldai.date_adjusted<='".$as_of_date."'")."
                     ".($depid==null||$depid==0?"":" AND chldai.department_id=".$depid)."
                 GROUP BY chldp.parent_id) AS chldaiin ON chldaiin.parent_id = pQ.product_id
@@ -2769,7 +2771,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                             INNER JOIN adjustment_items AS aii ON aii.adjustment_id = ai.adjustment_id
                             LEFT JOIN products p ON p.product_id = aii.product_id
                 WHERE ai.adjustment_type='OUT' 
-                AND ai.is_deleted=0   
+                AND ai.is_deleted=0  AND ai.approval_id = 1
                 ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
                 ".($depid==null||$depid==0?"":" AND ai.department_id=".$depid)."
                 GROUP BY aii.product_id) as aiout ON aiout.product_id = pQ.product_id
@@ -2784,7 +2786,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                     LEFT JOIN products chldp ON chldp.product_id = chldaii.product_id
                     WHERE
                         chldai.is_deleted = 0
-                            AND chldai.adjustment_type = 'OUT'
+                            AND chldai.adjustment_type = 'OUT' AND chldai.approval_id = 1
                             ".($as_of_date==null?"":" AND chldai.date_adjusted<='".$as_of_date."'")."
                             ".($depid==null||$depid==0?"":" AND chldai.department_id=".$depid)."
                     GROUP BY chldp.parent_id) AS chldaiout ON chldaiout.parent_id = pQ.product_id
@@ -2867,6 +2869,8 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 LEFT JOIN item_types it ON it.item_type_id = core.item_type_id
                 LEFT JOIN account_titles ON account_titles.account_id=core.income_account_id
                 LEFT JOIN tax_types ON tax_types.tax_type_id=core.tax_type_id
+                LEFT JOIN sizes ON sizes.size_id = core.size_id
+                LEFT JOIN models ON models.model_id = core.model_id
 
                 WHERE core.is_active = TRUE
                 ".($supplier_id==null?"":" AND core.supplier_id='".$supplier_id."'")."

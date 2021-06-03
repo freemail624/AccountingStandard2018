@@ -91,8 +91,9 @@
                     { targets:[2],data: "contact_name" },
                     { targets:[3],data: "address" },
                     { targets:[4],data: "contact_no" },
+                    { targets:[5],data: "referred_by" },
                     {
-                        targets:[5],
+                        targets:[6],
                         render: function (data, type, full, meta){
                             var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"   data-toggle="tooltip" data-placement="top" title="Edit" style="margin-left:-5px;"><i class="fa fa-pencil"></i> </button>';
                             var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info"  data-toggle="tooltip" data-placement="top" title="Move to trash" style="margin-right:-5px;"><i class="fa fa-trash-o"></i> </button>';
@@ -692,6 +693,7 @@
                                                         <th>Contact Person</th>
                                                         <th style="width: 30%;">Address</th>
                                                         <th>Contact No</th>
+                                                        <th>Referred By</th>
                                                         <th style="width: 15%;"><center>Action</center></th>
                                                     </tr>
                                                     </thead>
@@ -1014,6 +1016,21 @@
                                                         <i class="fa fa-file-code-o"></i>
                                                     </span>
                                                     <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="TIN">
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-12">
+                                            <div class="col-md-4" id="label">
+                                                 <label class="control-label boldlabel" style="text-align:right;">Referred By :</label>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-user"></i>
+                                                    </span>
+                                                    <input type="text" name="referred_by" id="referred_by" class="form-control" placeholder="Referred By">
                                                 </div>
                                             </div>
                                         </div>

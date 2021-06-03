@@ -31,9 +31,7 @@ class Purchase_monitoring extends CORE_Controller
         // $this->load->model('Menu_model');
         $this->load->model('Company_model');
         $this->load->model('Email_settings_model');
-
-
-                   $this->load->library('excel');
+        $this->load->library('excel');
 
     }
 

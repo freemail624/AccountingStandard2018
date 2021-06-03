@@ -191,7 +191,7 @@
     <div class="panel-group panel-default" id="accordionA">
 
 
-        <div class="panel panel-default">
+        <div class="hidden panel panel-default">
             <div class="panel-body panel-responsive" >
             <a data-toggle="collapse" data-parent="#accordionA" href="#collapse3" style="text-decoration: none;">
 <!--             <div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Review Expense (Pending)</b></div> -->
@@ -220,7 +220,6 @@
             </div>
             </div>
         </div>
-        <br/>
         <div class="panel panel-default">
             <div class="panel-body panel-responsive" >
             <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo" style="text-decoration: none;">

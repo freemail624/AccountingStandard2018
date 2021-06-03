@@ -100,6 +100,7 @@ class Customers extends CORE_Controller {
                 $m_customers->photo_path=$this->input->post('photo_path',TRUE);
                 $m_customers->term=$this->input->post('term',TRUE);
                 $m_customers->credit_limit=$this->input->post('credit_limit',TRUE);
+                $m_customers->referred_by=$this->input->post('referred_by',TRUE);
 
                 $m_customers->set('date_created','NOW()');
                 $m_customers->posted_by_user=$this->session->user_id;
@@ -155,6 +156,7 @@ class Customers extends CORE_Controller {
                 $m_customers->photo_path=$this->input->post('photo_path',TRUE);
                 $m_customers->term=$this->input->post('term',TRUE);
                 $m_customers->credit_limit=$this->input->post('credit_limit',TRUE);
+                $m_customers->referred_by=$this->input->post('referred_by',TRUE);
 
                 $m_customers->set('date_created','NOW()');
                 $m_customers->posted_by_user=$this->session->user_id;
@@ -284,6 +286,7 @@ class Customers extends CORE_Controller {
                 $m_customers->term=$this->input->post('term',TRUE);
                 $m_customers->credit_limit=$this->input->post('credit_limit',TRUE);
                 $m_customers->customer_type_id=$this->input->post('customer_type_id',TRUE);
+                $m_customers->referred_by=$this->input->post('referred_by',TRUE);
                 $m_customers->set('date_modified','NOW()');
                 $m_customers->modified_by_user=$this->session->user_id;
 
@@ -422,6 +425,8 @@ class Customers extends CORE_Controller {
                                         ->getStyle('E9')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('F9','TIN')
                                         ->getStyle('F9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('G9','Referred By')
+                                        ->getStyle('G9')->getFont()->setBold(TRUE);
 
                 $i=10;
 
@@ -435,7 +440,8 @@ class Customers extends CORE_Controller {
                                         ->setCellValue('C'.$i,$customer->contact_no)
                                         ->setCellValue('D'.$i,$customer->address)
                                         ->setCellValue('E'.$i,$customer->email_address)
-                                        ->setCellValue('F'.$i,$customer->tin_no);
+                                        ->setCellValue('F'.$i,$customer->tin_no)
+                                        ->setCellValue('G'.$i,$customer->referred_by);
                 $i++;
 
                 }
