@@ -28,7 +28,9 @@
 	        	<input type="text" class="return_amount_invoice form-control" name="amount_return[]" readonly>
 	        </td>
 
-	        <td><input type="text" name="payment_amount[]" class="payment_amount numeric form-control" /><input type="hidden" name="journal_id[]" value="<?php echo $item->journal_id; ?>">
+	        <td><input type="text" name="payment_amount[]" class="payment_amount numeric form-control" />
+	        	<input type="hidden" name="journal_id[]" value="<?php echo $item->journal_id; ?>">
+				<input type="hidden" name="sales_invoice_id[]" value="<?php echo $item->sales_invoice_id; ?>">
 	        	<input type="hidden" name="is_sales[]" value="<?php echo $item->is_sales; ?>" />
 	        </td>
 	        <td align="center"><button type="button" class="btn btn-success btn_set_amount"><i class="fa fa-check"></i></button></td>
@@ -60,7 +62,9 @@
 	        	<input type="text" class="return_amount_invoice form-control" name="amount_return[]" readonly>
 	        </td>
 
-	        <td><input type="text" name="payment_amount[]" class="payment_amount numeric form-control" /><input type="hidden" name="journal_id[]" value="<?php echo $item->journal_id; ?>">
+	        <td><input type="text" name="payment_amount[]" class="payment_amount numeric form-control" />
+				<input type="hidden" name="journal_id[]" value="<?php echo $item->journal_id; ?>">
+				<input type="hidden" name="sales_invoice_id[]" value="<?php echo $item->sales_invoice_id; ?>">
 	        	<input type="hidden" name="is_sales[]" value="<?php echo $item->is_sales; ?>" />
 	        </td>
 	        <td align="center"><button type="button" class="btn btn-success btn_set_amount"><i class="fa fa-check"></i></button></td>

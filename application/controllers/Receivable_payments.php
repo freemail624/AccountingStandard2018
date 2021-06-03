@@ -127,12 +127,14 @@ class receivable_payments extends CORE_Controller
                 $payment_amount=$this->input->post('payment_amount',TRUE);
                 $journal_id=$this->input->post('journal_id',TRUE);
                 $receivable_amount=$this->input->post('receivable_amount',TRUE);
+                $sales_invoice_id = $this->input->post('sales_invoice_id',TRUE);
                 $is_sales=$this->input->post('is_sales',TRUE);
 
                 for($i=0;$i<=count($payment_amount)-1;$i++){
                     if($payment_amount[$i] > 0){
                         $m_payment_items->payment_id=$payment_id;
                         $m_payment_items->journal_id=$journal_id[$i];
+                        $m_payment_items->sales_invoice_id=$this->get_numeric_value($sales_invoice_id[$i]);
                         $m_payment_items->payment_amount=$this->get_numeric_value($payment_amount[$i]);
                         $m_payment_items->receivable_amount=$this->get_numeric_value($receivable_amount[$i]);
                         $m_payment_items->save();
