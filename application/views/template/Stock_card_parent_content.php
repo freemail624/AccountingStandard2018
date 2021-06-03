@@ -86,28 +86,30 @@
         </tr>
     </table>
 <br/>
-   <center>
        <table width="100%"  style="border-collapse: collapse;">
            <thead>
                 <tr class="">
-                    <td style="border: 1px solid lightgrey;padding: 5px;"><b>Txn Date</b></td>
-                    <td style="border: 1px solid lightgrey;padding: 5px;"><b>Reference</b></td>
-                    <td style="border: 1px solid lightgrey;padding: 5px;"><b>Packaging</b></td>
-                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>QTY In</b></td>
-                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>QTY Out</b></td>
-                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>On Hand</b></td>
-                    <td style="border: 1px solid lightgrey;padding: 5px;"><b>Department</b></td>
-                    <td style="border: 1px solid lightgrey;padding: 5px;"><b>Remarks</b></td>
-
+                    <td width="10%" style="border: 1px solid lightgrey;padding: 5px;"><b>Txn Date</b></td>
+                    <td width="10%" style="border: 1px solid lightgrey;padding: 5px;"><b>Reference</b></td>
+                    <td width="10%" style="border: 1px solid lightgrey;padding: 5px;"><b>Packaging</b></td>
+                    <td width="10%" style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>QTY In</b></td>
+                    <td width="10%" style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>QTY Out</b></td>
+                    <td width="10%" style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>On Hand</b></td>
+                    <td width="10%" style="border: 1px solid lightgrey;padding: 5px;"><b>Department</b></td>
+                    <td width="10%" style="border: 1px solid lightgrey;padding: 5px;"><b>Remarks</b></td>
                 </tr>
-
            </thead>
            <tbody>
-                <?php if(count($products_parent)==0){ ?>
-                    <tr>
-                        <td colspan="9" style="border: 1px solid lightgrey;padding: 10px;" align="center">No transaction found.</td>
-                    </tr>
-                <?php } ?>
+               <tr>
+                     <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo date("M d, Y",strtotime($as_of_date)); ?></td>
+                     <td style="border: 1px solid lightgrey;padding: 5px;">System</td>
+                     <td style="border: 1px solid lightgrey;padding: 5px;"></td>
+                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"></td>
+                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"></td>
+                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($balance_as_of->total_qty_balance,2).' '.$info[0]->bulk_unit_name; ?></td>
+                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: left;"></td>
+                     <td style="border: 1px solid lightgrey;padding: 5px;text-align: left;"><strong>System Generated Balance</strong></td>
+                 </tr>
 
                 <?php foreach($products_parent as $product){ ?>
                <tr>
@@ -126,57 +128,6 @@
                 <?php } ?>
            </tbody>
        </table>
-   </center>
-
-<style>
-  tr {
-      border: none!important;
-  }
-
-/*  tr:nth-child(even){
-      background: #414141 !important;
-      border: none!important;
-  }
-
-  tr:hover {
-      transition: .4s;
-      background: #414141 !important;
-      color: white;
-  }
-
-  tr:hover .btn {
-      border-color: #494949!important;
-      border-radius: 0!important;
-      -webkit-box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
-      -moz-box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
-      box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
-  }*/
-</style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<style>
-  tr {
-      border: none!important;
-  }
-
-</style>
 
 </body>
 </html>

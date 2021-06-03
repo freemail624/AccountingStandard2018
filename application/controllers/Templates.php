@@ -1802,14 +1802,15 @@ class Templates extends CORE_Controller {
 
                     array(
                         'purchase_order.*',
-                        'CONCAT_WS(" ",purchase_order.terms,purchase_order.duration)as term_description',
+                        'CONCAT_WS(" ",terms.term_description,purchase_order.duration)as term_description',
                         'order_status.order_status',
                         'approval_status.approval_status'
                     ),
 
                     array(
                         array('order_status','order_status.order_status_id=purchase_order.order_status_id','left'),
-                        array('approval_status','approval_status.approval_id=purchase_order.approval_id','left')
+                        array('approval_status','approval_status.approval_id=purchase_order.approval_id','left'),
+                        array('terms','terms.term_id=purchase_order.term_id','left')
                     )
 
                 );

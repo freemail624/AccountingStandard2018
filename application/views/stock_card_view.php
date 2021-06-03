@@ -21,6 +21,7 @@
     <link type="text/css" href="assets/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet">
     <link type="text/css" href="assets/plugins/datatables/dataTables.themify.css" rel="stylesheet">
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
+    <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
 
     <style>
         .toolbar{
@@ -100,7 +101,7 @@
                             <div class="panel-body">
                                 <h2 style="margin-bottom: 30px;">Stock Card / Bin Card</h1><hr>
                                 <div class="row container-fluid">
-                                        <div class="col-xs-12 col-sm-6">
+                                        <div class="col-sm-6">
                                             <label><b class="required">*</b> Product :</label><br>
                                             <select id="cbo_product" class="form-control" style="width: 100%">
                                                 <?php foreach($products as $product) { ?>
@@ -110,6 +111,10 @@
                                                 <?php } ?>
                                             </select>
                                         </div>
+                                        <div class="col-sm-2">
+                                            <label><b class="required">*</b> As of Date :</label><br>
+                                            <input type="text" id="as_of_date" class="date-picker form-control" value="<?php echo date('m/d/Y'); ?>">
+                                        </div>
 <!--                                         <div class="col-xs-4 col-sm-2">
                                             <label>Category</label><br>
                                             <select id="cbo_cat" class="form-control" style="width: 100%">
@@ -118,10 +123,10 @@
                                                     <option value="Retail" id="retail">Retail</option>
                                             </select>
                                         </div> -->
-                                        <div class="col-xs-4 col-sm-2"><br><br>
+                                        <div class="col-sm-2"><br><br>
                                             <button id="btn_print" class="btn btn-primary btn-block" style="margin-top: 5px;vertical-align: middle;"><i class="fa fa-print"></i> Print Report</button>
                                         </div>
-                                        <div class="col-xs-4 col-sm-2"><br><br>
+                                        <div class="col-sm-2"><br><br>
                                             <button id="btn_export" class="btn btn-success btn-block" style="margin-top: 5px;"><i class="fa fa-file-excel-o"></i> Export</button>
                                         </div>
 
@@ -196,6 +201,13 @@
 
 <script src="assets/plugins/spinner/dist/spin.min.js"></script>
 <script src="assets/plugins/spinner/dist/ladda.min.js"></script>
+
+<!-- Date range use moment.js same as full calendar plugin -->
+<script src="assets/plugins/fullcalendar/moment.min.js"></script>
+<!-- Data picker -->
+<script src="assets/plugins/datapicker/bootstrap-datepicker.js"></script>
+
+
 <!-- numeric formatter -->
 <script src="assets/plugins/formatter/autoNumeric.js" type="text/javascript"></script>
 <script src="assets/plugins/formatter/accounting.js" type="text/javascript"></script>
@@ -218,6 +230,14 @@ $(document).ready(function(){
         //     minimumResultsForSearch : -1
         // });
 
+        $('.date-picker').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: true,
+            autoclose: true
+
+        });
 
         reinitializeBalances();
     }();
@@ -228,12 +248,16 @@ $(document).ready(function(){
             reinitializeBalances();
         });
 
+        $('#as_of_date').on("change", function(){
+            reinitializeBalances();
+        });
+
         $('#btn_print').click(function(){
-            window.open('Products/transaction/history-product?id='+_cboProduct.val()+'&type=stockcard_print')
+            window.open('Products/transaction/history-product?id='+_cboProduct.val()+'&type=stockcard_print&date='+$('#as_of_date').val())
         });;
 
         $('#btn_export').click(function(){
-            window.open('Products/Export_Stock?id='+_cboProduct.val()+'&type=stockcard_print')
+            window.open('Products/Export_Stock?id='+_cboProduct.val()+'&type=stockcard_print&date='+$('#as_of_date').val())
 
         });
 
@@ -263,7 +287,7 @@ $(document).ready(function(){
 
         $('#tbl_stock #parent').html('');
         $.ajax({
-            url : 'Products/transaction/history-product?id='+_cboProduct.val()+'&type=stockcard',
+            url : 'Products/transaction/history-product?id='+_cboProduct.val()+'&type=stockcard&date='+$('#as_of_date').val(),
             type : "GET",
             cache : false,
             dataType : 'json',
@@ -276,6 +300,22 @@ $(document).ready(function(){
                 $('#purchase_cost').html(accounting.formatNumber(response.product_info.purchase_cost,2));
                 $('#sale_price').html(accounting.formatNumber(response.product_info.sale_price,2));
                 $('#product_code').html(response.product_info.product_code);
+
+                $('#tbl_stock #parent').html('');
+                /* System Generated Balance */
+                $('#tbl_stock #parent').append(
+                    '<tr>'+
+                        '<td>'+response.as_of_date+'</td>'+
+                        '<td>System</td>'+
+                        '<td></td>'+
+                        '<td></td>'+
+                        '<td></td>'+
+                        '<td align="right">'+response.balance_as_of.total_qty_bulk+'</td>'+
+                        '<td></td>'+
+                        '<td><strong>System Generated Balance</strong></td>'+
+                    '</tr>'
+                );
+
                 $.each(response.products_parent, function(index,value){
                     $('#tbl_stock #parent').append(
                         '<tr>'+

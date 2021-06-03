@@ -527,6 +527,7 @@ class Products extends CORE_Controller
                 $product_id=$this->input->get('id');
                 $department_id=($this->input->get('depid')==null||$this->input->get('depid')==0?0:$this->input->get('depid'));
                 $as_of_date=$this->input->get('date');
+                // $as_of_date=date('Y-m-d');
 
                 if($as_of_date==null){
                     $date = null; 
@@ -541,7 +542,21 @@ class Products extends CORE_Controller
                 $cat=$this->input->get('cat');
                 $data['product_id'] = $product_id;
                 $m_products=$this->Products_model;
-                $balance_as_of=$m_products->product_list($account,$prev_date,$product_id,null,null,1,null,$department_id,$ci_account,$dis_account,null,null)[0];
+                $balance_as_of=$m_products->product_list(
+                    $account,
+                    $prev_date,
+                    $product_id,
+                    null,
+                    null,
+                    null,
+                    null,
+                    $department_id,
+                    $ci_account,
+                    $dis_account,
+                    null,
+                    null,
+                    null)[0];
+
                 
                 //$product_id,$depid=0,$as_of_date=null,$account,$is_parent=null,$ciaccount // OREDR OF PARAMETER
                 $data['products_parent']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account,$balance_as_of->total_qty_bulk,$from_date,$balance_as_of->total_qty_balance);
@@ -961,11 +976,24 @@ function Export_Stock(){
 
                 $department_id=($this->input->get('depid')==null||$this->input->get('depid')==0?0:$this->input->get('depid'));
                 $as_of_date=$this->input->get('date');
-                if($as_of_date==null){ $date = null; }else{$date = date('Y-m-d',strtotime($as_of_date));}
+
+                if($as_of_date==null){
+                    $date = null; 
+                    $from_date = null;
+                    $prev_date = null;
+                }else{
+                    $date = date('Y-m-d',strtotime($as_of_date));
+                    $from_date = date('Y-m-01',strtotime($as_of_date));
+                    $prev_date = date("Y-m-d",strtotime(date('Y-m-01',strtotime($as_of_date)) . "-1 days"));
+                }
+
                 $m_products=$this->Products_model;
 
-                $products_parent=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account);
-                $products_child=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account);
+                $balance_as_of=$m_products->product_list($account,$prev_date,$product_id,null,null,1,null,$department_id,$ci_account,$dis_account,null,null)[0];
+
+                $products_parent=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account,$balance_as_of->total_qty_bulk,$from_date,$balance_as_of->total_qty_balance);
+                $products_child=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account,$balance_as_of->total_qty_bulk,$from_date,$balance_as_of->total_qty_balance);
+
 
                 $info=$m_products->get_list(
                     array('product_id'=>$product_id),
@@ -1022,12 +1050,24 @@ function Export_Stock(){
                   ->getActiveSheet()->setCellValue('E12','OUT')->getStyle('E12')->getFont()->setBold(TRUE)
                   ->getActiveSheet()->setCellValue('F12','Balance')->getStyle('F12')->getFont()->setBold(TRUE)
                   // ->getActiveSheet()->setCellValue('G12','Bulk Balance')->getStyle('G12')->getFont()->setBold(TRUE)
-                  ->getActiveSheet()->setCellValue('G12','Department')->getStyle('H12')->getFont()->setBold(TRUE)
-                  ->getActiveSheet()->setCellValue('H12','Remarks')->getStyle('I12')->getFont()->setBold(TRUE);
+                  ->getActiveSheet()->setCellValue('G12','Department')->getStyle('G12')->getFont()->setBold(TRUE)
+                  ->getActiveSheet()->setCellValue('H12','Remarks')->getStyle('H12')->getFont()->setBold(TRUE);
 
-            $excel->getActiveSheet()->getStyle('D12:H12')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+            $excel->getActiveSheet()->getStyle('D12:F12')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-          $i = 12;  foreach ($products_parent as $parent) {
+          $i = 12;  
+          $i++;
+
+        $excel->getActiveSheet()->setCellValue('A'.$i,$prev_date);
+        $excel->getActiveSheet()->setCellValue('B'.$i,'System');
+        
+        $excel->getActiveSheet()->getStyle('D'.$i.':F'.$i)->getNumberFormat()->setFormatCode('#,##0.00');
+        $excel->getActiveSheet()->getStyle('D'.$i.':F'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+        $excel->getActiveSheet()->setCellValue('F'.$i,$balance_as_of->total_qty_balance.' '.$product_info->bulk_unit_name);
+        $excel->getActiveSheet()->setCellValue('H'.$i,'System Generated Balance');
+
+          foreach ($products_parent as $parent) {
                                 $i++;
                                 $excel->getActiveSheet()->setCellValue('A'.$i,$parent->txn_date);
                                 $excel->getActiveSheet()->setCellValue('B'.$i,$parent->ref_no);

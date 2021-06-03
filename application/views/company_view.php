@@ -425,7 +425,7 @@
                                                    </div>  
 
 
-                                                   <div class="form-group"> 
+                                                   <div class="form-group hidden"> 
                                                        <div class="col-md-7 col-md-offset-3">
                                                          <label class="control-label" id="is_print_auto"> 
                                                            <strong> 
