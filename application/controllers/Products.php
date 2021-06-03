@@ -486,16 +486,27 @@ class Products extends CORE_Controller
                 $department_id=($this->input->get('depid')==null||$this->input->get('depid')==0?0:$this->input->get('depid'));
                 $as_of_date=$this->input->get('date');
 
-                if($as_of_date==null){$date = null; }else{$date = date('Y-m-d',strtotime($as_of_date));}
+                if($as_of_date==null){
+                    $date = null; 
+                    $from_date = null;
+                    $prev_date = null;
+                }else{
+                    $date = date('Y-m-d',strtotime($as_of_date));
+                    $from_date = date('Y-m-01',strtotime($as_of_date));
+                    $prev_date = date("Y-m-d",strtotime(date('Y-m-01',strtotime($as_of_date)) . "-1 days"));
+                }
 
                 $m_products=$this->Products_model;
 
-                $balance_as_of = $m_products->get_product_balance_as_of_date($product_id,date('Y-m-01'),$depid)[0]; 
-                $data['balance_as_of'] =$balance_as_of;
+                $balance_as_of=$m_products->product_list($account,$prev_date,$product_id,null,null,1,null,$department_id,$ci_account,$disaccount,null,null)[0];
                 
-                $data['products']=$m_products->get_product_history($product_id,$department_id,$date,$account);
-                $data['products_parent']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$disaccount);
+                // $data['products']=$m_products->get_product_history($product_id,$department_id,$date,$account);
+                $data['products_parent']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$disaccount,$balance_as_of->total_qty_bulk,$from_date,$balance_as_of->total_qty_balance);
+
+
+                $data['balance_as_of'] =$balance_as_of;
                 $data['product_id']=$product_id;
+                $data['as_of_date'] = $from_date;
                 //$this->load->view('Template/product_history_menus',$data);
 
                 $this->load->view('template/product_history_inventory',$data);
@@ -518,18 +529,27 @@ class Products extends CORE_Controller
                 $as_of_date=$this->input->get('date');
 
                 if($as_of_date==null){
-                    $date = null;
+                    $date = null; 
+                    $from_date = null;
+                    $prev_date = null;
                 }else{
                     $date = date('Y-m-d',strtotime($as_of_date));
+                    $from_date = date('Y-m-01',strtotime($as_of_date));
+                    $prev_date = date("Y-m-d",strtotime(date('Y-m-01',strtotime($as_of_date)) . "-1 days"));
                 }
 
                 $cat=$this->input->get('cat');
                 $data['product_id'] = $product_id;
                 $m_products=$this->Products_model;
+                $balance_as_of=$m_products->product_list($account,$prev_date,$product_id,null,null,1,null,$department_id,$ci_account,$dis_account,null,null)[0];
+                
                 //$product_id,$depid=0,$as_of_date=null,$account,$is_parent=null,$ciaccount // OREDR OF PARAMETER
-                $data['products_parent']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account);
-                $data['products_child']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account);
+                $data['products_parent']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account,$balance_as_of->total_qty_bulk,$from_date,$balance_as_of->total_qty_balance);
+                $data['products_child']=$m_products->get_product_history_with_child($product_id,$department_id,$date,$account,1,$ci_account,$dis_account,$balance_as_of->total_qty_bulk,$from_date,$balance_as_of->total_qty_balance);
+
                 $data['product_id']=$product_id;
+                $data['balance_as_of'] =$balance_as_of;
+                $data['as_of_date'] = $prev_date;
                 //$this->load->view('Template/product_history_menus',$data);
 
 

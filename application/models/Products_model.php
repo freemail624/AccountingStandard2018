@@ -328,11 +328,11 @@ class Products_model extends CORE_Model {
         return $this->db->query($sql)->result();
     }
 
-     function get_product_history_with_child($product_id,$depid=0,$as_of_date=null,$account,$is_parent=null,$ciaccount,$disaccount=null){
+     function get_product_history_with_child($product_id,$depid=0,$as_of_date=null,$account,$is_parent=null,$ciaccount,$disaccount=null,$balance,$from_date,$child_balance){
 
-        $this->db->query("SET @pBalance:=0.00;");
-        $this->db->query("SET @cBalance:=0.00;");
-        $this->db->query("SET @bulkBalance:=0.00;");
+        $this->db->query("SET @pBalance:=$child_balance;");
+        $this->db->query("SET @cBalance:=$child_balance;");
+        $this->db->query("SET @bulkBalance:=$balance;");
         $sql="
 
             SELECT main.*,
@@ -374,7 +374,7 @@ class Products_model extends CORE_Model {
             WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
             AND ai.approval_id = 1
             AND aii.product_id=$product_id ".($depid==0?"":" AND ai.department_id=".$depid)."
-            ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND ai.date_adjusted BETWEEN '".$from_date."' AND '".$as_of_date."'")."
 
             UNION ALL
 
@@ -407,7 +407,7 @@ class Products_model extends CORE_Model {
             WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
             AND p.parent_id = $product_id AND ai.approval_id = 1
             ".($depid==0?"":" AND ai.department_id=".$depid)."
-            ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND ai.date_adjusted BETWEEN '".$from_date."' AND '".$as_of_date."'")."
             GROUP BY ai.adjustment_id
 
 
@@ -446,7 +446,7 @@ class Products_model extends CORE_Model {
             LEFT JOIN departments d on d.department_id = ai.department_id
             WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE AND ai.approval_id = 1
             AND aii.product_id=$product_id ".($depid==0?"":" AND ai.department_id=".$depid)."
-            ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND ai.date_adjusted BETWEEN '".$from_date."' AND '".$as_of_date."'")."
 
             UNION ALL
 
@@ -482,7 +482,7 @@ class Products_model extends CORE_Model {
             AND p.parent_id = $product_id AND ai.approval_id = 1
 
             ".($depid==0?"":" AND ai.department_id=".$depid)."
-            ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND ai.date_adjusted BETWEEN '".$from_date."' AND '".$as_of_date."'")."
             GROUP BY ai.adjustment_id
 
             UNION ALL
@@ -520,7 +520,7 @@ class Products_model extends CORE_Model {
             AND di.is_finalized = TRUE
             ".($depid==0?"":" AND di.department_id=".$depid)."
             AND dii.product_id=$product_id
-            ".($as_of_date==null?"":" AND di.date_delivered<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND di.date_delivered BETWEEN '".$from_date."' AND '".$as_of_date."'")."
 
 
             UNION ALL
@@ -555,7 +555,7 @@ class Products_model extends CORE_Model {
             AND di.is_finalized = TRUE
             ".($depid==0?"":" AND di.department_id=".$depid)."
             AND p.parent_id = $product_id
-            ".($as_of_date==null?"":" AND di.date_delivered<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND di.date_delivered BETWEEN '".$from_date."' AND '".$as_of_date."'")."
             GROUP BY di.dr_invoice_id
 
             UNION ALL
@@ -589,7 +589,8 @@ class Products_model extends CORE_Model {
             LEFT JOIN departments d on d.department_id = ii.issued_department_id
             WHERE ii.is_active=TRUE AND ii.is_deleted=FALSE
             ".($depid==0?"":" AND ii.issued_department_id=".$depid)."
-            AND iit.product_id=$product_id ".($as_of_date==null?"":" AND ii.date_issued<='".$as_of_date."'")."
+            AND iit.product_id=$product_id 
+            ".($as_of_date==null?"":" AND ii.date_issued BETWEEN '".$from_date."' AND '".$as_of_date."'")."
 
 
             UNION ALL
@@ -621,7 +622,7 @@ class Products_model extends CORE_Model {
             WHERE ii.is_active=TRUE AND ii.is_deleted=FALSE
             ".($depid==0?"":" AND ii.issued_department_id=".$depid)."
             AND p.parent_id = $product_id
-            ".($as_of_date==null?"":" AND ii.date_issued<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND ii.date_issued BETWEEN '".$from_date."' AND '".$as_of_date."'")."
             GROUP BY ii.issuance_id
 
             UNION ALL
@@ -656,7 +657,8 @@ class Products_model extends CORE_Model {
             LEFT JOIN departments d on d.department_id = ii.from_department_id
             WHERE ii.is_active=TRUE AND ii.is_deleted=FALSE
             ".($depid==0?"":" AND ii.from_department_id=".$depid)."
-            AND iit.product_id=$product_id ".($as_of_date==null?"":" AND ii.date_issued<='".$as_of_date."'")."
+            AND iit.product_id=$product_id 
+            ".($as_of_date==null?"":" AND ii.date_issued BETWEEN '".$from_date."' AND '".$as_of_date."'")."
             
 
 
@@ -690,7 +692,7 @@ class Products_model extends CORE_Model {
             WHERE ii.is_active=TRUE AND ii.is_deleted=FALSE
             ".($depid==0?"":" AND ii.from_department_id=".$depid)."
             AND p.parent_id = $product_id
-            ".($as_of_date==null?"":" AND ii.date_issued<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND ii.date_issued BETWEEN '".$from_date."' AND '".$as_of_date."'")."
             GROUP BY ii.issuance_department_id
 
 
@@ -728,7 +730,8 @@ class Products_model extends CORE_Model {
             LEFT JOIN departments d on d.department_id = ii.to_department_id
             WHERE ii.is_active=TRUE AND ii.is_deleted=FALSE
             ".($depid==0?"":" AND ii.to_department_id=".$depid)."
-            AND iit.product_id=$product_id ".($as_of_date==null?"":" AND ii.date_issued<='".$as_of_date."'")."
+            AND iit.product_id=$product_id 
+            ".($as_of_date==null?"":" AND ii.date_issued BETWEEN '".$from_date."' AND '".$as_of_date."'")."
 
 
             UNION ALL
@@ -762,7 +765,7 @@ class Products_model extends CORE_Model {
             WHERE ii.is_active=TRUE AND ii.is_deleted=FALSE
             ".($depid==0?"":" AND ii.to_department_id=".$depid)."
             AND p.parent_id = $product_id
-            ".($as_of_date==null?"":" AND ii.date_issued<='".$as_of_date."'")."            
+            ".($as_of_date==null?"":" AND ii.date_issued BETWEEN '".$from_date."' AND '".$as_of_date."'")."          
             GROUP BY ii.issuance_department_id
 
             ".($account==TRUE?" 
@@ -802,7 +805,7 @@ class Products_model extends CORE_Model {
             WHERE si.is_active = TRUE AND si.is_deleted = FALSE
             ".($depid==0?"":" AND si.department_id=".$depid)."
             AND sii.product_id = $product_id
-            ".($as_of_date==null?"":" AND si.date_invoice<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND si.date_invoice BETWEEN '".$from_date."' AND '".$as_of_date."'")."
                 
             UNION ALL
 
@@ -837,7 +840,7 @@ class Products_model extends CORE_Model {
             WHERE si.is_active = TRUE AND si.is_deleted = FALSE
             ".($depid==0?"":" AND si.department_id=".$depid)."
             AND p.parent_id = $product_id
-            ".($as_of_date==null?"":" AND si.date_invoice<='".$as_of_date."'")."            
+            ".($as_of_date==null?"":" AND si.date_invoice BETWEEN '".$from_date."' AND '".$as_of_date."'")."         
             GROUP BY si.sales_invoice_id
 
             ":" ")."
@@ -881,7 +884,7 @@ class Products_model extends CORE_Model {
             WHERE ci.is_active = TRUE AND ci.is_deleted = FALSE
             ".($depid==0?"":" AND ci.department_id=".$depid)."
             AND cii.product_id = $product_id
-            ".($as_of_date==null?"":" AND ci.date_invoice<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND ci.date_invoice BETWEEN '".$from_date."' AND '".$as_of_date."'")."
 
 
             UNION  ALL                
@@ -917,7 +920,7 @@ class Products_model extends CORE_Model {
             WHERE ci.is_active = TRUE AND ci.is_deleted = FALSE
             ".($depid==0?"":" AND ci.department_id=".$depid)."
             AND p.parent_id = $product_id
-            ".($as_of_date==null?"":" AND ci.date_invoice<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND ci.date_invoice BETWEEN '".$from_date."' AND '".$as_of_date."'")."
             GROUP BY ci.cash_invoice_id
 
             ":" ")."
@@ -958,7 +961,7 @@ class Products_model extends CORE_Model {
             WHERE dis.is_active=TRUE AND dis.is_deleted=FALSE 
             ".($depid==0?"":" AND dis.department_id=".$depid)."
             AND dii.product_id=$product_id
-            ".($as_of_date==null?"":" AND dis.date_invoice<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND dis.date_invoice BETWEEN '".$from_date."' AND '".$as_of_date."'")."
 
 
 
@@ -992,7 +995,7 @@ class Products_model extends CORE_Model {
             WHERE dis.is_active=TRUE AND dis.is_deleted=FALSE 
             ".($depid==0?"":" AND dis.department_id=".$depid)."
             AND p.parent_id = $product_id
-            ".($as_of_date==null?"":" AND dis.date_invoice<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND dis.date_invoice BETWEEN '".$from_date."' AND '".$as_of_date."'")."
             GROUP BY dis.dispatching_invoice_id
 
             ":" ")."
