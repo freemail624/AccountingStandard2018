@@ -2315,6 +2315,8 @@ $(document).ready(function(){
             _cboBrands.select2('val',data.brand_id);
             _cboBulkUnitId.select2('val',data.bulk_unit_id);
             _cboParentId.select2('val',data.parent_id);
+            _cboSizes.select2('val',data.size_id);
+            _cboModels.select2('val',data.model_id);
 
             $('#is_tax_exempt').prop('checked', (data.is_tax_exempt==1?true:false));
             $('#is_bulk').prop('checked', (data.is_bulk==1?true:false));
