@@ -155,7 +155,7 @@
                     <td class="left right" align="right">P <?php echo number_format($item->po_price, 2); ?></td>
                     <td class="left right" align="right"><?php echo number_format($item->po_line_total_after_global, 2); ?></td>
                 </tr>
-            <?php $rmbTotal += $item->rmb_price;
+            <?php $rmbTotal += ($item->po_qty * $item->rmb_price);
             } ?>
             <tr>
                 <td colspan="3" class="top" rowspan="6" valign="top">
