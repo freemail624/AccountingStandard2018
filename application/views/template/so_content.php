@@ -50,6 +50,7 @@
                     <p><?php echo $company_info->company_address_2; ?></p>
                     <span>Email : <?php echo $company_info->email_address; ?></span>
                     <p>Tel and Fax no.: <?php echo $company_info->landline . ' &nbsp;' . $company_info->mobile_no; ?></p>
+                    Department : <?php echo $sales_order->department_name; ?>
                 </td>
                 <td width="50%" style="text-align: right;" valign="top">
                     <h1><b>SALES ORDER</b></h1><br />
