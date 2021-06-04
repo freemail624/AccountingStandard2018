@@ -249,8 +249,18 @@ class Deliveries extends CORE_Controller
                     $m_dr_items->dr_tax_amount=$this->get_numeric_value($dr_tax_amount[$i]);
                     $m_dr_items->dr_non_tax_amount=$this->get_numeric_value($dr_non_tax_amount[$i]);
                     $m_dr_items->dr_line_total_after_global=$this->get_numeric_value($dr_line_total_after_global[$i]);
-                    $m_dr_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
-                    $m_dr_items->batch_no=$batch_no[$i];
+
+                    if($exp_date[$i] != null || ""){
+                        $m_dr_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
+                    }else{
+                        $m_dr_items->exp_date = null;
+                    }
+
+                    if($batch_no[$i] != null || ""){
+                        $m_dr_items->batch_no=$batch_no[$i];
+                    }else{
+                        $m_dr_items->batch_no = null;
+                    }
 
                     /*if($exp_date[$i]==null||$exp_date[$i]==""){
                         $response['title'] = 'Invalid Expiration!';
@@ -395,8 +405,19 @@ class Deliveries extends CORE_Controller
                     $m_dr_items->dr_tax_amount=$this->get_numeric_value($dr_tax_amount[$i]);
                     $m_dr_items->dr_non_tax_amount=$this->get_numeric_value($dr_non_tax_amount[$i]);
                     $m_dr_items->dr_line_total_after_global=$this->get_numeric_value($dr_line_total_after_global[$i]);
-                    $m_dr_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
-                    $m_dr_items->batch_no=$batch_no[$i];
+
+                    if($exp_date[$i] != null || ""){
+                        $m_dr_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
+                    }else{
+                        $m_dr_items->exp_date = null;
+                    }
+
+                    if($batch_no[$i] != null || ""){
+                        $m_dr_items->batch_no=$batch_no[$i];
+                    }else{
+                        $m_dr_items->batch_no = null;
+                    }
+
                     //$m_dr_items->set('unit_id','(SELECT unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
                     //unit id retrieval is change, because of TRIGGER restriction
 

@@ -258,8 +258,19 @@ class Adjustments extends CORE_Controller
                     $m_adjustment_items->adjust_line_total_price=$this->get_numeric_value($adjust_line_total_price[$i]);
                     $m_adjustment_items->adjust_tax_amount=$this->get_numeric_value($adjust_tax_amount[$i]);
                     $m_adjustment_items->adjust_non_tax_amount=$this->get_numeric_value($adjust_non_tax_amount[$i]);
-                    $m_adjustment_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
-                    $m_adjustment_items->batch_no=$batch_no[$i];
+
+                    if($exp_date[$i] != null || ""){
+                        $m_adjustment_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
+                    }else{
+                        $m_adjustment_items->exp_date = null;
+                    }
+
+                    if($batch_no[$i] != null || ""){
+                        $m_adjustment_items->batch_no=$batch_no[$i];
+                    }else{
+                        $m_adjustment_items->batch_no = null;
+                    } 
+
                     $m_adjustment_items->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
                     $m_adjustment_items->is_parent=$this->get_numeric_value($is_parent[$i]);
 
@@ -363,8 +374,19 @@ class Adjustments extends CORE_Controller
                     $m_adjustment_items->adjust_line_total_price=$this->get_numeric_value($adjust_line_total_price[$i]);
                     $m_adjustment_items->adjust_tax_amount=$this->get_numeric_value($adjust_tax_amount[$i]);
                     $m_adjustment_items->adjust_non_tax_amount=$this->get_numeric_value($adjust_non_tax_amount[$i]);
-                    $m_adjustment_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
-                    $m_adjustment_items->batch_no=$batch_no[$i];
+
+                    if($exp_date[$i] != null || ""){
+                        $m_adjustment_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
+                    }else{
+                        $m_adjustment_items->exp_date = null;
+                    }
+
+                    if($batch_no[$i] != null || ""){
+                        $m_adjustment_items->batch_no=$batch_no[$i];
+                    }else{
+                        $m_adjustment_items->batch_no = null;
+                    } 
+
                     $m_adjustment_items->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
                     //$m_adjustment_items->set('unit_id','(SELECT unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
 

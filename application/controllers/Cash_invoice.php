@@ -263,8 +263,19 @@ class Cash_invoice extends CORE_Controller
                     $m_invoice_items->inv_line_total_price=$this->get_numeric_value($inv_line_total_price[$i]);
                     $m_invoice_items->inv_tax_amount=$this->get_numeric_value($inv_tax_amount[$i]);
                     $m_invoice_items->inv_non_tax_amount=$this->get_numeric_value($inv_non_tax_amount[$i]);
-                    $m_invoice_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
+
+                    if($exp_date[$i] != null || ""){
+                        $m_invoice_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
+                    }else{
+                        $m_invoice_items->exp_date = null;
+                    }
+
+                    if($batch_no[$i] != null || ""){
                     $m_invoice_items->batch_no=$batch_no[$i];
+                    }else{
+                        $m_invoice_items->batch_no = null;
+                    }
+
                     $m_invoice_items->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
                     $m_invoice_items->is_parent=$this->get_numeric_value($is_parent[$i]);
 
@@ -390,8 +401,19 @@ class Cash_invoice extends CORE_Controller
                     $m_invoice_items->inv_line_total_price=$this->get_numeric_value($inv_line_total_price[$i]);
                     $m_invoice_items->inv_tax_amount=$this->get_numeric_value($inv_tax_amount[$i]);
                     $m_invoice_items->inv_non_tax_amount=$this->get_numeric_value($inv_non_tax_amount[$i]);
-                    $m_invoice_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
+                    
+                    if($exp_date[$i] != null || ""){
+                        $m_invoice_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
+                    }else{
+                        $m_invoice_items->exp_date = null;
+                    }
+
+                    if($batch_no[$i] != null || ""){
                     $m_invoice_items->batch_no=$batch_no[$i];
+                    }else{
+                        $m_invoice_items->batch_no = null;
+                    }
+
                     $m_invoice_items->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
                     $m_invoice_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                     

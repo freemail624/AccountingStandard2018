@@ -345,8 +345,19 @@ class Sales_invoice extends CORE_Controller
                     $m_invoice_items->inv_tax_amount=$this->get_numeric_value($inv_tax_amount[$i]);
                     $m_invoice_items->inv_non_tax_amount=$this->get_numeric_value($inv_non_tax_amount[$i]);
                     //$m_invoice_items->dr_invoice_id=$dr_invoice_id[$i];
-                    $m_invoice_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
-                    $m_invoice_items->batch_no=$batch_no[$i];
+
+                    if($exp_date[$i] != null || ""){
+                        $m_invoice_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
+                    }else{
+                        $m_invoice_items->exp_date = null;
+                    }
+
+                    if($batch_no[$i] != null || ""){
+                        $m_invoice_items->batch_no=$batch_no[$i];
+                    }else{
+                        $m_invoice_items->batch_no = null;
+                    }
+
                     $m_invoice_items->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
 
                     //unit id retrieval is change, because of TRIGGER restriction
@@ -506,8 +517,19 @@ class Sales_invoice extends CORE_Controller
                         $m_invoice_items->inv_tax_amount=$this->get_numeric_value($inv_tax_amount[$i]);
                         $m_invoice_items->inv_non_tax_amount=$this->get_numeric_value($inv_non_tax_amount[$i]);
                         $m_invoice_items->orig_so_price=$this->get_numeric_value($orig_so_price[$i]);
-                        $m_invoice_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
-                        $m_invoice_items->batch_no=$batch_no[$i];
+
+                        if($exp_date[$i] != null || ""){
+                            $m_invoice_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
+                        }else{
+                            $m_invoice_items->exp_date = null;
+                        }
+
+                        if($batch_no[$i] != null || ""){
+                            $m_invoice_items->batch_no=$batch_no[$i];
+                        }else{
+                            $m_invoice_items->batch_no = null;
+                        }
+
                         $m_invoice_items->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
 
                         //unit id retrieval is change, because of TRIGGER restriction
@@ -528,17 +550,17 @@ class Sales_invoice extends CORE_Controller
                         $m_products->modify($this->get_numeric_value($prod_id[$i]));
                     }
 
-                    $checkInvoice = $m_loading->check_invoice_loading($sales_invoice_id);
-                    if(count($checkInvoice)>0){
-                        $loading = $m_invoice->get_open_sales_invoice_list(null,null,null,$sales_invoice_id);
+                    // $checkInvoice = $m_loading->check_invoice_loading($sales_invoice_id);
+                    // if(count($checkInvoice)>0){
+                    //     $loading = $m_invoice->get_open_sales_invoice_list(null,null,null,$sales_invoice_id);
 
-                        if(count($loading)>0){
-                            $m_loading_items->total_after_discount = $this->get_numeric_value($loading[0]->total_after_discount);
-                            $m_loading_items->total_inv_qty = $this->get_numeric_value($loading[0]->total_inv_qty);
-                            $m_loading_items->address = $loading[0]->address;
-                            $m_loading_items->modify($checkInvoice[0]->loading_item_id);
-                        }
-                    }
+                    //     if(count($loading)>0){
+                    //         $m_loading_items->total_after_discount = $this->get_numeric_value($loading[0]->total_after_discount);
+                    //         $m_loading_items->total_inv_qty = $this->get_numeric_value($loading[0]->total_inv_qty);
+                    //         $m_loading_items->address = $loading[0]->address;
+                    //         $m_loading_items->modify($checkInvoice[0]->loading_item_id);
+                    //     }
+                    // }
 
                     //update status of so
                     $m_so->order_status_id=$this->get_so_status($sales_order_id);

@@ -186,6 +186,19 @@ class Issuance_department extends CORE_Controller
                     $m_issue_items->issue_non_tax_amount=$this->get_numeric_value($issue_non_tax_amount[$i]);
                     $m_issue_items->batch_no=$batch_no[$i];
                     $m_issue_items->exp_date=date('Y-m-d',strtotime($exp_date[$i]));
+
+                    if($exp_date[$i] != null || ""){
+                        $m_issue_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
+                    }else{
+                        $m_issue_items->exp_date = null;
+                    }
+
+                    if($batch_no[$i] != null || ""){
+                        $m_issue_items->batch_no=$batch_no[$i];
+                    }else{
+                        $m_issue_items->batch_no = null;
+                    }
+
                     //unit id retrieval is change, because of TRIGGER restriction
                         $m_issue_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                         if($is_parent[$i] == '1'){
@@ -263,8 +276,19 @@ class Issuance_department extends CORE_Controller
                     $m_issue_items->issue_line_total_price=$this->get_numeric_value($issue_line_total_price[$i]);
                     $m_issue_items->issue_tax_amount=$this->get_numeric_value($issue_tax_amount[$i]);
                     $m_issue_items->issue_non_tax_amount=$this->get_numeric_value($issue_non_tax_amount[$i]);
-                    $m_issue_items->batch_no=$batch_no[$i];
-                    $m_issue_items->exp_date=date('Y-m-d',strtotime($exp_date[$i]));                    
+
+                    if($exp_date[$i] != null || ""){
+                        $m_issue_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
+                    }else{
+                        $m_issue_items->exp_date = null;
+                    }
+
+                    if($batch_no[$i] != null || ""){
+                        $m_issue_items->batch_no=$batch_no[$i];
+                    }else{
+                        $m_issue_items->batch_no = null;
+                    } 
+
                     $m_issue_items->is_parent=$this->get_numeric_value($is_parent[$i]);
 
                     if($is_parent[$i] == '1'){

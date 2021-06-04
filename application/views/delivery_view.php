@@ -1168,11 +1168,15 @@ $(document).ready(function(){
                 }
                 if (event.keyCode == 13) {
                     // $('.tt-suggestion:first').click();
-               _objTypeHead.typeahead('close');     //  -- changed due to barcode scan not working
-              _objTypeHead.typeahead('val','');      //  -- changed due to barcode scan not working
+                    _objTypeHead.typeahead('close');     //  -- changed due to barcode scan not working
+                    _objTypeHead.typeahead('val','');      //  -- changed due to barcode scan not working
                 }
             }).bind('typeahead:select', function(ev, suggestion) {
 
+                    // $('.tt-suggestion:first').click();
+                    _objTypeHead.typeahead('close');     //  -- changed due to barcode scan not working
+                    _objTypeHead.typeahead('val','');      //  -- changed due to barcode scan not working
+                    
             // if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
             //     showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
             //     return;
@@ -1760,6 +1764,18 @@ $(document).ready(function(){
                                 retail_price = 0;
                             }
 
+                            if(value.exp_date == null || ""){
+                                exp_date = "";
+                            }else{
+                                exp_date = value.exp_date;
+                            }
+
+                            if(value.batch_no == null || ""){
+                                batch_no = "";
+                            }else{
+                                batch_no = value.batch_no;
+                            }  
+
                             $('#tbl_items > tbody').append(newRowItem({
                                 dr_qty : value.dr_qty,
                                 product_code : value.product_code,
@@ -1788,8 +1804,8 @@ $(document).ready(function(){
                                 is_parent : value.is_parent,
                                 bulk_price: value.purchase_cost,
                                 retail_price: retail_price,
-                                exp_date : value.exp_date,
-                                batch_no : value.batch_no,
+                                exp_date : exp_date,
+                                batch_no : batch_no,
                                 a:a
                             }));
                             changetxn = 'inactive';

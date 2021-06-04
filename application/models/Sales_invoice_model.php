@@ -150,7 +150,7 @@ class Sales_invoice_model extends CORE_Model
 
 function get_journal_entries_2($sales_invoice_id){
 
-$sql="SELECT main.* FROM(
+    $sql="SELECT main.* FROM(
             SELECT acc_receivable.account_id,acc_receivable.memo,
             0 as cr_amount,SUM(acc_receivable.dr_amount) as dr_amount
              FROM
@@ -185,11 +185,10 @@ $sql="SELECT main.* FROM(
             p.sd_account_id as account_id,
             '' as memo,
             0 cr_amount,
-            (si.total_discount+si.total_overall_discount_amount) as dr_amount
+            SUM(sii.inv_qty*sii.inv_discount) as dr_amount
 
             FROM `sales_invoice_items` as sii
             INNER JOIN products as p ON sii.product_id=p.product_id
-            LEFT JOIN sales_invoice si ON si.sales_invoice_id=sii.sales_invoice_id
             WHERE sii.sales_invoice_id=$sales_invoice_id AND p.sd_account_id>0
             GROUP BY p.sd_account_id
 
@@ -211,12 +210,11 @@ $sql="SELECT main.* FROM(
             SELECT
             p.income_account_id as account_id,
             '' as memo,
-            (SUM(sii.inv_non_tax_amount) + si.total_discount + si.total_overall_discount_amount) cr_amount,
+            SUM(sii.inv_non_tax_amount) + SUM(sii.inv_qty*sii.inv_discount) cr_amount,
             0 as dr_amount
 
             FROM `sales_invoice_items` as sii
             INNER JOIN products as p ON sii.product_id=p.product_id
-            LEFT JOIN sales_invoice si ON si.sales_invoice_id=sii.sales_invoice_id
             WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
             GROUP BY p.income_account_id
 
@@ -239,7 +237,6 @@ $sql="SELECT main.* FROM(
             INNER JOIN products as p ON sii.product_id=p.product_id
             WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
             )as output_tax GROUP BY output_tax.account_id
-
 
             )as main WHERE main.dr_amount>0 OR main.cr_amount>0
             

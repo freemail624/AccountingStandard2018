@@ -92,9 +92,8 @@ parent::__construct();
         -- Sales Return
 		SELECT
 		p.sales_return_account_id as account_id,
-		SUM(IFNULL(adj.adjust_non_tax_amount,0)) as dr_amount,
+		SUM(IFNULL(adj.adjust_non_tax_amount,0)) + SUM(IFNULL(adj.adjust_line_total_discount,0)) as dr_amount,
 		0 as cr_amount,
-		
 		'' as memo
 		FROM adjustment_items adj
 		INNER JOIN products p ON p.product_id = adj.product_id
@@ -108,7 +107,6 @@ parent::__construct();
 		p.expense_account_id as account_id,
 		SUM(adj.adjust_qty * p.purchase_cost) as dr_amount,
 		0 as cr_amount,
-		
 		'' as memo
 
 		FROM 
@@ -116,6 +114,7 @@ parent::__construct();
 		INNER JOIN products p ON p.product_id = adj.product_id
 		WHERE adj.adjustment_id = $adjustment_id AND p.expense_account_id > 0
 		GROUP BY p.expense_account_id
+
 
 		-- Output Tax
 	    UNION ALL
@@ -126,9 +125,7 @@ parent::__construct();
 	    output_tax.memo
 	     FROM
 	    (SELECT adj.product_id,
-
-	    (SELECT output_tax_account_id FROM account_integration) as account_id
-	    ,
+	    (SELECT output_tax_account_id FROM account_integration) as account_id,
 	    '' as memo,
 	    SUM(adj.adjust_tax_amount) as dr_amount,
 	    0 as cr_amount
@@ -173,7 +170,7 @@ parent::__construct();
 		INNER JOIN products p ON p.product_id = adj.product_id
 		WHERE adj.adjustment_id = $adjustment_id AND p.cos_account_id > 0
 		GROUP BY p.cos_account_id
-
+		
 		-- Discount
 		UNION ALL
 
@@ -181,13 +178,11 @@ parent::__construct();
 		p.sd_account_id as account_id,
 		0 as dr_amount,
 		SUM(IFNULL(adj.adjust_line_total_discount,0)) as cr_amount,
-		
 		'' as memo
 		FROM adjustment_items adj
 		INNER JOIN products p ON p.product_id = adj.product_id
 		WHERE adj.adjustment_id= $adjustment_id AND p.sd_account_id > 0
 		GROUP BY p.sd_account_id
-       
         
 
 		) as main 
@@ -325,6 +320,7 @@ parent::__construct();
 			WHERE si.is_active = TRUE 
 			AND si.is_deleted = FALSE
 			AND si.customer_id= '$customer_id'
+			AND p.item_type_id != 3
 
 			UNION ALL
 
@@ -368,6 +364,7 @@ parent::__construct();
 			WHERE ci.is_active = TRUE 
 			AND ci.is_deleted = FALSE
 			AND ci.customer_id= '$customer_id'
+			AND p.item_type_id != 3
 			";
 
         return $this->db->query($sql)->result();

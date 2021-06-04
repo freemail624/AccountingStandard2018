@@ -62,6 +62,7 @@
 
     $(document).ready(function(){
         var dt; var _txnMode; var _selectedID; var _selectRowObj; var _selectedBranch; var _cboCustomerType;
+        var _cboDepartment;
 
         /*$(document).ready(function(){
             $('#modal_filter').modal('show');
@@ -91,8 +92,9 @@
                     { targets:[2],data: "contact_name" },
                     { targets:[3],data: "address" },
                     { targets:[4],data: "contact_no" },
+                    { targets:[5],data: "department_name" },
                     {
-                        targets:[5],
+                        targets:[6],
                         render: function (data, type, full, meta){
                             var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"   data-toggle="tooltip" data-placement="top" title="Edit" style="margin-left:-5px;"><i class="fa fa-pencil"></i> </button>';
                             var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info"  data-toggle="tooltip" data-placement="top" title="Move to trash" style="margin-right:-5px;"><i class="fa fa-trash-o"></i> </button>';
@@ -109,6 +111,10 @@
 
 
             _cboCustomerType=$("#cbo_customer_type").select2({
+                allowClear: false
+            });
+
+            _cboDepartment=$("#cbo_departments").select2({
                 allowClear: false
             });
 
@@ -166,6 +172,7 @@
                 $('#modal_create_customer').modal('show');
                 clearFields($('#frm_customer'));
                 $('#cbo_customer_type').select2('val', 0);
+                _cboDepartment.select2('val',0);
             });
 
              $('#btn_browse').click(function(event){
@@ -190,6 +197,7 @@
                     $('#branch').val(data.department_id);
                     $('#refcustomertype_id').val(data.refcustomertype_id);
                     _cboCustomerType.select2('val',data.customer_type_id);
+                    _cboDepartment.select2('val',data.department_id);
                     $('#term').val(data.term);
 
                     //alert(data.term);
@@ -275,7 +283,7 @@
                 });  
 
                 $('#btn_export').click(function(){
-                   window.open('customers/transaction/export-supplier');
+                   window.open('customers/transaction/export-customer');
                 });                
 
                 $('#btn_save').click(function(){
@@ -692,6 +700,7 @@
                                                         <th>Contact Person</th>
                                                         <th style="width: 30%;">Address</th>
                                                         <th>Contact No</th>
+                                                        <th>Department</th>
                                                         <th style="width: 15%;"><center>Action</center></th>
                                                     </tr>
                                                     </thead>
@@ -1032,7 +1041,21 @@
                                             </div>
                                         </div>
 
-
+                                        <div class="col-md-12">
+                                            <div class="col-md-4" id="label">
+                                                 <label class="control-label boldlabel" style="text-align:right;">Department :</label>
+                                            </div>
+                                            <div class="col-md-8" style="padding: 0; padding-top: 5px;">
+                                            <select name="department_id" id="cbo_departments" style="width: 100%">
+                                                <option value="0">None</option>
+                                                <?php foreach($departments as $department){ ?>
+                                                    <option value="<?php echo $department->department_id; ?>">
+                                                        <?php echo $department->department_name?>
+                                                    </option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>
 
 
                                     </div>

@@ -928,6 +928,9 @@ $(document).ready(function(){
             //     return;
             // }
 
+                _objTypeHead.typeahead('close');
+                _objTypeHead.typeahead('val','');
+
             var product_id = 0;
             var conversion_rate = 0;
 
@@ -1005,8 +1008,19 @@ $(document).ready(function(){
                 readonlyAttr = "readonly";
                 dateAttr = "";
                 hideAttr = "";
-                exp_date = suggestion.exp_date;
-                batch_no = suggestion.batch_no;
+
+                if(suggestion.exp_date == null || ""){
+                    exp_date = "";
+                }else{
+                    exp_date = suggestion.exp_date;
+                }
+
+                if(suggestion.batch_no == null || ""){
+                    batch_no = "";
+                }else{
+                    batch_no = suggestion.batch_no;
+                }            
+
             }
 
             $('#tbl_items > tbody').prepend(newRowItem({
@@ -1408,6 +1422,18 @@ $(document).ready(function(){
                             hideAttr = "";
                         }
                         
+                        if(value.exp_date == null || ""){
+                            exp_date = "";
+                        }else{
+                            exp_date = value.exp_date;
+                        }
+
+                        if(value.batch_no == null || ""){
+                            batch_no = "";
+                        }else{
+                            batch_no = value.batch_no;
+                        }            
+
                         $('#tbl_items > tbody').prepend(newRowItem({
                             adjust_qty : value.inv_qty,
                             product_code : value.product_code,
@@ -1436,8 +1462,8 @@ $(document).ready(function(){
                             readonlyAttr : readonlyAttr,
                             hideAttr : hideAttr,
                             dateAttr : dateAttr,
-                            exp_date : value.exp_date,
-                            batch_no : value.batch_no,
+                            exp_date : exp_date,
+                            batch_no : batch_no,
                             cost_upon_invoice : value.cost_upon_invoice                                
                         }));
                         changetxn = 'inactive';
@@ -1490,6 +1516,18 @@ $(document).ready(function(){
                 hideAttr = "";
             }
 
+            if(value.exp_date == null || ""){
+                exp_date = "";
+            }else{
+                exp_date = value.exp_date;
+            }
+
+            if(value.batch_no == null || ""){
+                batch_no = "";
+            }else{
+                batch_no = value.batch_no;
+            }            
+
             $('#tbl_items > tbody').prepend(newRowItem({
                 adjust_qty : value.dr_qty,
                 product_code : value.product_code,
@@ -1518,8 +1556,8 @@ $(document).ready(function(){
                 readonlyAttr : readonlyAttr,
                 hideAttr : hideAttr,
                 dateAttr : dateAttr,
-                exp_date : value.exp_date,
-                batch_no : value.batch_no,
+                exp_date : exp_date,
+                batch_no : batch_no,
                 cost_upon_invoice : value.cost_upon_invoice        
             }));
             changetxn = 'inactive';
@@ -1633,6 +1671,18 @@ $(document).ready(function(){
                             hideAttr = "";
                         }
 
+                        if(value.exp_date == null || ""){
+                            exp_date = "";
+                        }else{
+                            exp_date = value.exp_date;
+                        }
+
+                        if(value.batch_no == null || ""){
+                            batch_no = "";
+                        }else{
+                            batch_no = value.batch_no;
+                        }            
+
                         $('#tbl_items > tbody').prepend(newRowItem({
                             adjust_qty : value.adjust_qty,
                             product_code : value.product_code,
@@ -1661,8 +1711,8 @@ $(document).ready(function(){
                             readonlyAttr : readonlyAttr,
                             hideAttr : hideAttr,
                             dateAttr : dateAttr,
-                            exp_date : value.exp_date,
-                            batch_no : value.batch_no,
+                            exp_date : exp_date,
+                            batch_no : batch_no,
                             cost_upon_invoice : value.cost_upon_invoice                          
                         }));
                         changetxn = 'inactive';
@@ -1882,11 +1932,15 @@ $(document).ready(function(){
                     }else{
                         $('#tbl_search_list > tbody').html('');
                         $.each(rows,function(i,value){
+
+                            batch_no = value.batch_no == null ? "" : value.batch_no;
+                            exp_date = value.exp_date == null ? "" : value.exp_date;
+
                             $('#tbl_search_list > tbody').append('<tr class="row-item">'+
                             '<td >'+value.product_code+'</td>'+
                             '<td >'+value.product_desc+'</td>'+
-                            '<td >'+value.batch_no+'</td>'+
-                            '<td >'+value.exp_date+'</td>'+
+                            '<td >'+batch_no+'</td>'+
+                            '<td >'+exp_date+'</td>'+
                             '<td align="right">'+value.on_hand_per_batch+'</td>'+
                             '<td align="right">'+value.srp+'</td>'+
                             '<td align="right">'+value.srp_cost+'</td>'+

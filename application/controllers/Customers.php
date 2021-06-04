@@ -53,7 +53,7 @@ class Customers extends CORE_Controller {
             case 'list':
                 $m_customers=$this->Customers_model;
 
-                $response['data']=$m_customers->get_list('is_active=TRUE AND is_deleted=FALSE');
+                $response['data']=$this->response_rows(array('customers.is_deleted'=>FALSE,'customers.is_active'=>TRUE));
 
                 echo json_encode($response);
 
@@ -347,19 +347,20 @@ class Customers extends CORE_Controller {
                 $m_company_info=$this->Company_model;
                 $company_info=$m_company_info->get_list();
                 $data['company_info']=$company_info[0];
-                $data['customers']=$this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
+                $data['customers']=$this->response_rows(array('customers.is_deleted'=>FALSE,'customers.is_active'=>TRUE));
                     $this->load->view('template/customer_masterfile_content',$data);
 
             break;
 
-            case 'export-supplier':
+            case 'export-customer':
 
                 $excel = $this->excel;
 
                 $m_company_info=$this->Company_model;
                 $company_info=$m_company_info->get_list();
                 $data['company_info']=$company_info[0];
-                $customers=$this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
+                $customers=$this->response_rows(array('customers.is_deleted'=>FALSE,'customers.is_active'=>TRUE));
+
                 $excel->setActiveSheetIndex(0);
 
                 $excel->getActiveSheet()->getColumnDimensionByColumn('A1:B1')->setWidth('30');
@@ -422,6 +423,8 @@ class Customers extends CORE_Controller {
                                         ->getStyle('E9')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('F9','TIN')
                                         ->getStyle('F9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('G9','Department')
+                                        ->getStyle('G9')->getFont()->setBold(TRUE);
 
                 $i=10;
 
@@ -435,7 +438,8 @@ class Customers extends CORE_Controller {
                                         ->setCellValue('C'.$i,$customer->contact_no)
                                         ->setCellValue('D'.$i,$customer->address)
                                         ->setCellValue('E'.$i,$customer->email_address)
-                                        ->setCellValue('F'.$i,$customer->tin_no);
+                                        ->setCellValue('F'.$i,$customer->tin_no)
+                                        ->setCellValue('G'.$i,$customer->department_name);
                 $i++;
 
                 }

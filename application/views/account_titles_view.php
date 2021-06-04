@@ -199,7 +199,7 @@
                                             </div>
                                         </div>
                                         <br/>
-                                        <div class="form-group hidden">
+                                        <div class="form-group">
                                             <div class="col-md-1"></div>
                                             <div class="col-md-10">
                                                 <h4><i class="fa fa-cog"></i> Product Settings <small>Account Linking</small></h4>
@@ -208,7 +208,7 @@
                                             <div class="col-md-1">
                                             </div>
                                         </div>                                        
-                                        <div class="form-group hidden">
+                                        <div class="form-group">
                                             <label class="col-md-2 control-label"><strong>Category :</strong></label>
                                             <div class="col-md-9">
                                                 <select name="category_id" id="cbo_category_id">
@@ -221,7 +221,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="form-group hidden">
+                                        <div class="form-group">
                                             <label class="col-md-2 control-label"><strong>Category Type:</strong></label>
                                             <div class="col-md-9">
                                                 <select name="category_type_id" id="cbo_category_type_id">

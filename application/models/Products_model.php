@@ -1921,7 +1921,7 @@ Product Pick List
 
 */
     
-    function products_for_sales($criteria=""){
+    function products_for_sales($criteria="",$status=1){
         
         $sql="SELECT rc.*,p.*,u.unit_name as product_unit_name,
 
@@ -1975,13 +1975,36 @@ Product Pick List
                                 UNION ALL
 
 
-                                SELECT aii.product_id,aii.batch_no,aii.exp_date,
+                                SELECT aii.product_id,
+                                aii.batch_no,
+                                aii.exp_date,
                                 CONCAT_WS('-',aii.batch_no,aii.product_id,aii.exp_date)as unq_id,
-                                aii.adjust_qty as receive_qty,aii.adjust_price as product_item_cost,ai.date_created
+                                aii.adjust_qty as receive_qty,
+                                aii.adjust_price as product_item_cost,
+                                ai.date_created
                                 FROM adjustment_items as aii
                                 INNER JOIN adjustment_info as ai
                                 ON aii.adjustment_id=ai.adjustment_id
                                 WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+
+                                ".($status==1?"
+
+                                UNION ALL
+
+                                /* Services */
+                                SELECT
+                                    p.product_id,
+                                    null as batch_no,
+                                    null as exp_date,
+                                    CONCAT_WS('-',null,p.product_id,null)as unq_id,
+                                    1 as receive_qty,
+                                    0 as product_item_cost,
+                                    '' as date_created
+                                FROM products p 
+                                WHERE p.is_deleted = FALSE AND p.is_active = TRUE AND p.item_type_id = 3
+
+
+                                ":"")."    
 
                             )as dii ORDER BY dii.date_created DESC
 
@@ -2005,7 +2028,8 @@ Product Pick List
                     SUM(sii.inv_qty) as out_qty
                     FROM sales_invoice_items as sii
                     INNER JOIN sales_invoice as si ON sii.sales_invoice_id=si.sales_invoice_id
-                    WHERE si.is_active=TRUE AND si.is_deleted=FALSE
+                    LEFT JOIN products p ON p.product_id = sii.product_id
+                    WHERE si.is_active=TRUE AND si.is_deleted=FALSE AND p.item_type_id != 3
                     GROUP BY sii.product_id,sii.batch_no,sii.exp_date) as sinv
 
                     ON rc.unq_id=sinv.unq_id
@@ -2017,7 +2041,8 @@ Product Pick List
                     SUM(cii.inv_qty) as out_qty
                     FROM cash_invoice_items as cii
                     INNER JOIN cash_invoice as ci ON cii.cash_invoice_id=ci.cash_invoice_id
-                    WHERE ci.is_active=TRUE AND ci.is_deleted=FALSE
+                    LEFT JOIN products p ON p.product_id = cii.product_id
+                    WHERE ci.is_active=TRUE AND ci.is_deleted=FALSE AND p.item_type_id != 3
                     GROUP BY cii.product_id,cii.batch_no,cii.exp_date) as cinv
 
                     ON rc.unq_id=cinv.unq_id

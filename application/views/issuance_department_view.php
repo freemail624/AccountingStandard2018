@@ -672,6 +672,8 @@ dt_si = $('#tbl_si_list').DataTable({
             }
         }).bind('typeahead:select', function(ev, suggestion) {
             //console.log(suggestion);
+                _objTypeHead.typeahead('close');           //     -- changed due to barcode scan not working
+                _objTypeHead.typeahead('val','');         //  -- changed due to barcode scan not working
 
             // if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
             //     showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
@@ -739,14 +741,21 @@ dt_si = $('#tbl_si_list').DataTable({
 
             suggis_parent = suggestion.is_parent;
 
-            var qty = 1;
-            if (suggestion.is_product_basyo == 1){
-                qty = TotalBasyo();
+            if(suggestion.exp_date == null || ""){
+                exp_date = "";
+            }else{
+                exp_date = suggestion.exp_date;
             }
+
+            if(suggestion.batch_no == null || ""){
+                batch_no = "";
+            }else{
+                batch_no = suggestion.batch_no;
+            }           
 
             changetxn ='active';
             $('#tbl_items > tbody').append(newRowItem({
-                issue_qty : qty,
+                issue_qty : 1,
                 product_code : suggestion.product_code,
                 product_id: suggestion.product_id,
                 product_desc : suggestion.product_desc,
@@ -771,8 +780,8 @@ dt_si = $('#tbl_si_list').DataTable({
                 a:a,
                 is_basyo:suggestion.is_basyo,
                 is_product_basyo:suggestion.is_product_basyo,
-                exp_date : suggestion.exp_date,
-                batch_no : suggestion.batch_no,
+                exp_date : exp_date,
+                batch_no : batch_no,
                 cost_upon_invoice : suggestion.srp_cost
             }));
             _line_unit=$('.line_unit'+a).select2({
@@ -1094,10 +1103,6 @@ dt_si = $('#tbl_si_list').DataTable({
             $(oTableItems.total_line_discount,row).find('input.numeric').val(accounting.formatNumber(line_total_discount,2)); //line total discount
             $(oTableItems.net_vat,row).find('input.numeric').val(accounting.formatNumber(net_vat,2)); //net of vat
             $(oTableItems.vat_input,row).find('input.numeric').val(accounting.formatNumber(vat_input,2)); //vat input
-            //console.log(net_vat);
-            if(accounting.unformat(row.find('.is_basyo').val()) == 1){
-                reComputeTotalBasyo();
-            }
 
             reComputeTotal();
         });
@@ -1208,7 +1213,6 @@ dt_si = $('#tbl_si_list').DataTable({
         });
         $('#tbl_items > tbody').on('click','button[name="remove_item"]',function(){
             $(this).closest('tr').remove();
-            reComputeTotalBasyo();
             reComputeTotal();
         });
 
@@ -1242,11 +1246,15 @@ dt_si = $('#tbl_si_list').DataTable({
                     }else{
                         $('#tbl_search_list > tbody').html('');
                         $.each(rows,function(i,value){
+
+                            batch_no = value.batch_no == null ? "" : value.batch_no;
+                            exp_date = value.exp_date == null ? "" : value.exp_date;
+
                             $('#tbl_search_list > tbody').append('<tr class="row-item">'+
                             '<td >'+value.product_code+'</td>'+
                             '<td >'+value.product_desc+'</td>'+
-                            '<td >'+value.batch_no+'</td>'+
-                            '<td >'+value.exp_date+'</td>'+
+                            '<td >'+batch_no+'</td>'+
+                            '<td >'+exp_date+'</td>'+
                             '<td align="right">'+value.on_hand_per_batch+'</td>'+
                             '<td align="right">'+value.srp+'</td>'+
                             '<td align="right">'+value.srp_cost+'</td>'+
@@ -1496,35 +1504,6 @@ dt_si = $('#tbl_si_list').DataTable({
                
     };
 
-    var TotalBasyo=function(){
-        var rows=$('#tbl_items > tbody tr');
-        var total_basyo = 0;
-        var qty = 0;
-
-        $.each(rows,function(){
-            var is_basyo = $(this).find('.is_basyo').val();
-            if(is_basyo == 1){
-                qty=parseFloat(accounting.unformat($(oTableItems.qty,$(this)).find('input.numeric').val()));
-                total_basyo += qty;
-            }
-        });
-
-        return accounting.formatNumber(total_basyo,2);
-    };
-
-    var reComputeTotalBasyo=function(){
-        var total_basyo = TotalBasyo();
-
-        var basyo_rows=$('#tbl_items > tbody tr');
-        $.each(basyo_rows,function(){
-            var is_product_basyo = $(this).find('.is_product_basyo').val();
-            if(is_product_basyo == 1){
-                $(this).find('.qty').val(total_basyo);
-                $(this).find('.qty').trigger('keyup');
-            }
-        });
-    };
-
     var reInitializeNumeric=function(){
         $('.numeric').autoNumeric('init');
     };
@@ -1533,7 +1512,7 @@ dt_si = $('#tbl_si_list').DataTable({
        return $.ajax({
            "dataType":"json",
            "type":"POST",
-           "url":"products/transaction/current-items",
+           "url":"products/transaction/current-items-1",
            "beforeSend": function(){
                 countproducts = products.local.length;
                 if(countproducts > 100){

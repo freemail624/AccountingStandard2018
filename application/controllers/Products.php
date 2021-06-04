@@ -81,7 +81,7 @@ class Products extends CORE_Controller
 
             case 'parent-list':
                 $m_products = $this->Products_model;
-                $response['data']=$m_products->product_list(1,null,null,null,null,null,null,null,1,null,null,1);
+                $response['data']=$m_products->product_list(1,null,null,null,null,1,null,null,1,null,null,1);
                 echo json_encode($response);
                 break;
 
@@ -105,17 +105,24 @@ class Products extends CORE_Controller
                 echo json_encode($response);
                 break;
 
+            case 'current-items-1':
+                $m_products = $this->Products_model;
+                $status = 0;
+                $response['data']=$m_products->products_for_sales(null,$status);
+                echo json_encode($response);
+                break;                
+
             case 'current-items-for-adjustment':
                 $m_products = $this->Products_model;
                 $type = $filter_value;
 
                 // IN
                 if($type == 1){ 
-                    $response['data']=$m_products->product_list(1,null,null,null,null,null,null,null,1,null,null,1);
+                    $response['data']=$m_products->product_list(1,null,null,null,null,1,null,null,1,null,null,1);
                 }
                 // OUT
                 else{
-                    $response['data']=$m_products->products_for_sales();
+                    $response['data']=$m_products->products_for_sales(null,0);
                 }
 
                 echo json_encode($response);

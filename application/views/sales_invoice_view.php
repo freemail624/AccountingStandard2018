@@ -1162,11 +1162,13 @@ $(document).ready(function(){
             if (event.keyCode == 13) {
              
                 // $('.tt-suggestion:first').click();
-    _objTypeHead.typeahead('close');           //     -- changed due to barcode scan not working
-    _objTypeHead.typeahead('val','');         //  -- changed due to barcode scan not working
+                _objTypeHead.typeahead('close');           //     -- changed due to barcode scan not working
+                _objTypeHead.typeahead('val','');         //  -- changed due to barcode scan not working
             }
         }).bind('typeahead:select', function(ev, suggestion) {
 
+                _objTypeHead.typeahead('close');           //     -- changed due to barcode scan not working
+                _objTypeHead.typeahead('val','');         //  -- changed due to barcode scan not working
 
             // if(!(checkProduct(suggestion.product_id))){ // Checks if item is already existing in the Table of Items for invoice
             //     showNotification({title: suggestion.product_desc,stat:"error",msg: "Item is Already Added."});
@@ -1259,14 +1261,22 @@ $(document).ready(function(){
                 //     net_vat = getFloat(net_vat) / getFloat(suggestion.child_unit_desc);
                 //     vat_input = getFloat(vat_input) / getFloat(suggestion.child_unit_desc);
                 // }
-            var qty = 1;
-            if (suggestion.is_product_basyo == 1){
-                qty = TotalBasyo();
+
+            if(suggestion.exp_date == null || ""){
+                exp_date = "";
+            }else{
+                exp_date = suggestion.exp_date;
             }
+
+            if(suggestion.batch_no == null || ""){
+                batch_no = "";
+            }else{
+                batch_no = suggestion.batch_no;
+            }            
 
             changetxn = 'active';
             $('#tbl_items > tbody').append(newRowItem({
-                inv_qty : qty,
+                inv_qty : 1,
                 inv_gross : temp_inv_price,
                 product_code : suggestion.product_code,
                 product_id: suggestion.product_id,
@@ -1293,8 +1303,8 @@ $(document).ready(function(){
                 primary_unit:suggestion.primary_unit,
                 is_basyo:suggestion.is_basyo,
                 is_product_basyo:suggestion.is_product_basyo,
-                exp_date : suggestion.exp_date,
-                batch_no : suggestion.batch_no,
+                exp_date : exp_date,
+                batch_no : batch_no,
                 cost_upon_invoice : suggestion.srp_cost
 
             }));
@@ -1765,7 +1775,7 @@ $(document).ready(function(){
                         }else if (value.is_bulk== 0){
                             retail_price = 0;
                         }
-                        
+                    
                         $('#tbl_items > tbody').append(newRowItem({
                             inv_gross : value.inv_gross,
                             inv_qty : value.so_qty, 
@@ -1905,6 +1915,18 @@ $(document).ready(function(){
                                 retail_price = 0;
                             }
 
+                        if(value.exp_date == null || ""){
+                            exp_date = "";
+                        }else{
+                            exp_date = value.exp_date;
+                        }
+
+                        if(value.batch_no == null || ""){
+                            batch_no = "";
+                        }else{
+                            batch_no = value.batch_no;
+                        }            
+
                         $('#tbl_items > tbody').append(newRowItem({
                             inv_qty : value.inv_qty,
                             product_code : value.product_code,
@@ -1934,8 +1956,8 @@ $(document).ready(function(){
                             a:a,
                             is_basyo:value.is_basyo,
                             is_product_basyo:value.is_product_basyo,
-                            exp_date : value.exp_date,
-                            batch_no : value.batch_no,
+                            exp_date : exp_date,
+                            batch_no : batch_no,
                             cost_upon_invoice : value.cost_upon_invoice
 
                         }));
@@ -2057,11 +2079,6 @@ $(document).ready(function(){
             $(oTableItems.vat_input,row).find('input.numeric').val(vat_input); //vat input
             $(oTableItems.total_after_global,row).find('input.numeric').val(accounting.formatNumber(total_after_global,2));
             //console.log(net_vat);
-
-            if(accounting.unformat(row.find('.is_basyo').val()) == 1){
-                reComputeTotalBasyo();
-            }
-
             reComputeTotal();
         });
 
@@ -2170,7 +2187,6 @@ $(document).ready(function(){
             });*/
         $('#tbl_items > tbody').on('click','button[name="remove_item"]',function(){
             $(this).closest('tr').remove();
-            reComputeTotalBasyo();
             reComputeTotal();
         });
 
@@ -2204,11 +2220,15 @@ $(document).ready(function(){
                     }else{
                         $('#tbl_search_list > tbody').html('');
                         $.each(rows,function(i,value){
+
+                            batch_no = value.batch_no == null ? "" : value.batch_no;
+                            exp_date = value.exp_date == null ? "" : value.exp_date;
+
                             $('#tbl_search_list > tbody').append('<tr class="row-item">'+
                             '<td >'+value.product_code+'</td>'+
                             '<td >'+value.product_desc+'</td>'+
-                            '<td >'+value.batch_no+'</td>'+
-                            '<td >'+value.exp_date+'</td>'+
+                            '<td >'+batch_no +'</td>'+
+                            '<td >'+exp_date +'</td>'+
                             '<td align="right">'+value.on_hand_per_batch+'</td>'+
                             '<td align="right">'+value.srp+'</td>'+
                             '<td align="right">'+value.srp_cost+'</td>'+
@@ -2546,35 +2566,6 @@ $(document).ready(function(){
         $('#td_total_after_discount').html(accounting.formatNumber(after_tax - (after_tax * ($('#txt_overall_discount').val() / 100)),2));
         $('#td_tax').html(accounting.formatNumber(inv_tax_amount,2));
         $('#td_discount').html(accounting.formatNumber(discounts,2)); // unknown - must be referring to table summary but not on id given
-    };
-
-    var TotalBasyo=function(){
-        var rows=$('#tbl_items > tbody tr');
-        var total_basyo = 0;
-        var qty = 0;
-
-        $.each(rows,function(){
-            var is_basyo = $(this).find('.is_basyo').val();
-            if(is_basyo == 1){
-                qty=parseFloat(accounting.unformat($(oTableItems.qty,$(this)).find('input.numeric').val()));
-                total_basyo += qty;
-            }
-        });
-
-        return accounting.formatNumber(total_basyo,2);
-    };
-
-    var reComputeTotalBasyo=function(){
-        var total_basyo = TotalBasyo();
-
-        var basyo_rows=$('#tbl_items > tbody tr');
-        $.each(basyo_rows,function(){
-            var is_product_basyo = $(this).find('.is_product_basyo').val();
-            if(is_product_basyo == 1){
-                $(this).find('.qty').val(total_basyo);
-                $(this).find('.qty').trigger('keyup');
-            }
-        });
     };
 
     var resetSummary=function(){
