@@ -186,8 +186,20 @@
             </td>
         </tr>                
     </table>
-    <br/><br/><br/><br/>
-    <?php include 'po_report_footer.php'; ?>   
+    <br/>
+
+    <table cellpadding="6" style="width: 100%">
+        <tr>
+            <td class="border" valign="top" style="min-height: 80px;height: 80px;">
+                Remarks: <br/>
+                <?php echo $info->remarks ?>
+            </td>
+        </tr>
+    </table> <br />
+
+    <br/><br/><br/>
+
+    <?php include 'sales_report_footer.php'; ?>   
 </div>
 
 

@@ -176,11 +176,21 @@
                 <?php echo number_format($sales_info->total_after_discount,2); ?>
             </td>
         </tr>
-    </table>
+    </table>   
+    <br/>
 
-    <br/><br/><br/><br/>
+    <table cellpadding="6" style="width: 100%">
+        <tr>
+            <td class="border" valign="top" style="min-height: 80px;height: 80px;">
+                Remarks: <br/>
+                <?php echo $sales_info->remarks ?>
+            </td>
+        </tr>
+    </table> <br />
 
-    <?php include 'po_report_footer.php'; ?>   
+    <br/><br/><br/>
+
+    <?php include 'sales_report_footer.php'; ?>   
 </div>
 
 
