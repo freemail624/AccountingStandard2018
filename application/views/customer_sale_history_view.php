@@ -160,30 +160,38 @@
                             </select>
 
                         </div>
-                    <div class="col-lg-3">
-                            Search :<br />
-                             <input type="text" id="searchbox_sales_history" class="form-control">
-                    </div>
+                        <div class="col-lg-3">
+                                Search :<br />
+                                 <input type="text" id="searchbox_sales_history" class="form-control">
+                        </div>
                 </div>
                 <br>
-            <table id="tbl_sales_invoice" class="table table-striped" cellspacing="0" width="100%" style="">
-                <thead >
-                <tr>
-                    <th></th>
-                    <th width="25%">Product</th>
-                    <th>Price</th>
-                    <th>Qty</th>
-                    <th>Unit</th>
-                    <th>Gross</th>
-                    <th>Invoice #</th>
-                    <th width="10%">Invoice Date</th>
-                    <th width="20%">Remarks</th>
-                </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <button class="btn btn-primary pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " title="Print" ><i class="fa fa-print"></i> Print Report
+                        </button>
+                        <button class="btn btn-success pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_excel" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " title="Export to Excel" ><i class="fa fa-file-excel-o"></i> Excel Report
+                        </button>
+                        <button class="btn btn-success pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_email" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " title="Export to Excel" ><span class=""></span> <i class="fa fa-file-excel-o"></i> Email Report
+                        </button>
+                    </div>
+                </div>
+                <table id="tbl_sales_invoice" class="table table-striped" cellspacing="0" width="100%" style="">
+                    <thead >
+                    <tr>
+                        <th width="10%">Invoice Date</th>
+                        <th>Receipt No</th>
+                        <th>Qty</th>
+                        <th width="25%">Product Description</th>
+                        <th>Price</th>
+                        <th>Gross</th>
+                        <th width="20%">Remarks</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
         </div>
         <!-- <div class="panel-footer"></div> -->
     </div>
@@ -242,7 +250,7 @@ $(document).ready(function(){
             "dom": '<"toolbar">frtip',
             "pageLength": 50,
             "bLengthChange":false,
-                "order": [[ 6, "desc" ]],
+                "order": [[ 0, "desc" ]],
             "ajax" : {
                 "url" : "Customer_sale_history/transaction/list",
                 "bDestroy": true,            
@@ -250,27 +258,27 @@ $(document).ready(function(){
                         return $.extend( {}, d, {
                             "id":$('#cbo_customers').val(),
                             "pid":$('#product_id').val()
-
-
                         });
                     }
             }, 
             "columns": [
-                { visible:false,
-                    "targets": [0],
-                    "class":          "details-control",
-                    "orderable":      false,
-                    "data":           null,
-                    "defaultContent": ""
+                { targets:[0],data: "date_invoice" },
+                { targets:[1],data: "receipt_no" },
+                { sClass:"right_align", targets:[2],data: "inv_qty", 
+                    render: $.fn.dataTable.render.number( ',', '.', 2)
                 },
-                { targets:[1],data: "product_desc" ,render: $.fn.dataTable.render.ellipsis(100)},
-                {sClass:"right_align", targets:[2],data: "inv_price" , render: $.fn.dataTable.render.number( ',', '.', 2)},
-                {sClass:"right_align", targets:[3],data: "inv_qty" , render: $.fn.dataTable.render.number( ',', '.', 2)},
-                { targets:[4],data: "unit_name" },
-                {sClass:"right_align", targets:[5],data: "inv_gross" , render: $.fn.dataTable.render.number( ',', '.', 2)},
-                { targets:[6],data: "inv_no" },
-                { targets:[7],data: "date_invoice" },
-                { targets:[8],data: "remarks"  ,render: $.fn.dataTable.render.ellipsis(80)},
+                { targets:[3],data: "product_desc",
+                    render: $.fn.dataTable.render.ellipsis(100)
+                },
+                { sClass:"right_align", targets:[4],data: "inv_price",
+                    render: $.fn.dataTable.render.number( ',', '.', 2)
+                },
+                { sClass:"right_align", targets:[5],data: "inv_gross",
+                    render: $.fn.dataTable.render.number( ',', '.', 2)
+                },
+                { targets:[6],data: "remarks",
+                    render: $.fn.dataTable.render.ellipsis(35)
+                }
             ]
         });
         _cboCustomers=$("#cbo_customers").select2({
@@ -357,8 +365,47 @@ $(document).ready(function(){
         _cboProducts.on("select2:select", function (e) {
             $('#tbl_sales_invoice').DataTable().ajax.reload()
         });
+
+        $('#btn_print').click(function(){
+            window.open('Customer_sale_history/transaction/print?product_id='+$('#product_id').val()+'&customer_id='+$('#cbo_customers').val());
+        });
+
+        $('#btn_excel').click(function(){
+            window.open('Customer_sale_history/transaction/excel?product_id='+$('#product_id').val()+'&customer_id='+$('#cbo_customers').val());
+        });
+
+        $('#btn_email').on('click', function() {
+            showNotification({title:"Sending!",stat:"info",msg:"Please wait for a few seconds."});
+            var btn=$(this);
+        
+            $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":'Customer_sale_history/transaction/email?product_id='+$('#product_id').val()+'&customer_id='+$('#cbo_customers').val(),
+                "beforeSend": showSpinningProgress(btn)
+            }).done(function(response){
+                showNotification(response);
+                showSpinningProgress(btn);
+
+            });
+        });
+
     })();
-  
+
+    var showNotification=function(obj){
+        PNotify.removeAll();
+        new PNotify({
+            title:  obj.title,
+            text:  obj.msg,
+            type:  obj.stat
+        });
+    };
+
+    var showSpinningProgress=function(e){
+        $(e).find('span').toggleClass('glyphicon glyphicon-refresh spinning');
+        $(e).toggleClass('disabled');
+    };
+
 });
 </script>
 </body>

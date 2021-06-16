@@ -55,8 +55,8 @@
 <body>
 	<table width="100%">
         <tr>
-            <td width="10%" style="object-fit: cover;"><img src="<?php echo base_url().$company_info->logo_path; ?>" style="height: 90px; width: 90px; text-align: left;"></td>
-            <td width="90%" class="">
+<!--             <td width="10%" style="object-fit: cover;"><img src="<?php //echo base_url().$company_info->logo_path; ?>" style="height: 90px; width: 90px; text-align: left;"></td> -->
+            <td width="100%" class="">
                 <span style="font-size: 20px;" class="report-header"><strong><?php echo $company_info->company_name; ?></strong></span><br>
                 <span><?php echo $company_info->company_address; ?></span><br>
                 <span><?php echo $company_info->landline.'/'.$company_info->mobile_no; ?></span><br>

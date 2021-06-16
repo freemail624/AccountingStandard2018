@@ -39,8 +39,8 @@
 <body>
     <table width="100%">
         <tr class="row_child_tbl_sales_order">
-            <td width="10%"><img src="<?php echo base_url().$company_info->logo_path; ?>" style="height: 100px; width: 100px; text-align: left;"></td>
-            <td width="90%" class="">
+<!--             <td width="10%"><img src="<?php //echo base_url().$company_info->logo_path; ?>" style="height: 100px; width: 100px; text-align: left;"></td> -->
+            <td width="100%" class="">
                 <span  style="font-size: 22px;"><strong><?php echo $company_info->company_name; ?></strong></span><br>
                 <span><?php echo $company_info->company_address; ?></span><br>
                 <span><?php echo $company_info->landline.'/'.$company_info->mobile_no; ?></span><br>

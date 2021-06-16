@@ -141,14 +141,13 @@ class Product_list_report extends CORE_Controller
 
                 $excel->getActiveSheet()->getStyle('A')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
                 $excel->getActiveSheet()->getStyle('B')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-
                 $excel->getActiveSheet()->getStyle('C')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
                 $excel->getActiveSheet()->getStyle('D')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
                 $excel->getActiveSheet()->getStyle('E')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
                 $excel->getActiveSheet()->getStyle('F')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
                 $excel->getActiveSheet()->getStyle('G')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                $excel->getActiveSheet()->getStyle('H')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                $excel->getActiveSheet()->getStyle('I')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                $excel->getActiveSheet()->getStyle('H')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+                $excel->getActiveSheet()->getStyle('I')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
                 $excel->getActiveSheet()->getStyle('J')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                 $excel->getActiveSheet()->getStyle('K')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                 $excel->getActiveSheet()->getStyle('L')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
@@ -156,6 +155,8 @@ class Product_list_report extends CORE_Controller
                 $excel->getActiveSheet()->getStyle('N')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                 $excel->getActiveSheet()->getStyle('O')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                 $excel->getActiveSheet()->getStyle('P')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                $excel->getActiveSheet()->getStyle('Q')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                $excel->getActiveSheet()->getStyle('R')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
                 $excel->getActiveSheet()->getColumnDimension('A')->setWidth(25);
                 $excel->getActiveSheet()->getColumnDimension('B')->setWidth(30);
@@ -168,12 +169,13 @@ class Product_list_report extends CORE_Controller
                 $excel->getActiveSheet()->getColumnDimension('I')->setWidth(25);
                 $excel->getActiveSheet()->getColumnDimension('J')->setWidth(25);
                 $excel->getActiveSheet()->getColumnDimension('K')->setWidth(25);
-
                 $excel->getActiveSheet()->getColumnDimension('L')->setWidth(25);
                 $excel->getActiveSheet()->getColumnDimension('M')->setWidth(25);
                 $excel->getActiveSheet()->getColumnDimension('N')->setWidth(25);
                 $excel->getActiveSheet()->getColumnDimension('O')->setWidth(25);
                 $excel->getActiveSheet()->getColumnDimension('P')->setWidth(25);
+                $excel->getActiveSheet()->getColumnDimension('Q')->setWidth(25);
+                $excel->getActiveSheet()->getColumnDimension('R')->setWidth(25);
 
                 $excel->getActiveSheet()->setTitle('Product List Report');
 
@@ -182,44 +184,30 @@ class Product_list_report extends CORE_Controller
                                         ->setCellValue('A3',$company_info[0]->email_address)
                                         ->setCellValue('A4',$company_info[0]->mobile_no);
 
-                $excel->getActiveSheet()->getStyle('A8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('B8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('C8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('D8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('E8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('F8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('G8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('H8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('I8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('J8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('K8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('L8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('M8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('N8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('O8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('P8')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('A8:R8')->getFont()->setBold(TRUE);
 
-            $excel->getActiveSheet()->setCellValue('A6','PRODUCT LIST REPORT')
-            ->setCellValue('C6','Supplier: '.$supplier_name)
-            ->setCellValue('D6','Category: '.$category_name)
-            ->setCellValue('E6','Inventory Type: '.$item_type)
-
-                ->setCellValue('A8','PLU')
-                ->setCellValue('B8','Product Description')
-                ->setCellValue('C8','Other Description')
-                ->setCellValue('D8','Category')
-                ->setCellValue('E8','Supplier')
-                ->setCellValue('F8','Unit')
-                ->setCellValue('G8','Item Type')
-                ->setCellValue('H8','Tax Type')
-                ->setCellValue('I8','Purchase Cost')
-                ->setCellValue('J8','Sale Price')
-                ->setCellValue('K8','Warning QTY')
-                ->setCellValue('L8','Ideal Qty')
-                ->setCellValue('M8','Discounted Price')
-                ->setCellValue('N8','Dealer Price')         
-                ->setCellValue('O8','Distributor Price')
-                ->setCellValue('P8','Public Price');
+                $excel->getActiveSheet()->setCellValue('A6','PRODUCT LIST REPORT')
+                                        ->setCellValue('C6','Supplier: '.$supplier_name)
+                                        ->setCellValue('D6','Category: '.$category_name)
+                                        ->setCellValue('E6','Inventory Type: '.$item_type)
+                                        ->setCellValue('A8','PLU')
+                                        ->setCellValue('B8','Product Description')
+                                        ->setCellValue('C8','Other Description')
+                                        ->setCellValue('D8','Category')
+                                        ->setCellValue('E8','Supplier')
+                                        ->setCellValue('F8','Unit')
+                                        ->setCellValue('G8','Size')
+                                        ->setCellValue('H8','Model')
+                                        ->setCellValue('I8','Item Type')
+                                        ->setCellValue('J8','Tax Type')
+                                        ->setCellValue('K8','Purchase Cost')
+                                        ->setCellValue('L8','Sale Price')
+                                        ->setCellValue('M8','Warning QTY')
+                                        ->setCellValue('N8','Ideal Qty')
+                                        ->setCellValue('O8','Discounted Price')
+                                        ->setCellValue('P8','Dealer Price')         
+                                        ->setCellValue('Q8','Distributor Price')
+                                        ->setCellValue('R8','Public Price');
 
 
                 $i = 9;
@@ -232,25 +220,27 @@ class Product_list_report extends CORE_Controller
                                 ->setCellValue('D'.$i, $data->category_name)
                                 ->setCellValue('E'.$i, $data->supplier_name)
                                 ->setCellValue('F'.$i,$data->product_unit_name)
-                                ->setCellValue('G'.$i,$data->item_type)
-                                ->setCellValue('H'.$i,$data->tax_rate)
-                                ->setCellValue('I'.$i,number_format($data->purchase_cost,2))
-                                ->setCellValue('J'.$i,number_format($data->sale_price,2))
-                                ->setCellValue('K'.$i,number_format($data->product_warn,2))
-                                ->setCellValue('L'.$i, number_format($data->product_ideal,2))
-                                ->setCellValue('M'.$i,number_format($data->discounted_price,2))
-                                ->setCellValue('N'.$i,number_format($data->dealer_price,2))
-                                ->setCellValue('O'.$i,number_format($data->distributor_price,2))
-                                ->setCellValue('P'.$i,number_format($data->public_price,2));
+                                ->setCellValue('G'.$i,$data->size_desc)
+                                ->setCellValue('H'.$i,$data->model_name)
+                                ->setCellValue('I'.$i,$data->item_type)
+                                ->setCellValue('J'.$i,$data->tax_rate)
+                                ->setCellValue('K'.$i,number_format($data->purchase_cost,2))
+                                ->setCellValue('L'.$i,number_format($data->sale_price,2))
+                                ->setCellValue('M'.$i,number_format($data->product_warn,2))
+                                ->setCellValue('N'.$i, number_format($data->product_ideal,2))
+                                ->setCellValue('O'.$i,number_format($data->discounted_price,2))
+                                ->setCellValue('P'.$i,number_format($data->dealer_price,2))
+                                ->setCellValue('Q'.$i,number_format($data->distributor_price,2))
+                                ->setCellValue('R'.$i,number_format($data->public_price,2));
                 $i++;
 
                 }
 
                 $i++;
 
-            $excel->getActiveSheet()->setCellValue('A'.$i,'Exported By: '.$this->session->user_fullname);
-            $i++;
-            $excel->getActiveSheet()->setCellValue('A'.$i,'Date Exported: '.date("Y-m-d H:i:s"));
+                $excel->getActiveSheet()->setCellValue('A'.$i,'Exported By: '.$this->session->user_fullname);
+                $i++;
+                $excel->getActiveSheet()->setCellValue('A'.$i,'Date Exported: '.date("Y-m-d H:i:s"));
 
 
                 // Redirect output to a client’s web browser (Excel2007)
@@ -396,18 +386,17 @@ class Product_list_report extends CORE_Controller
               
                 $excel->setActiveSheetIndex(0);
                 // SET WIDTH
-                  ob_start();
+                ob_start();
               
-   $excel->getActiveSheet()->getStyle('A')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+                $excel->getActiveSheet()->getStyle('A')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
                 $excel->getActiveSheet()->getStyle('B')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-
                 $excel->getActiveSheet()->getStyle('C')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
                 $excel->getActiveSheet()->getStyle('D')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
                 $excel->getActiveSheet()->getStyle('E')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
                 $excel->getActiveSheet()->getStyle('F')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
                 $excel->getActiveSheet()->getStyle('G')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                $excel->getActiveSheet()->getStyle('H')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                $excel->getActiveSheet()->getStyle('I')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                $excel->getActiveSheet()->getStyle('H')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+                $excel->getActiveSheet()->getStyle('I')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
                 $excel->getActiveSheet()->getStyle('J')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                 $excel->getActiveSheet()->getStyle('K')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                 $excel->getActiveSheet()->getStyle('L')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
@@ -415,6 +404,8 @@ class Product_list_report extends CORE_Controller
                 $excel->getActiveSheet()->getStyle('N')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                 $excel->getActiveSheet()->getStyle('O')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                 $excel->getActiveSheet()->getStyle('P')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                $excel->getActiveSheet()->getStyle('Q')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                $excel->getActiveSheet()->getStyle('R')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
                 $excel->getActiveSheet()->getColumnDimension('A')->setWidth(25);
                 $excel->getActiveSheet()->getColumnDimension('B')->setWidth(30);
@@ -427,12 +418,13 @@ class Product_list_report extends CORE_Controller
                 $excel->getActiveSheet()->getColumnDimension('I')->setWidth(25);
                 $excel->getActiveSheet()->getColumnDimension('J')->setWidth(25);
                 $excel->getActiveSheet()->getColumnDimension('K')->setWidth(25);
-
                 $excel->getActiveSheet()->getColumnDimension('L')->setWidth(25);
                 $excel->getActiveSheet()->getColumnDimension('M')->setWidth(25);
                 $excel->getActiveSheet()->getColumnDimension('N')->setWidth(25);
                 $excel->getActiveSheet()->getColumnDimension('O')->setWidth(25);
                 $excel->getActiveSheet()->getColumnDimension('P')->setWidth(25);
+                $excel->getActiveSheet()->getColumnDimension('Q')->setWidth(25);
+                $excel->getActiveSheet()->getColumnDimension('R')->setWidth(25);
 
                 $excel->getActiveSheet()->setTitle('Product List Report');
 
@@ -441,44 +433,30 @@ class Product_list_report extends CORE_Controller
                                         ->setCellValue('A3',$company_info[0]->email_address)
                                         ->setCellValue('A4',$company_info[0]->mobile_no);
 
-                $excel->getActiveSheet()->getStyle('A8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('B8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('C8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('D8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('E8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('F8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('G8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('H8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('I8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('J8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('K8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('L8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('M8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('N8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('O8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('P8')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('A8:R8')->getFont()->setBold(TRUE);
 
-            $excel->getActiveSheet()->setCellValue('A6','PRODUCT LIST REPORT')
-            ->setCellValue('C6','Supplier: '.$supplier_name)
-            ->setCellValue('D6','Category: '.$category_name)
-            ->setCellValue('E6','Inventory Type: '.$item_type)
-
-                ->setCellValue('A8','PLU')
-                ->setCellValue('B8','Product Description')
-                ->setCellValue('C8','Other Description')
-                ->setCellValue('D8','Category')
-                ->setCellValue('E8','Supplier')
-                ->setCellValue('F8','Unit')
-                ->setCellValue('G8','Item Type')
-                ->setCellValue('H8','Tax Type')
-                ->setCellValue('I8','Purchase Cost')
-                ->setCellValue('J8','Sale Price')
-                ->setCellValue('K8','Warning QTY')
-                ->setCellValue('L8','Ideal Qty')
-                ->setCellValue('M8','Discounted Price')
-                ->setCellValue('N8','Dealer Price')         
-                ->setCellValue('O8','Distributor Price')
-                ->setCellValue('P8','Public Price');
+                $excel->getActiveSheet()->setCellValue('A6','PRODUCT LIST REPORT')
+                                        ->setCellValue('C6','Supplier: '.$supplier_name)
+                                        ->setCellValue('D6','Category: '.$category_name)
+                                        ->setCellValue('E6','Inventory Type: '.$item_type)
+                                        ->setCellValue('A8','PLU')
+                                        ->setCellValue('B8','Product Description')
+                                        ->setCellValue('C8','Other Description')
+                                        ->setCellValue('D8','Category')
+                                        ->setCellValue('E8','Supplier')
+                                        ->setCellValue('F8','Unit')
+                                        ->setCellValue('G8','Size')
+                                        ->setCellValue('H8','Model')
+                                        ->setCellValue('I8','Item Type')
+                                        ->setCellValue('J8','Tax Type')
+                                        ->setCellValue('K8','Purchase Cost')
+                                        ->setCellValue('L8','Sale Price')
+                                        ->setCellValue('M8','Warning QTY')
+                                        ->setCellValue('N8','Ideal Qty')
+                                        ->setCellValue('O8','Discounted Price')
+                                        ->setCellValue('P8','Dealer Price')         
+                                        ->setCellValue('Q8','Distributor Price')
+                                        ->setCellValue('R8','Public Price');
 
 
                 $i = 9;
@@ -488,29 +466,30 @@ class Product_list_report extends CORE_Controller
                             $excel->getActiveSheet()->setCellValue('A'.$i,$data->product_code)
                                 ->setCellValue('B'.$i,$data->product_desc)
                                 ->setCellValue('C'.$i,$data->product_desc1)
-                                ->setCellValue('D'.$i,$data->category_name)
-                                ->setCellValue('E'.$i,$data->supplier_name)
+                                ->setCellValue('D'.$i, $data->category_name)
+                                ->setCellValue('E'.$i, $data->supplier_name)
                                 ->setCellValue('F'.$i,$data->product_unit_name)
-                                ->setCellValue('G'.$i,$data->item_type)
-                                ->setCellValue('H'.$i,$data->tax_rate)
-                                ->setCellValue('I'.$i,number_format($data->purchase_cost,2))
-                                ->setCellValue('J'.$i,number_format($data->sale_price,2))
-                                ->setCellValue('K'.$i,number_format($data->product_warn,2))
-                                ->setCellValue('L'.$i, number_format($data->product_ideal,2))
-                                ->setCellValue('M'.$i,number_format($data->discounted_price,2))
-                                ->setCellValue('N'.$i,number_format($data->dealer_price,2))
-                                ->setCellValue('O'.$i,number_format($data->distributor_price,2))
-                                ->setCellValue('P'.$i,number_format($data->public_price,2));
+                                ->setCellValue('G'.$i,$data->size_desc)
+                                ->setCellValue('H'.$i,$data->model_name)
+                                ->setCellValue('I'.$i,$data->item_type)
+                                ->setCellValue('J'.$i,$data->tax_rate)
+                                ->setCellValue('K'.$i,number_format($data->purchase_cost,2))
+                                ->setCellValue('L'.$i,number_format($data->sale_price,2))
+                                ->setCellValue('M'.$i,number_format($data->product_warn,2))
+                                ->setCellValue('N'.$i, number_format($data->product_ideal,2))
+                                ->setCellValue('O'.$i,number_format($data->discounted_price,2))
+                                ->setCellValue('P'.$i,number_format($data->dealer_price,2))
+                                ->setCellValue('Q'.$i,number_format($data->distributor_price,2))
+                                ->setCellValue('R'.$i,number_format($data->public_price,2));
                 $i++;
 
                 }
 
                 $i++;
 
-            $excel->getActiveSheet()->setCellValue('A'.$i,'Exported By: '.$this->session->user_fullname);
-            $i++;
-            $excel->getActiveSheet()->setCellValue('A'.$i,'Date Exported: '.date("Y-m-d H:i:s"));
-
+                $excel->getActiveSheet()->setCellValue('A'.$i,'Exported By: '.$this->session->user_fullname);
+                $i++;
+                $excel->getActiveSheet()->setCellValue('A'.$i,'Date Exported: '.date("Y-m-d H:i:s"));
 
                  // Redirect output to a client’s web browser (Excel2007)
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');

@@ -7,6 +7,7 @@ class Purchase_monitoring extends CORE_Controller
     function __construct() {
         parent::__construct('');
         $this->validate_session();
+        $this->load->library('M_pdf');
         $this->load->library('excel');
         $this->load->model('Products_model');
         $this->load->model('Categories_model');
@@ -96,127 +97,125 @@ class Purchase_monitoring extends CORE_Controller
                     $product_info = $this->Products_model->get_list($product_id);
                     $data['product_name']=$product_info[0]->product_desc;
                 }
+
                 $data['start_date'] = $start_date;
                 $data['end_date'] = $end_date;
 
-                $this->load->view('template/purchase_monitoring_content',$data);
+                $file_name='Purchase Monitoring';
+                $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                $content=$this->load->view('template/purchase_monitoring_content',$data,TRUE); //load the template
+                // $pdf->setFooter('{PAGENO}');
+                $pdf->WriteHTML($content);
+                //download it.
+                $pdf->Output();
+
+
                 break;
 
-            case 'excel':
+            case 'report-excel':
                 $m_company=$this->Company_model;
                 $company_info=$m_company->get_list();
 
                 $m_products = $this->Products_model;
-                $supplier_id = $this->input->get('sup');
-                $category_id = $this->input->get('cat');
+                $m_delivery_invoice = $this->Delivery_invoice_model;
 
-                $suppliers = $this->Suppliers_model->get_list($supplier_id);
-                $categories = $this->Categories_model->get_list($category_id);
+                $product_id = $this->input->get('product_id');
+                $start_date=date('Y-m-d',strtotime($this->input->get('start_date',TRUE)));
+                $end_date=date('Y-m-d',strtotime($this->input->get('end_date',TRUE)));
+                $data=$m_delivery_invoice->purchase_monitoring($product_id,$start_date,$end_date);
 
-                ($supplier_id == null ? $supplier_name = 'ALL' : $supplier_name=$suppliers[0]->supplier_name);
-                ($category_id == null ? $category_name = 'ALL' : $category_name=$categories[0]->category_name);
-                $data=$m_products->product_list(1,null,null,$supplier_id,$category_id,null,1);
-                // echo json_encode($response);
-                // $this->load->view('template/product_list_report_content',$data);
+                if ($product_id == null ){ 
+                    $product_name = 'ALL'; 
+                    $product_stock = 0;
+                }else{
+                    $product_info = $this->Products_model->get_list($product_id);
+                    $product_name = $product_info[0]->product_desc;
 
 
+                    $as_of_date = date('Y-m-d');
+                    $product=$m_products->product_list(1,$as_of_date,$product_id,null,null,null,null,null,1,null,null,null,null);
+
+                    if(count($product) > 0){
+                        $product_stock = $product[0]->on_hand_per_batch;
+                    }else{  
+                        $product_stock = 0;
+                    }
+
+                }
+                
+                $date_start = date('F j, Y',strtotime($this->input->get('start_date',TRUE)));
+                $date_end = date('F j, Y',strtotime($this->input->get('end_date',TRUE)));
+                $date_range = $date_start.' - '.$date_end;
 
                 $excel=$this->excel;
 
                 $excel->setActiveSheetIndex(0);
 
-                $excel->getActiveSheet()->getStyle('A')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                $excel->getActiveSheet()->getStyle('B')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-
-                $excel->getActiveSheet()->getStyle('C')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                $excel->getActiveSheet()->getStyle('D')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                $excel->getActiveSheet()->getStyle('E')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                $excel->getActiveSheet()->getStyle('F')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                $excel->getActiveSheet()->getStyle('G')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                $excel->getActiveSheet()->getStyle('H')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-
-                $excel->getActiveSheet()->getColumnDimension('A')->setWidth(25);
+                $excel->getActiveSheet()->getColumnDimension('A')->setWidth(15);
                 $excel->getActiveSheet()->getColumnDimension('B')->setWidth(30);
-                $excel->getActiveSheet()->getColumnDimension('C')->setWidth(30);
-                $excel->getActiveSheet()->getColumnDimension('D')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('E')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('F')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('G')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('H')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('I')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('J')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('K')->setWidth(25);
+                $excel->getActiveSheet()->getColumnDimension('C')->setWidth(15);
+                $excel->getActiveSheet()->getColumnDimension('D')->setWidth(15);
+                $excel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
+                $excel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
 
-                $excel->getActiveSheet()->getColumnDimension('L')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('M')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('N')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('O')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('P')->setWidth(25);
-
-                $excel->getActiveSheet()->setTitle('Product List Report');
+                $excel->getActiveSheet()->setTitle('Purchase Monitoring');
 
                 $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
                                         ->setCellValue('A2',$company_info[0]->company_address)
                                         ->setCellValue('A3',$company_info[0]->email_address)
                                         ->setCellValue('A4',$company_info[0]->mobile_no);
 
-                $excel->getActiveSheet()->getStyle('A8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('B8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('C8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('D8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('E8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('F8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('G8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('H8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('I8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('J8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('K8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('L8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('M8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('N8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('O8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('P8')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('B8')
+                      ->getAlignment()
+                      ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 
-            $excel->getActiveSheet()->setCellValue('A6','REORDER PRODUCT LIST (Pick-up)  ')
-            ->setCellValue('C6','Supplier: '.$supplier_name)
-            ->setCellValue('D6','Category: '.$category_name)
+                $excel->getActiveSheet()->getStyle('A6')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('A6','Purchase Monitoring')
+                                        ->setCellValue('A7','Product :')
+                                        ->setCellValue('B7',$product_name)
+                                        ->setCellValue('A8','Product Stock :')
+                                        ->setCellValue('B8',$product_stock)
+                                        ->setCellValue('A9','Date Range :')
+                                        ->setCellValue('B9',$date_range);
 
-                ->setCellValue('A8','PLU')
-                ->setCellValue('B8','Product Description')
-                ->setCellValue('C8','Unit')
-                ->setCellValue('D8','Category')
-                ->setCellValue('E8','Supplier')
-                ->setCellValue('F8','Minimum Stock')
-                ->setCellValue('G8','Actual Stock')
-                ->setCellValue('H8','Recommended Order');
+                $excel->getActiveSheet()->getStyle('C11:D11')
+                      ->getAlignment()
+                      ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
+                $excel->getActiveSheet()->getStyle('A11:F11')->getFont()->setBold(TRUE);
 
-                $i = 9;
+                $excel->getActiveSheet()->setCellValue('A11','Date Invoice')
+                                        ->setCellValue('B11','Product Description')
+                                        ->setCellValue('C11','Qty')
+                                        ->setCellValue('D11','Price')
+                                        ->setCellValue('E11','Supplier')
+                                        ->setCellValue('F11','Reference No');
 
+                $i = 12;
 
                 foreach ($data as $data) {
-                            $excel->getActiveSheet()->setCellValue('A'.$i,$data->product_code)
-                                ->setCellValue('B'.$i,$data->product_desc)
-                                ->setCellValue('C'.$i,$data->unit_name)
-                                ->setCellValue('D'.$i, $data->category_name)
-                                ->setCellValue('E'.$i, $data->supplier_name)
-                                ->setCellValue('F'.$i,number_format($data->product_warn,0))
-                                ->setCellValue('G'.$i, number_format($data->CurrentQty,0))
-                                ->setCellValue('H'.$i,number_format($data->recommended_qty,0));
-                $i++;
+
+                    $excel->getActiveSheet()
+                          ->setCellValue('A'.$i,$data->date_delivered)
+                          ->setCellValue('B'.$i,$data->product_desc)
+                          ->setCellValue('C'.$i,$data->dr_qty)
+                          ->setCellValue('D'.$i,$data->dr_price)
+                          ->setCellValue('E'.$i,$data->supplier_name)
+                          ->setCellValue('F'.$i,$data->dr_invoice_no);
+                    $i++;
 
                 }
 
                 $i++;
 
-            $excel->getActiveSheet()->setCellValue('A'.$i,'Exported By: '.$this->session->user_fullname);
-            $i++;
-            $excel->getActiveSheet()->setCellValue('A'.$i,'Date Exported: '.date("Y-m-d H:i:s"));
-
+                $excel->getActiveSheet()->setCellValue('A'.$i,'Exported By: '.$this->session->user_fullname);
+                $i++;
+                $excel->getActiveSheet()->setCellValue('A'.$i,'Date Exported: '.date("Y-m-d H:i:s"));
 
                 // Redirect output to a client’s web browser (Excel2007)
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                header('Content-Disposition: attachment;filename="Reorder Product (Pick-list)'.date("Y-m-d H:i:s").'.xlsx"');
+                header('Content-Disposition: attachment;filename="Purchase Monitoring '.date("Y-m-d H:i:s").'.xlsx"');
                 header('Cache-Control: max-age=0');
                 // If you're serving to IE 9, then the following may be needed
                 header('Cache-Control: max-age=1');
@@ -231,126 +230,114 @@ class Purchase_monitoring extends CORE_Controller
                 $objWriter->save('php://output');
                 break;
 
-
-
-
         case 'email':
-
                 $m_email=$this->Email_settings_model;
-                $filter_value = 2;
-                $email=$m_email->get_list(2);   
                 $m_company=$this->Company_model;
+                $m_products = $this->Products_model;
+                $m_delivery_invoice = $this->Delivery_invoice_model;
+
+                $email=$m_email->get_list(2);   
                 $company_info=$m_company->get_list();
 
-                $m_products = $this->Products_model;
-                $supplier_id = $this->input->get('sup');
-                $category_id = $this->input->get('cat');
+                $product_id = $this->input->get('product_id');
+                $start_date=date('Y-m-d',strtotime($this->input->get('start_date',TRUE)));
+                $end_date=date('Y-m-d',strtotime($this->input->get('end_date',TRUE)));
+                $data=$m_delivery_invoice->purchase_monitoring($product_id,$start_date,$end_date);
 
-                $suppliers = $this->Suppliers_model->get_list($supplier_id);
-                $categories = $this->Categories_model->get_list($category_id);
+                if ($product_id == null ){ 
+                    $product_name = 'ALL'; 
+                    $product_stock = 0;
+                }else{
+                    $product_info = $this->Products_model->get_list($product_id);
+                    $product_name = $product_info[0]->product_desc;
 
-                ($supplier_id == null ? $supplier_name = 'ALL' : $supplier_name=$suppliers[0]->supplier_name);
-                ($category_id == null ? $category_name = 'ALL' : $category_name=$categories[0]->category_name);
-                $data=$m_products->product_list(1,null,null,$supplier_id,$category_id,null,1);
-                // echo json_encode($response);
+
+                    $as_of_date = date('Y-m-d');
+                    $product=$m_products->product_list(1,$as_of_date,$product_id,null,null,null,null,null,1,null,null,null,null);
+
+                    if(count($product) > 0){
+                        $product_stock = $product[0]->on_hand_per_batch;
+                    }else{  
+                        $product_stock = 0;
+                    }
+
+                }
+                
+                $date_start = date('F j, Y',strtotime($this->input->get('start_date',TRUE)));
+                $date_end = date('F j, Y',strtotime($this->input->get('end_date',TRUE)));
+                $date_range = $date_start.' - '.$date_end;
+
 
                 $excel=$this->excel;
-              
                 $excel->setActiveSheetIndex(0);
                 // SET WIDTH
-                  ob_start();
+                ob_start();
 
-                $excel->getActiveSheet()->getStyle('A')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                $excel->getActiveSheet()->getStyle('B')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-
-                $excel->getActiveSheet()->getStyle('C')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                $excel->getActiveSheet()->getStyle('D')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                $excel->getActiveSheet()->getStyle('E')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                $excel->getActiveSheet()->getStyle('F')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                $excel->getActiveSheet()->getStyle('G')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                $excel->getActiveSheet()->getStyle('H')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-
-                $excel->getActiveSheet()->getColumnDimension('A')->setWidth(25);
+                $excel->getActiveSheet()->getColumnDimension('A')->setWidth(15);
                 $excel->getActiveSheet()->getColumnDimension('B')->setWidth(30);
-                $excel->getActiveSheet()->getColumnDimension('C')->setWidth(30);
-                $excel->getActiveSheet()->getColumnDimension('D')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('E')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('F')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('G')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('H')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('I')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('J')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('K')->setWidth(25);
+                $excel->getActiveSheet()->getColumnDimension('C')->setWidth(15);
+                $excel->getActiveSheet()->getColumnDimension('D')->setWidth(15);
+                $excel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
+                $excel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
 
-                $excel->getActiveSheet()->getColumnDimension('L')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('M')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('N')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('O')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('P')->setWidth(25);
 
-                $excel->getActiveSheet()->setTitle('Product List Report');
+                $excel->getActiveSheet()->setTitle('Purchase Monitoring');
 
                 $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
                                         ->setCellValue('A2',$company_info[0]->company_address)
                                         ->setCellValue('A3',$company_info[0]->email_address)
                                         ->setCellValue('A4',$company_info[0]->mobile_no);
 
-                $excel->getActiveSheet()->getStyle('A8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('B8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('C8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('D8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('E8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('F8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('G8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('H8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('I8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('J8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('K8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('L8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('M8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('N8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('O8')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->getStyle('P8')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('B8')
+                      ->getAlignment()
+                      ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 
-            $excel->getActiveSheet()->setCellValue('A6','REORDER PRODUCT LIST (Pick-up)  ')
-            ->setCellValue('C6','Supplier: '.$supplier_name)
-            ->setCellValue('D6','Category: '.$category_name)
+                $excel->getActiveSheet()->getStyle('A6')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('A6','Purchase Monitoring')
+                                        ->setCellValue('A7','Product :')
+                                        ->setCellValue('B7',$product_name)
+                                        ->setCellValue('A8','Product Stock :')
+                                        ->setCellValue('B8',$product_stock)
+                                        ->setCellValue('A9','Date Range :')
+                                        ->setCellValue('B9',$date_range);
 
-                ->setCellValue('A8','PLU')
-                ->setCellValue('B8','Product Description')
-                ->setCellValue('C8','Unit')
-                ->setCellValue('D8','Category')
-                ->setCellValue('E8','Supplier')
-                ->setCellValue('F8','Minimum Stock')
-                ->setCellValue('G8','Actual Stock')
-                ->setCellValue('H8','Recommended Order');
+                $excel->getActiveSheet()->getStyle('C11:D11')
+                      ->getAlignment()
+                      ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
+                $excel->getActiveSheet()->getStyle('A11:F11')->getFont()->setBold(TRUE);
 
-                $i = 9;
+                $excel->getActiveSheet()->setCellValue('A11','Date Invoice')
+                                        ->setCellValue('B11','Product Description')
+                                        ->setCellValue('C11','Qty')
+                                        ->setCellValue('D11','Price')
+                                        ->setCellValue('E11','Supplier')
+                                        ->setCellValue('F11','Reference No');
 
+                $i = 12;
 
                 foreach ($data as $data) {
-                            $excel->getActiveSheet()->setCellValue('A'.$i,$data->product_code)
-                                ->setCellValue('B'.$i,$data->product_desc)
-                                ->setCellValue('C'.$i,$data->unit_name)
-                                ->setCellValue('D'.$i, $data->category_name)
-                                ->setCellValue('E'.$i, $data->supplier_name)
-                                ->setCellValue('F'.$i,number_format($data->product_warn,0))
-                                ->setCellValue('G'.$i, number_format($data->CurrentQty,0))
-                                ->setCellValue('H'.$i,number_format($data->recommended_qty,0));
-                $i++;
+
+                    $excel->getActiveSheet()
+                          ->setCellValue('A'.$i,$data->date_delivered)
+                          ->setCellValue('B'.$i,$data->product_desc)
+                          ->setCellValue('C'.$i,$data->dr_qty)
+                          ->setCellValue('D'.$i,$data->dr_price)
+                          ->setCellValue('E'.$i,$data->supplier_name)
+                          ->setCellValue('F'.$i,$data->dr_invoice_no);
+                    $i++;
 
                 }
 
                 $i++;
 
-            $excel->getActiveSheet()->setCellValue('A'.$i,'Exported By: '.$this->session->user_fullname);
-            $i++;
-            $excel->getActiveSheet()->setCellValue('A'.$i,'Date Exported: '.date("Y-m-d H:i:s"));
+                $excel->getActiveSheet()->setCellValue('A'.$i,'Exported By: '.$this->session->user_fullname);
+                $i++;
+                $excel->getActiveSheet()->setCellValue('A'.$i,'Date Exported: '.date("Y-m-d H:i:s"));
 
                  // Redirect output to a client’s web browser (Excel2007)
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                header('Content-Disposition: attachment;filename="Reorder Product (Pick-up) '.date('Y-m-d',now()).'.xlsx"');
+                header('Content-Disposition: attachment;filename="Purchase Monitoring '.date("Y-m-d H:i:s").'.xlsx"');
                 header('Cache-Control: max-age=0');
                 // If you're serving to IE 9, then the following may be needed
                 header('Cache-Control: max-age=1');
@@ -364,10 +351,10 @@ class Purchase_monitoring extends CORE_Controller
                 $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
                 $objWriter->save('php://output');
                 $data = ob_get_clean();
-                                ob_end_clean();
+                ob_end_clean();
 
-                          $file_name='Reorder Product (Pick-up)'.date('Y-m-d h:i:A', now());
-                            $excelFilePath = $file_name.".xlsx"; //generate filename base on id
+                        $file_name='Purchase Monitoring '.date('Y-m-d H:i:s', now());
+                        $excelFilePath = $file_name.".xlsx"; //generate filename base on id
                             //download it.
                             // Set SMTP Configuration
                             $emailConfig = array(
@@ -388,7 +375,7 @@ class Purchase_monitoring extends CORE_Controller
                             );
 
                             $to = array($email[0]->email_to);
-                            $subject = 'Reorder Product (Pick-list)';
+                            $subject = 'Purchase Monitoring';
                           //  $message = 'Type your gmail message here';
                             $message = '<p>To: ' .$email[0]->email_to. '</p></ br>' .$email[0]->default_message.'</ br><p>Sent By: '. '<b>'.$this->session->user_fullname.'</b>'. '</p></ br>' .date('Y-m-d h:i:A', now());
 
@@ -420,7 +407,7 @@ class Purchase_monitoring extends CORE_Controller
                             echo json_encode($response);
                             }
 
-                                break;
+                break;
         }
     }
 

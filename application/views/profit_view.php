@@ -379,18 +379,18 @@ $(document).ready(function(){
             if(type == '1'){ reportProducts();}else if(type == '2'){ reportInvoiceDetailed();}else if(type == '3'){ reportInvoiceSummary(); }
         });        
 
-        _cboInvoiceType.on("select2:select", function (e) {
-            type = _cboReportType.val();
-            var invoice_type = $(this).val();
+        // _cboInvoiceType.on("select2:select", function (e) {
+        //     type = _cboReportType.val();
+        //     var invoice_type = $(this).val();
 
-            if(invoice_type == 2){
-                $('.truck_panel').show();
-            }else{
-                $('.truck_panel').hide();
-            }
+        //     if(invoice_type == 2){
+        //         $('.truck_panel').show();
+        //     }else{
+        //         $('.truck_panel').hide();
+        //     }
 
-            if(type == '1'){ reportProducts();}else if(type == '2'){ reportInvoiceDetailed();}else if(type == '3'){ reportInvoiceSummary(); }
-        });     
+        //     if(type == '1'){ reportProducts();}else if(type == '2'){ reportInvoiceDetailed();}else if(type == '3'){ reportInvoiceSummary(); }
+        // });     
 
 
         $("#txt_start_date").datepicker().on("change", function () {        

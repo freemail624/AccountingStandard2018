@@ -1915,16 +1915,17 @@ $(document).ready(function(){
 
     var initializeDepartment = function(status){
         
-        var user_department_id = <?php echo $this->session->user_department_id; ?>;
+        // var user_department_id = <?php //echo $this->session->user_department_id; ?>;
         
-        if(user_department_id == 0 || user_department_id == null){
-            status == null ? "" : $('#cbo_departments').select2('val', null);
-            $('#cbo_departments').prop("disabled", false);
-        }else{
-            status == null ? "" : $('#cbo_departments').select2('val', user_department_id);
-            $('#cbo_departments').prop("disabled", true);
-        }
-
+        // if(user_department_id == 0 || user_department_id == null){
+        //     status == null ? "" : $('#cbo_departments').select2('val', null);
+        //     $('#cbo_departments').prop("disabled", false);
+        // }else{
+        //     status == null ? "" : $('#cbo_departments').select2('val', user_department_id);
+        //     $('#cbo_departments').prop("disabled", true);
+        // }
+        var user_department_id = $('#cbo_departments').data('default');
+        $('#cbo_departments').select2('val', user_department_id);
     };
 
     function validateNumber(event) {

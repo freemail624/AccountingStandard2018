@@ -640,6 +640,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
         $sql="
         SELECT 
         dii.product_id,
+        dii.dr_qty,
         dii.dr_invoice_id,
         p.product_desc,
         p.product_code,

@@ -149,10 +149,19 @@
                                 <?php } ?>
                             </select>
                         </div>
-                    <div class="col-lg-3">
-                            Search :<br />
-                             <input type="text" id="searchbox_sales_history" class="form-control">
-                    </div>
+                        <div class="col-lg-3">
+                                Search :<br />
+                                 <input type="text" id="searchbox_sales_history" class="form-control">
+                        </div>
+                        <div class="col-lg-5">
+                            <br/>
+                            <button class="btn btn-primary pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " title="Print" ><i class="fa fa-print"></i> Print Report
+                            </button>
+                            <button class="btn btn-success pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_excel" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " title="Export to Excel" ><i class="fa fa-file-excel-o"></i> Excel Report
+                            </button>
+                            <button class="btn btn-success pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_email" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " title="Export to Excel" ><span class=""></span> <i class="fa fa-file-excel-o"></i> Email Report
+                            </button>
+                        </div>
                 </div>
                 <br>
             <table id="tbl_sales_invoice" class="table table-striped" cellspacing="0" width="100%" style="">
@@ -160,6 +169,7 @@
                 <tr>
                     <th></th>
                     <th>Invoice #</th>
+                    <th>Receipt No</th>
                     <th>Invoice Date</th>
                     <th>Customer</th>
                     <th>Department</th>
@@ -228,7 +238,7 @@ $(document).ready(function(){
             "dom": '<"toolbar">frtip',
             "pageLength": 50,
             "bLengthChange":false,
-                "order": [[ 2, "desc" ]],
+                "order": [[ 3, "desc" ]],
             "ajax" : {
                 "url" : "Sales_history/transaction/list_with_count",
                 "bDestroy": true,            
@@ -248,10 +258,11 @@ $(document).ready(function(){
                     "defaultContent": ""
                 },
                 { targets:[1],data: "inv_no" },
-                { targets:[2],data: "date_invoice" },
-                { targets:[3],data: "customer_name" },
-                { targets:[4],data: "department_name" },
-                { targets:[5],data: "remarks"  ,render: $.fn.dataTable.render.ellipsis(80)},
+                { targets:[2],data: "receipt_no" },
+                { targets:[3],data: "date_invoice" },
+                { targets:[4],data: "customer_name" },
+                { targets:[5],data: "department_name" },
+                { targets:[6],data: "remarks"  ,render: $.fn.dataTable.render.ellipsis(35)},
             ]
         });
         _cboCustomers=$("#cbo_customers").select2({
@@ -329,8 +340,46 @@ $(document).ready(function(){
         _cboCustomers.on("select2:select", function (e) {
             $('#tbl_sales_invoice').DataTable().ajax.reload()
         });
+
+        $('#btn_print').click(function(){
+            window.open('Sales_history/transaction/print?customer_id='+$('#cbo_customers').val());
+        });
+
+        $('#btn_excel').click(function(){
+            window.open('Sales_history/transaction/excel?customer_id='+$('#cbo_customers').val());
+        });
+
+        $('#btn_email').on('click', function() {
+            showNotification({title:"Sending!",stat:"info",msg:"Please wait for a few seconds."});
+            var btn=$(this);
+        
+            $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":'Sales_history/transaction/email?customer_id='+$('#cbo_customers').val(),
+                "beforeSend": showSpinningProgress(btn)
+            }).done(function(response){
+                showNotification(response);
+                showSpinningProgress(btn);
+
+            });
+        });
+
     })();
   
+    var showNotification=function(obj){
+        PNotify.removeAll();
+        new PNotify({
+            title:  obj.title,
+            text:  obj.msg,
+            type:  obj.stat
+        });
+    };
+
+    var showSpinningProgress=function(e){
+        $(e).find('span').toggleClass('glyphicon glyphicon-refresh spinning');
+        $(e).toggleClass('disabled');
+    };
 });
 </script>
 </body>

@@ -65,6 +65,9 @@
             text-align: right;
         }
 
+        #tbl_delivery_invoice_filter{
+            display: none;
+        }
     </style>
 
 </head>
@@ -96,57 +99,63 @@
                                             <div class="panel-body table-responsive">
                                             <h2 class="h2-panel-heading">Purchase History<small> | <a href="assets/manual/purchasing/Purchase_History.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
                                             <div class="row">
-                                            <div class="col-sm-3">
-                                                <b class="required">*</b> <label>Invoice Date From: </label><br />
-                                                <div class="input-group">
-                                                    <input id="from_date" type="text" class="date-picker form-control" value="<?php echo date("m"); ?>/01/<?php echo date("Y"); ?>">
-                                                    <div class="input-group-addon">
-                                                        <i class="fa fa-calendar"></i>
+                                                <div class="col-sm-2">
+                                                    <b class="required">*</b> <label>Invoice Date From: </label><br />
+                                                    <div class="input-group">
+                                                        <input id="from_date" type="text" class="date-picker form-control" value="<?php echo date("m"); ?>/01/<?php echo date("Y"); ?>">
+                                                        <div class="input-group-addon">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-sm-3">
-                                                <b class="required">*</b> <label>Invoice Date To: </label><br />
-                                                <div class="input-group">
-                                                    <input id="to_date" type="text" class="date-picker form-control" value="<?php echo date('m/d/Y'); ?>">
-                                                    <div class="input-group-addon">
-                                                        <i class="fa fa-calendar"></i>
+                                                <div class="col-sm-2">
+                                                    <b class="required">*</b> <label>Invoice Date To: </label><br />
+                                                    <div class="input-group">
+                                                        <input id="to_date" type="text" class="date-picker form-control" value="<?php echo date('m/d/Y'); ?>">
+                                                        <div class="input-group-addon">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </div>
                                                     </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b class="required">*</b> <label>Supplier </label>:<br />
+                                                    <select name="supplier" id="supplier" style="width: 100%;">
+                                                        <option value="0"> ALL</option>
+                                                        <?php foreach($suppliers as $supplier){ ?>
+                                                            <option value="<?php echo $supplier->supplier_id; ?>"><?php echo $supplier->supplier_name; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b class="required">*</b> <label>Departments </label>:<br />
+                                                    <select name="department" id="department" >
+                                                        <option value="0"> ALL</option>
+                                                        <?php foreach($departments as $department){ ?>
+                                                            <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-2">    
+                                                    <label>Search </label>:<br />
+                                                    <input type="text" id="tbl_search" class="form-control"> 
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <button class="btn btn-primary pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_print"  data-toggle="modal" data-placement="left" title="Print" >
+                                                        <i class="fa fa-print"></i> Print Report
+                                                    </button>
+                                                    <button class="btn btn-success pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_excel" data-placement="left" title="Export to Excel" >
+                                                        <i class="fa fa-file-excel-o"></i> Export Report
+                                                    </button>
+
+                                                    <button class="btn btn-success pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_email" data-placement="left" title="Sent to Email" ><span class=""></span> 
+                                                        <i class="fa  fa-envelope-o"></i> Send Report
+                                                    </button>
                                                 </div>
                                             </div>
 
-                                            <div class="col-sm-3">
-                                                <b class="required">*</b> <label>Supplier </label>:<br />
-                                                <select name="supplier" id="supplier" style="width: 100%;">
-                                                    <option value="0"> ALL</option>
-                                                    <?php foreach($suppliers as $supplier){ ?>
-                                                        <option value="<?php echo $supplier->supplier_id; ?>"><?php echo $supplier->supplier_name; ?></option>
-                                                    <?php } ?>
-                                                </select>
-                                            </div>
-                                            <div class="col-sm-3">
-                                                <b class="required">*</b> <label>Departments </label>:<br />
-                                                <select name="department" id="department" >
-                                                    <option value="0"> ALL</option>
-                                                    <?php foreach($departments as $department){ ?>
-                                                        <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
-                                                    <?php } ?>
-                                                </select>
-                                            </div>
-                                            </div>
-<!--                                             <div class="col-sm-2">
-                                                <button class="btn btn-primary pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_print"  data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Print" ><i class="fa fa-print"></i> Print Report
-                                            </button>
-                                            </div>
-                                            <div class="col-sm-2">
-                                                <button class="btn btn-success pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_excel" data-placement="left" title="Export to Excel" ><i class="fa fa-file-excel-o"></i> Export Report
-                                            </button>
-                                            </div>
-                                            <div class="col-sm-2">
-                                                <button class="btn btn-success pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_email" data-placement="left" title="Sent to Email" ><span class=""></span> <i class="fa  fa-envelope-o"></i> Send Report
-                                            </button>
-                                            </div> -->
-                                                <table id="tbl_delivery_invoice" class="table table-striped" cellspacing="0" width="100%">
+                                            <table id="tbl_delivery_invoice" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead>
                                                     <tr>
                                                         <th></th>
@@ -242,13 +251,12 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "dr_invoice_no" },
                 { targets:[2],data: "supplier_name" },
-                {targets:[3],data: "department_name" },
+                { targets:[3],data: "department_name" },
                 { targets:[4],data: "external_ref_no" },
                 { targets:[5],data: "po_no" },
                 { targets:[6],data: "term_description" },
                 { targets:[7],data: "date_delivered" },
-            
-            { visible:false, targets:[8],data: "dr_invoice_id" }
+                { visible:false, targets:[8],data: "dr_invoice_id" }
             ]
         });
 
@@ -311,22 +319,11 @@ $(document).ready(function(){
             }
         } );
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        $("#tbl_search").keyup(function(){          
+                dt 
+                    .search(this.value) 
+                    .draw(); 
+        });
 
         $('#from_date').change(function(){
             $('#tbl_delivery_invoice').DataTable().ajax.reload()          
@@ -340,12 +337,15 @@ $(document).ready(function(){
         $('#supplier').change(function(){
             $('#tbl_delivery_invoice').DataTable().ajax.reload()          
         });
+
         $('#btn_print').click(function(){
-            window.open('Bar_sales_report/transaction/print?frm='+ $('#from_date').val() +'&to='+ $('#to_date').val()+'&cashier='+ $('#cashier').val()+'&type=contentview');
+            window.open('Purchase_history/transaction/print?frm='+ $('#from_date').val() +'&to='+ $('#to_date').val()+'&supplier_id='+ $('#supplier').val()+'&department_id='+$('#department').val()+'&type=contentview');
         });
+
         $('#btn_excel').click(function(){
-            window.open('Bar_sales_report/transaction/export?frm='+ $('#from_date').val() +'&to='+ $('#to_date').val()+'&cashier='+ $('#cashier').val()+'&type=contentview');
+            window.open('Purchase_history/transaction/export?frm='+ $('#from_date').val() +'&to='+ $('#to_date').val()+'&supplier_id='+ $('#supplier').val()+'&department_id='+$('#department').val());
         });
+
        $('#btn_email').on('click', function() {
                 showNotification({title:"Sending!",stat:"info",msg:"Please wait for a few seconds."});
 
@@ -354,14 +354,14 @@ $(document).ready(function(){
                 $.ajax({
                     "dataType":"json",
                     "type":"POST",
-                    "url":'Bar_sales_report/transaction/email?frm='+ $('#from_date').val() +'&to='+ $('#to_date').val()+'&cashier='+ $('#cashier').val()+'&type=contentview',
+                    "url":'Purchase_history/transaction/email?frm='+ $('#from_date').val() +'&to='+ $('#to_date').val()+'&supplier_id='+ $('#supplier').val()+'&department_id='+$('#department').val(),
                     "beforeSend": showSpinningProgress(btn)
                 }).done(function(response){
                     showNotification(response);
                     showSpinningProgress(btn);
 
                 });
-                });
+        });
     })();
 
             var showNotification=function(obj){

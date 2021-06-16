@@ -216,12 +216,12 @@
                                                     <div class="row">
                                                         <div class="col-lg-4">
                                                             <div class="form-group" style="margin-bottom:0px;">
-                                                                <label class=""><b class="required">*</b>PLU :</label>
+                                                                <label class=""> PLU :</label>
                                                                     <div class="input-group">
                                                                         <span class="input-group-addon">
                                                                             <i class="fa fa-file-code-o"></i>
                                                                         </span>
-                                                                        <input type="text" name="product_code" id="product_code" class="form-control" value="" data-error-msg="PLU is required." required>
+                                                                        <input type="text" name="product_code" id="product_code" class="form-control" value="" data-error-msg="PLU is required." readonly placeholder="Auto">
                                                                     </div>
                                                             </div>
 
@@ -1324,7 +1324,7 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "product_code" },
                 { targets:[2],data: "product_desc" },
-                { targets:[3],data: "product_unit_name" },
+                { visible: false, targets:[3],data: "product_unit_name" },
                 { targets:[4],data: "category_name" },
                 {
                     targets:[5],data: "purchase_cost",
@@ -1369,10 +1369,10 @@ $(document).ready(function(){
             "rowCallback":function( row, data, index ){
 
 
-                $(row).find('td').eq(5).attr({
+                $(row).find('td').eq(4).attr({
                     "align": "right"
                 });
-                $(row).find('td').eq(6).attr({
+                $(row).find('td').eq(5).attr({
                     "align": "right"
                 });
 

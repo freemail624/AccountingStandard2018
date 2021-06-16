@@ -111,6 +111,15 @@
         { 
             display:none; 
         } 
+
+        .official_receipt{
+            background-color: skyblue;
+        }
+
+        .delivery_receipt{
+            background-color: lightgray;
+        }
+
     </style>
     <link type="text/css" href="assets/css/light-theme.css" rel="stylesheet">
 </head>
@@ -169,17 +178,18 @@
             <table id="tbl_sales_invoice" class="table table-striped" cellspacing="0" width="100%" style="">
                 <thead >
                 <tr>
-                    <th></th>
-                    <th>Invoice #</th>
-                    <th>Invoice Date</th>
-                    <th>Due Date</th>
-                    <th>Customer</th>
-                    <th>Department</th>
-                    <th style="width: 20%">Remarks</th>
-                    <th>Amount</th>
-                    <th>Receipt Type</th>
+                    <th width="5%"></th>
+                    <th width="10%">Invoice Date</th>
+                    <th width="15%">Receipt No</th>
+                    <th width="25%">Customer</th>
+                    <th width="10%">Department</th>
+                    <th width="10%">Amount</th>
                     <th width="20%"><center>Action</center></th>
-                    <th>Invoice #</th>
+                    <th width="1%">Invoice #</th>
+                    <th width="1%">Due Date</th>
+                    <th width="1%">Remarks</th>
+                    <th width="1%">Receipt Type</th>
+                    <th width="1%"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -250,6 +260,12 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>Receipt No :</label> <br />
+                                <input type="text" name="receipt_no" id="receipt_no" class="form-control" data-error-msg="Receipt No is required!" placeholder="Receipt No">
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-3">
                         <div class="row">
@@ -266,7 +282,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label>Address :</label><br>
-                                <textarea class="form-control" id="txt_address" type="text" name="address" placeholder="Customer Address" rows="5"></textarea>                              
+                                <textarea class="form-control" id="txt_address" type="text" name="address" placeholder="Customer Address" rows="8" style="min-height: 155px;"></textarea>
                             </div>
                         </div>
                     </div>
@@ -1046,9 +1062,19 @@ $(document).ready(function(){
     };
     var initializeControls=function(){
         dt=$('#tbl_sales_invoice').DataTable({
+            "rowCallback": function( row, data, index ) {
+                if ( data.inv_receipt_type_id == 1 )
+                {
+                    $('td', row).css('background-color', '#d2ebfb');
+                }
+                else
+                {
+                    $('td', row).css('background-color', '#ececec');
+                }
+            },
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 10, "desc" ]],
+            "order": [[ 11, "desc" ]],
             "ajax" : { 
                 "url":"Sales_invoice/transaction/list", 
                 "bDestroy": true,             
@@ -1070,21 +1096,18 @@ $(document).ready(function(){
                     "data":           null,
                     "defaultContent": ""
                 },
-                { targets:[1],data: "sales_inv_no" },
-                { targets:[2],data: "date_invoice" },
-                { targets:[3],data: "date_due" ,visible:false},
-                { targets:[4],data: "customer_name" },
-                { targets:[5],data: "department_name" },
-                { targets:[6],data: "remarks"  ,render: $.fn.dataTable.render.ellipsis(30)},
+                { targets:[1],data: "date_invoice" },
+                { targets:[2],data: "receipt_no" },
+                { targets:[3],data: "customer_name" },
+                { targets:[4],data: "department_name" },
                 {
-                    sClass: "text-right", targets:[7],data: null,
+                    sClass: "text-right", targets:[5],data: null,
                     render: function (data, type, full, meta){
                         return accounting.formatNumber(data.total_after_tax,2);
                     }
                 },
-                { targets:[8],data: "inv_receipt_type" },
                 {
-                    targets:[9],data:null,
+                    targets:[6],data:null,
                     render: function (data, type, full, meta){
                         var btn_attachments='<a href="Sales_attachments?id='+data.sales_invoice_id+'" target="_blank" class="btn btn-default btn-sm" name="attachment_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Attachments"><i class="fa fa-paperclip"></i> '+data.total_attachments+'</a>';
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-right:0" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
@@ -1092,9 +1115,14 @@ $(document).ready(function(){
                         return '<center>'+btn_attachments+"&nbsp;"+btn_edit+"&nbsp;"+btn_trash+'</center>';
                     }
                 },
-                { targets:[10],data: "sales_invoice_id", visible:false }
+                { visible: false, targets:[7],data: "sales_inv_no" },
+                { visible: false, targets:[8],data: "date_due" },
+                { visible: false, targets:[9],data: "remarks"  ,render: $.fn.dataTable.render.ellipsis(30)},
+                { visible: false, targets:[10],data: "inv_receipt_type" },
+                { visible: false, targets:[11],data: "sales_invoice_id" }
             ]
         });
+
         dt_so=$('#tbl_so_list').DataTable({
             "bLengthChange":false,
             "ajax" : "Sales_order/transaction/open",
@@ -2498,16 +2526,18 @@ $(document).ready(function(){
     };
     var initializeDepartment = function(status){
         
-        var user_department_id = <?php echo $this->session->user_department_id; ?>;
+        // var user_department_id = <?php echo $this->session->user_department_id; ?>;
         
-        if(user_department_id == 0 || user_department_id == null){
-            status == null ? "" : $('#cbo_departments').select2('val', null);
-            $('#cbo_departments').prop("disabled", false);
-        }else{
-            status == null ? "" : $('#cbo_departments').select2('val', user_department_id);
-            $('#cbo_departments').prop("disabled", true);
-        }
+        // if(user_department_id == 0 || user_department_id == null){
+        //     status == null ? "" : $('#cbo_departments').select2('val', null);
+        //     $('#cbo_departments').prop("disabled", false);
+        // }else{
+        //     status == null ? "" : $('#cbo_departments').select2('val', user_department_id);
+        //     $('#cbo_departments').prop("disabled", true);
+        // }
 
+        var user_department_id = $('#cbo_departments').data('default');
+        $('#cbo_departments').select2('val', user_department_id);
     };
 
     function validateNumber(event) {

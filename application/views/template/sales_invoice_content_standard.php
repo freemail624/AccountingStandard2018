@@ -37,7 +37,7 @@
     <table width="100%">
         <tr class="">
             <td width="50%" valign="top">
-                <img src="<?php echo $company_info->logo_path; ?>" style="height: 70px; width: 300px;"> 
+                <img src="<?php echo $company_info->logo_path; ?>" style="height: 70px; width: 200px;"> 
                 <br/><br/>
 
                 <p><?php echo $company_info->company_address; ?></p>
@@ -186,7 +186,7 @@
     <table width="100%">
         <tr class="">
             <td width="50%" valign="top">
-                <img src="<?php echo $company_info->logo_path; ?>" style="height: 70px; width: 300px;"> 
+                <img src="<?php echo $company_info->logo_path; ?>" style="height: 70px; width: 200px;"> 
                 <br/><br/>
 
                 <p><?php echo $company_info->company_address; ?></p>

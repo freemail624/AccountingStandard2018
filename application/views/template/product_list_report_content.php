@@ -30,8 +30,8 @@
 <body>
        <table width="100%">
         <tr>
-            <td width="10%" style="object-fit: cover;"><img src="<?php echo base_url().$company_info->logo_path; ?>" style="height: 90px; width: 90px; text-align: left;"></td>
-            <td width="90%" class="">
+<!--             <td width="10%" style="object-fit: cover;"><img src="<?php //echo base_url().$company_info->logo_path; ?>" style="height: 90px; width: 90px; text-align: left;"></td> -->
+            <td width="100%" class="">
                 <span style="font-size: 20px;" class="report-header"><strong><?php echo $company_info->company_name; ?></strong></span><br>
                 <span><?php echo $company_info->company_address; ?></span><br>
                 <span><?php echo $company_info->landline.'/'.$company_info->mobile_no; ?></span><br>
@@ -52,6 +52,8 @@
             <th>Category</th>
             <th>Supplier</th>
             <th>Unit</th>
+            <th>Size</th>
+            <th>Model</th>
             <th>Item Type</th>
             <th>Tax Type</th>
             <th>Purchase Cost</th>
@@ -74,6 +76,8 @@
              <td><?php echo $data->category_name; ?></td>
              <td><?php echo $data->supplier_name; ?></td>
              <td><?php echo $data->product_unit_name; ?></td>
+             <td><?php echo $data->size_desc; ?></td>
+             <td><?php echo $data->model_name; ?></td>
              <td><?php echo $data->item_type; ?></td>
              <td><?php echo $data->tax_rate; ?></td>
              <td class="right-align"><?php echo number_format($data->purchase_cost,2);  ?></td>

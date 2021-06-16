@@ -225,6 +225,7 @@ class Cash_invoice extends CORE_Controller
                 $m_invoice->total_tendered=$this->get_numeric_value($this->input->post('total_tendered',TRUE));
                 $m_invoice->total_change=$this->get_numeric_value($this->input->post('total_change',TRUE));
                 $m_invoice->inv_receipt_type_id=$this->get_numeric_value($this->input->post('inv_receipt_type_id',TRUE));
+                $m_invoice->receipt_no=$this->input->post('receipt_no',TRUE);
                 $m_invoice->posted_by_user=$this->session->user_id;
                 $m_invoice->save();
 
@@ -351,6 +352,7 @@ class Cash_invoice extends CORE_Controller
                     $m_invoice->total_tendered=$this->get_numeric_value($this->input->post('total_tendered',TRUE));
                     $m_invoice->total_change=$this->get_numeric_value($this->input->post('total_change',TRUE));
                     $m_invoice->inv_receipt_type_id=$this->get_numeric_value($this->input->post('inv_receipt_type_id',TRUE));
+                    $m_invoice->receipt_no=$this->input->post('receipt_no',TRUE);
                     $m_invoice->address=$this->input->post('address',TRUE);
                     $m_invoice->modified_by_user=$this->session->user_id;
                     $m_invoice->modify($cash_invoice_id);

@@ -6,12 +6,12 @@ class Purchase_history extends CORE_Controller {
         parent::__construct('');
         $this->validate_session();
         // $this->load->model('Pos_integration_items_model');
+        $this->load->library('M_pdf');
+        $this->load->library('excel');
         $this->load->model('Company_model');
         $this->load->model('Users_model');
         $this->load->model('Suppliers_model');
         $this->load->model('Departments_model');
-        $this->load->library('M_pdf');
-        $this->load->library('excel');
         $this->load->model('Email_settings_model');
         $this->load->model('Delivery_invoice_model');
     }
@@ -55,289 +55,281 @@ class Purchase_history extends CORE_Controller {
                 echo json_encode($response);
                 break;
 
-            case'delivery_list_count':  //this returns JSON of Purchase Order to be rendered on Datatable with validation of count in invoice
-            $m_delivery=$this->Delivery_invoice_model;
-            $department=$this->input->get('department',TRUE);
-            $supplier=$this->input->get('supplier',TRUE);
-            ($department == '0')? $department = null :$department =$department ;
-            ($supplier == '0')? $supplier = null :$supplier =$supplier ;
+            case'delivery_list_count': 
+
+                $m_delivery=$this->Delivery_invoice_model;
+                $department=$this->input->get('department',TRUE);
+                $supplier=$this->input->get('supplier',TRUE);
+                ($department == '0')? $department = null :$department =$department ;
+                ($supplier == '0')? $supplier = null :$supplier =$supplier ;
                 $from=date('Y-m-d',strtotime($this->input->get('frm',TRUE)));
                 $to=date('Y-m-d',strtotime($this->input->get('to',TRUE)));
-            $response['data']=$m_delivery->delivery_list_count($id_filter,$department,$supplier,$from,$to,1);
 
-            echo json_encode($response);    
+                $response['data']=$m_delivery->delivery_list_count($id_filter,$department,$supplier,$from,$to,1);
+
+                echo json_encode($response);    
 
             break;
 
-            case 'print': //cash invoice
-                // $m_cash_invoice=$this->Cash_invoice_model;
-                // $m_cash_invoice_items=$this->Cash_invoice_items_model;
+            case 'print':
                 $m_company_info=$this->Company_model;
+                $m_delivery=$this->Delivery_invoice_model;
+                $m_department=$this->Departments_model;
+                $m_supplier=$this->Suppliers_model;
+
                 $type=$this->input->get('type',TRUE);
-                $company_info=$m_company_info->get_list();
-                $data['company_info']=$company_info[0];
-                $m_pos = $this->Pos_integration_items_model;
-                $cashier=$this->input->get('cashier',TRUE);
+                $department_id=$this->input->get('department_id',TRUE);
+                $supplier_id=$this->input->get('supplier_id',TRUE);
                 $from=date('Y-m-d',strtotime($this->input->get('frm',TRUE)));
                 $to=date('Y-m-d',strtotime($this->input->get('to',TRUE)));
-                ($cashier == '0')? $cashier = null :$cashier =$cashier ;
-                $data['reports'] = $m_pos->bar_sales_report_list($cashier,$from,$to);
 
-                $data['from'] =$from;
-                $data['to'] =$to;
-                $this->load->view('template/bar_sales_report_content',$data);
-                // //preview on browser
-                // if($type=='contentview'){
-                //     $file_name='Bar Sales Report';
-                //     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
-                //     $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
-                //     $content=$this->load->view('template/bar_sales_report_content',$data,TRUE); //load the template
-                //     $pdf->setFooter('{PAGENO}');
-                    
-                //     $pdf->WriteHTML($content);
-                //     //download it.
-                //     $pdf->Output();
-                // }
+                // Get Department Name
+                if($department_id == 0){
+                    $department_id = null;
+                    $data['department_name'] = 'ALL';
+                }else{
+                    $department_id=$department_id;
+                    $data['department_name'] = $m_department->get_list($department_id)[0]->department_name;
+                }
+
+                // Get Supplier Name
+                if($supplier_id == 0){
+                    $supplier_id = null;
+                    $data['supplier_name'] = 'ALL';
+                }else{
+                    $supplier_id=$supplier_id;
+                    $data['supplier_name'] = $m_supplier->get_list($supplier_id)[0]->supplier_name;
+                }
+
+                $data['data']=$m_delivery->delivery_list_count($id_filter,$department_id,$supplier_id,$from,$to,1);
+
+                $company_info=$m_company_info->get_list();
+                $data['company_info']=$company_info[0];
+                $data['from'] =date('F j, Y',strtotime($this->input->get('frm',TRUE)));
+                $data['to'] =date('F j, Y',strtotime($this->input->get('to',TRUE)));
+
+                //preview on browser
+                if($type=='contentview'){
+                    $file_name='Purchase History';
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                    $content=$this->load->view('template/purchase_history_content',$data,TRUE); //load the template
+                    // $pdf->setFooter('{PAGENO}');
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output();
+                }
 
                 break;
 
             case 'export':
           
-                    $excel=$this->excel;
-                    $m_company = $this->Company_model;
-                    $company_info = $m_company->get_list();
-                    $data['company_info'] = $company_info[0];
+                $m_company=$this->Company_model;
+                $m_delivery=$this->Delivery_invoice_model;
+                $m_department=$this->Departments_model;
+                $m_supplier=$this->Suppliers_model;
+                $excel=$this->excel;
 
+                $department_id=$this->input->get('department_id',TRUE);
+                $supplier_id=$this->input->get('supplier_id',TRUE);
+                $from=date('Y-m-d',strtotime($this->input->get('frm',TRUE)));
+                $to=date('Y-m-d',strtotime($this->input->get('to',TRUE)));
 
-                    $m_pos = $this->Pos_integration_items_model;
-                    $cashier=$this->input->get('cashier',TRUE);
-                    $from=date('Y-m-d',strtotime($this->input->get('frm',TRUE)));
-                    $to=date('Y-m-d',strtotime($this->input->get('to',TRUE)));
-                    ($cashier == '0')? $cashier = null :$cashier =$cashier ;
-                    $reports = $m_pos->bar_sales_report_list($cashier,$from,$to);
+                // Get Department Name
+                if($department_id == 0){
+                    $department_id = null;
+                    $department_name = 'ALL';
+                }else{
+                    $department_id=$department_id;
+                    $department_name = $m_department->get_list($department_id)[0]->department_name;
+                }
 
+                // Get Supplier Name
+                if($supplier_id == 0){
+                    $supplier_id = null;
+                    $supplier_name = 'ALL';
+                }else{
+                    $supplier_id=$supplier_id;
+                    $supplier_name = $m_supplier->get_list($supplier_id)[0]->supplier_name;
+                }
 
+                $data=$m_delivery->delivery_list_count($id_filter,$department_id,$supplier_id,$from,$to,1);
+                $from =date('F j, Y',strtotime($this->input->get('frm',TRUE)));
+                $to =date('F j, Y',strtotime($this->input->get('to',TRUE)));
+                $company_info = $m_company->get_list();
 
+                $excel->setActiveSheetIndex(0);
 
+                $excel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
+                $excel->getActiveSheet()->getColumnDimension('B')->setWidth(30);
+                $excel->getActiveSheet()->getColumnDimension('C')->setWidth(15);
+                $excel->getActiveSheet()->getColumnDimension('D')->setWidth(15);
+                $excel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
+                $excel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
+                $excel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
+                $excel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
 
+                //name the worksheet
+                $excel->getActiveSheet()->setTitle("Purchase History");
+                $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->mergeCells('A1:B1');
+                $excel->getActiveSheet()->mergeCells('A2:B2');
+                $excel->getActiveSheet()->mergeCells('A3:B3');
+                $excel->getActiveSheet()->mergeCells('A4:B4');
+                $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
+                                        ->setCellValue('A2',$company_info[0]->company_address)
+                                        ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no)
+                                        ->setCellValue('A4',$company_info[0]->email_address);
+                                          
+                // $excel->getActiveSheet()->mergeCells('A6:D6');
+                $excel->getActiveSheet()->getStyle('A6')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('A6','Purchase History')
+                                        ->setCellValue('A7','Supplier : ')
+                                        ->setCellValue('B7',$supplier_name)
+                                        ->setCellValue('A8','Department : ')
+                                        ->setCellValue('B8',$department_name)
+                                        ->setCellValue('A9','From '.$from.' to '.$to);
 
-                    $excel->setActiveSheetIndex(0);
+                $excel->getActiveSheet()->getStyle('A11:H11')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('A11','Invoice #')
+                                        ->setCellValue('B11','Supplier')
+                                        ->setCellValue('C11','Department')
+                                        ->setCellValue('D11','External Ref #')
+                                        ->setCellValue('E11','PO#')
+                                        ->setCellValue('F11','Terms')
+                                        ->setCellValue('G11','Delivered');          
 
-                    $excel->getActiveSheet()->getColumnDimensionByColumn('A1:B1')->setWidth('30');
-                    $excel->getActiveSheet()->getColumnDimensionByColumn('A2:B2')->setWidth('50');
-                    $excel->getActiveSheet()->getColumnDimensionByColumn('A3')->setWidth('30');
-                    $excel->getActiveSheet()->getColumnDimensionByColumn('A4')->setWidth('30');
+                $i = 12;
 
-                    //name the worksheet
-                    $excel->getActiveSheet()->setTitle("Bar Sales Report");
-                    $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->mergeCells('A1:B1');
-                    $excel->getActiveSheet()->mergeCells('A2:B2');
-                    $excel->getActiveSheet()->mergeCells('A3:B3');
-                    $excel->getActiveSheet()->mergeCells('A4:B4');
-                    $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
-                                            ->setCellValue('A2',$company_info[0]->company_address)
-                                            ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no)
-                                            ->setCellValue('A4',$company_info[0]->email_address);
+                foreach($data as $data){
 
-                    $excel->getActiveSheet()->getColumnDimensionByColumn('A6:B6')->setWidth('40');                                          
-                    $excel->getActiveSheet()->mergeCells('A6:D6');
-                    $excel->getActiveSheet()->setCellValue('A6','Bar Sales Report ('.$from.' - '.$to.')')
-                                            ->getStyle('A6')->getFont()->setBold(TRUE)
-                                            ->setSize(16);
-
-                    $excel->getActiveSheet()->getColumnDimension('A')->setWidth('20');
-                    $excel->getActiveSheet()->getColumnDimension('B')->setWidth('20');
-                    $excel->getActiveSheet()->getColumnDimension('C')->setWidth('20');
-                    $excel->getActiveSheet()->getColumnDimension('D')->setWidth('20');
-                    $excel->getActiveSheet()->getColumnDimension('E')->setWidth('20');
-                    $excel->getActiveSheet()->getColumnDimension('F')->setWidth('20');
-                    $excel->getActiveSheet()->getColumnDimension('G')->setWidth('20');
-                                                            
-                    $i=7;
-                    $excel->getActiveSheet()->setCellValue('A'.$i,'Cashier: '.($cashier=='' ? 'ALL' : $cashier))->getStyle('A'.$i);    
-                    $excel->getActiveSheet()->setCellValue('B'.$i,'Date: '.$from.' - '.$to)->getStyle('B'.$i);    
-                    $i=9;
-                    $excel->Align_right('C',$i);
-                    $excel->Align_right('D',$i);
-                    $excel->Align_right('E',$i);
-                    $excel->Align_right('F',$i);
-                    $excel->Align_right('G',$i);
-                    $excel->getActiveSheet()->setCellValue('A'.$i,'Sales Date')->getStyle('A'.$i)->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('B'.$i,'Cashier')->getStyle('B'.$i)->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('c'.$i,'Total Amount')->getStyle('C'.$i)->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('D'.$i,'Cash')->getStyle('D'.$i)->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('E'.$i,'Check')->getStyle('E'.$i)->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('F'.$i,'Card')->getStyle('F'.$i)->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('G'.$i,'Gift Check')->getStyle('G'.$i)->getFont()->setBold(TRUE);
-
+                    $excel->getActiveSheet()->setCellValue('A'.$i,$data->dr_invoice_no)
+                                ->setCellValue('B'.$i,$data->supplier_name)
+                                ->setCellValue('C'.$i,$data->department_name)
+                                ->setCellValue('D'.$i,$data->external_ref_no)
+                                ->setCellValue('E'.$i,$data->po_no)
+                                ->setCellValue('F'.$i,$data->term_description)
+                                ->setCellValue('G'.$i,$data->date_delivered);
+                                
                     $i++;
-                    $total = 0;
-                    $total_cash = 0;
-                    $total_card = 0;
-                    $total_check = 0;
-                    $total_gc = 0;
-                    foreach ($reports as $report) {
-                        $excel->Align_right('C',$i);
-                        $excel->Align_right('D',$i);
-                        $excel->Align_right('E',$i);
-                        $excel->Align_right('F',$i);
-                        $excel->Align_right('G',$i);
-                        $excel->getActiveSheet()->setCellValue('A'.$i,$report->sales_date);
-                        $excel->getActiveSheet()->setCellValue('B'.$i,$report->cashier);
-                        $excel->getActiveSheet()->setCellValue('c'.$i,(number_format($report->total,2) == 0 ? '0.00' : number_format($report->total,2)));
-                        $excel->getActiveSheet()->setCellValue('D'.$i,(number_format($report->cash_amount,2) == 0 ? '0.00' : number_format($report->cash_amount,2)));
-                        $excel->getActiveSheet()->setCellValue('E'.$i,(number_format($report->check_amount,2) == 0 ? '0.00' : number_format($report->check_amount,2)));
-                        $excel->getActiveSheet()->setCellValue('F'.$i,(number_format($report->card_amount,2) == 0 ? '0.00' : number_format($report->card_amount,2)));
-                        $excel->getActiveSheet()->setCellValue('G'.$i,(number_format($report->gc_amount,2) == 0 ? '0.00' : number_format($report->gc_amount,2)));
-                        
-                    $i++;
 
-                   $total += $report->total ;
-                   $total_cash += $report->cash_amount;
-                   $total_card += $report->card_amount;
-                   $total_check+= $report->check_amount;
-                   $total_gc+= $report->gc_amount;
-                    }
+                }
 
-                        $excel->Align_right('C',$i);
-                        $excel->Align_right('D',$i);
-                        $excel->Align_right('E',$i);
-                        $excel->Align_right('F',$i);
-                        $excel->Align_right('G',$i);
-                        $excel->getActiveSheet()->setCellValue('c'.$i,(number_format($total,2) == 0 ? '0.00' : number_format($total,2)))->getStyle('C'.$i)->getFont()->setBold(TRUE);
-                        $excel->getActiveSheet()->setCellValue('D'.$i,(number_format($total_cash,2) == 0 ? '0.00' : number_format($total_cash,2)))->getStyle('D'.$i)->getFont()->setBold(TRUE);
-                        $excel->getActiveSheet()->setCellValue('F'.$i,(number_format($total_card,2) == 0 ? '0.00' : number_format($total_card,2)))->getStyle('E'.$i)->getFont()->setBold(TRUE);
-                        $excel->getActiveSheet()->setCellValue('E'.$i,(number_format($total_check,2) == 0 ? '0.00' : number_format($total_check,2)))->getStyle('F'.$i)->getFont()->setBold(TRUE);
-                        $excel->getActiveSheet()->setCellValue('G'.$i,(number_format($total_gc,2) == 0 ? '0.00' : number_format($total_gc,2)))->getStyle('G'.$i)->getFont()->setBold(TRUE);
-                        
+                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                header('Content-Disposition: attachment;filename='."Purchase History.xlsx".'');
+                header('Cache-Control: max-age=0');
+                // If you're serving to IE 9, then the following may be needed
+                header('Cache-Control: max-age=1');
+                // If you're serving to IE over SSL, then the following may be needed
+                header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+                header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+                header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+                header ('Pragma: public'); // HTTP/1.0
 
-                    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                    header('Content-Disposition: attachment;filename='."Bar Sales Report.xlsx".'');
-                    header('Cache-Control: max-age=0');
-                    // If you're serving to IE 9, then the following may be needed
-                    header('Cache-Control: max-age=1');
-                    // If you're serving to IE over SSL, then the following may be needed
-                    header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-                    header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
-                    header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-                    header ('Pragma: public'); // HTTP/1.0
+                $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+                $objWriter->save('php://output'); 
 
-                    $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
-                    $objWriter->save('php://output'); 
+            break;
 
-                break;
-
-                case 'email':
+            case 'email':
           
-                    $excel=$this->excel;
-                    $m_company = $this->Company_model;
-                    $company_info = $m_company->get_list();
-                    $data['company_info'] = $company_info[0];
-
-
-                    $m_pos = $this->Pos_integration_items_model;
-                    $cashier=$this->input->get('cashier',TRUE);
-                    $from=date('Y-m-d',strtotime($this->input->get('frm',TRUE)));
-                    $to=date('Y-m-d',strtotime($this->input->get('to',TRUE)));
-                    ($cashier == '0')? $cashier = null :$cashier =$cashier ;
-                    $reports = $m_pos->bar_sales_report_list($cashier,$from,$to);
                 $excel=$this->excel;
                 $m_email=$this->Email_settings_model;
-                $filter_value = 2;
+                $m_company=$this->Company_model;
+                $m_delivery=$this->Delivery_invoice_model;
+                $m_department=$this->Departments_model;
+                $m_supplier=$this->Suppliers_model;
+
+                $department_id=$this->input->get('department_id',TRUE);
+                $supplier_id=$this->input->get('supplier_id',TRUE);
+                $from=date('Y-m-d',strtotime($this->input->get('frm',TRUE)));
+                $to=date('Y-m-d',strtotime($this->input->get('to',TRUE)));
+
+                // Get Department Name
+                if($department_id == 0){
+                    $department_id = null;
+                    $department_name = 'ALL';
+                }else{
+                    $department_id=$department_id;
+                    $department_name = $m_department->get_list($department_id)[0]->department_name;
+                }
+
+                // Get Supplier Name
+                if($supplier_id == 0){
+                    $supplier_id = null;
+                    $supplier_name = 'ALL';
+                }else{
+                    $supplier_id=$supplier_id;
+                    $supplier_name = $m_supplier->get_list($supplier_id)[0]->supplier_name;
+                }
+
+                $data=$m_delivery->delivery_list_count($id_filter,$department_id,$supplier_id,$from,$to,1);
+                $from =date('F j, Y',strtotime($this->input->get('frm',TRUE)));
+                $to =date('F j, Y',strtotime($this->input->get('to',TRUE)));
+                $company_info = $m_company->get_list();
                 $email=$m_email->get_list(2);    
-                    $excel->setActiveSheetIndex(0);
-                  ob_start();
-                    $excel->getActiveSheet()->getColumnDimensionByColumn('A1:B1')->setWidth('30');
-                    $excel->getActiveSheet()->getColumnDimensionByColumn('A2:B2')->setWidth('50');
-                    $excel->getActiveSheet()->getColumnDimensionByColumn('A3')->setWidth('30');
-                    $excel->getActiveSheet()->getColumnDimensionByColumn('A4')->setWidth('30');
 
-                    //name the worksheet
-                    $excel->getActiveSheet()->setTitle("Bar Sales Report");
-                    $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->mergeCells('A1:B1');
-                    $excel->getActiveSheet()->mergeCells('A2:B2');
-                    $excel->getActiveSheet()->mergeCells('A3:B3');
-                    $excel->getActiveSheet()->mergeCells('A4:B4');
-                    $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
-                                            ->setCellValue('A2',$company_info[0]->company_address)
-                                            ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no)
-                                            ->setCellValue('A4',$company_info[0]->email_address);
+                $excel->setActiveSheetIndex(0);
+                ob_start();
 
-                    $excel->getActiveSheet()->getColumnDimensionByColumn('A6:B6')->setWidth('40');                                          
-                    $excel->getActiveSheet()->mergeCells('A6:D6');
-                    $excel->getActiveSheet()->setCellValue('A6','Bar Sales Report ('.$from.' - '.$to.')')
-                                            ->getStyle('A6')->getFont()->setBold(TRUE)
-                                            ->setSize(16);
+                $excel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
+                $excel->getActiveSheet()->getColumnDimension('B')->setWidth(30);
+                $excel->getActiveSheet()->getColumnDimension('C')->setWidth(15);
+                $excel->getActiveSheet()->getColumnDimension('D')->setWidth(15);
+                $excel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
+                $excel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
+                $excel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
+                $excel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
 
-                    $excel->getActiveSheet()->getColumnDimension('A')->setWidth('20');
-                    $excel->getActiveSheet()->getColumnDimension('B')->setWidth('20');
-                    $excel->getActiveSheet()->getColumnDimension('C')->setWidth('20');
-                    $excel->getActiveSheet()->getColumnDimension('D')->setWidth('20');
-                    $excel->getActiveSheet()->getColumnDimension('E')->setWidth('20');
-                    $excel->getActiveSheet()->getColumnDimension('F')->setWidth('20');
-                    $excel->getActiveSheet()->getColumnDimension('G')->setWidth('20');
-                                                            
-                    $i=7;
-                    $excel->getActiveSheet()->setCellValue('A'.$i,'Cashier: '.($cashier=='' ? 'ALL' : $cashier))->getStyle('A'.$i);    
-                    $excel->getActiveSheet()->setCellValue('B'.$i,'Date: '.$from.' - '.$to)->getStyle('B'.$i);    
-                    $i=9;
-                    $excel->Align_right('C',$i);
-                    $excel->Align_right('D',$i);
-                    $excel->Align_right('E',$i);
-                    $excel->Align_right('F',$i);
-                    $excel->Align_right('G',$i);
-                    $excel->getActiveSheet()->setCellValue('A'.$i,'Sales Date')->getStyle('A'.$i)->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('B'.$i,'Cashier')->getStyle('B'.$i)->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('c'.$i,'Total Amount')->getStyle('C'.$i)->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('D'.$i,'Cash')->getStyle('D'.$i)->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('E'.$i,'Check')->getStyle('E'.$i)->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('F'.$i,'Card')->getStyle('F'.$i)->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('G'.$i,'Gift Check')->getStyle('G'.$i)->getFont()->setBold(TRUE);
+                //name the worksheet
+                $excel->getActiveSheet()->setTitle("Purchase History");
+                $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->mergeCells('A1:B1');
+                $excel->getActiveSheet()->mergeCells('A2:B2');
+                $excel->getActiveSheet()->mergeCells('A3:B3');
+                $excel->getActiveSheet()->mergeCells('A4:B4');
+                $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
+                                        ->setCellValue('A2',$company_info[0]->company_address)
+                                        ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no)
+                                        ->setCellValue('A4',$company_info[0]->email_address);
+                                          
+                // $excel->getActiveSheet()->mergeCells('A6:D6');
+                $excel->getActiveSheet()->getStyle('A6')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('A6','Purchase History')
+                                        ->setCellValue('A7','Supplier : ')
+                                        ->setCellValue('B7',$supplier_name)
+                                        ->setCellValue('A8','Department : ')
+                                        ->setCellValue('B8',$department_name)
+                                        ->setCellValue('A9','From '.$from.' to '.$to);
 
-                    $i++;
-                    $total = 0;
-                    $total_cash = 0;
-                    $total_card = 0;
-                    $total_check = 0;
-                    $total_gc = 0;
-                    foreach ($reports as $report) {
-                        $excel->Align_right('C',$i);
-                        $excel->Align_right('D',$i);
-                        $excel->Align_right('E',$i);
-                        $excel->Align_right('F',$i);
-                        $excel->Align_right('G',$i);
-                        $excel->getActiveSheet()->setCellValue('A'.$i,$report->sales_date);
-                        $excel->getActiveSheet()->setCellValue('B'.$i,$report->cashier);
-                        $excel->getActiveSheet()->setCellValue('c'.$i,(number_format($report->total,2) == 0 ? '0.00' : number_format($report->total,2)));
-                        $excel->getActiveSheet()->setCellValue('D'.$i,(number_format($report->cash_amount,2) == 0 ? '0.00' : number_format($report->cash_amount,2)));
-                        $excel->getActiveSheet()->setCellValue('E'.$i,(number_format($report->check_amount,2) == 0 ? '0.00' : number_format($report->check_amount,2)));
-                        $excel->getActiveSheet()->setCellValue('F'.$i,(number_format($report->card_amount,2) == 0 ? '0.00' : number_format($report->card_amount,2)));
-                        $excel->getActiveSheet()->setCellValue('G'.$i,(number_format($report->gc_amount,2) == 0 ? '0.00' : number_format($report->gc_amount,2)));
-                        
+                $excel->getActiveSheet()->getStyle('A11:H11')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('A11','Invoice #')
+                                        ->setCellValue('B11','Supplier')
+                                        ->setCellValue('C11','Department')
+                                        ->setCellValue('D11','External Ref #')
+                                        ->setCellValue('E11','PO#')
+                                        ->setCellValue('F11','Terms')
+                                        ->setCellValue('G11','Delivered');          
+
+                $i = 12;
+
+                foreach($data as $data){
+
+                    $excel->getActiveSheet()->setCellValue('A'.$i,$data->dr_invoice_no)
+                                ->setCellValue('B'.$i,$data->supplier_name)
+                                ->setCellValue('C'.$i,$data->department_name)
+                                ->setCellValue('D'.$i,$data->external_ref_no)
+                                ->setCellValue('E'.$i,$data->po_no)
+                                ->setCellValue('F'.$i,$data->term_description)
+                                ->setCellValue('G'.$i,$data->date_delivered);
+                                
                     $i++;
 
-                   $total += $report->total ;
-                   $total_cash += $report->cash_amount;
-                   $total_card += $report->card_amount;
-                   $total_check+= $report->check_amount;
-                   $total_gc+= $report->gc_amount;
-                    }
+                }
 
-                        $excel->Align_right('C',$i);
-                        $excel->Align_right('D',$i);
-                        $excel->Align_right('E',$i);
-                        $excel->Align_right('F',$i);
-                        $excel->Align_right('G',$i);
-                        $excel->getActiveSheet()->setCellValue('c'.$i,(number_format($total,2) == 0 ? '0.00' : number_format($total,2)))->getStyle('C'.$i)->getFont()->setBold(TRUE);
-                        $excel->getActiveSheet()->setCellValue('D'.$i,(number_format($total_cash,2) == 0 ? '0.00' : number_format($total_cash,2)))->getStyle('D'.$i)->getFont()->setBold(TRUE);
-                        $excel->getActiveSheet()->setCellValue('F'.$i,(number_format($total_card,2) == 0 ? '0.00' : number_format($total_card,2)))->getStyle('E'.$i)->getFont()->setBold(TRUE);
-                        $excel->getActiveSheet()->setCellValue('E'.$i,(number_format($total_check,2) == 0 ? '0.00' : number_format($total_check,2)))->getStyle('F'.$i)->getFont()->setBold(TRUE);
-                        $excel->getActiveSheet()->setCellValue('G'.$i,(number_format($total_gc,2) == 0 ? '0.00' : number_format($total_gc,2)))->getStyle('G'.$i)->getFont()->setBold(TRUE);
                 // Redirect output to a client’s web browser (Excel2007)
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                header('Content-Disposition: attachment;filename="Bar Sales Report.xlsx"');
+                header('Content-Disposition: attachment;filename='."Purchase History.xlsx".'');
                 header('Cache-Control: max-age=0');
                 // If you're serving to IE 9, then the following may be needed
                 header('Cache-Control: max-age=1');
@@ -351,59 +343,59 @@ class Purchase_history extends CORE_Controller {
                 $objWriter->save('php://output');
                 $data = ob_get_clean();
 
-                          $file_name='Bar Sales Report '.date('Y-m-d h:i:A', now());
-                            $excelFilePath = $file_name.".xlsx"; //generate filename base on id
-                            //download it.
-                            // Set SMTP Configuration
-                            $emailConfig = array(
-                                'protocol' => 'smtp', 
-                                'smtp_host' => 'ssl://smtp.googlemail.com', 
-                                'smtp_port' => 465, 
-                                'smtp_user' => $email[0]->email_address, 
-                                'smtp_pass' => $email[0]->password, 
-                                'mailtype' => 'html', 
-                                'charset' => 'iso-8859-1'
-                            );
+                $file_name='Purchase History '.date('Y-m-d h:i:A', now());
+                $excelFilePath = $file_name.".xlsx"; //generate filename base on id
+                    //download it.
+                    // Set SMTP Configuration
+                    $emailConfig = array(
+                        'protocol' => 'smtp', 
+                        'smtp_host' => 'ssl://smtp.googlemail.com', 
+                        'smtp_port' => 465, 
+                        'smtp_user' => $email[0]->email_address, 
+                        'smtp_pass' => $email[0]->password, 
+                        'mailtype' => 'html', 
+                        'charset' => 'iso-8859-1'
+                    );
 
-                            // Set your email information
-                            
-                            $from = array(
-                                'email' => $email[0]->email_address,
-                                'name' => $email[0]->name_from
-                            );
+                    // Set your email information
+                    
+                    $from = array(
+                        'email' => $email[0]->email_address,
+                        'name' => $email[0]->name_from
+                    );
 
-                            $to = array($email[0]->email_to);
-                            $subject = 'Bar Sales Report';
-                          //  $message = 'Type your gmail message here';
-                            $message = '<p>To: ' .$email[0]->email_to. '</p></ br>' .$email[0]->default_message.'</ br><p>Sent By: '. '<b>'.$this->session->user_fullname.'</b>'. '</p></ br>' .date('Y-m-d h:i:A', now());
+                    $to = array($email[0]->email_to);
+                    $subject = 'Purchase History';
+                  //  $message = 'Type your gmail message here';
+                    $message = '<p>To: ' .$email[0]->email_to. '</p></ br>' .$email[0]->default_message.'</ br><p>Sent By: '. '<b>'.$this->session->user_fullname.'</b>'. '</p></ br>' .date('Y-m-d h:i:A', now());
 
-                            // Load CodeIgniter Email library
-                            $this->load->library('email', $emailConfig);
-                            // Sometimes you have to set the new line character for better result
-                            $this->email->set_newline("\r\n");
-                            // Set email preferences
-                            $this->email->from($from['email'], $from['name']);
-                            $this->email->to($to);
-                            $this->email->subject($subject);
-                            $this->email->message($message);
-                            $this->email->attach($data, 'attachment', $excelFilePath , 'application/ms-excel');
-                            $this->email->set_mailtype("html");
-                            // Ready to send email and check whether the email was successfully sent
-                            if (!$this->email->send()) {
-                                // Raise error message
-                            $response['title']='Try Again!';
-                            $response['stat']='error';
-                            $response['msg']='Please check the Email Address of your Supplier or your Internet Connection.';
+                    // Load CodeIgniter Email library
+                    $this->load->library('email', $emailConfig);
+                    // Sometimes you have to set the new line character for better result
+                    $this->email->set_newline("\r\n");
+                    // Set email preferences
+                    $this->email->from($from['email'], $from['name']);
+                    $this->email->to($to);
+                    $this->email->subject($subject);
+                    $this->email->message($message);
+                    $this->email->attach($data, 'attachment', $excelFilePath , 'application/ms-excel');
+                    $this->email->set_mailtype("html");
+                    // Ready to send email and check whether the email was successfully sent
+                    if (!$this->email->send()) {
+                        // Raise error message
+                    $response['title']='Try Again!';
+                    $response['stat']='error';
+                    $response['msg']='Please check the Email Address of your Supplier or your Internet Connection.';
 
-                            echo json_encode($response);
-                            } else {
-                                // Show success notification or other things here
-                            $response['title']='Success!';
-                            $response['stat']='success';
-                            $response['msg']='Email Sent successfully.';
+                    echo json_encode($response);
+                    } else {
+                        // Show success notification or other things here
+                    $response['title']='Success!';
+                    $response['stat']='success';
+                    $response['msg']='Email Sent successfully.';
 
-                            echo json_encode($response);
-                            }
+                    echo json_encode($response);
+                    }
                 break;
 
         }

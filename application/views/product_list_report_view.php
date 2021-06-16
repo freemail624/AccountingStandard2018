@@ -104,22 +104,24 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "product_code" },
                 { targets:[2],data: "product_desc" },
-                { targets:[3],data: "product_desc1" },
+                { visible: false, targets:[3],data: "product_desc1" },
                 { targets:[4],data: "category_name" },
-                { targets:[5],data: "supplier_name" },
+                { visible: false, targets:[5],data: "supplier_name" },
                 { targets:[6],data: "product_unit_name" },
-                { targets:[7],data: "item_type" },
-                { targets:[8],data: "tax_rate" },
-                { sClass:'right-align', targets:[9],data: "purchase_cost" , render: $.fn.dataTable.render.number( ',', '.', 2 ) },
-                { sClass:'right-align', targets:[10],data: "sale_price", render: $.fn.dataTable.render.number( ',', '.', 2 ) },
-                { sClass:'right-align', targets:[11],data: "product_warn", render: $.fn.dataTable.render.number( ',', '.', 2 ) },
-                { sClass:'right-align', targets:[12],data: "product_ideal", render: $.fn.dataTable.render.number( ',', '.', 2 ) },
-                { sClass:'right-align', targets:[13],data: "discounted_price", render: $.fn.dataTable.render.number( ',', '.', 2 ) },
-                { sClass:'right-align', targets:[14],data: "dealer_price" , render: $.fn.dataTable.render.number( ',', '.', 2 ) },
-                { sClass:'right-align', targets:[15],data: "distributor_price", render: $.fn.dataTable.render.number( ',', '.', 2 ) },
-                { sClass:'right-align', targets:[16],data: "public_price" , render: $.fn.dataTable.render.number( ',', '.', 2 ) },
+                { targets:[7],data: "size_desc" },
+                { targets:[8],data: "model_name" },
+                { targets:[9],data: "item_type" },
+                { targets:[10],data: "tax_rate" },
+                { sClass:'right-align', targets:[11],data: "purchase_cost" , render: $.fn.dataTable.render.number( ',', '.', 2 ) },
+                { sClass:'right-align', targets:[12],data: "sale_price", render: $.fn.dataTable.render.number( ',', '.', 2 ) },
+                { sClass:'right-align', targets:[13],data: "product_warn", render: $.fn.dataTable.render.number( ',', '.', 2 ) },
+                { sClass:'right-align', targets:[14],data: "product_ideal", render: $.fn.dataTable.render.number( ',', '.', 2 ) },
+                { sClass:'right-align', targets:[15],data: "discounted_price", render: $.fn.dataTable.render.number( ',', '.', 2 ) },
+                { sClass:'right-align', targets:[16],data: "dealer_price" , render: $.fn.dataTable.render.number( ',', '.', 2 ) },
+                { sClass:'right-align', targets:[17],data: "distributor_price", render: $.fn.dataTable.render.number( ',', '.', 2 ) },
+                { sClass:'right-align', targets:[18],data: "public_price" , render: $.fn.dataTable.render.number( ',', '.', 2 ) },
                 { sClass:'right-align', visible:false,
-                    targets:[4],data: "CurrentQty",
+                    targets:[19],data: "CurrentQty",
                     render: function (data, type, full, meta) {
                         if(isNaN(data)){
                             return 0;
@@ -136,7 +138,7 @@ $(document).ready(function(){
                      },
             "rowCallback":function( row, data, index ){
 
-                $(row).find('td').eq(4).attr({
+                $(row).find('td').eq(19).attr({
                     "align": "right"
                 });
             }
@@ -378,6 +380,8 @@ $(document).ready(function(){
                                                         <th>Category</th>
                                                         <th>Supplier</th>
                                                         <th>Unit</th>
+                                                        <th>Size</th>
+                                                        <th>Model</th>
                                                         <th>Item Type</th>
                                                         <th>Tax Type</th>
                                                         <th>Purchase Cost</th>

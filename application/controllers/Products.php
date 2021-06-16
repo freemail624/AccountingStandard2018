@@ -173,7 +173,14 @@ class Products extends CORE_Controller
                 $m_products->set('date_created','NOW()');
                 $m_products->created_by_user = $this->session->user_id;
 
-                $m_products->product_code = $this->input->post('product_code', TRUE);
+                $m_account_integration=$this->Account_integration_model;
+                $account_integration=$m_account_integration->get_list();
+                $number = '000000'; // the number to format
+                $format_code = COUNT($m_products->get_list(array("is_deleted"=>FALSE)))+1+$account_integration[0]->product_code_start;
+                $product_code = str_pad(intval($number) + $format_code, strlen($number), '0', STR_PAD_LEFT);
+
+                // $m_products->product_code = $this->input->post('product_code', TRUE);
+                $m_products->product_code = $product_code;
                 $m_products->product_desc = $this->input->post('product_desc', TRUE);
                 $m_products->product_desc1 = $this->input->post('product_desc1', TRUE);
 
@@ -263,7 +270,7 @@ class Products extends CORE_Controller
                 $m_products->set('date_modified','NOW()');
                 $m_products->modified_by_user = $this->session->user_id;
 
-                $m_products->product_code = $this->input->post('product_code', TRUE);
+                // $m_products->product_code = $this->input->post('product_code', TRUE);
                 $m_products->product_desc = $this->input->post('product_desc', TRUE);
                 $m_products->product_desc1 = $this->input->post('product_desc1', TRUE);
                 $m_products->brand_id = $this->get_numeric_value($this->input->post('brand_id', TRUE));

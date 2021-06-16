@@ -1001,9 +1001,10 @@ GROUP BY n.customer_id HAVING total_balance > 0";
     }
 
     function get_customer_sale_history($customer_id = null,$product_id = null){
-        $sql='          SELECT 
+        $sql='SELECT 
             invoice_id,
             inv_no,
+            receipt_no,
             transaction_type,
             product_desc,
             inv_qty,
@@ -1024,6 +1025,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
             sii.inv_gross,
             si.date_invoice,
             si.sales_inv_no  as inv_no,
+            si.receipt_no,
             si.remarks
             FROM sales_invoice_items sii
             LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id 
@@ -1044,6 +1046,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
             cii.inv_gross,
             ci.date_invoice,
             ci.cash_inv_no  as inv_no,
+            ci.receipt_no,
             ci.remarks
             FROM cash_invoice_items cii
 
@@ -1067,6 +1070,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
         "SI" as type,
         si.sales_invoice_id as invoice_id,
         si.sales_inv_no as inv_no,
+        si.receipt_no,
         si.remarks,
         DATE_FORMAT(si.date_invoice,"%m/%d/%Y") as date_invoice,
         d.department_name,
@@ -1088,6 +1092,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
         "CI" as type,
         ci.cash_invoice_id as inv_id,
         ci.cash_inv_no as inv_no,
+        ci.receipt_no,
         ci.remarks,
         DATE_FORMAT(ci.date_invoice,"%m/%d/%Y") as date_invoice,
         d.department_name,

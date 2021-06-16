@@ -93,7 +93,7 @@ $(document).ready(function(){
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "pageLength":15,
-            "order": [[ 7, "desc" ]],
+            "order": [[ 6, "desc" ]],
              "searching": false,
             // "scrollX": true,
             oLanguage: {
@@ -103,7 +103,7 @@ $(document).ready(function(){
             "ajax": {
               "url":"Purchase_monitoring/transaction/list",
               "type":"GET",
-              // "order": [[ 6, "desc" ]],
+              "order": [[ 6, "desc" ]],
               "data":function (d) {
                 return $.extend( {}, d, {
                     "product_id": $('#product_id').val(),
@@ -114,17 +114,13 @@ $(document).ready(function(){
             },
             "columns": [
 
-                { targets:[0],data: "product_code" },
+                { targets:[0],data: "date_delivered" },
                 { targets:[1],data: "product_desc" },
-                { targets:[2],data: "unit_name" },
+                { targets:[2],data: "dr_qty" },
                 { sClass: 'right-align',targets:[3],data: "dr_price" , render: $.fn.dataTable.render.number( ',', '.', 2 ) },
                 { targets:[4],data: "supplier_name" },
-                { targets:[5],data: "date_delivered" },
-                { targets:[6],data: "dr_invoice_no" },
-                { targets:[7],data: "dr_invoice_id" , visible:false}
-
-
-
+                { targets:[5],data: "dr_invoice_no" },
+                { targets:[6],data: "dr_invoice_id" , visible:false},
 
             ],
 
@@ -185,28 +181,28 @@ $(document).ready(function(){
         });
 
         $('#btn_print').click(function(){
-            window.open('Purchase_monitoring/transaction/report?supplier_id='+$('#product_id').val()+'&start_date='+$('#start_date').val()+'&end_date='+$('#end_date').val());
+            window.open('Purchase_monitoring/transaction/report?product_id='+$('#product_id').val()+'&start_date='+$('#start_date').val()+'&end_date='+$('#end_date').val());
         });
 
-        // $('#btn_excel').click(function(){
-        //     window.open('Pick_list/transaction/excel?sup='+$('#new_supplier').val()+'&cat='+$('#product_id').val());
-        // });
-        // $('#btn_email').on('click', function() {
-        // showNotification({title:"Sending!",stat:"info",msg:"Please wait for a few seconds."});
+        $('#btn_excel').click(function(){
+            window.open('Purchase_monitoring/transaction/report-excel?product_id='+$('#product_id').val()+'&start_date='+$('#start_date').val()+'&end_date='+$('#end_date').val());
+        });
 
-        // var btn=$(this);
-    
-        // $.ajax({
-        //     "dataType":"json",
-        //     "type":"POST",
-        //     "url":'Pick_list/transaction/email?sup='+$('#new_supplier').val()+'&cat='+$('#product_id').val(),
-        //     "beforeSend": showSpinningProgress(btn)
-        // }).done(function(response){
-        //     showNotification(response);
-        //     showSpinningProgress(btn);
+        $('#btn_email').on('click', function() {
+            showNotification({title:"Sending!",stat:"info",msg:"Please wait for a few seconds."});
+            var btn=$(this);
+        
+            $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":'Purchase_monitoring/transaction/email?product_id='+$('#product_id').val()+'&start_date='+$('#start_date').val()+'&end_date='+$('#end_date').val(),
+                "beforeSend": showSpinningProgress(btn)
+            }).done(function(response){
+                showNotification(response);
+                showSpinningProgress(btn);
 
-        // });
-        // });
+            });
+        });
     })();
 
     var getOnHand=function(){
@@ -365,31 +361,25 @@ $(document).ready(function(){
                                                 <br>
                                                 </div><br>
                                                 <div class="row">
-                                                    <div class="col-sm-2">
+                                                    <div class="col-sm-12">
                                                         <button class="btn btn-primary pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " title="Print" ><i class="fa fa-print"></i> Print Report
                                                         </button>
-                                                    </div>
-                                                   <!--  <div class="col-sm-2">
                                                         <button class="btn btn-success pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_excel" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " title="Export to Excel" ><i class="fa fa-file-excel-o"></i> Excel Report
                                                         </button>
-                                                    </div>
-                                                    <div class="col-sm-2">
                                                         <button class="btn btn-success pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_email" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " title="Export to Excel" ><span class=""></span> <i class="fa fa-file-excel-o"></i> Email Report
                                                         </button>
-                                                    </div> -->
+                                                    </div>
                                                 </div>
                                                 <table id="tbl_products" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead class="">
                                                     <tr>    
-                                                        <th>PLU</th>
+                                                        <th>Date Invoice</th>
                                                         <th>Product Description</th>
-                                                        <th>Unit</th>
+                                                        <th>Qty</th>
                                                         <th>Price</th>
                                                         <th>Supplier</th>
-                                                        <th>Date Invoice</th>
                                                         <th>Reference No.</th>
                                                         <th></th>
-
                                                     </tr>
                                                     </thead>
                                                     <tbody>

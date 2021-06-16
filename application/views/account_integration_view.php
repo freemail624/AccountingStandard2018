@@ -69,7 +69,7 @@
             to { -webkit-transform: rotate(360deg); }
         }
 
-        .numeric{
+        .numeric, .number{
             text-align: right;
         }
 /*
@@ -243,8 +243,8 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                         </div>
                     </div>
 
-                    <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Cash Invoice </strong></span></h4>
-                    <div class="form-group">
+                    <h4 class="hidden"><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Cash Invoice </strong></span></h4>
+                    <div class="hidden form-group">
                         <label class="col-md-3 control-label"> <b class="required"> * </b>Customer :</label>
                         <div class="col-md-7">
                             <select name="default_customer_id" class="cbo_accounts" data-error-msg="Default Customer is required." required>
@@ -259,8 +259,8 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                     </div>                    
 
 
-                    <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Order Source (Sales) </strong></span></h4>
-                    <div class="form-group">
+                    <h4 class="hidden"><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Order Source (Sales) </strong></span></h4>
+                    <div class="hidden form-group">
                         <label class="col-md-3 control-label"> <b class="required"> * </b>Order Source :</label>
                         <div class="col-md-7">
                             <select name="default_order_source_id" class="cbo_accounts" data-error-msg="Order Source is required." required>
@@ -296,6 +296,18 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                         <div class="5">
                             <span class="help-block m-b-none">Please Choose a default daily allowance for loading report. </span></div>
                     </div>
+
+
+                    <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Product Code </strong></span></h4>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label"> <b class="required"> * </b>Product Code # :</label>
+                        <div class="col-md-2">
+                            <input type="text" class="number form-control" name="product_code_start" placeholder="Product Code" required data-error-msg="Product Code is required." value="<?php echo $current_accounts->product_code_start; ?>">
+                        </div>
+                        <div class="5">
+                            <span class="help-block m-b-none">Please choose a starting number for product code automization. </span></div>
+                    </div>
+
                     <br/>
                 </form>
                     <div class="col-sm-offset-3">
@@ -962,6 +974,7 @@ $(document).ready(function(){
         });
 
 
+        $('.number').autoNumeric('init', {mDec: '0'});
         $('.numeric').autoNumeric('init');
         // $('#cbo_inventory').select2('val', 0);
 

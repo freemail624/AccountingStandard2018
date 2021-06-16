@@ -307,6 +307,7 @@ class Sales_invoice extends CORE_Controller
                 $m_invoice->total_after_tax=$this->get_numeric_value($this->input->post('summary_after_tax',TRUE));
                 $m_invoice->total_after_discount=$this->get_numeric_value($this->input->post('total_after_discount',TRUE));
                 $m_invoice->inv_receipt_type_id=$this->get_numeric_value($this->input->post('inv_receipt_type_id',TRUE));
+                $m_invoice->receipt_no=$this->input->post('receipt_no',TRUE);
                 $m_invoice->posted_by_user=$this->session->user_id;
                 $m_invoice->save();
 
@@ -469,6 +470,7 @@ class Sales_invoice extends CORE_Controller
                     $m_invoice->total_after_discount=$this->get_numeric_value($this->input->post('total_after_discount',TRUE));
                     $m_invoice->address=$this->input->post('address',TRUE);
                     $m_invoice->inv_receipt_type_id=$this->get_numeric_value($this->input->post('inv_receipt_type_id',TRUE));
+                    $m_invoice->receipt_no=$this->input->post('receipt_no',TRUE);
                     $m_invoice->modified_by_user=$this->session->user_id;
                     $m_invoice->modify($sales_invoice_id);
 
@@ -823,6 +825,7 @@ class Sales_invoice extends CORE_Controller
              'sales_invoice.is_active = TRUE AND sales_invoice.is_deleted = FALSE '.($filter_value==null?'':' AND sales_invoice.sales_invoice_id='.$filter_value).''.($additional==null?'':$additional),
             array(
                 'inv_receipt_types.inv_receipt_type',
+                'sales_invoice.receipt_no',
                 'sales_invoice.inv_receipt_type_id',
                 'sales_invoice.sales_invoice_id',
                 'sales_invoice.sales_inv_no',
