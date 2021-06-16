@@ -896,10 +896,10 @@ $(document).ready(function(){
                 header: [
                     '<table class="tt-head"><tr>'+
                         '<td width="10%" style="padding-left: 1%;"><b>PLU</b></td>'+
-                        '<td width="25%" align="left"><b>Description</b></td>'+
+                        '<td width="30%" align="left"><b>Description</b></td>'+
                         '<td width="15%" align="left"><b>Size</b></td>'+
                         '<td width="20%" align="left"><b>Model</b></td>'+
-                        '<td width="10%" align="right"><b>On Hand</b></td>'+
+                        '<td width="6%" align="right"><b>On Hand</b></td>'+
                         '<td width="10%" align="right"><b>SRP</b></td>'+
                         '<td width="10%" align="right" style="padding-right: 2%;"><b>Cost Price</b></td>'+
                     '</tr></table>'
@@ -907,12 +907,12 @@ $(document).ready(function(){
                 suggestion: Handlebars.compile(
                     '<table class="tt-items"><tr>'+
                         '<td width="10%" style="padding-left: 1%;">{{product_code}}</td>'+
-                        '<td width="25%" align="left">{{product_desc}}</td>'+
+                        '<td width="30%" align="left">{{product_desc}}</td>'+
                         '<td width="15%" align="left">{{size_desc}}</td>'+
                         '<td width="20%" align="left">{{model_name}}</td>'+
-                        '<td width="10%" align="right">{{on_hand_per_batch}}</td>'+
-                        '<td width="10%" align="right">{{srp}}</td>'+
-                        '<td width="10%" align="right" style="padding-right: 2%;">{{srp_cost}}</td>'+
+                        '<td width="6%" align="right">{{on_hand_per_batch}}</td>'+
+                        '<td width="10%" align="right">{{srp_price}}</td>'+
+                        '<td width="10%" align="right" style="padding-right: 2%;">{{cost_price}}</td>'+
                     '</tr></table>')
             }
         }).on('keyup', this, function (event) {

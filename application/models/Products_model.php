@@ -2457,7 +2457,9 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
     $sql="SELECT
             productmain.*, FORMAT(productmain.total_qty_balance,2) as on_hand_per_batch,
             (productmain.total_qty_balance * productmain.purchase_cost) as total_cost,
-            (productmain.total_qty_balance * productmain.sale_price) as total_srp
+            (productmain.total_qty_balance * productmain.sale_price) as total_srp,
+            FORMAT(productmain.purchase_cost,2) as cost_price,
+            FORMAT(productmain.sale_price,2) as srp_price
         FROM
         (SELECT main.*,
             (main.quantity_in - main.quantity_out) as total_qty_balance,

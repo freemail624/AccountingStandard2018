@@ -1212,27 +1212,32 @@ $(document).ready(function(){
         name: 'products',
         display: 'product_code',
         source: products,
-        templates: {
-            header: [
-                '<table class="tt-head"><tr>'+
-                    '<td width="15%" style="padding-left: 1%;"><b>PLU</b></td>'+
-                    '<td width="25%" align="left"><b>Description</b></td>'+
-                    '<td width="20%" align="left"><b>Size</b></td>'+
-                    '<td width="20%" align="left"><b>Model</b></td>'+
-                    '<td width="10%" ><b>On Hand</b></td>'+
-                    '<td width="10%" align="right" style="padding-right: 2%;"><b>SRP</b></td>'+
-                '</tr></table>'
-            ].join('\n'),
-            suggestion: Handlebars.compile(
-                '<table class="tt-items"><tr>'+
-                    '<td width="15%" style="padding-left: 1%;">{{product_code}}</td>'+
-                    '<td width="25%" align="left">{{product_desc}}</td>'+
-                    '<td width="20%" align="left">{{size_desc}}</td>'+
-                    '<td width="20%" align="left">{{model_name}}</td>'+
-                    '<td width="10%" >{{on_hand_per_batch}}</td>'+
-                    '<td width="10%" align="right" style="padding-right: 2%;">{{srp}}</td>'+
-                '</tr></table>')
-        }
+            templates: {
+                header: [
+                    '<table class="tt-head">'+
+                        '<tr>'+
+                            '<td width="10%" style="padding-left: 1%;"><b>PLU</b></td>'+
+                            '<td width="30%" align="left"><b>Description 1</b></td>'+
+                            '<td width="10%" align="right" style="padding-right: 2%;"><b>On Hand</b></td>'+
+                            '<td width="20%" align="left"><b>Size</b></td>'+
+                            '<td width="20%" align="left"><b>Model</b></td>'+
+                            '<td width="10%" align="right" style="padding-right: 2%;"><b>SRP</b></td>'+
+                        '</tr>'+
+                    '</table>'
+                ].join('\n'),
+
+                suggestion: Handlebars.compile(
+                    '<table class="tt-items">'+
+                        '<tr>'+
+                            '<td width="10%" style="padding-left: 1%">{{product_code}}</td>'+
+                            '<td width="30%" align="left">{{product_desc}}</td>'+
+                            '<td width="10%" align="right" style="padding-right: 2%;">{{on_hand_per_batch}}</td>'+
+                            '<td width="20%" align="left">{{size_desc}}</td>'+
+                            '<td width="20%" align="left">{{model_name}}</td>'+
+                            '<td width="10%" align="right" style="padding-right: 2%;">{{srp_price}}</td>'+
+                        '</tr>'+
+                    '</table>')
+            }
         }).on('keyup', this, function (event) {
             if (_objTypeHead.typeahead('val') == '') {
                 return false;
