@@ -24,6 +24,638 @@
     <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
     <link href="assets/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+    <style>
+        .toolbar{
+            float: left;
+        }
+
+        td.details-control {
+            background: url('assets/img/Folder_Closed.png') no-repeat center center;
+            cursor: pointer;
+        }
+        tr.details td.details-control {
+            background: url('assets/img/Folder_Opened.png') no-repeat center center;
+        }
+
+        .child_table{
+            padding: 5px;
+            border: 1px #ff0000 solid;
+        }
+
+        .glyphicon.spinning {
+            animation: spin 1s infinite linear;
+            -webkit-animation: spin2 1s infinite linear;
+        }
+
+
+        @keyframes spin {
+            from { transform: scale(1) rotate(0deg); }
+            to { transform: scale(1) rotate(360deg); }
+        }
+
+        @-webkit-keyframes spin2 {
+            from { -webkit-transform: rotate(0deg); }
+            to { -webkit-transform: rotate(360deg); }
+        }
+
+        .numeric{
+            text-align: right;
+            width: 60%;
+        }
+
+        #btn_new {
+            text-transform: capitalize; !important;
+        }
+
+        .modal-body {
+            text-transform: bold;
+        }
+
+        .boldlabel {
+            font-weight: bold;
+        }
+
+        .inlinecustomlabel {
+          
+            font-weight: bold;
+        }
+        .form-group {
+            padding-bottom: 3px;
+        }
+
+        #is_tax_exempt {
+            width:23px;
+            height:23px;
+        }
+
+        .modal-body {
+            padding-left:0px !important;
+        }
+
+        #label {
+            text-align:left;
+        }
+
+        .form-group {
+            padding:0;
+            margin:5px;
+        }
+
+        .input-group {
+            padding:0;
+            margin:0;
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        .modal-body p {
+            margin-left: 20px !important;
+        }
+
+        #img_user {
+            padding-bottom: 15px;
+        }
+
+        .btn-back {
+            float: left; 
+            border-radius: 50px; 
+            border: 3px solid #9E9E9E!important; 
+            background: transparent; 
+            margin-right: 10px;
+        }
+
+        #tbl_customers_filter{
+            display: none;
+        }
+
+        .select2-container{
+            min-width: 100%;
+
+        }
+    </style>
+</head>
+
+<body class="animated-content" style="font-family: tahoma;">
+
+<?php echo $_top_navigation; ?>
+
+<div id="wrapper">
+    <div id="layout-static">
+
+        <?php echo $_side_bar_navigation;?>
+
+        <div class="static-content-wrapper white-bg">
+
+
+            <div class="static-content"  >
+                <div class="page-content"><!-- #page-content -->
+
+                    <ol class="breadcrumb" style="margin:0%;">
+                        <li><a href="dashboard">Dashboard</a></li>
+                        <li><a href="customers">Branches</a></li>
+                    </ol>
+
+
+                <div class="container-fluid">
+                        <div data-widget-group="group1">    
+                            <div class="row">
+                                <div class="col-md-12">
+
+                                    <div id="div_customer_list">
+                                        <div class="panel panel-default">
+                                           <!--  <div class="panel-heading">
+                                                <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Customers</b>
+                                            </div>              -->                     
+                                            <div class="panel-body table-responsive">
+                                            <h2 class="h2-panel-heading">Branches<!-- <small> | <a href="assets/manual/masterfiles/Customer_Management.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small> --></h2><hr>
+
+                                            <div class="row">
+                                                <div class="col-lg-3"><br>
+                                                        <button class="btn btn-primary" id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;margin-bottom: 0px !important; float: left;" data-toggle="modal" data-target="" data-placement="left" title=" New Branch" ><i class="fa fa-plus"></i>  New Branch</button>
+                                                </div>
+                                                <div class="col-lg-offset-3 col-lg-3" style="text-align: right;">
+                                                &nbsp;<br>
+                                                        <button class="btn btn-primary" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Print Supplier Masterfile" ><i class="fa fa-print"></i> Print</button> &nbsp;
+                                                        <button class="btn btn-success" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Export Supplier Masterfile" ><i class="fa fa-file-excel-o"></i> Export</button>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                        Search :<br />
+                                                         <input type="text" id="searchbox_customers" class="form-control">
+                                                </div>
+                                            </div><br>
+
+
+                                                
+                                                <table id="tbl_customers" class="table table-striped" cellspacing="0" width="100%">
+                                                    <thead class="">
+                                                    <tr>
+                                                        <th>&nbsp;&nbsp;</th>
+                                                        <th>Branch Name</th>
+                                                        <th>Company Name</th>
+                                                        <th style="width: 30%;">Address</th>
+                                                        <th>Contact No</th>
+                                                        <th>Parent</th>
+                                                        <th style="width: 15%;"><center>Action</center></th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="panel-footer"></div>
+                                        </div>
+                                    </div>
+
+
+                                    <!-- <div id="div_customer_fields" style="display: none;">
+                                        <div class="panel panel-default" style="border-top: 3px solid #2196f3;">
+                                            <div class="panel-heading">
+                                                <h2>Customer Information</h2>
+                                                <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body"}'></div>
+                                            </div> -->
+
+                                            <!-- <div class="panel-body">
+
+                                            <h2>Customer Information</h2>
+                                               <form id="frm_customer" role="form" class="form-horizontal row-border">
+
+
+                                                   <div class="form-group">
+                                                       <label class="col-md-2 control-label"><strong>* Customer Name :</strong></label>
+                                                       <div class="col-md-9">
+                                                           <div class="input-group">
+                                                                <span class="input-group-addon">
+                                                                    <i class="fa fa-users"></i>
+                                                                </span>
+                                                               <input type="text" name="customer_name" class="form-control" placeholder="Customer Name" data-error-msg="Customer name is required!" required>
+                                                           </div>
+                                                       </div>
+                                                   </div>
+
+                                                   <div class="form-group">
+                                                       <label class="col-md-2 control-label"><strong>* Address :</strong></label>
+                                                       <div class="col-md-9">
+                                                           <textarea name="address" class="form-control" data-error-msg="Customer address is required!" required></textarea>
+                                                       </div>
+                                                   </div>
+
+                                                    <div class="form-group">
+                                                        <label class="col-md-2 control-label"><strong>* Email :</strong></label>
+                                                        <div class="col-md-9">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">
+                                                                    <i class="fa fa-envelope-o"></i>
+                                                                </span>
+                                                                <input type="text" name="email_address" class="form-control" placeholder="Email Address">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                   <div class="form-group">
+                                                       <label class="col-md-2 control-label"><strong>Landline :</strong></label>
+                                                       <div class="col-md-9">
+                                                           <div class="input-group">
+                                                                <span class="input-group-addon">
+                                                                    <i class="fa fa-send"></i>
+                                                                </span>
+                                                               <input type="text" name="landline" class="form-control" placeholder="Landline">
+                                                           </div>
+                                                       </div>
+                                                   </div>
+
+                                                   <div class="form-group">
+                                                       <label class="col-md-2 control-label"><strong>Mobile No :</strong></label>
+                                                       <div class="col-md-9">
+                                                           <div class="input-group">
+                                                                <span class="input-group-addon">
+                                                                    <i class="fa fa-send"></i>
+                                                                </span>
+                                                               <input type="text" name="mobile_no" class="form-control" placeholder="Mobile No">
+                                                           </div>
+                                                       </div>
+                                                   </div>
+
+
+                                                   <div class="form-group">
+                                                       <label class="col-md-2 control-label"><strong>Photo :</strong></label>
+                                                       <div class="col-md-5">
+                                                           <div class="input-group">
+                                                               <div class="" style="border:1px solid black;height: 230px;width: 210px;vertical-align: middle;">
+
+                                                                   <div id="div_img_users" style="position:relative;">
+                                                                       <img name="img_users" src="assets/img/anonymous-icon.png" style="object-fit: fill; !important; height: 100%;width: 100%;" />
+                                                                       <input type="file" name="file_upload[]" class="hidden">
+                                                                   </div>
+
+                                                                   <div id="div_img_loader" style="display: none;">
+                                                                        <img name="img_loader" src="assets/img/loader/ajax-loader-sm.gif" style="display: block;margin:40% auto auto auto; " />
+                                                                   </div>
+                                                               </div>
+
+                                                               <button id="btn_browse" class="btn btn-green" style="margin-top: 2%;text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Browse Photo</button>&nbsp;
+                                                               <button id="btn_remove_photo"  class="btn btn-red" style="margin-top: 2%;text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Remove</button>
+                                                           </div>
+                                                       </div>
+                                                   </div>
+
+
+
+                                                    <br /><br />
+
+
+
+                                               </form>
+
+
+
+
+                                            </div>
+                                            <div class="panel-footer">
+                                                <div class="row">
+                                                    <div class="col-sm-10 col-sm-offset-2">
+                                                        <button id="btn_save" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;""><span class=""></span>  Save Changes</button>
+                                                        <button id="btn_cancel" class="btn-default btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"">Cancel</button>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                    </div> -->
+
+
+
+
+                                </div>
+                            </div>
+                        </div>
+                </div> <!-- .container-fluid -->
+
+                </div> <!-- #page-content -->
+            </div>
+
+
+            <div id="modal_confirmation" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                            <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Confirm Deletion</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p id="modal-body-message">Are you sure ?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="btn_yes" type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
+                            <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div><!---modal-->
+
+            <div id="modal_filter" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+                <div class="modal-dialog modal-md">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background-color:#27ae60;">
+                            <button type="button" style="color:white;" class="close"  data-dismiss="modal" aria-hidden="true">X</button>
+                            <h4 class="modal-title" style="color:white;"><span id="modal_mode"> View Branches </h4>
+                        </div>
+
+                        <div class="modal-body">
+                            <form id="frm_filter">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group" style="margin-bottom:0px;margin-left:20px !important;">
+                                            <label class="boldlabel">Branches :</label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon">
+                                                    <i class="fa fa-users"></i>
+                                                </span>
+                                                <select name="department_id" id="department_id" class="form-control">
+                                                    <option value="">View all branches</option>
+                                                    
+                                                    <?php
+                                                    foreach($departments as $row)
+                                                    {
+                                                        echo '<option value="'.$row->department_id.'">'.$row->department_name.'</option>';
+                                                    }
+                                                    ?>
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button id="btn_filter" type="button" class="btn" style="background-color:#2ecc71;color:white;">Select</button>
+                            <button id="btn_close_filter" type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="modal_create_customer" class="modal fade" role="dialog"><!--modal-->
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background-color:#2ecc71;">
+                            <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                            <h4 class="modal-title" style="color:#ecf0f1;"><span id="modal_mode"> </span>Branch Information</h4>
+                        </div>
+
+                        <div class="modal-body">
+                            <form id="frm_customer">
+                                <div class="row">
+                                    <div class="col-md-8">
+
+
+                                        <div class="col-md-12">
+                                            <div class="col-md-4">
+                                                 <label class="control-label boldlabel">
+                                                    Branch Code :
+                                                </label>
+                                            </div>
+                                            <div class="form-group" style="width: 100%;">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-code"></i>
+                                                    </span>
+                                                    <input type="text" name="customer_code" class="form-control" placeholder="Branch Code" data-error-msg="Branch Code is required!">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="col-md-4">
+                                                 <label class="control-label boldlabel">
+                                                    <b class="required">*</b> Branch Name :
+                                                </label>
+                                            </div>
+                                            <div class="form-group" style="width: 100%;">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-users"></i>
+                                                    </span>
+                                                    <input type="text" name="customer_name" class="form-control" placeholder="Branch Name" data-error-msg="Branch Name is required!" required>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="col-md-4" id="label">
+                                                <label class="control-label boldlabel">
+                                                    Company Name :
+                                                </label>
+                                            </div>
+                                            <div class="form-group" style="width: 100%;">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-users"></i>
+                                                    </span>
+                                                    <input type="text" name="registered_company_name" class="form-control" placeholder="Registered Company Name">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    
+
+                                        <div class="col-md-12">
+                                            <div class="col-md-4" id="label">
+                                                <label class="control-label boldlabel">
+                                                    Contact Person :
+                                                </label>
+                                            </div>
+                                            <div class="form-group" style="width: 100%;">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-users"></i>
+                                                    </span>
+                                                    <input type="text" name="contact_name" class="form-control" placeholder="Contact Person">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="col-md-4" id="label">
+                                                 <label class="control-label boldlabel"><font color="red"><b>*</b></font> Address :</label>
+                                            </div>
+                                            <div class="form-group" style="width: 100%;">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-home"></i>
+                                                     </span>
+                                                     <textarea name="address" class="form-control" data-error-msg="Customer address is required!" placeholder="Address" required ></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    
+                                        <div class="col-md-12">
+                                            <div class="col-md-4" id="label">
+                                                 <label class="control-label boldlabel">Email Address :</label>
+                                            </div>
+                                            <div class="form-group" style="width: 100%;">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-envelope-o"></i>
+                                                    </span>
+                                                    <input type="text" name="email_address" class="form-control" placeholder="Email Address">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    
+                                        <div class="col-md-12">
+                                            <div class="col-md-4" id="label">
+                                                 <label class="control-label boldlabel">Contact No :</label>
+                                            </div>
+                                            <div class="form-group" style="width: 100%;">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-phone"></i>
+                                                    </span>
+                                                    <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Contact No">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="col-md-4" id="label">
+                                                <label class="control-label boldlabel">
+                                                    <b class="required">*</b> TIN :
+                                                </label>
+                                            </div>
+                                            <div class="form-group" style="width: 100%;">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-file-code-o"></i>
+                                                    </span>
+                                                    <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="TIN" required data-error-msg="TIN is required.">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="col-md-4" id="label" style="padding-top: 5px;">
+                                                 <label class="control-label boldlabel">Branch Type :</label>
+                                            </div>
+                                            <div class="col-md-8" style="padding: 0px;padding-top: 5px;">
+                                                <select name="customer_type_id" id="cbo_customer_type" style="width: 100%;">
+                                                    <option value="0">None</option>
+                                                    <?php foreach($customer_type as $customer_type){ ?>
+                                                        <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name?></option>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="col-md-4" id="label" style="padding-top: 10px;">
+                                                 <label class="control-label boldlabel">Parent :</label>
+                                            </div>
+                                            <div class="col-md-8" style="padding: 0; padding-top: 10px;">
+                                            <select name="department_id" id="cbo_departments" style="width: 100%">
+                                                <option value="0">None</option>
+                                                <?php foreach($departments as $department){ ?>
+                                                    <option value="<?php echo $department->department_id; ?>">
+                                                        <?php echo $department->department_name?>
+                                                    </option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>
+
+                                        <!-- <div class="col-md-12">
+                                            <div class="col-md-4" id="label">
+                                                 <label class="control-label boldlabel" style="text-align:right;"> Term :</label>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-file-code-o"></i>
+                                                    </span>
+                                                    <input type="text" name="term" id="term" class="form-control" placeholder="Term in days">
+                                                </div>
+                                            </div>
+                                        </div> -->
+
+                                        <!-- <div class="col-md-12">
+                                            <div class="col-md-4" id="label">
+                                                 <label class="control-label boldlabel" style="text-align:right;"> Credit Limit :</label>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-file-code-o"></i>
+                                                    </span>
+                                                    <input type="text" name="credit_limit" id="credit_limit" class="form-control" placeholder="Credit Limit">
+                                                </div>
+                                            </div>
+                                        </div> -->
+
+
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="col-md-12">
+                                            <div class="col-md-12">
+                                                <label class="control-label boldlabel" style="text-align:left;padding-top:10px;"><i class="fa fa-user" aria-hidden="true" style="padding-right:10px;"></i>Branch Photo</label>
+                                                <hr style="margin-top:0px !important;height:1px;background-color:black;">
+                                            </div>
+                                            <div style="width:100%;height:350px;border:2px solid #34495e;border-radius:5px;">
+                                                <center>
+                                                    <img name="img_user" id="img_user" src="assets/img/anonymous-icon.png" height="140px;" width="140px;"></img>
+                                                </center>
+                                                <hr style="margin-top:0px !important;height:1px;background-color:black;">
+                                                <center>
+                                                     <button type="button" id="btn_browse" style="width:150px;margin-bottom:5px;" class="btn btn-primary">Browse Photo</button>
+                                                     <button type="button" id="btn_remove_photo" style="width:150px;" class="btn btn-danger">Remove</button>
+                                                     <input type="file" name="file_upload[]" class="hidden">
+                                                </center> 
+                                            </div>
+                                        </div>   
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button id="btn_save" type="button" class="btn" style="background-color:#2ecc71;color:white;">Save</button>
+                            <button id="btn_cancel" type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div><!---content---->
+                </div>
+            </div><!---modal-->
+
+
+
+
+
+
+
+
+            <footer role="contentinfo">
+                <div class="clearfix">
+                    <ul class="list-unstyled list-inline pull-left">
+                        <li><h6 style="margin: 0;">&copy; 2018 - JDEV OFFICE SOLUTION INC</h6></li>
+                    </ul>
+                    <button class="pull-right btn btn-link btn-xs hidden-print" id="back-to-top"><i class="ti ti-arrow-up"></i></button>
+                </div>
+            </footer>
+
+
+
+
+        </div>
+    </div>
+
+
+</div>
+
+
+
     <?php echo $_switcher_settings; ?>
     <?php echo $_def_js_files; ?>
 
@@ -89,7 +721,7 @@
                         "defaultContent": ""
                     },
                     { targets:[1],data: "customer_name" },
-                    { targets:[2],data: "contact_name" },
+                    { targets:[2],data: "registered_company_name" },
                     { targets:[3],data: "address" },
                     { targets:[4],data: "contact_no" },
                     { targets:[5],data: "department_name" },
@@ -532,593 +1164,6 @@
 
 
 </script>
-
-    <style>
-        .toolbar{
-            float: left;
-        }
-
-        td.details-control {
-            background: url('assets/img/Folder_Closed.png') no-repeat center center;
-            cursor: pointer;
-        }
-        tr.details td.details-control {
-            background: url('assets/img/Folder_Opened.png') no-repeat center center;
-        }
-
-        .child_table{
-            padding: 5px;
-            border: 1px #ff0000 solid;
-        }
-
-        .glyphicon.spinning {
-            animation: spin 1s infinite linear;
-            -webkit-animation: spin2 1s infinite linear;
-        }
-
-
-        @keyframes spin {
-            from { transform: scale(1) rotate(0deg); }
-            to { transform: scale(1) rotate(360deg); }
-        }
-
-        @-webkit-keyframes spin2 {
-            from { -webkit-transform: rotate(0deg); }
-            to { -webkit-transform: rotate(360deg); }
-        }
-
-        .numeric{
-            text-align: right;
-            width: 60%;
-        }
-
-        #btn_new {
-            text-transform: capitalize; !important;
-        }
-
-        .modal-body {
-            text-transform: bold;
-        }
-
-        .boldlabel {
-            font-weight: bold;
-        }
-
-        .inlinecustomlabel {
-          
-            font-weight: bold;
-        }
-        .form-group {
-            padding-bottom: 3px;
-        }
-
-        #is_tax_exempt {
-            width:23px;
-            height:23px;
-        }
-
-        .modal-body {
-            padding-left:0px !important;
-        }
-
-        #label {
-            text-align:left;
-        }
-
-        .form-group {
-            padding:0;
-            margin:5px;
-        }
-
-        .input-group {
-            padding:0;
-            margin:0;
-        }
-
-        textarea {
-            resize: none;
-        }
-
-        .modal-body p {
-            margin-left: 20px !important;
-        }
-
-        #img_user {
-            padding-bottom: 15px;
-        }
-
-        .btn-back {
-            float: left; 
-            border-radius: 50px; 
-            border: 3px solid #9E9E9E!important; 
-            background: transparent; 
-            margin-right: 10px;
-        }
-
-        #tbl_customers_filter{
-            display: none;
-        }
-    </style>
-</head>
-
-<body class="animated-content" style="font-family: tahoma;">
-
-<?php echo $_top_navigation; ?>
-
-<div id="wrapper">
-    <div id="layout-static">
-
-        <?php echo $_side_bar_navigation;?>
-
-        <div class="static-content-wrapper white-bg">
-
-
-            <div class="static-content"  >
-                <div class="page-content"><!-- #page-content -->
-
-                    <ol class="breadcrumb" style="margin:0%;">
-                        <li><a href="dashboard">Dashboard</a></li>
-                        <li><a href="customers">Customers</a></li>
-                    </ol>
-
-
-                <div class="container-fluid">
-                        <div data-widget-group="group1">    
-                            <div class="row">
-                                <div class="col-md-12">
-
-                                    <div id="div_customer_list">
-                                        <div class="panel panel-default">
-                                           <!--  <div class="panel-heading">
-                                                <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Customers</b>
-                                            </div>              -->                     
-                                            <div class="panel-body table-responsive">
-                                            <h2 class="h2-panel-heading">Customers<small> | <a href="assets/manual/masterfiles/Customer_Management.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
-
-                                            <div class="row">
-                                                <div class="col-lg-3"><br>
-                                                        <button class="btn btn-primary" id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;margin-bottom: 0px !important; float: left;" data-toggle="modal" data-target="" data-placement="left" title=" New product" ><i class="fa fa-plus"></i>  New Customer</button>
-                                                </div>
-                                                <div class="col-lg-offset-3 col-lg-3" style="text-align: right;">
-                                                &nbsp;<br>
-                                                        <button class="btn btn-primary" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Print Supplier Masterfile" ><i class="fa fa-print"></i> Print</button> &nbsp;
-                                                        <button class="btn btn-success" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Export Supplier Masterfile" ><i class="fa fa-file-excel-o"></i> Export</button>
-                                                </div>
-                                                <div class="col-lg-3">
-                                                        Search :<br />
-                                                         <input type="text" id="searchbox_customers" class="form-control">
-                                                </div>
-                                            </div><br>
-
-
-                                                
-                                                <table id="tbl_customers" class="table table-striped" cellspacing="0" width="100%">
-                                                    <thead class="">
-                                                    <tr>
-                                                        <th>&nbsp;&nbsp;</th>
-                                                        <th>Customer Name</th>
-                                                        <th>Contact Person</th>
-                                                        <th style="width: 30%;">Address</th>
-                                                        <th>Contact No</th>
-                                                        <th>Department</th>
-                                                        <th style="width: 15%;"><center>Action</center></th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            <div class="panel-footer"></div>
-                                        </div>
-                                    </div>
-
-
-                                    <!-- <div id="div_customer_fields" style="display: none;">
-                                        <div class="panel panel-default" style="border-top: 3px solid #2196f3;">
-                                            <div class="panel-heading">
-                                                <h2>Customer Information</h2>
-                                                <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body"}'></div>
-                                            </div> -->
-
-                                            <!-- <div class="panel-body">
-
-                                            <h2>Customer Information</h2>
-                                               <form id="frm_customer" role="form" class="form-horizontal row-border">
-
-
-                                                   <div class="form-group">
-                                                       <label class="col-md-2 control-label"><strong>* Customer Name :</strong></label>
-                                                       <div class="col-md-9">
-                                                           <div class="input-group">
-                                                                <span class="input-group-addon">
-                                                                    <i class="fa fa-users"></i>
-                                                                </span>
-                                                               <input type="text" name="customer_name" class="form-control" placeholder="Customer Name" data-error-msg="Customer name is required!" required>
-                                                           </div>
-                                                       </div>
-                                                   </div>
-
-                                                   <div class="form-group">
-                                                       <label class="col-md-2 control-label"><strong>* Address :</strong></label>
-                                                       <div class="col-md-9">
-                                                           <textarea name="address" class="form-control" data-error-msg="Customer address is required!" required></textarea>
-                                                       </div>
-                                                   </div>
-
-                                                    <div class="form-group">
-                                                        <label class="col-md-2 control-label"><strong>* Email :</strong></label>
-                                                        <div class="col-md-9">
-                                                            <div class="input-group">
-                                                                <span class="input-group-addon">
-                                                                    <i class="fa fa-envelope-o"></i>
-                                                                </span>
-                                                                <input type="text" name="email_address" class="form-control" placeholder="Email Address">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                   <div class="form-group">
-                                                       <label class="col-md-2 control-label"><strong>Landline :</strong></label>
-                                                       <div class="col-md-9">
-                                                           <div class="input-group">
-                                                                <span class="input-group-addon">
-                                                                    <i class="fa fa-send"></i>
-                                                                </span>
-                                                               <input type="text" name="landline" class="form-control" placeholder="Landline">
-                                                           </div>
-                                                       </div>
-                                                   </div>
-
-                                                   <div class="form-group">
-                                                       <label class="col-md-2 control-label"><strong>Mobile No :</strong></label>
-                                                       <div class="col-md-9">
-                                                           <div class="input-group">
-                                                                <span class="input-group-addon">
-                                                                    <i class="fa fa-send"></i>
-                                                                </span>
-                                                               <input type="text" name="mobile_no" class="form-control" placeholder="Mobile No">
-                                                           </div>
-                                                       </div>
-                                                   </div>
-
-
-                                                   <div class="form-group">
-                                                       <label class="col-md-2 control-label"><strong>Photo :</strong></label>
-                                                       <div class="col-md-5">
-                                                           <div class="input-group">
-                                                               <div class="" style="border:1px solid black;height: 230px;width: 210px;vertical-align: middle;">
-
-                                                                   <div id="div_img_users" style="position:relative;">
-                                                                       <img name="img_users" src="assets/img/anonymous-icon.png" style="object-fit: fill; !important; height: 100%;width: 100%;" />
-                                                                       <input type="file" name="file_upload[]" class="hidden">
-                                                                   </div>
-
-                                                                   <div id="div_img_loader" style="display: none;">
-                                                                        <img name="img_loader" src="assets/img/loader/ajax-loader-sm.gif" style="display: block;margin:40% auto auto auto; " />
-                                                                   </div>
-                                                               </div>
-
-                                                               <button id="btn_browse" class="btn btn-green" style="margin-top: 2%;text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Browse Photo</button>&nbsp;
-                                                               <button id="btn_remove_photo"  class="btn btn-red" style="margin-top: 2%;text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Remove</button>
-                                                           </div>
-                                                       </div>
-                                                   </div>
-
-
-
-                                                    <br /><br />
-
-
-
-                                               </form>
-
-
-
-
-                                            </div>
-                                            <div class="panel-footer">
-                                                <div class="row">
-                                                    <div class="col-sm-10 col-sm-offset-2">
-                                                        <button id="btn_save" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;""><span class=""></span>  Save Changes</button>
-                                                        <button id="btn_cancel" class="btn-default btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"">Cancel</button>
-                                                    </div>
-                                                </div>
-
-
-                                            </div>
-                                        </div>
-                                    </div> -->
-
-
-
-
-                                </div>
-                            </div>
-                        </div>
-                </div> <!-- .container-fluid -->
-
-                </div> <!-- #page-content -->
-            </div>
-
-
-            <div id="modal_confirmation" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
-                <div class="modal-dialog modal-sm">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
-                            <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Confirm Deletion</h4>
-                        </div>
-                        <div class="modal-body">
-                            <p id="modal-body-message">Are you sure ?</p>
-                        </div>
-                        <div class="modal-footer">
-                            <button id="btn_yes" type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
-                            <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal">No</button>
-                        </div>
-                    </div>
-                </div>
-            </div><!---modal-->
-
-            <div id="modal_filter" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
-                <div class="modal-dialog modal-md">
-                    <div class="modal-content">
-                        <div class="modal-header" style="background-color:#27ae60;">
-                            <button type="button" style="color:white;" class="close"  data-dismiss="modal" aria-hidden="true">X</button>
-                            <h4 class="modal-title" style="color:white;"><span id="modal_mode"> View Branches </h4>
-                        </div>
-
-                        <div class="modal-body">
-                            <form id="frm_filter">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group" style="margin-bottom:0px;margin-left:20px !important;">
-                                            <label class="boldlabel">Branches :</label>
-                                            <div class="input-group">
-                                                <span class="input-group-addon">
-                                                    <i class="fa fa-users"></i>
-                                                </span>
-                                                <select name="department_id" id="department_id" class="form-control">
-                                                    <option value="">View all branches</option>
-                                                    
-                                                    <?php
-                                                    foreach($departments as $row)
-                                                    {
-                                                        echo '<option value="'.$row->department_id.'">'.$row->department_name.'</option>';
-                                                    }
-                                                    ?>
-
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button id="btn_filter" type="button" class="btn" style="background-color:#2ecc71;color:white;">Select</button>
-                            <button id="btn_close_filter" type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="modal_create_customer" class="modal fade" role="dialog"><!--modal-->
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header" style="background-color:#2ecc71;">
-                            <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
-                            <h4 class="modal-title" style="color:#ecf0f1;"><span id="modal_mode"> </span>Customer Information</h4>
-                        </div>
-
-                        <div class="modal-body">
-                            <form id="frm_customer">
-                                <div class="row">
-                                    <div class="col-md-8">
-                                        <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b>*</b></font> Customer Name :</label>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-users"></i>
-                                                    </span>
-                                                    <input type="text" name="customer_name" class="form-control" placeholder="Customer Name" data-error-msg="Customer Name is required!" required>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;"><font color="red"></font> Contact Person :</label>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-users"></i>
-                                                    </span>
-                                                    <input type="text" name="contact_name" class="form-control" placeholder="Contact Person">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    
-                                        <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b>*</b></font> Address :</label>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-home"></i>
-                                                     </span>
-                                                     <textarea name="address" class="form-control" data-error-msg="Supplier address is required!" placeholder="Address" required ></textarea>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;"> Term :</label>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-file-code-o"></i>
-                                                    </span>
-                                                    <input type="text" name="term" id="term" class="form-control" placeholder="Term in days">
-                                                </div>
-                                            </div>
-                                        </div> -->
-
-                                        <!-- <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;"> Credit Limit :</label>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-file-code-o"></i>
-                                                    </span>
-                                                    <input type="text" name="credit_limit" id="credit_limit" class="form-control" placeholder="Credit Limit">
-                                                </div>
-                                            </div>
-                                        </div> -->
-                                    
-                                        <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;">Email Address :</label>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-envelope-o"></i>
-                                                    </span>
-                                                    <input type="text" name="email_address" class="form-control" placeholder="Email Address">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    
-                                        <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;">Contact No :</label>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-phone"></i>
-                                                    </span>
-                                                    <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Contact No">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;">TIN :</label>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-file-code-o"></i>
-                                                    </span>
-                                                    <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="TIN">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;">Customer Type :</label>
-                                            </div>
-                                            <div class="col-md-8" style="padding: 0px;">
-                                            <select name="customer_type_id" id="cbo_customer_type" style="width: 100%">
-                                                <option value="0">None</option>
-                                                <?php foreach($customer_type as $customer_type){ ?>
-                                                    <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name?></option>
-                                                <?php } ?>
-                                            </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;">Department :</label>
-                                            </div>
-                                            <div class="col-md-8" style="padding: 0; padding-top: 5px;">
-                                            <select name="department_id" id="cbo_departments" style="width: 100%">
-                                                <option value="0">None</option>
-                                                <?php foreach($departments as $department){ ?>
-                                                    <option value="<?php echo $department->department_id; ?>">
-                                                        <?php echo $department->department_name?>
-                                                    </option>
-                                                <?php } ?>
-                                            </select>
-                                            </div>
-                                        </div>
-
-
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="col-md-12">
-                                            <div class="col-md-12">
-                                                <label class="control-label boldlabel" style="text-align:left;padding-top:10px;"><i class="fa fa-user" aria-hidden="true" style="padding-right:10px;"></i>Customer's Photo</label>
-                                                <hr style="margin-top:0px !important;height:1px;background-color:black;">
-                                            </div>
-                                            <div style="width:100%;height:350px;border:2px solid #34495e;border-radius:5px;">
-                                                <center>
-                                                    <img name="img_user" id="img_user" src="assets/img/anonymous-icon.png" height="140px;" width="140px;"></img>
-                                                </center>
-                                                <hr style="margin-top:0px !important;height:1px;background-color:black;">
-                                                <center>
-                                                     <button type="button" id="btn_browse" style="width:150px;margin-bottom:5px;" class="btn btn-primary">Browse Photo</button>
-                                                     <button type="button" id="btn_remove_photo" style="width:150px;" class="btn btn-danger">Remove</button>
-                                                     <input type="file" name="file_upload[]" class="hidden">
-                                                </center> 
-                                            </div>
-                                        </div>   
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button id="btn_save" type="button" class="btn" style="background-color:#2ecc71;color:white;">Save</button>
-                            <button id="btn_cancel" type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                        </div>
-                    </div><!---content---->
-                </div>
-            </div><!---modal-->
-
-
-
-
-
-
-
-
-            <footer role="contentinfo">
-                <div class="clearfix">
-                    <ul class="list-unstyled list-inline pull-left">
-                        <li><h6 style="margin: 0;">&copy; 2018 - JDEV OFFICE SOLUTION INC</h6></li>
-                    </ul>
-                    <button class="pull-right btn btn-link btn-xs hidden-print" id="back-to-top"><i class="ti ti-arrow-up"></i></button>
-                </div>
-            </footer>
-
-
-
-
-        </div>
-    </div>
-
-
-</div>
-
-
-
-
 
 
 

@@ -90,6 +90,7 @@ class Customers extends CORE_Controller {
 
                 $m_customers->customer_name=$customer_name;
                 $m_customers->contact_name=$this->input->post('contact_name',TRUE);
+                $m_customers->registered_company_name=$this->input->post('registered_company_name',TRUE);
                 $m_customers->address=$this->input->post('address',TRUE);
                 $m_customers->email_address=$this->input->post('email_address',TRUE);
                 $m_customers->customer_type_id=$this->input->post('customer_type_id',TRUE);
@@ -273,6 +274,7 @@ class Customers extends CORE_Controller {
                 }
 
                 $m_customers->customer_name=$this->input->post('customer_name',TRUE);
+                $m_customers->registered_company_name=$this->input->post('registered_company_name',TRUE);
                 $m_customers->contact_name=$this->input->post('contact_name',TRUE);
                 $m_customers->address=$this->input->post('address',TRUE);
                 $m_customers->email_address=$this->input->post('email_address',TRUE);
@@ -413,7 +415,7 @@ class Customers extends CORE_Controller {
 
                 $excel->getActiveSheet()->setCellValue('A9','Customer Name')
                                         ->getStyle('A9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('B9','Contact Name')
+                $excel->getActiveSheet()->setCellValue('B9','Registered Company Name')
                                         ->getStyle('B9')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('C9','Contact No')
                                         ->getStyle('C9')->getFont()->setBold(TRUE);
@@ -434,7 +436,7 @@ class Customers extends CORE_Controller {
 
 
                 $excel->getActiveSheet()->setCellValue('A'.$i,$customer->customer_name)
-                                        ->setCellValue('B'.$i,$customer->contact_name)
+                                        ->setCellValue('B'.$i,$customer->registered_company_name)
                                         ->setCellValue('C'.$i,$customer->contact_no)
                                         ->setCellValue('D'.$i,$customer->address)
                                         ->setCellValue('E'.$i,$customer->email_address)

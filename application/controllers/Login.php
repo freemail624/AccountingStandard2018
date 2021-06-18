@@ -168,8 +168,8 @@ class Login extends CORE_Controller {
         $m_account_types=$this->Account_type_model;
         $m_account_types->create_default_account_types();
 
-        $m_department=$this->Departments_model;
-        $m_department->create_default_department();
+        // $m_department=$this->Departments_model;
+        // $m_department->create_default_department();
 
         $m_item_type=$this->Item_type_model;
         $m_item_type->create_default_item_types();
@@ -183,11 +183,11 @@ class Login extends CORE_Controller {
         // $m_account_title=$this->Account_title_model;
         // $m_account_title->create_default_account_title();
 
-        $m_suppliers=$this->Suppliers_model;
-        $m_suppliers->create_default_supplier();
+        // $m_suppliers=$this->Suppliers_model;
+        // $m_suppliers->create_default_supplier();
 
-        $m_customers=$this->Customers_model;
-        $m_customers->create_default_customer();
+        // $m_customers=$this->Customers_model;
+        // $m_customers->create_default_customer();
 
 
     }

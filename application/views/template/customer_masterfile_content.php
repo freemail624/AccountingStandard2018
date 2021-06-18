@@ -51,7 +51,7 @@
             <thead>
             <tr>
                 <th>Customer Name</th>
-                <th>Contact Person</th>
+                <th>Registered Company Name</th>
                 <th>Contact No</th>
                 <th width="20%">Address</th>
                 <th>Email Address</th>
@@ -64,7 +64,7 @@
             <?php foreach ($customers as $customer) { ?>
             <tr>
                 <td><?php echo $customer->customer_name ?></td>
-                <td><?php echo $customer->contact_name ?></td>
+                <td><?php echo $customer->registered_company_name ?></td>
                 <td><?php echo $customer->contact_no ?></td>
                 <td><?php echo $customer->address ?></td>
                 <td><?php echo $customer->email_address ?></td>

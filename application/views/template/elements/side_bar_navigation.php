@@ -44,14 +44,14 @@
                                 <li class="<?php echo (in_array('1-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Cash_receipt">Cash Receipt Journal</a></li>
                             </ul>
                         </li>
-<!--                         <li class="<?php //echo (in_array('13',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-view-list-alt"></i><span>Services</span></a>
+                        <li class="<?php //echo (in_array('13',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-view-list-alt"></i><span>Services</span></a>
                             <ul class="acc-menu">
                                 <li class="<?php //echo (in_array('13-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Service_invoice">Service Invoice</a></li>
                                 <li class="<?php //echo (in_array('13-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Service_journal">Service Journal</a></li>
                                 <li class="<?php //echo (in_array('13-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Service_unit">Service Unit</a></li>
                                 <li class="<?php //echo (in_array('13-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Services">Service Management</a></li>
                             </ul>
-                        </li> -->
+                        </li>
                         <li class="<?php echo (in_array('2',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-package"></i><span>Purchasing</span></a>
                             <ul class="acc-menu">
                                 <li class="<?php echo (in_array('2-9',$this->session->user_rights)?'':'hidden'); ?>"><a href="Purchase_request">Purchase Request</a></li>

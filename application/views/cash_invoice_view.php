@@ -255,7 +255,14 @@
                                 <select name="customer" id="cbo_customers" data-error-msg="Customer is required." required>
                                     <option value="0">[ Create New Customer ]</option>
                                     <?php foreach($customers as $customer){ ?>
-                                        <option data-address="<?php echo $customer->address; ?>" data-contact="<?php echo $customer->contact_name; ?>" value="<?php echo $customer->customer_id; ?>" data-term-default="<?php echo ($customer->term=="none"?"":$customer->term); ?>" data-customer_type="<?php echo $customer->customer_type_id; ?>"><?php echo $customer->customer_name; ?></option>
+                                        <option data-address="<?php echo $customer->address; ?>"  
+                                                data-contact="<?php echo $customer->contact_name; ?>"  
+                                                data-term-default="<?php echo ($customer->term=="none"?"":$customer->term); ?>" 
+                                                data-customer_type="<?php echo $customer->customer_type_id; ?>" 
+                                                data-department_id="<?php echo $customer->department_id; ?>" 
+                                                value="<?php echo $customer->customer_id; ?>"> 
+                                                <?php echo $customer->customer_name; ?> 
+                                        </option> 
                                     <?php } ?>
                                 </select>    
                             </div>
@@ -571,7 +578,7 @@
 </div>
 
 
-<div id="modal_new_customer" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+<div id="modal_new_customer" class="modal fade" role="dialog"><!--modal-->
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header" style="background-color:#2ecc71;">
@@ -584,7 +591,7 @@
                         <div class="col-md-8">
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;"><b>*</b> Customer Name :</label>
+                                     <label class="control-label boldlabel" style="text-align:right;"><b class="required">*</b> Customer Name :</label>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">
@@ -597,27 +604,27 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;"><b>*</b>Contact Person :</label>
+                                     <label class="control-label boldlabel" style="text-align:right;">Contact Person :</label>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">
                                         <span class="input-group-addon">
                                             <i class="fa fa-users"></i>
                                         </span>
-                                        <input type="text" name="contact_name" class="form-control" placeholder="Contact Person" data-error-msg="Contact Person is required!" required>
+                                        <input type="text" name="contact_name" class="form-control" placeholder="Contact Person" data-error-msg="Contact Person is required!">
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;"><b>*</b> Address :</label>
+                                     <label class="control-label boldlabel" style="text-align:right;"><b class="required">*</b> Address :</label>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">
                                         <span class="input-group-addon">
                                             <i class="fa fa-home"></i>
                                          </span>
-                                         <textarea name="address" class="form-control" data-error-msg="Supplier address is required!" placeholder="Address" required ></textarea>
+                                         <textarea name="address" class="form-control" data-error-msg="Customer address is required!" placeholder="Address" required ></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -662,14 +669,16 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;">Tin No :</label>
+                                    <label class="control-label boldlabel" style="text-align:right;">
+                                        <b class="required">*</b> TIN :
+                                    </label>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">
                                         <span class="input-group-addon">
                                             <i class="fa fa-file-code-o"></i>
                                         </span>
-                                        <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="Tin No">
+                                        <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="Tin No" required data-error-msg="TIN is required.">
                                     </div>
                                 </div>
                             </div>
@@ -686,6 +695,21 @@
                                 </select>
                                 </div>
                             </div> 
+                            <div class="col-md-12">
+                                <div class="col-md-4" id="label" style="padding-top: 10px;">
+                                     <label class="control-label boldlabel" style="text-align:right;">Department :</label>
+                                </div>
+                                <div class="col-md-8" style="padding: 0; padding-top: 10px;">
+                                <select name="department_id" id="department_id" style="width: 100%">
+                                    <option value="0">None</option>
+                                    <?php foreach($departments as $department){ ?>
+                                        <option value="<?php echo $department->department_id; ?>">
+                                            <?php echo $department->department_name?>
+                                        </option>
+                                    <?php } ?>
+                                </select>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-4">
                             <div class="col-md-12">
@@ -972,7 +996,7 @@
 <script src="assets/plugins/formatter/accounting.js" type="text/javascript"></script>
 <script>
 $(document).ready(function(){
-    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboDepartments; var _cboCustomers; var dt_so; var products; var changetxn;
+    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboCustomerDepartments; var _cboCustomers; var dt_so; var products; var changetxn;
      var _line_unit; var _cboCustomerType;
     var _cboCustomerTypeCreate; var global_item_desc = ''; var _selectRowTblItems;
 
@@ -1082,6 +1106,10 @@ $(document).ready(function(){
         $('.numeric').autoNumeric('init');
         $('#contact_no').keypress(validateNumber);
         _cboDepartments=$("#cbo_departments").select2({
+            placeholder: "Please select Department.",
+            allowClear: false
+        });
+        _cboCustomerDepartments=$("#department_id").select2({
             placeholder: "Please select Department.",
             allowClear: false
         });
@@ -1450,6 +1478,7 @@ $(document).ready(function(){
         _cboDepartments.on('select2:select', function(){
             if (_cboDepartments.val() == 0) {
                 clearFields($('#frm_department_new'));
+                _cboDepartments.select2('val', null); 
                 $('#modal_new_department').modal('show');
                 $('#modal_new_salesperson').modal('hide');
             }
@@ -1483,16 +1512,21 @@ $(document).ready(function(){
             if(i==0){ //new customer
                 //clearFields($('#modal_new_customer').find('form'));
                  clearFields($('#frm_customer_new'));
+                _cboCustomers.select2('val',null)
                 _cboCustomerTypeCreate.select2('val',0);
                 _cboCustomerType.select2('val',0);
-                _cboCustomers.select2('val',null);
-
+                _cboDepartments.select2('val', null);
                 $('#modal_new_customer').modal('show');
             }else{
                 var obj_customers=$('#cbo_customers').find('option[value="' + i + '"]');
                 $('#txt_address').val(obj_customers.data('address'));
                 $('#contact_person').val(obj_customers.data('contact'));
                 $('#cbo_customer_type').select2('val',obj_customers.data('customer_type'));
+ 
+                var customer_department_id = obj_customers.data('department_id'); 
+                var department_id = (customer_department_id == 0 ? null : customer_department_id); 
+                _cboDepartments.select2('val', department_id); 
+
                 $('#typeaheadsearch').focus();
             }
             
@@ -1622,12 +1656,23 @@ $(document).ready(function(){
                     if(response.stat == 'success'){
                         $('#modal_new_customer').modal('hide');
                         var _customer=response.row_added[0];
-                        $('#cbo_customers').append('<option value="'+_customer.customer_id+'" selected data-contact="'+_customer.contact_name+'" data-customer_type="'+_customer.customer_type_id+'">'+ _customer.customer_name + '</option>');
+                        var term = _customer.term=="none" ? "" : _customer.term;
+
+                        $('#cbo_customers').append('<option '+
+                            'value="'+_customer.customer_id+'" selected '+
+                            'data-address="'+_customer.address+'" '+
+                            'data-contact="'+_customer.contact_name+'" '+
+                            'data-term-default="'+term+'" '+
+                            'data-department_id="'+_customer.department_id+'" '+
+                            'data-customer_type="'+_customer.customer_type_id+'"> '+
+                                _customer.customer_name + 
+                            '</option>');
+
                         $('#cbo_customers').select2('val',_customer.customer_id);
                         $('#txt_address').val(_customer.address);
                         $('#contact_person').val(_customer.contact_name);
                         $('#cbo_customer_type').select2('val',_customer.customer_type_id);
-                    }
+                        _cboDepartments.select2('val',_customer.department_id);                    }
 
                 }).always(function(){
                     showSpinningProgress(btn);
