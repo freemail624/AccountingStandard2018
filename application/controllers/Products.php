@@ -370,7 +370,7 @@ class Products extends CORE_Controller
                 $response['title']='Success!';
                 $response['stat']='success';
                 $response['msg']='Product information successfully updated.';
-                $response['row_updated']=$m_products->product_list(1,null,$product_id,null,null,null,null,null,1);
+                $response['row_updated'] = $this->response_rows($product_id);
 
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;

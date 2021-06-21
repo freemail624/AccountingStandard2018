@@ -2847,6 +2847,7 @@
                     $('#cbo_customers').append('<option value="' + data.customer_id + '" selected data-customer_type = "' + data.customer_type_id + '">' + data.customer_name + '</option>');
                     $('#cbo_customers').select2('val', data.customer_id);
                     _vehicleIDSelected = data.vehicle_id;
+                    _cboCustomers.trigger("select2:select");
                     $('#cbo_advisors').select2('val', data.advisor_id);
                     $('#cbo_insurance').select2('val', data.insurance_id);
 

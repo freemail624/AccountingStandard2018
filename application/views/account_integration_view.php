@@ -387,7 +387,7 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                             <span class="help-block m-b-none">Please select if Cash Invoices will be included in the Inventory computation.</span>
                         </div>
                     </div>
-                    <div class="form-group hidden">
+                    <div class="form-group">
                         <label class="col-md-3 control-label"> * Warehouse Dispatching Invoice Integration :</label>
                         <div class="col-md-7">
                             <select name="dispatching_invoice_inventory" class="cbo_accounts"   id="cbo_inventory" data-error-msg="Inventory is required." required>

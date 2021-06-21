@@ -515,9 +515,9 @@
                                                             </strong>
                                                         </label>
 
-                                                        <label class="control-label hidden" id="checkcheck" style="margin-left: 10px;">
+                                                        <label class="control-label" for="checkcheck" style="margin-left: 10px;">
                                                             <strong>
-                                                                <input type="checkbox" name="chk_dispatching" for="checkcheck">
+                                                                <input type="checkbox" name="chk_dispatching" id="checkcheck">
                                                                 For Dispatching ?
                                                             </strong>
                                                         </label>
@@ -2479,6 +2479,11 @@
                     name: "remarks",
                     value: $('textarea[name="remarks"]').val()
                 });
+                // _data.push({
+                //     name: "for_dispatching",
+                //     value: $('#for_dispatching').val()
+                // });
+
                 _data.push({
                     name: "for_dispatching",
                     value: $('#for_dispatching').val()
