@@ -57,6 +57,7 @@
 					$m_sales = $this->Sales_invoice_model;
 					$department_id = $this->input->get('id', TRUE);
 					$as_of_date = $this->input->get('as_of_date', TRUE);
+					$status_id = $this->input->get('status_id', TRUE);
 
 					if($as_of_date != null){
 						$as_of_date = date("Y-m-d", strtotime($this->input->get('as_of_date', TRUE)));
@@ -64,7 +65,7 @@
 						$as_of_date = date("Y-m-d");
 					}
 
-					$response['data'] = $m_sales->get_aging_receivables_billing($department_id,$as_of_date);
+					$response['data'] = $m_sales->get_aging_receivables_billing($department_id,$as_of_date,$status_id);
 
 					echo json_encode($response);
 					break;		
@@ -110,6 +111,7 @@
 
 					$department_id = $this->input->get('id', TRUE);
 					$as_of_date = $this->input->get('as_of_date', TRUE);
+					$status_id = $this->input->get('status_id', TRUE);
 
 					if($as_of_date != null){
 						$as_of_date = date("Y-m-d", strtotime($this->input->get('as_of_date', TRUE)));
@@ -117,7 +119,7 @@
 						$as_of_date = date("Y-m-d");
 					}
 
-					$data['receivables'] = $m_sales->get_aging_receivables_billing($department_id,$as_of_date);
+					$data['receivables'] = $m_sales->get_aging_receivables_billing($department_id,$as_of_date,$status_id);
 
 					if($department_id == 0){
 						$data['department_name'] = "All Departments";
@@ -156,6 +158,7 @@
 
 					$department_id = $this->input->get('id', TRUE);
 					$as_of_date = $this->input->get('as_of_date', TRUE);
+					$status_id = $this->input->get('status_id', TRUE);
 
 					if($as_of_date != null){
 						$as_of_date = date("Y-m-d", strtotime($this->input->get('as_of_date', TRUE)));
@@ -163,7 +166,7 @@
 						$as_of_date = date("Y-m-d");
 					}
 
-					$receivables = $m_sales->get_aging_receivables_billing($department_id,$as_of_date);
+					$receivables = $m_sales->get_aging_receivables_billing($department_id,$as_of_date,$status_id);
 
 					if($department_id == 0){
 						$department_name = "All Departments";
@@ -208,15 +211,17 @@
 	                $excel->getActiveSheet()->getColumnDimension('E')->setWidth('25');
 	                $excel->getActiveSheet()->getColumnDimension('F')->setWidth('30');
 	                $excel->getActiveSheet()->getColumnDimension('G')->setWidth('30');
+	                $excel->getActiveSheet()->getColumnDimension('H')->setWidth('30');
+	                $excel->getActiveSheet()->getColumnDimension('I')->setWidth('10');
 	                	                	                
 	                $excel->getActiveSheet()
 	                        ->getStyle('C:H')
 	                        ->getAlignment()
 	                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);	
 
-	                $excel->getActiveSheet()->setCellValue('A8','Tenant Code')
+	                $excel->getActiveSheet()->setCellValue('A8','TENANT CODE')
 	                                        ->getStyle('A8')->getFont()->setBold(TRUE);
-	                $excel->getActiveSheet()->setCellValue('B8','Tenant Name')
+	                $excel->getActiveSheet()->setCellValue('B8','TENANT NAME')
 	                                        ->getStyle('B8')->getFont()->setBold(TRUE);
 	                $excel->getActiveSheet()->setCellValue('C8','0-30 DAYS')
 	                                        ->getStyle('C8')->getFont()->setBold(TRUE);
@@ -230,6 +235,8 @@
 	                                        ->getStyle('G8')->getFont()->setBold(TRUE);
 	                $excel->getActiveSheet()->setCellValue('H8','TOTAL SECURITY DEPOSIT')
 	                                        ->getStyle('H8')->getFont()->setBold(TRUE);
+	                $excel->getActiveSheet()->setCellValue('I8','STATUS')
+	                                        ->getStyle('I8')->getFont()->setBold(TRUE);
 	                $i=9;
 					$sum_thirty = 0; 
 					$sum_sixty = 0;
@@ -247,6 +254,7 @@
 		                $excel->getActiveSheet()->getColumnDimension('F')->setWidth('20');
 		                $excel->getActiveSheet()->getColumnDimension('G')->setWidth('20');
 		                $excel->getActiveSheet()->getColumnDimension('H')->setWidth('20');
+		                $excel->getActiveSheet()->getColumnDimension('I')->setWidth('10');
 
 
 		                $excel->getActiveSheet()
@@ -263,6 +271,7 @@
 		                $excel->getActiveSheet()->setCellValue('F'.$i,$receivable->balance_over_ninetydays);   
 		                $excel->getActiveSheet()->setCellValue('G'.$i,$receivable->total_tenant_balance);  
 		                $excel->getActiveSheet()->setCellValue('H'.$i,$receivable->total_security_deposit);
+		                $excel->getActiveSheet()->setCellValue('I'.$i,$receivable->status);
 
 						
 						$i++; 

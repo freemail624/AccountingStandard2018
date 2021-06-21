@@ -125,7 +125,15 @@
                                                             <?php } ?>
                                                         </select>
                                                 </div>
-                                                <div class="col-lg-3">
+                                                <div class="col-lg-2">
+                                                        Status :<br />
+                                                        <select id="cbo_status" class="selectpicker show-tick form-control" data-live-search="true">
+                                                                <option value="all">All</option>
+                                                                <option value="1">Active</option>
+                                                                <option value="0">Inactive</option>
+                                                        </select>
+                                                </div>
+                                                <div class="col-lg-2">
                                                     Date :<br />
                                                     <div class="input-group">
                                                         <input type="text" id="as_of_date" class="date-picker form-control" value="<?php echo date('m/d/Y'); ?>">
@@ -134,7 +142,7 @@
                                                          </span>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-3">
+                                                <div class="col-lg-2">
                                                         Search :<br />
                                                          <input type="text" id="searchbox" class="form-control">
                                                 </div>
@@ -214,7 +222,7 @@
 
     $(document).ready(function() {
         var dt; var _txnMode; var _selectedID; var _selectRowObj; var _taxTypeGroup;
-        var _cboDepartment;
+        var _cboDepartment; var _cboStatus;
 
         $('.date-picker').datepicker({
             todayBtn: "linked",
@@ -232,6 +240,13 @@
                 allowClear: false
             });
 
+            _cboStatus=$("#cbo_status").select2({
+                placeholder: "Please Select status.",
+                allowClear: false
+            });            
+
+            _cboStatus.select2('val', 1);
+
             dt=$('#tbl_aging').DataTable({
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
@@ -246,6 +261,7 @@
                     "data": function ( d ) {
                             return $.extend( {}, d, {
                                 "id": _cboDepartment.val(),
+                                "status_id" : _cboStatus.val(),
                                 "as_of_date" : $('#as_of_date').val()
                             });
                         }
@@ -386,6 +402,10 @@
                 $('#tbl_aging').DataTable().ajax.reload();
            });
 
+            _cboStatus.on("select2:select", function (e) {
+                $('#tbl_aging').DataTable().ajax.reload();
+           });
+
             $('#as_of_date').on("change", function (e) {
                 $('#tbl_aging').DataTable().ajax.reload();
             });
@@ -399,13 +419,15 @@
             $('#btn_print').click(function(){
                 var id = $('#cbo_departments').val();
                 var as_of_date = $('#as_of_date').val();
-                window.open('Aging_receivables/transaction/print?id='+id+'&as_of_date='+as_of_date);   
+                var status_id = $('#cbo_status').val();
+                window.open('Aging_receivables/transaction/print?id='+id+'&as_of_date='+as_of_date+'&status_id='+status_id);   
             });
 
             $('#btn_export').click(function(){
                 var id = $('#cbo_departments').val();
                 var as_of_date = $('#as_of_date').val();
-                window.open('Aging_receivables/transaction/export?id='+id+'&as_of_date='+as_of_date);   
+                var status_id = $('#cbo_status').val();
+                window.open('Aging_receivables/transaction/export?id='+id+'&as_of_date='+as_of_date+'&status_id='+status_id);   
             });
 
             $('#btn_email').click(function(){

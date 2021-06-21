@@ -27,7 +27,7 @@
 						customers.tin_no,
 				        customers.customer_name as particular,
 				        customers.address,
-				        '' as zip_code
+				        customers.zip_code as zip_code
 				    FROM
 				        customers
 				    WHERE

@@ -495,10 +495,20 @@ GROUP BY n.customer_id HAVING total_balance > 0";
     CONVERT( IF(@balance < (o.thirty_days ) , (o.thirty_days - @balance ), (o.thirty_days - o.thirty_days  ) )  , DECIMAL (20 , 2 ))as  balance_thirty_days,
     CONVERT( IF(@balance < o.thirty_days , @balance := @balance-@balance , @balance:= @balance-o.thirty_days ), DECIMAL (20 , 2 )) as rem_after_thirty,*/
 
-    function get_aging_receivables_billing($department_id=0,$as_of_date=null)
+    function get_aging_receivables_billing($department_id=0,$as_of_date=null,$status_id='all')
     {
         $sql = "SELECT aging.* FROM (SELECT 
         p.tenant_id,
+        (CASE
+            WHEN COALESCE(contracts.active_count,0) > 0
+            THEN 1
+            ELSE 0
+        END) tenant_active,
+        (CASE
+            WHEN COALESCE(contracts.active_count,0) > 0
+            THEN 'Active'
+            ELSE 'Inactive'
+        END) status,
         bt.tenant_code,
         bt.trade_name,
         bt.accounting_department_id,
@@ -689,6 +699,15 @@ GROUP BY n.customer_id HAVING total_balance > 0";
             
             ) as p
             LEFT JOIN b_tenants as bt ON bt.tenant_id = p.tenant_id
+            LEFT JOIN 
+            (SELECT 
+                    contract.tenant_id,
+                    COUNT(*) as active_count
+                FROM
+                    b_contract_info contract
+                    WHERE is_deleted = 0 AND is_active = 1
+                    GROUP BY contract.tenant_id) as contracts ON contracts.tenant_id = p.tenant_id
+
             LEFT JOIN
                 (SELECT main.tenant_id,
                     (COALESCE(SUM(main.total_fee),0) - COALESCE(SUM(main.total_payment),0)) as total_security_deposit
@@ -724,7 +743,10 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                     group by main.tenant_id
                 ) as sd ON sd.tenant_id = bt.tenant_id
             ) as aging
-            ".($department_id==0?"":" WHERE aging.accounting_department_id='".$department_id."'")."";
+            WHERE 1 = 1
+            ".($department_id==0?"":" AND aging.accounting_department_id='".$department_id."'")."
+            ".($status_id=='all'?"":" AND aging.tenant_active='".$status_id."'")."
+            ";
 
         return $this->db->query($sql)->result();
     }

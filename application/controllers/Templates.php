@@ -1909,18 +1909,18 @@ class Templates extends CORE_Controller {
                 $data['payee_tin_1'] = substr($payee_tin,0, 3);
                 $data['payee_tin_2'] = substr($payee_tin,3, 3);
                 $data['payee_tin_3'] = substr($payee_tin,6, 3);
-                $data['payee_tin_4'] = substr($payee_tin,9, 3);
+                $data['payee_tin_4'] = substr($payee_tin,9, 5);
 
                 $payor_tin = $company->tin_no;
                 $data['payor_tin_1'] = substr($payor_tin,0, 3);
                 $data['payor_tin_2'] = substr($payor_tin,3, 3);
                 $data['payor_tin_3'] = substr($payor_tin,6, 3);
-                $data['payor_tin_4'] = substr($payor_tin,9, 3); 
+                $data['payor_tin_4'] = substr($payor_tin,9, 5); 
 
                 $date_txn=$year.'-'.$month_id.'-01';
 
                 $data['m'] = date("m",strtotime($date_txn)); 
-                $data['y'] = date("y",strtotime($date_txn));
+                $data['y'] = date("Y",strtotime($date_txn));
 
                 $data['from_period_day'] = '01';
                 $data['to_period_day'] = date("t",strtotime($date_txn));          
