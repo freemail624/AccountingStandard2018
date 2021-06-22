@@ -873,7 +873,7 @@ class Products_model extends CORE_Model {
 
             /*Parent - Sales Invoice*/
             SELECT 
-            si.date_invoice as txn_date,
+            l.loading_date as txn_date,
             si.date_created as date_created,
             si.sales_inv_no as ref_no,
             ('Sales Invoice') as type,
@@ -915,7 +915,7 @@ class Products_model extends CORE_Model {
 
             /*Child - Sales Invoice*/
             SELECT 
-            si.date_invoice as txn_date,
+            l.loading_date as txn_date,
             si.date_created as date_created,
             si.sales_inv_no as ref_no,
             ('Sales Invoice') as type,
