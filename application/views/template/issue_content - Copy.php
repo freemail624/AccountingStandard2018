@@ -15,11 +15,11 @@
     </thead>
     <tbody>
         <tr>
-            <td style="width:20%;font-weight:bold;">Name of Customer: </td>
+            <td style="width:20%;font-weight:bold;">Name of Branch: </td>
             <td style="border-bottom:1px solid black;width:30%;"> <?php echo $issuance_info->customer_name; ?></td>
             <td style="width:10%;"></td>
             <td style="text-align:right;font-weight:bold;">Date:</td>
-            <td style="border-bottom:1px solid black;width:20%;text-align:center;"><?php echo  date_format(new DateTime($issuance_info->date_issued),"m/d/Y"); ?></td>
+            <td style="border-bottom:1px solid black;width:20%;text-align:center;"><?php echo  date_format(new DateTime($issuance_info->date_issued), "m/d/Y"); ?></td>
         </tr>
         <tr>
             <td style="width:20%;font-weight:bold;">Address: </td>
@@ -41,29 +41,30 @@
         </tr>
     </thead>
     <tbody>
-       <?php 
-            $grandtotal=0;
-            foreach($issue_items as $item){
-            $grandtotal+=$item->issue_line_total_price;
-             ?>
-                <tr>
-                    <td><?php echo $item->product_desc; ?></td>
-                    <td style="text-align:center;"><?php echo number_format($item->issue_qty,2); ?></td>
-                    <td style="text-align:center;"></td>
-                    <td style="text-align:center;"><?php echo number_format($item->issue_price,2); ?></td>
-                    <td style="text-align:center;"><?php echo number_format($item->issue_line_total_price,2); ?></td>
-                </tr>
-            <?php } ?>
+        <?php
+        $grandtotal = 0;
+        foreach ($issue_items as $item) {
+            $grandtotal += $item->issue_line_total_price;
+        ?>
             <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td style="text-align:right;font-weight:bold;">Grand Total</td>
-                <td style="text-align:center;font-weight:bold;color:#2ecc71;"><?php echo $grandtotal; ?></td>
+                <td><?php echo $item->product_desc; ?></td>
+                <td style="text-align:center;"><?php echo number_format($item->issue_qty, 2); ?></td>
+                <td style="text-align:center;"></td>
+                <td style="text-align:center;"><?php echo number_format($item->issue_price, 2); ?></td>
+                <td style="text-align:center;"><?php echo number_format($item->issue_line_total_price, 2); ?></td>
             </tr>
+        <?php } ?>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td style="text-align:right;font-weight:bold;">Grand Total</td>
+            <td style="text-align:center;font-weight:bold;color:#2ecc71;"><?php echo $grandtotal; ?></td>
+        </tr>
     </tbody>
 </table>
-<hr></hr>
+<hr>
+</hr>
 <table>
     <tbody>
         <tr>
@@ -78,24 +79,7 @@
             <th style="width:10%;text-align:center;"></th>
             <th style="width:10%;text-align:center;"></th>
             <th style="width:22%;text-align:center;"></th>
-            <th style="width:23%;text-align:center;border-top:1px solid black;">Customer's Signature</th>
+            <th style="width:23%;text-align:center;border-top:1px solid black;">Branch's Signature</th>
         </tr>
     </tbody>
 </table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

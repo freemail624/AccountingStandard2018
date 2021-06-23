@@ -617,7 +617,7 @@ class Profit extends CORE_Controller
 
                 $excel->getActiveSheet()->setCellValue('A'.$i,'Invoice No')
                                         ->getStyle('A'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('B'.$i,'Customer Name')
+                $excel->getActiveSheet()->setCellValue('B'.$i,'Branch Name')
                                         ->getStyle('B'.$i)->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('C'.$i,'Date')
                                         ->getStyle('C'.$i)->getFont()->setBold(TRUE);

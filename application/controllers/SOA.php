@@ -148,7 +148,7 @@
                                         	->setSize(14);
 	                
 	                $excel->getActiveSheet()->mergeCells('A8:B8');					
-                	$excel->getActiveSheet()->setCellValue('A8','Customer Name: '.$customer_info->customer_name)
+                	$excel->getActiveSheet()->setCellValue('A8', 'Branch Name: '.$customer_info->customer_name)
                                         	->getStyle('A8')->getFont()->setBold(TRUE);
 
 	                $excel->getActiveSheet()->mergeCells('D8:E8');                                        	
@@ -540,7 +540,7 @@
                                         	->setSize(14);
 	                
 	                $excel->getActiveSheet()->mergeCells('A8:B8');					
-                	$excel->getActiveSheet()->setCellValue('A8','Customer Name: '.$customer_info->customer_name)
+                	$excel->getActiveSheet()->setCellValue('A8', 'Branch Name: '.$customer_info->customer_name)
                                         	->getStyle('A8')->getFont()->setBold(TRUE);
 
 	                $excel->getActiveSheet()->mergeCells('D8:E8');                                        	

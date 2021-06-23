@@ -48,7 +48,7 @@
     <td><h2>SALES INVOICE</h2></td>
     <table width="100%" cellspacing="0" border="1" cellpadding="4">
     	<tr>
-    		<td width="50%"><strong style="font-size: 16px;">DEPARTMENT : </strong><br><?php echo $sales_info->department_name; ?></td>
+    		<td width="50%"><strong style="font-size: 16px;">PARENT : </strong><br><?php echo $sales_info->department_name; ?></td>
     		<td width="50%"><strong style="font-size: 16px;">SALESPERSON : </strong><br><?php echo ($sales_info->salesperson_name == '' ? '&nbsp;' : $sales_info->salesperson_name); ?></td>
     	</tr>
     	<tr>

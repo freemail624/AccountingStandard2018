@@ -123,7 +123,7 @@
 					if($remaining_amount[0]->Balance == 0){
 						$response['title'] = "Error";
 	                    $response['stat'] = "error";
-	                    $response['msg'] = "Can't Post expense, petty cash amount must not be zero in your chosen department.";
+	                    $response['msg'] = "Can't Post expense, petty cash amount must not be zero in your chosen parent.";
 	                } else if($remaining_amount[0]->Balance < $post_amount) {
 						$response['title'] = "Error";
 	                    $response['stat'] = "error";

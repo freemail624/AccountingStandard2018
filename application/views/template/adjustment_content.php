@@ -85,7 +85,7 @@
     <table width="100%" cellpadding="5" class="table table-striped">
         <tr>
             <td width="50%" valign="top">
-                <span class="default-color">DEPARTMENT : </span>
+                <span class="default-color">PARENT : </span>
                 <span style="font-size: 10pt;"><b><?php echo $adjustment_info->department_name; ?></b></span><br/>
             </td>   
             <td width="50%" valign="top" align="right">

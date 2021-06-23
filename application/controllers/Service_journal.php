@@ -12,6 +12,7 @@ class Service_journal extends CORE_Controller
         $this->load->model(
             array(
                 'Customers_model',
+                'Customer_type_model',
                 'Account_title_model',
                 'Payment_method_model',
                 'Journal_info_model',
@@ -36,6 +37,7 @@ class Service_journal extends CORE_Controller
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
 
+        $data['customer_type_create']=$this->Customer_type_model->get_list('is_deleted=FALSE');
         $data['customers']=$this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['accounts']=$this->Account_title_model->get_list('is_active=TRUE AND is_deleted=FALSE');

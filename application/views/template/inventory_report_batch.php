@@ -70,7 +70,7 @@
             </td>
         </tr>
         <tr>
-            <td><strong>DEPARTMENT</strong> : </td>
+            <td><strong>PARENT</strong> : </td>
             <td><?php echo $department; ?></td>
         </tr>
     </table>

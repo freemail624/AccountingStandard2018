@@ -32,7 +32,7 @@
 	        $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', true);
 
 
-	        $data['title'] = 'Customer Subsidiary';
+	        $data['title'] = 'Branch Subsidiary';
 
             $m_integration=$this->Account_integration_model;
 	        $data['customers'] = $this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE AND customer_name!=""',"customers.*",null,'customer_name');

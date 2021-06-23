@@ -32,7 +32,7 @@ class Customers extends CORE_Controller {
         $data['_switcher_settings']=$this->load->view('template/elements/switcher','',TRUE);
         $data['_side_bar_navigation']=$this->load->view('template/elements/side_bar_navigation','',TRUE);
         $data['_top_navigation']=$this->load->view('template/elements/top_navigation','',TRUE);
-        $data['title']='Customer Management';
+        $data['title']='Branch Management';
 
         $data['customer_type']=$this->Customer_type_model->get_list(
             'is_deleted=FALSE'
@@ -83,11 +83,12 @@ class Customers extends CORE_Controller {
                 $customer=$this->Customers_model->get_customer($customer_name);
                 if(count($customer)>0){
                     $response['stat']='error';
-                    $response['title']='<b>Customer Error</b>';
-                    $response['msg']=$customer_name.' is already existing. <br/>Please make sure customer name is unique!<br />';
+                    $response['title']='<b>Branch Error</b>';
+                    $response['msg']=$customer_name.' is already existing. <br/>Please make sure branch name is unique!<br />';
                     die(json_encode($response));
                 }
 
+                $m_customers->customer_code = $this->input->post('customer_code',TRUE);
                 $m_customers->customer_name=$customer_name;
                 $m_customers->contact_name=$this->input->post('contact_name',TRUE);
                 $m_customers->registered_company_name=$this->input->post('registered_company_name',TRUE);
@@ -119,12 +120,12 @@ class Customers extends CORE_Controller {
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=1; //CRUD
                 $m_trans->trans_type_id=52; // TRANS TYPE
-                $m_trans->trans_log='Created a new customer: '.$this->input->post('contact_name',TRUE);
+                $m_trans->trans_log= 'Created a new branch: '.$this->input->post('contact_name',TRUE);
                 $m_trans->save();
 
                 $response['title']='Success!';
                 $response['stat']='success';
-                $response['msg']='Customer Information successfully created.';
+                $response['msg']='Branch Information successfully created.';
                 $response['row_added']=$this->response_rows($customer_id);
                 echo json_encode($response);
 
@@ -139,11 +140,12 @@ class Customers extends CORE_Controller {
                 $customer=$this->Customers_model->get_customer($customer_name);
                 if(count($customer)>0){
                     $response['stat']='error';
-                    $response['title']='<b>Customer Error</b>';
-                    $response['msg']=$customer_name.' is already existing. <br/>Please make sure customer name is unique!<br />';
+                    $response['title']='<b>Branch Error</b>';
+                    $response['msg']=$customer_name. ' is already existing. <br/>Please make sure branch name is unique!<br />';
                     die(json_encode($response));
                 }
 
+                $m_customers->customer_code = $this->input->post('customer_code', TRUE);
                 $m_customers->customer_name=$customer_name;
                 $m_customers->contact_name=$this->input->post('contact_name',TRUE);
                 $m_customers->address=$this->input->post('address',TRUE);
@@ -174,12 +176,12 @@ class Customers extends CORE_Controller {
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=1; //CRUD
                 $m_trans->trans_type_id=52; // TRANS TYPE
-                $m_trans->trans_log='Created a new customer: '.$this->input->post('contact_name',TRUE);
+                $m_trans->trans_log= 'Created a new branch: '.$this->input->post('contact_name',TRUE);
                 $m_trans->save();
 
                 $response['title']='Success!';
                 $response['stat']='success';
-                $response['msg']='Customer Information successfully created.';
+                $response['msg']='Branch Information successfully created.';
                 $response['row_added']=$this->response_rows($customer_id);
                 echo json_encode($response);
 
@@ -199,7 +201,7 @@ class Customers extends CORE_Controller {
                 if(count($m_journal->get_list('is_active=1 AND customer_id='.$customer_id))>0){
                     $response['title'] = 'Cannot delete!';
                     $response['stat'] = 'error';
-                    $response['msg'] = 'This customer still has an active transaction in General Journal.';
+                    $response['msg'] = 'This branch still has an active transaction in General Journal.';
 
                     echo json_encode($response);
                     exit;
@@ -208,7 +210,7 @@ class Customers extends CORE_Controller {
                 else if(count($m_sales_order->get_list('is_active=1 AND customer_id='.$customer_id))>0){
                     $response['title'] = 'Cannot delete!';
                     $response['stat'] = 'error';
-                    $response['msg'] = 'This customer still has an active transaction in Sales Order.';
+                    $response['msg'] = 'This branch still has an active transaction in Sales Order.';
 
                     echo json_encode($response);
                     exit;
@@ -217,7 +219,7 @@ class Customers extends CORE_Controller {
                 else if(count($m_invoice->get_list('is_deleted=0 AND customer_id='.$customer_id))>0){
                     $response['title'] = 'Cannot delete!';
                     $response['stat'] = 'error';
-                    $response['msg'] = 'This customer still has an active transaction in Sales Invoice.';
+                    $response['msg'] = 'This branch still has an active transaction in Sales Invoice.';
 
                     echo json_encode($response);
                     exit;
@@ -226,7 +228,7 @@ class Customers extends CORE_Controller {
                 else if(count($m_payment->get_list('is_active=1 AND customer_id='.$customer_id))>0){
                     $response['title'] = 'Cannot delete!';
                     $response['stat'] = 'error';
-                    $response['msg'] = 'This customer still has an active transaction in Collection Entry.';
+                    $response['msg'] = 'This branch still has an active transaction in Collection Entry.';
 
                     echo json_encode($response);
                     exit;
@@ -240,7 +242,7 @@ class Customers extends CORE_Controller {
                     if($m_customers->modify($customer_id)){
                         $response['title']='Success!';
                         $response['stat']='success';
-                        $response['msg']='Customer Information successfully deleted.';
+                        $response['msg']='Branch Information successfully deleted.';
 
                         $customer_name = $m_customers->get_list($customer_id,'customer_name');
                         $m_trans=$this->Trans_model;
@@ -268,11 +270,12 @@ class Customers extends CORE_Controller {
                 $customer=$this->Customers_model->get_customer($customer_name,$customer_id);
                 if(count($customer)>0){
                     $response['stat']='error';
-                    $response['title']='<b>Customer Error</b>';
-                    $response['msg']=$customer_name.' is already existing. <br/>Please make sure customer name is unique!<br />';
+                    $response['title']='<b>Branch Error</b>';
+                    $response['msg']=$customer_name. ' is already existing. <br/>Please make sure branch name is unique!<br />';
                     die(json_encode($response));
                 }
 
+                $m_customers->customer_code = $this->input->post('customer_code', TRUE);
                 $m_customers->customer_name=$this->input->post('customer_name',TRUE);
                 $m_customers->registered_company_name=$this->input->post('registered_company_name',TRUE);
                 $m_customers->contact_name=$this->input->post('contact_name',TRUE);
@@ -301,12 +304,12 @@ class Customers extends CORE_Controller {
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=2; //CRUD
                 $m_trans->trans_type_id=52; // TRANS TYPE
-                $m_trans->trans_log='Updated customer: '.$this->input->post('customer_name',TRUE).' ID('.$customer_id.')';
+                $m_trans->trans_log= 'Updated branch: '.$this->input->post('customer_name',TRUE).' ID('.$customer_id.')';
                 $m_trans->save();
 
                 $response['title']='Success!';
                 $response['stat']='success';
-                $response['msg']='Customer Information successfully updated.';
+                $response['msg']='Branch Information successfully updated.';
                 $response['row_updated']=$this->response_rows($customer_id);
                 echo json_encode($response);
 
@@ -371,7 +374,7 @@ class Customers extends CORE_Controller {
                 $excel->getActiveSheet()->getColumnDimensionByColumn('A4')->setWidth('40');
 
                 //name the worksheet
-                $excel->getActiveSheet()->setTitle("Customer Masterfile");
+                $excel->getActiveSheet()->setTitle("Branch Masterfile");
                 $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->mergeCells('A1:B1');
                 $excel->getActiveSheet()->mergeCells('A2:C2');
@@ -383,7 +386,7 @@ class Customers extends CORE_Controller {
                                         ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no)
                                         ->setCellValue('A4',$company_info[0]->email_address);
 
-                $excel->getActiveSheet()->setCellValue('A6','Customer Masterfile')
+                $excel->getActiveSheet()->setCellValue('A6','Branch Masterfile')
                                         ->getStyle('A6')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('A7','')
                                         ->getStyle('A7')->getFont()->setItalic(TRUE);
@@ -413,7 +416,7 @@ class Customers extends CORE_Controller {
 
                 $excel->getActiveSheet()->getStyle('A9:G9')->applyFromArray( $style_header );
 
-                $excel->getActiveSheet()->setCellValue('A9','Customer Name')
+                $excel->getActiveSheet()->setCellValue('A9','Branch Name')
                                         ->getStyle('A9')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('B9','Registered Company Name')
                                         ->getStyle('B9')->getFont()->setBold(TRUE);
@@ -425,7 +428,7 @@ class Customers extends CORE_Controller {
                                         ->getStyle('E9')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('F9','TIN')
                                         ->getStyle('F9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('G9','Department')
+                $excel->getActiveSheet()->setCellValue('G9', 'Parent')
                                         ->getStyle('G9')->getFont()->setBold(TRUE);
 
                 $i=10;
@@ -446,7 +449,7 @@ class Customers extends CORE_Controller {
 
                 }
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                header('Content-Disposition: attachment;filename="Customer Masterfile '.date('M-d-Y',NOW()).'.xlsx"');
+                header('Content-Disposition: attachment;filename="Branch Masterfile '.date('M-d-Y',NOW()).'.xlsx"');
                 header('Cache-Control: max-age=0');
                 // If you're serving to IE 9, then the following may be needed
                 header('Cache-Control: max-age=1');

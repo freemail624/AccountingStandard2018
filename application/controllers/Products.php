@@ -988,7 +988,7 @@ function Export_Stock(){
                   ->getActiveSheet()->setCellValue('E12','OUT')->getStyle('E12')->getFont()->setBold(TRUE)
                   ->getActiveSheet()->setCellValue('F12','Balance')->getStyle('F12')->getFont()->setBold(TRUE)
                   // ->getActiveSheet()->setCellValue('G12','Bulk Balance')->getStyle('G12')->getFont()->setBold(TRUE)
-                  ->getActiveSheet()->setCellValue('G12','Department')->getStyle('H12')->getFont()->setBold(TRUE)
+                  ->getActiveSheet()->setCellValue('G12', 'Parent')->getStyle('H12')->getFont()->setBold(TRUE)
                   ->getActiveSheet()->setCellValue('H12','Remarks')->getStyle('I12')->getFont()->setBold(TRUE);
 
             $excel->getActiveSheet()->getStyle('D12:H12')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);

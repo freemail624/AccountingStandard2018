@@ -193,7 +193,7 @@ class Sales_report_source extends CORE_Controller
                                         ->getStyle('A'.$i)->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('B'.$i,'Date')
                                         ->getStyle('B'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('C'.$i,'Customer Name')
+                $excel->getActiveSheet()->setCellValue('C'.$i, 'Branch Name')
                                         ->getStyle('C'.$i)->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('D'.$i,'Product Description')
                                         ->getStyle('D'.$i)->getFont()->setBold(TRUE);
@@ -288,7 +288,7 @@ class Sales_report_source extends CORE_Controller
                 $excel->getActiveSheet()->setCellValue('B'.$i,'Reference')
                                         ->getStyle('B'.$i)->getFont()->setBold(TRUE);
 
-                $excel->getActiveSheet()->setCellValue('C'.$i,'Customer Name')
+                $excel->getActiveSheet()->setCellValue('C'.$i, 'Branch Name')
                                         ->getStyle('C'.$i)->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('D'.$i,'Product Description')
                                         ->getStyle('D'.$i)->getFont()->setBold(TRUE);

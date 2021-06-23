@@ -78,7 +78,7 @@ class Sales_summary extends CORE_Controller
                                             ->setCellValue('B1', 'Date')
                                             ->setCellValue('C1', 'Vet Rep')
                                             ->setCellValue('D1', 'VR')
-                                            ->setCellValue('E1', 'Customer')
+                                            ->setCellValue('E1', 'Branch')
                                             ->setCellValue('F1', 'Product')
                                             ->setCellValue('G1', 'Type of Product')
                                             ->setCellValue('H1', 'Qty')

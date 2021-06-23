@@ -145,7 +145,7 @@
 											->getStyle('A8')->getFont()->setBold(TRUE);
 					$excel->getActiveSheet()->setCellValue('B8','Date')
 											->getStyle('B8')->getFont()->setBold(TRUE);
-					$excel->getActiveSheet()->setCellValue('C8','Customer Name')
+					$excel->getActiveSheet()->setCellValue('C8','Branch Name')
 											->getStyle('C8')->getFont()->setBold(TRUE);
 
 					$excel->getActiveSheet()->setCellValue('D8',"Pay Type\nCash")
@@ -358,7 +358,7 @@
 											->getStyle('A8')->getFont()->setBold(TRUE);
 					$excel->getActiveSheet()->setCellValue('B8','Date')
 											->getStyle('B8')->getFont()->setBold(TRUE);
-					$excel->getActiveSheet()->setCellValue('C8','Customer Name')
+					$excel->getActiveSheet()->setCellValue('C8','Branch Name')
 											->getStyle('C8')->getFont()->setBold(TRUE);
 
 					$excel->getActiveSheet()->setCellValue('D8',"Pay Type\nCash")

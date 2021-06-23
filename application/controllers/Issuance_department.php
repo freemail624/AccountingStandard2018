@@ -37,7 +37,7 @@ class Issuance_department extends CORE_Controller
         );
         $data['company']=$this->Company_model->getDefaultRemarks()[0];
         $data['accounts']=$this->Account_integration_model->get_list(1);
-        $data['title'] = 'Issuance to Department';
+        $data['title'] = 'Issuance to Parent';
         (in_array('15-5',$this->session->user_rights)? 
         $this->load->view('issuance_department_view', $data)
         :redirect(base_url('dashboard')));
@@ -70,11 +70,11 @@ class Issuance_department extends CORE_Controller
             $m_trans->set('trans_date','NOW()');
             $m_trans->trans_key_id=11; //CRUD
             $m_trans->trans_type_id=66; // TRANS TYPE
-            $m_trans->trans_log='Closed/Did Not Post Issuance Department '.$this->input->post('trn_type').' : '.$iss_inv_no[0]->trn_no.' from General Journal Pending with reason: '.$this->input->post('closing_reason');
+            $m_trans->trans_log= 'Closed/Did Not Post Issuance Parent '.$this->input->post('trn_type').' : '.$iss_inv_no[0]->trn_no.' from General Journal Pending with reason: '.$this->input->post('closing_reason');
             $m_trans->save();
             $response['title'] = 'Success!';
             $response['stat'] = 'success';
-            $response['msg'] = 'Issuance Department successfully closed.';
+            $response['msg'] = 'Issuance Parent successfully closed.';
             echo json_encode($response);    
             break;
 

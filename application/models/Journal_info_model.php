@@ -721,7 +721,7 @@ class Journal_info_model extends CORE_Model{
 
     function get_account_subsidiary($account_id, $startDate, $endDate,$includeChild=0) {
         $this->db->query("SET @balance:=0.00;");
-        $sql="SELECT m.*,
+        $sql= "SELECT m.*,
         (CASE
             WHEN m.account_type_id=1 OR m.account_type_id=5 THEN
                 CONVERT((@balance:=@balance +(m.debit-m.credit)), DECIMAL(20,2))
@@ -741,7 +741,7 @@ class Journal_info_model extends CORE_Model{
             memo,
             remarks,
             (CASE WHEN ji.`supplier_id` = 0
-            THEN CONCAT(customer_name, ' (Customer)') WHEN ji.`customer_id`=0
+            THEN CONCAT(customer_name, ' (Branch)') WHEN ji.`customer_id`=0
             THEN CONCAT(supplier_name, ' (Supplier)') END) AS particular,
             ac.account_type_id,
             ji.supplier_id,
@@ -966,10 +966,10 @@ class Journal_info_model extends CORE_Model{
                     su.supplier_name,
                     CONCAT('') as a,
 
-                    IF(ji.customer_id = 0, 'Customer: ', 'Supplier: ') as title,
+                    IF(ji.customer_id = 0, 'Branch: ', 'Supplier: ') as title,
                     IF(ji.customer_id = 0, cu.customer_name, su.supplier_name) as name,
 
-                    CONCAT(DATE_FORMAT(ji.date_txn,'%m/%d/%Y'),' | <b> Book: </b> ',ji.book_type,' | <b>',IF(ji.supplier_id = 0, 'Customer: ', 'Supplier: '),'</b> ',IF(ji.supplier_id = 0, cu.customer_name, su.supplier_name),' | <b>Transaction #: </b> ',ji.txn_no,' ',IF(ji.ref_type != '', '<b>Reference #:</b> ',''),' ',IF(ji.ref_type != '', ji.ref_type, ''),'',IF(ji.ref_type != '','-',''),'',IF(ji.ref_type != '', ji.ref_no, '')) as group_by,
+                    CONCAT(DATE_FORMAT(ji.date_txn,'%m/%d/%Y'),' | <b> Book: </b> ',ji.book_type,' | <b>',IF(ji.supplier_id = 0, 'Branch: ', 'Supplier: '),'</b> ',IF(ji.supplier_id = 0, cu.customer_name, su.supplier_name),' | <b>Transaction #: </b> ',ji.txn_no,' ',IF(ji.ref_type != '', '<b>Reference #:</b> ',''),' ',IF(ji.ref_type != '', ji.ref_type, ''),'',IF(ji.ref_type != '','-',''),'',IF(ji.ref_type != '', ji.ref_no, '')) as group_by,
 
                     CONCAT(ji.date_txn,' ',ji.book_type) as code
                     FROM journal_info as ji
@@ -991,7 +991,7 @@ class Journal_info_model extends CORE_Model{
             $sql="SELECT 
                     DATE_FORMAT(ji.date_txn,'%m/%d/%Y') AS date_txn,
 
-                    IF(ji.supplier_id = 0, 'Customer: ', 'Supplier: ') as title,
+                    IF(ji.supplier_id = 0, 'Branch: ', 'Supplier: ') as title,
                     IF(ji.supplier_id = 0, cu.customer_name, su.supplier_name) as name,
 
                     CONCAT('<b>Date: </b>',DATE_FORMAT(ji.date_txn,'%m/%d/%Y'),' | <b> Book: </b> ',ji.book_type) as group_by,
@@ -1035,7 +1035,7 @@ class Journal_info_model extends CORE_Model{
                     CONCAT(ji.ref_type,'-',ji.ref_no) as reference,
                     CONCAT('') as a,
 
-                    IF(ji.supplier_id = 0, 'Customer: ', 'Supplier: ') as title,
+                    IF(ji.supplier_id = 0, 'Branch: ', 'Supplier: ') as title,
                     IF(ji.supplier_id = 0, cu.customer_name, su.supplier_name) as name,
 
                     CONCAT('<b>Date: </b>',DATE_FORMAT(ji.date_txn,'%m/%d/%Y'),' | <b> Book: </b> ',ji.book_type) as group_by

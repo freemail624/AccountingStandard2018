@@ -84,11 +84,11 @@
     <table width="100%" cellpadding="5" class="table table-striped">
         <tr>
             <td width="35%" class="border" valign="top" style="padding: 10px;">
-                <span class="default-color">FROM DEPARTMENT : </span><br/><br/>
+                <span class="default-color">FROM PARENT : </span><br/><br/>
                 <span style="font-size: 10pt;"><b><?php echo $issuance_info->from_department_name; ?></b></span><br/>
             </td>
             <td width="35%" class="border" valign="top" style="padding: 10px;">
-                <span class="default-color">TO DEPARTMENT : </span><br/><br/>
+                <span class="default-color">TO PARENT : </span><br/><br/>
                 <span style="font-size: 10pt;"><b><?php echo $issuance_info->to_department_name; ?></b></span><br/>
             </td>
             <td width="30%" class="border" valign="top" style="padding: 10px;">

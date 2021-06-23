@@ -203,14 +203,14 @@ class Account_integration extends CORE_Controller
 
                 $response['stat']="success";
                 $response['title']="Success!";
-                $response['msg']="Customer Accounts successfully integrated.";
+                $response['msg']="Branch Accounts successfully integrated.";
 
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=2; //CRUD
                 $m_trans->trans_type_id=57; // TRANS TYPE
-                $m_trans->trans_log='Updated System General Configuration Customer';
+                $m_trans->trans_log='Updated System General Configuration Branch';
                 $m_trans->save();
                 echo json_encode($response);
 

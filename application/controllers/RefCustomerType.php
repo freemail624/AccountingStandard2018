@@ -37,7 +37,7 @@ class RefCustomerType extends CORE_Controller {
 
                 $response['title'] = 'Success!';
                 $response['stat'] = 'success';
-                $response['msg'] = 'Customer Type Information Successfully created.';
+                $response['msg'] = 'Branch Type Information Successfully created.';
                 $response['row_added'] = $m_refcustomertype->get_list($refcustomertype_id);
                 echo json_encode($response);
 
@@ -52,7 +52,7 @@ class RefCustomerType extends CORE_Controller {
                 if($m_refcustomertype->modify($refcustomertype_id)){
                     $response['title']='Success!';
                     $response['stat']='success';
-                    $response['msg']='Customer Type Information Successfully deleted.';
+                    $response['msg']='Branch Type Information Successfully deleted.';
 
                     echo json_encode($response);
                 }
@@ -70,7 +70,7 @@ class RefCustomerType extends CORE_Controller {
 
                 $response['title']='Success!';
                 $response['stat']='success';
-                $response['msg']='Customer Type Information Successfully updated.';
+                $response['msg']='Branch Type Information Successfully updated.';
                 $response['row_updated']=$m_refcustomertype->get_list($refcustomertype_id);
                 echo json_encode($response);
 

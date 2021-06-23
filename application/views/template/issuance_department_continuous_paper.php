@@ -41,7 +41,7 @@
 
 <table width="100%" cellspacing="5" cellpadding="0">
     <tr>
-        <td width="50%">FROM DEPARTMENT : <?php echo $issuance_info->from_department_name; ?></td>
+        <td width="50%">FROM PARENT : <?php echo $issuance_info->from_department_name; ?></td>
         <td width="50%" align="right">TRANSFER# : <?php echo $issuance_info->trn_no; ?></td>
     </tr>
     <tr>

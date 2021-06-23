@@ -267,7 +267,7 @@ class Products_model extends CORE_Model {
                  ".($as_of_date==null?"":" AND di.date_delivered<='".$as_of_date."'")."
 
 
-                ".($account==TRUE?" 
+                ".($account==TRUE? " 
 
 
                  UNION ALL
@@ -276,7 +276,7 @@ class Products_model extends CORE_Model {
                 si.date_invoice as txn_date,
                 si.sales_inv_no as ref_no,
                 ('Sales Invoice') as type,
-                CONCAT(IFNULL(c.customer_name,''),' (Customer)') as Description,
+                CONCAT(IFNULL(c.customer_name,''),' (Branch)') as Description,
                 sii.product_id,
                 sii.exp_date,sii.batch_no,
                 0 as in_qty, (sii.inv_qty) as out_qty,
@@ -764,7 +764,7 @@ class Products_model extends CORE_Model {
             ".($as_of_date==null?"":" AND ii.date_issued<='".$as_of_date."'")."            
             GROUP BY ii.issuance_department_id
 
-            ".($account==TRUE?" 
+            ".($account==TRUE? " 
             
             UNION ALL  
             SELECT 
@@ -772,7 +772,7 @@ class Products_model extends CORE_Model {
             si.date_created as date_created,
             si.sales_inv_no as ref_no,
             ('Sales Invoice') as type,
-            CONCAT(IFNULL(c.customer_name,''),' (Customer)') as Description,
+            CONCAT(IFNULL(c.customer_name,''),' (Branch)') as Description,
             sii.product_id,
             'Bulk' AS identifier,
             0 as parent_in_qty,
@@ -801,7 +801,7 @@ class Products_model extends CORE_Model {
             WHERE si.is_active = TRUE AND si.is_deleted = FALSE
             ".($depid==0?"":" AND si.department_id=".$depid)."
             AND sii.product_id = $product_id
-            ".($as_of_date==null?"":" AND si.date_invoice<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND si.date_invoice<='".$as_of_date."'"). "
                 
             UNION ALL
 
@@ -810,7 +810,7 @@ class Products_model extends CORE_Model {
             si.date_created as date_created,
             si.sales_inv_no as ref_no,
             ('Sales Invoice') as type,
-            CONCAT(IFNULL(c.customer_name,''),' (Customer)') as Description,
+            CONCAT(IFNULL(c.customer_name,''),' (Branch)') as Description,
             sii.product_id,
             'Retail' as identifier,
             0 as parent_in_qty,
@@ -842,7 +842,7 @@ class Products_model extends CORE_Model {
             ":" ")."
 
 
-            ".($ciaccount==TRUE?" 
+            ".($ciaccount==TRUE? " 
             
             UNION  ALL                
             
@@ -851,7 +851,7 @@ class Products_model extends CORE_Model {
             ci.date_created,
             ci.cash_inv_no as ref_no,
             'Cash Invoice' as type,
-            CONCAT(IFNULL(c.customer_name,''),' (Customer)') as Description,
+            CONCAT(IFNULL(c.customer_name,''),' (Branch)') as Description,
             cii.product_id,
             'Bulk' AS identifier,
             0 as parent_in_qty,
@@ -880,7 +880,7 @@ class Products_model extends CORE_Model {
             WHERE ci.is_active = TRUE AND ci.is_deleted = FALSE
             ".($depid==0?"":" AND ci.department_id=".$depid)."
             AND cii.product_id = $product_id
-            ".($as_of_date==null?"":" AND ci.date_invoice<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND ci.date_invoice<='".$as_of_date."'"). "
 
 
             UNION  ALL                
@@ -890,7 +890,7 @@ class Products_model extends CORE_Model {
             ci.date_created,
             ci.cash_inv_no as ref_no,
             'Cash Invoice' as type,
-            CONCAT(IFNULL(c.customer_name,''),' (Customer)') as Description,
+            CONCAT(IFNULL(c.customer_name,''),' (Branch)') as Description,
             cii.product_id,
             'Retail' as identifier,
             0 as parent_in_qty,
@@ -922,7 +922,7 @@ class Products_model extends CORE_Model {
             ":" ")."
 
 
-            ".($disaccount==TRUE?" 
+            ".($disaccount==TRUE? " 
 
             UNION ALL
             SELECT 
@@ -930,7 +930,7 @@ class Products_model extends CORE_Model {
             dis.date_created,
             dis.dispatching_inv_no,
             ('Dispatching Invoice') as type,
-            CONCAT(IFNULL(c.customer_name,''),' (Customer)') as Description,
+            CONCAT(IFNULL(c.customer_name,''),' (Branch)') as Description,
             dii.product_id,
             'Bulk' AS identifier,
             0 as parent_in_qty,
@@ -957,7 +957,7 @@ class Products_model extends CORE_Model {
             WHERE dis.is_active=TRUE AND dis.is_deleted=FALSE 
             ".($depid==0?"":" AND dis.department_id=".$depid)."
             AND dii.product_id=$product_id
-            ".($as_of_date==null?"":" AND dis.date_invoice<='".$as_of_date."'")."
+            ".($as_of_date==null?"":" AND dis.date_invoice<='".$as_of_date."'"). "
 
 
 
@@ -967,7 +967,7 @@ class Products_model extends CORE_Model {
             dis.date_created,
             dis.dispatching_inv_no,
             ('Dispatching Invoice') as type,
-            CONCAT(IFNULL(c.customer_name,''),' (Customer)') as Description,
+            CONCAT(IFNULL(c.customer_name,''),' (Branch)') as Description,
             dii.product_id,
             'Retail' as identifier,
             0 as parent_in_qty,
@@ -1189,7 +1189,7 @@ function get_product_history_with_child1($product_id,$depid=0,$as_of_date=null,$
             AND iit.product_id=$product_id ".($as_of_date==null?"":" AND ii.date_issued<='".$as_of_date."'")."
 
 
-            ".($account==TRUE?" 
+            ".($account==TRUE? " 
             
             UNION ALL  
             SELECT 
@@ -1197,7 +1197,7 @@ function get_product_history_with_child1($product_id,$depid=0,$as_of_date=null,$
             si.date_created as date_created,
             si.sales_inv_no as ref_no,
             ('Sales Invoice') as type,
-            CONCAT(IFNULL(c.customer_name,''),' (Customer)') as Description,
+            CONCAT(IFNULL(c.customer_name,''),' (Branch)') as Description,
             sii.product_id,
             'Bulk' AS identifier,
             0 as parent_in_qty,
@@ -1223,7 +1223,7 @@ function get_product_history_with_child1($product_id,$depid=0,$as_of_date=null,$
             ":" ")."
 
 
-            ".($ciaccount==TRUE?" 
+            ".($ciaccount==TRUE? " 
             
             UNION  ALL                
             
@@ -1232,7 +1232,7 @@ function get_product_history_with_child1($product_id,$depid=0,$as_of_date=null,$
             ci.date_created,
             ci.cash_inv_no as ref_no,
             'Cash Invoice' as type,
-            CONCAT(IFNULL(c.customer_name,''),' (Customer)') as Description,
+            CONCAT(IFNULL(c.customer_name,''),' (Branch)') as Description,
             cii.product_id,
             'Bulk' AS identifier,
             0 as parent_in_qty,
@@ -1260,7 +1260,7 @@ function get_product_history_with_child1($product_id,$depid=0,$as_of_date=null,$
             ":" ")."
 
 
-            ".($disaccount==TRUE?" 
+            ".($disaccount==TRUE? " 
 
             UNION ALL
             SELECT 
@@ -1268,7 +1268,7 @@ function get_product_history_with_child1($product_id,$depid=0,$as_of_date=null,$
             dis.date_created,
             dis.dispatching_inv_no,
             ('Dispatching Invoice') as type,
-            CONCAT(IFNULL(c.customer_name,''),' (Customer)') as Description,
+            CONCAT(IFNULL(c.customer_name,''),' (Branch)') as Description,
             dii.product_id,
             'Bulk' AS identifier,
             0 as parent_in_qty,
@@ -2332,7 +2332,7 @@ Product Pick List
                         si.date_invoice as txn_date,
                         si.sales_inv_no as ref_no,
                         'Charge Invoice' as txn_type,
-                        CONCAT(c.customer_name,' (Customer)') as description,
+                        CONCAT(c.customer_name,' (Branch)') as description,
                         sii.product_id,
                         sii.batch_no,
                         sii.exp_date,
@@ -2356,7 +2356,7 @@ Product Pick List
                         ci.date_invoice as txn_date,
                         ci.cash_inv_no as ref_no,
                         'Cash Invoice' as txn_type,
-                        CONCAT(c.customer_name,' (Customer)') as description,
+                        CONCAT(c.customer_name,' (Branch)') as description,
                         cii.product_id,
                         cii.batch_no,
                         cii.exp_date,

@@ -149,7 +149,7 @@
 	                        ->getAlignment()
 	                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);	
 
-	                $excel->getActiveSheet()->setCellValue('A8','Customer Name')
+	                $excel->getActiveSheet()->setCellValue('A8','Branch Name')
 	                                        ->getStyle('A8')->getFont()->setBold(TRUE);
 	                $excel->getActiveSheet()->setCellValue('B8','Current')
 	                                        ->getStyle('B8')->getFont()->setBold(TRUE);
@@ -313,7 +313,7 @@
 	                        ->getAlignment()
 	                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);	
 
-	                $excel->getActiveSheet()->setCellValue('A8','Customer Name')
+	                $excel->getActiveSheet()->setCellValue('A8','Branch Name')
 	                                        ->getStyle('A8')->getFont()->setBold(TRUE);
 	                $excel->getActiveSheet()->setCellValue('B8','Current')
 	                                        ->getStyle('B8')->getFont()->setBold(TRUE);

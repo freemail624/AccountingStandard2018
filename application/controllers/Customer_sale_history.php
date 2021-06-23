@@ -41,7 +41,7 @@ class Customer_sale_history extends CORE_Controller
             array('customers.is_active'=>TRUE,'customers.is_deleted'=>FALSE),'*',null,'customers.customer_name ASC'
         );
         $data['products']=$this->Products_model->get_list(array('products.is_deleted'=>FALSE),'*',null,'products.product_desc ASC');
-        $data['title'] = 'Customer Sales History';
+        $data['title'] = 'Branch Sales History';
         
         (in_array('3-7',$this->session->user_rights)? 
         $this->load->view('customer_sale_history_view', $data)

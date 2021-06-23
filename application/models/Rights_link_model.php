@@ -8,7 +8,7 @@ class Rights_link_model extends CORE_Model{
         parent::__construct();
     }
     function create_default_link_list(){
-        $sql="INSERT INTO `rights_links` (`link_id`, `parent_code`, `link_code`, `link_name`) VALUES
+        $sql= "INSERT INTO `rights_links` (`link_id`, `parent_code`, `link_code`, `link_name`) VALUES
                                           (1,'1','1-1','General Journal'),
                                           (2,'1','1-2','Cash Disbursement'),
                                           (3,'1','1-3','Purchase Journal'),
@@ -22,11 +22,11 @@ class Rights_link_model extends CORE_Model{
                                           (12,'3','3-2','Charge Invoice'),
                                           (13,'3','3-3','Record Payment'),
                                           (14,'4','4-2','Category Management'),
-                                          (15,'4','4-3','Department Management'),
+                                          (15,'4','4-3','Parent Management'),
                                           (16,'4','4-4','Unit Management'),
                                           (17,'5','5-1','Product Management'),
                                           (18,'5','5-2','Supplier Management'),
-                                          (19,'5','5-3','Customer Management'),
+                                          (19,'5','5-3','Branch Management'),
                                           (20,'6','6-1','Setup Tax'),
                                           (21,'6','6-2','Setup Chart of Accounts'),
                                           (22,'6','6-3','Account Integration'),
@@ -44,7 +44,7 @@ class Rights_link_model extends CORE_Model{
                                           (35,'9','9-3','Export Trial Balance'),
                                           (36,'6','6-7','Setup Check Layout'),
                                           (37,'9','9-4','AR Schedule'),
-                                          (38,'9','9-6','Customer Subsidiary'),
+                                          (38,'9','9-6','Branch Subsidiary'),
                                           (39,'9','9-8','Account Subsidiary'),
                                           (40,'9','9-7','Supplier Subsidiary'),
                                           (41,'9','9-5','AP Schedule'),
@@ -89,7 +89,7 @@ class Rights_link_model extends CORE_Model{
                                           (82,'15','15-1','Product Management (Inventory Tab)'),
                                           (83,'3','3-4','Cash Invoice'),
                                           (84,'6','6-13','Audit Trail'),
-                                          (85,'15','15-5','Item Transfer to Department'),
+                                          (85,'15','15-5','Item Transfer to Parent'),
                                           (86,'15','15-6','Stock Card / Bin Card'),
                                           (87,'3','3-5','Warehouse Dispatching'),
                                           (88,'4','4-7','Brands'),
@@ -104,7 +104,7 @@ class Rights_link_model extends CORE_Model{
                                           (97,'7','7-2','Inventory Report Detailed'),
                                           (98,'8','8-6','Profit Report'),
                                           (99,'3','3-6','Sales/Cash Invoice History'),
-                                          (100,'3','3-7','Customer Sales History'),
+                                          (100,'3','3-7','Branch Sales History'),
                                           -- (101,'5','5-5','Agent Management'),
                                           -- (102,'3','3-8','Loading Report'),
                                           (102,'2','2-9','Purchase Request'),

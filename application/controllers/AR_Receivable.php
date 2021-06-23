@@ -44,7 +44,7 @@ class AR_Receivable extends CORE_Controller {
 
                 $response['title'] = 'Success!';
                 $response['stat'] = 'success';
-                $response['msg'] = 'Department Information successfully created.';
+                $response['msg'] = 'Parent Information successfully created.';
                 $response['row_added'] = $m_departments->get_department_list($department_id);
                 echo json_encode($response);
 
@@ -59,7 +59,7 @@ class AR_Receivable extends CORE_Controller {
                 if($m_departments->modify($department_id)){
                     $response['title']='Success!';
                     $response['stat']='success';
-                    $response['msg']='Department Information successfully deleted.';
+                    $response['msg']= 'Parent Information successfully deleted.';
 
                     echo json_encode($response);
                 }
@@ -77,7 +77,7 @@ class AR_Receivable extends CORE_Controller {
 
                 $response['title']='Success!';
                 $response['stat']='success';
-                $response['msg']='Department Information successfully updated.';
+                $response['msg']= 'Parent Information successfully updated.';
                 $response['row_updated']=$m_departments->get_department_list($department_id);
                 echo json_encode($response);
 

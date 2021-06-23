@@ -137,7 +137,7 @@ class AR_Reports extends CORE_Controller {
                                         ->setCellValue('A3',$company_info->landline.'/'.$company_info->mobile_no)
                                         ->setCellValue('A4',$company_info->email_address);
 
-                $excel->getActiveSheet()->setCellValue('A6','Customer Name: '.$customers)
+                $excel->getActiveSheet()->setCellValue('A6','Branch Name: '.$customers)
                                         ->getStyle('A6')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('A7','Date: '.$tempfrom.' To '.$tempto)
                                         ->getStyle('A7')->getFont()->setBold(TRUE);
@@ -246,7 +246,7 @@ class AR_Reports extends CORE_Controller {
                                         ->setCellValue('A3',$company_info->landline.'/'.$company_info->mobile_no)
                                         ->setCellValue('A4',$company_info->email_address);
 
-                $excel->getActiveSheet()->setCellValue('A6','Customer Name: '.$customers)
+                $excel->getActiveSheet()->setCellValue('A6','Branch Name: '.$customers)
                                         ->getStyle('A6')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('A7','Date: '.$tempfrom.' To '.$tempto)
                                         ->getStyle('A7')->getFont()->setBold(TRUE);

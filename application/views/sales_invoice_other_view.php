@@ -273,7 +273,7 @@
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-sm-4">
-                                                            Issue to Branch / Department * : <br />
+                                                            Issue to Branch / Parent * : <br />
                                                             <select name="issue_to_department" id="cbo_issue_departments" data-error-msg="Branch is required." required>
                                                                 <option value="0">[ Create New Branch ]</option>
                                                                 <?php foreach($departments as $department){ ?>
@@ -549,7 +549,7 @@
                         <tr>
                             <th></th>
                             <th>SO#</th>
-                            <th>Customer</th>
+                            <th>Branch</th>
                             <th>Remarks</th>
                             <th>Order</th>
                             <th>Status</th>
@@ -608,7 +608,7 @@
                             <span class="input-group-addon">
                                 <i class="fa fa-users"></i>
                             </span>
-                                <input type="text" name="department_name" class="form-control" placeholder="Department" data-error-msg="Department name is required." required>
+                                <input type="text" name="department_name" class="form-control" placeholder="Parent" data-error-msg="Parent name is required." required>
                             </div>
                         </div>
 

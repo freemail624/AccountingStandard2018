@@ -3732,7 +3732,7 @@ class Templates extends CORE_Controller {
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                $excel->getActiveSheet()->setCellValue('A9','Customer')
+                $excel->getActiveSheet()->setCellValue('A9','Branch')
                                         ->getStyle('A9')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('B9','Previous')
                                         ->getStyle('B9')->getFont()->setBold(TRUE);
@@ -4017,7 +4017,7 @@ class Templates extends CORE_Controller {
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                $excel->getActiveSheet()->setCellValue('A9','Customer')
+                $excel->getActiveSheet()->setCellValue('A9','Branch')
                                         ->getStyle('A9')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('B9','Previous')
                                         ->getStyle('B9')->getFont()->setBold(TRUE);
@@ -4135,10 +4135,10 @@ class Templates extends CORE_Controller {
                 $excel->getActiveSheet()->setCellValue('A6','PERIOD: '.$start_Date.' to '.$end_Date)
                                         ->getStyle('A6')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->mergeCells('A8:B8');                     
-                $excel->getActiveSheet()->setCellValue('A8','CUSTOMER SUBSIDIARY REPORT')
+                $excel->getActiveSheet()->setCellValue('A8','BRANCH SUBSIDIARY REPORT')
                                         ->getStyle('A8')->getFont()->setBold(TRUE);
 
-                $excel->getActiveSheet()->setCellValue('A10','CUSTOMER: '.$subsidiary_info->customer_name)
+                $excel->getActiveSheet()->setCellValue('A10','BRANCH: '.$subsidiary_info->customer_name)
                                         ->mergeCells('A10:D10');                                         
                 $excel->getActiveSheet()->setCellValue('E10','ACCOUNT: '.$subsidiary_info->account_title)
                                         ->mergeCells('E10:H10');
@@ -4218,7 +4218,7 @@ class Templates extends CORE_Controller {
 
                 }
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                header('Content-Disposition: attachment;filename='."CUSTOMER SUBSIDIARY REPORT.xlsx".'');
+                header('Content-Disposition: attachment;filename='."BRANCH SUBSIDIARY REPORT.xlsx".'');
                 header('Cache-Control: max-age=0');
                 // If you're serving to IE 9, then the following may be needed
                 header('Cache-Control: max-age=1');
@@ -4470,7 +4470,7 @@ class Templates extends CORE_Controller {
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                $excel->getActiveSheet()->setCellValue('A9','Customer')
+                $excel->getActiveSheet()->setCellValue('A9','Branch')
                                         ->getStyle('A9')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('B9','Previous')
                                         ->getStyle('B9')->getFont()->setBold(TRUE);
@@ -4873,7 +4873,7 @@ class Templates extends CORE_Controller {
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                $excel->getActiveSheet()->setCellValue('A9','Customer')
+                $excel->getActiveSheet()->setCellValue('A9', 'Branch')
                                         ->getStyle('A9')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('B9','Previous')
                                         ->getStyle('B9')->getFont()->setBold(TRUE);
@@ -5049,10 +5049,10 @@ class Templates extends CORE_Controller {
                 $excel->getActiveSheet()->setCellValue('A6','PERIOD: '.$start_Date.' to '.$end_Date)
                                         ->getStyle('A6')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->mergeCells('A8:B8');                     
-                $excel->getActiveSheet()->setCellValue('A8','CUSTOMER SUBSIDIARY REPORT')
+                $excel->getActiveSheet()->setCellValue('A8','BRANCH SUBSIDIARY REPORT')
                                         ->getStyle('A8')->getFont()->setBold(TRUE);
 
-                $excel->getActiveSheet()->setCellValue('A10','CUSTOMER: '.$subsidiary_info->customer_name)
+                $excel->getActiveSheet()->setCellValue('A10','BRANCH: '.$subsidiary_info->customer_name)
                                         ->mergeCells('A10:D10');                                         
                 $excel->getActiveSheet()->setCellValue('E10','ACCOUNT: '.$subsidiary_info->account_title)
                                         ->mergeCells('E10:H10');
@@ -5132,7 +5132,7 @@ class Templates extends CORE_Controller {
 
                 }
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                header('Content-Disposition: attachment;filename='."CUSTOMER SUBSIDIARY REPORT.xlsx".'');
+                header('Content-Disposition: attachment;filename='."BRANCH SUBSIDIARY REPORT.xlsx".'');
                 header('Cache-Control: max-age=0');
                 // If you're serving to IE 9, then the following may be needed
                 header('Cache-Control: max-age=1');
@@ -5147,7 +5147,7 @@ class Templates extends CORE_Controller {
                 $objWriter->save('php://output'); 
                 $data = ob_get_clean();
 
-                            $file_name='CUSTOMER SUBSIDIARY REPORT '.date('Y-m-d h:i:A', now());
+                            $file_name='BRANCH SUBSIDIARY REPORT '.date('Y-m-d h:i:A', now());
                             $excelFilePath = $file_name.".xlsx"; //generate filename base on id
                             //download it.
                             // Set SMTP Configuration
@@ -5169,7 +5169,7 @@ class Templates extends CORE_Controller {
                             );
 
                             $to = array($email[0]->email_to);
-                            $subject = 'CUSTOMER SUBSIDIARY REPORT';
+                            $subject = 'BRANCH SUBSIDIARY REPORT';
                           //  $message = 'Type your gmail message here';
                             $message = '<p>To: ' .$email[0]->email_to. '</p></ br>' .$email[0]->default_message.'</ br><p>Sent By: '. '<b>'.$this->session->user_fullname.'</b>'. '</p></ br>' .date('Y-m-d h:i:A', now());
 

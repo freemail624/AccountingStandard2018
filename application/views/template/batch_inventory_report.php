@@ -64,7 +64,7 @@
     <br><br>
     <table width="100%">
         <tr>
-            <td width="15%"><strong>DEPARTMENT</strong> : </td>
+            <td width="15%"><strong>PARENT</strong> : </td>
             <td width="85%"><?php echo $department; ?></td>
         </tr>
     </table>

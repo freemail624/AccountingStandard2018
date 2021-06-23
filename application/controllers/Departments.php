@@ -17,7 +17,7 @@ class Departments extends CORE_Controller {
         $data['_switcher_settings'] = $this->load->view('template/elements/switcher', '', TRUE);
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
-        $data['title'] = 'Department Management';
+        $data['title'] = 'Parent Management';
         (in_array('4-3',$this->session->user_rights)? 
         $this->load->view('departments_view', $data)
         :redirect(base_url('dashboard')));
@@ -48,12 +48,12 @@ class Departments extends CORE_Controller {
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=1; //CRUD
                 $m_trans->trans_type_id=46; // TRANS TYPE
-                $m_trans->trans_log='Created Department: '.$this->input->post('department_name', TRUE);
+                $m_trans->trans_log= 'Created Parent: '.$this->input->post('department_name', TRUE);
                 $m_trans->save();
 
                 $response['title'] = 'Success!';
                 $response['stat'] = 'success';
-                $response['msg'] = 'Department Information successfully created.';
+                $response['msg'] = 'Parent Information successfully created.';
                 $response['row_added'] = $m_departments->get_department_list($department_id);
                 echo json_encode($response);
 
@@ -68,7 +68,7 @@ class Departments extends CORE_Controller {
                 if($m_departments->modify($department_id)){
                     $response['title']='Success!';
                     $response['stat']='success';
-                    $response['msg']='Department Information successfully deleted.';
+                    $response['msg']= 'Parent Information successfully deleted.';
 
                     $department_name = $m_departments->get_list($department_id,'department_name');
                     $m_trans=$this->Trans_model;
@@ -76,7 +76,7 @@ class Departments extends CORE_Controller {
                     $m_trans->set('trans_date','NOW()');
                     $m_trans->trans_key_id=3; //CRUD
                     $m_trans->trans_type_id=46; // TRANS TYPE
-                    $m_trans->trans_log='Deleted Department: '.$department_name[0]->department_name;
+                    $m_trans->trans_log= 'Deleted Parent: '.$department_name[0]->department_name;
                     $m_trans->save();
 
                     echo json_encode($response);
@@ -99,12 +99,12 @@ class Departments extends CORE_Controller {
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=2; //CRUD
                 $m_trans->trans_type_id=46; // TRANS TYPE
-                $m_trans->trans_log='Updated Department: '.$this->input->post('department_name',TRUE).' ID('.$department_id.')';
+                $m_trans->trans_log= 'Updated Parent: '.$this->input->post('department_name',TRUE).' ID('.$department_id.')';
                 $m_trans->save();
 
                 $response['title']='Success!';
                 $response['stat']='success';
-                $response['msg']='Department Information successfully updated.';
+                $response['msg']= 'Parent Information successfully updated.';
                 $response['row_updated']=$m_departments->get_department_list($department_id);
                 echo json_encode($response);
 

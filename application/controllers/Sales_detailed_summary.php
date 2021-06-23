@@ -136,14 +136,14 @@ class Sales_detailed_summary extends CORE_Controller {
                     $excel->getActiveSheet()->getColumnDimensionByColumn('A1')->setWidth('50');
                     $excel->getActiveSheet()->getColumnDimensionByColumn('A2:B2')->setWidth('50');
                     $excel->getActiveSheet()->getColumnDimensionByColumn('A3')->setWidth('50');
-                    $excel->getActiveSheet()->setTitle("SALES PER CUSTOMER SUMMARY");
+                    $excel->getActiveSheet()->setTitle("SALES PER BRANCH SUMMARY");
                     $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
                     $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
                      ->setCellValue('A2',$company_info[0]->company_address)
                      ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no);
 
                     $excel->getActiveSheet()->getStyle('A5')->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER CUSTOMER (SUMMARY)');
+                    $excel->getActiveSheet()->setCellValue('A5', 'SALES REPORT PER BRANCH (SUMMARY)');
 
                     $excel->getActiveSheet()->getColumnDimension('A')->setWidth('40');
                     $excel->getActiveSheet()->getColumnDimension('B')->setWidth('25');
@@ -158,7 +158,7 @@ class Sales_detailed_summary extends CORE_Controller {
                     $excel->getActiveSheet()->getStyle('B7')->getFont()->setBold(TRUE);
                     $excel->getActiveSheet()->getStyle('C7')->getFont()->setBold(TRUE);
 
-                    $excel->getActiveSheet()->setCellValue('A7','Customer');
+                    $excel->getActiveSheet()->setCellValue('A7','Branch');
                     $excel->getActiveSheet()->setCellValue('B7','Total Sales');
                     $i = 8;
                     $sum = 0;
@@ -202,7 +202,7 @@ class Sales_detailed_summary extends CORE_Controller {
 
 
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                header('Content-Disposition: attachment;filename='."Sales Report Per Customer Summary.xlsx".'');
+                header('Content-Disposition: attachment;filename='."Sales Report Per Branch Summary.xlsx".'');
                 header('Cache-Control: max-age=0');
                 // If you're serving to IE 9, then the following may be needed
                 header('Cache-Control: max-age=1');
@@ -217,7 +217,7 @@ class Sales_detailed_summary extends CORE_Controller {
                 $objWriter->save('php://output');
                 $data = ob_get_clean();
 
-                            $file_name='Sales Report Per Customer Summary '.date('Y-m-d h:i:A', now());
+                            $file_name='Sales Report Per Branch Summary '.date('Y-m-d h:i:A', now());
                             $excelFilePath = $file_name.".xlsx"; //generate filename base on id
                             //download it.
                             // Set SMTP Configuration
@@ -239,7 +239,7 @@ class Sales_detailed_summary extends CORE_Controller {
                             );
 
                             $to = array($email[0]->email_to);
-                            $subject = 'Sales Report Per Customer Summary';
+                            $subject = 'Sales Report Per Branch Summary';
                           //  $message = 'Type your gmail message here';
                             $message = '<p>To: ' .$email[0]->email_to. '</p></ br>' .$email[0]->default_message.'</ br><p>Sent By: '. '<b>'.$this->session->user_fullname.'</b>'. '</p></ br>' .date('Y-m-d h:i:A', now());
 
@@ -575,14 +575,14 @@ class Sales_detailed_summary extends CORE_Controller {
                     $excel->getActiveSheet()->getColumnDimensionByColumn('A1')->setWidth('50');
                     $excel->getActiveSheet()->getColumnDimensionByColumn('A2:B2')->setWidth('50');
                     $excel->getActiveSheet()->getColumnDimensionByColumn('A3')->setWidth('50');
-                    $excel->getActiveSheet()->setTitle("SALES PER CUSTOMER SUMMARY");
+                    $excel->getActiveSheet()->setTitle("SALES PER BRANCH SUMMARY");
                     $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
                     $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
                      ->setCellValue('A2',$company_info[0]->company_address)
                      ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no);
 
                     $excel->getActiveSheet()->getStyle('A5')->getFont()->setBold(TRUE);
-                    $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER CUSTOMER (SUMMARY)');
+                    $excel->getActiveSheet()->setCellValue('A5', 'SALES REPORT PER BRANCH (SUMMARY)');
 
                     $excel->getActiveSheet()->getColumnDimension('A')->setWidth('40');
                     $excel->getActiveSheet()->getColumnDimension('B')->setWidth('25');
@@ -596,7 +596,7 @@ class Sales_detailed_summary extends CORE_Controller {
                     $excel->getActiveSheet()->getStyle('B7')->getFont()->setBold(TRUE);
                     $excel->getActiveSheet()->getStyle('C7')->getFont()->setBold(TRUE);
 
-                    $excel->getActiveSheet()->setCellValue('A7','Customer');
+                    $excel->getActiveSheet()->setCellValue('A7', 'Branch');
                     $excel->getActiveSheet()->setCellValue('B7','Total Sales');
                     $i = 8;
                     $sum = 0;
@@ -640,7 +640,7 @@ class Sales_detailed_summary extends CORE_Controller {
 
                 ob_end_clean();
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                header('Content-Disposition: attachment;filename='."Sales Report Per Customer Summary.xlsx".'');
+                header('Content-Disposition: attachment;filename='. "Sales Report Per Branch Summary.xlsx".'');
                 header('Cache-Control: max-age=0');
                 // If you're serving to IE 9, then the following may be needed
                 header('Cache-Control: max-age=1');
@@ -881,13 +881,13 @@ class Sales_detailed_summary extends CORE_Controller {
                  $excel->getActiveSheet()->getColumnDimensionByColumn('A1')->setWidth('50');
                  $excel->getActiveSheet()->getColumnDimensionByColumn('A2:B2')->setWidth('50');
                  $excel->getActiveSheet()->getColumnDimensionByColumn('A3')->setWidth('50');
-                 $excel->getActiveSheet()->setTitle("SALES PER CUSTOMER DETAILED");
+                 $excel->getActiveSheet()->setTitle("SALES PER BRANCH DETAILED");
                  $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
                  $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
                                          ->setCellValue('A2',$company_info[0]->company_address)
                                          ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no);
                  $excel->getActiveSheet()->getStyle('A5')->getFont()->setBold(TRUE);
-                 $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER CUSTOMER (DETAILED)');
+                 $excel->getActiveSheet()->setCellValue('A5', 'SALES REPORT PER BRANCH (DETAILED)');
 
                 $i = 7;
 
@@ -994,7 +994,7 @@ class Sales_detailed_summary extends CORE_Controller {
                  $i++;
                 }    
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                header('Content-Disposition: attachment;filename='."Sales Report Per Customer Detailed.xlsx".'');
+                header('Content-Disposition: attachment;filename='. "Sales Report Per Branch Detailed.xlsx".'');
                 header('Cache-Control: max-age=0');
                 // If you're serving to IE 9, then the following may be needed
                 header('Cache-Control: max-age=1');
@@ -1009,7 +1009,7 @@ class Sales_detailed_summary extends CORE_Controller {
                 $objWriter->save('php://output');
                 $data =  ob_get_clean();
 
-                            $file_name='Sales Report Per Customer Detailed '.date('Y-m-d h:i:A', now());
+                            $file_name= 'Sales Report Per Branch Detailed '.date('Y-m-d h:i:A', now());
                             $excelFilePath = $file_name.".xlsx"; //generate filename base on id
                             //download it.
                             // Set SMTP Configuration
@@ -1031,7 +1031,7 @@ class Sales_detailed_summary extends CORE_Controller {
                             );
 
                             $to = array($email[0]->email_to);
-                            $subject = 'Sales Report Per Customer Detailed';
+                            $subject = 'Sales Report Per Branch Detailed';
                           //  $message = 'Type your gmail message here';
                             $message = '<p>To: ' .$email[0]->email_to. '</p></ br>' .$email[0]->default_message.'</ br><p>Sent By: '. '<b>'.$this->session->user_fullname.'</b>'. '</p></ br>' .date('Y-m-d h:i:A', now());
 
@@ -1447,13 +1447,13 @@ class Sales_detailed_summary extends CORE_Controller {
                  $excel->getActiveSheet()->getColumnDimensionByColumn('A1')->setWidth('50');
                  $excel->getActiveSheet()->getColumnDimensionByColumn('A2:B2')->setWidth('50');
                  $excel->getActiveSheet()->getColumnDimensionByColumn('A3')->setWidth('50');
-                 $excel->getActiveSheet()->setTitle("SALES PER CUSTOMER DETAILED");
+                 $excel->getActiveSheet()->setTitle("SALES PER BRANCH DETAILED");
                  $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
                  $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
                                          ->setCellValue('A2',$company_info[0]->company_address)
                                          ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no);
                  $excel->getActiveSheet()->getStyle('A5')->getFont()->setBold(TRUE);
-                 $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER CUSTOMER (DETAILED)');
+                 $excel->getActiveSheet()->setCellValue('A5', 'SALES REPORT PER BRANCH (DETAILED)');
 
                 $i = 7;
 
@@ -1561,7 +1561,7 @@ class Sales_detailed_summary extends CORE_Controller {
                 }    
                 ob_end_clean();
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                header('Content-Disposition: attachment;filename='."Sales Report Per Customer Detailed.xlsx".'');
+                header('Content-Disposition: attachment;filename='. "Sales Report Per Branch Detailed.xlsx".'');
                 header('Cache-Control: max-age=0');
                 // If you're serving to IE 9, then the following may be needed
                 header('Cache-Control: max-age=1');
