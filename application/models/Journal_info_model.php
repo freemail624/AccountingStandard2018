@@ -12,7 +12,7 @@ class Journal_info_model extends CORE_Model{
         parent::__construct();
     }
 
-    function get_check_list($check_type_id='all',$tsd,$ted) 
+    function get_check_list($check_type_id='all',$tsd,$ted,$check_status='all',$cstatus) 
     {
         $query = $this->db->query("SELECT 
                 main.*
@@ -40,16 +40,16 @@ class Journal_info_model extends CORE_Model{
                 LEFT JOIN customers c ON c.customer_id = ji.customer_id
                 LEFT JOIN b_refchecktype bank ON bank.check_type_id = ji.check_type_id
                 WHERE
-                    ji.is_active = TRUE
-                        AND ji.is_deleted = FALSE
+                        ji.is_deleted = FALSE
                         AND ji.payment_method_id = 2 
                         AND ji.book_type = 'CDJ'
                         AND ji.date_txn BETWEEN '".$tsd."' AND '".$ted."'
                         ".($check_type_id=='all'?"":" AND ji.check_type_id=".$check_type_id)."
+                        ".($check_status=='all'?"":" AND ji.is_active=".$check_status)."
 
                         UNION ALL SELECT 
 
-                    0 AS journal_id,
+                        0 AS journal_id,
                         cv.cv_id,
                         2 AS type_id,
                         cv.check_no,
@@ -71,12 +71,12 @@ class Journal_info_model extends CORE_Model{
                 LEFT JOIN customers c ON c.customer_id = cv.customer_id
                 LEFT JOIN b_refchecktype bank ON bank.check_type_id = cv.check_type_id
                 WHERE
-                    cv.is_active = TRUE
-                        AND cv.is_deleted = FALSE
+                        cv.is_deleted = FALSE
                         AND cv.payment_method_id = 2
                         AND cv.cv_status_id != 2
                         AND cv.date_txn BETWEEN '".$tsd."' AND '".$ted."'
                         ".($check_type_id=='all'?"":" AND cv.check_type_id=".$check_type_id)."
+                        ".($check_status=='all' ?"":" AND cv.cv_status_id $cstatus 4")."
 
                         ) AS main");
         return $query->result();        

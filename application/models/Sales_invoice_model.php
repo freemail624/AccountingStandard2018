@@ -527,7 +527,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                 -- Over 90 Days
                   CONVERT( 
                     (CASE
-                        WHEN @balance < o.over_ninetydays
+                        WHEN @balance <= o.over_ninetydays
                             THEN (o.over_ninetydays - @balance)
                         WHEN @balance > o.over_ninetydays
                             THEN (o.over_ninetydays - o.over_ninetydays)
@@ -537,7 +537,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                 
                     CONVERT( 
                     (CASE
-                        WHEN @balance < o.over_ninetydays
+                        WHEN @balance <= o.over_ninetydays
                             THEN @balance:=0
                         WHEN @balance > o.over_ninetydays
                             THEN @balance:=(@balance - o.over_ninetydays)
@@ -548,7 +548,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                 -- 90 Days
                   CONVERT( 
                     (CASE
-                        WHEN @balance < o.ninety_days
+                        WHEN @balance <= o.ninety_days
                             THEN (o.ninety_days - @balance)
                         WHEN @balance > o.ninety_days
                             THEN 
@@ -564,7 +564,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                     
                     CONVERT( 
                     (CASE
-                        WHEN @balance < o.ninety_days
+                        WHEN @balance <= o.ninety_days
                             THEN @balance:=0
                         WHEN @balance > o.ninety_days
                             THEN 
@@ -582,7 +582,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                 -- 60 Days
                   CONVERT( 
                     (CASE
-                        WHEN @balance < o.sixty_days
+                        WHEN @balance <= o.sixty_days
                             THEN (o.sixty_days - @balance)
                         WHEN @balance > o.sixty_days
                             THEN 
@@ -595,10 +595,11 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                         ELSE o.sixty_days
                     END)
                     , DECIMAL (20 , 2 ))as  balance_sixty_days,
-                      
+                    
+
                CONVERT( 
                     (CASE
-                        WHEN @balance < o.sixty_days
+                        WHEN @balance <= o.sixty_days
                             THEN @balance:=0
                         WHEN @balance > o.sixty_days
                             THEN 
@@ -616,7 +617,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                 -- 30 Days
                   CONVERT( 
                     (CASE
-                        WHEN @balance < o.thirty_days
+                        WHEN @balance <= o.thirty_days
                             THEN (o.thirty_days - @balance)
                         WHEN @balance > o.thirty_days
                             THEN 
@@ -632,7 +633,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                 
                 CONVERT( 
                     (CASE
-                        WHEN @balance < o.thirty_days
+                        WHEN @balance <= o.thirty_days
                             THEN @balance:=0
                         WHEN @balance > o.thirty_days
                             THEN 

@@ -26,7 +26,8 @@
 <br /><br />
 <div>
     <h2 style="display: table;margin: 0 auto;!important;">Check Summary - <?php echo $bank; ?></h2>
-    <p style="display: table;margin: 0 auto;!important;">Period <?php echo $start; ?> to <?php echo $end; ?></p>
+    <p style="display: table;margin: 0 auto;!important;">Period : <?php echo $start; ?> to <?php echo $end; ?></p>
+    <p style="display: table;margin: 0 auto;!important;">Status : <?php echo $status_name; ?> </p>
 </div>
 
 

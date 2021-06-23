@@ -169,12 +169,6 @@
         <div class="panel-body">
             <h2 class="h2-panel-heading">Check Summary</h2><hr />
             <div class="row">
-                <div class="col-lg-3">
-                    <br/>
-                    <button class="btn btn-primary" id="btn_print_check_list" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Print list"><i class="fa fa-print"></i> Print</button>
-                    <button class="btn btn-success" id="btn_excel_check_list" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Download Excel list"><i class="fa fa-file-excel-o"></i> Export</button>
-                    <button class="btn btn-default" id="btn_refresh_check_list" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Refresh"><i class="fa fa-refresh"></i> Refresh</button>
-                </div>
                 <div class="col-lg-2">
                     From :<br />
                     <div class="input-group">
@@ -204,10 +198,27 @@
                     </select>
                 </div>
                 <div class="col-lg-2">
-                        Search :<br />
-                         <input type="text" id="searchbox_check" class="form-control">
+                    Status : <br/>
+                    <select id="cbo_check_status" class="form-control">
+                        <option value="all">All</option>
+                        <option value="1">Active Checks</option>
+                        <option value="0">Cancelled Checks</option>
+                    </select>
                 </div>
-            </div><br>
+                <div class="col-lg-3">
+                    Search :<br />
+                    <input type="text" id="searchbox_check" class="form-control">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <br/>
+                    <button class="btn btn-primary" id="btn_print_check_list" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Print list"><i class="fa fa-print"></i> Print</button>
+                    <button class="btn btn-success" id="btn_excel_check_list" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Download Excel list"><i class="fa fa-file-excel-o"></i> Export</button>
+                    <button class="btn btn-default" id="btn_refresh_check_list" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Refresh"><i class="fa fa-refresh"></i> Refresh</button>
+                </div>
+            </div>
+            <br>
             <div>
                 <table id="tbl_check_list" class="table table-striped" cellspacing="0" width="100%">
                     <thead style="display:none;">
@@ -317,7 +328,7 @@
 <script>
 $(document).ready(function(){
 
-    var _cboCheckTypes; var dtCheckList; var _cboLayouts; var _selectedTypeID;
+    var _cboCheckTypes; var _cboCheckStatus; var dtCheckList; var _cboLayouts; var _selectedTypeID;
 
     var initializeControls=function(){
 
@@ -327,6 +338,14 @@ $(document).ready(function(){
         });
         
         _cboCheckTypes.select2('val','all');
+
+
+        _cboCheckStatus=$('#cbo_check_status').select2({
+            placeholder: "Please Select Check Status",
+            allowClear:false
+        });
+        
+        _cboCheckStatus.select2('val',1);
 
         _cboLayouts=$('#cbo_layouts').select2({
             placeholder: "Please select check layout.",
@@ -356,6 +375,7 @@ $(document).ready(function(){
                 "data": function ( d ) {
                         return $.extend( {}, d, {
                             "check_type_id": _cboCheckTypes.val(),
+                            "check_status": _cboCheckStatus.val(),
                             "start_date": $('#txt_start_date').val(),
                             "end_date": $('#txt_end_date').val()
                         });
@@ -431,7 +451,11 @@ $(document).ready(function(){
 
         _cboCheckTypes.on("select2:select", function (e) {
             $('#tbl_check_list').DataTable().ajax.reload();
-       });
+        });
+
+        _cboCheckStatus.on("select2:select", function (e) {
+            $('#tbl_check_list').DataTable().ajax.reload();
+        });
 
         $('#btn_refresh_check_list').click(function(){
             $('#tbl_check_list').DataTable().ajax.reload();
@@ -452,11 +476,11 @@ $(document).ready(function(){
         });
 
         $('#btn_print_check_list').click(function(){
-            window.open('Check_summary/transaction/print-check-list?bank='+$('#cbo_check_type').val()+'&start='+$('#txt_start_date').val()+"&end="+$('#txt_end_date').val());
+            window.open('Check_summary/transaction/print-check-list?bank='+$('#cbo_check_type').val()+'&start='+$('#txt_start_date').val()+"&end="+$('#txt_end_date').val()+"&check_status="+$('#cbo_check_status').val());
         });
 
         $('#btn_excel_check_list').on('click', function() {
-            window.open('Check_summary/transaction/export-check-list?bank='+$('#cbo_check_type').val()+'&start='+$('#txt_start_date').val()+"&end="+$('#txt_end_date').val());
+            window.open('Check_summary/transaction/export-check-list?bank='+$('#cbo_check_type').val()+'&start='+$('#txt_start_date').val()+"&end="+$('#txt_end_date').val()+"&check_status="+$('#cbo_check_status').val());
         });           
 
         $('#tbl_check_list').on('click','button[name="print_check"]',function(){

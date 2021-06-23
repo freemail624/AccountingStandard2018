@@ -53,9 +53,20 @@ class Check_summary extends CORE_Controller
             case 'get-check-list':
                 $m_journal=$this->Journal_info_model;
                 $check_type_id = $this->input->get('check_type_id', TRUE);
+                $check_status = $this->input->get('check_status', TRUE);
                 $tsd = date('Y-m-d',strtotime($this->input->get('start_date', TRUE)));
                 $ted = date('Y-m-d',strtotime($this->input->get('end_date', TRUE)));
-                $response['data']=$m_journal->get_check_list($check_type_id,$tsd,$ted);
+
+                if($check_status == 'all'){
+                    $cstatus = "";
+                }else if($check_status == 1){
+                    $cstatus = "!=";
+                }
+                else if($check_status == 0){
+                    $cstatus = "=";
+                }
+
+                $response['data']=$m_journal->get_check_list($check_type_id,$tsd,$ted,$check_status,$cstatus);
                 echo json_encode($response);
                 break;
 
@@ -64,10 +75,23 @@ class Check_summary extends CORE_Controller
                 $m_bank=$this->Check_types_model;
 
                 $check_type_id = $this->input->get('bank', TRUE);
+                $check_status = $this->input->get('check_status', TRUE);
                 $tsd = date('Y-m-d',strtotime($this->input->get('start', TRUE)));
                 $ted = date('Y-m-d',strtotime($this->input->get('end', TRUE)));
 
-                $data['checks']=$m_journal->get_check_list($check_type_id,$tsd,$ted);
+                if($check_status == 'all'){
+                    $cstatus = "";
+                    $status_name = "ALL";
+                }else if($check_status == 1){
+                    $cstatus = "!=";
+                    $status_name = "Active";
+                }
+                else if($check_status == 0){
+                    $cstatus = "=";
+                    $status_name = "Cancelled";
+                }
+
+                $data['checks']=$m_journal->get_check_list($check_type_id,$tsd,$ted,$check_status,$cstatus);
 
                 $company_info=$this->Company_model->get_list();
                 $params['company_info']=$company_info[0];
@@ -86,6 +110,7 @@ class Check_summary extends CORE_Controller
                 }
 
                 $data['bank']=$bank_name;
+                $data['status_name']=$status_name;
                 $data['start']=date('m/d/Y',strtotime($this->input->get('start')));
                 $data['end']=date('m/d/Y',strtotime($this->input->get('end')));
 
@@ -101,10 +126,23 @@ class Check_summary extends CORE_Controller
                 $m_bank=$this->Check_types_model;
 
                 $check_type_id = $this->input->get('bank', TRUE);
+                $check_status = $this->input->get('check_status', TRUE);
                 $tsd = date('Y-m-d',strtotime($this->input->get('start', TRUE)));
                 $ted = date('Y-m-d',strtotime($this->input->get('end', TRUE)));
 
-                $checks=$m_journal->get_check_list($check_type_id,$tsd,$ted);
+                if($check_status == 'all'){
+                    $cstatus = "";
+                    $status_name = "ALL";
+                }else if($check_status == 1){
+                    $cstatus = "!=";
+                    $status_name = "Active";
+                }
+                else if($check_status == 0){
+                    $cstatus = "=";
+                    $status_name = "Cancelled";
+                }
+
+                $checks=$m_journal->get_check_list($check_type_id,$tsd,$ted,$check_status,$cstatus);
                 $company_info=$this->Company_model->get_list();
                 $bank_name = "";
 
@@ -141,24 +179,24 @@ class Check_summary extends CORE_Controller
                                                             substr($company_info[0]->tin_no,6, 3).'-'.
                                                             substr($company_info[0]->tin_no,9, 3));                                            
                 $excel->getActiveSheet()->mergeCells('A6:I6');                                            
-                $excel->getActiveSheet()->mergeCells('A7:I7');
+                $excel->getActiveSheet()->mergeCells('A7:I7');                                         
+                $excel->getActiveSheet()->mergeCells('A8:I8');
 
                 $excel->getActiveSheet()
-                        ->getStyle('A6:I7')
+                        ->getStyle('A6:I8')
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);                
 
 
                 $excel->getActiveSheet()->setCellValue('A6','Check Summary - '.$bank_name)
                                         ->getStyle('A6')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('A7','Period '.$start.' to '.$end)
+                $excel->getActiveSheet()->setCellValue('A7','Period : '.$start.' to '.$end)
                                         ->getStyle('A7')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('A8','Status : '.$status_name)
+                                        ->getStyle('A8')->getFont()->setBold(TRUE);
 
                 $filename = 'Check Summary - '.$start.' to '.$end.'.xlsx';  
                                        
-                $excel->getActiveSheet()->setCellValue('A8','')
-                                        ->getStyle('A8')->getFont()->setItalic(TRUE);
-
                 $excel->getActiveSheet()->getColumnDimension('A')->setWidth('20');
                 $excel->getActiveSheet()->getColumnDimension('B')->setWidth('20');
                 $excel->getActiveSheet()->getColumnDimension('C')->setWidth('20');
@@ -175,51 +213,51 @@ class Check_summary extends CORE_Controller
                     )
                 );
 
-                $excel->getActiveSheet()->getStyle('A9:I9')->applyFromArray( $style_header );            
+                $excel->getActiveSheet()->getStyle('A10:I10')->applyFromArray( $style_header );            
 
                 $excel->getActiveSheet()
-                        ->getStyle('A9:C9')
+                        ->getStyle('A10:C10')
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 
                 $excel->getActiveSheet()
-                        ->getStyle('D9')
+                        ->getStyle('D10')
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT); 
 
                 $excel->getActiveSheet()
-                        ->getStyle('E9:I9')
+                        ->getStyle('E10:I10')
                         ->getAlignment()
                         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);                                                
 
 
-                $excel->getActiveSheet()->setCellValue('A9','Bank')
-                                        ->getStyle('A9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('B9','Check #')
-                                        ->getStyle('B9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('C9','Check Date')
-                                        ->getStyle('C9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('D9','Amount')                    
-                                        ->getStyle('D9')->getFont()->setBold(TRUE);          
-                $excel->getActiveSheet()->setCellValue('E9','Reference')
-                                        ->getStyle('E9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('F9','Book Type')
-                                        ->getStyle('F9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('G9','Particular')
-                                        ->getStyle('G9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('H9','Remarks')
-                                        ->getStyle('H9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('I9','Issued')
-                                        ->getStyle('I9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('A10','Bank')
+                                        ->getStyle('A10')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('B10','Check #')
+                                        ->getStyle('B10')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('C10','Check Date')
+                                        ->getStyle('C10')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('D10','Amount')                    
+                                        ->getStyle('D10')->getFont()->setBold(TRUE);          
+                $excel->getActiveSheet()->setCellValue('E10','Reference')
+                                        ->getStyle('E10')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('F10','Book Type')
+                                        ->getStyle('F10')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('G10','Particular')
+                                        ->getStyle('G10')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('H10','Remarks')
+                                        ->getStyle('H10')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('I10','Issued')
+                                        ->getStyle('I10')->getFont()->setBold(TRUE);
                       
-                $i=10;
+                $i=11;
 
                 foreach ($checks as $row) {
                 
                 $excel->getActiveSheet()->setCellValue('A'.$i,$row->bank)
                                         ->setCellValue('B'.$i,$row->check_no)
                                         ->setCellValue('C'.$i,$row->check_date)
-                                        ->setCellValue('D'.$i,number_format($row->amount,2))
+                                        ->setCellValue('D'.$i,$row->amount)
                                         ->setCellValue('E'.$i,$row->ref_no)
                                         ->setCellValue('F'.$i,$row->book_type)
                                         ->setCellValue('G'.$i,$row->particular)
