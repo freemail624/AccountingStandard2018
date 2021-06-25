@@ -89,6 +89,7 @@ class Account_payables extends CORE_Controller
                 $m_journal->remarks=$this->input->post('remarks',TRUE);
                 $m_journal->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
                 $m_journal->book_type='PJE';
+                $m_journal->is_review = $this->get_numeric_value($this->input->post('is_review', TRUE));
 
                 //for audit details
                 $m_journal->set('date_created','NOW()');
@@ -214,6 +215,7 @@ class Account_payables extends CORE_Controller
             //***************************************************************************************
             case 'cancel':
                 $m_journal=$this->Journal_info_model;
+                $m_delivery=$this->Delivery_invoice_model;
                 $journal_id=$this->input->post('journal_id',TRUE);
 
                 //validate if this transaction is not yet closed
@@ -223,7 +225,15 @@ class Account_payables extends CORE_Controller
                     $response['title']='<b>Journal is Locked!</b>';
                     $response['msg']='Sorry, you cannot cancel journal that is already closed!<br />';
                     die(json_encode($response));
-                }                
+                }
+
+                $deliveries = $m_delivery->get_list('journal_id =' . $journal_id);
+
+                if (count($deliveries)) {
+                    $delivery = $deliveries[0];
+                    $m_delivery->is_journal_posted = 0;
+                    $m_delivery->modify($delivery->dr_invoice_id);
+                }
 
                 //check if the transaction is cancelled or not
                 $is_active=$m_journal->get_list('is_active>0 AND journal_id='.$journal_id);
@@ -298,6 +308,7 @@ class Account_payables extends CORE_Controller
                 'journal_info.txn_no',
                 'DATE_FORMAT(journal_info.date_txn,"%m/%d/%Y")as date_txn',
                 'journal_info.is_active',
+                'journal_info.is_review',
                 'journal_info.remarks',
                 'journal_info.supplier_id',
                 'journal_info.customer_id',
@@ -310,7 +321,11 @@ class Account_payables extends CORE_Controller
                 array('suppliers','suppliers.supplier_id=journal_info.supplier_id','left'),
                 array('user_accounts','user_accounts.user_id=journal_info.created_by_user','left')
             ),
-            'journal_info.journal_id DESC'
+            'journal_info.journal_id DESC',NULL,NULL,NULL,
+            'CASE 
+                WHEN is_review = 1 AND is_active = 0 THEN FALSE
+                ELSE TRUE
+            END'
         );
     }
 

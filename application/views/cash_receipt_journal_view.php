@@ -1433,7 +1433,9 @@
                                         "success": function(response) {
                                             showNotification(response);
                                             if (response.stat == "success") {
-                                                dt.row(_selectRowObj).data(response.row_updated[0]).draw();
+                                                $('#tbl_accounts_receivable').DataTable().ajax.reload()
+                                                $('#tbl_collection_for_review').DataTable().ajax.reload()
+                                                $('#tbl_cash_invoice_for_review').DataTable().ajax.reload()
                                             }
 
                                         }
@@ -1713,6 +1715,10 @@
 
                             var createJournal = function() {
                                 var _data = $('#frm_journal').serializeArray();
+                                _data.push({
+                                    name: 'is_review',
+                                    value: 0
+                                })
                                 return $.ajax({
                                     "dataType": "json",
                                     "type": "POST",
@@ -2030,7 +2036,10 @@
 
                                 var finalizeJournalReview = function() {
                                     var _data_review = parent.find('form').serializeArray();
-
+                                    _data_review.push({
+                                        name: 'is_review',
+                                        value: 1
+                                    })
                                     return $.ajax({
                                         "dataType": "json",
                                         "type": "POST",
@@ -2090,6 +2099,10 @@
 
                                 var finalizeJournalReview = function() {
                                     var _data_review = parent.find('form').serializeArray();
+                                    _data_review.push({
+                                        name: 'is_review',
+                                        value: 1
+                                    })
 
                                     return $.ajax({
                                         "dataType": "json",

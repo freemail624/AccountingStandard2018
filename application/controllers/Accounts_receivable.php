@@ -92,6 +92,7 @@ class Accounts_receivable extends CORE_Controller
                 $m_journal->book_type='SJE';
                 $m_journal->ref_no=$this->input->post('ref_no',TRUE);
                 $m_journal->is_sales=1;
+                $m_journal->is_review = $this->get_numeric_value($this->input->post('is_review', TRUE));
 
                 //for audit details
                 $m_journal->set('date_created','NOW()');
@@ -217,6 +218,7 @@ class Accounts_receivable extends CORE_Controller
             //***************************************************************************************
             case 'cancel':
                 $m_journal=$this->Journal_info_model;
+                $m_sales_invoice=$this->Sales_invoice_model;
                 $journal_id=$this->input->post('journal_id',TRUE);
 
                 //validate if this transaction is not yet closed
@@ -226,6 +228,14 @@ class Accounts_receivable extends CORE_Controller
                     $response['title']='<b>Journal is Locked!</b>';
                     $response['msg']='Sorry, you cannot cancel journal that is already closed!<br />';
                     die(json_encode($response));
+                }
+
+                $sales = $m_sales_invoice->get_list('journal_id =' . $journal_id);
+
+                if (count($sales)) {
+                    $sale = $sales[0];
+                    $m_sales_invoice->is_journal_posted = 0;
+                    $m_sales_invoice->modify($sale->sales_invoice_id);
                 }
 
 
@@ -278,6 +288,7 @@ class Accounts_receivable extends CORE_Controller
                 'journal_info.txn_no',
                 'DATE_FORMAT(journal_info.date_txn,"%m/%d/%Y")as date_txn',
                 'journal_info.is_active',
+                'journal_info.is_review',
                 'journal_info.remarks',
                 'journal_info.customer_id',
                 'journal_info.department_id',
@@ -288,7 +299,14 @@ class Accounts_receivable extends CORE_Controller
                 array('customers','customers.customer_id=journal_info.customer_id','left'),
                 array('user_accounts','user_accounts.user_id=journal_info.created_by_user','left')
             ),
-            'journal_info.journal_id DESC'
+            'journal_info.journal_id DESC',
+            NULL,
+            NULL,
+            NULL,
+            'CASE 
+                WHEN is_review = 1 AND is_active = 0 THEN FALSE
+                ELSE TRUE
+            END'
         );
     }
 
