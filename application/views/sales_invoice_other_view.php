@@ -595,7 +595,7 @@
             <div class="modal-content"><!---content--->
                 <div class="modal-header ">
                     <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
-                    <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>New Branch</h4>
+                    <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>New Parent</h4>
 
                 </div>
 
@@ -603,7 +603,7 @@
                     <form id="frm_department_new">
 
                         <div class="form-group">
-                            <label>* Branch :</label>
+                            <label>* Parent :</label>
                             <div class="input-group">
                             <span class="input-group-addon">
                                 <i class="fa fa-users"></i>
@@ -613,7 +613,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Branch Description :</label>
+                            <label>Parent Description :</label>
                             <textarea name="department_desc" class="form-control"></textarea>
                         </div>
 

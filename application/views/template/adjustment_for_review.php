@@ -80,7 +80,7 @@
                                     <div class="col-lg-10">
 
                                             <select id="cbo_particulars" name="particular_id" class=" cbo_supplier_list selectpicker show-tick form-control" data-live-search="true" data-error-msg="Particular is required." required>
-                                                <optgroup label="Customers">
+                                                <optgroup label="Branches">
                                                     <?php foreach($customers as $customer){ ?>
                                                         <option value='C-<?php echo $customer->customer_id; ?>' <?php echo ($particular_id===$customer->customer_id?'selected':''); ?>><?php echo $customer->customer_name; ?></option>
                                                     <?php } ?>
@@ -96,7 +96,7 @@
 
                                     </div>
                                     <br /><br />
-                                    <label class="col-lg-2"> <b class="required">*</b> Branch : </label>
+                                    <label class="col-lg-2"> <b class="required">*</b> Parent : </label>
                                     <div class="col-lg-10">
                                         <select name="department_id" class="cbo_department_list" data-error-msg="" required>
                                             <?php foreach($departments as $department){ ?>

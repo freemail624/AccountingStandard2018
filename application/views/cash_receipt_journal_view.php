@@ -393,7 +393,7 @@
                                                                             <select id="cbo_customers" name="customer_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Branch is required." required>
                                                                                 <option value="0">[ Create New Branch ]</option>
                                                                                 <?php foreach ($customers as $customer) { ?>
-                                                                                    <option value='<?php echo $customer->customer_id; ?>'><?php echo $customer->customer_name; ?></option>
+                                                                                    <option value='<?php echo $customer->customer_id; ?>' data-department_id='<?php echo $customer->department_id; ?>'><?php echo $customer->customer_name; ?></option>
                                                                                 <?php } ?>
                                                                             </select>
                                                                         </div>
@@ -1501,6 +1501,12 @@
                                         $('#cbo_customer_type').select2('val', 0);
                                         $('#cbo_departments_create').select2('val', 0);
                                         clearFields($('#modal_new_customer').find('form'));
+                                    } else {
+                                        var obj_customer = $('#cbo_customers').find('option[value="' + i + '"]');
+                                        var customer_department_id = obj_customer.data('department_id');
+                                        var department_id = (customer_department_id == 0 ? null : customer_department_id);
+                                        _cbo_departments.select2('val', department_id);
+                                        $('#typeaheadsearch').focus();
                                     }
 
                                 });

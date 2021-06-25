@@ -370,7 +370,7 @@
                                                                                 <select id="cbo_customers" name="customer_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Branch is required." required>
                                                                                     <option value="0">[ Create New Branch ]</option>
                                                                                     <?php foreach ($customers as $customer) { ?>
-                                                                                        <option value='<?php echo $customer->customer_id; ?>'><?php echo $customer->customer_name; ?></option>
+                                                                                        <option value='<?php echo $customer->customer_id; ?>' data-department_id="<?php echo $customer->department_id; ?>"><?php echo $customer->customer_name; ?></option>
                                                                                     <?php } ?>
                                                                                 </select>
                                                                             </div>
@@ -1348,8 +1348,9 @@
                                                 _cboCustomers.select2('val', null)
                                                 _cboCustomerType.select2('val', 0);
                                                 $('#modal_new_customer').modal('show');
-
                                             }
+                                            var obj_customers = $('#cbo_customers').find('option[value="' + i + '"]');
+                                            _cboDepartments.select2('val', obj_customers.data('department_id'))
 
                                         });
 
@@ -1430,6 +1431,7 @@
                                                         $('#cbo_customers').append('<option value="' + _customers.customer_id + '" selected>' + _customers.customer_name + '</option>');
 
                                                         _cboCustomers.select2('val', _customers.customer_id);
+                                                        _cboDepartments.select2('val', _customers.department_id);
                                                         clearFields($('#modal_new_customer'));
                                                         //showList(true);
                                                         //$('#btn_create_customer').attr('disabled',false);

@@ -13,11 +13,13 @@ class Service_invoice extends CORE_Controller
         $this->load->model('Sales_order_model');
         $this->load->model('Departments_model');
         $this->load->model('Customers_model');
+        $this->load->model('Customer_type_model');
         $this->load->model('Salesperson_model');
         $this->load->model('Service_invoice_model');
         $this->load->model('Service_invoice_item_model');
         $this->load->model('Services_model');
         $this->load->model('Users_model');
+        $this->load->model('Account_integration_model');
 
     }
 
@@ -35,6 +37,7 @@ class Service_invoice extends CORE_Controller
         $data['departments']=$this->Departments_model->get_list(
             array('departments.is_active'=>TRUE,'departments.is_deleted'=>FALSE)
         );
+        $data['customer_type_create'] = $this->Customer_type_model->get_list('is_deleted=FALSE');
 
         $data['salespersons']=$this->Salesperson_model->get_list(
             array('salesperson.is_active'=>TRUE,'salesperson.is_deleted'=>FALSE),
@@ -60,6 +63,8 @@ class Service_invoice extends CORE_Controller
                 array('service_unit','service_unit.service_unit_id=services.service_unit','left')
                 )   
             );
+
+        $data['accounts'] = $this->Account_integration_model->get_list(1);
 
         $data['title'] = 'Service Invoice';
         $this->load->view('service_invoice_view', $data);
@@ -126,7 +131,7 @@ class Service_invoice extends CORE_Controller
 
                 
 
-                
+                $m_invoice->terms = $this->get_numeric_value($this->input->post('terms',TRUE));
                 $m_invoice->posted_by_user=$this->session->user_id;
                 $m_invoice->save();
 
@@ -191,6 +196,7 @@ class Service_invoice extends CORE_Controller
                 $m_invoice->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
                 $m_invoice->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                 $m_invoice->total_amount_after_discount=$this->get_numeric_value($this->input->post('summary_total_amount_after_discount',TRUE));
+                $m_invoice->terms = $this->get_numeric_value($this->input->post('terms', TRUE));
                 $m_invoice->modified_by_user=$this->session->user_id;
                 $m_invoice->modify($service_invoice_id);
 
@@ -312,6 +318,7 @@ function response_rows_invoice($filter_value){
                     'service_invoice.remarks',
                     'service_invoice.total_overall_discount',
                     'service_invoice.is_journal_posted',
+                    'service_invoice.terms',
                     'DATE_FORMAT(service_invoice.date_invoice,"%m/%d/%Y") as date_invoice',
                    'DATE_FORMAT(service_invoice.date_due,"%m/%d/%Y") as date_due',
                     'customers.customer_name',

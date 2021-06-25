@@ -86,7 +86,7 @@
                                         </select>
                                     </div>
                                     <br /><br />
-                                    <label class="col-lg-2"> <b class="required">*</b> Branch : </label>
+                                    <label class="col-lg-2"> <b class="required">*</b> Parent : </label>
                                     <div class="col-lg-10">
                                         <select name="department_id" class="cbo_department_list" data-error-msg="" required>
                                             <?php foreach($departments as $department){ ?>

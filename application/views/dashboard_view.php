@@ -357,7 +357,7 @@
                                                     <div class="col-xs-12 col-sm-3">
                                                         <div class="data-container text-center text-container">
                                                             <h2><strong><?php echo ($this->session->user_group_id != 1 ? '0' : $customer_count); ?></strong></h2>
-                                                            <h4><b>Customers</b></h4>
+                                                            <h4><b>Branches</b></h4>
                                                         </div>
                                                     </div>
                                                     <div class="col-xs-12 col-sm-3">

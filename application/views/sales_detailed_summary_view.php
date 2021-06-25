@@ -116,7 +116,7 @@
 
                                                             <div class="tab-container tab-top tab-success">
                                                                 <ul class="nav nav-tabs" id="parent">
-                                                                    <li class="active" style=""><a data-toggle="tab" href="#customers" id="btn_customer">Customers</a></li>
+                                                                    <li class="active" style=""><a data-toggle="tab" href="#customers" id="btn_customer">Branches</a></li>
                                                                     <li style=""><a data-toggle="tab" href="#salesman" id="btn_salesman">Salesperson</a></li>
                                                                     <li style=""><a data-toggle="tab" href="#products" id="btn_products">Products</a></li>
                                                                 </ul>

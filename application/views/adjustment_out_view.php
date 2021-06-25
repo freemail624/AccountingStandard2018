@@ -228,7 +228,7 @@
 
                                                             <div class="row">
                                                                 <div class="col-sm-4">
-                                                                    Branch * : <br />
+                                                                    Parent * : <br />
                                                                     <select name="department" id="cbo_departments" data-error-msg="Parent is required." required>
                                                                         <option value="0">[ Create New Branch ]</option>
                                                                         <?php foreach ($departments as $department) { ?>
@@ -465,7 +465,7 @@
                                                                 <!---content--->
                                                                 <div class="modal-header ">
                                                                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
-                                                                    <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>New Branch</h4>
+                                                                    <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>New Parent</h4>
 
                                                                 </div>
 
@@ -473,7 +473,7 @@
                                                                     <form id="frm_department_new">
 
                                                                         <div class="form-group">
-                                                                            <label>* Branch :</label>
+                                                                            <label>* Parent :</label>
                                                                             <div class="input-group">
                                                                                 <span class="input-group-addon">
                                                                                     <i class="fa fa-users"></i>

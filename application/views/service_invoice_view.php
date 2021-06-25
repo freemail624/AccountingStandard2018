@@ -161,7 +161,7 @@
                                                                 <th>Invoice #</th>
                                                                 <th>Invoice Date</th>
                                                                 <th>Due Date</th>
-                                                                <th>Customer</th>
+                                                                <th>Branch</th>
                                                                 <th>Parent</th>
                                                                 <th width="20%">Remarks</th>
                                                                 <th>
@@ -195,11 +195,11 @@
                                                             <hr>
                                                             <div class="row">
                                                                 <div class="col-sm-4">
-                                                                    <b class="required">* </b><label>Parent : </label><br />
-                                                                    <select name="department" id="cbo_departments" data-error-msg="Parent is required." required>
-                                                                        <option value="0">[ Create New Parent ]</option>
-                                                                        <?php foreach ($departments as $department) { ?>
-                                                                            <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
+                                                                    <b class="required">*</b> <label>Branch :</label> <br />
+                                                                    <select name="customer" id="cbo_customers" data-error-msg="Branch is required." required>
+                                                                        <option value="0">[ Create New Branch ]</option>
+                                                                        <?php foreach ($customers as $customer) { ?>
+                                                                            <option data-department_id="<?php echo $customer->department_id; ?>" data-address="<?php echo $customer->address; ?>" data-contact="<?php echo $customer->contact_name; ?>" value="<?php echo $customer->customer_id; ?>" data-term-default="<?php echo ($customer->term == "none" ? "" : $customer->term); ?>"><?php echo $customer->customer_name; ?></option>
                                                                         <?php } ?>
                                                                     </select>
                                                                 </div>
@@ -219,11 +219,11 @@
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-sm-4">
-                                                                    <b class="required">*</b> <label>Customer :</label> <br />
-                                                                    <select name="customer" id="cbo_customers" data-error-msg="Customer is required." required>
-                                                                        <option value="0">[ Create New Customer ]</option>
-                                                                        <?php foreach ($customers as $customer) { ?>
-                                                                            <option data-address="<?php echo $customer->address; ?>" data-contact="<?php echo $customer->contact_name; ?>" value="<?php echo $customer->customer_id; ?>" data-term-default="<?php echo ($customer->term == "none" ? "" : $customer->term); ?>"><?php echo $customer->customer_name; ?></option>
+                                                                    <b class="required">* </b><label>Parent : </label><br />
+                                                                    <select name="department" id="cbo_departments" data-error-msg="Parent is required." required>
+                                                                        <option value="0">[ Create New Parent ]</option>
+                                                                        <?php foreach ($departments as $department) { ?>
+                                                                            <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
                                                                         <?php } ?>
                                                                     </select>
                                                                 </div>
@@ -249,7 +249,13 @@
                                                             <div class="row">
                                                                 <div class="col-sm-8">
                                                                     <label>Address :</label><br>
-                                                                    <input class="form-control" id="txt_address" type="text" name="address" placeholder="Customer Address">
+                                                                    <input class="form-control" id="txt_address" type="text" name="address" placeholder="Branch Address">
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <label><b class="required">*</b> Terms :</label> <br />
+                                                                    <div class="input-group">
+                                                                        <input id="terms" name="terms" type="text" class="number form-control" data-default="<?php echo $accounts[0]->terms; ?>" />
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -384,56 +390,98 @@
                     <div class="modal-content">
                         <div class="modal-header" style="background-color:#2ecc71;">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
-                            <h4 class="modal-title" style="color:#ecf0f1;"><span id="modal_mode"> </span>New Customer</h4>
+                            <h4 class="modal-title" style="color:#ecf0f1;"><span id="modal_mode"> </span>New Branch</h4>
                         </div>
                         <div class="modal-body">
                             <form id="frm_customer_new">
                                 <div class="row">
                                     <div class="col-md-8">
                                         <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
-                                                <label class="control-label boldlabel" style="text-align:right;"><b>*</b> Customer Name :</label>
+                                            <div class="col-md-4">
+                                                <label class="control-label boldlabel">
+                                                    Branch Code :
+                                                </label>
                                             </div>
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <span class="input-group-addon">
-                                                        <i class="fa fa-users"></i>
+                                                        <i class="fa fa-code"></i>
                                                     </span>
-                                                    <input type="text" name="customer_name" class="form-control" placeholder="Customer Name" data-error-msg="Customer Name is required!" required>
+                                                    <input type="text" name="customer_code" class="form-control" placeholder="Branch Code" data-error-msg="Branch Code is required!">
                                                 </div>
                                             </div>
                                         </div>
+
                                         <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
-                                                <label class="control-label boldlabel" style="text-align:right;"><b>*</b> Contact Person :</label>
+                                            <div class="col-md-4">
+                                                <label class="control-label boldlabel">
+                                                    <b class="required">*</b> Branch Name :
+                                                </label>
                                             </div>
-                                            <div class="form-group">
+                                            <div class="form-group" style="width: 100%;">
                                                 <div class="input-group">
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-users"></i>
                                                     </span>
-                                                    <input type="text" name="contact_name" class="form-control" placeholder="Contact Person" data-error-msg="Contact Person is required!" required>
+                                                    <input type="text" name="customer_name" class="form-control" placeholder="Branch Name" data-error-msg="Branch Name is required!" required>
                                                 </div>
                                             </div>
                                         </div>
+
                                         <div class="col-md-12">
                                             <div class="col-md-4" id="label">
-                                                <label class="control-label boldlabel" style="text-align:right;"><b>*</b> Address :</label>
+                                                <label class="control-label boldlabel">
+                                                    Company Name :
+                                                </label>
                                             </div>
-                                            <div class="form-group">
+                                            <div class="form-group" style="width: 100%;">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-users"></i>
+                                                    </span>
+                                                    <input type="text" name="registered_company_name" class="form-control" placeholder="Registered Company Name">
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-12">
+                                            <div class="col-md-4" id="label">
+                                                <label class="control-label boldlabel">
+                                                    Contact Person :
+                                                </label>
+                                            </div>
+                                            <div class="form-group" style="width: 100%;">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-users"></i>
+                                                    </span>
+                                                    <input type="text" name="contact_name" class="form-control" placeholder="Contact Person">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="col-md-4" id="label">
+                                                <label class="control-label boldlabel">
+                                                    <font color="red"><b>*</b></font> Address :
+                                                </label>
+                                            </div>
+                                            <div class="form-group" style="width: 100%;">
                                                 <div class="input-group">
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-home"></i>
                                                     </span>
-                                                    <textarea name="address" class="form-control" data-error-msg="Customer address is required!" placeholder="Address" required></textarea>
+                                                    <textarea name="address" class="form-control" data-error-msg="Branch address is required!" placeholder="Address" required></textarea>
                                                 </div>
                                             </div>
                                         </div>
+
                                         <div class="col-md-12">
                                             <div class="col-md-4" id="label">
-                                                <label class="control-label boldlabel" style="text-align:right;">Email Address :</label>
+                                                <label class="control-label boldlabel">Email Address :</label>
                                             </div>
-                                            <div class="form-group">
+                                            <div class="form-group" style="width: 100%;">
                                                 <div class="input-group">
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-envelope-o"></i>
@@ -442,37 +490,72 @@
                                                 </div>
                                             </div>
                                         </div>
+
                                         <div class="col-md-12">
                                             <div class="col-md-4" id="label">
-                                                <label class="control-label boldlabel" style="text-align:right;">Landline :</label>
+                                                <label class="control-label boldlabel">Contact No :</label>
                                             </div>
-                                            <div class="form-group">
+                                            <div class="form-group" style="width: 100%;">
                                                 <div class="input-group">
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-phone"></i>
                                                     </span>
-                                                    <input type="text" name="landline" id="landline" class="form-control" placeholder="Landline">
+                                                    <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Contact No">
                                                 </div>
                                             </div>
                                         </div>
+
                                         <div class="col-md-12">
                                             <div class="col-md-4" id="label">
-                                                <label class="control-label boldlabel" style="text-align:right;">Contact No :</label>
+                                                <label class="control-label boldlabel">
+                                                    <b class="required">*</b> TIN :
+                                                </label>
                                             </div>
-                                            <div class="form-group">
+                                            <div class="form-group" style="width: 100%;">
                                                 <div class="input-group">
                                                     <span class="input-group-addon">
-                                                        <i class="fa fa-mobile"></i>
+                                                        <i class="fa fa-file-code-o"></i>
                                                     </span>
-                                                    <input type="text" name="contact_no" id="mobile_no" class="form-control" placeholder="Contact No">
+                                                    <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="TIN" data-error-msg="TIN is required!" required>
                                                 </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="col-md-4" id="label" style="padding-top: 5px;">
+                                                <label class="control-label boldlabel">Branch Type :</label>
+                                            </div>
+                                            <div class="col-md-8" style="padding: 0px;padding-top: 5px;">
+                                                <select name="customer_type_id" id="cbo_customer_type" style="width: 100%;">
+                                                    <option value="0">None</option>
+                                                    <?php foreach ($customer_type_create as $customer_type) { ?>
+                                                        <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name ?></option>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="col-md-4" id="label" style="padding-top: 10px;">
+                                                <label class="control-label boldlabel">Parent :</label>
+                                            </div>
+                                            <div class="col-md-8" style="padding: 0; padding-top: 10px;">
+                                                <select name="department_id" id="cbo_departments_create" style="width: 100%">
+                                                    <option value="0">None</option>
+                                                    <?php foreach ($departments as $department) { ?>
+                                                        <option value="<?php echo $department->department_id; ?>">
+                                                            <?php echo $department->department_name ?>
+                                                        </option>
+                                                    <?php } ?>
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="col-md-12">
                                             <div class="col-md-12">
-                                                <label class="control-label boldlabel" style="text-align:left;padding-top:10px;"><i class="fa fa-user" aria-hidden="true" style="padding-right:10px;"></i>Customer's Photo</label>
+                                                <label class="control-label boldlabel" style="text-align:left;padding-top:10px;"><i class="fa fa-user" aria-hidden="true" style="padding-right:10px;"></i>Branch's Photo</label>
                                                 <hr style="margin-top:0px !important;height:1px;background-color:black;">
                                             </div>
                                             <div style="width:100%;height:350px;border:2px solid #34495e;border-radius:5px;">
@@ -692,7 +775,8 @@
             var _selectedID;
             var _selectRowObj;
             var _cboDepartments;
-            var _cboDepartments;
+            var _cboDepartmentsCreate;
+            var _cboCustomerType
             var _cboCustomers;
             var dt_so;
             var oTableItems = {
@@ -788,6 +872,15 @@
                     placeholder: "Please select sales person.",
                     allowClear: true
                 });
+
+                _cboCustomerType = $("#cbo_customer_type").select2({
+                    allowClear: false
+                });
+
+                _cboDepartmentsCreate = $("#cbo_departments_create").select2({
+                    allowClear: false
+                });
+
                 _cboSalesperson.select2('val', null);
                 _cboDepartments.select2('val', null);
                 _cboDepartment.select2('val', null);
@@ -953,6 +1046,7 @@
                         $('#modal_new_customer').modal('show');
                     }
                     var obj_customers = $('#cbo_customers').find('option[value="' + i + '"]');
+                    _cboDepartments.select2('val', obj_customers.data('department_id'))
                     $('#txt_address').val(obj_customers.data('address'));
                     $('#contact_person').val(obj_customers.data('contact'));
                 });
@@ -1049,6 +1143,7 @@
                             var _customer = response.row_added[0];
                             $('#cbo_customers').append('<option value="' + _customer.customer_id + '" selected>' + _customer.customer_name + '</option>');
                             $('#cbo_customers').select2('val', _customer.customer_id);
+                            _cboDepartments.select2('val', _customer.department_id);
                             $('#txt_address').val(_customer.address);
                         }).always(function() {
                             showSpinningProgress(btn);
@@ -1077,7 +1172,8 @@
                     $('#txt_total_overall_discount').val('0.00');
                     $('#txt_total_overall_discount_amount').val('0.00');
                     $('#invoice_default').datepicker('setDate', 'today');
-                    $('#due_default').datepicker('setDate', 'today');
+                    $('#terms').val($('#terms').data('default'));
+                    computeDueDate(true);
                     reComputeTotal(); //this is to make sure, display summary are recomputed as 0
                 });
 
@@ -1247,6 +1343,25 @@
                 $('#btn_remove_photo').click(function(event) {
                     event.preventDefault();
                     $('img[name="img_user"]').attr('src', 'assets/img/anonymous-icon.png');
+                });
+
+                $('#terms').on('keyup', function() {
+                    computeDueDate(true);
+                });
+
+                $('#due_default').on('change', function() {
+                    const dueDate = new Date($('#due_default').val())
+                    const invoiceDate = new Date($('#invoice_default').val())
+                    if (dueDate < invoiceDate) {
+                        showNotification({
+                            title: "Error!",
+                            stat: "error",
+                            msg: 'Make sure due date is greater than invoice date.'
+                        });
+                        computeDueDate(true);
+                        return
+                    }
+                    computeDueDate(false);
                 });
             })();
             var validateRequiredFields = function(f) {
@@ -1437,6 +1552,20 @@
             var reInitializeNumeric = function() {
                 $('.numeric').autoNumeric('init');
             };
+
+            var computeDueDate = function(isTerms) {
+                const invoiceDate = new Date($('#invoice_default').val());
+                if (isTerms) {
+                    const days = accounting.unformat($('#terms').val());
+                    const dueDate = new Date(invoiceDate.setDate(invoiceDate.getDate() + parseInt(days)))
+                    $('#due_default').datepicker('setDate', dueDate)
+                } else {
+                    const dueDate = new Date($('#due_default').val());
+                    const diffTime = Math.abs(dueDate - invoiceDate);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    $('#terms').val(diffDays)
+                }
+            }
 
         });
     </script>

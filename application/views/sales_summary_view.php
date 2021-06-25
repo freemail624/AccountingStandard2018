@@ -66,8 +66,8 @@
 
                                     <div class="row">
                                         <div class="col-sm-12">
-                                            Branch : <br />
-                                            <select name="department" id="cbo_departments" data-error-msg="Branch is required." required>
+                                            Parent : <br />
+                                            <select name="department" id="cbo_departments" data-error-msg="Parent is required." required>
 
                                                 <?php foreach($departments as $department){ ?>
                                                     <option value="<?php echo $department->department_id; ?>" <?php echo ($department->department_id==1?"selected":""); ?>><?php echo $department->department_name; ?></option>

@@ -108,7 +108,7 @@ class General_journal extends CORE_Controller
                 $m_journal->remarks=$this->input->post('remarks',TRUE);
                 $m_journal->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
                 $m_journal->book_type='GJE';
-
+                $m_journal->is_review = $this->get_numeric_value($this->input->post('is_review', TRUE));
                 //for audit details
                 $m_journal->set('date_created','NOW()');
                 $m_journal->created_by_user=$this->session->user_id;
@@ -271,6 +271,8 @@ class General_journal extends CORE_Controller
             //***************************************************************************************
             case 'cancel':
                 $m_journal=$this->Journal_info_model;
+                $m_issuance=$this->Issuance_department_model;
+                $m_adjustment=$this->Adjustment_model;
                 $journal_id=$this->input->post('journal_id',TRUE);
 
                 //validate if this transaction is not yet closed
@@ -280,6 +282,28 @@ class General_journal extends CORE_Controller
                     $response['title']='<b>Journal is Locked!</b>';
                     $response['msg']='Sorry, you cannot cancel journal that is already closed!<br />';
                     die(json_encode($response));
+                }
+
+                $from_issuances = $m_issuance->get_list('journal_id_from =' . $journal_id);
+                $to_issuances = $m_issuance->get_list('journal_id_to = ' . $journal_id);
+                $adjustments = $m_adjustment->get_list('journal_id =' . $journal_id);
+
+                if (count($from_issuances)) {
+                    $issuance = $from_issuances[0];
+                    $m_issuance->is_journal_posted_from = 0;
+                    $m_issuance->modify($issuance->issuance_department_id);
+                }
+
+                if (count($to_issuances)) {
+                    $issuance = $to_issuances[0];
+                    $m_issuance->is_journal_posted_to = 0;
+                    $m_issuance->modify($issuance->issuance_department_id);
+                }
+
+                if (count($adjustments)) {
+                    $adjustment = $adjustments[0];
+                    $m_adjustment->is_journal_posted = 0;
+                    $m_adjustment->modify($adjustment->adjustment_id);
                 }
 
                 //mark Items as deleted
@@ -401,6 +425,7 @@ class General_journal extends CORE_Controller
                 'journal_info.department_id',
                 'DATE_FORMAT(journal_info.date_txn,"%m/%d/%Y")as date_txn',
                 'journal_info.is_active',
+                'journal_info.is_review',
                 'journal_info.remarks',
                 'CONCAT(IF(NOT ISNULL(customers.customer_id),CONCAT("C-",customers.customer_id),""),IF(NOT ISNULL(suppliers.supplier_id),CONCAT("S-",suppliers.supplier_id),"")) as particular_id',
                 'CONCAT_WS(" ",IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,"")) as particular',
@@ -411,7 +436,11 @@ class General_journal extends CORE_Controller
                 array('suppliers','suppliers.supplier_id=journal_info.supplier_id','left'),
                 array('user_accounts','user_accounts.user_id=journal_info.created_by_user','left')
             ),
-            'journal_info.journal_id DESC'
+            'journal_info.journal_id DESC',NULL,NULL,NULL,
+            'CASE 
+                WHEN is_review = 1 AND is_active = 0 THEN FALSE
+                ELSE TRUE
+            END'
         );
     }
 

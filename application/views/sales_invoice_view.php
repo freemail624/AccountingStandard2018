@@ -349,6 +349,14 @@
                                                                                 </div>
                                                                             </div>
                                                                         </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-12">
+                                                                                <label><b class="required">*</b> Terms :</label> <br />
+                                                                                <div class="input-group">
+                                                                                    <input id="terms" name="terms" type="text" class="number form-control" data-default="<?php echo $accounts[0]->terms; ?>" />
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
 
                                                                 </div>
@@ -1242,6 +1250,9 @@
                     ]
                 });
                 $('.numeric').autoNumeric('init');
+                $('.number').autoNumeric('init', {
+                    'mDec': 0
+                });
                 $('#contact_no').keypress(validateNumber);
 
                 _cboDepartments = $("#cbo_departments").select2({
@@ -1885,10 +1896,12 @@
                     $('#txt_overall_discount').val('0.00');
                     $('#txt_overall_discount_amount').val('0.00');
                     $('#invoice_default').datepicker('setDate', 'today');
-                    $('#due_default').datepicker('setDate', 'today');
+                    // $('#due_default').datepicker('setDate', 'today');
                     $('input[id="checkcheck"]').prop('checked', false);
                     $('#for_dispatching').val('0');
                     $('textarea[name="remarks"]').val($('textarea[name="remarks"]').data('default'));
+                    $('#terms').val($('#terms').data('default'));
+                    computeDueDate(true);
 
                     getproduct().done(function(data) {
                         products.clear();
@@ -2034,6 +2047,7 @@
                 $('#tbl_sales_invoice tbody').on('click', 'button[name="edit_info"]', function() {
                     _selectRowObj = $(this).closest('tr');
                     var data = dt.row(_selectRowObj).data();
+                    console.log(data);
                     _selectedID = data.sales_invoice_id;
                     _is_journal_posted = data.is_journal_posted;
 
@@ -2522,6 +2536,25 @@
                     event.preventDefault();
                     $('img[name="img_user"]').attr('src', 'assets/img/anonymous-icon.png');
                 });
+
+                $('#terms').on('keyup', function() {
+                    computeDueDate(true);
+                });
+
+                $('#due_default').on('change', function() {
+                    const dueDate = new Date($('#due_default').val())
+                    const invoiceDate = new Date($('#invoice_default').val())
+                    if (dueDate < invoiceDate) {
+                        showNotification({
+                            title: "Error!",
+                            stat: "error",
+                            msg: 'Make sure due date is greater than invoice date.'
+                        });
+                        computeDueDate(true);
+                        return
+                    }
+                    computeDueDate(false);
+                });
             })();
             var validateRequiredFields = function(f) {
                 var stat = true;
@@ -2927,6 +2960,20 @@
                 var modalDialogHeight = modalDialog.height();
                 if (modalDialogHeight > backdropHeight) backdrop.height(modalDialogHeight + 100);
             }, 500)
+
+            var computeDueDate = function(isTerms) {
+                const invoiceDate = new Date($('#invoice_default').val());
+                if (isTerms) {
+                    const days = accounting.unformat($('#terms').val());
+                    const dueDate = new Date(invoiceDate.setDate(invoiceDate.getDate() + parseInt(days)))
+                    $('#due_default').datepicker('setDate', dueDate)
+                } else {
+                    const dueDate = new Date($('#due_default').val());
+                    const diffTime = Math.abs(dueDate - invoiceDate);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    $('#terms').val(diffDays)
+                }
+            }
         });
     </script>
 </body>

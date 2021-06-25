@@ -361,6 +361,14 @@
                                                                                 </div>
                                                                             </div>
                                                                         </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-12">
+                                                                                <label><b class="required">*</b> Terms :</label> <br />
+                                                                                <div class="input-group">
+                                                                                    <input id="terms" name="terms" type="text" class="number form-control" data-default="<?php echo $accounts[0]->terms; ?>" />
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
 
                                                                 </div>
@@ -634,8 +642,23 @@
                                 <div class="row">
                                     <div class="col-md-8">
                                         <div class="col-md-12">
+                                            <div class="col-md-4">
+                                                <label class="control-label boldlabel">
+                                                    Branch Code :
+                                                </label>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-code"></i>
+                                                    </span>
+                                                    <input type="text" name="customer_code" class="form-control" placeholder="Branch Code" data-error-msg="Branch Code is required!">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
                                             <div class="col-md-4" id="label">
-                                                <label class="control-label boldlabel" style="text-align:right;"><b class="required">*</b> CustoBranchmer Name :</label>
+                                                <label class="control-label boldlabel" style="text-align:right;"><b class="required">*</b> Branch Name :</label>
                                             </div>
                                             <div class="form-group">
                                                 <div class="input-group">
@@ -1814,11 +1837,12 @@
                     $('#txt_overall_discount').val('0.00');
                     $('#txt_overall_discount_amount').val('0.00');
                     $('#invoice_default').datepicker('setDate', 'today');
-                    $('#due_default').datepicker('setDate', 'today');
                     $('#cbo_customer_type').select2('val', 0);
                     $('input[id="checkcheck"]').prop('checked', false);
                     $('#for_dispatching').val('0');
                     $('textarea[name="remarks"]').val($('textarea[name="remarks"]').data('default'));
+                    $('#terms').val($('#terms').data('default'));
+                    computeDueDate(true);
 
                     getproduct().done(function(data) {
                         products.clear();
@@ -2465,6 +2489,25 @@
                     event.preventDefault();
                     $('img[name="img_user"]').attr('src', 'assets/img/anonymous-icon.png');
                 });
+
+                $('#terms').on('keyup', function() {
+                    computeDueDate(true);
+                });
+
+                $('#due_default').on('change', function() {
+                    const dueDate = new Date($('#due_default').val())
+                    const invoiceDate = new Date($('#invoice_default').val())
+                    if (dueDate < invoiceDate) {
+                        showNotification({
+                            title: "Error!",
+                            stat: "error",
+                            msg: 'Make sure due date is greater than invoice date.'
+                        });
+                        computeDueDate(true);
+                        return
+                    }
+                    computeDueDate(false);
+                });
             })();
             var validateRequiredFields = function(f) {
                 var stat = true;
@@ -2920,6 +2963,20 @@
                 var modalDialogHeight = modalDialog.height();
                 if (modalDialogHeight > backdropHeight) backdrop.height(modalDialogHeight + 100);
             }, 500)
+
+            var computeDueDate = function(isTerms) {
+                const invoiceDate = new Date($('#invoice_default').val());
+                if (isTerms) {
+                    const days = accounting.unformat($('#terms').val());
+                    const dueDate = new Date(invoiceDate.setDate(invoiceDate.getDate() + parseInt(days)))
+                    $('#due_default').datepicker('setDate', dueDate)
+                } else {
+                    const dueDate = new Date($('#due_default').val());
+                    const diffTime = Math.abs(dueDate - invoiceDate);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    $('#terms').val(diffDays)
+                }
+            }
         });
     </script>
 </body>

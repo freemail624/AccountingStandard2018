@@ -70,7 +70,7 @@
                                             <div class="col-lg-10">
                                                 <select name="particular_id" class="selectpicker show-tick form-control particular_select" data-live-search="true" data-error-msg="Particular is required." required>
 
-                                                    <optgroup label="Customers">
+                                                    <optgroup label="Branches">
                                                         <?php foreach ($customers as $customer) { ?>
                                                             <option value='C-<?php echo $customer->customer_id; ?>'><?php echo $customer->customer_name; ?></option>
                                                         <?php } ?>

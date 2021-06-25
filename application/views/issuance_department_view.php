@@ -1283,7 +1283,7 @@
                                                             showNotification({
                                                                 title: "Error !",
                                                                 stat: "error",
-                                                                msg: "Departments must not be the same."
+                                                                msg: "Parents must not be the same."
                                                             });
                                                         } else {
                                                             if (validateRequiredFields($('#frm_issuances'))) {

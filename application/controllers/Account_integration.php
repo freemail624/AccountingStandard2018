@@ -143,7 +143,8 @@ class Account_integration extends CORE_Controller
                 $m_integration->default_order_source_id=$this->input->post('default_order_source_id',TRUE);   
                 $m_integration->default_customer_id=$this->input->post('default_customer_id',TRUE);   
                 $m_integration->basyo_product_id=$this->input->post('basyo_product_id',TRUE);   
-                $m_integration->daily_allowance=$this->get_numeric_value($this->input->post('daily_allowance',TRUE));   
+                $m_integration->daily_allowance=$this->get_numeric_value($this->input->post('daily_allowance',TRUE));  
+                $m_integration->terms=$this->get_numeric_value($this->input->post('terms', TRUE)); 
                 $m_integration->modify(1);
 
                 $response['stat']="success";

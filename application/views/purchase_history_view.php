@@ -138,7 +138,7 @@
                                                             </select>
                                                         </div>
                                                         <div class="col-sm-3">
-                                                            <b class="required">*</b> <label>Departments </label>:<br />
+                                                            <b class="required">*</b> <label>Parents </label>:<br />
                                                             <select name="department" id="department">
                                                                 <option value="0"> ALL</option>
                                                                 <?php foreach ($departments as $department) { ?>

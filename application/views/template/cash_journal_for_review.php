@@ -53,7 +53,7 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-lg-7">
-                                                        Branch * :<br />
+                                                        Parent * :<br />
                                                         <select name="customer_id" class="cbo_customer_list">
                                                             <?php foreach ($customers as $customer) { ?>
                                                                 <option value="<?php echo $customer->customer_id; ?>" <?php echo ($info->customer_id === $customer->customer_id ? 'selected' : ''); ?>><?php echo $customer->customer_name; ?></option>
@@ -72,7 +72,7 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-lg-7">
-                                                        Branch * :<br />
+                                                        Parent * :<br />
                                                         <select name="department_id" class="cbo_department_list">
                                                             <?php foreach ($departments as $department) { ?>
                                                                 <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>

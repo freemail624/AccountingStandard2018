@@ -203,7 +203,7 @@ class Cash_disbursement extends CORE_Controller
                 $m_journal->stt_ref_no=$this->input->post('stt_ref_no');
                 $m_journal->check_date=date('Y-m-d',strtotime($this->input->post('check_date',TRUE)));
                 $m_journal->amount=$this->get_numeric_value($this->input->post('amount'));
-
+                $m_journal->is_review= $this->get_numeric_value($this->input->post('is_review', TRUE));
                 //for audit details
                 $m_journal->set('date_created','NOW()');
                 $m_journal->created_by_user=$this->session->user_id;
@@ -373,6 +373,7 @@ class Cash_disbursement extends CORE_Controller
             //***************************************************************************************
             case 'cancel':
                 $m_journal=$this->Journal_info_model;
+                $m_payable_payment=$this->Payable_payment_model;
                 $journal_id=$this->input->post('journal_id',TRUE);
 
                 //validate if this transaction is not yet closed
@@ -382,6 +383,15 @@ class Cash_disbursement extends CORE_Controller
                     $response['title']='<b>Journal is Locked!</b>';
                     $response['msg']='Sorry, you cannot cancel journal that is already closed!<br />';
                     die(json_encode($response));
+                }
+
+                $payable_payments = $m_payable_payment->get_list('journal_id =' . $journal_id);
+
+                if (count($payable_payments)) {
+                    $payable_payment = $payable_payments[0];
+                    $m_payable_payment->is_journal_posted = 0;
+                    $m_payable_payment->is_posted = 0;
+                    $m_payable_payment->modify($payable_payment->payment_id);
                 }
 
                 //mark Items as deleted
@@ -432,6 +442,7 @@ class Cash_disbursement extends CORE_Controller
                 'journal_info.txn_no',
                 'DATE_FORMAT(journal_info.date_txn,"%m/%d/%Y")as date_txn',
                 'journal_info.is_active',
+                'journal_info.is_review',
                 'journal_info.remarks',
                 'journal_info.department_id',
                 'journal_info.bank_id',
@@ -455,7 +466,12 @@ class Cash_disbursement extends CORE_Controller
                 array('user_accounts','user_accounts.user_id=journal_info.created_by_user','left'),
                 array('payment_methods','payment_methods.payment_method_id=journal_info.payment_method_id','left')
             ),
-            'journal_info.journal_id DESC'
+            'journal_info.journal_id DESC',NULL,NULL,NULL,
+            'CASE 
+                WHEN is_review = 1 AND is_active = 0 THEN FALSE
+                ELSE TRUE
+            END'
+            
         );
     }
 

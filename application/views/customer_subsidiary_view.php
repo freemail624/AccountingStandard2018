@@ -83,7 +83,7 @@
                                                             <div style="border: 1px solid #a0a4a5;padding: 1%;border-radius: 5px;padding-bottom: 2%;">
                                                                 <div class="row">
                                                                     <div class="col-lg-4">
-                                                                        Customers * : <br />
+                                                                        Branch * : <br />
                                                                         <select id="cbo_customers" class="form-control">
                                                                             <?php foreach ($customers as $customer) { ?>
                                                                                 <option value="<?php echo $customer->customer_id; ?>"><?php echo $customer->customer_name; ?></option>

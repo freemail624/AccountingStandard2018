@@ -135,7 +135,7 @@
                                                     <div class="col-xs-12 col-md-4">
                                                         <strong>* Particular :</strong><br>
                                                         <select id="cbo_particulars" name="particular_id" class="show-tick form-control" data-live-search="true" >
-                                                            <optgroup label="Customers">
+                                                            <optgroup label="Branches">
                                                                 <?php foreach($customers as $customer){ ?>
                                                                     <option value='C-<?php echo $customer->customer_id; ?>'><?php echo $customer->customer_name; ?></option>
                                                                 <?php } ?>

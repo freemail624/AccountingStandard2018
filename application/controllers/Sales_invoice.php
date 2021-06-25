@@ -304,6 +304,7 @@ class Sales_invoice extends CORE_Controller
                 $m_invoice->total_after_tax=$this->get_numeric_value($this->input->post('summary_after_tax',TRUE));
                 $m_invoice->total_after_discount=$this->get_numeric_value($this->input->post('total_after_discount',TRUE));
                 $m_invoice->posted_by_user=$this->session->user_id;
+                $m_invoice->terms=$this->get_numeric_value($this->input->post('terms'), TRUE);
                 $m_invoice->save();
 
                 $sales_invoice_id=$m_invoice->last_insert_id();
@@ -476,6 +477,7 @@ class Sales_invoice extends CORE_Controller
                     $m_invoice->total_after_discount=$this->get_numeric_value($this->input->post('total_after_discount',TRUE));
                     $m_invoice->address=$this->input->post('address',TRUE);
                     $m_invoice->modified_by_user=$this->session->user_id;
+                    $m_invoice->terms = $this->get_numeric_value($this->input->post('terms'), TRUE);
                     $m_invoice->modify($sales_invoice_id);
 
 
@@ -860,6 +862,7 @@ class Sales_invoice extends CORE_Controller
                 'sales_invoice.salesperson_id',
                 'sales_invoice.address',
                 'sales_order.so_no',
+                'sales_invoice.terms',
                 '(SELECT count(*) FROM sales_attachments WHERE sales_invoice_id = sales_invoice.sales_invoice_id) as total_attachments'
             ),
             array(

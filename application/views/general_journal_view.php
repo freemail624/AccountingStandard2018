@@ -341,7 +341,7 @@
                                                                             <optgroup label="Branches">
                                                                                 <option value="create_customer">[Create New Branch]</option>
                                                                                 <?php foreach ($customers as $customer) { ?>
-                                                                                    <option value='C-<?php echo $customer->customer_id; ?>'><?php echo $customer->customer_name; ?></option>
+                                                                                    <option value='C-<?php echo $customer->customer_id; ?>' data-department_id='<?php echo $customer->department_id; ?>'><?php echo $customer->customer_name; ?></option>
                                                                                 <?php } ?>
                                                                             </optgroup>
 
@@ -1136,6 +1136,7 @@
                                     targets: [6],
                                     data: null,
                                     render: function(data, type, full, meta) {
+
                                         var _attribute = '';
                                         //console.log(data.is_email_sent);
                                         if (data.is_active == "1") {
@@ -1149,10 +1150,10 @@
                                 },
                                 {
                                     targets: [7],
+                                    data: null,
                                     render: function(data, type, full, meta) {
                                         var btn_edit = '<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                                         var btn_cancel = '<button class="btn btn-red btn-sm" name="cancel_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Cancel Journal"><i class="fa fa-times"></i> </button>';
-
                                         return '<center>' + btn_edit + '&nbsp;' + btn_cancel + '</center>';
                                     }
                                 },
@@ -1529,6 +1530,13 @@
                                 clearFields($('#frm_supplier'));
                                 $('img').attr('src', 'assets/img/anonymous-icon.png');
                                 $('#modal_create_suppliers').modal('show');
+                            } else {
+                                var i = $(this).select2('val');
+                                var obj_particulars = $('#cbo_particulars').find('option[value="' + i + '"]');
+                                var customer_department_id = obj_particulars.data('department_id');
+                                var department_id = (customer_department_id == 0 ? null : customer_department_id);
+                                _cboDepartments.select2('val', department_id);
+                                $('#typeaheadsearch').focus();
                             }
 
                         });
@@ -1731,7 +1739,10 @@
                                 "success": function(response) {
                                     showNotification(response);
                                     if (response.stat == "success") {
-                                        dt.row(_selectRowObj).data(response.row_updated[0]).draw();
+                                        // dt.row(_selectRowObj).data(response.row_updated[0]).draw();
+                                        $('#tbl_accounts_receivable').DataTable().ajax.reload()
+                                        $('#tbl_issuance_review').DataTable().ajax.reload()
+                                        $('#tbl_adjustment_review').DataTable().ajax.reload()
                                     }
 
                                 }
@@ -1850,6 +1861,7 @@
                                     var _customer = response.row_added[0];
                                     _cboParticulars.select2().find('optgroup[label="Branches"]').append('<option value="' + 'C-' + _customer.customer_id + '">' + _customer.customer_name + '</option>');
                                     _cboParticulars.select2('val', 'C-' + _customer.customer_id);
+                                    _cboDepartments.select2('val', _customer.department_id);
                                     $('input,textarea,select', $('#frm_customer')).val('');
                                 }).always(function() {
                                     $('#modal_create_customer').modal('toggle');
@@ -2084,7 +2096,10 @@
 
                         var finalizeJournalReview = function() {
                             var _data_review = parent.find('form').serializeArray();
-
+                            _data_review.push({
+                                name: 'is_review',
+                                value: 1
+                            })
                             return $.ajax({
                                 "dataType": "json",
                                 "type": "POST",
@@ -2147,7 +2162,10 @@
 
                         var finalizeJournalReview = function() {
                             var _data_review = parent.find('form').serializeArray();
-
+                            _data_review.push({
+                                name: 'is_review',
+                                value: 1
+                            })
                             return $.ajax({
                                 "dataType": "json",
                                 "type": "POST",
@@ -2208,6 +2226,10 @@
 
                     var createJournal = function() {
                         var _data = $('#frm_journal').serializeArray();
+                        _data.push({
+                            name: 'is_review',
+                            value: 0
+                        })
                         return $.ajax({
                             "dataType": "json",
                             "type": "POST",

@@ -1922,7 +1922,8 @@
                                     "success": function(response) {
                                         showNotification(response);
                                         if (response.stat == "success") {
-                                            dt.row(_selectRowObj).data(response.row_updated[0]).draw();
+                                            $('#tbl_cash_disbursement_list').DataTable().ajax.reload()
+                                            $('#tbl_expense_for_review').DataTable().ajax.reload()
                                         }
 
                                     }
@@ -2206,6 +2207,10 @@
                                     value: 0
                                 });
                             }
+                            _data.push({
+                                name: "is_review",
+                                value: 0
+                            });
 
                             return $.ajax({
                                 "dataType": "json",
@@ -2492,7 +2497,6 @@
 
 
                             parent.on('click', 'button[name="btn_finalize_journal_review"]', function() {
-
                                 var _curBtn = $(this);
                                 if (isBalance('#tbl_entries_for_review_' + _dataParentID)) {
                                     finalizeJournalReview().done(function(response) {
@@ -2533,6 +2537,11 @@
                                         value: 0
                                     });
                                 }
+
+                                _data_review.push({
+                                    name: "is_review",
+                                    value: 1
+                                });
 
                                 return $.ajax({
                                     "dataType": "json",

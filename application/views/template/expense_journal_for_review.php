@@ -101,7 +101,7 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-lg-7">
-                                                        Branch * :<br />
+                                                        Parent * :<br />
                                                         <select name="department_id" class="cbo_department_list">
                                                             <?php foreach ($departments as $department) { ?>
                                                                 <option value="<?php echo $department->department_id; ?>" <?php echo ($payment_info->department_id === $department->department_id ? 'selected' : ''); ?>><?php echo $department->department_name; ?></option>
@@ -257,7 +257,7 @@
                                             <i class="fa fa-calendar"></i> Payment Date : <?php echo $payment_info->payment_date; ?><br />
                                             <i class="fa fa-caret-square-o-left"></i> Receipt type : <?php echo $payment_info->receipt_type; ?><br /><br />
                                             <i class="fa fa-bookmark"></i> Parent : <?php echo $payment_info->department_name; ?><br />
-                                            <i class="fa fa-users"></i> Branch : <?php echo $payment_info->supplier_name; ?><br /><br />
+                                            <i class="fa fa-users"></i> Supplier : <?php echo $payment_info->supplier_name; ?><br /><br />
                                         </div>
                                         <div class="col-lg-6">
                                             <i class="fa fa-code"></i> Method of Payment : <?php echo $payment_info->payment_method; ?><br />

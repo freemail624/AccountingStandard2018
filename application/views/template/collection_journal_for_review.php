@@ -110,7 +110,7 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-lg-7">
-                                                        Branch * :<br />
+                                                        Parent * :<br />
                                                         <select name="department_id" class="cbo_department_list">
                                                             <?php foreach ($departments as $department) { ?>
                                                                 <option value="<?php echo $department->department_id; ?>" <?php echo ($payment_info->department_id === $department->department_id ? 'selected' : ''); ?>><?php echo $department->department_name; ?></option>

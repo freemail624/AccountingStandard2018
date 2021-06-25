@@ -182,7 +182,7 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                                                                             <li><a href="#accounts_integration_setting" data-toggle="tab" style="font-family: tahoma;"> Other Accounts</a></li>
                                                                             <li><a href="#accounts_integration_adjustment" data-toggle="tab" style="font-family: tahoma;">Adjustments</a></li>
                                                                             <li><a href="#accounts_integration_item_transfer" data-toggle="tab" style="font-family: tahoma;">Item Transfer</a></li>
-                                                                            <li class="hidden"><a href="#accounts_integration_default_settings" data-toggle="tab" style="font-family: tahoma;">Default Settings</a></li>
+                                                                            <li><a href="#accounts_integration_default_settings" data-toggle="tab" style="font-family: tahoma;">Default Settings</a></li>
                                                                             <!-- <li class=""><a href="#sched_expense_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-gear"></i> Expense Group (Schedule of Expense)</a></li> -->
                                                                             <li class=""><a href="#account_year_setting" data-toggle="tab" style="font-family: tahoma;"> Accounting Period</a></li>
                                                                             <!-- <li class=""><a href="#invoice_counter_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-code"></i> Invoice Number</a></li> -->
@@ -228,9 +228,9 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                                                                             <div class="tab-pane" id="accounts_integration_default_settings" style="min-height: 300px;">
                                                                                 <form id="frm_account_default_integration" role="form" class="form-horizontal row-border">
 
-                                                                                    <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Sales &amp; Purchasing </strong></span></h4>
+                                                                                    <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Sales &amp; </strong></span></h4>
                                                                                     <div class="form-group">
-                                                                                        <label class="col-md-3 control-label"> <b class="required"> * </b>Parent :</label>
+                                                                                        <!-- <label class="col-md-3 control-label"> <b class="required"> * </b>Parent :</label>
                                                                                         <div class="col-md-7">
                                                                                             <select name="default_department_id" class="cbo_accounts" data-error-msg="Default Parent is required." required>
                                                                                                 <?php foreach ($departments as $department) { ?>
@@ -240,10 +240,15 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                                                                                                 <?php } ?>
                                                                                             </select>
                                                                                             <span class="help-block m-b-none">Please Choose a default parent for sales &amp; purchasing. </span>
+                                                                                        </div> -->
+                                                                                        <label class="col-md-3 control-label"> <b class="required"> * </b>Terms :</label>
+                                                                                        <div class="col-md-7">
+                                                                                            <input id="terms" name="terms" type="text" class="number form-control" value="<?php echo $current_accounts->terms; ?>" />
+                                                                                            <span class="help-block m-b-none">Please input a default terms for sales. </span>
                                                                                         </div>
                                                                                     </div>
 
-                                                                                    <div class="form-group">
+                                                                                    <!-- <div class="form-group">
                                                                                         <label class="col-md-3 control-label"> <b class="required"> * </b>Product :</label>
                                                                                         <div class="col-md-7">
                                                                                             <select name="basyo_product_id" class="cbo_accounts" data-error-msg="Product (Basyo) is required." required>
@@ -255,7 +260,7 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                                                                                             </select>
                                                                                             <span class="help-block m-b-none">Please Choose a default parent for sales &amp; purchasing. </span>
                                                                                         </div>
-                                                                                    </div>
+                                                                                    </div> -->
 
                                                                                     <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Cash Invoice </strong></span></h4>
                                                                                     <div class="form-group">
@@ -288,7 +293,7 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                                                                                         </div>
                                                                                     </div>
 
-                                                                                    <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Loading Report (Order Qty) </strong></span></h4>
+                                                                                    <!-- <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Loading Report (Order Qty) </strong></span></h4>
                                                                                     <div class="form-group">
                                                                                         <label class="col-md-3 control-label"> <b class="required"> * </b>Product Category :</label>
                                                                                         <div class="col-md-7">
@@ -310,7 +315,7 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                                                                                         <div class="5">
                                                                                             <span class="help-block m-b-none">Please Choose a default daily allowance for loading report. </span>
                                                                                         </div>
-                                                                                    </div>
+                                                                                    </div> -->
                                                                                     <br />
                                                                                 </form>
                                                                                 <div class="col-sm-offset-3">
@@ -999,6 +1004,7 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
 
 
                             $('.numeric').autoNumeric('init');
+                            $('.number').autoNumeric('init',{'mDec':0});
                             // $('#cbo_inventory').select2('val', 0);
 
                         }();
