@@ -274,9 +274,17 @@
                                                                     <tr>
                                                                         <th width="10%">Qty</th>
                                                                         <th width="15%">UM</th>
-                                                                        <th width="25%">Item</th>
-                                                                        <th width="20%" style="text-align: right;">Unit Price</th>
-                                                                        <th width="20%" style="text-align: right;">Total</th>
+                                                                        <th width="20%">Item</th>
+                                                                        <th width="15%" style="text-align: right;">Unit Price</th>
+                                                                        <th width="10%" style="text-align: right;">Discount </th>
+                                                                        <!-- display:none; -->
+                                                                        <th style="display:none;" width="10%">Total line Discount </th> <!-- total discount -->
+                                                                        <th style="display:none;" width="10%">Tax % </th>
+                                                                        <!-- DISPLAY -->
+                                                                        <th width="15%" style="text-align: right">Gross</th>
+                                                                        <th width="15%" style="text-align: right">Total</th>
+                                                                        <th style="display:none;" width="10%">Vat Input(Total Line Tax) </th> <!-- vat input -->
+                                                                        <th style="display:none;" width="10%">Net of Vat (Price w/out Tax) </th> <!-- net of vat -->
                                                                         <td style="display: none">Item ID</td>
                                                                         <td style="display: none">Unit Id</td>
                                                                         <th>
@@ -293,12 +301,14 @@
                                                                             <input type="text" id="txt_total_overall_discount" class="numeric form-control" name="total_overall_discount" value="0.00">
                                                                             <input type="hidden" class="numeric form-control " name="total_overall_discount_amount" id="txt_total_overall_discount_amount" readonly>
                                                                         </td>
-                                                                        <td colspan="1" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Amount :</strong></td>
+                                                                        <td colspan="3" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
                                                                         <td align="right" colspan="1" id="total_amount" color="red">0.00</td>
                                                                         <td></td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <td colspan="4" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Discount :</strong></td>
+                                                                        <td colspan="2" style="text-align: right;">Tax % :</td>
+                                                                        <td align="right" colspan="1" id="total_tax_amount" color="red">0.00</td>
+                                                                        <td colspan="3" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
                                                                         <td align="right" colspan="1" id="total_amount_before_discount" color="red">0.00</td>
                                                                         <td></td>
                                                                     </tr>
@@ -329,6 +339,18 @@
                                                                                     <tr>
                                                                                         <td><strong>Total After Tax :</strong></td>
                                                                                         <td align="right"><b>0.00</b></td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td><strong>Total After Tax :</strong></td>
+                                                                                        <td align="right"><b>0.00</b></td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Total before Tax :</td>
+                                                                                        <td align="right">0.00</td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Tax :</td>
+                                                                                        <td align="right">0.00</td>
                                                                                     </tr>
                                                                                     <tr>
                                                                                         <td><strong>Total After Tax :</strong></td>
@@ -782,13 +804,21 @@
             var oTableItems = {
                 qty: 'td:eq(0)',
                 unit_price: 'td:eq(3)',
-                total: 'td:eq(4)',
-                line_total_after_global: 'td:eq(5)'
+                service_discount: 'td:eq(4)',
+                service_line_total_discount: 'td:eq(5)',
+                service_tax_rate: 'td:eq(6)',
+                service_line_total: 'td:eq(7)',
+                service_line_total_after_global: 'td:eq(8)',
+                service_tax_amount: 'td:eq(9)',
+                service_non_tax_amount: 'td:eq(10)'
 
             };
             var oTableDetails = {
                 total_after_discount: 'tr:eq(0) > td:eq(1)',
-                total: 'tr:eq(1) > td:eq(1)'
+                total: 'tr:eq(1) > td:eq(1)',
+                total_before_tax: 'tr:eq(2) > td:eq(1)',
+                total_tax_amount: 'tr:eq(3) > td:eq(1)',
+                total_after_tax: 'tr:eq(4) > td:eq(1)',
             };
             var initializeControls = function() {
                 dt = $('#tbl_service_invoice').DataTable({
@@ -926,11 +956,12 @@
                     }
                 }).bind('typeahead:select', function(ev, suggestion) {
 
-
                     var service_price = 0.00;
                     service_price = suggestion.service_amount;
                     var service_line_total = getFloat(service_price);
 
+                    var net_vat = service_line_total / (1 + (getFloat(suggestion.tax_rate) / 100));
+                    var vat_input = service_line_total - net_vat;
 
                     $('#tbl_items > tbody').append(newRowItem({
                         inv_qty: "1",
@@ -939,10 +970,18 @@
                         service_desc: suggestion.service_desc,
                         service_unit: suggestion.service_unit_name,
                         service_price: service_price,
-                        line_total: service_line_total
+                        service_line_total: service_line_total,
+                        service_discount: 0,
+                        service_line_total_discount: 0,
+                        service_tax_rate: suggestion.tax_rate,
+                        service_line_total_after_global: service_line_total,
+                        service_tax_amount: vat_input,
+                        service_non_tax_amount: net_vat
+
                     }));
                     reInitializeNumeric();
                     reComputeTotal();
+                    discountValidation();
                     //alert("dd")
                 });
                 $('div.tt-menu').on('click', 'table.tt-suggestion', function() {
@@ -1226,6 +1265,7 @@
                                 var rows = response.data;
                                 $('#tbl_items > tbody').html('');
                                 $.each(rows, function(i, value) {
+                                    console.log(value)
                                     $('#tbl_items > tbody').append(newRowItem({
                                         inv_qty: value.service_qty,
                                         service_id: value.service_id,
@@ -1233,13 +1273,18 @@
                                         service_unit_id: value.service_unit_id,
                                         service_unit: value.service_unit_name,
                                         service_price: value.service_price,
-                                        line_total: value.service_line_total
-
-
+                                        service_line_total: value.service_line_total,
+                                        service_discount: value.service_discount,
+                                        service_line_total_discount: value.service_line_total_discount,
+                                        service_tax_rate: value.service_tax_rate,
+                                        service_line_total_after_global: value.service_line_total_after_global,
+                                        service_tax_amount: value.service_tax_amount,
+                                        service_non_tax_amount: value.service_non_tax_amount
                                     }));
                                 });
                                 $('#txt_total_overall_discount').val(accounting.formatNumber($('#txt_total_overall_discount').val(), 2));
                                 reComputeTotal();
+                                discountValidation();
                             }
                         });
                         showList(false);
@@ -1266,10 +1311,13 @@
                     var row = $(this).closest('tr');
                     var price = parseFloat(accounting.unformat(row.find(oTableItems.unit_price).find('input.numeric').val()));
                     var qty = parseFloat(accounting.unformat(row.find(oTableItems.qty).find('input.number').val()));
-                    var line_total = price * qty;
-                    $(oTableItems.total, row).find('input.numeric').val(accounting.formatNumber(line_total, 2)); // line total amount
+                    var discount = parseFloat(accounting.unformat(row.find(oTableItems.service_discount).find('input.numeric').val())) /
+                        100;
 
-
+                    var service_line_total = price * qty;
+                    var service_line_total_discount = service_line_total * discount;
+                    $(oTableItems.service_line_total_discount, row).find('input.numeric').val(accounting.formatNumber(service_line_total_discount, 2)); // line total amount
+                    $(oTableItems.service_line_total, row).find('input.numeric').val(accounting.formatNumber(service_line_total, 2)); // line total amount
                     reComputeTotal();
                 });
                 $('#tbl_items tfoot').on('keyup', 'input.numeric,input.number', function() {
@@ -1326,7 +1374,6 @@
                     $.each(_files, function(key, value) {
                         data.append(key, value);
                     });
-                    console.log(_files);
                     $.ajax({
                         url: 'Customers/transaction/upload',
                         type: "POST",
@@ -1363,6 +1410,18 @@
                     }
                     computeDueDate(false);
                 });
+
+                $('#txt_total_overall_discount').on('keyup', function(e) {
+                    const val = parseFloat(accounting.unformat(e.target.value))
+                    if (val > 100) {
+                        showNotification({
+                            title: "Error!",
+                            stat: "error",
+                            msg: "Discount shouldn't be greater than 100%."
+                        });
+                        $(this).val('0')
+                    }
+                })
             })();
             var validateRequiredFields = function(f) {
                 var stat = true;
@@ -1421,6 +1480,18 @@
                     name: "summary_total_amount_after_discount",
                     value: tbl_summary.find(oTableDetails.total_after_discount).text()
                 });
+                _data.push({
+                    name: "total_before_tax",
+                    value: tbl_summary.find(oTableDetails.total_before_tax).text()
+                });
+                _data.push({
+                    name: "total_after_tax",
+                    value: tbl_summary.find(oTableDetails.total_after_tax).text()
+                });
+                _data.push({
+                    name: "total_tax_amount",
+                    value: tbl_summary.find(oTableDetails.total_tax_amount).text()
+                });
                 return $.ajax({
                     "dataType": "json",
                     "type": "POST",
@@ -1439,6 +1510,18 @@
                 _data.push({
                     name: "summary_total_amount_after_discount",
                     value: tbl_summary.find(oTableDetails.total_after_discount).text()
+                });
+                _data.push({
+                    name: "total_before_tax",
+                    value: tbl_summary.find(oTableDetails.total_before_tax).text()
+                });
+                _data.push({
+                    name: "total_after_tax",
+                    value: tbl_summary.find(oTableDetails.total_after_tax).text()
+                });
+                _data.push({
+                    name: "total_tax_amount",
+                    value: tbl_summary.find(oTableDetails.total_tax_amount).text()
                 });
                 _data.push({
                     name: "service_invoice_id",
@@ -1512,9 +1595,14 @@
                     '<td width="5%">' + d.service_unit + '</td>' +
                     '<td width="10%">' + d.service_desc + '</td>' +
                     '<td width="11%"><input name="service_price[]" type="text" class="numeric form-control" value="' + accounting.formatNumber(d.service_price, 2) + '" style="text-align:right;"></td>' +
-                    '<td width="11%" align="right"><input name="line_total[]" type="text" class="numeric form-control" value="' + accounting.formatNumber(d.line_total, 2) + '" readonly></td>' +
-                    '<td width="11%" style="display:none;" align="right"><input name="line_total_after_global[]" type="text" class="numeric form-control" value="' + accounting.formatNumber(d.line_total, 2) + '" readonly></td>' +
+                    '<td><input name="service_discount[]" type="text" class="numeric form-control service_discount" value="' + accounting.formatNumber(d.service_discount, 2) + '" style="text-align:right;"></td>' +
+                    '<td style="display: none"><input name="service_line_total_discount[]" type="text" class="numeric form-control" value="' + accounting.formatNumber(d.service_line_total_discount, 2) + '" style="text-align:right;"></td>' +
+                    '<td style="display: none"><input name="service_tax_rate[]" type="text" class="numeric form-control" value="' + accounting.formatNumber(d.service_tax_rate, 2) + '" style="text-align:right;"></td>' +
+                    '<td width="11%" align="right"><input name="service_line_total[]" type="text" class="numeric form-control" value="' + accounting.formatNumber(d.service_line_total, 2) + '" readonly></td>' +
+                    '<td width="11%" align="right"><input name="service_line_total_after_global[]" type="text" class="numeric form-control" value="' + accounting.formatNumber(d.service_line_total_after_global, 2) + '" readonly></td>' +
                     // display:none;
+                    '<td style="display: none"><input name="service_tax_amount[]" type="text" class="numeric form-control" value="' + accounting.formatNumber(d.service_tax_amount, 2) + '" style="text-align:right;"></td>' +
+                    '<td style="display: none"><input name="service_non_tax_amount[]" type="text" class="numeric form-control" value="' + accounting.formatNumber(d.service_non_tax_amount, 2) + '" style="text-align:right;"></td>' +
                     '<td style="display:none;"><input name="service_id[]" type="text" class=" form-control" value="' + d.service_id + '" readonly></td>' +
                     '<td style="display:none;"><input name="service_unit[]" type="text" class=" form-control" value="' + d.service_unit_id + '" readonly></td>' +
                     '<td align="center"><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>' +
@@ -1523,27 +1611,50 @@
             var reComputeTotal = function() {
                 var rows = $('#tbl_items > tbody tr');
                 var total_amount = 0;
+                var total_after_tax = 0;
+                var total_tax_amount = 0;
+                var total_non_tax_amount = 0;
+                var total_discount_amount = 0;
                 var over_all_discount = parseFloat(accounting.unformat($('#txt_total_overall_discount').val() / 100));
                 $.each(rows, function() {
-                    new_total = parseFloat(accounting.unformat($(oTableItems.total, $(this)).find('input.numeric').val()));
-                    total_amount += parseFloat(accounting.unformat($(oTableItems.total, $(this)).find('input.numeric').val()));
-                    $(oTableItems.line_total_after_global, $(this)).find('input.numeric').val(accounting.formatNumber(new_total - (new_total * over_all_discount), 2));
+                    const service_line_total = parseFloat(accounting.unformat($(oTableItems.service_line_total, $(this)).find('input.numeric').val()));
+                    const service_line_total_discount = parseFloat(accounting.unformat($(oTableItems.service_line_total_discount, $(this)).find('input.numeric').val()));
+
+                    const line_total_before_global = service_line_total - service_line_total_discount;
+                    const global_discount_amount = line_total_before_global * over_all_discount;
+                    const line_total_after_global = line_total_before_global - global_discount_amount;
+
+                    $(oTableItems.service_line_total_after_global, $(this)).find('input.numeric').val(accounting.formatNumber(line_total_after_global, 2));
+
+                    var tax_rate = parseFloat(accounting.unformat($(oTableItems.service_tax_rate, $(this)).find('input.numeric').val()));
+                    var net_vat = line_total_after_global / (1 + (getFloat(tax_rate) / 100));
+                    var vat_input = line_total_after_global - net_vat;
+
+                    $(oTableItems.service_non_tax_amount, $(this)).find('input.numeric').val(accounting.formatNumber(net_vat, 2));
+                    $(oTableItems.service_tax_amount, $(this)).find('input.numeric').val(accounting.formatNumber(vat_input, 2));
+
+                    total_discount_amount += global_discount_amount;
+                    total_non_tax_amount += net_vat;
+                    total_tax_amount += vat_input;
+                    total_after_tax += line_total_after_global;
+                    total_amount += line_total_before_global;
                 });
-
-
-                var discount_percentage = $('#txt_total_overall_discount').val();
-                var discount_amount = total_amount * (discount_percentage / 100);
-                var total_after_discount = total_amount - discount_amount;
-
-
-                $('#txt_total_overall_discount_amount').val(accounting.formatNumber(discount_amount, 2)); // amount of discount
-                $('#total_amount').html('<b>' + accounting.formatNumber(total_amount, 2) + '</b>'); //amount after discount
-                $('#total_amount_before_discount').html('<b>' + accounting.formatNumber(total_after_discount, 2) + '</b>');
+                //total after discount
+                $('#txt_total_overall_discount_amount').val(accounting.formatNumber(total_discount_amount, 2));
+                //total before tax
+                $('#total_amount').html('<b>' + accounting.formatNumber(total_non_tax_amount, 2) + '</b>');
+                //total
+                $('#total_amount_before_discount').html('<b>' + accounting.formatNumber(total_after_tax, 2) + '</b>');
+                //total tax
+                $('#total_tax_amount').html('<b>' + accounting.formatNumber(total_tax_amount, 2) + '</b>');
 
 
                 var tbl_summary = $('#tbl_service_invoice_summary');
                 tbl_summary.find(oTableDetails.total).html('<b>' + accounting.formatNumber(total_amount, 2) + '</b>');
-                tbl_summary.find(oTableDetails.total_after_discount).html('<b>' + accounting.formatNumber(total_after_discount, 2) + '</b>');
+                tbl_summary.find(oTableDetails.total_after_discount).html('<b>' + accounting.formatNumber(total_after_tax, 2) + '</b>');
+                tbl_summary.find(oTableDetails.total_before_tax).html('<b>' + accounting.formatNumber(total_non_tax_amount, 2) + '</b>');
+                tbl_summary.find(oTableDetails.total_tax_amount).html('<b>' + accounting.formatNumber(total_tax_amount, 2) + '</b>');
+                tbl_summary.find(oTableDetails.total_after_tax).html('<b>' + accounting.formatNumber(total_after_tax, 2) + '</b>');
             };
             var resetSummary = function() {
                 var tbl_summary = $('#tbl_service_invoice_summary');
@@ -1565,6 +1676,20 @@
                     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                     $('#terms').val(diffDays)
                 }
+            }
+
+            var discountValidation = function() {
+                $('.service_discount').on('keyup', function(e) {
+                    const val = parseFloat(accounting.unformat(e.target.value))
+                    if (val > 100) {
+                        showNotification({
+                            title: "Error!",
+                            stat: "error",
+                            msg: "Discount shouldn't be greater than 100%."
+                        });
+                        $(this).val('0')
+                    }
+                })
             }
 
         });

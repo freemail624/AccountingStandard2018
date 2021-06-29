@@ -13,6 +13,7 @@ class Services extends CORE_Controller
         $this->load->model('Services_model');
         $this->load->model('Service_unit_model');
         $this->load->model('Users_model');
+        $this->load->model('Tax_types_model');
     }
 
     public function index() {
@@ -30,6 +31,7 @@ class Services extends CORE_Controller
         $data['units'] = $this->Service_unit_model->get_list(array('service_unit.is_deleted'=>FALSE));
 
         $data['accounts'] = $this->Account_title_model->get_list(null,'account_id,account_title');
+        $data['tax_types'] = $this->Tax_types_model->get_list(array('tax_types.is_deleted' => FALSE));
 
 
         $this->load->view('Services_view', $data);
@@ -43,16 +45,16 @@ class Services extends CORE_Controller
                     array('services.is_deleted'=>FALSE),
                    "
                     services.*,
-                    account_titles.account_title
+                    account_titles.account_title,
+                    tax_types.tax_type,
+                    tax_types.tax_rate
                     ",
 
                     array(
-                        array('account_titles', 'account_titles.account_id=services.income_account_id','left')
-
-                        )
-
-
-                    );
+                        array('account_titles', 'account_titles.account_id=services.income_account_id','left'),
+                        array('tax_types', 'tax_types.tax_type_id=services.tax_type_id', 'left')
+                    )
+                );
                 echo json_encode($response);
                 break;
 
@@ -61,6 +63,7 @@ class Services extends CORE_Controller
                 $m_services->service_code = $this->input->post('service_code',TRUE);
                 $m_services->service_desc = $this->input->post('service_desc',TRUE);
                 $m_services->service_unit = $this->input->post('service_unit',TRUE);
+                $m_services->tax_type_id = $this->get_numeric_value($this->input->post('tax_type_id',TRUE));
                 $m_services->income_account_id = $this->input->post('income_account_id',TRUE);
                 $m_services->expense_account_id = $this->input->post('expense_account_id',TRUE);
                 $m_services->service_amount = $this->get_numeric_value($this->input->post('service_amount',TRUE));
@@ -80,6 +83,7 @@ class Services extends CORE_Controller
                 $m_services->service_code = $this->input->post('service_code',TRUE);
                 $m_services->service_desc = $this->input->post('service_desc',TRUE);
                 $m_services->service_unit = $this->input->post('service_unit',TRUE);
+                $m_services->tax_type_id = $this->get_numeric_value($this->input->post('tax_type_id', TRUE));
                 $m_services->income_account_id = $this->input->post('income_account_id',TRUE);
                 $m_services->expense_account_id = $this->input->post('expense_account_id',TRUE);
                 $m_services->service_amount = $this->get_numeric_value($this->input->post('service_amount',TRUE));
@@ -116,15 +120,18 @@ class Services extends CORE_Controller
         }
     }
 
-        function response_rows($filter){
+    function response_rows($filter){
         return $this->Services_model->get_list(
             $filter,
 
-            'services.*'
-          
-
-            );
-        }
+            'services.*,
+            tax_types.tax_type,
+            tax_types.tax_rate',
+            array(
+                array('tax_types', 'tax_types.tax_type_id=services.tax_type_id', 'left')
+            )
+        );
+    }
 
 
 

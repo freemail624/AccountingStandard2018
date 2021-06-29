@@ -55,12 +55,14 @@ class Service_invoice extends CORE_Controller
             array(
                 
                 'services.*',
-                'service_unit.*'
-
+                'service_unit.*',
+                'tax_types.tax_type',
+                'tax_types.tax_rate'
                 ),
 
             array(
-                array('service_unit','service_unit.service_unit_id=services.service_unit','left')
+                array('service_unit','service_unit.service_unit_id=services.service_unit','left'),
+                array('tax_types', 'tax_types.tax_type_id=services.tax_type_id', 'left')
                 )   
             );
 
@@ -128,6 +130,10 @@ class Service_invoice extends CORE_Controller
                 $m_invoice->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
                 $m_invoice->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                 $m_invoice->total_amount_after_discount=$this->get_numeric_value($this->input->post('summary_total_amount_after_discount',TRUE));
+                $m_invoice->total_before_tax = $this->get_numeric_value($this->input->post('total_before_tax', TRUE));
+                $m_invoice->total_after_tax = $this->get_numeric_value($this->input->post('total_after_tax', TRUE));
+                $m_invoice->total_tax_amount=$this->get_numeric_value($this->input->post('total_tax_amount',TRUE));
+
 
                 
 
@@ -144,19 +150,29 @@ class Service_invoice extends CORE_Controller
                 $service_id = $this->input->post('service_id');
                 $service_qty = $this->input->post('qty');
                 $service_price = $this->input->post('service_price');
-                $service_line_total = $this->input->post('line_total');
+                $service_line_total = $this->input->post('service_line_total');
+                $service_discount = $this->input->post('service_discount');
+                $service_line_total_discount = $this->input->post('service_line_total_discount');
+                $service_tax_rate = $this->input->post('service_tax_rate');
+                $service_tax_amount = $this->input->post('service_tax_amount');
+                $service_non_tax_amount = $this->input->post('service_non_tax_amount');
                 $service_unit = $this->input->post('service_unit');
-                $line_total_after_global = $this->input->post('line_total_after_global');
+                $service_line_total_after_global = $this->input->post('service_line_total_after_global');
                 
 
                 for($i=0;$i<count($service_id);$i++){
-                $m_invoice_items->service_invoice_id=$service_invoice_id;
-                $m_invoice_items->service_id=$this->get_numeric_value($service_id[$i]);
-                $m_invoice_items->service_qty=$this->get_numeric_value($service_qty[$i]);
-                $m_invoice_items->service_price=$this->get_numeric_value($service_price[$i]);
-                $m_invoice_items->service_line_total=$this->get_numeric_value($service_line_total[$i]);
-                $m_invoice_items->service_line_total_after_global=$this->get_numeric_value($line_total_after_global[$i]);
-                $m_invoice_items->service_unit=$this->get_numeric_value($service_unit[$i]);
+                    $m_invoice_items->service_invoice_id=$service_invoice_id;
+                    $m_invoice_items->service_id=$this->get_numeric_value($service_id[$i]);
+                    $m_invoice_items->service_qty=$this->get_numeric_value($service_qty[$i]);
+                    $m_invoice_items->service_price=$this->get_numeric_value($service_price[$i]);
+                    $m_invoice_items->service_line_total=$this->get_numeric_value($service_line_total[$i]);
+                    $m_invoice_items->service_line_total_after_global=$this->get_numeric_value($service_line_total_after_global[$i]);
+                    $m_invoice_items->service_discount = $this->get_numeric_value($service_discount[$i]);
+                    $m_invoice_items->service_line_total_discount = $this->get_numeric_value($service_line_total_discount[$i]);
+                    $m_invoice_items->service_tax_rate = $this->get_numeric_value($service_tax_rate[$i]);
+                    $m_invoice_items->service_tax_amount = $this->get_numeric_value($service_tax_amount[$i]);
+                    $m_invoice_items->service_non_tax_amount = $this->get_numeric_value($service_non_tax_amount[$i]);
+                    $m_invoice_items->service_unit=$this->get_numeric_value($service_unit[$i]);
 
                 $m_invoice_items->save();
                 }
@@ -197,6 +213,9 @@ class Service_invoice extends CORE_Controller
                 $m_invoice->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                 $m_invoice->total_amount_after_discount=$this->get_numeric_value($this->input->post('summary_total_amount_after_discount',TRUE));
                 $m_invoice->terms = $this->get_numeric_value($this->input->post('terms', TRUE));
+                $m_invoice->total_before_tax = $this->get_numeric_value($this->input->post('total_before_tax', TRUE));
+                $m_invoice->total_after_tax = $this->get_numeric_value($this->input->post('total_after_tax', TRUE));
+                $m_invoice->total_tax_amount = $this->get_numeric_value($this->input->post('total_tax_amount', TRUE));
                 $m_invoice->modified_by_user=$this->session->user_id;
                 $m_invoice->modify($service_invoice_id);
 
@@ -210,21 +229,32 @@ class Service_invoice extends CORE_Controller
                 $service_id = $this->input->post('service_id');
                 $service_qty = $this->input->post('qty');
                 $service_price = $this->input->post('service_price');
-                $service_line_total = $this->input->post('line_total');
+                $service_line_total = $this->input->post('service_line_total');
                 $service_unit = $this->input->post('service_unit');
                 $line_total_after_global = $this->input->post('line_total_after_global');
+                $service_discount = $this->input->post('service_discount');
+                $service_line_total_discount = $this->input->post('service_line_total_discount');
+                $service_tax_rate = $this->input->post('service_tax_rate');
+                $service_tax_amount = $this->input->post('service_tax_amount');
+                $service_non_tax_amount = $this->input->post('service_non_tax_amount');
+                $service_line_total_after_global = $this->input->post('service_line_total_after_global');
                 
 
                 for($i=0;$i<count($service_id);$i++){
-                $m_invoice_items->service_invoice_id=$service_invoice_id;
-                $m_invoice_items->service_id=$this->get_numeric_value($service_id[$i]);
-                $m_invoice_items->service_qty=$this->get_numeric_value($service_qty[$i]);
-                $m_invoice_items->service_price=$this->get_numeric_value($service_price[$i]);
-                $m_invoice_items->service_line_total=$this->get_numeric_value($service_line_total[$i]);
-                $m_invoice_items->service_line_total_after_global=$this->get_numeric_value($line_total_after_global[$i]);
-                $m_invoice_items->service_unit=$this->get_numeric_value($service_unit[$i]);
+                    $m_invoice_items->service_invoice_id = $service_invoice_id;
+                    $m_invoice_items->service_id = $this->get_numeric_value($service_id[$i]);
+                    $m_invoice_items->service_qty = $this->get_numeric_value($service_qty[$i]);
+                    $m_invoice_items->service_price = $this->get_numeric_value($service_price[$i]);
+                    $m_invoice_items->service_unit = $this->get_numeric_value($service_unit[$i]);
+                    $m_invoice_items->service_line_total = $this->get_numeric_value($service_line_total[$i]);
+                    $m_invoice_items->service_line_total_after_global = $this->get_numeric_value($service_line_total_after_global[$i]);
+                    $m_invoice_items->service_discount = $this->get_numeric_value($service_discount[$i]);
+                    $m_invoice_items->service_line_total_discount = $this->get_numeric_value($service_line_total_discount[$i]);
+                    $m_invoice_items->service_tax_rate = $this->get_numeric_value($service_tax_rate[$i]);
+                    $m_invoice_items->service_tax_amount = $this->get_numeric_value($service_tax_amount[$i]);
+                    $m_invoice_items->service_non_tax_amount = $this->get_numeric_value($service_non_tax_amount[$i]);
 
-                $m_invoice_items->save();
+                    $m_invoice_items->save();
                 }
                 $m_invoice->modify($service_invoice_id);
 
