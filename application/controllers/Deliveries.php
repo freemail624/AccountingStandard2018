@@ -181,7 +181,7 @@ class Deliveries extends CORE_Controller
                 $m_delivery_invoice->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
                 $m_delivery_invoice->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                 $m_delivery_invoice->total_after_discount=$this->get_numeric_value($this->input->post('total_after_discount',TRUE));
-
+                $m_delivery_invoice->discount_type_id=$this->get_numeric_value($this->input->post('discount_type_id',TRUE));
                 $m_delivery_invoice->save();
 
                 $dr_invoice_id=$m_delivery_invoice->last_insert_id();
@@ -316,6 +316,7 @@ class Deliveries extends CORE_Controller
                 $m_delivery_invoice->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
                 $m_delivery_invoice->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                 $m_delivery_invoice->total_after_discount=$this->get_numeric_value($this->input->post('total_after_discount',TRUE));
+                $m_delivery_invoice->discount_type_id=$this->get_numeric_value($this->input->post('discount_type_id',TRUE));
                 $m_delivery_invoice->modify($dr_invoice_id);
 
 

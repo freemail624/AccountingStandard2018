@@ -101,8 +101,11 @@
                                     <div class="panel panel-default">
                                         <div class="panel-body table-responsive">
                                         <h2 class="h2-panel-heading">Cash Flow Configuration</h2><hr>
-                                        <b>Note:</b> Please set up the appropriate classifications for the accounts needed in the Comparative Cash Flow report. Classifications include: <i>
-                                        Depreciation and Amortization, Receivables, Advances, Prepayments, Other current assets, Accounts Payable and Other Current Liabilities, Interest received, Income Taxes Paid, Creditable Withholding Taxes, Addition of Property and Equipment, Withdrawals, and Provision For Income Tax.</i><b> Each classification need atleast one account.</b>
+                                        <b>Note:</b> Please set up the appropriate classifications for the accounts needed in the Cash Flow report. <br/> <br/>
+                                        <div class="hidden">
+                                            <b>Note:</b> Please set up the appropriate classifications for the accounts needed in the Comparative Cash Flow report. Classifications include: <i>
+                                            Depreciation and Amortization, Receivables, Advances, Prepayments, Other current assets, Accounts Payable and Other Current Liabilities, Interest received, Income Taxes Paid, Creditable Withholding Taxes, Addition of Property and Equipment, Withdrawals, and Provision For Income Tax.</i><b> Each classification need atleast one account.</b>
+                                        </div>
                                         <form id="frm_cash_flow_settings" role="form" class="form-horizontal">
                                             <table class="table table-striped" width="100%">
                                                 <thead>

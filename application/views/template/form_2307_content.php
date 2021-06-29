@@ -23,6 +23,10 @@
     
 </style>
 <img src="../../assets/img/bir_forms/form_2307_1st_page_1.png" style="top: 0px; left: 0px; width: 100%;position: absolute;z-index: 100;height: 100%;">
+<?php foreach($items as $item){ ?>
+<span style="top: 0px; left: 0px;"><?php echo $item->reference_no; ?></span>
+<?php } ?>
+
 <span style="top: 112px; left: 170px;letter-spacing: 10px;"><?php echo $m; ?></span>
 <span style="top: 112px; left: 203px;letter-spacing: 10px;"><?php echo $from_period_day; ?></span>
 <span style="top: 112px; left: 235px;letter-spacing: 10px;"><?php echo $y; ?></span>

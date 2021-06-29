@@ -565,6 +565,12 @@
                                         <input class="form-control text-center numeric" id="cash_amount" type="text" maxlength="12" value="0.00" name="amount" required data-error-msg="Amount is Required!">
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label>Net Amount  :</label><br />
+                                        <input class="form-control text-center numeric" id="net_amount" type="text" value="0.00" name="net_amount" data-error-msg="Net Amount is Required!">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

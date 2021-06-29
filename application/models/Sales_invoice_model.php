@@ -680,7 +680,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                             FROM 
                                 (SELECT 
                                 bi.tenant_id,
-                                CONVERT(CONCAT(bi.app_year,'-',LPAD(bi.month_id, 2, 0),'-01'), DATE) as billing_date,
+                                CONVERT(CONCAT(bi.app_year,'-',LPAD(bi.month_id, 2, 0),'-20'), DATE) as billing_date,
                                 bi.total_amount_due
                                 FROM b_billing_info bi 
 

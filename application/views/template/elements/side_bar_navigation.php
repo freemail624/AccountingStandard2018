@@ -173,6 +173,8 @@
                                         
                                         <li class="<?php echo (in_array('9-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Trial_balance">Trial Balance</a></li>
                                         <li class="<?php echo (in_array('9-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Balance_sheet">Balance Sheet</a></li>
+
+                                        <li class="<?php echo (in_array('9-29',$this->session->user_rights)?'':'hidden'); ?>"><a href="Cash_flow">Cash Flow</a></li>
                                     </ul>
                                 </li>
                                 <li class="hasChild secondChild">

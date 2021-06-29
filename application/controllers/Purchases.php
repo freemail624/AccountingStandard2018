@@ -305,6 +305,9 @@ class Purchases extends CORE_Controller
                     $m_purchases->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                     $m_purchases->total_after_discount=$this->get_numeric_value($this->input->post('total_after_discount',TRUE));
 
+                    $m_purchases->discount_type_id=$this->get_numeric_value($this->input->post('discount_type_id',TRUE));
+
+
                     $m_purchases->save();
 
                     $po_id=$m_purchases->last_insert_id();
@@ -400,6 +403,8 @@ class Purchases extends CORE_Controller
                     $m_purchases->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
                     $m_purchases->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                     $m_purchases->total_after_discount=$this->get_numeric_value($this->input->post('total_after_discount',TRUE));
+                    
+                    $m_purchases->discount_type_id=$this->get_numeric_value($this->input->post('discount_type_id',TRUE));
                     $m_purchases->modify($po_id);
 
 

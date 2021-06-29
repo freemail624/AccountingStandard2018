@@ -611,15 +611,18 @@ class Templates extends CORE_Controller {
                         }
 
                         if($type=='tsb'){
-                            $file_name=$info[0]->po_no;
-                            $pdfFilePath = $file_name.".pdf"; //generate filename base on id
-                            $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
-                            $pdf = $this->m_pdf->load("Letter-L");
-                            $content=$this->load->view('template/po_content_new_tsb',$data,TRUE); //load the template
-                            // $pdf->setFooter('{PAGENO}');
-                            $pdf->WriteHTML($content);
-                            //download it.
-                            $pdf->Output();
+                            // $file_name=$info[0]->po_no;
+                            // $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                            // // $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                            // $pdf = $this->m_pdf->load("A5");
+                            // $content=$this->load->view('template/po_content_custom_tsb',$data,TRUE); //load the template
+                            // // $pdf->setFooter('{PAGENO}');
+                            // $pdf->WriteHTML($content);
+                            // //download it.
+                            // $pdf->Output();
+
+
+                            echo $this->load->view('template/po_content_custom_tsb',$data,TRUE);
 
                         }
 
@@ -2912,15 +2915,17 @@ class Templates extends CORE_Controller {
                 }
 
                 if($type == "RR"){
-                    $file_name=$purchase_info[0]->dr_invoice_no;
-                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
-                    $pdf = $this->m_pdf->load('Letter'); //pass the instance of the mpdf class
-                    $content=$this->load->view('template/ap_journal_rr',$data,TRUE);
-                    // $pdf->setFooter('{PAGENO}');
-                    $pdf->WriteHTML($content);
-                    //download it.
-                    $pdf->Output();
+                    // $file_name=$purchase_info[0]->dr_invoice_no;
+                    // $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    // $pdf = $this->m_pdf->load('Letter'); //pass the instance of the mpdf class
+                    // $content=$this->load->view('template/ap_journal_rr',$data,TRUE);
+                    // // $pdf->setFooter('{PAGENO}');
+                    // $pdf->WriteHTML($content);
+                    // //download it.
+                    // $pdf->Output();
 
+                    echo $this->load->view('template/ap_journal_rr_custom',$data,TRUE); //details of the journal
+                
                 }
 
 

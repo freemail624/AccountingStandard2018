@@ -39,6 +39,7 @@
 	    function get_2307_items($particular_id,$type,$month=null,$year=null){
 	    	$sql="SELECT 
 			    form_2307.*,
+			   	CONCAT(IFNULL(ji.ref_type,''),'-',IFNULL(ji.ref_no,'')) as reference_no,
 			    m.month_name,
 			    m.quarter,
 			    tc.atc as atc,
@@ -51,6 +52,8 @@
 			    months m ON m.month_id = MONTH(date)
 			        LEFT JOIN
 			    tax_code tc ON tc.atc_id = form_2307.atc_id
+			    	LEFT JOIN
+			    journal_info ji ON ji.journal_id = form_2307.journal_id
 			WHERE
 				form_2307.is_deleted = FALSE AND form_2307.is_active = TRUE 
 			    

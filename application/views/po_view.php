@@ -261,7 +261,25 @@
                             <?php } ?>
                         </select>
                     </div>
-                    <div class="col-sm-2 col-sm-offset-3">
+                    <div class="col-sm-3">
+                        Contact Person : <br />
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <i class="fa fa-users"></i>
+                            </span>
+                            <input type="text" name="contact_person" class="form-control" placeholder="Contact Person">
+                        </div>
+
+                        <div style="display: none;">
+                            Tax type : <br />
+                            <select name="tax_type" id="cbo_tax_type">
+                                <?php foreach($tax_types as $tax_type){ ?>
+                                    <option value="<?php echo $tax_type->tax_type_id; ?>" data-tax-rate="<?php echo $tax_type->tax_rate; ?>"><?php echo $tax_type->tax_type; ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
                         Invoice Date :<br />
                         <div class="input-group">
 
@@ -305,24 +323,16 @@
                             <?php } ?>
                         </select>
                     </div>
-
-                    <div class="col-sm-4 col-sm-offset-3">
-
-                        Contact Person : <br />
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="fa fa-users"></i>
-                            </span>
-                            <input type="text" name="contact_person" class="form-control" placeholder="Contact Person">
-                        </div>
-
-                        <div style="display: none;">
-                            Tax type : <br />
-                            <select name="tax_type" id="cbo_tax_type">
-                                <?php foreach($tax_types as $tax_type){ ?>
-                                    <option value="<?php echo $tax_type->tax_type_id; ?>" data-tax-rate="<?php echo $tax_type->tax_rate; ?>"><?php echo $tax_type->tax_type; ?></option>
-                                <?php } ?>
-                            </select></div>
+                    <div class="col-sm-3">
+                        Contact No : <br />
+                        <input type="text" name="contact_no" class="form-control" placeholder="Contact Number">
+                    </div>
+                    <div class="col-sm-4">
+                        Discount Type : <br/>
+                        <select class="form-control" name="discount_type_id" id="cbo_discount_type">
+                            <option value="1">Percentage</option>
+                            <option value="2">Amount</option>
+                        </select>
                     </div>
                 </div>
 
@@ -330,16 +340,13 @@
                     <div class="col-sm-5">
                         Deliver to Address * : <br />
                         <textarea name="deliver_to_address" class="form-control" placeholder="Deliver to Address" data-error-msg="Deliver address is required!" required></textarea>
-
                     </div>
-
-                    <div class="col-sm-2 col-sm-offset-3">
-                        Contact No : <br />
-                        <input type="text" name="contact_no" class="form-control" placeholder="Contact Number">
-                    </div>
-                    <div class="col-sm-2 ">
+                    <div class="col-sm-3">
                         Terms : <br />
                         <input type="text" name="terms" class="form-control" placeholder="Terms">
+                    </div>
+                    <div class="col-sm-4">
+
                     </div>
                 </div>
 
@@ -369,7 +376,7 @@
                         <th width="10%">UM</th>
                         <th width="15%">Item</th>
                         <th width="10%" style="text-align: right;">Unit Price</th>
-                        <th width="10%" style="text-align: right;">Discount(%)</th>
+                        <th width="10%" style="text-align: right;">Discount(<span class="discount_label"></span>)</th>
 
                         <th style="display: none;" width="5%">T.D</th> <!-- total discount -->
                         <th style="display: none;" width="5%">Tax %</th>
@@ -393,7 +400,7 @@
                         <td colspan="7" style="height: 20px;">&nbsp;</td>
                     </tr>
                     <tr>
-                        <td colspan="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount (%) :</strong></td>
+                        <td colspan="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount (<span class="discount_label"></span>) :</strong></td>
                         <td align="right" colspan="1" id="" color="red">
                             <input id="txt_overall_discount" name="total_overall_discount" type="text" class="numeric form-control" value="0.00" />
                             <input id="txt_overall_discount_amount" name="total_overall_discount_amount" type="hidden" class="numeric form-control" value="0.00" />
@@ -985,7 +992,7 @@
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboSuppliers; var _cboTaxType;
     var _cboDepartments; var _defCostType; var products; var _line_unit; var changetxn; var _cboApproval;
-
+    var _cboDiscountType;
 
     //_defCostType=1; //Luzon Area Purchase Cost is default, this will change when branch is specified
 
@@ -1025,6 +1032,12 @@ $(document).ready(function(){
         });
 
         _cboApproval.select2('val',0);
+
+        _cboDiscountType=$('#cbo_discount_type').select2({
+            placeholder: "",
+            minimumResultsForSearch : -1,
+            allowClear: false
+        });
 
         $('.date-picker').datepicker({
             todayBtn: "linked",
@@ -1348,6 +1361,28 @@ $(document).ready(function(){
     var bindEventHandlers=(function(){
         var detailRows = [];
 
+        var reInitializeDiscount = function(){
+
+            var discount_type = $('#cbo_discount_type').val();
+            var discount_label;
+
+            if(discount_type == 1){
+                discount_label = "%";
+            }else{
+                discount_label = "Amt";
+            }
+
+            $('.po_discount').val(accounting.formatNumber(0,2));
+            $('.discount_label').html(discount_label);
+
+            $('.number-keyup').keyup();
+            reComputeTotal();
+        };
+
+        $('#cbo_discount_type').on("change", function(){
+            reInitializeDiscount();
+        });
+
         $('#tbl_purchases tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
             var row = dt.row( tr );
@@ -1447,7 +1482,9 @@ $(document).ready(function(){
 
             $('input[name="date_invoice"]').datepicker('setDate','today');
             $('input[name="date_delivery"]').datepicker('setDate','today');
-            
+        
+            _cboDiscountType.select2('val', 1);
+            reInitializeDiscount();
             //$('#cbo_prodType').select2('val',3);
             $('#typeaheadsearch').val('');
             getproduct().done(function(data){
@@ -1578,7 +1615,7 @@ $(document).ready(function(){
 
             $('#cbo_suppliers').select2('val',data.supplier_id);
             $('#cbo_departments').select2('val',data.department_id);
-
+            $('#cbo_discount_type').select2('val', data.discount_type_id);
             //var tbl_summary=$('#tbl_purchase_summary');
             //tbl_summary.find(oTableDetails.discount).html(accounting.formatNumber(data.total_discount,2));
             //tbl_summary.find(oTableDetails.before_tax).html(accounting.formatNumber(data.total_before_tax,2));
@@ -1733,18 +1770,25 @@ $(document).ready(function(){
             //     row.find(oTableItems.discount).find('input.numeric').val('0.00');
             // }
             var global_discount = $('#txt_overall_discount').val();
-            var discounted_price=price-discount;
-            var line_total_discount=discount*qty;
-            var line_total=price*qty;
-            var new_discount_price=line_total*(discount/100);
-            var new_line_total=line_total-new_discount_price;
-            var total_after_global = new_line_total-(new_line_total*(global_discount/100));
-            var net_vat=total_after_global/(1+tax_rate);
-            var vat_input=total_after_global-net_vat;
+            var line_total = price * qty;
+
+            var discount_type = $('#cbo_discount_type').val();
+            var line_total_discount = discount_type == 2 ? discount : line_total * (discount / 100);
+
+            var new_line_total = line_total - (line_total_discount);
+
+
+            var global_total_discount = discount_type == 2 ? global_discount : new_line_total * (global_discount / 100);
+
+            var total_after_global = new_line_total - global_total_discount;
+
+            var net_vat = total_after_global / (1 + tax_rate);
+            var vat_input = total_after_global - net_vat;
+
 
             $(oTableItems.total,row).find('input.numeric').val(accounting.formatNumber(new_line_total,2)); // line total amount
             $(oTableItems.total_after_global,row).find('input.numeric').val(accounting.formatNumber(total_after_global,2)); // line total amount
-            $(oTableItems.total_line_discount,row).find('input.numeric').val(accounting.formatNumber(new_discount_price,2)); //line total discount
+            $(oTableItems.total_line_discount,row).find('input.numeric').val(accounting.formatNumber(line_total_discount,2)); //line total discount
             $(oTableItems.net_vat,row).find('input.numeric').val(accounting.formatNumber(net_vat,2)); //net of vat
             $(oTableItems.vat_input,row).find('input.numeric').val(accounting.formatNumber(vat_input,2)); //vat input
 
@@ -2123,7 +2167,7 @@ $(document).ready(function(){
         '<td ><input name="po_qty[]" type="text" class="numeric form-control number-keyup" value="'+ d.po_qty+'"></td>'+unit+'<td >'+d.product_desc+' <input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
 
         '<td ><input name="po_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.po_price,2)+'" style="text-align:right;"></td>'+
-        '<td ><input name="po_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.po_discount,2)+'" style="text-align:right;"></td>'+
+        '<td ><input name="po_discount[]" type="text" class="numeric form-control po_discount" value="'+ accounting.formatNumber(d.po_discount,2)+'" style="text-align:right;"></td>'+
         //display:none;
         '<td style="display: none;" ><input name="po_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.po_line_total_discount,2)+'" readonly></td>'+
         '<td style="display: none;"><input name="po_tax_rate[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.po_tax_rate,2)+'"></td>'+

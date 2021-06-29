@@ -189,7 +189,7 @@ class Cash_vouchers extends CORE_Controller
                 $m_info->atc_id=$this->input->post('atc_id',TRUE);
                 // $m_info->atc_2307=$this->input->post('atc_2307',TRUE);
                 // $m_info->remarks_2307=$this->input->post('remarks_2307',TRUE);
-
+                $m_info->net_amount=$this->get_numeric_value($this->input->post('net_amount'));
                 $m_info->dr_invoice_id=$dr_invoice_id;
                 $m_info->save();
 
@@ -312,6 +312,7 @@ class Cash_vouchers extends CORE_Controller
 
                 $m_info->is_2307 =$this->get_numeric_value($this->input->post('is_2307',TRUE));
                 $m_info->atc_id=$this->input->post('atc_id',TRUE);
+                $m_info->net_amount=$this->get_numeric_value($this->input->post('net_amount'));
                 // $m_info->atc_2307=$this->input->post('atc_2307',TRUE);
                 // $m_info->remarks_2307=$this->input->post('remarks_2307',TRUE);
                 $m_info->dr_invoice_id=$dr_invoice_id;

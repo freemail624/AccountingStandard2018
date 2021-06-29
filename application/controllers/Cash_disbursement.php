@@ -188,6 +188,7 @@ class Cash_disbursement extends CORE_Controller
                 $m_journal->check_no=$voucher_info->check_no;
                 $m_journal->check_date=date('Y-m-d',strtotime($voucher_info->check_date));
                 $m_journal->amount=$this->get_numeric_value($voucher_info->amount);
+                $m_journal->net_amount=$this->get_numeric_value($voucher_info->net_amount);
 
                 //for audit details
                 $m_journal->set('date_created','NOW()');
@@ -195,12 +196,11 @@ class Cash_disbursement extends CORE_Controller
                 $m_journal->save();
 
                 $journal_id=$m_journal->last_insert_id();                   
-                $total_amount=0;
+                $net_amount=$this->get_numeric_value($voucher_info->net_amount);
                 $total_wtax=0;
                 
                 $j_accounts=$this->Cash_vouchers_accounts_model->get_list(array('cv_accounts.cv_id'=>$cv_id));
                 foreach($j_accounts as $j_account){
-                    $total_amount+=$this->get_numeric_value($j_account->dr_amount);
                     if ($account_integration[0]->supplier_wtax_account_id == $j_account->account_id){
                         $total_wtax+=$this->get_numeric_value($j_account->cr_amount);
                     }
@@ -229,7 +229,7 @@ class Cash_disbursement extends CORE_Controller
                 $form_2307_apply=$voucher_info->is_2307;
                 $supplier=$m_supplier->get_list($voucher_info->supplier_id);
                 $company=$m_company->get_list();
-                $tax_rate = ($total_wtax/$total_amount)*100;
+                $tax_rate = ($total_wtax/$net_amount)*100;
 
                 if ($form_2307_apply == 1){
                     $m_form_2307->journal_id=$journal_id;
@@ -249,7 +249,7 @@ class Cash_disbursement extends CORE_Controller
                     // $m_form_2307->payor_tin=$company[0]->tin_no;
                     // $m_form_2307->payor_address=$company[0]->registered_address;
                     // $m_form_2307->zip_code = $company[0]->zip_code; 
-                    $m_form_2307->gross_amount=$this->get_numeric_value($total_amount);
+                    $m_form_2307->gross_amount=$this->get_numeric_value($net_amount);
                     $m_form_2307->deducted_amount=$this->get_numeric_value($total_wtax);
                     $m_form_2307->tax_rate=$this->get_numeric_value($tax_rate);
                     $m_form_2307->atc_id=$voucher_info->atc_id;
@@ -397,6 +397,7 @@ class Cash_disbursement extends CORE_Controller
                     $m_journal->check_date=date('Y-m-d',strtotime($this->input->post('check_date',TRUE)));
                 }
                 $m_journal->amount=$this->get_numeric_value($this->input->post('amount'));
+                $m_journal->net_amount=$this->get_numeric_value($this->input->post('net_amount'));
 
                 //for audit details
                 $m_journal->set('date_created','NOW()');
@@ -410,12 +411,10 @@ class Cash_disbursement extends CORE_Controller
                 $cr_amounts=$this->input->post('cr_amount',TRUE);
                 $department_id_line=$this->input->post('department_id_line',TRUE);
                     
-                $total_amount=0;
                 $total_wtax=0;
-                
+                $net_amount = $this->get_numeric_value($this->input->post('net_amount',TRUE));
 
                 for($i=0;$i<=count($accounts)-1;$i++){
-                    $total_amount+=$this->get_numeric_value($dr_amounts[$i]);
                     if ($account_integration[0]->supplier_wtax_account_id == $accounts[$i]){
                         $total_wtax+=$this->get_numeric_value($cr_amounts[$i]);
                     }
@@ -436,7 +435,7 @@ class Cash_disbursement extends CORE_Controller
                 $supplier_id=$this->input->post('supplier_id',TRUE);
                 $supplier=$m_supplier->get_list($supplier_id);
                 $company=$m_company->get_list();
-                $tax_rate = ($total_wtax/$total_amount)*100;
+                $tax_rate = ($total_wtax/$net_amount)*100;
 
                 if ($form_2307_apply == 1){
                     $m_form_2307->journal_id=$journal_id;
@@ -459,7 +458,7 @@ class Cash_disbursement extends CORE_Controller
                     // $m_form_2307->payor_tin=$company[0]->tin_no;
                     // $m_form_2307->payor_address=$company[0]->registered_address;
                     // $m_form_2307->zip_code = $company[0]->zip_code; 
-                    $m_form_2307->gross_amount=$this->get_numeric_value($total_amount);
+                    $m_form_2307->gross_amount=$this->get_numeric_value($net_amount);
                     $m_form_2307->deducted_amount=$this->get_numeric_value($total_wtax);
                     $m_form_2307->tax_rate=$this->get_numeric_value($tax_rate);                    
                     $m_form_2307->atc_id=$this->input->post('atc_id',TRUE);
@@ -554,6 +553,7 @@ class Cash_disbursement extends CORE_Controller
                 $m_journal->ref_type=$this->input->post('ref_type');
                 $m_journal->ref_no=$this->input->post('ref_no');
                 $m_journal->amount=$this->get_numeric_value($this->input->post('amount'));
+                $m_journal->net_amount=$this->get_numeric_value($this->input->post('net_amount'));
 
                 //for audit details
                 $m_journal->set('date_modified','NOW()');
@@ -569,11 +569,10 @@ class Cash_disbursement extends CORE_Controller
 
                 $m_journal_accounts->delete_via_fk($journal_id);
 
-                $total_amount=0;
+                $net_amount=$this->get_numeric_value($this->input->post('net_amount',TRUE));
                 $total_wtax=0;
 
                 for($i=0;$i<=count($accounts)-1;$i++){
-                    $total_amount+=$this->get_numeric_value($dr_amounts[$i]);
                     if ($account_integration[0]->supplier_wtax_account_id == $accounts[$i]){
                         $total_wtax+=$this->get_numeric_value($cr_amounts[$i]);
                     }
@@ -595,7 +594,7 @@ class Cash_disbursement extends CORE_Controller
                 $supplier_id=$this->input->post('supplier_id',TRUE);
                 $supplier=$m_supplier->get_list($supplier_id);
                 $company=$m_company->get_list();
-                $tax_rate = ($total_wtax/$total_amount)*100;
+                $tax_rate = ($total_wtax/$net_amount)*100;
 
                 if ($form_2307_apply == 1){
 
@@ -619,7 +618,7 @@ class Cash_disbursement extends CORE_Controller
                     // $m_form_2307->payor_tin=$company[0]->tin_no;
                     // $m_form_2307->payor_address=$company[0]->registered_address;
                     // $m_form_2307->zip_code = $company[0]->zip_code; 
-                    $m_form_2307->gross_amount=$this->get_numeric_value($total_amount);
+                    $m_form_2307->gross_amount=$this->get_numeric_value($net_amount);
                     $m_form_2307->deducted_amount=$this->get_numeric_value($total_wtax);
                     $m_form_2307->tax_rate=$this->get_numeric_value($tax_rate);                      
                     $m_form_2307->atc_id=$this->input->post('atc_id',TRUE);
@@ -749,6 +748,7 @@ class Cash_disbursement extends CORE_Controller
             "journal_info.is_deleted=FALSE AND journal_info.book_type='CDJ'".($criteria==null?'':' AND journal_info.journal_id='.$criteria)."".($additional==null?'':$additional),
 
             array(
+                'journal_info.net_amount',
                 'journal_info.journal_id',
                 'journal_info.txn_no',
                 'DATE_FORMAT(journal_info.date_txn,"%m/%d/%Y")as date_txn',
