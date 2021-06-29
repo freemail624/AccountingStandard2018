@@ -703,7 +703,8 @@ class Templates extends CORE_Controller {
                     $file_name=$info[0]->service_invoice_no;
                     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                     $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
-                    $content=$this->load->view('template/service_invoice_content',$data,TRUE);//load the template
+                    $content=$this->load->view('template/service_invoice_content_standard',$data,TRUE);
+                    // $content=$this->load->view('template/service_invoice_content',$data,TRUE);//load the template
                     $pdf->setFooter('{PAGENO}');
                     $pdf->WriteHTML($content);
                     //download it.
