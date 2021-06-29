@@ -2,7 +2,7 @@
     span{
         position: absolute;
         z-index: 200;
-        font-size: 9pt;
+        font-size: 11pt;
         text-transform: uppercase;
     }
 
@@ -12,7 +12,7 @@
         width: auto;
         height: auto;   
         top: 180px;      
-        left: 10px;    
+        left: 30px;    
     }
 
     @page { 
@@ -25,12 +25,12 @@
 </style>
 <!-- <img src="<?php //echo base_url(); ?>/assets/img/rr.jpg" style="top: 0px; left: 0px; width: 100%;position: absolute;z-index: 100;height: 100%;"> -->
 
-<span style="top: 105px; left: 140px;"><?php echo $purchase_info->supplier_name; ?></span>
-<span style="top: 105px; left: 540px;"><?php echo $purchase_info->date_delivered; ?></span>
+<span style="top: 102px; left: 150px;"><?php echo $purchase_info->supplier_name; ?></span>
+<span style="top: 102px; left: 555px;"><?php echo $purchase_info->date_delivered; ?></span>
 
 <div class="panel">
 
-        <table width="100%" style="font-size: 10pt;">
+        <table width="100%" style="font-size: 12pt;">
 
             <?php 
             $dr_amount = 0;
@@ -51,7 +51,7 @@
             ?>
                 <?php if($entry->dr_amount > 0){ ?>
                     <tr>
-                        <td style="width: 380px;max-width: 380px;">
+                        <td style="width: 370px;max-width: 370px;">
                             <?php echo $entry->account_title; ?>
                         </td>
                         <td style="width: 165px;max-width: 165px;padding-left: 10px;">
@@ -63,11 +63,11 @@
 
                 <?php if($entry->cr_amount > 0){ ?>
                     <tr>
-                        <td align="right" style="width: 380px;max-width: 380px;">
+                        <td align="right" style="width: 370px;max-width: 370px;padding-right: 10px;">
                             <?php echo $entry->account_title; ?>
                         </td>
                         <td style="width: 165px;max-width: 165px;padding-left: 10px;">&nbsp;</td>
-                        <td style="width: 165px;max-width: 165px;padding-right: 10px;" align="right">
+                        <td style="width: 165px;max-width: 165px;padding-right: 20px;" align="right">
                             <?php echo number_format($entry->cr_amount,2); ?>
                         </td>
                     </tr>

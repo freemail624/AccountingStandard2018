@@ -11,8 +11,8 @@
         z-index: 200;  
         width: auto;
         height: auto;   
-        top: 230px;      
-        left: 0px;    
+        top: 250px;      
+        left: 30px;    
     }
 
     @page { 
@@ -22,14 +22,14 @@
     }
     
 </style>
-<!-- <img src="<?php echo base_url(); ?>/assets/img/po.jpg" style="top: 0px; left: 0px; width: 100%;position: absolute;z-index: 100;height: 100%;">
- -->
-<span style="top: 155px; left: 53px;"><?php echo $purchase_info->supplier_name; ?></span>
-<span style="top: 170px; left: 45px;"><?php echo $purchase_info->terms; ?></span>
+<!-- <img src="<?php //echo base_url(); ?>/assets/img/po.jpg" style="top: 0px; left: 0px; width: 100%;position: absolute;z-index: 100;height: 100%;"> -->
 
-<span style="top: 138px; left: 330px;"><?php echo date('m/d/Y'); ?></span>
-<span style="top: 155px; left: 350px;"><?php echo $purchase_info->contact_no; ?></span>
-<span style="top: 169px; left: 370px;"><?php echo $purchase_info->date_invoice; ?></span>
+<span style="top: 175px; left: 83px;"><?php echo $purchase_info->supplier_name; ?></span>
+<span style="top: 190px; left: 75px;"><?php echo $purchase_info->terms; ?></span>
+
+<span style="top: 158px; left: 360px;"><?php echo date('m/d/Y'); ?></span>
+<span style="top: 175px; left: 380px;"><?php echo $purchase_info->contact_no; ?></span>
+<span style="top: 189px; left: 400px;"><?php echo $purchase_info->date_invoice; ?></span>
 
 <div class="panel">
 

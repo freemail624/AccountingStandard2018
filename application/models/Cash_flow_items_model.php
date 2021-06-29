@@ -8,13 +8,13 @@ class Cash_flow_items_model extends CORE_Model {
         parent::__construct();
     }
     	
-    function get_cash_flow($cash_flow_ref_id=null,$start_date,$end_date){
+	function get_cash_flow($cash_flow_ref_id=null,$start_date,$end_date){
     	$sql="SELECT 
 			    main.*,
 			    (CASE
 					WHEN main.cash_flow_ref_id = 1 THEN (main.previous)
-			        WHEN main.cash_flow_ref_id = 3 THEN (main.previous - main.current)
-			        WHEN main.cash_flow_ref_id = 4 THEN (main.current - main.previous)
+			        WHEN main.cash_flow_ref_id = 3 THEN (main.current - main.previous)
+			        WHEN main.cash_flow_ref_id = 4 THEN (main.previous - main.current)
 			        ELSE main.current
 			    END) AS total_amount
 			FROM
@@ -23,7 +23,12 @@ class Cash_flow_items_model extends CORE_Model {
 			            at.account_title,
 			            at.parent_account_id,
 			            COALESCE((SELECT 
-			                    (SUM(ja.dr_amount) - SUM(ja.cr_amount)) AS amount
+			                    (CASE
+			                    	WHEN cfi.cash_flow_ref_id = 5 THEN (SUM(ja.cr_amount) - SUM(ja.dr_amount))
+			                    	WHEN cfi.cash_flow_ref_id = 6 THEN (SUM(ja.cr_amount) - SUM(ja.dr_amount))
+			                    	ELSE 
+			                    		(SUM(ja.dr_amount) - SUM(ja.cr_amount))
+			                    END) AS amount
 			                FROM
 			                    journal_info ji
 			                LEFT JOIN journal_accounts ja ON ja.journal_id = ji.journal_id
@@ -34,7 +39,12 @@ class Cash_flow_items_model extends CORE_Model {
 			                        AND ja.account_id = cfi.account_id
 			                GROUP BY ja.account_id), 0) AS previous,
 			            COALESCE((SELECT 
-			                    (SUM(ja.dr_amount) - SUM(ja.cr_amount)) AS amount
+			                    (CASE
+			                    	WHEN cfi.cash_flow_ref_id = 5 THEN (SUM(ja.cr_amount) - SUM(ja.dr_amount))
+			                    	WHEN cfi.cash_flow_ref_id = 6 THEN (SUM(ja.cr_amount) - SUM(ja.dr_amount))
+			                    	ELSE 
+			                    		(SUM(ja.dr_amount) - SUM(ja.cr_amount))
+			                    END) AS amount
 			                FROM
 			                    journal_info ji
 			                LEFT JOIN journal_accounts ja ON ja.journal_id = ji.journal_id
