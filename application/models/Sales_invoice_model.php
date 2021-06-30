@@ -225,7 +225,7 @@ function get_journal_entries_2($sales_invoice_id){
             output_tax.memo,
             SUM(output_tax.cr_amount)as cr_amount,
             0 as dr_amount
-             FROM
+            FROM
             (SELECT sii.product_id,
 
             (SELECT output_tax_account_id FROM account_integration) as account_id

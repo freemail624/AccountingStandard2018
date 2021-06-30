@@ -351,7 +351,7 @@
                                         <div class="col-lg-4" style="margin:0px;">
 
                                             <div class="form-group" style="margin-bottom:0px;">
-                                                <label class="">Link to Credit Account :</label>
+                                                <label class="">Link to Sales Account :</label>
 
                                                 <select name="income_account_id" id="income_account_id" data-error-msg="Link to Account is required." required>
                                                     <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
@@ -363,9 +363,9 @@
 
                                             </div>
                                             <div class="form-group" style="margin-bottom:0px;">
-                                                <label class="">Link to Debit Account :</label>
+                                                <label class="">Link to Discount Account :</label>
 
-                                                <select name="expense_account_id" id="expense_account_id" data-error-msg="Link to Account is required." required>
+                                                <select name="discount_account_id" id="discount_account_id" data-error-msg="Link to Account is required." required>
                                                     <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
                                                     <option value="0">None</option>
                                                     <?php foreach ($accounts as $account) { ?>
@@ -548,7 +548,7 @@
                 allowClear: false
             });
 
-            _cboDebit = $('#expense_account_id').select2({
+            _cboDebit = $('#discount_account_id').select2({
                 allowClear: false
             });
 
@@ -614,7 +614,7 @@
 
                 _cboCredit.select2('val', data.income_account_id);
 
-                _cboDebit.select2('val', data.expense_account_id);
+                _cboDebit.select2('val', data.discount_account_id);
 
                 _cboTax.select2('val', data.tax_type_id);
 

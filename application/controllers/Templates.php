@@ -144,6 +144,7 @@ class Templates extends CORE_Controller {
                         'service_invoice.total_amount',
                         'service_invoice.total_overall_discount_amount',
                         'service_invoice.total_amount_after_discount',
+                        'service_invoice.total_tax_amount',
                         'DATE_FORMAT(service_invoice.date_invoice,"%m/%d/%Y")as date_invoice',
                         'DATE_FORMAT(service_invoice.date_created,"%m/%d/%Y %r")as date_created',
                         'service_invoice.posted_by_user',

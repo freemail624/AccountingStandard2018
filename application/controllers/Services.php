@@ -65,7 +65,7 @@ class Services extends CORE_Controller
                 $m_services->service_unit = $this->input->post('service_unit',TRUE);
                 $m_services->tax_type_id = $this->get_numeric_value($this->input->post('tax_type_id',TRUE));
                 $m_services->income_account_id = $this->input->post('income_account_id',TRUE);
-                $m_services->expense_account_id = $this->input->post('expense_account_id',TRUE);
+                $m_services->discount_account_id = $this->input->post('discount_account_id',TRUE);
                 $m_services->service_amount = $this->get_numeric_value($this->input->post('service_amount',TRUE));
                 $m_services->save();
                 $service_id = $m_services->last_insert_id();
@@ -85,7 +85,7 @@ class Services extends CORE_Controller
                 $m_services->service_unit = $this->input->post('service_unit',TRUE);
                 $m_services->tax_type_id = $this->get_numeric_value($this->input->post('tax_type_id', TRUE));
                 $m_services->income_account_id = $this->input->post('income_account_id',TRUE);
-                $m_services->expense_account_id = $this->input->post('expense_account_id',TRUE);
+                $m_services->discount_account_id = $this->input->post('discount_account_id', TRUE);
                 $m_services->service_amount = $this->get_numeric_value($this->input->post('service_amount',TRUE));
                 $m_services->modify($service_id);
 

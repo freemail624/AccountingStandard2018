@@ -157,7 +157,7 @@
                                 </div>
                             </div>
                             <div class="tab-pane" id="purchase_review_<?php echo $service_invoice->service_invoice_id; ?>">
-                                <h4><span style="margin-left: 1%"><strong><i class="fa fa-bars"></i> Sales Invoice</strong></span></h4>
+                                <h4><span style="margin-left: 1%"><strong><i class="fa fa-bars"></i> Service Invoice</strong></span></h4>
                                 <hr />
                                 <div style="margin-left: 2%">
                                     <div class="row">
@@ -180,16 +180,19 @@
                                     <table class="table table-striped" style="width: 100% !important;">
                                         <thead>
                                             <tr style="border-bottom: solid gray;">
-                                                <td style="width: 35%;"><strong>Item</strong></td>
-                                                <td style="width: 15%;text-align: left;"><strong>Qty</strong></td>
+                                                <td style="width: 30%;"><strong>Item</strong></td>
+                                                <td style="width: 10%;text-align: left;"><strong>Qty</strong></td>
                                                 <td style="width: 12%;"><strong>UM</strong></td>
                                                 <td style="width: 12%;text-align: right;"><strong>Price</strong></td>
+                                                <td style="width: 12%;text-align: right;"><strong>Discount</strong></td>
+                                                <td style="width: 12%;text-align: right;"><strong>Tax</strong></td>
                                                 <td style="width: 12%;text-align: right;"><strong>Total</strong></td>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $inv_total_price = 0.00;
+                                            $total_gross = 0.00;
+                                            $total_discount_per_item = 0.00;
                                             foreach ($items as $item) {
                                             ?>
                                                 <tr>
@@ -197,27 +200,38 @@
                                                     <td style="text-align: left;"><?php echo $item->service_qty; ?></td>
                                                     <td><?php echo $item->service_unit_name; ?></td>
                                                     <td align="right"><?php echo number_format($item->service_price, 2); ?></td>
+                                                    <td align="right"><?php echo number_format($item->service_line_total_discount, 2); ?></td>
+                                                    <td align="right"><?php echo number_format($item->service_tax_amount, 2); ?></td>
                                                     <td align="right"><?php echo number_format($item->service_line_total, 2); ?></td>
                                                 </tr>
                                             <?php
-                                                $inv_total_price += $item->service_line_total;
+                                                $total_gross += $item->service_line_total;
+                                                $total_discount_per_item += $item->service_line_total_discount;
                                             }
                                             ?>
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <td colspan="5"> </td>
+                                                <td colspan="7"> </td>
                                             </tr>
                                             <tr>
-                                                <td colspan="4" align="right">Total before Discount: </td>
-                                                <td align="right"><?php echo number_format($service_invoice->total_amount, 2); ?></td>
+                                                <td colspan="6" align="right">Gross Total: </td>
+                                                <td align="right"><?php echo number_format($total_gross, 2); ?></td>
                                             </tr>
                                             <tr>
-                                                <td colspan="4" align="right">Discount: </td>
+                                                <td colspan="6" align="right">Discount Per Item: </td>
+                                                <td align="right"><?php echo number_format($total_discount_per_item, 2); ?></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="6" align="right">Global Discount: </td>
                                                 <td align="right"><?php echo number_format($service_invoice->total_overall_discount_amount, 2); ?></td>
                                             </tr>
                                             <tr>
-                                                <td colspan="4" align="right"><strong>Total after Discount: </strong></td>
+                                                <td colspan="6" align="right">Total Tax: </td>
+                                                <td align="right"><?php echo number_format($service_invoice->total_tax_amount, 2); ?></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="6" align="right"><strong>Total Service Amount: </strong></td>
                                                 <td align="right"><strong><?php echo number_format($service_invoice->total_amount_after_discount, 2); ?></strong></td>
                                             </tr>
                                         </tfoot>
