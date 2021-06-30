@@ -109,7 +109,7 @@
                                             </div >
                                             <button class="btn btn-success btn btn-sm col-sm-2 " style="" id="btn_email" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Send to Email" ><i class="fa fa-share"></i> Email
                                             </button>
-                                            <div class=" col-sm-2" style="margin-left: 10px;padding-left: 0; padding-right: 0; margin-bottom: 10px;">
+                                            <div class="col-sm-2" style="margin-left: 10px;padding-left: 0; padding-right: 0; margin-bottom: 10px;">
                                                 <a href="Annual_income_statement/Export" id="btn_export" class="btn btn-success btn-block"><span class="fa fa-file-excel-o"></span>&nbsp;Export to Excel</a>
                                             </div>
 

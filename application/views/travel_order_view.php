@@ -154,7 +154,7 @@
                                             </div>
                                             <div class="col-md-3">
                                                 <label><b class="required">*</b> Official Designation :</label> <br/>
-                                                <input type="text" name="official_designation" class=" form-control" placeholder="Official Designation" data-error-msg="Official Designation is required!" required>
+                                                <input type="text" name="official_designation" class="form-control" placeholder="Official Designation" data-error-msg="Official Designation is required!" required>
                                             </div>
                                             <div class="col-md-4">
                                                 <label><b class="required">*</b> Travel Date :</label> <br/>

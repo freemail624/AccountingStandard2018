@@ -781,7 +781,7 @@ class Journal_info_model extends CORE_Model{
     }
 
 
-    function get_account_balance($type_id,$depid=null,$start=null,$end=null){
+    function get_account_balance($type_id,$depid=null,$start=null,$end=null,$customerId=null){
         $sql="SELECT main.*,att.account_title FROM(SELECT ji.journal_id,
             at.account_no,at.grand_parent_id,ac.account_type_id,ac.account_class_id,
             IF(
@@ -802,7 +802,8 @@ class Journal_info_model extends CORE_Model{
 
             WHERE ji.is_active=TRUE AND ji.is_deleted=FALSE
             AND ac.account_type_id=$type_id
-            ".($depid!=null?" AND ji.department_id=$depid":"")."
+            " . ($customerId != null && $customerId != 0 ? " AND ji.customer_id=$customerId" : "") . "
+            ".($depid!=null&& $depid != 0?" AND ji.department_id=$depid":"")."
             ".($start!=null&&$end!=null?" AND ji.date_txn BETWEEN '$start' AND '$end'":"")."
 
             GROUP BY at.grand_parent_id)as main LEFT JOIN account_titles as att ON main.grand_parent_id=att.account_id";

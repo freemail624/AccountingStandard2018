@@ -70,7 +70,7 @@
                 foreach ($sales_invoice_items as $item) {
                 ?>
                     <tr>
-                        <td width="30%" class=" tbl-border-si" style="padding: 5px;"><?php echo $item->product_desc; ?><br>
+                        <td width="30%" class="tbl-border-si" style="padding: 5px;"><?php echo $item->product_desc; ?><br>
                             <sup><?php echo $item->batch_no . ' ' . $item->exp_date; ?></sup>
                         </td>
                         <td width="10%" class="table-cellpadding tbl-border-si tbl-center"><?php echo number_format($item->inv_qty, 0); ?></td>
@@ -84,7 +84,7 @@
                     for ($i = 0; $i < $item_count; $i++) {
                         echo
                         '<tr>
-                                <td width="30%" class=" tbl-border-si" style="padding: 5px;">&nbsp;</td>
+                                <td width="30%" class="tbl-border-si" style="padding: 5px;">&nbsp;</td>
                                 <td width="10%" class="table-cellpadding tbl-border-si tbl-center">&nbsp;</td>
                                 <td width="10%" class="table-cellpadding tbl-border-si tbl-center">&nbsp;</td>
                                 <td width="20%" class="table-cellpadding tbl-border-si tbl-center">&nbsp;</td>
@@ -94,36 +94,36 @@
                 }
                 ?>
                 <tr>
-                    <td class=" tbl-border-si" width="30%"></td>
-                    <td class=" tbl-border-si" width="10%"></td>
-                    <td class=" tbl-border-si" width="10%"></td>
+                    <td class="tbl-border-si" width="30%"></td>
+                    <td class="tbl-border-si" width="10%"></td>
+                    <td class="tbl-border-si" width="10%"></td>
                     <td width="20%" class="table-cellpadding tbl-border-si tbl-left">Total Sales (VAT inclusive)</td>
-                    <td class=" tbl-border-si" align="center" width="30%">&nbsp;</td>
+                    <td class="tbl-border-si" align="center" width="30%">&nbsp;</td>
                 </tr>
                 <tr>
-                    <td class=" tbl-border-si" width="30%"></td>
-                    <td class=" tbl-border-si" width="10%"></td>
-                    <td class=" tbl-border-si" width="10%"></td>
+                    <td class="tbl-border-si" width="30%"></td>
+                    <td class="tbl-border-si" width="10%"></td>
+                    <td class="tbl-border-si" width="10%"></td>
                     <td width="20%" class="table-cellpadding tbl-border-si tbl-left">Less: VAT</td>
-                    <td class=" tbl-border-si" align="center" width="30%"></td>
+                    <td class="tbl-border-si" align="center" width="30%"></td>
                 </tr>
                 <tr>
                     <td width="40%" colspan="2" class="table-cellpadding tbl-border-si tbl-right">VATable Sales</td>
-                    <td class=" tbl-border-si" width="10%"></td>
+                    <td class="tbl-border-si" width="10%"></td>
                     <td width="20%" class="table-cellpadding tbl-border-si tbl-left">Amount: Net of VAT</td>
-                    <td class=" tbl-border-si" width="30%"></td>
+                    <td class="tbl-border-si" width="30%"></td>
                 </tr>
                 <tr>
                     <td width="40%" colspan="2" class="table-cellpadding tbl-border-si tbl-right">VAT-Exempt Sales</td>
-                    <td class=" tbl-border-si" width="10%"></td>
+                    <td class="tbl-border-si" width="10%"></td>
                     <td width="20%" class="table-cellpadding tbl-border-si tbl-left">Less: SC/PWD Discount</td>
-                    <td class=" tbl-border-si" width="30%"></td>
+                    <td class="tbl-border-si" width="30%"></td>
                 </tr>
                 <tr>
                     <td width="40%" colspan="2" class="table-cellpadding tbl-border-si tbl-right">Zero Rated Sales</td>
-                    <td class=" tbl-border-si" width="10%"></td>
+                    <td class="tbl-border-si" width="10%"></td>
                     <td width="20%" class="table-cellpadding tbl-border-si tbl-left">Amount Due</td>
-                    <td class=" tbl-border-si" align="center" style="
+                    <td class="tbl-border-si" align="center" style="
                     <?php if ($_GET['category'] == 1) {
                         echo 'color: #404040;';
                     } else {
@@ -132,9 +132,9 @@
                 </tr>
                 <tr>
                     <td width="40%" colspan="2" class="table-cellpadding tbl-border-si tbl-right">VAT Amount</td>
-                    <td class=" tbl-border-si" width="10%"></td>
+                    <td class="tbl-border-si" width="10%"></td>
                     <td width="20%" class="table-cellpadding tbl-border-si tbl-left">Add: VAT</td>
-                    <td class=" tbl-border-si" align="center" style="
+                    <td class="tbl-border-si" align="center" style="
                     <?php if ($_GET['category'] == 1) {
                         echo 'color: #404040;';
                     } else {
@@ -142,9 +142,9 @@
                     } ?>" width="30%"><?php echo number_format($sales_info->total_tax_amount, 2); ?></td>
                 </tr>
                 <tr>
-                    <td class=" tbl-border-si" width="50%" colspan="3"></td>
+                    <td class="tbl-border-si" width="50%" colspan="3"></td>
                     <td width="20%" class="table-cellpadding tbl-border-si tbl-left"><strong>TOTAL AMOUNT DUE</strong></td>
-                    <td class=" tbl-border-si" align="center" width="30%"><?php echo number_format($sales_info->total_after_tax, 2); ?></td>
+                    <td class="tbl-border-si" align="center" width="30%"><?php echo number_format($sales_info->total_after_tax, 2); ?></td>
                 </tr>
             </tbody>
         </table>

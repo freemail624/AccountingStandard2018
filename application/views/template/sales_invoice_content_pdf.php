@@ -66,7 +66,7 @@
                     foreach($sales_invoice_items as $item) { 
                 ?>
                 <tr>
-                    <td width="30%" class=" " style="padding: 5px;"><?php echo $item->product_desc; ?><br>
+                    <td width="30%" class="" style="padding: 5px;"><?php echo $item->product_desc; ?><br>
                     <sup><?php echo $item->batch_no.' '.$item->exp_date; ?></sup></td>
                     <td width="10%" class="tbl-center"><?php echo number_format($item->inv_qty,0); ?></td>
                     <td width="10%" class="tbl-center"><?php echo $item->size; ?></td>
@@ -81,7 +81,7 @@
                         for ($i = 0; $i < $item_count; $i++) {
                             echo 
                             '<tr>
-                                <td width="30%" class=" " style="padding: 5px;">&nbsp;</td>
+                                <td width="30%" class="" style="padding: 5px;">&nbsp;</td>
                                 <td width="10%" class="table-cellpadding tbl-center">&nbsp;</td>
                                 <td width="10%" class="table-cellpadding tbl-center">&nbsp;</td>
                                 <td width="20%" class="table-cellpadding tbl-center">&nbsp;</td>

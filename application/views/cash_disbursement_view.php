@@ -639,7 +639,7 @@
         </div>
     </div>
     </div>
-    <table id=" table_hidden" class="hidden">
+    <table id="table_hidden" class="hidden">
                                                                     <tr>
                                                                         <td width="30%">
                                                                             <select name="accounts[]" class="selectpicker show-tick form-control selectpicker_accounts" data-live-search="true">

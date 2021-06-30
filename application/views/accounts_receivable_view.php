@@ -509,7 +509,7 @@
                 </div>
 
 
-                <table id=" table_hidden" class="hidden">
+                <table id="table_hidden" class="hidden">
                                                                                     <tr>
                                                                                         <td>
                                                                                             <select name="accounts[]" class="selectpicker show-tick form-control selectpicker_accounts" data-live-search="true" title="Please select Account.">
@@ -1313,7 +1313,6 @@
 
                                         //add account button on table
                                         $('#tbl_entries').on('click', 'button.add_account', function() {
-
                                             var row = $('#table_hidden').find('tr');
                                             row.clone().insertAfter('#tbl_entries > tbody > tr:last');
 

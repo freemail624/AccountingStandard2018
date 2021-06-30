@@ -453,7 +453,7 @@
 
                             <div class="modal-footer">
                                 <button id="btn_save_location" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;""><span class=""></span>  Save Changes</button>
-                                    <button id=" btn_cancel_location" class="btn-default btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"">Cancel</button>
+                                    <button id="btn_cancel_location" class="btn-default btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"">Cancel</button>
                                 </div>
                             </div>
                         </div>

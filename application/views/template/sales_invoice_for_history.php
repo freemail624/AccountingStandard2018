@@ -78,7 +78,7 @@
                 <td class="bottom"><strong><?php echo  date_format(new DateTime($sales_info->date_invoice), "m/d/Y"); ?></strong></td>
             </tr>
             <tr>
-                <td class=" fifteen">BRANCH:</td>
+                <td class="fifteen">BRANCH:</td>
                 <td class="bottom twentyfive"><strong><?php echo $sales_info->customer_name; ?></strong></td>
                 <td></td>
                 <td class="fifteen">SALES TYPE:</td>

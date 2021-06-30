@@ -3001,11 +3001,12 @@ class Templates extends CORE_Controller {
                 $start=$this->input->get('start',TRUE);
                 $end=$this->input->get('end',TRUE);
                 $depid=$this->input->get('depid',TRUE);
+                $customerId=$this->input->get('customer_id',TRUE);
 
-                if($depid==1){$depid=null;}
+                // if($depid==1){$depid=null;}
 
-                $data['income_accounts']=$this->Journal_info_model->get_account_balance(4,$depid,date("Y-m-d",strtotime($start)),date("Y-m-d",strtotime($end)));
-                $data['expense_accounts']=$this->Journal_info_model->get_account_balance(5,$depid,date("Y-m-d",strtotime($start)),date("Y-m-d",strtotime($end)));
+                $data['income_accounts']=$this->Journal_info_model->get_account_balance(4,$depid,date("Y-m-d",strtotime($start)),date("Y-m-d",strtotime($end)), $customerId);
+                $data['expense_accounts']=$this->Journal_info_model->get_account_balance(5,$depid,date("Y-m-d",strtotime($start)),date("Y-m-d",strtotime($end)), $customerId);
 
                 $m_company=$this->Company_model;
                 $company=$m_company->get_list();
@@ -3013,10 +3014,13 @@ class Templates extends CORE_Controller {
                 $data['company_info']=$company[0];
 
                 $m_departments=$this->Departments_model;
+                $m_customers=$this->Customers_model;
                 $departments=$m_departments->get_list($depid);
+                $customers=$m_customers->get_list($customerId);
 
-                $data['departments']=$departments[0]->department_name;
-
+                $data['departments']= $departments && $departments[0] ? $departments[0]->department_name : 'CONSOLIDATED';
+                $data['customer'] = $customers && $customers[0] ? $customers[0]->customer_name : 'ALL';
+                $data['customer_id'] = $customerId;
 
                 $data['start']=date("m/d/Y",strtotime($start));
                 $data['end']=date("m/d/Y",strtotime($end));

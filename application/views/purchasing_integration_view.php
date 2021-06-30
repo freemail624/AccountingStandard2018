@@ -178,7 +178,7 @@
                         </div>
 
 
-                        <div class=" col-lg-offset-3">
+                        <div class="col-lg-offset-3">
                             <button id="btn_save_supplier_accounts" type="button" class="btn btn-primary" style="font-family: tahoma;text-transform: none;"><span class=""></span> Save Changes</button>
                         </div>
                     </form>

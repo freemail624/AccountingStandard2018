@@ -60,10 +60,10 @@ class Customers extends CORE_Controller {
                 break;
 
             case 'getcustomer':
-                $department_id = $this->input->post('department_id', TRUE);
+                $department_id = $this->input->get('department_id', TRUE);
                 $get = "";
 
-                if($department_id > 1){
+                if($department_id > 0){
                     $get = array('customers.department_id'=>$department_id,'customers.is_deleted'=>FALSE);
                 }else {
                     $get = array('customers.is_deleted'=>FALSE);

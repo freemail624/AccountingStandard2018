@@ -817,7 +817,7 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title""><span id=" modal_mode"> </span>New Product Type</h4>
+                                <h4 class="modal-title"><span id="modal_mode"> </span>New Product Type</h4>
                             </div>
                             <div class="modal-body">
                                 <form id="frm_product_type">

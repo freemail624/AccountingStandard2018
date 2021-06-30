@@ -1602,21 +1602,21 @@
 	};
 	DPGlobal.template = '<div class="datetimepicker">' +
 		'<div class="datetimepicker-minutes">' +
-		'<table class=" table-condensed">' +
+		'<table class="table-condensed">' +
 		DPGlobal.headTemplate +
 		DPGlobal.contTemplate +
 		DPGlobal.footTemplate +
 		'</table>' +
 		'</div>' +
 		'<div class="datetimepicker-hours">' +
-		'<table class=" table-condensed">' +
+		'<table class="table-condensed">' +
 		DPGlobal.headTemplate +
 		DPGlobal.contTemplate +
 		DPGlobal.footTemplate +
 		'</table>' +
 		'</div>' +
 		'<div class="datetimepicker-days">' +
-		'<table class=" table-condensed">' +
+		'<table class="table-condensed">' +
 		DPGlobal.headTemplate +
 		'<tbody></tbody>' +
 		DPGlobal.footTemplate +
@@ -1639,21 +1639,21 @@
 		'</div>';
 	DPGlobal.templateV3 = '<div class="datetimepicker">' +
 		'<div class="datetimepicker-minutes">' +
-		'<table class=" table-condensed">' +
+		'<table class="table-condensed">' +
 		DPGlobal.headTemplateV3 +
 		DPGlobal.contTemplate +
 		DPGlobal.footTemplate +
 		'</table>' +
 		'</div>' +
 		'<div class="datetimepicker-hours">' +
-		'<table class=" table-condensed">' +
+		'<table class="table-condensed">' +
 		DPGlobal.headTemplateV3 +
 		DPGlobal.contTemplate +
 		DPGlobal.footTemplate +
 		'</table>' +
 		'</div>' +
 		'<div class="datetimepicker-days">' +
-		'<table class=" table-condensed">' +
+		'<table class="table-condensed">' +
 		DPGlobal.headTemplateV3 +
 		'<tbody></tbody>' +
 		DPGlobal.footTemplate +

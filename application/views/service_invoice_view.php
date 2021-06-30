@@ -1603,8 +1603,8 @@
                     // display:none;
                     '<td style="display: none"><input name="service_tax_amount[]" type="text" class="numeric form-control" value="' + accounting.formatNumber(d.service_tax_amount, 2) + '" style="text-align:right;"></td>' +
                     '<td style="display: none"><input name="service_non_tax_amount[]" type="text" class="numeric form-control" value="' + accounting.formatNumber(d.service_non_tax_amount, 2) + '" style="text-align:right;"></td>' +
-                    '<td style="display:none;"><input name="service_id[]" type="text" class=" form-control" value="' + d.service_id + '" readonly></td>' +
-                    '<td style="display:none;"><input name="service_unit[]" type="text" class=" form-control" value="' + d.service_unit_id + '" readonly></td>' +
+                    '<td style="display:none;"><input name="service_id[]" type="text" class="form-control" value="' + d.service_id + '" readonly></td>' +
+                    '<td style="display:none;"><input name="service_unit[]" type="text" class="form-control" value="' + d.service_unit_id + '" readonly></td>' +
                     '<td align="center"><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>' +
                     '</tr>';
             };

@@ -105,40 +105,40 @@
 
             </tr>
             <tr>
-                <td class="  ">Branch:</td>
-                <td class=" "><?php echo $info->bill_customer; ?></td>
-                <td class=" ">Branch</td>
-                <td class="  "><?php echo $info->ship_customer; ?></td>
+                <td class=" ">Branch:</td>
+                <td class=""><?php echo $info->bill_customer; ?></td>
+                <td class="">Branch</td>
+                <td class=" "><?php echo $info->ship_customer; ?></td>
             </tr>
             <tr>
+                <td class="">Address:</td>
+                <td class=""><?php echo $info->bill_address; ?></td>
                 <td class=" ">Address:</td>
-                <td class=" "><?php echo $info->bill_address; ?></td>
-                <td class="  ">Address:</td>
-                <td class="  "><?php echo $info->ship_address; ?></td>
+                <td class=" "><?php echo $info->ship_address; ?></td>
             </tr>
             <tr>
-                <td class=" ">Email:</td>
-                <td class=" "><?php echo $info->bill_email; ?></td>
-                <td class="  ">Contact:</td>
-                <td class="  "><?php echo $info->ship_contact; ?></td>
-            </tr>
-            <tr>
-                <td class="  "></td>
-                <td class=" "></td>
-                <td class="  ">Phone Number:</td>
-                <td class="  "><?php echo $info->ship_number; ?></td>
+                <td class="">Email:</td>
+                <td class=""><?php echo $info->bill_email; ?></td>
+                <td class=" ">Contact:</td>
+                <td class=" "><?php echo $info->ship_contact; ?></td>
             </tr>
             <tr>
                 <td class=" "></td>
-                <td class=" "></td>
-                <td class="  ">City:</td>
-                <td class="  "><?php echo $info->ship_city; ?></td>
+                <td class=""></td>
+                <td class=" ">Phone Number:</td>
+                <td class=" "><?php echo $info->ship_number; ?></td>
             </tr>
             <tr>
-                <td class=" "></td>
-                <td class=" "></td>
-                <td class="  ">Zip Code:</td>
-                <td class="  "><?php echo $info->ship_zipcode; ?></td>
+                <td class=""></td>
+                <td class=""></td>
+                <td class=" ">City:</td>
+                <td class=" "><?php echo $info->ship_city; ?></td>
+            </tr>
+            <tr>
+                <td class=""></td>
+                <td class=""></td>
+                <td class=" ">Zip Code:</td>
+                <td class=" "><?php echo $info->ship_zipcode; ?></td>
             </tr>
         </table>
         <br>

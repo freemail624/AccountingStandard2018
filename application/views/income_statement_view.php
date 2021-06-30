@@ -101,12 +101,24 @@
 
                                                 <div class="row">
                                                     <div class="col-sm-12">
-                                                        <b class="required">*</b> Choose <b>Admin</b> to use all parents .<br>
+                                                        <!-- <b class="required">*</b> Choose <b>Admin</b> to use all parents .<br> -->
                                                         Parent : <br />
-                                                        <select name="department" id="cbo_departments" data-error-msg="Branch is required." required>
+                                                        <select name="department" id="cbo_departments" data-error-msg="Parent is required." required>
+                                                            <option value="0">ALL</option>
                                                             <?php foreach ($departments as $department) { ?>
-                                                                <option value="<?php echo $department->department_id; ?>" <?php echo ($department->department_id == 1 ? "selected" : ""); ?>><?php echo $department->department_name; ?></option>
+                                                                <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
                                                             <?php } ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <br />
+
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <!-- <b class="required">*</b> Choose <b>Admin</b> to use all parents .<br> -->
+                                                        Branch : <br />
+                                                        <select name="branch" id="cbo_customers" disabled data-error-msg="Branch is required." required>
+                                                            <option value="0">ALL</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -193,6 +205,7 @@
     <script type="text/javascript">
         $(document).ready(function() {
             var _cboDepartments;
+            var _cboCustomers;
 
             var _modal_filter = $('#modal_bsheet'),
                 _modal_balance = $('#modal_balance'),
@@ -214,10 +227,25 @@
                 placeholder: "Please select parent.",
                 allowClear: true
             });
+
+            _cboDepartments.change(function(e) {
+                if (e.target.value == 0) {
+                    _cboCustomers.select2('val', 0);
+                    $('#cbo_customers').prop('disabled', true);
+                    return
+                }
+                $('#cbo_customers').prop('disabled', false);
+                getCustomers()
+            })
+
+            _cboCustomers = $('#cbo_customers').select2({
+                placeholder: "Please select branch.",
+                allowClear: true
+            });
             // _cboDepartments.select2('val',1);
 
             $('#btn_export').click(function() {
-                window.open('Income_statement/transaction/export-excel?start=' + $('#dt_start_date').val() + '&end=' + $('#dt_end_date').val() + "&depid=" + _cboDepartments.select2('val'));
+                window.open('Income_statement/transaction/export-excel?start=' + $('#dt_start_date').val() + '&end=' + $('#dt_end_date').val() + "&depid=" + _cboDepartments.select2('val') + "&customer_id=" + _cboCustomers.select2('val'));
             });
 
             $('#btn_email').on('click', function() {
@@ -232,7 +260,7 @@
                 $.ajax({
                     "dataType": "json",
                     "type": "POST",
-                    "url": "Income_statement/transaction/email-excel?start=" + $('#dt_start_date').val() + '&end=' + $('#dt_end_date').val(),
+                    "url": "Income_statement/transaction/email-excel?start=" + $('#dt_start_date').val() + '&end=' + $('#dt_end_date').val() + "&depid=" + _cboDepartments.select2('val') + "&customer_id=" + _cboCustomers.select2('val'),
                     "beforeSend": showSpinningProgress(btn)
                 }).done(function(response) {
                     showNotification(response);
@@ -256,8 +284,31 @@
                 });
             };
 
+            var getCustomers = function() {
+                var department_id = $("#cbo_departments").val();
+                if (department_id) {
+                    $.ajax({
+                        url: 'Customers/transaction/getcustomer?department_id=' + department_id,
+                        type: "GET",
+                        cache: false,
+                        dataType: 'json',
+                        processData: false,
+                        contentType: false,
+                        success: function(response) {
+                            var rows = response.data;
+                            $("#cbo_customers option").remove();
+                            $("#cbo_customers").append('<option value="0">ALL</option>');
+                            $.each(rows, function(i, value) {
+                                $("#cbo_customers").append('<option value="' + value.customer_id + '">' + value.customer_name + '</option>');
+                            });
+                            $('#cbo_customers').val(0).trigger("change");
+                        }
+                    });
+                }
+            };
+
             $('#btn_print').click(function() {
-                $(this).attr('href', "Templates/layout/income-statement?type=&type=preview&start=" + $('#dt_start_date').val() + "&end=" + $('#dt_end_date').val() + "&depid=" + _cboDepartments.select2('val'));
+                $(this).attr('href', "Templates/layout/income-statement?type=&type=preview&start=" + $('#dt_start_date').val() + "&end=" + $('#dt_end_date').val() + "&depid=" + _cboDepartments.select2('val') + "&customer_id=" + _cboCustomers.select2('val'));
                 //window.open($(this).attr('href')+"?start="+$('#dt_start_date').val()+"&end="+$('#dt_end_date').val()+"&depid="+_cboDepartments.select2('val'));
 
             });

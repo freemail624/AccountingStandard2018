@@ -308,7 +308,7 @@
                                                         <br>
                                                         <br>
                                                         <hr />
-                                                        <div class=" col-lg-offset-3">
+                                                        <div class="col-lg-offset-3">
 
                                                         </div>
                                                     </form>
@@ -510,7 +510,7 @@
                                                         <br>
                                                         <br>
                                                         <hr />
-                                                        <div class=" col-lg-offset-3">
+                                                        <div class="col-lg-offset-3">
 
                                                         </div>
                                                     </form>

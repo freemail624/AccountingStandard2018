@@ -25,7 +25,7 @@
             <span style="font-size: 12pt;font-weight: bolder;"><strong><?php echo $company_info->company_name; ?></strong></span><br />
             <span style="font-size: 8pt;"><?php echo $company_info->company_address; ?></span><br />
             <span style="font-size: 8pt;"><?php echo $company_info->landline.'/'.$company_info->mobile_no; ?></span><br /><br />
-            <span style="font-size: 12pt;font-weight: bolder;"><strong>Income Statement - <?php echo $departments; ?></strong></h3></span>
+            <span style="font-size: 12pt;font-weight: bolder;"><strong>Income Statement - <?php echo $customer_id == 0 ? $departments : $customer; ?></strong></h3></span>
             <span style="font-size: 10pt;"><i>Period <?php echo $start; ?> to <?php echo $end; ?></i></span><br /><br /><br />
         </td>
     </tr>

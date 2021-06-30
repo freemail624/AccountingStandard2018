@@ -13,6 +13,7 @@ class Income_statement extends CORE_Controller
                 'Journal_account_model',
                 'Users_model',
                 'Departments_model',
+                'Customers_model',
                 'Company_model'
             )
         );
@@ -36,7 +37,6 @@ class Income_statement extends CORE_Controller
         (in_array('9-2',$this->session->user_rights)? 
         $this->load->view('income_statement_view', $data)
         :redirect(base_url('dashboard')));
-        
     }
 
     function transaction($txn)
@@ -51,12 +51,14 @@ class Income_statement extends CORE_Controller
                 $start=$this->input->get('start',TRUE);
                 $end=$this->input->get('end',TRUE);
                 $dep_id=$this->input->get('depid',TRUE);
+                $customerId=$this->input->get('customer_id',TRUE);
 
                 $departments = $this->Departments_model->get_list($dep_id);
-                $department_name = $departments[0]->department_name;
-                if($dep_id == 1){$dep_id=null;}
-                $income_accounts = $m_journal->get_account_balance(4,$dep_id,date("Y-m-d",strtotime($start)),date("Y-m-d",strtotime($end)));
-                $expense_accounts = $m_journal->get_account_balance(5,$dep_id,date("Y-m-d",strtotime($start)),date("Y-m-d",strtotime($end)));
+                $customers = $this->Customers_model->get_list($customerId);
+                $department_name = $departments && $departments[0] ? $departments[0]->department_name : 'CONSOLIDATED';
+                $customer_name = $customers && $customers[0] ? $customers[0]->customer_name : 'ALL';
+                $income_accounts = $m_journal->get_account_balance(4,$dep_id,date("Y-m-d",strtotime($start)),date("Y-m-d",strtotime($end)), $customerId);
+                $expense_accounts = $m_journal->get_account_balance(5,$dep_id,date("Y-m-d",strtotime($start)),date("Y-m-d",strtotime($end)), $customerId);
 
                 $excel=$this->excel;
    
@@ -96,7 +98,7 @@ class Income_statement extends CORE_Controller
 
                 $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
 
-                $excel->getActiveSheet()->setCellValue('A6','INCOME STATEMENT - '.$department_name)
+                $excel->getActiveSheet()->setCellValue('A6','INCOME STATEMENT - '. ($customerId == 0 ? $department_name : $customer_name))
                                         ->setCellValue('A7',$start.' to '.$end);
 
                 $excel->getActiveSheet()->getStyle('A6')->getFont()->setBold(TRUE);
@@ -232,18 +234,23 @@ class Income_statement extends CORE_Controller
 
                 case 'email-excel':
                 $m_journal = $this->Journal_info_model;
-                $m_company=$this->Company_model;
-                
-                $m_email=$this->Email_settings_model;
-                $filter_value = 2;
-                $email=$m_email->get_list(2);    
+                $m_company = $this->Company_model;
 
-                $company_info=$m_company->get_list();
-                $start=$this->input->get('start',TRUE);
-                $end=$this->input->get('end',TRUE);
-                if($dep_id == 1){$dep_id=null;}
-                $income_accounts = $m_journal->get_account_balance(4,$dep_id,date("Y-m-d",strtotime($start)),date("Y-m-d",strtotime($end)));
-                $expense_accounts = $m_journal->get_account_balance(5,$dep_id,date("Y-m-d",strtotime($start)),date("Y-m-d",strtotime($end)));
+                $m_email = $this->Email_settings_model;
+                $email = $m_email->get_list(2);
+
+                $company_info = $m_company->get_list();
+                $start = $this->input->get('start', TRUE);
+                $end = $this->input->get('end', TRUE);
+                $dep_id = $this->input->get('depid', TRUE);
+                $customerId = $this->input->get('customer_id', TRUE);
+
+                $departments = $this->Departments_model->get_list($dep_id);
+                $customers = $this->Customers_model->get_list($customerId);
+                $department_name = $departments && $departments[0] ? $departments[0]->department_name : 'CONSOLIDATED';
+                $customer_name = $customers && $customers[0] ? $customers[0]->customer_name : 'ALL';
+                $income_accounts = $m_journal->get_account_balance(4, $dep_id, date("Y-m-d", strtotime($start)), date("Y-m-d", strtotime($end)), $customerId);
+                $expense_accounts = $m_journal->get_account_balance(5, $dep_id, date("Y-m-d", strtotime($start)), date("Y-m-d", strtotime($end)), $customerId);
 
                 $excel=$this->excel;
 
@@ -251,167 +258,164 @@ class Income_statement extends CORE_Controller
                 $excel->setActiveSheetIndex(0);
 
                 $excel->getActiveSheet()->getColumnDimension('A')
-                                        ->setAutoSize(false)
-                                        ->setWidth('50');
+                    ->setAutoSize(false)
+                    ->setWidth('50');
 
                 $excel->getActiveSheet()->getColumnDimension('B')
-                                        ->setAutoSize(false)
-                                        ->setWidth('25');
+                    ->setAutoSize(false)
+                    ->setWidth('25');
 
-                $excel->getActiveSheet()->setTitle('Income Statement');
+                $excel->getActiveSheet()->setTitle('Income Statement' . $dep_id);
 
-                $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
-                                        ->setCellValue('A2',$company_info[0]->company_address)
-                                        ->setCellValue('A3',$company_info[0]->email_address)
-                                        ->setCellValue('A4',$company_info[0]->mobile_no);
+                $excel->getActiveSheet()->setCellValue('A1', $company_info[0]->company_name)
+                    ->setCellValue('A2', $company_info[0]->company_address)
+                    ->setCellValue('A3', $company_info[0]->email_address)
+                    ->setCellValue('A4', $company_info[0]->mobile_no);
 
                 $excel->getActiveSheet()
-                        ->mergeCells('A9:B9')
-                        ->setCellValue('A9', 'INCOME')
-                        ->getStyle('A9:B9')->applyFromArray(
-                            array(
-                                'fill' => array(
-                                    'type' => PHPExcel_Style_Fill::FILL_SOLID,
-                                    'color' => array('rgb' => '53C1F0')
-                                )
+                    ->mergeCells('A9:B9')
+                    ->setCellValue('A9', 'INCOME')
+                    ->getStyle('A9:B9')->applyFromArray(
+                        array(
+                            'fill' => array(
+                                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                                'color' => array('rgb' => '53C1F0')
                             )
-                        )->getFont()
-                        ->setItalic(TRUE)
-                        ->setBold(TRUE);
+                        )
+                    )->getFont()
+                    ->setItalic(TRUE)
+                    ->setBold(TRUE);
 
-                
+
 
                 $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
 
-                $excel->getActiveSheet()->setCellValue('A6','INCOME STATEMENT')
-                                        ->setCellValue('A7',$start.' to '.$end);
+                $excel->getActiveSheet()->setCellValue('A6', 'INCOME STATEMENT - ' . ($customerId == 0 ? $department_name : $customer_name))
+                    ->setCellValue('A7', $start . ' to ' . $end);
 
                 $excel->getActiveSheet()->getStyle('A6')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->getStyle('B9:D9')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->getStyle('A7')->getFont()->setItalic(TRUE);
 
                 $i = 9;
-                $income_total=0;
+                $income_total = 0;
                 $total_net = 0;
-                foreach($income_accounts as $income_account)
-                {
+                foreach ($income_accounts as $income_account) {
                     $i++;
 
-                    $excel->getActiveSheet()->setCellValue('A'.$i,$income_account->account_title);
-                    $excel->getActiveSheet()->setCellValue('B'.$i,number_format($income_account->account_balance,2))
-                            ->getStyle('B'.$i)
-                            ->getAlignment()
-                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                    $excel->getActiveSheet()->setCellValue('A' . $i, $income_account->account_title);
+                    $excel->getActiveSheet()->setCellValue('B' . $i, number_format($income_account->account_balance, 2))
+                        ->getStyle('B' . $i)
+                        ->getAlignment()
+                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                    $income_total+=$income_account->account_balance;
-
+                    $income_total += $income_account->account_balance;
                 }
 
                 $i++;
-                $excel->getActiveSheet()->setCellValue('A'.$i,'Total Income:')
-                                        ->getStyle('A'.$i)
-                                        ->getFont()
-                                        ->setBold(TRUE)
-                                        ->getActiveSheet()
-                                        ->getStyle('A'.$i)
-                                        ->getAlignment()
-                                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                $excel->getActiveSheet()->setCellValue('A' . $i, 'Total Income:')
+                    ->getStyle('A' . $i)
+                    ->getFont()
+                    ->setBold(TRUE)
+                    ->getActiveSheet()
+                    ->getStyle('A' . $i)
+                    ->getAlignment()
+                    ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                $excel->getActiveSheet()->setCellValue('B'.$i,number_format($income_total,2))
-                                        ->getStyle('B'.$i)
-                                        ->getFont()
-                                        ->setBold(TRUE)
-                                        ->getActiveSheet()
-                                        ->getStyle('B'.$i)
-                                        ->getAlignment()
-                                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                $excel->getActiveSheet()->setCellValue('B' . $i, number_format($income_total, 2))
+                    ->getStyle('B' . $i)
+                    ->getFont()
+                    ->setBold(TRUE)
+                    ->getActiveSheet()
+                    ->getStyle('B' . $i)
+                    ->getAlignment()
+                    ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                $i+=2;
+                $i += 2;
 
                 $excel->getActiveSheet()
-                        ->mergeCells('A'.$i.':'.'B'.$i)
-                        ->setCellValue('A'.$i, 'EXPENSE')
-                        ->getStyle('A'.$i.':'.'B'.$i)->applyFromArray(
-                            array(
-                                'fill' => array(
-                                    'type' => PHPExcel_Style_Fill::FILL_SOLID,
-                                    'color' => array('rgb' => '53C1F0')
-                                )
+                    ->mergeCells('A' . $i . ':' . 'B' . $i)
+                    ->setCellValue('A' . $i, 'EXPENSE')
+                    ->getStyle('A' . $i . ':' . 'B' . $i)->applyFromArray(
+                        array(
+                            'fill' => array(
+                                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                                'color' => array('rgb' => '53C1F0')
                             )
-                        )->getFont()
-                        ->setItalic(TRUE)
-                        ->setBold(TRUE);
+                        )
+                    )->getFont()
+                    ->setItalic(TRUE)
+                    ->setBold(TRUE);
 
                 $expense_total = 0;
-                foreach($expense_accounts as $expense_account)
-                {
+                foreach ($expense_accounts as $expense_account) {
                     $i++;
 
                     $excel->getActiveSheet()
-                            ->setCellValue('A'.$i,$expense_account->account_title);
+                        ->setCellValue('A' . $i, $expense_account->account_title);
 
                     $excel->getActiveSheet()
-                            ->setCellValue('B'.$i,number_format($expense_account->account_balance,2))
-                            ->getStyle('B'.$i)
-                            ->getAlignment()
-                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                        ->setCellValue('B' . $i, number_format($expense_account->account_balance, 2))
+                        ->getStyle('B' . $i)
+                        ->getAlignment()
+                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                    $expense_total+=$expense_account->account_balance;
+                    $expense_total += $expense_account->account_balance;
                 }
 
                 $i++;
-                $excel->getActiveSheet()->setCellValue('A'.$i,'Total Expense:')
-                                        ->getStyle('A'.$i)
-                                        ->getFont()
-                                        ->setBold(TRUE)
-                                        ->getActiveSheet()
-                                        ->getStyle('A'.$i)
-                                        ->getAlignment()
-                                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                $excel->getActiveSheet()->setCellValue('A' . $i, 'Total Expense:')
+                    ->getStyle('A' . $i)
+                    ->getFont()
+                    ->setBold(TRUE)
+                    ->getActiveSheet()
+                    ->getStyle('A' . $i)
+                    ->getAlignment()
+                    ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                $excel->getActiveSheet()->setCellValue('B'.$i,number_format($expense_total,2))
-                                        ->getStyle('B'.$i)
-                                        ->getFont()
-                                        ->setBold(TRUE)
-                                        ->getActiveSheet()
-                                        ->getStyle('B'.$i)
-                                        ->getAlignment()
-                                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                $excel->getActiveSheet()->setCellValue('B' . $i, number_format($expense_total, 2))
+                    ->getStyle('B' . $i)
+                    ->getFont()
+                    ->setBold(TRUE)
+                    ->getActiveSheet()
+                    ->getStyle('B' . $i)
+                    ->getAlignment()
+                    ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
                 $total_net = $income_total - $expense_total;
 
                 $i++;
-                $excel->getActiveSheet()->setCellValue('A'.$i, 'NET INCOME:')
-                                        ->getStyle('A'.$i)
-                                        ->getFont()
-                                        ->setBold(TRUE)
-                                        ->getActiveSheet()
-                                        ->getStyle('A'.$i)
-                                        ->getAlignment()
-                                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                $excel->getActiveSheet()->setCellValue('A' . $i, 'NET INCOME:')
+                    ->getStyle('A' . $i)
+                    ->getFont()
+                    ->setBold(TRUE)
+                    ->getActiveSheet()
+                    ->getStyle('A' . $i)
+                    ->getAlignment()
+                    ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                $excel->getActiveSheet()->setCellValue('B'.$i, number_format($total_net,2))
-                                        ->getStyle('B'.$i)
-                                        ->getFont()
-                                        ->setBold(TRUE)
-                                        ->getActiveSheet()
-                                        ->getStyle('B'.$i)
-                                        ->getAlignment()
-                                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                $excel->getActiveSheet()->setCellValue('B' . $i, number_format($total_net, 2))
+                    ->getStyle('B' . $i)
+                    ->getFont()
+                    ->setBold(TRUE)
+                    ->getActiveSheet()
+                    ->getStyle('B' . $i)
+                    ->getAlignment()
+                    ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
 
                 // Redirect output to a client’s web browser (Excel2007)
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                header('Content-Disposition: attachment;filename="Income Statement '.date('Y-m-d',strtotime($end)).'.xlsx"');
+                header('Content-Disposition: attachment;filename="Income Statement ' . date('Y-m-d', strtotime($end)) . '.xlsx"');
                 header('Cache-Control: max-age=0');
                 // If you're serving to IE 9, then the following may be needed
                 header('Cache-Control: max-age=1');
 
                 // If you're serving to IE over SSL, then the following may be needed
-                header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-                header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
-                header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-                header ('Pragma: public'); // HTTP/1.0
+                header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+                header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+                header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+                header('Pragma: public'); // HTTP/1.0
 
                 $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
                 $objWriter->save('php://output');

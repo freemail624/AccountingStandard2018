@@ -60,8 +60,8 @@
             foreach ($entries as $entry) { ?>
              <tr>
                  <td class="left bottom" style="text-align: left;"><?php echo $entry->account_title ?></td>
-                 <td class=" bottom" style="text-align: right;"><?php echo number_format($entry->dr_amount, 2); ?></td>
-                 <td class=" bottom" style="text-align: right;"><?php echo number_format($entry->cr_amount, 2); ?></td>
+                 <td class="bottom" style="text-align: right;"><?php echo number_format($entry->dr_amount, 2); ?></td>
+                 <td class="bottom" style="text-align: right;"><?php echo number_format($entry->cr_amount, 2); ?></td>
              </tr>
          <?php
                 $total_dr += $entry->dr_amount;

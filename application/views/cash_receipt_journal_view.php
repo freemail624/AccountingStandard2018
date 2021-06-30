@@ -551,7 +551,7 @@
 
 
 
-        <table id=" table_hidden" class="hidden">
+        <table id="table_hidden" class="hidden">
                                                                             <tr>
                                                                                 <td>
                                                                                     <select name="accounts[]" class="selectpicker show-tick form-control selectpicker_accounts" data-live-search="true">

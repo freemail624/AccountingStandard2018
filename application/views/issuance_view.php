@@ -342,7 +342,7 @@
 </div> <!-- .container-fluid -->
 </div> <!-- #page-content -->
 </div>
-<div id=" modal_sales_order" class="modal fade" role="dialog">
+<div id="modal_sales_order" class="modal fade" role="dialog">
                                                             <div class="modal-dialog modal-lg">
                                                                 <div class="modal-content">
                                                                     <div class="modal-header">
@@ -390,7 +390,7 @@
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
-                                                                    <h4 class="modal-title" style="color: white;><span id=" modal_mode"> </span>Confirm Deletion</h4>
+                                                                    <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Confirm Deletion</h4>
                                                                 </div>
                                                                 <div class="modal-body">
                                                                     <p id="modal-body-message">Are you sure ?</p>

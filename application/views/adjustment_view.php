@@ -460,7 +460,7 @@
 </div>
 
 
-<div id=" modal_confirmation" class="modal fade" tabindex="-1" role="dialog">
+<div id="modal_confirmation" class="modal fade" tabindex="-1" role="dialog">
                                                             <!--modal-->
                                                             <div class="modal-dialog modal-sm">
                                                                 <div class="modal-content">

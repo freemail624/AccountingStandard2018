@@ -83,7 +83,7 @@
                     foreach($sales_invoice_items as $item) { 
                 ?>
                 <tr>
-                    <td width="30%" class=" tbl-border-si" style="padding: 5px; font-size: 12px;"><?php echo $item->product_desc; ?><br>
+                    <td width="30%" class="tbl-border-si" style="padding: 5px; font-size: 12px;"><?php echo $item->product_desc; ?><br>
                     <sup><?php echo $item->batch_no.' '.$item->exp_date; ?></sup></td>
                     <td width="10%" class="table-cellpadding tbl-border-si tbl-center" style="font-size:12px;"><center><?php echo number_format($item->inv_qty,0); ?></center></td>
                     <td width="10%" class="table-cellpadding tbl-border-si tbl-center" style="font-size:12px;"><center><?php echo $item->size; ?></center></td>
@@ -96,9 +96,9 @@
                 ?>
                 
                 <tr>
-                    <td class=" tbl-border-si"  width="50%" colspan="3"></td>
+                    <td class="tbl-border-si"  width="50%" colspan="3"></td>
                     <td width="20%" class="table-cellpadding tbl-border-si tbl-left" style="font-size:12px;"><strong>TOTAL AMOUNT DUE</strong></td>
-                    <td class=" tbl-border-si" align="center" width="30%"><?php echo number_format($sales_info->total_after_tax,2); ?></td>
+                    <td class="tbl-border-si" align="center" width="30%"><?php echo number_format($sales_info->total_after_tax,2); ?></td>
                 </tr>
                 <tr>
                     <td class="" width="50%">&nbsp;</td>

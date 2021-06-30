@@ -456,7 +456,7 @@
                                                                     <button id="btn_cancel" class="btn-default btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"">Cancel</button>
                                     </div>
                                 </div>
-                <table id=" table_hidden" class="hidden">
+                <table id="table_hidden" class="hidden">
                                                                         <tr>
                                                                             <td>
                                                                                 <select name="accounts[]" class="selectpicker show-tick form-control selectpicker_accounts" data-live-search="true">

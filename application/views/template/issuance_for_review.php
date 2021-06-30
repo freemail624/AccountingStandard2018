@@ -81,7 +81,7 @@
                                         <label class="col-lg-2"> <b class="required">*</b> Supplier : </label>
                                         <div class="col-lg-10">
 
-                                            <select id="cbo_particulars" name="particular_id" class=" cbo_supplier_list selectpicker show-tick form-control" data-live-search="true" data-error-msg="Particular is required." required>
+                                            <select id="cbo_particulars" name="particular_id" class="cbo_supplier_list selectpicker show-tick form-control" data-live-search="true" data-error-msg="Particular is required." required>
                                                 <optgroup label="Branches">
                                                     <?php foreach ($customers as $customer) { ?>
                                                         <option value='C-<?php echo $customer->customer_id; ?>'><?php echo $customer->customer_name; ?></option>
