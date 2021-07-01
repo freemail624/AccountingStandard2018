@@ -229,9 +229,10 @@ class Cash_disbursement extends CORE_Controller
                 $form_2307_apply=$voucher_info->is_2307;
                 $supplier=$m_supplier->get_list($voucher_info->supplier_id);
                 $company=$m_company->get_list();
-                $tax_rate = ($total_wtax/$net_amount)*100;
 
                 if ($form_2307_apply == 1){
+                    $tax_rate = ($total_wtax/$net_amount)*100;
+
                     $m_form_2307->journal_id=$journal_id;
 
                     if($voucher_info->supplier_id > 0){
@@ -435,9 +436,9 @@ class Cash_disbursement extends CORE_Controller
                 $supplier_id=$this->input->post('supplier_id',TRUE);
                 $supplier=$m_supplier->get_list($supplier_id);
                 $company=$m_company->get_list();
-                $tax_rate = ($total_wtax/$net_amount)*100;
 
                 if ($form_2307_apply == 1){
+                    $tax_rate = ($total_wtax/$net_amount)*100;
                     $m_form_2307->journal_id=$journal_id;
 
                     $particular=explode('-',$this->input->post('particular_id',TRUE));
@@ -594,10 +595,9 @@ class Cash_disbursement extends CORE_Controller
                 $supplier_id=$this->input->post('supplier_id',TRUE);
                 $supplier=$m_supplier->get_list($supplier_id);
                 $company=$m_company->get_list();
-                $tax_rate = ($total_wtax/$net_amount)*100;
 
                 if ($form_2307_apply == 1){
-
+                    $tax_rate = ($total_wtax/$net_amount)*100;
                     $m_form_2307->journal_id=$journal_id;
 
                     $particular=explode('-',$this->input->post('particular_id',TRUE));
