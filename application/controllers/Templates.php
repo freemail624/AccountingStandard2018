@@ -7,6 +7,8 @@ class Templates extends CORE_Controller {
 
         $this->validate_session();
 
+        $this->load->model('Users_model');
+
         $this->load->model('Purchases_model');
         $this->load->model('Purchase_items_model');
 
@@ -311,6 +313,11 @@ class Templates extends CORE_Controller {
                         $m_company=$this->Company_model;
                         $type=$this->input->get('type',TRUE);
 
+                        $m_users=$this->Users_model;
+                        $user_id = $this->session->user_id;
+                        $user = $m_users->get_list($user_id, 'CONCAT_WS(" ",user_fname,user_mname,user_lname) as user_fullname');
+                        $data['prepared_by']=$user[0]->user_fullname;
+
                         $info=$m_purchases->get_list(
                                 $filter_value,
                                 'purchase_order.*,terms.term_description,suppliers.supplier_name,suppliers.address,suppliers.email_address,suppliers.contact_no, purchase_request.pr_no',
@@ -398,6 +405,11 @@ class Templates extends CORE_Controller {
                         $m_company=$this->Company_model;
                         $type=$this->input->get('type',TRUE);
 
+                        $m_users=$this->Users_model;
+                        $user_id = $this->session->user_id;
+                        $user = $m_users->get_list($user_id, 'CONCAT_WS(" ",user_fname,user_mname,user_lname) as user_fullname');
+                        $data['prepared_by']=$user[0]->user_fullname;
+
                         $info=$m_requests->get_list(
                                 $filter_value,
                                 'purchase_request.*,CONCAT_WS(" ",purchase_request.terms,purchase_request.duration)as term_description,suppliers.supplier_name,suppliers.address,suppliers.email_address,suppliers.contact_no',
@@ -483,9 +495,13 @@ class Templates extends CORE_Controller {
                         $m_delivery=$this->Delivery_invoice_model;
                         $m_dr_items=$this->Delivery_invoice_item_model;
                         $m_company=$this->Company_model;
+
+                        $m_users=$this->Users_model;
+                        $user_id = $this->session->user_id;
+                        $user = $m_users->get_list($user_id, 'CONCAT_WS(" ",user_fname,user_mname,user_lname) as user_fullname');
+                        $data['prepared_by']=$user[0]->user_fullname;
+
                         $type=$this->input->get('type',TRUE);
-
-
                         $info=$m_delivery->get_list(
                             $filter_value,
 
@@ -975,6 +991,15 @@ class Templates extends CORE_Controller {
                     echo $this->load->view('template/adjustment_content_menus',$data,TRUE);
                 }
 
+                //for approval view on DASHBOARD
+                if($type=='approval'){
+
+                    //echo '<br /><hr /><center><strong>Purchase Order for Approval</strong></center><hr />';
+                    echo '<br />';
+                    echo $this->load->view('template/adjustment_content_wo_header',$data,TRUE);
+                    echo $this->load->view('template/ai_content_approval_menus',$data,TRUE);
+                }
+
                 //show only inside grid without menu button
                 if($type=='contentview'){
                     echo $this->load->view('template/adjustment_content',$data,TRUE);
@@ -1080,6 +1105,11 @@ class Templates extends CORE_Controller {
                 $m_company_info=$this->Company_model;
                 $m_accounts=$this->Account_integration_model;
                 $type=$this->input->get('type',TRUE);
+
+                $m_users=$this->Users_model;
+                $user_id = $this->session->user_id;
+                $user = $m_users->get_list($user_id, 'CONCAT_WS(" ",user_fname,user_mname,user_lname) as user_fullname');
+                $data['prepared_by']=$user[0]->user_fullname;
 
                 // $info=$m_sales_invoice->get_list(
                 //     $filter_value,
@@ -1449,6 +1479,11 @@ class Templates extends CORE_Controller {
                 $company_info=$m_company_info->get_list();
                 $data['company_info']=$company_info[0];
                 $data['is_basyo']=$m_accounts->get_list(1)[0];
+                $m_users=$this->Users_model;
+                $user_id = $this->session->user_id;
+                $user = $m_users->get_list($user_id, 'CONCAT_WS(" ",user_fname,user_mname,user_lname) as user_fullname');
+                $data['prepared_by']=$user[0]->user_fullname;
+                
                 $info=$m_cash_invoice->get_list(
                 $filter_value,
                 array(
@@ -1709,6 +1744,11 @@ class Templates extends CORE_Controller {
                 $m_sales_order_items=$this->Sales_order_item_model;
                 $type=$this->input->get('type',TRUE);
 
+                $m_users=$this->Users_model;
+                $user_id = $this->session->user_id;
+                $user = $m_users->get_list($user_id, 'CONCAT_WS(" ",user_fname,user_mname,user_lname) as user_fullname');
+                $data['prepared_by']=$user[0]->user_fullname;
+
                 $info=$m_sales_order->get_list(
                     $filter_value,
                     'sales_order.*,departments.department_name,customers.customer_name,customers.contact_no,customers.email_address,customers.contact_name,customers.address',
@@ -1735,6 +1775,15 @@ class Templates extends CORE_Controller {
                 if($type=='fullview'||$type==null){
                     echo $this->load->view('template/so_content_wo_header',$data,TRUE);
                     echo $this->load->view('template/so_content_menus',$data,TRUE);
+                }
+
+                //for approval view on DASHBOARD
+                if($type=='approval'){
+
+                    //echo '<br /><hr /><center><strong>Purchase Order for Approval</strong></center><hr />';
+                    echo '<br />';
+                    echo $this->load->view('template/so_content_wo_header',$data,TRUE);
+                    echo $this->load->view('template/so_content_approval_menus',$data,TRUE);
                 }
 
                 //show only inside grid without menu button

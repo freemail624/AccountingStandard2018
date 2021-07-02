@@ -320,6 +320,29 @@
                                 </div>                                
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label><b class="required">*</b> Receipt Type :</label><br/>
+                                <select class="form-control" name="inv_receipt_type_id" id="cbo_receipt_types">
+                                    <?php foreach($receipt_tpyes as $receipt_type){ ?>
+                                        <option value="<?php echo $receipt_type->inv_receipt_type_id; ?>">
+                                            <?php echo $receipt_type->inv_receipt_type; ?>
+                                        </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>Receipt No :</label><br/>
+                                <div class="input-group">
+                                    <input type="text" name="receipt_no" id="receipt_no" class="form-control" placeholder="Receipt No" data-error-msg="Receipt No is required.">
+                                     <span class="input-group-addon">
+                                         <i class="fa fa-code"></i>
+                                    </span>
+                                </div>       
+                            </div>
+                        </div>
                     </div>
 
                 </div>
@@ -975,6 +998,7 @@ $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboDepartments; var _cboCustomers; var dt_so; var products; var changetxn;
      var _line_unit; var _cboCustomerType;
     var _cboCustomerTypeCreate; var global_item_desc = ''; var _selectRowTblItems;
+    var _cboReceiptType;
 
     var oTableItems={
         qty : 'td:eq(0)',
@@ -1009,6 +1033,16 @@ $(document).ready(function(){
     };
     var initializeControls=function(){
         dt=$('#tbl_cash_invoice').DataTable({
+            "rowCallback": function( row, data, index ) {
+                if ( data.inv_receipt_type_id == 1 )
+                {
+                    $('td', row).css('background-color', '#d2ebfb');
+                }
+                else
+                {
+                    $('td', row).css('background-color', '#ececec');
+                }
+            },              
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "order": [[ 8, "desc" ]],
@@ -1102,6 +1136,10 @@ $(document).ready(function(){
         });
         _cboSource=$("#cbo_order_source").select2({
             placeholder: "Please select Order Source.",
+            allowClear: false
+        });
+        _cboReceiptType=$("#cbo_receipt_types").select2({
+            placeholder: "Please select receipt type.",
             allowClear: false
         });
         _cboSalesperson.select2('val',null);
@@ -1640,6 +1678,7 @@ $(document).ready(function(){
             $('#cbo_customers').trigger('select2:select');
             $('#cbo_order_source').select2('val', $('#cbo_order_source').data('default'));
             $('#cbo_salesperson').select2('val', null);
+            $('#cbo_receipt_types').select2('val', 1);
             $('#img_user').attr('src','assets/img/anonymous-icon.png');
             $('#td_discount').html('0.00');
             $('#td_total_before_tax').html('0.00');
@@ -1847,6 +1886,8 @@ $(document).ready(function(){
             $('#cbo_customers').select2('val',data.customer_id);
             $('#cbo_salesperson').select2('val',data.salesperson_id);
             $('#cbo_customer_type').select2('val',data.customer_type_id);
+            $('#cbo_receipt_types').select2('val',data.inv_receipt_type_id);
+            
             $.ajax({
                 url : 'Cash_invoice/transaction/items/'+data.cash_invoice_id,
                 type : "GET",

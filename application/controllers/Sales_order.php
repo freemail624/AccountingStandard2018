@@ -115,12 +115,21 @@ class Sales_order extends CORE_Controller
                 break;
 
             //***********************************************************************************************************
+            case 'so-for-approved':  //is called on DASHBOARD, returns SO list for approval
+                //approval id 2 are those pending
+                $m_sales_order=$this->Sales_order_model;
+                $response['data']=$this->response_rows(
+                    'sales_order.is_active=TRUE AND sales_order.is_deleted=FALSE AND sales_order.approval_id = 2',
+                    'sales_order.sales_order_id ASC');
+                echo json_encode($response);
+                break;
+
             case 'open':  //this returns PO that are already approved
                 $m_sales_order=$this->Sales_order_model;
                 //$where_filter=null,$select_list=null,$join_array=null,$order_by=null,$group_by=null,$auto_select_escape=TRUE,$custom_where_filter=null
                 $response['data']= $m_sales_order->get_list(
 
-                    'sales_order.is_deleted=FALSE AND sales_order.is_active=TRUE AND (sales_order.order_status_id=1 OR sales_order.order_status_id=3)',
+                    'sales_order.is_deleted=FALSE AND sales_order.is_active=TRUE AND sales_order.approval_id=1 AND (sales_order.order_status_id=1 OR sales_order.order_status_id=3)',
 
                     array(
                         'sales_order.*',
@@ -201,6 +210,22 @@ class Sales_order extends CORE_Controller
                 echo json_encode($response);
                 break;
 
+
+            case 'mark-approved': //called on DASHBOARD when approved button is clicked
+                $m_sales_order=$this->Sales_order_model;
+                $sales_order_id=$this->input->post('sales_order_id',TRUE);
+
+                $m_sales_order->set('date_approved','NOW()'); //treat NOW() as function and not string, set date of approval
+                $m_sales_order->approved_by_user=$this->session->user_id; //deleted by user
+                $m_sales_order->approval_id=1; //1 means approved
+                
+                if($m_sales_order->modify($sales_order_id)){
+                    $response['title']='Success!';
+                    $response['stat']='success';
+                    $response['msg']='Sales order successfully approved.';
+                    echo json_encode($response);
+                }
+                break;
 
             //***************************************create new Items************************************************
             case 'create':
@@ -470,13 +495,17 @@ class Sales_order extends CORE_Controller
                 'departments.department_id',
                 'departments.department_name',
                 'customers.customer_name',
-                'order_status.order_status'
+                'order_status.order_status',
+                'approval_status.approval_status',
+                'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by'
             ),
 
             array(
                 array('departments','departments.department_id=sales_order.department_id','left'),
                 array('customers','customers.customer_id=sales_order.customer_id','left'),
-                array('order_status','order_status.order_status_id=sales_order.order_status_id','left')
+                array('order_status','order_status.order_status_id=sales_order.order_status_id','left'),
+                array('approval_status','approval_status.approval_id=sales_order.approval_id','left'),
+                array('user_accounts','user_accounts.user_id=sales_order.posted_by_user','left')
             ),
             'sales_order.sales_order_id DESC'
 

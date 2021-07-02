@@ -158,6 +158,7 @@
                         <th>Order Date</th>
                         <th>Customer</th>
                         <th style="width: 25%;">Remarks</th>
+                        <th>Approval</th>
                         <th>Status</th>
                         <th><center>Action</center></th>
                         <th>id</th>                    
@@ -773,7 +774,7 @@ $(document).ready(function(){
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "pageLength":15,
-            "order": [[ 7, "desc" ]],
+            "order": [[ 8, "desc" ]],
             "ajax" : "Sales_order/transaction/list",
             "columns": [
                 {
@@ -787,16 +788,17 @@ $(document).ready(function(){
                 { targets:[2],data: "date_order" },
                 { targets:[3],data: "customer_name" },
                 { targets:[4],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(80) },
-                { targets:[5],data: "order_status" },
+                { targets:[5],data: "approval_status" },
+                { targets:[6],data: "order_status" },
                 {
-                    targets:[6],
+                    targets:[7],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:0px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
                         return '<center>'+btn_edit+"&nbsp;"+btn_trash+'</center>';
                     }
                 },
-                { targets:[7],data: "sales_order_id", visible:false}
+                { targets:[8],data: "sales_order_id", visible:false}
             ]
         }); 
         var createToolBarButton=function(){

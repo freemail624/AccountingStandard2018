@@ -316,6 +316,18 @@
                 <div class="col-md-3">
                     <div class="row">
                         <div class="col-md-12">
+                            <label><b class="required">*</b> Receipt Type :</label><br />
+                            <select class="form-control" name="inv_receipt_type_id" id="cbo_receipt_types">
+                                <?php foreach($receipt_tpyes as $receipt_type){ ?>
+                                    <option value="<?php echo $receipt_type->inv_receipt_type_id; ?>">
+                                        <?php echo $receipt_type->inv_receipt_type; ?>
+                                    </option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
                             <label>Reference #:</label><br />
                             <div class="input-group">
                                 <span class="input-group-addon">
@@ -941,7 +953,7 @@
 $(document).ready(function(){
     var dt; var dt_po; var _txnMode; var _selectedID; var _selectRowObj; var _cboSuppliers; var _cboTaxType;
     var _productType; var _cboDepartments; var _defCostType; var products; var _line_unit; var changetxn ;
-    var _cboTerms;
+    var _cboTerms; var _cboReceiptType;
     //_defCostType=0;
 
     var oTableItems={
@@ -1003,6 +1015,16 @@ $(document).ready(function(){
         });
 
         dt=$('#tbl_delivery_invoice').DataTable({
+            "rowCallback": function( row, data, index ) {
+                if ( data.inv_receipt_type_id == 1 )
+                {
+                    $('td', row).css('background-color', '#d2ebfb');
+                }
+                else
+                {
+                    $('td', row).css('background-color', '#ececec');
+                }
+            },      
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "order": [[ 9, "desc" ]],
@@ -1080,6 +1102,11 @@ $(document).ready(function(){
         $('.numeric').autoNumeric('init');
 
         $('#contact_no').keypress(validateNumber);
+
+        _cboReceiptType=$("#cbo_receipt_types").select2({
+            placeholder: "Please select receipt type.",
+            allowClear: false
+        });
 
         _cboSuppliers=$("#cbo_suppliers").select2({
             placeholder: "Please select supplier.",
@@ -1428,6 +1455,7 @@ $(document).ready(function(){
             $('#cbo_departments').select2('val', $('#cbo_departments').data('default') );
             $('#cbo_suppliers').select2('val', null);
             $('#cbo_terms').select2('val', null);
+            $('#cbo_receipt_types').select2('val', 1);
             $('#img_user').attr('src','assets/img/anonymous-icon.png');
             $('#td_discount').html('0.00');
             $('#td_before_tax').html('0.00');
@@ -1715,6 +1743,7 @@ $(document).ready(function(){
                 $('#cbo_suppliers').select2('val',data.supplier_id);
                 $('#cbo_departments').select2('val',data.department_id);
                 $('#cbo_terms').select2('val',data.term_id);
+                $('#cbo_receipt_types').select2('val',data.inv_receipt_type_id);
 
                 $('input,textarea').each(function(){
                     var _elem=$(this);

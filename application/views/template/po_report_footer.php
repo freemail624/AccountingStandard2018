@@ -4,7 +4,7 @@
         <td class="default-color" style="padding-bottom: 10px;">APPROVED BY: </td>
     </tr>
     <tr>
-    	<td><center>JEANNE TAPANG</center></td>
+    	<td><center><?php echo $prepared_by; ?></center></td>
     	<td><center>RAYMUND SUNGA</center></td>
     </tr>
     <tr>

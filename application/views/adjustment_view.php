@@ -180,9 +180,9 @@
                     <th>Department</th>
                     <th style="width: 20%;">Remarks</th>
                     <th>Adjustment</th>
+                    <th>Status</th>
                     <th><center>Action</center></th>
                     <th></th>
-
                 </tr>
                 </thead>
                 <tbody>
@@ -804,7 +804,7 @@ $(document).ready(function(){
         dt=$('#tbl_issuances').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 8, "desc" ]],
+            "order": [[ 10, "desc" ]],
             "ajax" : "Adjustments/transaction/list",
             "columns": [
                 {
@@ -821,8 +821,9 @@ $(document).ready(function(){
                 { targets:[5],data: "department_name" },
                 { targets:[6],data: "remarks" },
                 { targets:[7],data: "adjustment_type" },
+                { targets:[8],data: "approval_status" },
                 {
-                    targets:[8],
+                    targets:[9],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
@@ -830,7 +831,7 @@ $(document).ready(function(){
                         return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                     }
                 },
-                { targets:[8],data: "adjustment_id",visible:false }
+                { targets:[10],data: "adjustment_id",visible:false }
             ]
 
         });

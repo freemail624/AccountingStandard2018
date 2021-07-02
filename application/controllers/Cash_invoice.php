@@ -9,6 +9,7 @@ class Cash_invoice extends CORE_Controller
         parent::__construct('');
         $this->validate_session();
 
+        $this->load->model('Inv_receipt_types_model');
         $this->load->model('Cash_invoice_model');
         $this->load->model('Cash_invoice_items_model');
         $this->load->model('Refproduct_model');
@@ -57,6 +58,7 @@ class Cash_invoice extends CORE_Controller
         );
 
 
+        $data['receipt_tpyes']=$this->Inv_receipt_types_model->get_list();
         $tax_rate=$this->Company_model->get_list(
             null,
             array(
@@ -224,6 +226,8 @@ class Cash_invoice extends CORE_Controller
                 $m_invoice->total_tendered=$this->get_numeric_value($this->input->post('total_tendered',TRUE));
                 $m_invoice->total_change=$this->get_numeric_value($this->input->post('total_change',TRUE));
                 $m_invoice->posted_by_user=$this->session->user_id;
+                $m_invoice->inv_receipt_type_id=$this->input->post('inv_receipt_type_id',TRUE);
+                $m_invoice->receipt_no=$this->input->post('receipt_no',TRUE);
                 $m_invoice->save();
 
                 $cash_invoice_id=$m_invoice->last_insert_id();
@@ -350,6 +354,8 @@ class Cash_invoice extends CORE_Controller
                     $m_invoice->total_change=$this->get_numeric_value($this->input->post('total_change',TRUE));
                     $m_invoice->address=$this->input->post('address',TRUE);
                     $m_invoice->modified_by_user=$this->session->user_id;
+                    $m_invoice->inv_receipt_type_id=$this->input->post('inv_receipt_type_id',TRUE);
+                    $m_invoice->receipt_no=$this->input->post('receipt_no',TRUE);
                     $m_invoice->modify($cash_invoice_id);
 
 

@@ -8,6 +8,7 @@ class Deliveries extends CORE_Controller
         parent::__construct('');
         $this->validate_session();
 
+        $this->load->model('Inv_receipt_types_model');
         $this->load->model('Delivery_invoice_model');
         $this->load->model('Suppliers_model');
         $this->load->model('Tax_types_model');
@@ -51,6 +52,7 @@ class Deliveries extends CORE_Controller
             )
         );
 
+        $data['receipt_tpyes']=$this->Inv_receipt_types_model->get_list();
         $data['terms']=$this->Terms_model->get_list(array("is_deleted"=>FALSE));
         $data['tax_types']=$this->Tax_types_model->get_list('is_deleted=0');
         $data['company']=$this->Company_model->getDefaultRemarks()[0];
@@ -192,6 +194,7 @@ class Deliveries extends CORE_Controller
                 $m_delivery_invoice->purchase_order_id=$purchase_order_id;
                 //$m_delivery_invoice->dr_invoice_no=$this->input->post('dr_invoice_no',TRUE);
                 //$m_delivery_invoice->batch_no=$this->input->post('batch_no',TRUE);
+                $m_delivery_invoice->inv_receipt_type_id=$this->input->post('inv_receipt_type_id',TRUE);
                 $m_delivery_invoice->external_ref_no=$this->input->post('external_ref_no',TRUE);
                 $m_delivery_invoice->contact_person=$this->input->post('contact_person',TRUE);
                 $m_delivery_invoice->term_id=$this->input->post('term_id',TRUE);
@@ -332,6 +335,7 @@ class Deliveries extends CORE_Controller
                 $m_delivery_invoice->purchase_order_id=$purchase_order_id;
                 //$m_delivery_invoice->dr_invoice_no=$this->input->post('dr_invoice_no',TRUE);
                 //$m_delivery_invoice->batch_no=$this->input->post('batch_no',TRUE);
+                $m_delivery_invoice->inv_receipt_type_id=$this->input->post('inv_receipt_type_id',TRUE);
                 $m_delivery_invoice->external_ref_no=$this->input->post('external_ref_no',TRUE);
                 $m_delivery_invoice->contact_person=$this->input->post('contact_person',TRUE);
                 $m_delivery_invoice->term_id=$this->input->post('term_id',TRUE);

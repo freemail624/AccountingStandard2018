@@ -33,7 +33,7 @@ class Rights_link_model extends CORE_Model{
                                           (23,'6','6-4','Setup User Group'),
                                           (24,'6','6-5','Create User Account'),
                                           (25,'6','6-6','Setup Company Info'),
-                                          (26,'7','7-1','Purchase Order for Approval'),
+                                          (26,'7','7-1','Purchase Request for Approval'),
                                           (27,'9','9-1','Balance Sheet Report'),
                                           (28,'9','9-2','Income Statement'),
                                           (29,'4','4-1','Account Classification'),
@@ -116,7 +116,9 @@ class Rights_link_model extends CORE_Model{
                                           (108,'17','17-4','Accomplishment Report'),
                                           (109,'5','5-6','Edit Product Costing'),
                                           (110,'15','15-7','Batch Inventory'),
-                                          (111,'15','15-8','Barcode Generator')
+                                          (111,'15','15-8','Barcode Generator'),
+                                          (112,'3','3-9','Sales Order Approval'),
+                                          (113,'15','15-9','Item Adjustment Approval')
 
 
                                           ON DUPLICATE KEY UPDATE

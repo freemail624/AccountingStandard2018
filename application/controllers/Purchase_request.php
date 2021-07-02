@@ -149,27 +149,25 @@ class Purchase_request extends CORE_Controller
                     );
                     break;
 
-                case 'po-for-approved':  //is called on DASHBOARD, returns PO list for approval
+                case 'pr-for-approved':  //is called on DASHBOARD, returns PR list for approval
                     //approval id 2 are those pending
                     $m_requests=$this->Purchase_request_model;
                     $response['data']=$m_requests->get_list(
                         //filter
-                        'purchase_order.is_active=TRUE AND purchase_order.is_deleted=FALSE AND purchase_order.approval_id=2',
+                        'purchase_request.is_active=TRUE AND purchase_request.is_deleted=FALSE AND purchase_request.approval_id=2',
                         //fields
-                        'purchase_order.*,suppliers.supplier_name,COUNT(po_attachments.po_attachment_id) as attachment,
-                        CONCAT_WS(" ",purchase_order.terms,purchase_order.duration)As term_description,
+                        'purchase_request.*,
+                        CONCAT_WS(" ",purchase_request.terms,purchase_request.duration)As term_description,
                         CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by',
                         //joins
                         array(
-                            array('suppliers','suppliers.supplier_id=purchase_order.supplier_id','left'),
-                            array('user_accounts','user_accounts.user_id=purchase_order.posted_by_user','left'),
-                            array('po_attachments','po_attachments.purchase_request_id=purchase_order.purchase_request_id','left')
+                            array('user_accounts','user_accounts.user_id=purchase_request.posted_by_user','left')
                         ),
 
                         //order by
-                        'purchase_order.purchase_request_id DESC',
+                        'purchase_request.purchase_request_id DESC',
                         //group by
-                        'purchase_order.purchase_request_id'
+                        'purchase_request.purchase_request_id'
                     );
                     echo json_encode($response);
                     break;
@@ -271,7 +269,7 @@ class Purchase_request extends CORE_Controller
                     $m_requests->department_id=$this->input->post('department',TRUE);
                     $m_requests->remarks=$this->input->post('remarks',TRUE);
                     $m_requests->tax_type_id=$this->input->post('tax_type',TRUE);
-                    $m_requests->approval_id=1;
+                    $m_requests->approval_id=2;
                     $m_requests->posted_by_user=$this->session->user_id;
                     $m_requests->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                     $m_requests->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
@@ -509,52 +507,7 @@ class Purchase_request extends CORE_Controller
                     echo json_encode($response);
 
                     break;
-
-                // case 'mark-approved': //called on DASHBOARD when approved button is clicked
-                //     $m_requests=$this->Purchase_request_model;
-                //     $purchase_request_id=$this->input->post('purchase_request_id',TRUE);
-
-
-
-                //     $m_requests->set('date_approved','NOW()'); //treat NOW() as function and not string, set date of approval
-                //     $m_requests->approved_by_user=$this->session->user_id; //deleted by user
-                //     $m_requests->approval_id=1; //1 means approved
-                //     if($m_requests->modify($purchase_request_id)){
-
-                //         $info=$m_requests->get_list(
-                //             $purchase_request_id,
-                //             array(
-                //                 'user_accounts.user_email',
-                //                 'purchase_order.po_no'
-                //             ),
-                //             array(
-                //                 array('user_accounts','user_accounts.user_id=purchase_order.posted_by_user','left')
-                //             )
-                //         );
-
-                //         if(strlen($info[0]->user_email)>0){ //if email is found, notify the user who posted it
-                //             $email_setting  = array('mailtype'=>'html');
-                //             $this->email->initialize($email_setting);
-
-                //             $this->email->from('jdevsystems@jdevsolution.com', 'Paul Christian Rueda');
-                //             $this->email->to($info[0]->user_email);
-                //             //$this->email->cc('another@another-example.com');
-                //             //$this->email->bcc('them@their-example.com');
-
-                //             $this->email->subject('PO Notification!');
-                //             $this->email->message('<p>Good Day!</p><br /><br /><p>Hi! your Purchase Order '.$info[0]->po_no.' is already approved. Kindly check your account.</p>');
-                //             //$this->email->set_mailtype('html');
-
-                //             $this->email->send();
-                //         }
-
-                //         $response['title']='Success!';
-                //         $response['stat']='success';
-                //         $response['msg']='Purchase order successfully approved.';
-                //         echo json_encode($response);
-                //     }
-                //     break;
-
+                    
                 case 'mark-approved': //called on DASHBOARD when approved button is clicked
                     $m_requests=$this->Purchase_request_model;
                     $purchase_request_id=$this->input->post('purchase_request_id',TRUE);
@@ -565,60 +518,11 @@ class Purchase_request extends CORE_Controller
                     $m_requests->set('date_approved','NOW()'); //treat NOW() as function and not string, set date of approval
                     $m_requests->approved_by_user=$this->session->user_id; //deleted by user
                     $m_requests->approval_id=1; //1 means approved
+                    
                     if($m_requests->modify($purchase_request_id)){
-
-                        $info=$m_requests->get_list(
-                            $purchase_request_id,
-                            array(
-                                'user_accounts.user_email',
-                                'purchase_order.po_no'
-                            ),
-                            array(
-                                array('user_accounts','user_accounts.user_id=purchase_order.posted_by_user','left')
-                            )
-                        );
-
-                        // if(strlen($info[0]->user_email)>0){ //if email is found, notify the user who posted it
-                        //     $emailConfig = array('protocol' => 'smtp', 
-                        //         'smtp_host' => 'ssl://smtp.googlemail.com', 
-                        //         'smtp_port' => 465, 
-                        //         'smtp_user' => $email[0]->email_address, 
-                        //         'smtp_pass' => $email[0]->password, 
-                        //         'mailtype' => 'html', 
-                        //         'charset' => 'iso-8859-1');
-
-                        //     // Set your email information
-                            
-                        //     $from = array('email' => $email[0]->email_from,
-                        //         'name' => $email[0]->name_from);
-                                
-
-                        //     $to = array($info[0]->user_email);
-                        //     $subject = 'Purchase Order';
-                        //   //  $message = 'Type your gmail message here';
-                        //     $message = '<p>Good Day!</p><br /><br /><p>Hi! your Purchase Order '.$info[0]->po_no.' is already approved. Kindly check your account.</p>';
-
-                        //     // Load CodeIgniter Email library
-                        //     $this->load->library('email', $emailConfig);
-                        //     // Sometimes you have to set the new line character for better result
-                        //     $this->email->set_newline("\r\n");
-                        //     // Set email preferences
-                        //     $this->email->from($from['email'], $from['name']);
-                        //     $this->email->to($to);
-                        //     $this->email->subject($subject);
-                        //     $this->email->message($message);
-                         
-                        //     $this->email->set_mailtype("html");
-                        //     $this->email->send();
-                        // }
-
-
-
-
-
                         $response['title']='Success!';
                         $response['stat']='success';
-                        $response['msg']='Purchase order successfully approved.';
+                        $response['msg']='Purchase request successfully approved.';
                         echo json_encode($response);
                     }
                     break;

@@ -9,6 +9,7 @@ class Sales_invoice extends CORE_Controller
         parent::__construct('');
         $this->validate_session();
 
+        $this->load->model('Inv_receipt_types_model');
         $this->load->model('Sales_invoice_model');
         $this->load->model('Sales_invoice_item_model');
         $this->load->model('Refproduct_model');
@@ -67,6 +68,8 @@ class Sales_invoice extends CORE_Controller
         $data['customer_type_create']=$this->Customer_type_model->get_list(
             'is_deleted=FALSE'
         );
+
+        $data['receipt_tpyes']=$this->Inv_receipt_types_model->get_list();
 
         $tax_rate=$this->Company_model->get_list(
             null,
@@ -304,6 +307,8 @@ class Sales_invoice extends CORE_Controller
                 $m_invoice->total_after_tax=$this->get_numeric_value($this->input->post('summary_after_tax',TRUE));
                 $m_invoice->total_after_discount=$this->get_numeric_value($this->input->post('total_after_discount',TRUE));
                 $m_invoice->posted_by_user=$this->session->user_id;
+                $m_invoice->inv_receipt_type_id=$this->input->post('inv_receipt_type_id',TRUE);
+                $m_invoice->receipt_no=$this->input->post('receipt_no',TRUE);
                 $m_invoice->save();
 
                 $sales_invoice_id=$m_invoice->last_insert_id();
@@ -465,6 +470,8 @@ class Sales_invoice extends CORE_Controller
                     $m_invoice->total_after_discount=$this->get_numeric_value($this->input->post('total_after_discount',TRUE));
                     $m_invoice->address=$this->input->post('address',TRUE);
                     $m_invoice->modified_by_user=$this->session->user_id;
+                    $m_invoice->inv_receipt_type_id=$this->input->post('inv_receipt_type_id',TRUE);
+                    $m_invoice->receipt_no=$this->input->post('receipt_no',TRUE);
                     $m_invoice->modify($sales_invoice_id);
 
 
@@ -817,6 +824,8 @@ class Sales_invoice extends CORE_Controller
         return $this->Sales_invoice_model->get_list(
              'sales_invoice.is_active = TRUE AND sales_invoice.is_deleted = FALSE '.($filter_value==null?'':' AND sales_invoice.sales_invoice_id='.$filter_value).''.($additional==null?'':$additional),
             array(
+                'sales_invoice.inv_receipt_type_id',
+                'sales_invoice.receipt_no',
                 'sales_invoice.sales_invoice_id',
                 'sales_invoice.sales_inv_no',
                 'sales_invoice.remarks', 

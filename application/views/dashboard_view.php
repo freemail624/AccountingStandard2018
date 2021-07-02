@@ -81,7 +81,7 @@
             overflow-x: hidden!important;
         }
 
-        #tbl_po_list {
+        #tbl_pr_list {
 /*            color: white!important;
             border: none!important;*/
             font-size: 12px;
@@ -404,19 +404,16 @@
                                                     
 
                                                 </div>
-                                                <div class="row hidden" style="margin-top: 20px;">
-                                                    <div class="col-xs-12 col-sm-8 <?php echo (in_array('7-1',$this->session->user_rights)?'':'hidden'); ?>">
-                                                      <div class="data-container table-responsive" style="padding: 20px 15px 20px 15px; min-height: 700px; max-height: 700px;">
-                                                            <h6 class="visible-xs hidden-sm hidden-md hidden-lg po_title" style="position: absolute; top: 5px"><i class="fa fa-file-text-o"></i> <span >PURCHASE ORDER</span></h6>
-                                                            <h3 class="hidden-xs po_title" style="position: absolute; top: 5px"><i class="fa fa-file-text-o"  style="color: #067cb2;"></i> <span >PURCHASE ORDER FOR APPROVAL</span></h2>
-                                                            <table id="tbl_po_list" class="table table-striped" cellspacing="0" width="100%">
+                                                <div class="row" style="margin-top: 20px;">
+                                                    <div class="col-xs-12 <?php echo (in_array('7-1',$this->session->user_rights)?'':'hidden'); ?>">
+                                                      <div class="data-container table-responsive" style="padding: 20px 15px 20px 15px;">
+                                                            <h6 class="visible-xs hidden-sm hidden-md hidden-lg " style="position: absolute; top: 5px;background-color: white;"><i class="fa fa-file-text-o"></i> <span >PURCHASE REQUEST</span></h6>
+                                                            <h3 class="hidden-xs " style="position: absolute; top: 5px; background-color: white;"><i class="fa fa-file-text-o"  style="color: #067cb2;"></i> <span >PURCHASE REQUEST FOR APPROVAL</span></h3>
+                                                            <table id="tbl_pr_list" class="table table-striped" cellspacing="0" width="100%">
                                                                 <thead>
                                                                     <th></th>
-                                                                    <th>PO #</th>
-                                                                    <th>Vendor</th>
-                                                                    <th>Terms </th>
+                                                                    <th>PR #</th>
                                                                     <th>Posted by </th>
-                                                                    <th style="text-align: center;"> <i class="fa fa-paperclip"></i></th>
                                                                     <th style="width: 15%!important;"><center>Action</center></th>
                                                                 </thead>
                                                                 <tbody>
@@ -424,14 +421,53 @@
                                                             </table>
                                                       </div>
                                                     </div>
-                                                    <div class="col-xs-12 <?php echo ($this->session->user_group_id == 1 ? 'col-sm-4' : 'col-sm-12' ); ?>">
-                                                      <div id="style-1" class="data-container" style="min-height: 700px; max-height: 700px; overflow-y: scroll;">
-                                                        <h3><i class="fa fa-rss" style="color: #067cb2;;"></i> ACTIVITY FEED</h3>
-                                                        <div class="v-timeline vertical-container">
-                                                            <?php echo ($this->session->user_group_id != 1 ? '' : $news_feed); ?>
-                                                        </div>
+
+                                                </div>
+
+                                                <div class="row" style="margin-top: 20px;">
+                                                    <div class="col-xs-12 <?php echo (in_array('3-9',$this->session->user_rights)?'':'hidden'); ?>">
+                                                      <div class="data-container table-responsive" style="padding: 20px 15px 20px 15px;">
+                                                            <h6 class="visible-xs hidden-sm hidden-md hidden-lg " style="position: absolute; top: 5px;background-color: white;"><i class="fa fa-file-text-o"></i> <span >SALES ORDER FOR APPROVAL</span></h6>
+                                                            <h3 class="hidden-xs " style="position: absolute; top: 5px; background-color: white;"><i class="fa fa-file-text-o"  style="color: #067cb2;"></i> <span >SALES ORDER FOR APPROVAL</span></h3>
+                                                            <table id="tbl_so_list" class="table table-striped" cellspacing="0" width="100%">
+                                                                <thead>
+                                                                    <th></th>
+                                                                    <th>SO #</th>
+                                                                    <th>Order Date</th>
+                                                                    <th>Customer</th>
+                                                                    <th>Posted by </th>
+                                                                    <th style="width: 15%!important;"><center>Action</center></th>
+                                                                </thead>
+                                                                <tbody>
+                                                                </tbody>
+                                                            </table>
                                                       </div>
                                                     </div>
+
+                                                </div>
+
+
+                                                <div class="row" style="margin-top: 20px;">
+                                                    <div class="col-xs-12 <?php echo (in_array('15-9',$this->session->user_rights)?'':'hidden'); ?>">
+                                                      <div class="data-container table-responsive" style="padding: 20px 15px 20px 15px;">
+                                                            <h6 class="visible-xs hidden-sm hidden-md hidden-lg " style="position: absolute; top: 5px;background-color: white;"><i class="fa fa-file-text-o"></i> <span >ITEM ADJUSTMENT FOR APPROVAL</span></h6>
+                                                            <h3 class="hidden-xs " style="position: absolute; top: 5px; background-color: white;"><i class="fa fa-file-text-o"  style="color: #067cb2;"></i> <span >ITEM ADJUSTMENT FOR APPROVAL</span></h3>
+                                                            <table id="tbl_ai_list" class="table table-striped" cellspacing="0" width="100%">
+                                                                <thead>
+                                                                    <th></th>
+                                                                    <th>ADJ #</th>
+                                                                    <th>Date</th>
+                                                                    <th>Transaction Type</th>
+                                                                    <th>Invoice #</th>
+                                                                    <th>Posted by </th>
+                                                                    <th style="width: 15%!important;"><center>Action</center></th>
+                                                                </thead>
+                                                                <tbody>
+                                                                </tbody>
+                                                            </table>
+                                                      </div>
+                                                    </div>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -750,12 +786,12 @@ Chart.defaults.global.defaultFontColor = "#000000";
         var initializeControls=(function(){
 
 
-            dt=$('#tbl_po_list').DataTable({
+            dt=$('#tbl_pr_list').DataTable({
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
-                "ajax" : "Purchases/transaction/po-for-approved",
+                "ajax" : "Purchase_request/transaction/pr-for-approved",
                 "language": {
-                  "searchPlaceholder":"Search Purchase Order"
+                  "searchPlaceholder":"Search Purchase Request"
                 },
                 "columns": [
                     {
@@ -765,27 +801,81 @@ Chart.defaults.global.defaultFontColor = "#000000";
                         "data":           null,
                         "defaultContent": ""
                     },
-                    { targets:[1],data: "po_no" },
-                    { targets:[2],data: "supplier_name" },
-                    { targets:[3],data: "term_description" },
+                    { targets:[1],data: "pr_no" },
+                    { targets:[2],data: "posted_by" },
+                    {
+                        targets:[3],
+                        render: function (data, type, full, meta){
+                            //alert(full.purchase_request_id);
+
+                            var btn_approved='<button class="btn btn-success btn-sm" name="approve_pr"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Approve this PO"><i class="fa fa-check" style="color: white;"></i> <span class=""></span></button>';
+
+                            return '<center>'+btn_approved+'</center>';
+                        }
+                    }
+                ]
+            });
+
+            dt_so=$('#tbl_so_list').DataTable({
+                "dom": '<"toolbar">frtip',
+                "bLengthChange":false,
+                "ajax" : "Sales_order/transaction/so-for-approved",
+                "language": {
+                  "searchPlaceholder":"Search Order"
+                },
+                "columns": [
+                    {
+                        "targets": [0],
+                        "class":          "details-control",
+                        "orderable":      false,
+                        "data":           null,
+                        "defaultContent": ""
+                    },
+                    { targets:[1],data: "so_no" },
+                    { targets:[2],data: "date_order" },
+                    { targets:[3],data: "customer_name" },
                     { targets:[4],data: "posted_by" },
                     {
-                        targets:[5],data: "attachment",
+                        targets:[5],
                         render: function (data, type, full, meta){
+                            //alert(full.purchase_request_id);
 
-                            return '<center>'+ data +' <i class="fa fa-paperclip"></i></classenter>';
+                            var btn_approved='<button class="btn btn-success btn-sm" name="approve_so"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Approve this Sales Order"><i class="fa fa-check" style="color: white;"></i> <span class=""></span></button>';
+
+                            return '<center>'+btn_approved+'</center>';
                         }
+                    }
+                ]
+            });
 
+            dt_ai=$('#tbl_ai_list').DataTable({
+                "dom": '<"toolbar">frtip',
+                "bLengthChange":false,
+                "ajax" : "Adjustments/transaction/ai-for-approved",
+                "language": {
+                  "searchPlaceholder":"Search Order"
+                },
+                "columns": [
+                    {
+                        "targets": [0],
+                        "class":          "details-control",
+                        "orderable":      false,
+                        "data":           null,
+                        "defaultContent": ""
                     },
+                    { targets:[1],data: "adjustment_code" },
+                    { targets:[2],data: "date_adjusted" },
+                    { targets:[3],data: "transaction_type" },
+                    { targets:[4],data: "inv_no" },
+                    { targets:[5],data: "posted_by" },
                     {
                         targets:[6],
                         render: function (data, type, full, meta){
-                            //alert(full.purchase_order_id);
+                            //alert(full.purchase_request_id);
 
-                            var btn_approved='<button class="btn btn-success btn-sm" name="approve_po"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Approve this PO"><i class="fa fa-check" style="color: white;"></i> <span class=""></span></button>';
-                            var btn_conversation='<a id="link_conversation" href="Po_messages?id='+full.purchase_order_id+'" target="_blank" class="btn btn-info btn-sm"  style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Open Conversation"><i class="fa fa-envelope"></i> </a>';
+                            var btn_approved='<button class="btn btn-success btn-sm" name="approve_ai"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Approve this adjustment"><i class="fa fa-check" style="color: white;"></i> <span class=""></span></button>';
 
-                            return '<center>'+btn_approved+'&nbsp;'+btn_conversation+'</center>';
+                            return '<center>'+btn_approved+'</center>';
                         }
                     }
                 ]
@@ -801,7 +891,7 @@ Chart.defaults.global.defaultFontColor = "#000000";
             var detailRows = [];
 
            
-            $('#tbl_po_list tbody').on( 'click', 'tr td.details-control', function () {
+            $('#tbl_pr_list tbody').on( 'click', 'tr td.details-control', function () {
                 var tr = $(this).closest('tr');
                 var row = dt.row( tr );
                 var idx = $.inArray( tr.attr('id'), detailRows );
@@ -821,7 +911,7 @@ Chart.defaults.global.defaultFontColor = "#000000";
                     $.ajax({
                         "dataType":"html",
                         "type":"POST",
-                        "url":"Templates/layout/po/"+ d.purchase_order_id+'?type=approval',
+                        "url":"Templates/layout/pr/"+ d.purchase_request_id+'?type=approval',
                         "beforeSend" : function(){
                             row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
                         }
@@ -839,16 +929,85 @@ Chart.defaults.global.defaultFontColor = "#000000";
                 }
             } );
 
+            $('#tbl_so_list tbody').on( 'click', 'tr td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = dt_so.row( tr );
+                var idx = $.inArray( tr.attr('id'), detailRows );
+
+                if ( row.child.isShown() ) {
+                    tr.removeClass( 'details' );
+                    row.child.hide();
+
+                    // Remove from the 'open' array
+                    detailRows.splice( idx, 1 );
+                }
+                else {
+                    tr.addClass( 'details' );
+                    //console.log(row.data());
+                    var d=row.data();
+
+                    $.ajax({
+                        "dataType":"html",
+                        "type":"POST",
+                        "url":"Templates/layout/sales-order/"+ d.sales_order_id+'?type=approval',
+                        "beforeSend" : function(){
+                            row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                        }
+                    }).done(function(response){
+                        row.child( response,'no-padding' ).show();
+                        // Add to the 'open' array
+                        if ( idx === -1 ) {
+                            detailRows.push( tr.attr('id') );
+                        }
+                    });
+                }
+            } );            
+
+
+            $('#tbl_ai_list tbody').on( 'click', 'tr td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = dt_ai.row( tr );
+                var idx = $.inArray( tr.attr('id'), detailRows );
+
+                if ( row.child.isShown() ) {
+                    tr.removeClass( 'details' );
+                    row.child.hide();
+
+                    // Remove from the 'open' array
+                    detailRows.splice( idx, 1 );
+                }
+                else {
+                    tr.addClass( 'details' );
+                    //console.log(row.data());
+                    var d=row.data();
+
+                    $.ajax({
+                        "dataType":"html",
+                        "type":"POST",
+                        "url":"Templates/layout/adjustments/"+ d.adjustment_id+'?type=approval',
+                        "beforeSend" : function(){
+                            row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                        }
+                    }).done(function(response){
+                        row.child( response,'no-padding' ).show();
+                        // Add to the 'open' array
+                        if ( idx === -1 ) {
+                            detailRows.push( tr.attr('id') );
+                        }
+                    });
+                }
+            } );     
+
 
             //*****************************************************************************************
-            $('#tbl_po_list > tbody').on('click','button[name="approve_po"]',function(){
+            $('#tbl_pr_list > tbody').on('click','button[name="approve_pr"]',function(){
             // showNotification({title:"Approving PO and Sending Email!",stat:"info",msg:"Please wait for a few seconds."});
                 _selectRowObj=$(this).closest('tr'); //hold dom of tr which is selected
 
                 var data=dt.row(_selectRowObj).data();
-                _selectedID=data.purchase_order_id;
+                _selectedID=data.purchase_request_id;
 
-                 approvePurchaseOrder().done(function(response){
+                 approvePurchaseRequest().done(function(response){
                     showNotification(response);
                     if(response.stat=="success"){
                         dt.row(_selectRowObj).remove().draw();
@@ -857,17 +1016,62 @@ Chart.defaults.global.defaultFontColor = "#000000";
                 });
             });
 
-
-            //****************************************************************************************
-            $('#tbl_po_list > tbody').on('click','button[name="mark_as_approved"]',function(){
+            $('#tbl_pr_list > tbody').on('click','button[name="mark_as_approved"]',function(){
                 _selectRowObj=$(this).parents('tr').prev();
-                _selectRowObj.find('button[name="approve_po"]').click();
+                _selectRowObj.find('button[name="approve_pr"]').click();
                 showSpinningProgress($(this));
             });
 
 
+            //*****************************************************************************************
+            $('#tbl_so_list > tbody').on('click','button[name="approve_so"]',function(){
+            // showNotification({title:"Approving PO and Sending Email!",stat:"info",msg:"Please wait for a few seconds."});
+                _selectRowObj=$(this).closest('tr'); //hold dom of tr which is selected
+
+                var data=dt_so.row(_selectRowObj).data();
+                _selectedID=data.sales_order_id;
+
+                 approveSalesOrder().done(function(response){
+                    showNotification(response);
+                    if(response.stat=="success"){
+                        dt_so.row(_selectRowObj).remove().draw();
+                    }
+
+                });
+            });
+
+            $('#tbl_so_list > tbody').on('click','button[name="mark_as_approved"]',function(){
+                _selectRowObj=$(this).parents('tr').prev();
+                _selectRowObj.find('button[name="approve_so"]').click();
+                showSpinningProgress($(this));
+            });
+
+
+            //*****************************************************************************************
+            $('#tbl_ai_list > tbody').on('click','button[name="approve_ai"]',function(){
+            // showNotification({title:"Approving PO and Sending Email!",stat:"info",msg:"Please wait for a few seconds."});
+                _selectRowObj=$(this).closest('tr'); //hold dom of tr which is selected
+
+                var data=dt_ai.row(_selectRowObj).data();
+                _selectedID=data.adjustment_id;
+
+                 approveItemAdjustment().done(function(response){
+                    showNotification(response);
+                    if(response.stat=="success"){
+                        dt_ai.row(_selectRowObj).remove().draw();
+                    }
+
+                });
+            });
+
+            $('#tbl_ai_list > tbody').on('click','button[name="mark_as_approved"]',function(){
+                _selectRowObj=$(this).parents('tr').prev();
+                _selectRowObj.find('button[name="approve_ai"]').click();
+                showSpinningProgress($(this));
+            });
+
             //****************************************************************************************
-            $('#tbl_po_list > tbody').on('click','button[name="external_link_conversation"]',function(){
+            $('#tbl_pr_list > tbody').on('click','button[name="external_link_conversation"]',function(){
                 _selectRowObj=$(this).parents('tr').prev();
                 _selectRowObj.find('#link_conversation').trigger("click");
                 //alert(_selectRowObj.find('a[id="link_conversation"]').length);
@@ -884,12 +1088,32 @@ Chart.defaults.global.defaultFontColor = "#000000";
 
 
         //functions called on bindEventHandlers
-        var approvePurchaseOrder=function(){
+        var approvePurchaseRequest=function(){
             return $.ajax({
                 "dataType":"json",
                 "type":"POST",
-                "url":"Purchases/transaction/mark-approved",
-                "data":{purchase_order_id : _selectedID}
+                "url":"Purchase_request/transaction/mark-approved",
+                "data":{purchase_request_id : _selectedID}
+
+            });
+        };
+
+        var approveSalesOrder=function(){
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Sales_order/transaction/mark-approved",
+                "data":{sales_order_id : _selectedID}
+
+            });
+        };
+
+        var approveItemAdjustment=function(){
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Adjustments/transaction/mark-approved",
+                "data":{adjustment_id : _selectedID}
 
             });
         };

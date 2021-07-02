@@ -53,6 +53,7 @@ class Products_model extends CORE_Model {
                 ai.product_id = $product_id
                     AND a.is_active = TRUE
                     AND a.is_deleted = FALSE
+                    AND a.approval_id=1
                     AND a.adjustment_type = 'OUT') AS adj_out_qty
                 INNER JOIN
             (SELECT 
@@ -64,6 +65,7 @@ class Products_model extends CORE_Model {
                 ai.product_id = $product_id
                     AND a.is_active = TRUE
                     AND a.is_deleted = FALSE
+                    AND a.approval_id=1
                     AND a.adjustment_type = 'IN') AS adj_in_qty
                 INNER JOIN
             (SELECT 
@@ -213,6 +215,7 @@ class Products_model extends CORE_Model {
                 INNER JOIN `adjustment_items` as aii ON aii.adjustment_id=ai.adjustment_id
                 LEFT JOIN departments d ON d.department_id = ai.department_id
                 WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+                AND ai.approval_id=1
                 AND aii.product_id=$product_id ".($depid==0?"":" AND ai.department_id=".$depid)."
                 ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
 
@@ -236,7 +239,9 @@ class Products_model extends CORE_Model {
                  FROM adjustment_info as ai
                 INNER JOIN `adjustment_items` as aii ON aii.adjustment_id=ai.adjustment_id
                 LEFT JOIN departments d ON d.department_id = ai.department_id
-                WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE ".($depid==0?"":" AND ai.department_id=".$depid)."
+                WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE 
+                AND ai.approval_id=1
+                ".($depid==0?"":" AND ai.department_id=".$depid)."
                 AND aii.product_id=$product_id ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
 
 
@@ -372,6 +377,7 @@ class Products_model extends CORE_Model {
             LEFT JOIN departments d on d.department_id = ai.department_id
             LEFT JOIN user_accounts u on u.user_id = ai.posted_by_user
             WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+            AND ai.approval_id=1
             AND aii.product_id=$product_id ".($depid==0?"":" AND ai.department_id=".$depid)."
             ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
 
@@ -404,6 +410,7 @@ class Products_model extends CORE_Model {
             LEFT JOIN departments d on d.department_id = ai.department_id
             LEFT JOIN user_accounts u on u.user_id = ai.posted_by_user
             WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+            AND ai.approval_id=1
             AND p.parent_id = $product_id
             ".($depid==0?"":" AND ai.department_id=".$depid)."
             ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
@@ -444,6 +451,7 @@ class Products_model extends CORE_Model {
             LEFT JOIN user_accounts u on u.user_id = ai.posted_by_user
             LEFT JOIN departments d on d.department_id = ai.department_id
             WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+            AND ai.approval_id=1
             AND aii.product_id=$product_id ".($depid==0?"":" AND ai.department_id=".$depid)."
             ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
 
@@ -478,6 +486,7 @@ class Products_model extends CORE_Model {
             LEFT JOIN user_accounts u on u.user_id = ai.posted_by_user
             LEFT JOIN departments d on d.department_id = ai.department_id
             WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+            AND ai.approval_id=1
             AND p.parent_id = $product_id
 
             ".($depid==0?"":" AND ai.department_id=".$depid)."
@@ -1044,7 +1053,8 @@ function get_product_history_with_child1($product_id,$depid=0,$as_of_date=null,$
             LEFT JOIN products p on p.product_id = aii.product_id
             LEFT JOIN departments d on d.department_id = ai.department_id
             LEFT JOIN user_accounts u on u.user_id = ai.posted_by_user
-            WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+            WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE 
+            AND ai.approval_id=1
             AND aii.product_id=$product_id ".($depid==0?"":" AND ai.department_id=".$depid)."
             ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
 
@@ -1074,6 +1084,7 @@ function get_product_history_with_child1($product_id,$depid=0,$as_of_date=null,$
             LEFT JOIN user_accounts u on u.user_id = ai.posted_by_user
             LEFT JOIN departments d on d.department_id = ai.department_id
             WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+            AND ai.approval_id=1
             AND aii.product_id=$product_id ".($depid==0?"":" AND ai.department_id=".$depid)."
             ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
 
@@ -1377,7 +1388,7 @@ function get_product_history_with_child1($product_id,$depid=0,$as_of_date=null,$
                                 FROM adjustment_items as aii
                                 INNER JOIN adjustment_info as ai
                                 ON aii.adjustment_id=ai.adjustment_id
-                                WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+                                WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.approval_id=1 AND ai.is_deleted=FALSE
 
                             )as dii ORDER BY dii.date_created DESC
 
@@ -1438,7 +1449,7 @@ function get_product_history_with_child1($product_id,$depid=0,$as_of_date=null,$
                     FROM adjustment_items as aii
                     INNER JOIN adjustment_info as ai
                     ON aii.adjustment_id=ai.adjustment_id
-                    WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+                    WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.approval_id=1 AND ai.is_deleted=FALSE
 
                     GROUP BY aii.product_id,aii.batch_no,aii.exp_date
                     )as aoQ
@@ -1561,7 +1572,8 @@ function get_product_history_with_child1($product_id,$depid=0,$as_of_date=null,$
                     FROM adjustment_items as aii
                     INNER JOIN adjustment_info as ai
                     ON aii.adjustment_id=ai.adjustment_id
-                    WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+                    WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE 
+                    AND ai.approval_id=1
                     AND ai.date_adjusted<='$date'
                     GROUP BY aii.product_id,aii.batch_no,aii.exp_date) as inQ
 
@@ -1611,7 +1623,8 @@ function get_product_history_with_child1($product_id,$depid=0,$as_of_date=null,$
                     FROM adjustment_items as aii
                     INNER JOIN adjustment_info as ai
                     ON aii.adjustment_id=ai.adjustment_id
-                    WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+                    WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE 
+                    AND ai.approval_id=1
                     AND ai.date_adjusted<='$date'
 
                     GROUP BY aii.product_id,aii.batch_no,aii.exp_date
@@ -1696,6 +1709,7 @@ function get_product_history_with_child1($product_id,$depid=0,$as_of_date=null,$
                 ON ai.`adjustment_id`=aii.`adjustment_id`
                 WHERE ai.is_active=1
                 AND ai.is_deleted=0
+                AND ai.approval_id=1
                 AND ai.`adjustment_type`='IN' AND ai.date_adjusted<='$as_of_date'
                 ".($department==1||$department==null?"":" AND ai.department_id=$department")."
                 GROUP BY aii.product_id
@@ -1718,6 +1732,7 @@ function get_product_history_with_child1($product_id,$depid=0,$as_of_date=null,$
                 ON ai.`adjustment_id`=aii.`adjustment_id`
                 WHERE ai.is_active=1
                 AND ai.is_deleted=0
+                AND ai.approval_id=1
                 AND ai.`adjustment_type`='OUT' AND ai.date_adjusted<='$as_of_date'
                 ".($department==1||$department==null?"":" AND ai.department_id=$department")."
                 GROUP BY aii.product_id
@@ -1882,7 +1897,10 @@ function get_product_history_with_child1($product_id,$depid=0,$as_of_date=null,$
                 FROM adjustment_info as ai
                 INNER JOIN adjustment_items as aii
                 ON aii.adjustment_id=ai.adjustment_id
-                WHERE ai.adjustment_type='IN' AND ai.date_adjusted<='$as_of_date' ".($depid==null||$depid==0?"":" AND ai.department_id=".$depid)."
+                WHERE ai.adjustment_type='IN' AND 
+                ai.date_adjusted<='$as_of_date' 
+                AND ai.approval_id=1
+                ".($depid==null||$depid==0?"":" AND ai.department_id=".$depid)."
                 AND ai.is_deleted=0
                 GROUP BY aii.product_id
 
@@ -1901,7 +1919,9 @@ function get_product_history_with_child1($product_id,$depid=0,$as_of_date=null,$
                 FROM adjustment_info as ai
                 INNER JOIN adjustment_items as aii
                 ON aii.adjustment_id=ai.adjustment_id
-                WHERE ai.adjustment_type='OUT' AND ai.date_adjusted<='$as_of_date' ".($depid==null||$depid==0?"":" AND ai.department_id=".$depid)."
+                WHERE ai.adjustment_type='OUT' AND ai.date_adjusted<='$as_of_date' 
+                AND ai.approval_id=1
+                ".($depid==null||$depid==0?"":" AND ai.department_id=".$depid)."
                 AND ai.is_deleted=0
                 GROUP BY aii.product_id
 
@@ -1981,7 +2001,7 @@ Product Pick List
                                 FROM adjustment_items as aii
                                 INNER JOIN adjustment_info as ai
                                 ON aii.adjustment_id=ai.adjustment_id
-                                WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+                                WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.approval_id=1 AND ai.is_deleted=FALSE
 
                             )as dii ORDER BY dii.date_created DESC
 
@@ -2043,7 +2063,7 @@ Product Pick List
                     FROM adjustment_items as aii
                     INNER JOIN adjustment_info as ai
                     ON aii.adjustment_id=ai.adjustment_id
-                    WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+                    WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.approval_id=1 AND ai.is_deleted=FALSE
 
                     GROUP BY aii.product_id,aii.batch_no,aii.exp_date
                     )as aoQ
@@ -2115,7 +2135,8 @@ Product Pick List
                     FROM adjustment_items as aii
                     INNER JOIN adjustment_info as ai
                     ON aii.adjustment_id=ai.adjustment_id
-                    WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+                    WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE 
+                    AND ai.approval_id=1 AND ai.is_deleted=FALSE
                     ".($product_id==0?"":" AND aii.product_id=".$product_id."")."
                     ".($department_id==0?"":" AND ai.department_id=".$department_id."")."
                     ".($as_of_date==null?"":" AND ai.date_adjusted <= '".$as_of_date."'")."                            
@@ -2187,7 +2208,8 @@ Product Pick List
                     FROM adjustment_items as aii
                     INNER JOIN adjustment_info as ai
                     ON aii.adjustment_id=ai.adjustment_id
-                    WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+                    WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE 
+                    AND ai.approval_id=1 AND ai.is_deleted=FALSE
                     ".($product_id==0?"":" AND aii.product_id=".$product_id."")."
                     ".($department_id==0?"":" AND ai.department_id=".$department_id."")."
                     ".($as_of_date==null?"":" AND ai.date_adjusted <= '".$as_of_date."'")."                    
@@ -2294,7 +2316,8 @@ Product Pick List
                     FROM adjustment_items as aii
                     INNER JOIN adjustment_info as ai
                     ON aii.adjustment_id=ai.adjustment_id
-                    WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+                    WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE 
+                    AND ai.approval_id=1 AND ai.is_deleted=FALSE
                     AND CONCAT_WS('-',aii.batch_no,aii.product_id,aii.exp_date) = '$unq_id'
                     ".($department_id==0?"":" AND ai.department_id=".$department_id."")."
                     ".($as_of_date==null?"":" AND ai.date_adjusted <= '".$as_of_date."'")."                  
@@ -2389,7 +2412,8 @@ Product Pick List
                     FROM adjustment_items as aii
                     INNER JOIN adjustment_info as ai
                     ON aii.adjustment_id=ai.adjustment_id
-                    WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+                    WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE 
+                    AND ai.approval_id=1 AND ai.is_deleted=FALSE
                     AND CONCAT_WS('-',aii.batch_no,aii.product_id,aii.exp_date) = '$unq_id'
                     ".($department_id==0?"":" AND ai.department_id=".$department_id."")."
                     ".($as_of_date==null?"":" AND ai.date_adjusted <= '".$as_of_date."'")."           
@@ -2574,6 +2598,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                         products p ON p.product_id = aii.product_id
                 WHERE ai.adjustment_type='IN' 
                 AND ai.is_deleted=0 
+                AND ai.approval_id=1
                 ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
                 ".($depid==null||$depid==0?"":" AND ai.department_id=".$depid)."
                 GROUP BY aii.product_id) as aiin ON aiin.product_id = pQ.product_id
@@ -2589,6 +2614,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 WHERE
                     chldai.is_deleted = 0
                     AND chldai.adjustment_type = 'IN'
+                    AND chldai.approval_id=1
                     ".($as_of_date==null?"":" AND chldai.date_adjusted<='".$as_of_date."'")."
                     ".($depid==null||$depid==0?"":" AND chldai.department_id=".$depid)."
                 GROUP BY chldp.parent_id) AS chldaiin ON chldaiin.parent_id = pQ.product_id
@@ -2767,7 +2793,8 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                             INNER JOIN adjustment_items AS aii ON aii.adjustment_id = ai.adjustment_id
                             LEFT JOIN products p ON p.product_id = aii.product_id
                 WHERE ai.adjustment_type='OUT' 
-                AND ai.is_deleted=0   
+                AND ai.is_deleted=0  
+                AND ai.approval_id=1
                 ".($as_of_date==null?"":" AND ai.date_adjusted<='".$as_of_date."'")."
                 ".($depid==null||$depid==0?"":" AND ai.department_id=".$depid)."
                 GROUP BY aii.product_id) as aiout ON aiout.product_id = pQ.product_id
@@ -2783,6 +2810,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                     WHERE
                         chldai.is_deleted = 0
                             AND chldai.adjustment_type = 'OUT'
+                            AND chldai.approval_id=1
                             ".($as_of_date==null?"":" AND chldai.date_adjusted<='".$as_of_date."'")."
                             ".($depid==null||$depid==0?"":" AND chldai.department_id=".$depid)."
                     GROUP BY chldp.parent_id) AS chldaiout ON chldaiout.parent_id = pQ.product_id
