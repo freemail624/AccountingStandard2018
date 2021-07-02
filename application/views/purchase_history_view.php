@@ -117,7 +117,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-2">
                                                     <b class="required">*</b> <label>Supplier </label>:<br />
                                                     <select name="supplier" id="supplier" style="width: 100%;">
                                                         <option value="0"> ALL</option>
@@ -126,12 +126,21 @@
                                                         <?php } ?>
                                                     </select>
                                                 </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-2">
                                                     <b class="required">*</b> <label>Departments </label>:<br />
                                                     <select name="department" id="department" >
                                                         <option value="0"> ALL</option>
                                                         <?php foreach($departments as $department){ ?>
                                                             <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <b class="required">*</b> <label>Receipt Type </label>:<br />
+                                                    <select name="receipt_type" id="receipt_type" style="width: 100%;">
+                                                        <option value="0"> ALL</option>
+                                                        <?php foreach($inv_receipt_types as $receipt_type){ ?>
+                                                            <option value="<?php echo $receipt_type->inv_receipt_type_id; ?>"><?php echo $receipt_type->inv_receipt_type; ?></option>
                                                         <?php } ?>
                                                     </select>
                                                 </div>
@@ -160,9 +169,10 @@
                                                     <tr>
                                                         <th></th>
                                                         <th>Invoice #</th>
+                                                        <th>Receipt Type</th>
+                                                        <th>Receipt No</th>
                                                         <th>Supplier</th>
                                                         <th>Department</th>
-                                                        <th>External Ref#</th>
                                                         <th>PO #</th>
                                                         <th>Terms</th>
                                                         <th>Delivered</th>
@@ -218,7 +228,7 @@
 <script>
 
 $(document).ready(function(){
-    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cashier; var _supplier; var _department;
+    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cashier; var _supplier; var _department; var _receiptType;
 
     var initializeControls=function(){
         dt=$('#tbl_delivery_invoice').DataTable({
@@ -234,7 +244,8 @@ $(document).ready(function(){
                     "frm": $('#from_date').val(),
                     "to": $('#to_date').val(),
                     "supplier": $('#supplier').val(),
-                    "department": $('#department').val()
+                    "department": $('#department').val(),
+                    "inv_receipt_type_id": $('#receipt_type').val()
                 });
               }
             },
@@ -250,12 +261,13 @@ $(document).ready(function(){
                     "defaultContent": ""
                 },
                 { targets:[1],data: "dr_invoice_no" },
-                { targets:[2],data: "supplier_name" },
-                { targets:[3],data: "department_name" },
-                { targets:[4],data: "external_ref_no" },
-                { targets:[5],data: "po_no" },
-                { targets:[6],data: "term_description" },
-                { targets:[7],data: "date_delivered" },
+                { targets:[2],data: "inv_receipt_type" },
+                { targets:[3],data: "external_ref_no" },
+                { targets:[4],data: "supplier_name" },
+                { targets:[5],data: "department_name" },
+                { targets:[6],data: "po_no" },
+                { targets:[7],data: "term_description" },
+                { targets:[8],data: "date_delivered" },
                 { visible:false, targets:[8],data: "dr_invoice_id" }
             ]
         });
@@ -270,8 +282,12 @@ $(document).ready(function(){
             allopwClear: true
         });
 
-        _supplier=$('#department').select2({
+        _department=$('#department').select2({
             placeholder: "Please Select a Department",
+            allopwClear: true
+        });
+        _receiptType=$('#receipt_type').select2({
+            placeholder: "Please Select a Receipt Type",
             allopwClear: true
         });
         $('.date-picker').datepicker({
@@ -337,13 +353,16 @@ $(document).ready(function(){
         $('#supplier').change(function(){
             $('#tbl_delivery_invoice').DataTable().ajax.reload()          
         });
+        $('#receipt_type').change(function(){
+            $('#tbl_delivery_invoice').DataTable().ajax.reload()          
+        });
 
         $('#btn_print').click(function(){
-            window.open('Purchase_history/transaction/print?frm='+ $('#from_date').val() +'&to='+ $('#to_date').val()+'&supplier_id='+ $('#supplier').val()+'&department_id='+$('#department').val()+'&type=contentview');
+            window.open('Purchase_history/transaction/print?frm='+ $('#from_date').val() +'&to='+ $('#to_date').val()+'&supplier_id='+ $('#supplier').val()+'&department_id='+$('#department').val()+'&type=contentview&inv_receipt_type_id='+$('#receipt_type').val());
         });
 
         $('#btn_excel').click(function(){
-            window.open('Purchase_history/transaction/export?frm='+ $('#from_date').val() +'&to='+ $('#to_date').val()+'&supplier_id='+ $('#supplier').val()+'&department_id='+$('#department').val());
+            window.open('Purchase_history/transaction/export?frm='+ $('#from_date').val() +'&to='+ $('#to_date').val()+'&supplier_id='+ $('#supplier').val()+'&department_id='+$('#department').val()+'&inv_receipt_type_id='+$('#receipt_type').val());
         });
 
        $('#btn_email').on('click', function() {
@@ -354,7 +373,7 @@ $(document).ready(function(){
                 $.ajax({
                     "dataType":"json",
                     "type":"POST",
-                    "url":'Purchase_history/transaction/email?frm='+ $('#from_date').val() +'&to='+ $('#to_date').val()+'&supplier_id='+ $('#supplier').val()+'&department_id='+$('#department').val(),
+                    "url":'Purchase_history/transaction/email?frm='+ $('#from_date').val() +'&to='+ $('#to_date').val()+'&supplier_id='+ $('#supplier').val()+'&department_id='+$('#department').val()+'&inv_receipt_type_id='+$('#receipt_type').val(),
                     "beforeSend": showSpinningProgress(btn)
                 }).done(function(response){
                     showNotification(response);

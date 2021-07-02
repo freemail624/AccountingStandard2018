@@ -94,6 +94,11 @@
                                             <?php } ?>
                                         </select>
                                     </div>
+                                    <br /><br />
+                                    <label class="col-lg-2"> <b class="required">*</b> Ref No :</label>
+                                    <div class="col-lg-10">
+                                        <input type="text" name="ref_no" class="form-control" value="<?php echo $purchase_info->external_ref_no; ?>">
+                                    </div>
                                 </div>
                                 <br /><br /><br />
                                 <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Journal Entries</strong></span></h4>

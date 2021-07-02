@@ -346,6 +346,7 @@ class Products_model extends CORE_Model {
             (ai.date_adjusted) as txn_date,
             ai.date_created,
             ai.adjustment_code as ref_no,
+            CONCAT(IFNULL(dr.external_ref_no, ''),IFNULL(si.sales_inv_no, '')) as receipt_no,
             ('Adjustment IN')as type,
             'Inventory Adjustment' as Description,
             aii.product_id,
@@ -368,6 +369,8 @@ class Products_model extends CORE_Model {
 
             FROM adjustment_info as ai
             INNER JOIN `adjustment_items` as aii ON aii.adjustment_id=ai.adjustment_id
+            LEFT JOIN sales_invoice si on si.sales_inv_no=ai.inv_no
+            LEFT JOIN delivery_invoice dr on dr.dr_invoice_no=ai.dr_invoice_no
             LEFT JOIN products p on p.product_id = aii.product_id
             LEFT JOIN departments d on d.department_id = ai.department_id
             LEFT JOIN user_accounts u on u.user_id = ai.posted_by_user
@@ -383,6 +386,7 @@ class Products_model extends CORE_Model {
             (ai.date_adjusted) as txn_date,
             ai.date_created,
             ai.adjustment_code as ref_no,
+            CONCAT(IFNULL(dr.external_ref_no, ''),IFNULL(si.sales_inv_no, '')) as receipt_no,
             ('Adjustment IN')as type,
             'Inventory Adjustment' as Description,
             aii.product_id,
@@ -400,6 +404,8 @@ class Products_model extends CORE_Model {
 
             FROM adjustment_info as ai
             INNER JOIN `adjustment_items` as aii ON aii.adjustment_id=ai.adjustment_id
+            LEFT JOIN sales_invoice si on si.sales_inv_no=ai.inv_no
+            LEFT JOIN delivery_invoice dr on dr.dr_invoice_no=ai.dr_invoice_no
             LEFT JOIN products p on p.product_id = aii.product_id
             LEFT JOIN products bulk ON bulk.product_id = p.parent_id
             LEFT JOIN departments d on d.department_id = ai.department_id
@@ -419,6 +425,7 @@ class Products_model extends CORE_Model {
             (ai.date_adjusted) as txn_date,
             ai.date_created,
             ai.adjustment_code as ref_no,
+            CONCAT(IFNULL(dr.external_ref_no, ''),IFNULL(si.sales_inv_no, '')) as receipt_no,
             ('Adjustment Out')as type,
             'Inventory Adjustment' as Description,
             aii.product_id,
@@ -441,6 +448,8 @@ class Products_model extends CORE_Model {
 
              FROM adjustment_info as ai
             INNER JOIN `adjustment_items` as aii ON aii.adjustment_id=ai.adjustment_id
+            LEFT JOIN sales_invoice si on si.sales_inv_no=ai.inv_no
+            LEFT JOIN delivery_invoice dr on dr.dr_invoice_no=ai.dr_invoice_no
             LEFT JOIN products p on p.product_id = aii.product_id
             LEFT JOIN user_accounts u on u.user_id = ai.posted_by_user
             LEFT JOIN departments d on d.department_id = ai.department_id
@@ -456,6 +465,7 @@ class Products_model extends CORE_Model {
             (ai.date_adjusted) as txn_date,
             ai.date_created,
             ai.adjustment_code as ref_no,
+            CONCAT(IFNULL(dr.external_ref_no, ''),IFNULL(si.sales_inv_no, '')) as receipt_no,
             ('Adjustment Out')as type,
             'Inventory Adjustment' as Description,
             aii.product_id,
@@ -474,6 +484,8 @@ class Products_model extends CORE_Model {
 
              FROM adjustment_info as ai
             INNER JOIN `adjustment_items` as aii ON aii.adjustment_id=ai.adjustment_id
+            LEFT JOIN sales_invoice si on si.sales_inv_no=ai.inv_no
+            LEFT JOIN delivery_invoice dr on dr.dr_invoice_no=ai.dr_invoice_no
             LEFT JOIN products p on p.product_id = aii.product_id
             LEFT JOIN products bulk ON bulk.product_id = p.parent_id
             LEFT JOIN user_accounts u on u.user_id = ai.posted_by_user
@@ -491,6 +503,7 @@ class Products_model extends CORE_Model {
             di.date_delivered as txn_date,
             di.date_created,
             di.dr_invoice_no as ref_no,
+            di.external_ref_no as receipt_no,
             ('Purchase Invoice') as type,
             CONCAT(IFNULL(s.supplier_name,''),' (Supplier)') as Description,
             dii.product_id,
@@ -529,6 +542,7 @@ class Products_model extends CORE_Model {
             di.date_delivered as txn_date,
             di.date_created,
             di.dr_invoice_no as ref_no,
+            di.external_ref_no as receipt_no,
             ('Purchase Invoice') as type,
             CONCAT(IFNULL(s.supplier_name,''),' (Supplier)') as Description,
             dii.product_id,
@@ -564,6 +578,7 @@ class Products_model extends CORE_Model {
             ii.date_issued as txn_date,
             ii.date_created ,
             ii.slip_no as ref_no,
+            '' as receipt_no,
             'Issuance' as type,
             ii.issued_to_person as Description,
             iit.product_id,
@@ -599,6 +614,7 @@ class Products_model extends CORE_Model {
             ii.date_issued as txn_date,
             ii.date_created ,
             ii.slip_no as ref_no,
+            '' as receipt_no,
             'Issuance' as type,
             ii.issued_to_person as Description,
             iit.product_id,
@@ -631,6 +647,7 @@ class Products_model extends CORE_Model {
             ii.date_issued as txn_date,
             ii.date_created ,
             ii.trn_no as ref_no,
+            '' as receipt_no,
             'Transfer Issuance Out' as type,
             CONCAT(u.user_fname,' ', u.user_lname) as Description,
             iit.product_id,
@@ -668,6 +685,7 @@ class Products_model extends CORE_Model {
             ii.date_issued as txn_date,
             ii.date_created ,
             ii.trn_no as ref_no,
+            '' as receipt_no,
             'Transfer Issuance Out' as type,
             CONCAT(u.user_fname,' ', u.user_lname) as Description,
             iit.product_id,
@@ -703,6 +721,7 @@ class Products_model extends CORE_Model {
             ii.date_issued as txn_date,
             ii.date_created ,
             ii.trn_no as ref_no,
+            '' as receipt_no,
             'Transfer Issuance IN' as type,
             CONCAT(u.user_fname,' ', u.user_lname) as Description,
             iit.product_id,
@@ -740,6 +759,7 @@ class Products_model extends CORE_Model {
             ii.date_issued as txn_date,
             ii.date_created ,
             ii.trn_no as ref_no,
+            '' as receipt_no,
             'Transfer Issuance IN' as type,
             CONCAT(u.user_fname,' ', u.user_lname) as Description,
             iit.product_id,
@@ -775,6 +795,7 @@ class Products_model extends CORE_Model {
             si.date_invoice as txn_date,
             si.date_created as date_created,
             si.sales_inv_no as ref_no,
+            '' as receipt_no,
             ('Sales Invoice') as type,
             CONCAT(IFNULL(c.customer_name,''),' (Customer)') as Description,
             sii.product_id,
@@ -813,6 +834,7 @@ class Products_model extends CORE_Model {
             si.date_invoice as txn_date,
             si.date_created as date_created,
             si.sales_inv_no as ref_no,
+            '' as receipt_no,
             ('Sales Invoice') as type,
             CONCAT(IFNULL(c.customer_name,''),' (Customer)') as Description,
             sii.product_id,
@@ -854,6 +876,7 @@ class Products_model extends CORE_Model {
             (ci.date_invoice) as txn_date,
             ci.date_created,
             ci.cash_inv_no as ref_no,
+            ci.receipt_no,
             'Cash Invoice' as type,
             CONCAT(IFNULL(c.customer_name,''),' (Customer)') as Description,
             cii.product_id,
@@ -893,6 +916,7 @@ class Products_model extends CORE_Model {
             (ci.date_invoice) as txn_date,
             ci.date_created,
             ci.cash_inv_no as ref_no,
+            ci.receipt_no,
             'Cash Invoice' as type,
             CONCAT(IFNULL(c.customer_name,''),' (Customer)') as Description,
             cii.product_id,
@@ -933,6 +957,7 @@ class Products_model extends CORE_Model {
             dis.date_invoice as txn_date,
             dis.date_created,
             dis.dispatching_inv_no,
+            '' as receipt_no,
             ('Dispatching Invoice') as type,
             CONCAT(IFNULL(c.customer_name,''),' (Customer)') as Description,
             dii.product_id,
@@ -970,6 +995,7 @@ class Products_model extends CORE_Model {
             dis.date_invoice as txn_date,
             dis.date_created,
             dis.dispatching_inv_no,
+            '' as receipt_no,
             ('Dispatching Invoice') as type,
             CONCAT(IFNULL(c.customer_name,''),' (Customer)') as Description,
             dii.product_id,

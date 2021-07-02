@@ -89,6 +89,7 @@ class Account_payables extends CORE_Controller
                 $m_journal->remarks=$this->input->post('remarks',TRUE);
                 $m_journal->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
                 $m_journal->book_type='PJE';
+                $m_journal->ref_no=$this->input->post('ref_no',TRUE);
 
                 //for audit details
                 $m_journal->set('date_created','NOW()');

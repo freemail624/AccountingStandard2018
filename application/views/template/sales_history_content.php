@@ -31,30 +31,33 @@
     </table><br/>
 
     <h3><strong>Sales History</strong></h3>
-    <span style="font-weight: bolder;">Customer : </span> <?php echo $customer_name;?> <br><br/>
+    <span style="font-weight: bolder;">Customer : </span> <?php echo $customer_name;?> <br>
+    <span style="font-weight: bolder;">Receipt Type : </span> <?php echo $inv_receipt_type;?> <br><br/>
 
-     <table width="100%" cellpadding="5" cellspacing="3" style="border-collapse: collapse;">
+    <table width="100%" cellpadding="5" cellspacing="3" style="border-collapse: collapse;">
     	<thead>
             <tr>
-            	<th style="width:15%; border-bottom: 1px solid black;text-align: left;">Invoice #</th>
-            	<th style="width:15%; border-bottom: 1px solid black;text-align: left;">Receipt No</th>
-                <th style="width:10%; border-bottom: 1px solid black;text-align: left;">Invoice Date</th>
-            	<th style="width:20%; border-bottom: 1px solid black;text-align: left;">Customer</th>
-            	<th style="width:20%; border-bottom: 1px solid black;text-align: left;">Department</th>
+            	<th style="width:13%; border-bottom: 1px solid black;text-align: left;">Date</th>
+                <th style="width:12%; border-bottom: 1px solid black;text-align: left;">Receipt Type</th>
+            	<th style="width:13%; border-bottom: 1px solid black;text-align: left;">Receipt No</th>
+                <th style="width:15%; border-bottom: 1px solid black;text-align: left;">Particular</th>
+            	<th style="width:15%; border-bottom: 1px solid black;text-align: right;">Amount</th>
+            	<th style="width:12%; border-bottom: 1px solid black;text-align: left;">Department</th>
             	<th style="width:20%; border-bottom: 1px solid black;text-align: left;">Remarks</th>
             </tr>
     	</thead>
     	<tbody>
-         <?php 
-         foreach ($data as $data) { ?>
-         <tr>
-             <td valign="top"><?php echo $data->inv_no;  ?></td>
-             <td valign="top"><?php echo $data->receipt_no; ?></td>
-             <td valign="top"><?php echo $data->date_invoice; ?></td>
-             <td valign="top"><?php echo $data->customer_name; ?></td>
-             <td valign="top"><?php echo $data->department_name; ?></td>
-             <td valign="top"><?php echo $data->remarks; ?></td>
-         </tr>
+        <?php 
+        foreach ($data as $data) { ?>
+        <tr>
+            <td valign="top"><?php echo $data->date_invoice;  ?></td>
+            <td valign="top"><?php echo $data->inv_receipt_type; ?></td>
+            <td valign="top"><?php echo $data->receipt_no; ?></td>
+            <td valign="top"><?php echo $data->customer_name; ?></td>
+            <td style="text-align: right" valign="top"><?php echo number_format($data->total_after_tax,2); ?></td>
+            <td valign="top"><?php echo $data->department_name; ?></td>
+            <td valign="top"><?php echo $data->remarks; ?></td>
+        </tr>
         
         <?php } ?>   
         </tbody>

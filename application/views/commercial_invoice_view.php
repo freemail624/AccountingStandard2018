@@ -437,7 +437,7 @@
                         <div class="col-md-8">
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;"><b>*</b> Customer Name :</label>
+                                    <label class="control-label boldlabel" style="text-align:right;"><b>*</b> Customer Name :</label>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">
@@ -450,7 +450,7 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;"><b>*</b>Contact Person :</label>
+                                    <label class="control-label boldlabel" style="text-align:right;"><b>*</b>Contact Person :</label>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">
@@ -463,20 +463,20 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;"><b>*</b> Address :</label>
+                                    <label class="control-label boldlabel" style="text-align:right;"> Address :</label>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">
                                         <span class="input-group-addon">
                                             <i class="fa fa-home"></i>
-                                         </span>
-                                         <textarea name="address" class="form-control" data-error-msg="Supplier address is required!" placeholder="Address" required ></textarea>
+                                        </span>
+                                        <textarea name="address" class="form-control" data-error-msg="Supplier address is required!" placeholder="Address"></textarea>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;">Email Address :</label>
+                                    <label class="control-label boldlabel" style="text-align:right;">Email Address :</label>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">
@@ -489,7 +489,7 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;">Landline :</label>
+                                    <label class="control-label boldlabel" style="text-align:right;">Landline :</label>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">

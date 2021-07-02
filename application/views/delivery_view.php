@@ -203,18 +203,18 @@
                     From :<br /> 
                     <div class="input-group"> 
                         <input type="text" id="txt_start_date" name="" class="date-picker form-control" value="<?php echo date("m"); ?>/01/<?php echo date("Y"); ?>"> 
-                         <span class="input-group-addon"> 
-                                <i class="fa fa-calendar"></i> 
-                         </span> 
+                        <span class="input-group-addon"> 
+                            <i class="fa fa-calendar"></i> 
+                        </span> 
                     </div> 
                 </div>
                 <div class="col-lg-2">
                     To :<br /> 
                     <div class="input-group"> 
                         <input type="text" id="txt_end_date" name="" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>"> 
-                         <span class="input-group-addon"> 
-                                <i class="fa fa-calendar"></i> 
-                         </span> 
+                        <span class="input-group-addon"> 
+                            <i class="fa fa-calendar"></i> 
+                        </span> 
                     </div> 
                 </div> 
                 <div class="col-lg-3"> 
@@ -229,7 +229,7 @@
                     <th></th>
                     <th>Invoice #</th>
                     <th>Supplier</th>
-                    <th>External Ref#</th>
+                    <th>Receipt No</th>
                     <th>PO #</th>
                     <th>Terms</th>
                     <th>Delivered</th>
@@ -349,12 +349,24 @@
                 <div class="col-md-3">
                     <div class="row">
                         <div class="col-md-12">
-                            <label>Reference #:</label><br />
+                            <b class="required">*</b> <label>Receipt Type:</label><br />
+                            <select name="inv_receipt_type_id" id="cbo_inv_receipt_type_id" data-error-msg="Receipt Type is required." required>
+                                <?php foreach($inv_receipt_types as $receipt_type){ ?>
+                                    <option value="<?php echo $receipt_type->inv_receipt_type_id; ?>">
+                                        <?php echo $receipt_type->inv_receipt_type; ?>
+                                    </option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <b class="required">*</b> <label>Receipt No.:</label><br />
                             <div class="input-group">
                                 <span class="input-group-addon">
                                     <i class="fa fa-code"></i>
                                 </span>
-                                <input type="text" name="external_ref_no" class="form-control" placeholder="External Ref No.">
+                                <input type="text" name="external_ref_no" class="form-control" placeholder="Receipt No." data-error-msg="Receipt No is required." required>
                             </div>
                         </div>
                     </div>
@@ -988,7 +1000,7 @@
 $(document).ready(function(){
     var dt; var dt_po; var _txnMode; var _selectedID; var _selectRowObj; var _cboSuppliers; var _cboTaxType;
     var _productType; var _cboDepartments; var _defCostType; var products; var _line_unit; var changetxn ;
-    var _cboTerms; var _cboPaymentMethod;
+    var _cboTerms; var _cboPaymentMethod; var _cboReceiptType;
     //_defCostType=0;
 
     var oTableItems={
@@ -1051,6 +1063,16 @@ $(document).ready(function(){
         });
 
         dt=$('#tbl_delivery_invoice').DataTable({
+            "rowCallback": function( row, data, index ) {
+                if ( data.inv_receipt_type_id == 1 )
+                {
+                    $('td', row).css('background-color', '#d2ebfb');
+                }
+                else
+                {
+                    $('td', row).css('background-color', '#ececec');
+                }
+            },
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "order": [[ 9, "desc" ]],
@@ -1061,11 +1083,11 @@ $(document).ready(function(){
                 "url":"Deliveries/transaction/delivery_list_count", 
                 "bDestroy": true,             
                 "data": function ( d ) { 
-                        return $.extend( {}, d, { 
-                            "tsd":$('#txt_start_date').val(), 
-                            "ted":$('#txt_end_date').val() 
-                        }); 
-                    } 
+                    return $.extend( {}, d, { 
+                        "tsd":$('#txt_start_date').val(), 
+                        "ted":$('#txt_end_date').val() 
+                    }); 
+                } 
             }, 
             "language": {
                 "searchPlaceholder":"Search Invoice"
@@ -1163,6 +1185,11 @@ $(document).ready(function(){
 
         _cboPaymentMethod=$("#cbo_payment_method").select2({
             placeholder: "Please select a payment type.",
+            allowClear: false
+        });
+
+        _cboReceiptType=$("#cbo_inv_receipt_type_id").select2({
+            placeholder: "Please select a receipt type.",
             allowClear: false
         });
 
@@ -1503,6 +1530,7 @@ $(document).ready(function(){
             $('#cbo_departments').select2('val', $('#cbo_departments').data('default') );
             $('#cbo_suppliers').select2('val', null);
             $('#cbo_terms').select2('val', null);
+            $('#cbo_inv_receipt_type_id').select2('val', 1);
             $('#cbo_payment_method').select2('val', 2);
             $('#img_user').attr('src','assets/img/anonymous-icon.png');
             $('#td_discount').html('0.00');
@@ -1785,7 +1813,7 @@ $(document).ready(function(){
                 }).always(function(){ });
                 $('#typeaheadsearch').val('');
 
-               _txnMode="edit";
+                _txnMode="edit";
                 _selectRowObj=$(this).closest('tr');
                 var data=dt.row(_selectRowObj).data();
                 _selectedID=data.dr_invoice_id;
@@ -1797,6 +1825,7 @@ $(document).ready(function(){
                 $('#cbo_departments').select2('val',data.department_id);
                 $('#cbo_terms').select2('val',data.term_id);
                 $('#cbo_payment_method').select2('val',data.payment_method_id);
+                $('#cbo_inv_receipt_type_id').select2('val',data.inv_receipt_type_id);
 
                 $('input,textarea').each(function(){
                     var _elem=$(this);

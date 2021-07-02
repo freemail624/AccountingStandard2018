@@ -59,6 +59,7 @@ class Journal_info_model extends CORE_Model{
             account_type,
             memo,
             remarks,
+            ref_no,
             ac.account_type_id,
             ji.supplier_id,
             supplier_name,

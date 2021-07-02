@@ -31,11 +31,11 @@
             float: left;
         }
 
-        td:nth-child(6),td:nth-child(7){
+        td:nth-child(5),td:nth-child(6){
             text-align: right;
         }
 
-        td:nth-child(8){
+        td:nth-child(7){
             text-align: right;
             font-weight: bolder;
         }
@@ -126,11 +126,11 @@
                                                             <table id="tbl_customer_subsidiary" class="table table-striped" cellspacing="0" width="100%">
                                                                 <thead class="">
                                                                 <tr>
+                                                                    <th>Posted By</th>
                                                                     <th>Date</th>
-                                                                    <th>Txn #</th>
-                                                                    <th>Memo</th>
+                                                                    <th>Receipt No</th>
                                                                     <th>Remarks</th>
-                                                                    <th>Posted by</th>
+                                                                    <!-- <th>Posted by</th> -->
                                                                     <th>Debit</th>
                                                                     <th>Credit</th>
                                                                     <th>Balance</th>
@@ -351,27 +351,26 @@
                     }
                 },
                 "columns": [
-                    { targets:[0],data: "date_txn" },
-                    { targets:[1],data: "txn_no" },
-                    { targets:[2],data: "memo" },
+                    { targets:[0],data: "posted_by" },
+                    { targets:[1],data: "date_txn" },
+                    { targets:[2],data: "ref_no" },
                     { targets:[3],data: "remarks" },
-                    { targets:[4],data: "posted_by" },
 
 
                     {
-                        targets:[5],data: "debit",
+                        targets:[4],data: "debit",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }
                     },
                     {
-                        targets:[6],data: "credit",
+                        targets:[5],data: "credit",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }
                     },
                     {
-                        targets:[7],data: "balance",
+                        targets:[6],data: "balance",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }}

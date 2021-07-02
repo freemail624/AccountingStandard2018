@@ -157,15 +157,16 @@
                                 <table id="tbl_stock" class="table table-striped" style="width: 100%;,margin-top: 20px;">
                                 <thead>
                                     <tr>
-                                        <th style="width: 10%;">Date</th>
-                                        <th style="width: 15%;">Document No.</th>
-                                        <th style="width: 5%">Package</th>
+                                        <th style="width: 8%;">Date</th>
+                                        <th style="width: 10%;">Document No.</th>
+                                        <th style="width: 9%">Particular</th>
+                                        <th style="width: 9%">Receipt No</th>
                                         <th style="width: 8%;text-align: right;font-weight: bold;">IN</th>
                                         <th style="width: 8%;text-align: right;font-weight: bold;">OUT</th>
-                                        <th style="width: 12%;text-align: right;font-weight: bold;">Balance</th>
+                                        <th style="width: 8%;text-align: right;font-weight: bold;">Balance</th>
                                         <th class="hidden" style="width: 12%;text-align: right;font-weight: bold;">Bulk Balance</th>
                                         <th style="text-align: left;width: 10%;">Location</th>
-                                        <th style="text-align: left;width: 20%">Remarks</th>
+                                        <th style="text-align: left;width: 18%">Remarks</th>
                                     </tr>
                                 </thead>
                                     <tbody id="parent" style="width: 100%;">
@@ -310,6 +311,7 @@ $(document).ready(function(){
                         '<td></td>'+
                         '<td></td>'+
                         '<td></td>'+
+                        '<td></td>'+
                         '<td align="right">'+response.balance_as_of.total_qty_bulk+'</td>'+
                         '<td></td>'+
                         '<td><strong>System Generated Balance</strong></td>'+
@@ -321,7 +323,8 @@ $(document).ready(function(){
                         '<tr>'+
                             '<td>'+value.txn_date+'</td>'+
                             '<td>'+value.ref_no+'</td>'+
-                            '<td>'+value.identifier+'</td>'+
+                            '<td>'+value.Description+'</td>'+
+                            '<td>'+value.receipt_no+'</td>'+
                             '<td align="right">'+accounting.formatNumber(value.parent_in_qty,2)+'</td>'+
                             '<td align="right">'+accounting.formatNumber(value.parent_out_qty,2)+'</td>'+
                             '<td align="right">'+accounting.formatNumber(value.parent_balance,2)+' '+response.product_info.parent_unit_name+'</td>'+

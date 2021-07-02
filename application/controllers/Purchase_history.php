@@ -14,6 +14,7 @@ class Purchase_history extends CORE_Controller {
         $this->load->model('Departments_model');
         $this->load->model('Email_settings_model');
         $this->load->model('Delivery_invoice_model');
+        $this->load->model('Inv_receipt_types_model');
     }
 
     public function index() {
@@ -36,6 +37,7 @@ class Purchase_history extends CORE_Controller {
             array('departments.is_active'=>TRUE,'departments.is_deleted'=>FALSE)
         );
 
+        $data['inv_receipt_types']=$this->Inv_receipt_types_model->get_list();
 
         (in_array('2-8',$this->session->user_rights)? 
         $this->load->view('purchase_history_view', $data)
@@ -60,12 +62,14 @@ class Purchase_history extends CORE_Controller {
                 $m_delivery=$this->Delivery_invoice_model;
                 $department=$this->input->get('department',TRUE);
                 $supplier=$this->input->get('supplier',TRUE);
+                $inv_receipt_type_id=$this->input->get('inv_receipt_type_id',TRUE);
+                $inv_receipt_type_id=$inv_receipt_type_id ? $inv_receipt_type_id : null;
                 ($department == '0')? $department = null :$department =$department ;
                 ($supplier == '0')? $supplier = null :$supplier =$supplier ;
                 $from=date('Y-m-d',strtotime($this->input->get('frm',TRUE)));
                 $to=date('Y-m-d',strtotime($this->input->get('to',TRUE)));
 
-                $response['data']=$m_delivery->delivery_list_count($id_filter,$department,$supplier,$from,$to,1);
+                $response['data']=$m_delivery->delivery_list_count($id_filter,$department,$supplier,$from,$to,1,$inv_receipt_type_id);
 
                 echo json_encode($response);    
 
@@ -76,10 +80,12 @@ class Purchase_history extends CORE_Controller {
                 $m_delivery=$this->Delivery_invoice_model;
                 $m_department=$this->Departments_model;
                 $m_supplier=$this->Suppliers_model;
+                $m_inv_receipt_type=$this->Inv_receipt_types_model;
 
                 $type=$this->input->get('type',TRUE);
                 $department_id=$this->input->get('department_id',TRUE);
                 $supplier_id=$this->input->get('supplier_id',TRUE);
+                $inv_receipt_type_id=$this->input->get('inv_receipt_type_id',TRUE);
                 $from=date('Y-m-d',strtotime($this->input->get('frm',TRUE)));
                 $to=date('Y-m-d',strtotime($this->input->get('to',TRUE)));
 
@@ -101,7 +107,16 @@ class Purchase_history extends CORE_Controller {
                     $data['supplier_name'] = $m_supplier->get_list($supplier_id)[0]->supplier_name;
                 }
 
-                $data['data']=$m_delivery->delivery_list_count($id_filter,$department_id,$supplier_id,$from,$to,1);
+                // Get Receipt Type
+                if($inv_receipt_type_id == 0){
+                    $inv_receipt_type_id = null;
+                    $data['inv_receipt_type'] = 'ALL';
+                }else{
+                    $data['inv_receipt_type'] = $m_inv_receipt_type->get_list($inv_receipt_type_id)[0]->inv_receipt_type;
+                }
+
+
+                $data['data']=$m_delivery->delivery_list_count($id_filter,$department_id,$supplier_id,$from,$to,1,$inv_receipt_type_id);
 
                 $company_info=$m_company_info->get_list();
                 $data['company_info']=$company_info[0];
@@ -123,15 +138,16 @@ class Purchase_history extends CORE_Controller {
                 break;
 
             case 'export':
-          
                 $m_company=$this->Company_model;
                 $m_delivery=$this->Delivery_invoice_model;
                 $m_department=$this->Departments_model;
                 $m_supplier=$this->Suppliers_model;
+                $m_inv_receipt_type=$this->Inv_receipt_types_model;
                 $excel=$this->excel;
 
                 $department_id=$this->input->get('department_id',TRUE);
                 $supplier_id=$this->input->get('supplier_id',TRUE);
+                $inv_receipt_type_id=$this->input->get('inv_receipt_type_id',TRUE);
                 $from=date('Y-m-d',strtotime($this->input->get('frm',TRUE)));
                 $to=date('Y-m-d',strtotime($this->input->get('to',TRUE)));
 
@@ -152,8 +168,15 @@ class Purchase_history extends CORE_Controller {
                     $supplier_id=$supplier_id;
                     $supplier_name = $m_supplier->get_list($supplier_id)[0]->supplier_name;
                 }
+                // Get Receipt Type
+                if($inv_receipt_type_id == 0){
+                    $inv_receipt_type_id = null;
+                    $inv_receipt_type = 'ALL';
+                }else{
+                    $inv_receipt_type = $m_inv_receipt_type->get_list($inv_receipt_type_id)[0]->inv_receipt_type;
+                }
 
-                $data=$m_delivery->delivery_list_count($id_filter,$department_id,$supplier_id,$from,$to,1);
+                $data=$m_delivery->delivery_list_count($id_filter,$department_id,$supplier_id,$from,$to,1,$inv_receipt_type_id);
                 $from =date('F j, Y',strtotime($this->input->get('frm',TRUE)));
                 $to =date('F j, Y',strtotime($this->input->get('to',TRUE)));
                 $company_info = $m_company->get_list();
@@ -161,13 +184,14 @@ class Purchase_history extends CORE_Controller {
                 $excel->setActiveSheetIndex(0);
 
                 $excel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
-                $excel->getActiveSheet()->getColumnDimension('B')->setWidth(30);
-                $excel->getActiveSheet()->getColumnDimension('C')->setWidth(15);
-                $excel->getActiveSheet()->getColumnDimension('D')->setWidth(15);
+                $excel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
+                $excel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
+                $excel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
                 $excel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
                 $excel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
                 $excel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
                 $excel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
+                $excel->getActiveSheet()->getColumnDimension('I')->setWidth(20);
 
                 //name the worksheet
                 $excel->getActiveSheet()->setTitle("Purchase History");
@@ -188,28 +212,32 @@ class Purchase_history extends CORE_Controller {
                                         ->setCellValue('B7',$supplier_name)
                                         ->setCellValue('A8','Department : ')
                                         ->setCellValue('B8',$department_name)
-                                        ->setCellValue('A9','From '.$from.' to '.$to);
+                                        ->setCellValue('A9','Receipt Type : ')
+                                        ->setCellValue('B9',$inv_receipt_type)
+                                        ->setCellValue('A10','From '.$from.' to '.$to);
 
-                $excel->getActiveSheet()->getStyle('A11:H11')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('A11','Invoice #')
-                                        ->setCellValue('B11','Supplier')
-                                        ->setCellValue('C11','Department')
-                                        ->setCellValue('D11','External Ref #')
-                                        ->setCellValue('E11','PO#')
-                                        ->setCellValue('F11','Terms')
-                                        ->setCellValue('G11','Delivered');          
+                $excel->getActiveSheet()->getStyle('A12:I12')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('A12','Invoice #')
+                                        ->setCellValue('B12','Receipt Type')
+                                        ->setCellValue('C12','Receipt No')
+                                        ->setCellValue('D12','Supplier')
+                                        ->setCellValue('E12','Department')
+                                        ->setCellValue('F12','PO#')
+                                        ->setCellValue('G12','Terms')
+                                        ->setCellValue('H12','Delivered');        
 
-                $i = 12;
+                $i = 13;
 
                 foreach($data as $data){
 
                     $excel->getActiveSheet()->setCellValue('A'.$i,$data->dr_invoice_no)
-                                ->setCellValue('B'.$i,$data->supplier_name)
-                                ->setCellValue('C'.$i,$data->department_name)
-                                ->setCellValue('D'.$i,$data->external_ref_no)
-                                ->setCellValue('E'.$i,$data->po_no)
-                                ->setCellValue('F'.$i,$data->term_description)
-                                ->setCellValue('G'.$i,$data->date_delivered);
+                                ->setCellValue('B'.$i,$data->inv_receipt_type)
+                                ->setCellValue('C'.$i,$data->external_ref_no)
+                                ->setCellValue('D'.$i,$data->supplier_name)
+                                ->setCellValue('E'.$i,$data->department_name)
+                                ->setCellValue('F'.$i,$data->po_no)
+                                ->setCellValue('G'.$i,$data->term_description)
+                                ->setCellValue('H'.$i,$data->date_delivered);
                                 
                     $i++;
 
@@ -239,9 +267,11 @@ class Purchase_history extends CORE_Controller {
                 $m_delivery=$this->Delivery_invoice_model;
                 $m_department=$this->Departments_model;
                 $m_supplier=$this->Suppliers_model;
+                $m_inv_receipt_type=$this->Inv_receipt_types_model;
 
                 $department_id=$this->input->get('department_id',TRUE);
                 $supplier_id=$this->input->get('supplier_id',TRUE);
+                $inv_receipt_type_id=$this->input->get('inv_receipt_type_id', TRUE);
                 $from=date('Y-m-d',strtotime($this->input->get('frm',TRUE)));
                 $to=date('Y-m-d',strtotime($this->input->get('to',TRUE)));
 
@@ -263,7 +293,15 @@ class Purchase_history extends CORE_Controller {
                     $supplier_name = $m_supplier->get_list($supplier_id)[0]->supplier_name;
                 }
 
-                $data=$m_delivery->delivery_list_count($id_filter,$department_id,$supplier_id,$from,$to,1);
+                // Get Receipt Type
+                if($inv_receipt_type_id == 0){
+                    $inv_receipt_type_id = null;
+                    $inv_receipt_type = 'ALL';
+                }else{
+                    $inv_receipt_type = $m_inv_receipt_type->get_list($inv_receipt_type_id)[0]->inv_receipt_type;
+                }
+
+                $data=$m_delivery->delivery_list_count($id_filter,$department_id,$supplier_id,$from,$to,1,$inv_receipt_type_id);
                 $from =date('F j, Y',strtotime($this->input->get('frm',TRUE)));
                 $to =date('F j, Y',strtotime($this->input->get('to',TRUE)));
                 $company_info = $m_company->get_list();
@@ -273,13 +311,14 @@ class Purchase_history extends CORE_Controller {
                 ob_start();
 
                 $excel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
-                $excel->getActiveSheet()->getColumnDimension('B')->setWidth(30);
-                $excel->getActiveSheet()->getColumnDimension('C')->setWidth(15);
-                $excel->getActiveSheet()->getColumnDimension('D')->setWidth(15);
+                $excel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
+                $excel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
+                $excel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
                 $excel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
                 $excel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
                 $excel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
                 $excel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
+                $excel->getActiveSheet()->getColumnDimension('I')->setWidth(20);
 
                 //name the worksheet
                 $excel->getActiveSheet()->setTitle("Purchase History");
@@ -300,45 +339,48 @@ class Purchase_history extends CORE_Controller {
                                         ->setCellValue('B7',$supplier_name)
                                         ->setCellValue('A8','Department : ')
                                         ->setCellValue('B8',$department_name)
-                                        ->setCellValue('A9','From '.$from.' to '.$to);
+                                        ->setCellValue('A9','Receipt Type : ')
+                                        ->setCellValue('B9',$inv_receipt_type)
+                                        ->setCellValue('A10','From '.$from.' to '.$to);
 
-                $excel->getActiveSheet()->getStyle('A11:H11')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('A11','Invoice #')
-                                        ->setCellValue('B11','Supplier')
-                                        ->setCellValue('C11','Department')
-                                        ->setCellValue('D11','External Ref #')
-                                        ->setCellValue('E11','PO#')
-                                        ->setCellValue('F11','Terms')
-                                        ->setCellValue('G11','Delivered');          
+                $excel->getActiveSheet()->getStyle('A12:I12')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('A12','Invoice #')
+                                        ->setCellValue('B12','Receipt Type')
+                                        ->setCellValue('C12','Receipt No')
+                                        ->setCellValue('D12','Supplier')
+                                        ->setCellValue('E12','Department')
+                                        ->setCellValue('F12','PO#')
+                                        ->setCellValue('G12','Terms')
+                                        ->setCellValue('H12','Delivered');        
 
-                $i = 12;
+                $i = 13;
 
                 foreach($data as $data){
 
                     $excel->getActiveSheet()->setCellValue('A'.$i,$data->dr_invoice_no)
-                                ->setCellValue('B'.$i,$data->supplier_name)
-                                ->setCellValue('C'.$i,$data->department_name)
-                                ->setCellValue('D'.$i,$data->external_ref_no)
-                                ->setCellValue('E'.$i,$data->po_no)
-                                ->setCellValue('F'.$i,$data->term_description)
-                                ->setCellValue('G'.$i,$data->date_delivered);
+                                ->setCellValue('B'.$i,$data->inv_receipt_type)
+                                ->setCellValue('C'.$i,$data->external_ref_no)
+                                ->setCellValue('D'.$i,$data->supplier_name)
+                                ->setCellValue('E'.$i,$data->department_name)
+                                ->setCellValue('F'.$i,$data->po_no)
+                                ->setCellValue('G'.$i,$data->term_description)
+                                ->setCellValue('H'.$i,$data->date_delivered);
                                 
                     $i++;
 
                 }
 
-                // Redirect output to a client’s web browser (Excel2007)
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 header('Content-Disposition: attachment;filename='."Purchase History.xlsx".'');
                 header('Cache-Control: max-age=0');
                 // If you're serving to IE 9, then the following may be needed
                 header('Cache-Control: max-age=1');
-
                 // If you're serving to IE over SSL, then the following may be needed
                 header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
                 header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
                 header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
                 header ('Pragma: public'); // HTTP/1.0
+
                 $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
                 $objWriter->save('php://output');
                 $data = ob_get_clean();

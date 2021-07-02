@@ -38,6 +38,10 @@
     		<td>Department : </td>
     		<td><?php echo $department_name; ?></td>
     	</tr>
+			<tr>
+    		<td>Receipt Type : </td>
+    		<td><?php echo $inv_receipt_type; ?></td>
+    	</tr>
     	<tr>
     		<td colspan="2"><?php echo 'From '.$from.' to '.$to; ?></td>
     	</tr>
@@ -45,20 +49,22 @@
 
     <table width="100%" style="border-collapse: collapse;" cellpadding="3" cellspacing="3">
     	<tr>
-    		<td width="17%" class="border-bottom"><strong>Invoice #</strong></td>
-    		<td width="20%" class="border-bottom"><strong>Supplier</strong></td>
-    		<td width="13%" class="border-bottom"><strong>Department</strong></td>
-    		<td width="15%" class="border-bottom"><strong>Ext Ref#</strong></td>
-    		<td width="15%" class="border-bottom"><strong>PO#</strong></td>
-    		<td width="10%" class="border-bottom"><strong>Terms</strong></td>
+    		<td width="16%" class="border-bottom"><strong>Invoice #</strong></td>
+				<td width="14%" class="border-bottom"><strong>Receipt Type</strong></td>
+				<td width="10%" class="border-bottom"><strong>Receipt No</strong></td>
+    		<td width="19%" class="border-bottom"><strong>Supplier</strong></td>
+    		<td width="12%" class="border-bottom"><strong>Department</strong></td>
+    		<td width="11%" class="border-bottom"><strong>PO#</strong></td>
+    		<td width="8%" class="border-bottom"><strong>Terms</strong></td>
     		<td width="10%" class="border-bottom"><strong>Delivered</strong></td>
     	</tr>
     	<?php foreach($data as $data){ ?>
     		<tr>
     			<td><?php echo $data->dr_invoice_no; ?></td>
+					<td><?php echo $data->inv_receipt_type; ?></td>
+					<td><?php echo $data->external_ref_no; ?></td>
     			<td><?php echo $data->supplier_name; ?></td>
     			<td><?php echo $data->department_name; ?></td>
-    			<td><?php echo $data->external_ref_no; ?></td>
     			<td><?php echo $data->po_no; ?></td>
     			<td><?php echo $data->term_description; ?></td>
     			<td><?php echo $data->date_delivered; ?></td>

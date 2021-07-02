@@ -27,6 +27,7 @@ class Sales_history extends CORE_Controller
         $this->load->model('Customer_type_model');
         $this->load->model('Order_source_model');
         $this->load->model('Email_settings_model');
+        $this->load->model('Inv_receipt_types_model');
     }
 
     public function index() {
@@ -80,6 +81,7 @@ class Sales_history extends CORE_Controller
         $data['tax_percentage']=(count($tax_rate)>0?$tax_rate[0]->tax_rate:0);
         $data['invoice_counter']=$this->Invoice_counter_model->get_list(array('user_id'=>$this->session->user_id));
         $data['order_sources'] = $this->Order_source_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
+        $data['inv_receipt_types'] =$this->Inv_receipt_types_model->get_list();
 
         $data['title'] = 'Sales History';
         
@@ -95,7 +97,8 @@ class Sales_history extends CORE_Controller
             case 'list_with_count':  //this returns JSON of Issuance to be rendered on Datatable
                 $m_invoice=$this->Sales_invoice_model;
                 $customer_id = $this->input->get('id');
-                $response['data']=$m_invoice->get_sales_history($customer_id);
+                $inv_receipt_type_id = $this->input->get('inv_receipt_type_id');
+                $response['data']=$m_invoice->get_sales_history($customer_id,$inv_receipt_type_id);
                 echo json_encode($response);
                 break;
 
@@ -103,17 +106,24 @@ class Sales_history extends CORE_Controller
                 $m_invoice=$this->Sales_invoice_model;
                 $m_customer=$this->Customers_model;
                 $m_company=$this->Company_model;
+                $m_inv_receipt_type=$this->Inv_receipt_types_model;
 
                 $company=$m_company->get_list();
                 $customer_id = $this->input->get('customer_id');
-
-                $data['data']=$m_invoice->get_sales_history($customer_id);
+                $inv_receipt_type_id = $this->input->get('inv_receipt_type_id');
+                $data['data']=$m_invoice->get_sales_history($customer_id,$inv_receipt_type_id);
                 $data['company_info']=$company[0];
 
                 if($customer_id == 0){
                     $data['customer_name'] = 'ALL';
                 }else{
                     $data['customer_name'] = $m_customer->get_list($customer_id)[0]->customer_name;
+                }
+
+                if($inv_receipt_type_id == 0){
+                    $data['inv_receipt_type'] = 'ALL';
+                }else{
+                    $data['inv_receipt_type'] = $m_inv_receipt_type->get_list($inv_receipt_type_id)[0]->inv_receipt_type;
                 }
 
                 $file_name='Sales History';
@@ -132,16 +142,24 @@ class Sales_history extends CORE_Controller
                 $m_product=$this->Products_model;
                 $m_customer=$this->Customers_model;
                 $m_company=$this->Company_model;
+                $m_inv_receipt_type=$this->Inv_receipt_types_model;
 
                 $company_info=$m_company->get_list();
                 $customer_id = $this->input->get('customer_id');
+                $inv_receipt_type_id = $this->input->get('inv_receipt_type_id');
 
-                $data=$m_invoice->get_sales_history($customer_id);
+                $data=$m_invoice->get_sales_history($customer_id,$inv_receipt_type_id);
 
                 if($customer_id == 0){
                     $customer_name = 'ALL';
                 }else{
                     $customer_name = $m_customer->get_list($customer_id)[0]->customer_name;
+                }
+
+                if($inv_receipt_type_id == 0){
+                    $inv_receipt_type = 'ALL';
+                }else{
+                    $inv_receipt_type = $m_inv_receipt_type->get_list($inv_receipt_type_id)[0]->inv_receipt_type;
                 }
 
                 $excel=$this->excel;
@@ -167,30 +185,34 @@ class Sales_history extends CORE_Controller
                 $excel->getActiveSheet()->getStyle('A6')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('A6','Sales History')
                                         ->setCellValue('A7','Customer :')
-                                        ->setCellValue('B7',$customer_name);
+                                        ->setCellValue('B7',$customer_name)
+                                        ->setCellValue('A8','Receipt Type :')
+                                        ->setCellValue('B8',$inv_receipt_type);
 
-                $excel->getActiveSheet()->getStyle('A9:F9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('A10:G10')->getFont()->setBold(TRUE);
 
-                $excel->getActiveSheet()->setCellValue('A9','Invoice #')
-                                        ->setCellValue('B9','Receipt No')
-                                        ->setCellValue('C9','Invoice Date')
-                                        ->setCellValue('D9','Customer')
-                                        ->setCellValue('E9','Department')
-                                        ->setCellValue('F9','Remarks');
+                $excel->getActiveSheet()->setCellValue('A10','Date')
+                                        ->setCellValue('B10','Receipt Type')
+                                        ->setCellValue('C10','Receipt No')
+                                        ->setCellValue('D10','Particular')
+                                        ->setCellValue('E10','Amount')
+                                        ->setCellValue('F10','Department')
+                                        ->setCellValue('G10','Remarks');
 
-                $i = 10;
+                $i = 11;
 
                    foreach ($data as $data) {
 
                     $excel->getActiveSheet()
-                          ->setCellValue('A'.$i,$data->inv_no)
-                          ->setCellValue('B'.$i,$data->receipt_no)
-                          ->setCellValue('C'.$i,$data->date_invoice)
+                          ->setCellValue('A'.$i,$data->date_invoice)
+                          ->setCellValue('B'.$i,$data->inv_receipt_type)
+                          ->setCellValue('C'.$i,$data->receipt_no)
                           ->setCellValue('D'.$i,$data->customer_name)
-                          ->setCellValue('E'.$i,$data->department_name)
-                          ->setCellValue('F'.$i,$data->remarks);
+                          ->setCellValue('E'.$i,$data->total_after_tax)
+                          ->setCellValue('F'.$i,$data->department_name)
+                          ->setCellValue('G'.$i,$data->remarks);
+                    $excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()->setFormatCode('* #,##0.00;_* #,##0.00;_(@_)');
                     $i++;
-
                 }
 
                 $i++;
@@ -222,12 +244,14 @@ class Sales_history extends CORE_Controller
                 $m_invoice=$this->Sales_invoice_model;
                 $m_customer=$this->Customers_model;
                 $m_company=$this->Company_model;
+                $m_inv_receipt_type=$this->Inv_receipt_types_model;
 
                 $email=$m_email->get_list(2);   
                 $company_info=$m_company->get_list();
                 $customer_id = $this->input->get('customer_id');
+                $inv_receipt_type_id = $this->input->get('inv_receipt_type_id');
 
-                $data=$m_invoice->get_sales_history($customer_id);
+                $data=$m_invoice->get_sales_history($customer_id,$inv_receipt_type_id);
 
                 if($customer_id == 0){
                     $customer_name = 'ALL';
@@ -235,11 +259,18 @@ class Sales_history extends CORE_Controller
                     $customer_name = $m_customer->get_list($customer_id)[0]->customer_name;
                 }
 
-                $excel=$this->excel;
-                $excel->setActiveSheetIndex(0);
+                if($inv_receipt_type_id == 0){
+                    $inv_receipt_type = 'ALL';
+                }else{
+                    $inv_receipt_type = $m_inv_receipt_type->get_list($inv_receipt_type_id)[0]->inv_receipt_type;
+                }
+
                 // SET WIDTH
                 ob_start();
-$excel->getActiveSheet()->getColumnDimension('A')->setWidth(25);
+                $excel=$this->excel;
+                $excel->setActiveSheetIndex(0);
+
+                $excel->getActiveSheet()->getColumnDimension('A')->setWidth(25);
                 $excel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
                 $excel->getActiveSheet()->getColumnDimension('C')->setWidth(15);
                 $excel->getActiveSheet()->getColumnDimension('D')->setWidth(30);
@@ -259,30 +290,34 @@ $excel->getActiveSheet()->getColumnDimension('A')->setWidth(25);
                 $excel->getActiveSheet()->getStyle('A6')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('A6','Sales History')
                                         ->setCellValue('A7','Customer :')
-                                        ->setCellValue('B7',$customer_name);
+                                        ->setCellValue('B7',$customer_name)
+                                        ->setCellValue('A8','Receipt Type :')
+                                        ->setCellValue('B8',$inv_receipt_type);
 
-                $excel->getActiveSheet()->getStyle('A9:F9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('A10:G10')->getFont()->setBold(TRUE);
 
-                $excel->getActiveSheet()->setCellValue('A9','Invoice #')
-                                        ->setCellValue('B9','Receipt No')
-                                        ->setCellValue('C9','Invoice Date')
-                                        ->setCellValue('D9','Customer')
-                                        ->setCellValue('E9','Department')
-                                        ->setCellValue('F9','Remarks');
+                $excel->getActiveSheet()->setCellValue('A10','Date')
+                                        ->setCellValue('B10','Receipt Type')
+                                        ->setCellValue('C10','Receipt No')
+                                        ->setCellValue('D10','Particular')
+                                        ->setCellValue('E10','Amount')
+                                        ->setCellValue('F10','Department')
+                                        ->setCellValue('G10','Remarks');
 
-                $i = 10;
+                $i = 11;
 
                    foreach ($data as $data) {
 
                     $excel->getActiveSheet()
-                          ->setCellValue('A'.$i,$data->inv_no)
-                          ->setCellValue('B'.$i,$data->receipt_no)
-                          ->setCellValue('C'.$i,$data->date_invoice)
+                          ->setCellValue('A'.$i,$data->date_invoice)
+                          ->setCellValue('B'.$i,$data->inv_receipt_type)
+                          ->setCellValue('C'.$i,$data->receipt_no)
                           ->setCellValue('D'.$i,$data->customer_name)
-                          ->setCellValue('E'.$i,$data->department_name)
-                          ->setCellValue('F'.$i,$data->remarks);
+                          ->setCellValue('E'.$i,$data->total_after_tax)
+                          ->setCellValue('F'.$i,$data->department_name)
+                          ->setCellValue('G'.$i,$data->remarks);
+                    $excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()->setFormatCode('* #,##0.00;_* #,##0.00;_(@_)');
                     $i++;
-
                 }
 
                 $i++;
@@ -305,7 +340,7 @@ $excel->getActiveSheet()->getColumnDimension('A')->setWidth(25);
                 header ('Pragma: public'); // HTTP/1.0
 
                 $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
-                $objWriter->save('php://output');
+                $objWriter->save('php://output'); 
                 $data = ob_get_clean();
                 ob_end_clean();
 

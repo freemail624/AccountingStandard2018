@@ -179,11 +179,11 @@
                 <thead >
                 <tr>
                     <th width="5%"></th>
-                    <th width="10%">Invoice Date</th>
+                    <th width="10%">Date</th>
                     <th width="15%">Receipt No</th>
                     <th width="25%">Customer</th>
-                    <th width="10%">Department</th>
                     <th width="10%">Amount</th>
+                    <th width="10%">Department</th>
                     <th width="20%"><center>Action</center></th>
                     <th width="1%">Invoice #</th>
                     <th width="1%">Due Date</th>
@@ -250,8 +250,8 @@
                                     </select>   
                                 </div>
 
-                                <label> Receipt Type :</label><br />
-                                <select name="inv_receipt_type_id" id="cbo_order_receipt_types">
+                                <b class="required">*</b> <label> Receipt Type :</label><br />
+                                <select name="inv_receipt_type_id" id="cbo_order_receipt_types" data-error-msg="Receipt Type is required." required>
                                     <?php foreach($inv_receipt_types as $receipt_type){ ?>
                                         <option value="<?php echo $receipt_type->inv_receipt_type_id; ?>">
                                             <?php echo $receipt_type->inv_receipt_type; ?>
@@ -262,8 +262,8 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <label>Receipt No :</label> <br />
-                                <input type="text" name="receipt_no" id="receipt_no" class="form-control" data-error-msg="Receipt No is required!" placeholder="Receipt No">
+                                <b class="required">*</b> <label>Receipt No :</label> <br />
+                                <input type="text" name="receipt_no" id="receipt_no" class="form-control" data-error-msg="Receipt No is required!" placeholder="Receipt No" required>
                             </div>
                         </div>
                     </div>
@@ -643,14 +643,14 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;"><b>*</b> Address :</label>
+                                     <label class="control-label boldlabel" style="text-align:right;">Address :</label>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">
                                         <span class="input-group-addon">
                                             <i class="fa fa-home"></i>
                                          </span>
-                                         <textarea name="address" class="form-control" data-error-msg="Supplier address is required!" placeholder="Address" required ></textarea>
+                                         <textarea name="address" class="form-control" data-error-msg="Supplier address is required!" placeholder="Address"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -1099,13 +1099,13 @@ $(document).ready(function(){
                 { targets:[1],data: "date_invoice" },
                 { targets:[2],data: "receipt_no" },
                 { targets:[3],data: "customer_name" },
-                { targets:[4],data: "department_name" },
                 {
-                    sClass: "text-right", targets:[5],data: null,
+                    sClass: "text-right", targets:[4],data: null,
                     render: function (data, type, full, meta){
                         return accounting.formatNumber(data.total_after_tax,2);
                     }
                 },
+                { targets:[5],data: "department_name" },
                 {
                     targets:[6],data:null,
                     render: function (data, type, full, meta){

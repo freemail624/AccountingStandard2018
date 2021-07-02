@@ -555,7 +555,7 @@
                         <div class="col-md-8">
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b>*</b></font> Customer Name :</label>
+                                    <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b>*</b></font> Customer Name :</label>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">
@@ -569,7 +569,7 @@
 
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b>*</b></font> Contact Person :</label>
+                                    <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b>*</b></font> Contact Person :</label>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">
@@ -583,21 +583,21 @@
                         
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b>*</b></font> Address :</label>
+                                    <label class="control-label boldlabel" style="text-align:right;">Address :</label>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">
                                         <span class="input-group-addon">
                                             <i class="fa fa-home"></i>
-                                         </span>
-                                         <textarea name="address" class="form-control" data-error-msg="Supplier address is required!" placeholder="Address" required ></textarea>
+                                        </span>
+                                        <textarea name="address" class="form-control" data-error-msg="Supplier address is required!" placeholder="Address"></textarea>
                                     </div>
                                 </div>
                             </div>
                         
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;">Email Address :</label>
+                                    <label class="control-label boldlabel" style="text-align:right;">Email Address :</label>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">
@@ -611,7 +611,7 @@
                         
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;">Landline :</label>
+                                    <label class="control-label boldlabel" style="text-align:right;">Landline :</label>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">
@@ -625,7 +625,7 @@
 
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;">Contact No :</label>
+                                    <label class="control-label boldlabel" style="text-align:right;">Contact No :</label>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">
@@ -650,9 +650,9 @@
                                     </center>
                                     <hr style="margin-top:0px !important;height:1px;background-color:black;">
                                     <center>
-                                         <button type="button" id="btn_browse" style="width:150px;margin-bottom:5px;" class="btn btn-primary">Browse Photo</button>
-                                         <button type="button" id="btn_remove_photo" style="width:150px;" class="btn btn-danger">Remove</button>
-                                         <input type="file" name="file_upload[]" class="hidden">
+                                        <button type="button" id="btn_browse" style="width:150px;margin-bottom:5px;" class="btn btn-primary">Browse Photo</button>
+                                        <button type="button" id="btn_remove_photo" style="width:150px;" class="btn btn-danger">Remove</button>
+                                        <input type="file" name="file_upload[]" class="hidden">
                                     </center> 
                                 </div>
                             </div>   

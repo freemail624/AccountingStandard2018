@@ -22,7 +22,7 @@ class Deliveries extends CORE_Controller
         $this->load->model('Company_model');    
         $this->load->model('Terms_model');    
         $this->load->model('Account_integration_model');  
-
+        $this->load->model('Inv_receipt_types_model');
     }
 
     public function index() {
@@ -55,6 +55,7 @@ class Deliveries extends CORE_Controller
         $data['tax_types']=$this->Tax_types_model->get_list('is_deleted=0');
         $data['company']=$this->Company_model->getDefaultRemarks()[0];
         $data['accounts']=$this->Account_integration_model->get_list(1);
+        $data['inv_receipt_types'] =$this->Inv_receipt_types_model->get_list();
         $data['title'] = 'Delivery Invoice';
         
         (in_array('2-2',$this->session->user_rights)? 
@@ -220,6 +221,7 @@ class Deliveries extends CORE_Controller
                 $m_delivery_invoice->grand_total_amount=$this->get_numeric_value($this->input->post('grand_total_amount',TRUE));
                 $m_delivery_invoice->exchange_rate=$this->get_numeric_value($this->input->post('exchange_rate',TRUE));
                 $m_delivery_invoice->payment_method_id=$this->get_numeric_value($this->input->post('payment_method_id',TRUE));
+                $m_delivery_invoice->inv_receipt_type_id=$this->get_numeric_value($this->input->post('inv_receipt_type_id',TRUE));
                 $m_delivery_invoice->save();
 
                 $dr_invoice_id=$m_delivery_invoice->last_insert_id();
@@ -363,6 +365,7 @@ class Deliveries extends CORE_Controller
                 $m_delivery_invoice->grand_total_amount=$this->get_numeric_value($this->input->post('grand_total_amount',TRUE));
                 $m_delivery_invoice->exchange_rate=$this->get_numeric_value($this->input->post('exchange_rate',TRUE));
                 $m_delivery_invoice->payment_method_id=$this->get_numeric_value($this->input->post('payment_method_id',TRUE));
+                $m_delivery_invoice->inv_receipt_type_id=$this->get_numeric_value($this->input->post('inv_receipt_type_id',TRUE));
                 $m_delivery_invoice->modify($dr_invoice_id);
 
 

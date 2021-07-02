@@ -604,7 +604,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
             return $this->db->query($sql)->result();
     }
 
-    function delivery_list_count($id_filter,$department_id=null,$supplier_id=null,$startDate=null,$endDate=null,$is_finalized=null){
+    function delivery_list_count($id_filter,$department_id=null,$supplier_id=null,$startDate=null,$endDate=null,$is_finalized=null,$inv_receipt_type_id=null){
         $sql="
         SELECT di.*,
         suppliers.supplier_name,
@@ -613,7 +613,8 @@ GROUP BY n.supplier_id HAVING total_balance > 0
         purchase_order.po_no,
         DATE_FORMAT(di.date_due,'%m/%d/%Y')as date_due,
         DATE_FORMAT(di.date_delivered,'%m/%d/%Y')as date_delivered,
-        terms.term_description
+        terms.term_description,
+        rt.inv_receipt_type
         FROM
         delivery_invoice as di
          
@@ -622,6 +623,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
         LEFT JOIN tax_types ON tax_types.tax_type_id=di.tax_type_id
         LEFT JOIN purchase_order ON purchase_order.purchase_order_id=di.purchase_order_id 
         LEFT JOIN terms ON terms.term_id=di.term_id 
+        LEFT JOIN inv_receipt_types rt ON rt.inv_receipt_type_id=di.inv_receipt_type_id 
 
 
         WHERE
@@ -632,6 +634,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
         ".($supplier_id==null?"":" AND di.supplier_id=$supplier_id")."
         ".($id_filter==null?"":" AND di.dr_invoice_id=$id_filter")."
         ".($startDate==null?"":" AND di.date_delivered BETWEEN '$startDate' AND '$endDate'")."
+        ".($inv_receipt_type_id==null?"":" AND di.inv_receipt_type_id=$inv_receipt_type_id")."
         ";
         return $this->db->query($sql)->result();
 

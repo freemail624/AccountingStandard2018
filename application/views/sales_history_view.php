@@ -140,7 +140,7 @@
         <div class="row panel-row">
         <h2 class="h2-panel-heading">Charge/Cash Invoice History</h2><hr>
                     <div class="row">
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <b class="required"></b>Customer : <br />
                             <select name="customer" id="cbo_customers" data-error-msg="Customer is required." required>
                             <option value="0"> All</option>
@@ -149,9 +149,18 @@
                                 <?php } ?>
                             </select>
                         </div>
-                        <div class="col-lg-3">
-                                Search :<br />
-                                 <input type="text" id="searchbox_sales_history" class="form-control">
+                        <div class="col-sm-2">
+                            <b class="required"></b>Receipt Type : <br />
+                            <select name="receipt_type" id="cbo_receipt_type" data-error-msg="Receipt Type is required." required>
+                            <option value="0"> All</option>
+                                <?php foreach($inv_receipt_types as $receipt_type){ ?>
+                                    <option value="<?php echo $receipt_type->inv_receipt_type_id; ?>"><?php echo $receipt_type->inv_receipt_type; ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div class="col-lg-2">
+                            Search :<br />
+                            <input type="text" id="searchbox_sales_history" class="form-control">
                         </div>
                         <div class="col-lg-5">
                             <br/>
@@ -168,10 +177,11 @@
                 <thead >
                 <tr>
                     <th></th>
-                    <th>Invoice #</th>
+                    <th>Date</th>
+                    <th>Receipt Type</th>
                     <th>Receipt No</th>
-                    <th>Invoice Date</th>
-                    <th>Customer</th>
+                    <th>Particular</th>
+                    <th>Amount</th>
                     <th>Department</th>
                     <th style="width: 20%">Remarks</th>
                 </tr>
@@ -230,7 +240,7 @@
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboDepartments; var _cboCustomers; var dt_so; var products; var changetxn;
     var _cboCustomerType; var prodstat;
-    var _cboCustomerTypeCreate; var _cboSource;
+    var _cboCustomerTypeCreate; var _cboSource; var _cboReceiptType;
      var _line_unit;
 
     var initializeControls=function(){
@@ -243,11 +253,11 @@ $(document).ready(function(){
                 "url" : "Sales_history/transaction/list_with_count",
                 "bDestroy": true,            
                 "data": function ( d ) {
-                        return $.extend( {}, d, {
-                            "id":$('#cbo_customers').val()
-
-                        });
-                    }
+                    return $.extend( {}, d, {
+                        "id":$('#cbo_customers').val(),
+                        "inv_receipt_type_id":$('#cbo_receipt_type').val()
+                    });
+                }
             }, 
             "columns": [
                 {
@@ -257,16 +267,27 @@ $(document).ready(function(){
                     "data":           null,
                     "defaultContent": ""
                 },
-                { targets:[1],data: "inv_no" },
-                { targets:[2],data: "receipt_no" },
-                { targets:[3],data: "date_invoice" },
+                { targets:[1],data: "date_invoice" },
+                { targets:[2],data: "inv_receipt_type" },
+                { targets:[3],data: "receipt_no" },
                 { targets:[4],data: "customer_name" },
-                { targets:[5],data: "department_name" },
-                { targets:[6],data: "remarks"  ,render: $.fn.dataTable.render.ellipsis(35)},
+                {
+                    sClass: "text-right", targets:[5], data: null,
+                    render: function (data, type, full, meta){
+                        return accounting.formatNumber(data.total_after_tax,2);
+                    }
+                },
+                { targets:[6],data: "department_name" },
+                { targets:[7],data: "remarks"  ,render: $.fn.dataTable.render.ellipsis(35)},
             ]
         });
         _cboCustomers=$("#cbo_customers").select2({
             placeholder: "Please select customer.",
+            allowClear: false
+        });
+
+        _cboReceiptType=$("#cbo_receipt_type").select2({
+            placeholder: "Please select Receipt Type.",
             allowClear: false
         });
       
@@ -341,12 +362,16 @@ $(document).ready(function(){
             $('#tbl_sales_invoice').DataTable().ajax.reload()
         });
 
+        _cboReceiptType.on("select2:select", function (e) {
+            $('#tbl_sales_invoice').DataTable().ajax.reload()
+        });
+
         $('#btn_print').click(function(){
-            window.open('Sales_history/transaction/print?customer_id='+$('#cbo_customers').val());
+            window.open('Sales_history/transaction/print?customer_id='+$('#cbo_customers').val()+'&inv_receipt_type_id='+$('#cbo_receipt_type').val());
         });
 
         $('#btn_excel').click(function(){
-            window.open('Sales_history/transaction/excel?customer_id='+$('#cbo_customers').val());
+            window.open('Sales_history/transaction/excel?customer_id='+$('#cbo_customers').val()+'&inv_receipt_type_id='+$('#cbo_receipt_type').val());
         });
 
         $('#btn_email').on('click', function() {
@@ -356,7 +381,7 @@ $(document).ready(function(){
             $.ajax({
                 "dataType":"json",
                 "type":"POST",
-                "url":'Sales_history/transaction/email?customer_id='+$('#cbo_customers').val(),
+                "url":'Sales_history/transaction/email?customer_id='+$('#cbo_customers').val()+'&inv_receipt_type_id='+$('#cbo_receipt_type').val(),
                 "beforeSend": showSpinningProgress(btn)
             }).done(function(response){
                 showNotification(response);

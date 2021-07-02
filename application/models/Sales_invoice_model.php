@@ -1065,7 +1065,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
         return $this->db->query($sql)->result();
     }
 
-    function get_sales_history($customer_id = null){
+    function get_sales_history($customer_id = null, $inv_receipt_type_id = null){
         $sql='SELECT 
         "SI" as type,
         si.sales_invoice_id as invoice_id,
@@ -1074,16 +1074,20 @@ GROUP BY n.customer_id HAVING total_balance > 0";
         si.remarks,
         DATE_FORMAT(si.date_invoice,"%m/%d/%Y") as date_invoice,
         d.department_name,
-        c.customer_name
+        c.customer_name,
+        rt.inv_receipt_type,
+        si.total_after_tax
 
         FROM
         sales_invoice si
 
         LEFT JOIN departments d ON d.department_id=si.department_id
         LEFT JOIN customers c ON c.customer_id=si.customer_id
+        LEFT JOIN inv_receipt_types rt ON rt.inv_receipt_type_id=si.inv_receipt_type_id
         WHERE si.is_active= TRUE = si.is_deleted = FALSE
 
         '.($customer_id==null||$customer_id==0?'':' AND si.customer_id='.$customer_id).'
+        '.($inv_receipt_type_id==null||$inv_receipt_type_id==0?'':' AND si.inv_receipt_type_id='.$inv_receipt_type_id).'
 
         UNION ALL
 
@@ -1096,16 +1100,20 @@ GROUP BY n.customer_id HAVING total_balance > 0";
         ci.remarks,
         DATE_FORMAT(ci.date_invoice,"%m/%d/%Y") as date_invoice,
         d.department_name,
-        c.customer_name
+        c.customer_name,
+        rt.inv_receipt_type,
+        ci.total_after_tax
 
         FROM
         cash_invoice ci
 
         LEFT JOIN departments d ON d.department_id=ci.department_id
         LEFT JOIN customers c ON c.customer_id=ci.customer_id
+        LEFT JOIN inv_receipt_types rt ON rt.inv_receipt_type_id=ci.inv_receipt_type_id
         WHERE ci.is_active= TRUE = ci.is_deleted = FALSE
 
         '.($customer_id==null||$customer_id==0?'':' AND ci.customer_id='.$customer_id).'
+        '.($inv_receipt_type_id==null||$inv_receipt_type_id==0?'':' AND ci.inv_receipt_type_id='.$inv_receipt_type_id).'
 
 
         ORDER BY type,invoice_id DESC

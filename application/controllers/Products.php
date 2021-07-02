@@ -1051,13 +1051,13 @@ function Export_Stock(){
                   ->getActiveSheet()->setCellValue('D10',$sale_price)->getStyle('D10')->getNumberFormat()->setFormatCode('#,##0.00');
             
             $excel->getActiveSheet()->setCellValue('A12','Transaction Date')->getStyle('A12')->getFont()->setBold(TRUE)
-                  ->getActiveSheet()->setCellValue('B12','Reference')->getStyle('B12')->getFont()->setBold(TRUE)
-                  ->getActiveSheet()->setCellValue('C12','Packaging')->getStyle('C12')->getFont()->setBold(TRUE)
+                  ->getActiveSheet()->setCellValue('B12','Particular')->getStyle('B12')->getFont()->setBold(TRUE)
+                  ->getActiveSheet()->setCellValue('C12','Receipt No')->getStyle('C12')->getFont()->setBold(TRUE)
                   ->getActiveSheet()->setCellValue('D12','IN')->getStyle('D12')->getFont()->setBold(TRUE)
                   ->getActiveSheet()->setCellValue('E12','OUT')->getStyle('E12')->getFont()->setBold(TRUE)
                   ->getActiveSheet()->setCellValue('F12','Balance')->getStyle('F12')->getFont()->setBold(TRUE)
                   // ->getActiveSheet()->setCellValue('G12','Bulk Balance')->getStyle('G12')->getFont()->setBold(TRUE)
-                  ->getActiveSheet()->setCellValue('G12','Department')->getStyle('G12')->getFont()->setBold(TRUE)
+                  ->getActiveSheet()->setCellValue('G12','Location')->getStyle('G12')->getFont()->setBold(TRUE)
                   ->getActiveSheet()->setCellValue('H12','Remarks')->getStyle('H12')->getFont()->setBold(TRUE);
 
             $excel->getActiveSheet()->getStyle('D12:F12')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
@@ -1077,8 +1077,8 @@ function Export_Stock(){
           foreach ($products_parent as $parent) {
                                 $i++;
                                 $excel->getActiveSheet()->setCellValue('A'.$i,$parent->txn_date);
-                                $excel->getActiveSheet()->setCellValue('B'.$i,$parent->ref_no);
-                                $excel->getActiveSheet()->setCellValue('C'.$i,$parent->identifier);
+                                $excel->getActiveSheet()->setCellValue('B'.$i,$parent->Description);
+                                $excel->getActiveSheet()->setCellValue('C'.$i,$parent->receipt_no);
 
                                 $excel->getActiveSheet()->getStyle('D'.$i.':G'.$i)->getNumberFormat()->setFormatCode('#,##0.00');
 

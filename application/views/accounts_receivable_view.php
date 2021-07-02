@@ -605,14 +605,14 @@
                         
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b class="required">*</b></font> Address :</label>
+                                     <label class="control-label boldlabel" style="text-align:right;">Address :</label>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">
                                         <span class="input-group-addon">
                                             <i class="fa fa-home"></i>
                                          </span>
-                                         <textarea name="address" class="form-control" data-error-msg="Supplier address is required!" placeholder="Address" required ></textarea>
+                                         <textarea name="address" class="form-control" data-error-msg="Supplier address is required!" placeholder="Address" ></textarea>
                                     </div>
                                 </div>
                             </div>

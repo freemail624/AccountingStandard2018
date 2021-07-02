@@ -28,6 +28,7 @@
 			    account_type,
 			    memo,
     			remarks,
+					ref_no,
 			    ac.account_type_id,
 			    ji.customer_id,
 			    customer_name,

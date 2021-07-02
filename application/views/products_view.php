@@ -226,8 +226,8 @@
                                                             </div>
 
                                                             <div class="form-group" style="margin-bottom:0px;">
-                                                                    <label class=""><b class="required">*</b> Product Description :</label>
-                                                                    <textarea name="product_desc" id="product_desc"class="form-control" data-error-msg="Product Description is required." required></textarea>
+                                                                <label class=""><b class="required">*</b> Product Description :</label>
+                                                                <textarea name="product_desc" id="product_desc" class="form-control" data-error-msg="Product Description is required." required></textarea>
                                                             </div>
 
                                                             <div class="form-group" style="margin-bottom:0px;">
@@ -1513,33 +1513,35 @@ $(document).ready(function(){
         $("#brand").on("change", function () {     
             $modal = $('#modal_new_brand');
             if($(this).val() == 'new'){
-         
                 $modal.modal('show');
                 _cboBrands.select2('val',0);
 
                 clearFieldsCategory($('#frm_brands'));
+            } else {
+                setProductDescription()
             }
         });
     
         $("#size_id").on("change", function () {     
             $modal = $('#modal_new_size');
             if($(this).val() == 'new'){
-         
                 $modal.modal('show');
                 _cboSizes.select2('val',0);
-
                 clearFieldsCategory($('#frm_sizes'));
+            } else {
+                setProductDescription()
             }
         });
 
         $("#model_id").on("change", function () {     
             $modal = $('#modal_new_model');
             if($(this).val() == 'new'){
-         
                 $modal.modal('show');
                 _cboModels.select2('val',0);
 
                 clearFieldsCategory($('#frm_models'));
+            } else {
+                setProductDescription()
             }
         });
 
@@ -1547,7 +1549,6 @@ $(document).ready(function(){
         $("#product_category").on("change", function () {        
             $modal = $('#modal_category_group');
             if($(this).val() === 'cat'){
-         
                 $modal.modal('show');
                 _cboCategory.select2('val',0);
                 // $('#modal_create_product').modal('toggle');
@@ -1614,18 +1615,18 @@ $(document).ready(function(){
         //     }
         // });
 
-         $("#is_bulk").on("change", function () {        
-         if($('#is_bulk').prop("checked") == true){
-            $('#child_unit_desc').prop('required',true);
-           $('#child_unit_id').prop('required',true);
+        $("#is_bulk").on("change", function () {        
+            if($('#is_bulk').prop("checked") == true){
+                $('#child_unit_desc').prop('required',true);
+                $('#child_unit_id').prop('required',true);
             } else{
-            $('#child_unit_desc').prop('required',false);
-           $('#child_unit_id').prop('required',false);
+                $('#child_unit_desc').prop('required',false);
+                $('#child_unit_id').prop('required',false);
             // if(_cboPrimaryUnit.val() == 0 ) {
             //     _cboPrimaryUnit.select2('val',1);
             //             showNotification({title:"Error!",stat:"error",msg:'Retail not available. "Check" For Bulk and Retail if you wish to use retail as primary unit'});
             // }
-         }
+            }
         });    
 
 
@@ -2582,6 +2583,25 @@ $('#is_basyo').prop("checked") ?  _data.push({name : "is_basyo" , value : '1'   
         $('#description').val('');
         $(f).find('select:first').focus();
     };
+
+    var setProductDescription = function() {
+        // $(this).find('option:selected').data('contact-person')
+        const brand = $('#brand');
+        const size = $('#size_id');
+        const model = $('#model_id')
+        let description = ''
+        if (brand.val() != 0) {
+            description = brand.find('option:selected')[0]?.label + ' '?? '';
+        }
+        if (size.val() != 0) {
+            description = description + size.find('option:selected')[0]?.label + ' ' ?? '';
+        }
+        if (model.val() != 0) {
+            description = description + model.find('option:selected')[0]?.label ?? '';
+        }
+
+        $('#product_desc').val(description)
+    }
 
     function validateNumber(event) {
         var key = window.event ? event.keyCode : event.which;

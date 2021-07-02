@@ -89,13 +89,14 @@
        <table width="100%"  style="border-collapse: collapse;">
            <thead>
                 <tr class="">
-                    <td width="10%" style="border: 1px solid lightgrey;padding: 5px;"><b>Txn Date</b></td>
-                    <td width="10%" style="border: 1px solid lightgrey;padding: 5px;"><b>Reference</b></td>
-                    <td width="10%" style="border: 1px solid lightgrey;padding: 5px;"><b>Packaging</b></td>
-                    <td width="10%" style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>QTY In</b></td>
-                    <td width="10%" style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>QTY Out</b></td>
-                    <td width="10%" style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>On Hand</b></td>
-                    <td width="10%" style="border: 1px solid lightgrey;padding: 5px;"><b>Department</b></td>
+                    <td width="10%" style="border: 1px solid lightgrey;padding: 5px;"><b>Date</b></td>
+                    <td width="10%" style="border: 1px solid lightgrey;padding: 5px;"><b>Document No</b></td>
+                    <td width="10%" style="border: 1px solid lightgrey;padding: 5px;"><b>Particular</b></td>
+                    <td width="12%" style="border: 1px solid lightgrey;padding: 5px;"><b>Receipt No</b></td>
+                    <td width="10%" style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>IN</b></td>
+                    <td width="10%" style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>OUT</b></td>
+                    <td width="10%" style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><b>Balance</b></td>
+                    <td width="10%" style="border: 1px solid lightgrey;padding: 5px;"><b>Location</b></td>
                     <td width="10%" style="border: 1px solid lightgrey;padding: 5px;"><b>Remarks</b></td>
                 </tr>
            </thead>
@@ -104,6 +105,7 @@
                      <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo date("M d, Y",strtotime($as_of_date)); ?></td>
                      <td style="border: 1px solid lightgrey;padding: 5px;">System</td>
                      <td style="border: 1px solid lightgrey;padding: 5px;"></td>
+                     <td></td>
                      <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"></td>
                      <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"></td>
                      <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($balance_as_of->total_qty_balance,2).' '.$info[0]->bulk_unit_name; ?></td>
@@ -115,10 +117,8 @@
                <tr>
                    <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo date("M d, Y",strtotime($product->txn_date)); ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo $product->ref_no; ?></td>
-                   <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo $product->identifier; ?></td>
-
-
-
+                   <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo $product->Description; ?></td>
+                   <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo $product->receipt_no; ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_in_qty,2); ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_out_qty,2); ?></td>
                    <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"><?php echo number_format($product->parent_balance,2).' '.$info[0]->parent_unit_name; ?></td>
