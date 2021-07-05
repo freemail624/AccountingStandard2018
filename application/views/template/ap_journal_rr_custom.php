@@ -4,6 +4,8 @@
         z-index: 200;
         font-size: 11pt;
         text-transform: uppercase;
+        font-family: Arial;
+        font-weight: bold;
     }
 
     .panel{
@@ -13,6 +15,8 @@
         height: auto;   
         top: 180px;      
         left: 30px;    
+        font-family: Arial;
+        font-weight: bold;
     }
 
     @page { 
@@ -25,12 +29,12 @@
 </style>
 <!-- <img src="<?php //echo base_url(); ?>/assets/img/rr.jpg" style="top: 0px; left: 0px; width: 100%;position: absolute;z-index: 100;height: 100%;"> -->
 
-<span style="top: 100px; left: 150px;"><?php echo $purchase_info->supplier_name; ?></span>
-<span style="top: 100px; left: 555px;"><?php echo $purchase_info->date_delivered; ?></span>
+<span style="top: 100px; left: 160px;"><?php echo $purchase_info->supplier_name; ?></span>
+<span style="top: 100px; left: 565px;"><?php echo $purchase_info->date_delivered; ?></span>
 
 <div class="panel">
 
-        <table width="100%" style="font-size: 12pt;">
+        <table width="100%" style="font-size: 12pt; font-family: Arial; font-weight: bold;">
 
             <?php 
             $dr_amount = 0;
@@ -88,8 +92,11 @@
 </div>
 
 
-<span style="top: 365px; left: 650px;">
-    <strong><?php echo number_format($purchase_info->total_after_discount,2) ?></strong>
+<span style="top: 380px; left: 500px;">
+    <?php echo number_format($dr_amount,2) ?>
+</span>
+<span style="top: 380px; left: 650px;">
+    <?php echo number_format($cr_amount,2) ?>
 </span>
 <script type="text/javascript">
     window.print();
