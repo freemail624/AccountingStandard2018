@@ -87,7 +87,7 @@
             padding: 0 !important;
         }
         .panel-body {
-            padding: 0 !important;
+            padding: 0 !important; */
 
 
     </style>

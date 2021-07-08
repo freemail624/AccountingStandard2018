@@ -39,9 +39,11 @@ class Customers_model extends CORE_Model{
     
     function get_all_data($search_value=null)
     {
-        $sql="SELECT c.* FROM customers c WHERE c.is_deleted = FALSE AND c.is_active = TRUE
+        $sql="SELECT c.* FROM customers c 
+            LEFT JOIN customer_vehicles cv ON c.customer_id = cv.customer_id
+            WHERE c.is_deleted = FALSE AND c.is_active = TRUE
 
-            ".($search_value==null?"":" AND (c.customer_no LIKE '".$search_value."%' OR c.customer_name LIKE '%".$search_value."%' OR c.contact_name LIKE '%".$search_value."%')")."
+            ".($search_value==null?"":" AND (c.customer_no LIKE '".$search_value."%' OR c.customer_name LIKE '%".$search_value."%' OR c.contact_name LIKE '%".$search_value."%' OR cv.plate_no LIKE '%".$search_value."%' OR cv.conduction_no LIKE '%".$search_value."%')")."
         ";
         return $this->db->query($sql)->num_rows();
     }
@@ -54,10 +56,10 @@ class Customers_model extends CORE_Model{
             $order_dir=null){
 
         $sql="SELECT c.* FROM customers c
+            LEFT JOIN customer_vehicles cv ON c.customer_id = cv.customer_id
             WHERE c.is_deleted = FALSE AND c.is_active = TRUE
 
-            ".($search_value==null?"":" AND (c.customer_no LIKE '".$search_value."%' OR c.customer_name LIKE '%".$search_value."%' OR c.contact_name LIKE '%".$search_value."%')")."
-
+            ".($search_value==null?"":" AND (c.customer_no LIKE '".$search_value."%' OR c.customer_name LIKE '%".$search_value."%' OR c.contact_name LIKE '%".$search_value."%' OR cv.plate_no LIKE '%".$search_value."%' OR cv.conduction_no LIKE '%".$search_value."%')")."
             ".($order_column==null?" ORDER BY c.customer_name ASC ":" ORDER BY ".$order_column." ".$order_dir."")."
             ".($length==null?"":" LIMIT ".$length."")."
             ".($start==0?"":" OFFSET ".$start."")."

@@ -437,81 +437,99 @@
                                                 </div>  
                                             </div>
                                         </div>
+                                        <div class="col-md-12">
+                                            <div class="row">
+                                                <b class="required">*</b> <label>Advisor :</label> <br />
+                                                <select class="form-control" name="advisor_id" id="cbo_advisors" required data-error-msg="Advisor is required!">
+                                                    <option value="0">[ Create New Advisor ]</option>
+                                                    <?php foreach($advisors as $advisor){ ?>
+                                                        <option value="<?php echo $advisor->advisor_id; ?>">
+                                                            <?php echo $advisor->fullname; ?>
+                                                        </option>
+                                                    <?php }?>
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div> 
 
-                                  </div>
-                              </div>
-                          </div>
-                          <br/><br/>
+                                </div>
+                            </div>
+                        </div>
+                        <br/><br/>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="fieldset">
-                          <h1><i class="fa fa-info"></i> Order Details</h1>
-                          <div class="row">
-                              <div class="col-md-12">
-                                <b class="required">*</b> <label>Document Date :</label> <br />
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-calendar"></i>
-                                    </span>
-                                    <input type="text" name="document_date" class="datetime-picker form-control" value="<?php echo date("m/d/Y h:i:s"); ?>" placeholder="Document Date" data-error-msg="Please set the date this repair order was issued!" required readonly>
-                                </div>   
-                              </div>
-                              <div class="col-md-12">
-                                <b class="required">*</b> <label>Date/Time Promised :</label> <br />
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-calendar"></i>
-                                    </span>
-                                    <input type="text" name="date_time_promised" class="datetime-picker form-control" value="<?php echo date("m/d/Y h:i:s"); ?>" placeholder="Date Invoice" data-error-msg="Please set the promised date and time!" required>
-                                </div>   
-                              </div>
-                              <div class="col-md-12">
-                                <label>Insurance :</label> <br />
-                                <select class="form-control" name="insurance_id" id="cbo_insurance" data-error-msg="Advisor is required!">
-                                    <option value="0">[ Create New Insurance ]</option>
-                                    <?php foreach($insurances as $insurance){ ?>
-                                        <option value="<?php echo $insurance->insurance_id; ?>">
-                                            <?php echo $insurance->insurer_company; ?>
-                                        </option>
-                                    <?php }?>
-                                </select>
-                              </div>
-                              <div class="col-md-12">
-                                <b class="required">*</b> <label>Advisor :</label> <br />
-                                <select class="form-control" name="advisor_id" id="cbo_advisors" required data-error-msg="Advisor is required!">
-                                    <option value="0">[ Create New Advisor ]</option>
-                                    <?php foreach($advisors as $advisor){ ?>
-                                        <option value="<?php echo $advisor->advisor_id; ?>">
-                                            <?php echo $advisor->fullname; ?>
-                                        </option>
-                                    <?php }?>
-                                </select>
-                              </div>
-                              <div class="col-md-12">
-                                <label>Selling Dealer :</label> <br />
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-user"></i>
-                                    </span>
-                                    <input type="text" name="selling_dealer" class="form-control" placeholder="Selling Dealer">
-                                </div>   
-                              </div>
-                              <div class="col-md-12">
-                                  <hr/>
-                              </div>
-                              <div class="col-md-12">
-                                  <div class="col-md-12">
-                                      <center>
-                                      <label>Mode of Payment</label><br/>
-                                          <input type="checkbox" name="payment_mode_id" value="1" id="cash"> <label for="cash">Cash</label> 
-                                          <input type="checkbox" name="payment_mode_id" value="2" id="card" style="margin-left: 10px;"> <label for="card">Card</label> 
-                                      </center>                                      
-                                  </div>
-                              </div>
-                          </div>
-                          <br/>
+                            <h1><i class="fa fa-info"></i> Order Details</h1>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <b class="required">*</b> <label>Document Date :</label> <br />
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                        <input type="text" name="document_date" class="datetime-picker form-control" value="<?php echo date("m/d/Y h:i:s"); ?>" placeholder="Document Date" data-error-msg="Please set the date this repair order was issued!" required readonly>
+                                    </div>   
+                                </div>
+                                <div class="col-md-12">
+                                    <b class="required">*</b> <label>Date/Time Promised :</label> <br />
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                        <input type="text" name="date_time_promised" class="datetime-picker form-control" value="<?php echo date("m/d/Y h:i:s"); ?>" placeholder="Date Invoice" data-error-msg="Please set the promised date and time!" required>
+                                    </div>   
+                                </div>
+                                <div class="col-md-12">
+                                    <label>Insurance :</label> <br />
+                                    <select class="form-control" name="insurance_id" id="cbo_insurance" data-error-msg="Advisor is required!">
+                                        <option value="0">[ Create New Insurance ]</option>
+                                        <?php foreach($insurances as $insurance){ ?>
+                                            <option value="<?php echo $insurance->insurance_id; ?>">
+                                                <?php echo $insurance->insurer_company; ?>
+                                            </option>
+                                        <?php }?>
+                                    </select>
+                                </div>
+                                <div class="col-md-12">
+                                    <label>Selling Dealer :</label> <br />
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-user"></i>
+                                        </span>
+                                        <input type="text" name="selling_dealer" class="form-control" placeholder="Selling Dealer">
+                                    </div>   
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label>Loa No. : </label>
+                                            <input type="text" name="loa_no" class="form-control">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>Loa Date : </label>
+                                            <input type="text" name="loa_date" class="date-picker form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <label>Policy No. : </label>
+                                    <input type="text" name="policy_no" class="form-control">
+                                </div>
+                                <!-- <div class="col-md-12">
+                                    <hr/>
+                                </div> -->
+                                <!-- <div class="col-md-12">
+                                    <div class="col-md-12">
+                                        <center>
+                                        <label>Mode of Payment</label><br/>
+                                            <input type="checkbox" name="payment_mode_id" value="1" id="cash"> <label for="cash">Cash</label> 
+                                            <input type="checkbox" name="payment_mode_id" value="2" id="card" style="margin-left: 10px;"> <label for="card">Card</label> 
+                                        </center>                                      
+                                    </div>
+                                </div> -->
+                            </div>
+                            <br/><br />
                         </div>
                     </div>
                 </div>
@@ -538,13 +556,24 @@
                             <a href="#general_jobs" data-vehicle-service="3" data-toggle="tab" class="nav_button" data-active-color="#e69500 " style="font-family: tahoma;background: #E8E8E8 ; color: gray;border-top-left-radius: 1em;border-top-right-radius: 1em;"> General Job
                             <span style="background: gray; color: white; border-radius: 50%;padding: 1px 5px;font-size: 8pt;" id="gj_count">0</span></a>
                         </li>
+                        <li>
+                            <a href="#internal" data-vehicle-service="4" data-toggle="tab" class="nav_button" data-active-color="#088510 " style="font-family: tahoma;background: #E8E8E8 ; color: gray;border-top-left-radius: 1em;border-top-right-radius: 1em;"> Internal
+                            <span style="background: gray; color: white; border-radius: 50%;padding: 1px 5px;font-size: 8pt;" id="internal_count">0</span></a>
+                        </li>
+                        <li>
+                            <a href="#warranty" data-vehicle-service="5" data-toggle="tab" class="nav_button" data-active-color="#690665 " style="font-family: tahoma;background: #E8E8E8 ; color: gray;border-top-left-radius: 1em;border-top-right-radius: 1em;"> Warranty
+                            <span style="background: gray; color: white; border-radius: 50%;padding: 1px 5px;font-size: 8pt;" id="warranty_count">0</span></a>
+                        </li>
+                        <li>
+                            <a href="#carwash" data-vehicle-service="6" data-toggle="tab" class="nav_button" data-active-color="#068f8f " style="font-family: tahoma;background: #E8E8E8 ; color: gray;border-top-left-radius: 1em;border-top-right-radius: 1em;"> Car Wash
+                            <span style="background: gray; color: white; border-radius: 50%;padding: 1px 5px;font-size: 8pt;" id="carwash_count">0</span></a>
+                        </li>
                     </ul>
-
                 </div>
                 <div class="tab-content tab-content-view">
                     <div class="tab-pane active" id="pms">
                         <br/><br/>
-                        <form id="frm_items_pms">
+                        <form id="frm_items_pms" class="frm_items">
 
                         <label class="control-label" style="font-family: Tahoma;"><strong>Enter PLU or Search Item :</strong></label>
                         <div id="custom-templates">
@@ -612,7 +641,7 @@
                     </div>
                     <div class="tab-pane" id="body">
                         <br/><br/>      
-                        <form id="frm_items_bpr">
+                        <form id="frm_items_bpr" class="frm_items">
 
                         <label class="control-label" style="font-family: Tahoma;"><strong>Enter PLU or Search Item :</strong></label>
                         <div id="custom-templates">
@@ -681,7 +710,7 @@
                     </div>
                     <div class="tab-pane" id="general_jobs">
                         <br/><br/>         
-                        <form id="frm_items_gb">
+                        <form id="frm_items_gb" class="frm_items">
 
                         <label class="control-label" style="font-family: Tahoma;"><strong>Enter PLU or Search Item :</strong></label>
                         <div id="custom-templates">
@@ -706,6 +735,213 @@
                                 <textarea class="form-control" name="sdesc_<?php echo $i; ?>" placeholder="Service Description"></textarea>
                                 <div class="table-responsive">
                                     <table id="tbl_items_<?php echo $i; ?>" class="tbl_items tbl_items_3 table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
+                                        <thead class="">    
+                                            <tr>
+                                                <th width="5%">Qty</th>
+                                                <th width="8%">UM</th>
+                                                <th width="15%">Description</th>
+                                                <th width="10%" style="text-align: right;">Unit Price</th>
+                                                <th class="hidden">Discount</th>
+                                                <!-- DISPLAY NONE  -->
+                                                <th class="hidden">Total Discount</th>
+                                                <th class="hidden">Tax %</th>
+                                                <!-- DISPLAY -->
+                                                <th class="hidden">Gross</th>
+                                                <th width="10%" style="text-align: right;">Net Total</th>
+                                                <!-- Expiration and LOT# -->
+                                                <th class="hidden">Expiration</th>
+                                                <th class="hidden">LOT#</th>
+                                                <th class="hidden">Cost Upon Invoice</th>
+                                                <!-- DISPLAY NONE  -->
+                                                <th class="hidden">Vat Input(Total Line Tax)</th>
+                                                <th class="hidden">Net of Vat (Price w/out Tax)</th>
+                                                <td class="hidden">Item ID</td>
+                                                <th class="hidden">Total after Global</th> 
+                                                <th width="5%"><center>Action</center></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="6" style="height: 0px;min-height: 335px;">&nbsp;</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+
+                            </div>
+
+                            <?php }?>
+                        </div>
+
+                        </form>
+                    </div>
+                    <div class="tab-pane" id="internal">
+                        <br/><br/>         
+                        <form id="frm_items_internal" class="frm_items">
+
+                        <label class="control-label" style="font-family: Tahoma;"><strong>Enter PLU or Search Item :</strong></label>
+                        <div id="custom-templates">
+                            <input class="typeahead typeaheadsearch" type="text" placeholder="Enter PLU or Search Item">
+                        </div><br />
+
+                        <div class="tab-container tab-top tab-primary">
+                            <ul class="nav nav-tabs">
+                                <?php for($i=31;$i<=40;$i++){?>
+                                    <li>
+                                        <a href="#service_<?php echo $i; ?>" class="tbl_services" data-tbl-no="<?php echo $i; ?>" id="btn_service_<?php echo $i; ?>" data-toggle="tab"> SVC <?php echo $i; ?></a>
+                                    </li>
+                                <?php }?>
+                            </ul>
+                        </div>
+                        <div class="tab-content tab-content-view">
+
+                            <?php for($i=31;$i<=40;$i++){?>
+
+                            <div class="tab-pane" id="service_<?php echo $i; ?>">
+                                <label>Service Description <?php echo $i; ?>:</label> 
+                                <textarea class="form-control" name="sdesc_<?php echo $i; ?>" placeholder="Service Description"></textarea>
+                                <div class="table-responsive">
+                                    <table id="tbl_items_<?php echo $i; ?>" class="tbl_items tbl_items_4 table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
+                                        <thead class="">    
+                                            <tr>
+                                                <th width="5%">Qty</th>
+                                                <th width="8%">UM</th>
+                                                <th width="15%">Description</th>
+                                                <th width="10%" style="text-align: right;">Unit Price</th>
+                                                <th class="hidden">Discount</th>
+                                                <!-- DISPLAY NONE  -->
+                                                <th class="hidden">Total Discount</th>
+                                                <th class="hidden">Tax %</th>
+                                                <!-- DISPLAY -->
+                                                <th class="hidden">Gross</th>
+                                                <th width="10%" style="text-align: right;">Net Total</th>
+                                                <!-- Expiration and LOT# -->
+                                                <th class="hidden">Expiration</th>
+                                                <th class="hidden">LOT#</th>
+                                                <th class="hidden">Cost Upon Invoice</th>
+                                                <!-- DISPLAY NONE  -->
+                                                <th class="hidden">Vat Input(Total Line Tax)</th>
+                                                <th class="hidden">Net of Vat (Price w/out Tax)</th>
+                                                <td class="hidden">Item ID</td>
+                                                <th class="hidden">Total after Global</th> 
+                                                <th width="5%"><center>Action</center></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="6" style="height: 0px;min-height: 335px;">&nbsp;</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+
+                            </div>
+
+                            <?php }?>
+                        </div>
+
+                        </form>
+                    </div>
+                    <div class="tab-pane" id="warranty">
+                        <br/><br/>         
+                        <form id="frm_items_warranty" class="frm_items">
+
+                        <label class="control-label" style="font-family: Tahoma;"><strong>Enter PLU or Search Item :</strong></label>
+                        <div id="custom-templates">
+                            <input class="typeahead typeaheadsearch" type="text" placeholder="Enter PLU or Search Item">
+                        </div><br />
+
+                        <div class="tab-container tab-top tab-primary">
+                            <ul class="nav nav-tabs">
+                                <?php for($i=41;$i<=50;$i++){?>
+                                    <li>
+                                        <a href="#service_<?php echo $i; ?>" class="tbl_services" data-tbl-no="<?php echo $i; ?>" id="btn_service_<?php echo $i; ?>" data-toggle="tab"> SVC <?php echo $i; ?></a>
+                                    </li>
+                                <?php }?>
+                            </ul>
+                        </div>
+                        <div class="tab-content tab-content-view">
+
+                            <?php for($i=41;$i<=50;$i++){?>
+
+                            <div class="tab-pane" id="service_<?php echo $i; ?>">
+                                <label>Service Description <?php echo $i; ?>:</label> 
+                                <textarea class="form-control" name="sdesc_<?php echo $i; ?>" placeholder="Service Description"></textarea>
+                                <div class="table-responsive">
+                                    <table id="tbl_items_<?php echo $i; ?>" class="tbl_items tbl_items_5 table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
+                                        <thead class="">    
+                                            <tr>
+                                                <th width="5%">Qty</th>
+                                                <th width="8%">UM</th>
+                                                <th width="15%">Description</th>
+                                                <th width="10%" style="text-align: right;">Unit Price</th>
+                                                <th class="hidden">Discount</th>
+                                                <!-- DISPLAY NONE  -->
+                                                <th class="hidden">Total Discount</th>
+                                                <th class="hidden">Tax %</th>
+                                                <!-- DISPLAY -->
+                                                <th class="hidden">Gross</th>
+                                                <th width="10%" style="text-align: right;">Net Total</th>
+                                                <!-- Expiration and LOT# -->
+                                                <th class="hidden">Expiration</th>
+                                                <th class="hidden">LOT#</th>
+                                                <th class="hidden">Cost Upon Invoice</th>
+                                                <!-- DISPLAY NONE  -->
+                                                <th class="hidden">Vat Input(Total Line Tax)</th>
+                                                <th class="hidden">Net of Vat (Price w/out Tax)</th>
+                                                <td class="hidden">Item ID</td>
+                                                <th class="hidden">Total after Global</th> 
+                                                <th width="5%"><center>Action</center></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="6" style="height: 0px;min-height: 335px;">&nbsp;</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+
+                            </div>
+
+                            <?php }?>
+                        </div>
+
+                        </form>
+                    </div>
+                    <div class="tab-pane" id="carwash">
+                        <br/><br/>         
+                        <form id="frm_items_carwash" class="frm_items">
+
+                        <label class="control-label" style="font-family: Tahoma;"><strong>Enter PLU or Search Item :</strong></label>
+                        <div id="custom-templates">
+                            <input class="typeahead typeaheadsearch" type="text" placeholder="Enter PLU or Search Item">
+                        </div><br />
+
+                        <div class="tab-container tab-top tab-primary">
+                            <ul class="nav nav-tabs">
+                                <?php for($i=51;$i<=60;$i++){?>
+                                    <li>
+                                        <a href="#service_<?php echo $i; ?>" class="tbl_services" data-tbl-no="<?php echo $i; ?>" id="btn_service_<?php echo $i; ?>" data-toggle="tab"> SVC <?php echo $i; ?></a>
+                                    </li>
+                                <?php }?>
+                            </ul>
+                        </div>
+                        <div class="tab-content tab-content-view">
+
+                            <?php for($i=51;$i<=60;$i++){?>
+
+                            <div class="tab-pane" id="service_<?php echo $i; ?>">
+                                <label>Service Description <?php echo $i; ?>:</label> 
+                                <textarea class="form-control" name="sdesc_<?php echo $i; ?>" placeholder="Service Description"></textarea>
+                                <div class="table-responsive">
+                                    <table id="tbl_items_<?php echo $i; ?>" class="tbl_items tbl_items_6 table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
                                         <thead class="">    
                                             <tr>
                                                 <th width="5%">Qty</th>
@@ -845,7 +1081,82 @@
                                         <input type="hidden" name="summary_tax_amount_gj">
                                         <input type="hidden" name="summary_after_tax_gj">
                                     </td>
-                                </tr>                           
+                                </tr>
+                                <tr>
+                                    <td colspan="2" align="left">
+                                        <strong><i class="fa fa-car"></i> Internal</strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="55%" align="right">Total : </td>
+                                    <td width="45%" align="right" id="td_total_before_tax_internal">0.00</td>
+                                </tr>
+                                <tr>
+                                    <td align="right">Vat Amount : </td>
+                                    <td align="right" id="td_tax_internal">0.00</td>
+                                </tr>
+                                <tr>
+                                    <td align="right"><strong>Sub-Total :</strong></td>
+                                    <td align="right" id="td_after_tax_internal">0.00</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="hidden">
+                                        <input type="hidden" name="summary_discount_internal">
+                                        <input type="hidden" name="summary_before_discount_internal">
+                                        <input type="hidden" name="summary_tax_amount_internal">
+                                        <input type="hidden" name="summary_after_tax_internal">
+                                    </td>
+                                </tr>    
+                                <tr>
+                                    <td colspan="2" align="left">
+                                        <strong><i class="fa fa-car"></i> Warranty</strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="55%" align="right">Total : </td>
+                                    <td width="45%" align="right" id="td_total_before_tax_warranty">0.00</td>
+                                </tr>
+                                <tr>
+                                    <td align="right">Vat Amount : </td>
+                                    <td align="right" id="td_tax_warranty">0.00</td>
+                                </tr>
+                                <tr>
+                                    <td align="right"><strong>Sub-Total :</strong></td>
+                                    <td align="right" id="td_after_tax_warranty">0.00</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="hidden">
+                                        <input type="hidden" name="summary_discount_warranty">
+                                        <input type="hidden" name="summary_before_discount_warranty">
+                                        <input type="hidden" name="summary_tax_amount_warranty">
+                                        <input type="hidden" name="summary_after_tax_warranty">
+                                    </td>
+                                </tr>   
+                                <tr>
+                                    <td colspan="2" align="left">
+                                        <strong><i class="fa fa-car"></i> Car Wash</strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="55%" align="right">Total : </td>
+                                    <td width="45%" align="right" id="td_total_before_tax_carwash">0.00</td>
+                                </tr>
+                                <tr>
+                                    <td align="right">Vat Amount : </td>
+                                    <td align="right" id="td_tax_carwash">0.00</td>
+                                </tr>
+                                <tr>
+                                    <td align="right"><strong>Sub-Total :</strong></td>
+                                    <td align="right" id="td_after_tax_carwash">0.00</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="hidden">
+                                        <input type="hidden" name="summary_discount_carwash">
+                                        <input type="hidden" name="summary_before_discount_carwash">
+                                        <input type="hidden" name="summary_tax_amount_carwash">
+                                        <input type="hidden" name="summary_after_tax_carwash">
+                                    </td>
+                                </tr>             
                                 <tr>
                                     <td class="hidden" colspan="2" align="center"><strong>Discount</strong></td>
                                 </tr>
@@ -1996,6 +2307,12 @@ $(document).ready(function(){
                 $('#btn_service_11').trigger('click');
             }else if(_vehicleService == 3){
                 $('#btn_service_21').trigger('click');
+            }else if(_vehicleService == 4){
+                $('#btn_service_31').trigger('click');
+            }else if(_vehicleService == 5){
+                $('#btn_service_41').trigger('click');
+            }else if(_vehicleService == 6){
+                $('#btn_service_51').trigger('click');
             }
         });
 
@@ -2505,6 +2822,9 @@ $(document).ready(function(){
             countTblItems(1);
             countTblItems(2);
             countTblItems(3);
+            countTblItems(4);
+            countTblItems(5);
+            countTblItems(6);
             _vehicleIDSelected = null;
             reComputeTotal(); //this is to make sure, display summary are recomputed as 0
         });
@@ -2633,6 +2953,9 @@ $(document).ready(function(){
                     countTblItems(1);
                     countTblItems(2);
                     countTblItems(3);
+                    countTblItems(4);
+                    countTblItems(5);
+                    countTblItems(6);
                     reInitializeNumeric();
                 }
             });
@@ -2948,7 +3271,7 @@ $(document).ready(function(){
     };
 
     var createRepairOrder=function(){
-        var _data=$('#frm_repair_order,#frm_items_pms,#frm_items_bpr,#frm_items_gb').serializeArray();
+        var _data=$('#frm_repair_order,.frm_items').serializeArray();
         _data.push({name : "advisor_remarks", value : $('textarea[name="advisor_remarks"]').val()});
         _data.push({name : "customer_remarks", value : $('textarea[name="customer_remarks"]').val()});
 
@@ -2971,7 +3294,7 @@ $(document).ready(function(){
     };
 
     var updateRepairOrder=function(){
-        var _data=$('#frm_repair_order,#frm_items_pms,#frm_items_bpr,#frm_items_gb').serializeArray();
+        var _data=$('#frm_repair_order,.frm_items').serializeArray();
         _data.push({name : "advisor_remarks", value : $('textarea[name="advisor_remarks"]').val()});
         _data.push({name : "customer_remarks", value : $('textarea[name="customer_remarks"]').val()});
 
@@ -3160,6 +3483,9 @@ $(document).ready(function(){
         var rows_1=$('.tbl_items_1 > tbody tr');
         var rows_2=$('.tbl_items_2 > tbody tr');
         var rows_3=$('.tbl_items_3 > tbody tr');
+        var rows_4=$('.tbl_items_4 > tbody tr');
+        var rows_5=$('.tbl_items_5 > tbody tr');
+        var rows_6=$('.tbl_items_6 > tbody tr');
 
         if(stat == null || stat == 1){
             var discounts=0; var before_tax=0; var after_tax=0; var order_tax_amount=0; var gross=0;
@@ -3256,7 +3582,102 @@ $(document).ready(function(){
             $('input[name="summary_tax_amount_gj"]').val(accounting.formatNumber(order_tax_amount_gj,2));
             $('input[name="summary_after_tax_gj"]').val(accounting.formatNumber(after_tax_gj,2));
         }
-   
+
+        // Internal
+        if(stat == null || stat == 4){
+
+            var gross_internal=0; var discounts_internal=0; var before_tax_internal=0; var order_tax_amount_internal=0; var after_tax_internal=0;
+
+            $.each(rows_4,function(){
+                //console.log($(oTableItems.net_vat,$(this)));
+
+                // total_gj=parseFloat(accounting.unformat($(oTableItems.total,$(this)).find('input.numeric').val()));
+                // total_after_global_gj = (total_gj - (total_gj*global_discount));
+                // $(oTableItems.total_after_global,$(this)).find('input.numeric').val(accounting.formatNumber(total_after_global_gj,2));
+
+                gross_internal+=parseFloat(accounting.unformat($(oTableItems.gross,$(this)).find('input.numeric').val()));
+                discounts_internal+=parseFloat(accounting.unformat($(oTableItems.total_line_discount,$(this)).find('input.numeric').val()));
+                before_tax_internal+=parseFloat(accounting.unformat($(oTableItems.net_vat,$(this)).find('input.numeric').val()));
+                order_tax_amount_internal+=parseFloat(accounting.unformat($(oTableItems.vat_input,$(this)).find('input.numeric').val()));
+                after_tax_internal+=parseFloat(accounting.unformat($(oTableItems.total,$(this)).find('input.numeric').val()));
+            });       
+
+            $('#txt_overall_discount_amount_internal').val(accounting.formatNumber((gross_internal-discounts_internal) * ($('#txt_overall_discount').val() / 100),2));
+            $('#td_total_before_tax_internal').html(accounting.formatNumber(before_tax_internal,2));
+            $('#td_after_tax_internal').html('<b>'+accounting.formatNumber(after_tax_internal,2)+'</b>');
+            $('#td_total_after_discount_internal').html(accounting.formatNumber(after_tax_internal - (after_tax_internal * ($('#txt_overall_discount').val() / 100)),2));
+            $('#td_tax_internal').html(accounting.formatNumber(order_tax_amount_internal,2));
+            $('#td_discount_internal').html(accounting.formatNumber(discounts_internal,2)); // unknown - must be referring to table summary but not on id given
+
+            $('input[name="summary_discount_internal"]').val(accounting.formatNumber(discounts_internal,2));
+            $('input[name="summary_before_discount_internal"]').val(accounting.formatNumber(before_tax_internal,2));
+            $('input[name="summary_tax_amount_internal"]').val(accounting.formatNumber(order_tax_amount_internal,2));
+            $('input[name="summary_after_tax_internal"]').val(accounting.formatNumber(after_tax_internal,2));
+        }
+
+        // Warranty
+        if(stat == null || stat == 5){
+
+            var gross_warranty=0; var discounts_warranty=0; var before_tax_warranty=0; var order_tax_amount_warranty=0; var after_tax_warranty=0;
+
+            $.each(rows_5,function(){
+                //console.log($(oTableItems.net_vat,$(this)));
+
+                // total_gj=parseFloat(accounting.unformat($(oTableItems.total,$(this)).find('input.numeric').val()));
+                // total_after_global_gj = (total_gj - (total_gj*global_discount));
+                // $(oTableItems.total_after_global,$(this)).find('input.numeric').val(accounting.formatNumber(total_after_global_gj,2));
+
+                gross_warranty+=parseFloat(accounting.unformat($(oTableItems.gross,$(this)).find('input.numeric').val()));
+                discounts_warranty+=parseFloat(accounting.unformat($(oTableItems.total_line_discount,$(this)).find('input.numeric').val()));
+                before_tax_warranty+=parseFloat(accounting.unformat($(oTableItems.net_vat,$(this)).find('input.numeric').val()));
+                order_tax_amount_warranty+=parseFloat(accounting.unformat($(oTableItems.vat_input,$(this)).find('input.numeric').val()));
+                after_tax_warranty+=parseFloat(accounting.unformat($(oTableItems.total,$(this)).find('input.numeric').val()));
+            });       
+
+            $('#txt_overall_discount_amount_warranty').val(accounting.formatNumber((gross_warranty-discounts_warranty) * ($('#txt_overall_discount').val() / 100),2));
+            $('#td_total_before_tax_warranty').html(accounting.formatNumber(before_tax_warranty,2));
+            $('#td_after_tax_warranty').html('<b>'+accounting.formatNumber(after_tax_warranty,2)+'</b>');
+            $('#td_total_after_discount_warranty').html(accounting.formatNumber(after_tax_warranty - (after_tax_warranty * ($('#txt_overall_discount').val() / 100)),2));
+            $('#td_tax_warranty').html(accounting.formatNumber(order_tax_amount_warranty,2));
+            $('#td_discount_warranty').html(accounting.formatNumber(discounts_warranty,2)); // unknown - must be referring to table summary but not on id given
+
+            $('input[name="summary_discount_warranty"]').val(accounting.formatNumber(discounts_warranty,2));
+            $('input[name="summary_before_discount_warranty"]').val(accounting.formatNumber(before_tax_warranty,2));
+            $('input[name="summary_tax_amount_warranty"]').val(accounting.formatNumber(order_tax_amount_warranty,2));
+            $('input[name="summary_after_tax_warranty"]').val(accounting.formatNumber(after_tax_warranty,2));
+        }
+
+        // Carwash
+        if(stat == null || stat == 6){
+
+            var gross_carwash=0; var discounts_carwash=0; var before_tax_carwash=0; var order_tax_amount_carwash=0; var after_tax_carwash=0;
+
+            $.each(rows_6,function(){
+                //console.log($(oTableItems.net_vat,$(this)));
+
+                // total_gj=parseFloat(accounting.unformat($(oTableItems.total,$(this)).find('input.numeric').val()));
+                // total_after_global_gj = (total_gj - (total_gj*global_discount));
+                // $(oTableItems.total_after_global,$(this)).find('input.numeric').val(accounting.formatNumber(total_after_global_gj,2));
+
+                gross_carwash+=parseFloat(accounting.unformat($(oTableItems.gross,$(this)).find('input.numeric').val()));
+                discounts_carwash+=parseFloat(accounting.unformat($(oTableItems.total_line_discount,$(this)).find('input.numeric').val()));
+                before_tax_carwash+=parseFloat(accounting.unformat($(oTableItems.net_vat,$(this)).find('input.numeric').val()));
+                order_tax_amount_carwash+=parseFloat(accounting.unformat($(oTableItems.vat_input,$(this)).find('input.numeric').val()));
+                after_tax_carwash+=parseFloat(accounting.unformat($(oTableItems.total,$(this)).find('input.numeric').val()));
+            });       
+
+            $('#txt_overall_discount_amount_carwash').val(accounting.formatNumber((gross_carwash-discounts_carwash) * ($('#txt_overall_discount').val() / 100),2));
+            $('#td_total_before_tax_carwash').html(accounting.formatNumber(before_tax_carwash,2));
+            $('#td_after_tax_carwash').html('<b>'+accounting.formatNumber(after_tax_carwash,2)+'</b>');
+            $('#td_total_after_discount_carwash').html(accounting.formatNumber(after_tax_carwash - (after_tax_carwash * ($('#txt_overall_discount').val() / 100)),2));
+            $('#td_tax_carwash').html(accounting.formatNumber(order_tax_amount_carwash,2));
+            $('#td_discount_carwash').html(accounting.formatNumber(discounts_carwash,2)); // unknown - must be referring to table summary but not on id given
+
+            $('input[name="summary_discount_carwash"]').val(accounting.formatNumber(discounts_carwash,2));
+            $('input[name="summary_before_discount_carwash"]').val(accounting.formatNumber(before_tax_carwash,2));
+            $('input[name="summary_tax_amount_carwash"]').val(accounting.formatNumber(order_tax_amount_carwash,2));
+            $('input[name="summary_after_tax_carwash"]').val(accounting.formatNumber(after_tax_carwash,2));
+        }
         // var global_discount = parseFloat(accounting.unformat($('#txt_overall_discount').val()/100));
 
         // total_gj=parseFloat(accounting.unformat($(oTableItems.total,$(this)).find('input.numeric').val()));
@@ -3267,8 +3688,11 @@ $(document).ready(function(){
         var summary_after_tax_pms = accounting.unformat($('input[name="summary_after_tax_pms"]').val());
         var summary_after_tax_bpr = accounting.unformat($('input[name="summary_after_tax_bpr"]').val());
         var summary_after_tax_gj = accounting.unformat($('input[name="summary_after_tax_gj"]').val());
+        var summary_after_tax_internal = accounting.unformat($('input[name="summary_after_tax_internal"]').val());
+        var summary_after_tax_warranty = accounting.unformat($('input[name="summary_after_tax_warranty"]').val());
+        var summary_after_tax_carwash = accounting.unformat($('input[name="summary_after_tax_carwash"]').val());
 
-        var grand_total = summary_after_tax_pms + summary_after_tax_bpr + summary_after_tax_gj;
+        var grand_total = summary_after_tax_pms + summary_after_tax_bpr + summary_after_tax_gj + summary_after_tax_internal + summary_after_tax_warranty + summary_after_tax_carwash;
 
         $('input[name="repair_order_grand_total"]').val(accounting.formatNumber(grand_total,2));
 
@@ -3296,6 +3720,12 @@ $(document).ready(function(){
             tbl_count = $('#bpr_count');
         }else if(param == 3){
             tbl_count = $('#gj_count');
+        }else if(param == 4){
+            tbl_count = $('#internal_count');
+        }else if(param == 5){
+            tbl_count = $('#warranty_count');
+        }else if(param == 6){
+            tbl_count = $('#carwash_count');
         }
 
         tbl_count.html(accounting.formatNumber(tbl.length,0));

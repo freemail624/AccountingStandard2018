@@ -284,6 +284,9 @@ class Repair_order extends CORE_Controller
                 $m_order->insurance_id=$this->input->post('insurance_id',TRUE);
                 $m_order->advisor_remarks=$this->input->post('advisor_remarks',TRUE);
                 $m_order->customer_remarks=$this->input->post('customer_remarks',TRUE);
+                $m_order->loa_no=$this->input->post('loa_no',TRUE);
+                $m_order->loa_date=date('Y-m-d',strtotime($this->input->post('loa_date', TRUE)));
+                $m_order->policy_no=$this->input->post('policy_no',TRUE);
 
                 $m_order->sdesc_1=$this->input->post('sdesc_1',TRUE);
                 $m_order->sdesc_2=$this->input->post('sdesc_2',TRUE);
@@ -499,6 +502,9 @@ class Repair_order extends CORE_Controller
                 $m_order->insurance_id=$this->input->post('insurance_id',TRUE);
                 $m_order->advisor_remarks=$this->input->post('advisor_remarks',TRUE);
                 $m_order->customer_remarks=$this->input->post('customer_remarks',TRUE);
+                $m_order->loa_no=$this->input->post('loa_no',TRUE);
+                $m_order->loa_date=date('Y-m-d',strtotime($this->input->post('loa_date', TRUE)));
+                $m_order->policy_no=$this->input->post('policy_no',TRUE);
 
 
                 $m_order->sdesc_1=$this->input->post('sdesc_1',TRUE);
