@@ -29,8 +29,8 @@
 </style>
 <!-- <img src="<?php //echo base_url(); ?>/assets/img/rr.jpg" style="top: 0px; left: 0px; width: 100%;position: absolute;z-index: 100;height: 100%;"> -->
 
-<span style="top: 100px; left: 160px;"><?php echo $purchase_info->supplier_name; ?></span>
-<span style="top: 100px; left: 565px;"><?php echo $purchase_info->date_delivered; ?></span>
+<span style="top: 95px; left: 160px;"><?php echo $purchase_info->supplier_name; ?></span>
+<span style="top: 95px; left: 565px;"><?php echo $purchase_info->date_delivered; ?></span>
 
 <div class="panel">
 
@@ -55,7 +55,7 @@
             ?>
                 <?php if($entry->dr_amount > 0){ ?>
                     <tr>
-                        <td style="width: 370px;max-width: 370px;">
+                        <td style="width: 220px;max-width: 220px;">
                             <?php echo $entry->account_title; ?>
                         </td>
                         <td style="width: 165px;max-width: 165px;" align="center">
@@ -67,7 +67,7 @@
 
                 <?php if($entry->cr_amount > 0){ ?>
                     <tr>
-                        <td style="width: 370px;max-width: 370px;padding-left: 150px;">
+                        <td style="width: 220px;max-width: 220px;padding-left: 150px;">
                             <?php echo $entry->account_title; ?>
                         </td>
                         <td style="width: 165px;max-width: 165px;" align="center">&nbsp;</td>
@@ -92,10 +92,10 @@
 </div>
 
 
-<span style="top: 380px; left: 500px;">
+<span style="top: 365px; left: 465px;">
     <?php echo number_format($dr_amount,2) ?>
 </span>
-<span style="top: 380px; left: 650px;">
+<span style="top: 365px; left: 630px;">
     <?php echo number_format($cr_amount,2) ?>
 </span>
 <script type="text/javascript">

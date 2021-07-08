@@ -434,7 +434,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <label> Net Amount  :</label><br />
+                                        <label> <b id="net_amount_label" class="required"></b> Net Amount  :</label><br />
                                         <input class="form-control text-center numeric" id="net_amount" type="text" value="0.00" name="net_amount" data-error-msg="Net Amount is Required!">
                                     </div>
                                 </div>
@@ -1629,11 +1629,20 @@ $(document).ready(function(){
                 showNotification({ title: 'Error', msg: 'Please select check layout!', stat: 'error' });
         });
 
-        $('#is_2307').click(function(){
-            if ($(this).is(":checked") == false){
+        var apply_2307 = function(){
+            if ($('#is_2307').is(":checked") == false){
                 _cboTaxCode.select2('val',null);
                 $('#remarks_2307').val("");
+                $('#net_amount_label').html('');
+                $('#net_amount').prop('required',false);
+            }else{
+                $('#net_amount_label').html('*');
+                $('#net_amount').prop('required',true);
             }
+        }
+
+        $('#is_2307').click(function(){
+            apply_2307();
         });
 
         $('#cbo_tax_code').on("change", function (e) {
@@ -1677,6 +1686,7 @@ $(document).ready(function(){
             _cboPaymentMethod.select2('val',1);//set cash as default
             _cboCheckTypes.select2('val',0);//set cash as default
             $('input[name="date_txn"]').val(_currentDate);
+            apply_2307();
             showList(false);
 
         });
@@ -1826,6 +1836,8 @@ $(document).ready(function(){
             }else{
                 $('#is_2307').prop('checked', false);
             }
+            apply_2307();
+
             $.ajax({
                 url: 'Cash_vouchers/transaction/get-entries?id=' + data.cv_id,
                 type: "GET",
@@ -2296,7 +2308,7 @@ $(document).ready(function(){
                     return false;
                 }
             }else{
-                if($(this).val()==""){
+                if($(this).val()=="" || $(this).val() <= 0){
                     showNotification({title:"Error!",stat:"error",msg:$(this).data('error-msg')});
                     $(this).closest('div.form-group').addClass('has-error');
                     $(this).focus();

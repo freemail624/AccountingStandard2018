@@ -14,7 +14,7 @@
         width: auto;
         height: auto;   
         top: 260px;      
-        left: 75px;   
+        left: 60px;   
         font-family: Arial;
         font-weight: bold; 
     }
@@ -27,12 +27,12 @@
 </style>
 <!-- <img src="<?php //echo base_url(); ?>/assets/img/po.jpg" style="top: 0px; left: 0px; width: 100%;position: absolute;z-index: 100;height: 100%;"> -->
 
-<span style="top: 166px; left: 118px;"><?php echo $purchase_info->supplier_name; ?></span>
-<span style="top: 181px; left: 110px;"><?php echo $purchase_info->terms; ?></span>
+<span style="top: 161px; left: 118px;"><?php echo $purchase_info->supplier_name; ?></span>
+<span style="top: 176px; left: 110px;"><?php echo $purchase_info->terms; ?></span>
 
-<span style="top: 149px; left: 395px;"><?php echo date('m/d/Y'); ?></span>
-<span style="top: 166px; left: 415px;"><?php echo $purchase_info->contact_no; ?></span>
-<span style="top: 180px; left: 435px;"><?php echo $purchase_info->date_invoice; ?></span>
+<span style="top: 144px; left: 395px;"><?php echo date('m/d/Y'); ?></span>
+<span style="top: 161px; left: 415px;"><?php echo $purchase_info->contact_no; ?></span>
+<span style="top: 175px; left: 435px;"><?php echo $purchase_info->date_invoice; ?></span>
 
 <div class="panel">
 
