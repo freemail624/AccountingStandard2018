@@ -170,7 +170,7 @@
         <tr>
             <td class="border" align="right"><b>TOTAL AMOUNT DUE</b></td>
             <td class="border" align="right">
-                <?php echo number_format($info->total_after_discount,2); ?>
+                <?php echo number_format($info->total_after_tax,2); ?>
             </td>
         </tr>
         <tr>

@@ -103,6 +103,7 @@
     <table width="100%" cellpadding="5" class="table table-striped">
         <tr>
             <td valign="top" class="default-color top left right">DELIVERY DATE</td>
+            <td valign="top" class="default-color top left right">DELIVERY TIME</td>
             <td valign="top" class="default-color top left right">TERMS OF PAYMENT</td>
             <td valign="top" class="default-color top left right">PR NUMBER
             </td>
@@ -110,6 +111,9 @@
         <tr>
             <td valign="top" class="left right bottom" style="height: 30px;min-height: 30px;" align="center">
                 <span><?php echo ($purchase_info->delivery_date!=null||$purchase_info->delivery_date!='0000-00-00'? date('M d,Y',strtotime($purchase_info->delivery_date)) : ""); ?></span>
+            </td>
+            <td valign="top" class="left right bottom" style="height: 30px;min-height: 30px;" align="center">
+                <span><?php echo ($purchase_info->delivery_time!=null||$purchase_info->delivery_time!='0000-00-00 00:00:00'? date('h:i a',strtotime($purchase_info->delivery_time)) : ""); ?></span>
             </td>
             <td valign="top" class="left right bottom" style="height: 30px;min-height: 30px;" align="center">
                 <span><?php echo $purchase_info->term_description; ?></span>

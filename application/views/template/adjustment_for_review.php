@@ -197,61 +197,68 @@
                                     <table class="table table-striped" style="width: 100% !important;">
                                         <thead>
                                             <tr style="border-bottom: solid gray;">
-                                                <td style="width: 40%;"><strong>Item</strong></td>
-                                                <td style="width: 12%;text-align: right;"><strong>Qty</strong></td>
-                                                <td style="width: 12%;"><strong>UM</strong></td>
-                                                <td style="width: 12%;text-align: right;"><strong>Net Vat</strong></td>
-                                                <td style="width: 12%;text-align: right;"><strong>Tax</strong></td>
-                                                <td style="width: 12%;text-align: right;"><strong>Total</strong></td>
+                                                <td width="30%"><strong>Item</strong></td>
+                                                <td wiidth="10%" align="right"><strong>Qty</strong></td>
+                                                <td wiidth="10%" ><strong>UM</strong></td>
+                                                <td wiidth="10%" align="right"><strong>Cost</strong></td>
+                                                <td wiidth="10%" align="right"><strong>Price</strong></td>
+                                                <td wiidth="10%" align="right"><strong>Discount</strong></td>
+                                                <td wiidth="10%" align="right"><strong>Tax</strong></td>
+                                                <td wiidth="10%" align="right"><strong>Gross</strong></td>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php
-                                                $dr_total_price=0.00;
-                                                $dr_total_tax=0.00;
+                                                $gross_total=0;
+                                                $line_total_discount=0;
+                                                $global_discount=0;
+                                                $total_tax_amount=0;
                                                 foreach($items as $item){
                                                     ?>
                                             <tr style="">
                                                 <td><?php echo $item->product_desc; ?></td>
                                                 <td align="right"><?php echo number_format($item->adjust_qty,2); ?></td>
                                                 <td><?php echo $item->unit_name; ?></td>
-                                                <td align="right"><?php echo number_format($item->adjust_non_tax_amount,2); ?></td>
-                                                <td align="right"><?php echo number_format($item->adjust_tax_amount,2); ?></td>
+                                                <td align="right"><?php echo number_format($item->cost_upon_invoice,2); ?></td>
                                                 <td align="right"><?php echo number_format($item->adjust_price,2); ?></td>
+                                                <td align="right"><?php echo number_format($item->adjust_line_total_discount,2); ?></td>
+                                                <td align="right"><?php echo number_format($item->adjust_tax_amount,2); ?></td>
+                                                <td align="right"><?php echo number_format($item->adjust_qty * $item->adjust_price,2); ?></td>
                                                 
                                             </tr>
                                             <?php
-                                                    $dr_total_price+=$item->adjust_line_total_price;
-                                                    $dr_total_tax+=$item->adjust_tax_amount;
+                                                    $gross_total+= ($item->adjust_qty * $item->adjust_price);
+                                                    $line_total_discount+=$item->adjust_line_total_discount;
+                                                    $global_discount+=$item->global_discount_amount;
+                                                    $total_tax_amount+=$item->adjust_tax_amount;
                                             }
                                             ?>
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <td colspan="6"> </td>
+                                                <td colspan="8"> </td>
 
                                             </tr>
 
                                             <tr>
-                                                <td></td>
-                                                <td colspan="4" align="right">Discount 1:</td>
-                                                <td align="right"><?php echo number_format($adjustment_info->total_discount,2); ?></td>
+                                                <td colspan="7" align="right">Gross Total :</td>
+                                                <td align="right"><?php echo number_format($gross_total,2); ?></td>
                                             </tr>
                                             <tr>
-                                                <td></td>
-                                                <td colspan="4" align="right">Total Before Tax:</td>
-                                                <td align="right"><?php echo number_format($adjustment_info->total_before_tax,2); ?></td>
+                                                <td colspan="7" align="right">Discount per Item:</td>
+                                                <td align="right"><?php echo number_format($line_total_discount,2); ?></td>
                                             </tr>
                                             <tr>
-                                                <td></td>
-                                                <td colspan="4" align="right">Tax Amount:</td>
-                                                <td align="right"><?php echo number_format($adjustment_info->total_tax_amount,2); ?></td>
+                                                <td colspan="7" align="right">Global Discount:</td>
+                                                <td align="right"><?php echo number_format($global_discount,2); ?></td>
                                             </tr>
-
                                             <tr>
-                                                <td></td>
-                                                <td colspan="4" align="right">Total After Tax:</td>
-                                                <td align="right"><?php echo number_format($adjustment_info->total_after_tax,2); ?></td>
+                                                <td colspan="7" align="right">Total Tax:</td>
+                                                <td align="right"><?php echo number_format($total_tax_amount,2); ?></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="7" align="right"><strong>Total:</strong></td>
+                                                <td align="right"><strong><?php echo number_format($adjustment_info->total_after_tax,2); ?></strong></td>
                                             </tr>
                                       </tfoot>
                                     </table>

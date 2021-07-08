@@ -149,8 +149,29 @@ class Purchase_request extends CORE_Controller
                     );
                     break;
 
-                case 'pr-for-approved':  //is called on DASHBOARD, returns PR list for approval
-                    //approval id 2 are those pending
+                case 'pr-pending':  //Pending
+                    $m_requests=$this->Purchase_request_model;
+                    $response['data']=$m_requests->get_list(
+                        //filter
+                        'purchase_request.is_active=TRUE AND purchase_request.is_deleted=FALSE AND purchase_request.approval_id=1',
+                        //fields
+                        'purchase_request.*,
+                        CONCAT_WS(" ",purchase_request.terms,purchase_request.duration)As term_description,
+                        CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by',
+                        //joins
+                        array(
+                            array('user_accounts','user_accounts.user_id=purchase_request.posted_by_user','left')
+                        ),
+
+                        //order by
+                        'purchase_request.purchase_request_id DESC',
+                        //group by
+                        'purchase_request.purchase_request_id'
+                    );
+                    echo json_encode($response);
+                    break;
+
+                case 'pr-for-final-approval':  //For Final Approval
                     $m_requests=$this->Purchase_request_model;
                     $response['data']=$m_requests->get_list(
                         //filter
@@ -176,7 +197,7 @@ class Purchase_request extends CORE_Controller
                     $m_requests=$this->Purchase_request_model;
                     $response['data']= $m_requests->get_list(
 
-                        'purchase_request.is_deleted=FALSE AND purchase_request.is_active=TRUE AND purchase_request.approval_id=1 AND (purchase_request.order_status_id=1 OR purchase_request.order_status_id=3)',
+                        'purchase_request.is_deleted=FALSE AND purchase_request.is_active=TRUE AND purchase_request.approval_id=3 AND (purchase_request.order_status_id=1 OR purchase_request.order_status_id=3)',
 
                         array(
                             'purchase_request.*',
@@ -269,7 +290,6 @@ class Purchase_request extends CORE_Controller
                     $m_requests->department_id=$this->input->post('department',TRUE);
                     $m_requests->remarks=$this->input->post('remarks',TRUE);
                     $m_requests->tax_type_id=$this->input->post('tax_type',TRUE);
-                    $m_requests->approval_id=2;
                     $m_requests->posted_by_user=$this->session->user_id;
                     $m_requests->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                     $m_requests->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
@@ -508,7 +528,7 @@ class Purchase_request extends CORE_Controller
 
                     break;
                     
-                case 'mark-approved': //called on DASHBOARD when approved button is clicked
+                case 'mark-pending-approved': //called on DASHBOARD when approved button is clicked
                     $m_requests=$this->Purchase_request_model;
                     $purchase_request_id=$this->input->post('purchase_request_id',TRUE);
 
@@ -517,7 +537,26 @@ class Purchase_request extends CORE_Controller
 
                     $m_requests->set('date_approved','NOW()'); //treat NOW() as function and not string, set date of approval
                     $m_requests->approved_by_user=$this->session->user_id; //deleted by user
-                    $m_requests->approval_id=1; //1 means approved
+                    $m_requests->approval_id=2; //2 means for final approvale
+                    
+                    if($m_requests->modify($purchase_request_id)){
+                        $response['title']='Success!';
+                        $response['stat']='success';
+                        $response['msg']='Purchase request successfully approved for final approval.';
+                        echo json_encode($response);
+                    }
+                    break;
+
+                case 'mark-final-approved': //called on DASHBOARD when approved button is clicked
+                    $m_requests=$this->Purchase_request_model;
+                    $purchase_request_id=$this->input->post('purchase_request_id',TRUE);
+
+                    $m_email=$this->Email_settings_model;
+                    $email=$m_email->get_list();
+
+                    $m_requests->set('date_final_approved','NOW()'); //treat NOW() as function and not string, set date of approval
+                    $m_requests->final_approved_by_user=$this->session->user_id; //deleted by user
+                    $m_requests->approval_id=3; //3 means approved
                     
                     if($m_requests->modify($purchase_request_id)){
                         $response['title']='Success!';
@@ -526,7 +565,6 @@ class Purchase_request extends CORE_Controller
                         echo json_encode($response);
                     }
                     break;
-
 
                     case 'email':
 

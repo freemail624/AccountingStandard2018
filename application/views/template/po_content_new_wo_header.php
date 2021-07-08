@@ -44,18 +44,20 @@
 	<table width="100%"  cellspacing="-1" style="border:none!important;">
 
 		<tr>
-			<td style="padding: 6px;" width="35%" rowspan="2" valign="top">
+			<td style="padding: 6px;" width="30%" rowspan="2" valign="top">
 				<span><strong>SUPPLIER:</strong></span><br/><br/>
 				<span><strong><?php echo $purchase_info->supplier_name; ?></strong></span><br/>
 				<span>Cel No.: <?php echo $purchase_info->contact_no; ?></span><br/>
 				<span>Email : <?php echo $purchase_info->email_address; ?></span><br/>
 				<span>Attention: <?php echo $purchase_info->contact_person; ?></span><br/>
 			</td>
-			<td style="padding: 6px;" width="45%" valign="top">
+			<td style="padding: 6px;" width="40%" valign="top">
 				<span><strong>DELIVER TO : </strong></span><br/>
 				<span><?php echo $purchase_info->deliver_to_address; ?></span><br/>
 			</td>
-			<td style="padding: 6px;" width="20%" valign="top">
+			<td style="padding: 6px;" width="15%" valign="top">
+			</td>
+			<td style="padding: 6px;" width="15%" valign="top">
 				<span><strong>REQUEST # : </strong></span><br/>
 				<span><?php echo $purchase_info->pr_no; ?></span><br/>
 			</td>
@@ -65,9 +67,13 @@
 				<span><strong>TERMS : </strong></span><br/>
 				<span><?php echo $purchase_info->term_description; ?></span><br/>
 			</td>
-			<td style="padding: 6px;" width="20%" valign="top">
+			<td style="padding: 6px;" valign="top">
 				<span><strong>DELIVERY DATE : </strong></span><br/>
 				<span><?php echo $purchase_info->delivery_date; ?></span><br/>
+			</td>
+			<td style="padding: 6px;" valign="top">
+				<span><strong>DELIVERY TIME : </strong></span><br/>
+				<span><?php echo date('h:i a', strtotime($purchase_info->delivery_time)); ?></span><br/>
 			</td>
 		</tr>
 	</table>

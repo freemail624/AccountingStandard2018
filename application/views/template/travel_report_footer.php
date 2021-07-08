@@ -3,7 +3,7 @@
         <td colspan="2" class="default-color" style="padding-bottom: 10px;">REQUESTED BY</td>
     </tr>
     <tr>
-        <td colspan="2"><center>JEANNE TAPANG</center></td>
+        <td colspan="2" style="text-transform: uppercase;"><center><?php echo $prepared_by; ?></center></td>
     </tr>
     <tr>
         <td colspan="2"><center><hr style="margin: 0;padding: 0;width: 30%;margin-bottom: 5px;">SALES EXECUTIVE</center></td>

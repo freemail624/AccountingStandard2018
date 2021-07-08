@@ -15,6 +15,9 @@ class Templates extends CORE_Controller {
         $this->load->model('Purchase_request_model');
         $this->load->model('Purchase_request_items_model');
 
+        $this->load->model('Purchase_request_form_model');
+        $this->load->model('Purchase_request_form_items_model');
+
         $this->load->model('Delivery_invoice_model');
         $this->load->model('Delivery_invoice_item_model');
 
@@ -398,7 +401,7 @@ class Templates extends CORE_Controller {
 
                         break;
 
-            case 'pr': //purchase order
+            case 'pr': //purchase request
                         $m_requests=$this->Purchase_request_model;
                         $m_requests_items=$this->Purchase_request_items_model;
 
@@ -488,6 +491,83 @@ class Templates extends CORE_Controller {
 
                         break;
 
+
+
+            case 'prf': //purchase request (form)
+                        $m_request_form=$this->Purchase_request_form_model;
+                        $m_request_form_items=$this->Purchase_request_form_items_model;
+
+                        $m_company=$this->Company_model;
+                        $type=$this->input->get('type',TRUE);
+
+                        $m_users=$this->Users_model;
+                        $user_id = $this->session->user_id;
+                        $user = $m_users->get_list($user_id, 'CONCAT_WS(" ",user_fname,user_mname,user_lname) as user_fullname');
+                        $data['prepared_by']=$user[0]->user_fullname;
+
+                        $info=$m_request_form->get_list(
+                                $filter_value,
+                                'purchase_request_form.*,departments.department_name',
+                                array(
+                                    array('departments','departments.department_id=purchase_request_form.department_id','left')
+                                )
+                            );
+
+                        $company=$m_company->get_list();
+
+                        $data['requests']=$info[0];
+                        $data['company_info']=$company[0];
+
+                        $data['prf_items']=$m_request_form_items->get_list(
+                                array('purchase_request_form_id'=>$filter_value),
+                                'purchase_request_form_items.*'
+                            );
+
+                        //show only inside grid with menu buttons
+                        if($type=='fullview'||$type==null){
+                            echo $this->load->view('template/prf_content_new_wo_header',$data,TRUE);
+                            echo $this->load->view('template/prf_content_menus',$data,TRUE);
+                        }
+
+                        //for approval view on DASHBOARD
+                        if($type=='approval'){
+                            echo '<br />';
+                            echo $this->load->view('template/prf_content_new_wo_header',$data,TRUE);
+                            echo $this->load->view('template/prf_content_approval_menus',$data,TRUE);
+                        }
+
+                        //show only inside grid
+                        if($type=='contentview'){
+                            echo $this->load->view('template/prf_content_new',$data,TRUE);
+                        }
+
+                        //download pdf
+                        if($type=='pdf'){
+                            $file_name=$info[0]->prf_no;
+                            $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                            $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                            $content=$this->load->view('template/prf_content_new',$data,TRUE); //load the template
+                            // $pdf->setFooter('{PAGENO}');
+                            $pdf->WriteHTML($content);
+                            //download it.
+                            $pdf->Output($pdfFilePath,"D");
+
+                        }
+
+                        //preview on browser
+                        if($type=='preview'){
+                            $file_name=$info[0]->prf_no;
+                            $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                            $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                            $content=$this->load->view('template/prf_content_new',$data,TRUE); //load the template
+                            // $pdf->setFooter('{PAGENO}');
+                            $pdf->WriteHTML($content);
+                            //download it.
+                            $pdf->Output();
+
+                        }
+
+                        break;
 
 
             //****************************************************
@@ -866,6 +946,10 @@ class Templates extends CORE_Controller {
 
                 $type=$this->input->get('type',TRUE);
                 $data['is_basyo']=$m_accounts->get_list(1)[0];
+                $m_users=$this->Users_model;
+                $user_id = $this->session->user_id;
+                $user = $m_users->get_list($user_id, 'CONCAT_WS(" ",user_fname,user_mname,user_lname) as user_fullname');
+                $data['prepared_by']=$user[0]->user_fullname;
 
                 $info=$m_issuance->get_list(
                     $filter_value,
@@ -973,7 +1057,11 @@ class Templates extends CORE_Controller {
                 );
 
                 $company=$m_company->get_list();
-
+                $m_users=$this->Users_model;
+                $user_id = $this->session->user_id;
+                $user = $m_users->get_list($user_id, 'CONCAT_WS(" ",user_fname,user_mname,user_lname) as user_fullname');
+                $data['prepared_by']=$user[0]->user_fullname;
+                
                 $data['adjustment_info']=$info[0];
                 $data['company_info']=$company[0];
                 $data['adjustment_items']=$m_adjustment_items->get_list(
@@ -1301,6 +1389,10 @@ class Templates extends CORE_Controller {
                 $data['company_info']=$company_info[0];
 
                 $data['info']=$m_cash_request->get_request_list($filter_value)[0];
+                $m_users=$this->Users_model;
+                $user_id = $this->session->user_id;
+                $user = $m_users->get_list($user_id, 'CONCAT_WS(" ",user_fname,user_mname,user_lname) as user_fullname');
+                $data['prepared_by']=$user[0]->user_fullname;
 
                 //download pdf
                 if($type=='pdf'){
@@ -1344,6 +1436,11 @@ class Templates extends CORE_Controller {
 
                 $data['info']=$m_travel_order->get_travel_list($filter_value)[0];
 
+                $m_users=$this->Users_model;
+                $user_id = $this->session->user_id;
+                $user = $m_users->get_list($user_id, 'CONCAT_WS(" ",user_fname,user_mname,user_lname) as user_fullname');
+                $data['prepared_by']=$user[0]->user_fullname;
+
                 //download pdf
                 if($type=='pdf'){
                     $file_name=$data['info']->travel_order_no;
@@ -1385,6 +1482,10 @@ class Templates extends CORE_Controller {
                 $data['company_info']=$company_info[0];
 
                 $data['info']=$m_incident->get_incident_list($filter_value)[0];
+                $m_users=$this->Users_model;
+                $user_id = $this->session->user_id;
+                $user = $m_users->get_list($user_id, 'CONCAT_WS(" ",user_fname,user_mname,user_lname) as user_fullname');
+                $data['prepared_by']=$user[0]->user_fullname;
 
                 //download pdf
                 if($type=='pdf'){

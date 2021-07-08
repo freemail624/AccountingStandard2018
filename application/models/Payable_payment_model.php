@@ -12,24 +12,34 @@ class Payable_payment_model extends CORE_Model
 
     function get_journal_entries($payment_id){
 
-        $sql="SELECT
-                ai.payable_account_id as account_id,
-                (
-                    SELECT rp.total_paid_amount FROM payable_payments as rp WHERE rp.payment_id=$payment_id
-                ) as dr_amount, 0 as cr_amount,'' as memo
-
-                FROM `account_integration` as ai
-
-                UNION ALL
-
-                SELECT
-
-                ai.payment_to_supplier_id as account_id, 0 as dr_amount ,
-                (
-                    SELECT rp.total_paid_amount FROM payable_payments as rp WHERE rp.payment_id=$payment_id
-                ) as cr_amount,'' as memo
-
-                FROM `account_integration` as ai";
+        $sql="
+            SELECT
+            /* CASH */
+                ai.payable_account_id AS account_id,
+                (SELECT 
+                        rp.total_paid_amount
+                    FROM
+                        payable_payments AS rp
+                    WHERE
+                        rp.payment_id = $payment_id) AS dr_amount,
+                0 AS cr_amount,
+                '' AS memo
+            FROM
+                `account_integration` AS ai 
+            
+            /* AP */
+            UNION ALL SELECT 
+                ai.payment_to_supplier_id AS account_id,
+                0 AS dr_amount,
+                (SELECT 
+                        rp.total_paid_amount
+                    FROM
+                        payable_payments AS rp
+                    WHERE
+                        rp.payment_id = $payment_id) AS cr_amount,
+                '' AS memo
+            FROM
+                `account_integration` AS ai";
 
         return $this->db->query($sql)->result();
     }

@@ -72,8 +72,15 @@ class Adjustments extends CORE_Controller
                 echo json_encode($response);
                 break;
 
-            case 'ai-for-approved':  //is called on DASHBOARD, returns AI list for approval
-                //approval id 2 are those pending
+            case 'ai-pending':  //Pending
+                $m_adjustment=$this->Adjustment_model;
+                $response['data']=$this->response_rows(
+                    'adjustment_info.is_active=TRUE AND adjustment_info.is_deleted=FALSE AND adjustment_info.approval_id = 1',
+                    'adjustment_info.adjustment_id ASC');
+                echo json_encode($response);
+                break;
+
+            case 'ai-for-final-approval':  //For Final Approval
                 $m_adjustment=$this->Adjustment_model;
                 $response['data']=$this->response_rows(
                     'adjustment_info.is_active=TRUE AND adjustment_info.is_deleted=FALSE AND adjustment_info.approval_id = 2',
@@ -81,13 +88,29 @@ class Adjustments extends CORE_Controller
                 echo json_encode($response);
                 break;
 
-            case 'mark-approved': //called on DASHBOARD when approved button is clicked
+            case 'mark-pending-approved': //called on DASHBOARD when approved button is clicked
                 $m_adjustment=$this->Adjustment_model;
                 $adjustment_id=$this->input->post('adjustment_id',TRUE);
 
                 $m_adjustment->set('date_approved','NOW()'); //treat NOW() as function and not string, set date of approval
                 $m_adjustment->approved_by_user=$this->session->user_id; //deleted by user
-                $m_adjustment->approval_id=1; //1 means approved
+                $m_adjustment->approval_id=2; //2 means for final approval
+                
+                if($m_adjustment->modify($adjustment_id)){
+                    $response['title']='Success!';
+                    $response['stat']='success';
+                    $response['msg']='Item Adjustment successfully approved.';
+                    echo json_encode($response);
+                }
+                break;
+
+            case 'mark-final-approved': //called on DASHBOARD when approved button is clicked
+                $m_adjustment=$this->Adjustment_model;
+                $adjustment_id=$this->input->post('adjustment_id',TRUE);
+
+                $m_adjustment->set('date_approved','NOW()'); //treat NOW() as function and not string, set date of approval
+                $m_adjustment->approved_by_user=$this->session->user_id; //deleted by user
+                $m_adjustment->approval_id=3; //3 means approved
                 
                 if($m_adjustment->modify($adjustment_id)){
                     $response['title']='Success!';
@@ -490,8 +513,8 @@ class Adjustments extends CORE_Controller
                 'DATE_FORMAT(adjustment_info.date_adjusted,"%m/%d/%Y") as date_adjusted',
                 'departments.department_id',
                 '(CASE 
-                    WHEN adjustment_info.is_returns = 1 THEN "Sales Returns" 
-                    WHEN adjustment_info.is_dr_return = 1 THEN "Purchase Returns" 
+                    WHEN adjustment_info.is_returns = 1 THEN "Sales Return" 
+                    WHEN adjustment_info.is_dr_return = 1 THEN "Purchase Return" 
                     ELSE CONCAT("Adjustment"," ",adjustment_info.adjustment_type) END ) as transaction_type',
                 'departments.department_name'
             ),

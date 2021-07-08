@@ -33,7 +33,7 @@ class Rights_link_model extends CORE_Model{
                                           (23,'6','6-4','Setup User Group'),
                                           (24,'6','6-5','Create User Account'),
                                           (25,'6','6-6','Setup Company Info'),
-                                          (26,'7','7-1','Purchase Request for Approval'),
+                                          (26,'7','7-1','Purchase Request pending'),
                                           (27,'9','9-1','Balance Sheet Report'),
                                           (28,'9','9-2','Income Statement'),
                                           (29,'4','4-1','Account Classification'),
@@ -117,8 +117,14 @@ class Rights_link_model extends CORE_Model{
                                           (109,'5','5-6','Edit Product Costing'),
                                           (110,'15','15-7','Batch Inventory'),
                                           (111,'15','15-8','Barcode Generator'),
-                                          (112,'3','3-9','Sales Order Approval'),
-                                          (113,'15','15-9','Item Adjustment Approval')
+                                          (112,'3','3-9','Sales Order Pending'),
+                                          (113,'15','15-9','Item Adjustment pending'),
+                                          (114,'2','2-10','Purchase Request (Form)'),
+                                          (115,'2','2-11','Purchase Request (Form) pending'),
+                                          (116,'2','2-12','Purchase Request (Form) for final approval'),
+                                          (117,'2','2-13','Purchase Request for final approval'),
+                                          (118,'3','3-10','Sales Order for final approval'),
+                                          (119,'15','15-10','Item Adjustment for final approval')
 
 
                                           ON DUPLICATE KEY UPDATE

@@ -19,6 +19,7 @@
     <link type="text/css" href="assets/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet">
     <link type="text/css" href="assets/plugins/datatables/dataTables.themify.css" rel="stylesheet">
     <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/plugins/datapicker/datetimepicker.min.css">
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
     <!--/twitter typehead-->
     <link href="assets/plugins/twittertypehead/twitter.typehead.css" rel="stylesheet">
@@ -228,7 +229,7 @@
                             <?php } ?>
                         </select>
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-4">
                         PO # : <br />
                         <div class="input-group">
                             <span class="input-group-addon">
@@ -237,7 +238,7 @@
                             <input type="text" name="po_no" class="form-control" placeholder="PO-YYYYMMDD-XXX" readonly>
                         </div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <b class="required">*</b> Delivery Date :<br />
                         <div class="input-group">
                             <input type="text" name="delivery_date" id="delivery_date" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Delivery Date" data-error-msg="Delivery Date is required!" required>
@@ -259,7 +260,7 @@
                             <?php } ?>
                         </select>
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-4">
                         PR #:<br />
                         <div class="input-group">
                             <input type="text" name="pr_no" class="form-control" placeholder="PR #" readonly>
@@ -268,15 +269,9 @@
                             </span>
                         </div>
                     </div>
-                    <div class="col-sm-4">
-                        Contact Person : <br />
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="fa fa-users"></i>
-                            </span>
-                            <input type="text" name="contact_person" class="form-control" placeholder="Contact Person">
-                        </div>
-
+                    <div class="col-sm-3">
+                        Delivery Time : 
+                        <input type="text" name="delivery_time" class="time-picker form-control" placeholder="Delivery Time">
                         <div style="display: none;">
                             Tax type : <br />
                             <select name="tax_type" id="cbo_tax_type">
@@ -291,10 +286,17 @@
                     <div class="col-sm-5">
                         <b class="required">*</b> Deliver to Address : <br />
                         <textarea name="deliver_to_address" class="form-control" placeholder="Deliver to Address" data-error-msg="Deliver address is required!" required data-default="<?php echo $company->deliver_to_address_default; ?>"></textarea>
-
                     </div>
-
-                    <div class="col-sm-4 col-sm-offset-3">
+                    <div class="col-sm-4">
+                        Contact Person : <br />
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <i class="fa fa-users"></i>
+                            </span>
+                            <input type="text" name="contact_person" class="form-control" placeholder="Contact Person">
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
                         Terms : <br />
                         <select class="form-control" name="term_id" id="cbo_terms">
                             <option value="new">[ Create New Term ]</option>
@@ -859,6 +861,11 @@
 <?php echo $_def_js_files; ?>
 
 
+<!-- Date range use moment.js same as full calendar plugin -->
+<script src="assets/plugins/datapicker/moment.min.js"></script> 
+<!-- Data picker -->
+<script src="assets/plugins/datapicker/bootstrap-datepicker.js"></script>
+<script src="assets/plugins/datapicker/datetimepicker.min.js"></script>
 
 
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
@@ -902,6 +909,12 @@ $(document).ready(function(){
     var _cboTerms;
 
     //_defCostType=1; //Luzon Area Purchase Cost is default, this will change when branch is specified
+
+    var reInitializeTime = function(){
+        $('.time-picker').datetimepicker({
+            format: 'LT'
+        });
+    };
 
     var oTableItems={
         qty : 'td:eq(0)',
@@ -1404,7 +1417,7 @@ $(document).ready(function(){
             $('#custom_duties').val('0.00');
             $('#other_amount').val('0.00');
             reComputeTotal();
-
+            reInitializeTime();
             $('#delivery_date').datepicker('setDate', 'today');
             //$('#cbo_prodType').select2('val',3);
             $('#typeaheadsearch').val('');
@@ -1498,7 +1511,6 @@ $(document).ready(function(){
             }
 
         });
-
 
 
         $('#tbl_purchases tbody').on('click','button[name="edit_info"]',function(){
@@ -1617,8 +1629,7 @@ $(document).ready(function(){
             });
 
 
-
-
+            reInitializeTime(); 
             showList(false);
 
         });
@@ -1711,6 +1722,7 @@ $(document).ready(function(){
                 }
 
             });
+            reInitializeTime(); 
         });
 
         $('#tbl_purchases tbody').on('click','button[name="remove_info"]',function(){

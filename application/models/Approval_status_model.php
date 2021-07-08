@@ -17,8 +17,9 @@ class Approval_status_model extends CORE_Model
         $sql="INSERT INTO approval_status
                   (approval_id,approval_status,approval_description)
               VALUES
-                  (1,'Approved',''),
-                  (2,'Pending','')
+                  (1,'Pending',''),
+                  (2,'For Final Approval',''),
+                  (3,'Approved','')
               ON DUPLICATE KEY UPDATE
                   approval_status.approval_id=VALUES(approval_status.approval_id),
                   approval_status.approval_status=VALUES(approval_status.approval_status)

@@ -4,11 +4,11 @@
         <td class="default-color" style="padding-bottom: 10px;">APPROVED BY: </td>
     </tr>
     <tr>
-    	<td><center><?php echo $prepared_by; ?></center></td>
+    	<td style="text-transform: uppercase;"><center><?php echo $prepared_by; ?></center></td>
     	<td><center>RAYMUND SUNGA</center></td>
     </tr>
     <tr>
-    	<td><center><hr style="margin: 0;padding: 0;width: 60%;margin-bottom: 5px;">SALES EXECUTIVE</center></td>
+    	<td><center><hr style="margin: 0;padding: 0;width: 60%;margin-bottom: 5px;">NAME AND SIGNATURE</center></td>
     	<td><center><hr style="margin: 0;padding: 0;width: 60%;margin-bottom: 5px;">PRESIDENT</center></td>
     </tr>
 </table>

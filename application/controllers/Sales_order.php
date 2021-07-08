@@ -115,8 +115,15 @@ class Sales_order extends CORE_Controller
                 break;
 
             //***********************************************************************************************************
-            case 'so-for-approved':  //is called on DASHBOARD, returns SO list for approval
-                //approval id 2 are those pending
+            case 'so-pending':  //Pending
+                $m_sales_order=$this->Sales_order_model;
+                $response['data']=$this->response_rows(
+                    'sales_order.is_active=TRUE AND sales_order.is_deleted=FALSE AND sales_order.approval_id = 1',
+                    'sales_order.sales_order_id ASC');
+                echo json_encode($response);
+                break;
+
+            case 'so-for-final-approval':  //For Final Approval
                 $m_sales_order=$this->Sales_order_model;
                 $response['data']=$this->response_rows(
                     'sales_order.is_active=TRUE AND sales_order.is_deleted=FALSE AND sales_order.approval_id = 2',
@@ -129,7 +136,7 @@ class Sales_order extends CORE_Controller
                 //$where_filter=null,$select_list=null,$join_array=null,$order_by=null,$group_by=null,$auto_select_escape=TRUE,$custom_where_filter=null
                 $response['data']= $m_sales_order->get_list(
 
-                    'sales_order.is_deleted=FALSE AND sales_order.is_active=TRUE AND sales_order.approval_id=1 AND (sales_order.order_status_id=1 OR sales_order.order_status_id=3)',
+                    'sales_order.is_deleted=FALSE AND sales_order.is_active=TRUE AND sales_order.approval_id=3 AND (sales_order.order_status_id=1 OR sales_order.order_status_id=3)',
 
                     array(
                         'sales_order.*',
@@ -211,13 +218,29 @@ class Sales_order extends CORE_Controller
                 break;
 
 
-            case 'mark-approved': //called on DASHBOARD when approved button is clicked
+            case 'mark-pending-approved': //called on DASHBOARD when approved button is clicked
                 $m_sales_order=$this->Sales_order_model;
                 $sales_order_id=$this->input->post('sales_order_id',TRUE);
 
                 $m_sales_order->set('date_approved','NOW()'); //treat NOW() as function and not string, set date of approval
                 $m_sales_order->approved_by_user=$this->session->user_id; //deleted by user
-                $m_sales_order->approval_id=1; //1 means approved
+                $m_sales_order->approval_id=2; //2 means for final approval
+                
+                if($m_sales_order->modify($sales_order_id)){
+                    $response['title']='Success!';
+                    $response['stat']='success';
+                    $response['msg']='Sales order successfully approved for final approval.';
+                    echo json_encode($response);
+                }
+                break;
+
+            case 'mark-final-approved': //called on DASHBOARD when approved button is clicked
+                $m_sales_order=$this->Sales_order_model;
+                $sales_order_id=$this->input->post('sales_order_id',TRUE);
+
+                $m_sales_order->set('date_final_approved','NOW()'); //treat NOW() as function and not string, set date of approval
+                $m_sales_order->final_approved_by_user=$this->session->user_id; //deleted by user
+                $m_sales_order->approval_id=3; //3 means approved
                 
                 if($m_sales_order->modify($sales_order_id)){
                     $response['title']='Success!';
@@ -225,7 +248,7 @@ class Sales_order extends CORE_Controller
                     $response['msg']='Sales order successfully approved.';
                     echo json_encode($response);
                 }
-                break;
+                break;                
 
             //***************************************create new Items************************************************
             case 'create':

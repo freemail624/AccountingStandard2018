@@ -99,7 +99,7 @@
                 <?php echo $info->follow_up; ?>
             </td>
             <td valign="bottom" width="30%" style="padding-bottom: 90px;">
-                <p>Reported By</p><br/>
+                <p>Reported By : <br/><?php echo $prepared_by; ?></p><br/>
                 <p>Position</p><br/>
                 <p>Department</p><br/>
             </td>

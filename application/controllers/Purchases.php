@@ -156,7 +156,7 @@ class Purchases extends CORE_Controller
                     //$where_filter=null,$select_list=null,$join_array=null,$order_by=null,$group_by=null,$auto_select_escape=TRUE,$custom_where_filter=null
                     $response['data']= $m_purchases->get_list(
 
-                        'purchase_order.is_deleted=FALSE AND purchase_order.is_active=TRUE AND purchase_order.approval_id=1 AND (purchase_order.order_status_id=1 OR purchase_order.order_status_id=3)',
+                        'purchase_order.is_deleted=FALSE AND purchase_order.is_active=TRUE AND purchase_order.approval_id=3 AND (purchase_order.order_status_id=1 OR purchase_order.order_status_id=3)',
 
                         array(
                             'purchase_order.*',
@@ -254,12 +254,13 @@ class Purchases extends CORE_Controller
                     $m_purchases->duration=$this->input->post('duration',TRUE);
                     $m_purchases->deliver_to_address=$this->input->post('deliver_to_address',TRUE);
                     $m_purchases->delivery_date = date('Y-m-d',strtotime($this->input->post('delivery_date',TRUE)));
+                    $m_purchases->delivery_time = date('Y-m-d',strtotime($this->input->post('delivery_date',TRUE))).' '.date('H:i:s',strtotime($this->input->post('delivery_time',TRUE)));
                     $m_purchases->contact_person=$this->input->post('contact_person',TRUE);
                     $m_purchases->supplier_id=$this->input->post('supplier',TRUE);
                     $m_purchases->department_id=$this->input->post('department',TRUE);
                     $m_purchases->remarks=$this->input->post('remarks',TRUE);
                     $m_purchases->tax_type_id=$this->input->post('tax_type',TRUE);
-                    $m_purchases->approval_id=1;
+                    $m_purchases->approval_id=3;
                     $m_purchases->posted_by_user=$this->session->user_id;
                     $m_purchases->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                     $m_purchases->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
@@ -365,6 +366,7 @@ class Purchases extends CORE_Controller
                     $m_purchases->duration=$this->input->post('duration',TRUE);
                     $m_purchases->deliver_to_address=$this->input->post('deliver_to_address',TRUE);
                     $m_purchases->delivery_date = date('Y-m-d',strtotime($this->input->post('delivery_date',TRUE)));
+                    $m_purchases->delivery_time = date('Y-m-d',strtotime($this->input->post('delivery_date',TRUE))).' '.date('H:i:s',strtotime($this->input->post('delivery_time',TRUE)));
                     $m_purchases->contact_person=$this->input->post('contact_person',TRUE);
                     $m_purchases->supplier_id=$this->input->post('supplier',TRUE);
                     $m_purchases->department_id=$this->input->post('department',TRUE);
@@ -567,7 +569,7 @@ class Purchases extends CORE_Controller
 
                     $m_purchases->set('date_approved','NOW()'); //treat NOW() as function and not string, set date of approval
                     $m_purchases->approved_by_user=$this->session->user_id; //deleted by user
-                    $m_purchases->approval_id=1; //1 means approved
+                    $m_purchases->approval_id=3; //1 means approved
                     if($m_purchases->modify($purchase_order_id)){
 
                         $info=$m_purchases->get_list(
@@ -739,6 +741,7 @@ class Purchases extends CORE_Controller
             $filter_value,
             array(
                 'purchase_order.*',
+                'DATE_FORMAT(purchase_order.delivery_time, "%h:%i %p") as delivery_time',
                 'terms.term_description',
                 'suppliers.supplier_name',
                 'tax_types.tax_type',
