@@ -528,6 +528,19 @@
                                                                                                 </div>
                                                                                             </div>
                                                                                         </div>
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="row">
+                                                                                                <b class="required">*</b> <label>Advisor :</label> <br />
+                                                                                                <select class="form-control" name="advisor_id" id="cbo_advisors" required data-error-msg="Advisor is required!">
+                                                                                                    <option value="0">[ Create New Advisor ]</option>
+                                                                                                    <?php foreach ($advisors as $advisor) { ?>
+                                                                                                        <option value="<?php echo $advisor->advisor_id; ?>">
+                                                                                                            <?php echo $advisor->fullname; ?>
+                                                                                                        </option>
+                                                                                                    <?php } ?>
+                                                                                                </select>
+                                                                                            </div>
+                                                                                        </div>
                                                                                     </div>
 
                                                                                 </div>
@@ -570,17 +583,6 @@
                                                                                 </select>
                                                                             </div>
                                                                             <div class="col-md-12">
-                                                                                <b class="required">*</b> <label>Advisor :</label> <br />
-                                                                                <select class="form-control" name="advisor_id" id="cbo_advisors" required data-error-msg="Advisor is required!">
-                                                                                    <option value="0">[ Create New Advisor ]</option>
-                                                                                    <?php foreach ($advisors as $advisor) { ?>
-                                                                                        <option value="<?php echo $advisor->advisor_id; ?>">
-                                                                                            <?php echo $advisor->fullname; ?>
-                                                                                        </option>
-                                                                                    <?php } ?>
-                                                                                </select>
-                                                                            </div>
-                                                                            <div class="col-md-12">
                                                                                 <label>Selling Dealer :</label> <br />
                                                                                 <div class="input-group">
                                                                                     <span class="input-group-addon">
@@ -588,6 +590,10 @@
                                                                                     </span>
                                                                                     <input type="text" name="selling_dealer" class="form-control" placeholder="Selling Dealer">
                                                                                 </div>
+                                                                            </div>
+                                                                            <div class="col-md-12">
+                                                                                <label>Tag No. : </label>
+                                                                                <input type="text" name="tag_no" class="form-control">
                                                                             </div>
                                                                             <div class="col-md-12">
                                                                                 <hr />
@@ -672,7 +678,8 @@
                                                                                 <div class="tab-pane <?php if ($i == 1) {
                                                                                                             echo 'active';
                                                                                                         } ?>" id="service_<?php echo $i; ?>">
-                                                                                    <label>Service Description :</label>
+                                                                                    <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured<?php echo $i; ?>" class="no-format">Is Insured?</label>
+                                                                                    <br/><label>Service Description :</label>
                                                                                     <textarea class="form-control" name="sdesc_<?php echo $i; ?>" placeholder="Service Description"></textarea>
                                                                                     <div class="table-responsive">
                                                                                         <table id="tbl_items_<?php echo $i; ?>" class="tbl_items tbl_items_1 table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
@@ -698,8 +705,8 @@
                                                                                                     <th class="hidden">Net of Vat (Price w/out Tax)</th>
                                                                                                     <td class="hidden">Item ID</td>
                                                                                                     <th class="hidden">Total after Global</th>
-                                                                                                    <th width="10%" class="is_insured">
-                                                                                                        <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured1<?php echo $i; ?>" class="no-format">Is Insured?</label>
+                                                                                                    <th class="hidden" width="10%" class="is_insured">
+                                                                                                        <!-- <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured1<?php echo $i; ?>" class="no-format">Is Insured?</label> -->
                                                                                                     </th>
                                                                                                     <th width="5%">
                                                                                                         <center>Action</center>
@@ -710,7 +717,7 @@
                                                                                             </tbody>
                                                                                             <tfoot>
                                                                                                 <tr>
-                                                                                                    <td colspan="8" style="height: 0px;min-height: 335px;">&nbsp;</td>
+                                                                                                    <td colspan="7" style="height: 0px;min-height: 335px;">&nbsp;</td>
                                                                                                 </tr>
                                                                                             </tfoot>
                                                                                         </table>
@@ -745,7 +752,8 @@
                                                                             <?php for ($i = 11; $i <= 20; $i++) { ?>
 
                                                                                 <div class="tab-pane" id="service_<?php echo $i; ?>">
-                                                                                    <label>Service Description <?php echo $i; ?>:</label>
+                                                                                    <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured<?php echo $i; ?>" class="no-format">Is Insured?</label>
+                                                                                    <br/><label>Service Description :</label>
                                                                                     <textarea class="form-control" name="sdesc_<?php echo $i; ?>" placeholder="Service Description"></textarea>
                                                                                     <div class="table-responsive">
                                                                                         <table id="tbl_items_<?php echo $i; ?>" class="tbl_items tbl_items_2 table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
@@ -771,8 +779,8 @@
                                                                                                     <th class="hidden">Net of Vat (Price w/out Tax)</th>
                                                                                                     <td class="hidden">Item ID</td>
                                                                                                     <th class="hidden">Total after Global</th>
-                                                                                                    <th width="10%" class="is_insured">
-                                                                                                        <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured1<?php echo $i; ?>" class="no-format">Is Insured?</label>
+                                                                                                    <th class="hidden" width="10%" class="is_insured">
+                                                                                                        <!-- <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured1<?php echo $i; ?>" class="no-format">Is Insured?</label> -->
                                                                                                     </th>
                                                                                                     <th width="5%">
                                                                                                         <center>Action</center>
@@ -783,7 +791,7 @@
                                                                                             </tbody>
                                                                                             <tfoot>
                                                                                                 <tr>
-                                                                                                    <td colspan="8" style="height: 0px;min-height: 335px;">&nbsp;</td>
+                                                                                                    <td colspan="7" style="height: 0px;min-height: 335px;">&nbsp;</td>
                                                                                                 </tr>
                                                                                             </tfoot>
                                                                                         </table>
@@ -819,7 +827,8 @@
                                                                             <?php for ($i = 21; $i <= 30; $i++) { ?>
 
                                                                                 <div class="tab-pane" id="service_<?php echo $i; ?>">
-                                                                                    <label>Service Description <?php echo $i; ?>:</label>
+                                                                                    <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured<?php echo $i; ?>" class="no-format">Is Insured?</label>
+                                                                                    <br/><label>Service Description :</label>
                                                                                     <textarea class="form-control" name="sdesc_<?php echo $i; ?>" placeholder="Service Description"></textarea>
                                                                                     <div class="table-responsive">
                                                                                         <table id="tbl_items_<?php echo $i; ?>" class="tbl_items tbl_items_3 table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
@@ -845,8 +854,8 @@
                                                                                                     <th class="hidden">Net of Vat (Price w/out Tax)</th>
                                                                                                     <td class="hidden">Item ID</td>
                                                                                                     <th class="hidden">Total after Global</th>
-                                                                                                    <th width="10%" class="is_insured">
-                                                                                                        <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured1<?php echo $i; ?>" class="no-format">Is Insured?</label>
+                                                                                                    <th class="hidden" width="10%" class="is_insured">
+                                                                                                        <!-- <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured1<?php echo $i; ?>" class="no-format">Is Insured?</label> -->
                                                                                                     </th>
                                                                                                     <th width="5%">
                                                                                                         <center>Action</center>
@@ -857,7 +866,7 @@
                                                                                             </tbody>
                                                                                             <tfoot>
                                                                                                 <tr>
-                                                                                                    <td colspan="8" style="height: 0px;min-height: 335px;">&nbsp;</td>
+                                                                                                    <td colspan="7" style="height: 0px;min-height: 335px;">&nbsp;</td>
                                                                                                 </tr>
                                                                                             </tfoot>
                                                                                         </table>
@@ -893,7 +902,8 @@
                                                                             <?php for ($i = 31; $i <= 40; $i++) { ?>
 
                                                                                 <div class="tab-pane" id="service_<?php echo $i; ?>">
-                                                                                    <label>Service Description <?php echo $i; ?>:</label>
+                                                                                    <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured<?php echo $i; ?>" class="no-format">Is Insured?</label>
+                                                                                    <br/><label>Service Description :</label>
                                                                                     <textarea class="form-control" name="sdesc_<?php echo $i; ?>" placeholder="Service Description"></textarea>
                                                                                     <div class="table-responsive">
                                                                                         <table id="tbl_items_<?php echo $i; ?>" class="tbl_items tbl_items_4 table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
@@ -919,8 +929,8 @@
                                                                                                     <th class="hidden">Net of Vat (Price w/out Tax)</th>
                                                                                                     <td class="hidden">Item ID</td>
                                                                                                     <th class="hidden">Total after Global</th>
-                                                                                                    <th width="10%" class="is_insured">
-                                                                                                        <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured1<?php echo $i; ?>" class="no-format">Is Insured?</label>
+                                                                                                    <th class="hidden" width="10%" class="is_insured">
+                                                                                                        <!-- <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured1<?php echo $i; ?>" class="no-format">Is Insured?</label> -->
                                                                                                     </th>
                                                                                                     <th width="5%">
                                                                                                         <center>Action</center>
@@ -931,7 +941,7 @@
                                                                                             </tbody>
                                                                                             <tfoot>
                                                                                                 <tr>
-                                                                                                    <td colspan="8" style="height: 0px;min-height: 335px;">&nbsp;</td>
+                                                                                                    <td colspan="7" style="height: 0px;min-height: 335px;">&nbsp;</td>
                                                                                                 </tr>
                                                                                             </tfoot>
                                                                                         </table>
@@ -967,7 +977,8 @@
                                                                             <?php for ($i = 41; $i <= 50; $i++) { ?>
 
                                                                                 <div class="tab-pane" id="service_<?php echo $i; ?>">
-                                                                                    <label>Service Description <?php echo $i; ?>:</label>
+                                                                                    <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured<?php echo $i; ?>" class="no-format">Is Insured?</label>
+                                                                                    <br/><label>Service Description :</label>
                                                                                     <textarea class="form-control" name="sdesc_<?php echo $i; ?>" placeholder="Service Description"></textarea>
                                                                                     <div class="table-responsive">
                                                                                         <table id="tbl_items_<?php echo $i; ?>" class="tbl_items tbl_items_5 table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
@@ -993,8 +1004,8 @@
                                                                                                     <th class="hidden">Net of Vat (Price w/out Tax)</th>
                                                                                                     <td class="hidden">Item ID</td>
                                                                                                     <th class="hidden">Total after Global</th>
-                                                                                                    <th width="10%" class="is_insured">
-                                                                                                        <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured1<?php echo $i; ?>" class="no-format">Is Insured?</label>
+                                                                                                    <th class="hidden" width="10%" class="is_insured">
+                                                                                                        <!-- <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured1<?php echo $i; ?>" class="no-format">Is Insured?</label> -->
                                                                                                     </th>
                                                                                                     <th width="5%">
                                                                                                         <center>Action</center>
@@ -1005,7 +1016,7 @@
                                                                                             </tbody>
                                                                                             <tfoot>
                                                                                                 <tr>
-                                                                                                    <td colspan="8" style="height: 0px;min-height: 335px;">&nbsp;</td>
+                                                                                                    <td colspan="7" style="height: 0px;min-height: 335px;">&nbsp;</td>
                                                                                                 </tr>
                                                                                             </tfoot>
                                                                                         </table>
@@ -1041,7 +1052,8 @@
                                                                             <?php for ($i = 51; $i <= 60; $i++) { ?>
 
                                                                                 <div class="tab-pane" id="service_<?php echo $i; ?>">
-                                                                                    <label>Service Description <?php echo $i; ?>:</label>
+                                                                                    <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured<?php echo $i; ?>" class="no-format">Is Insured?</label>
+                                                                                    <br/><label>Service Description :</label>
                                                                                     <textarea class="form-control" name="sdesc_<?php echo $i; ?>" placeholder="Service Description"></textarea>
                                                                                     <div class="table-responsive">
                                                                                         <table id="tbl_items_<?php echo $i; ?>" class="tbl_items tbl_items_6 table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
@@ -1067,8 +1079,8 @@
                                                                                                     <th class="hidden">Net of Vat (Price w/out Tax)</th>
                                                                                                     <td class="hidden">Item ID</td>
                                                                                                     <th class="hidden">Total after Global</th>
-                                                                                                    <th width="10%" class="is_insured">
-                                                                                                        <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured1<?php echo $i; ?>" class="no-format">Is Insured?</label>
+                                                                                                    <th class="hidden" width="10%" class="is_insured">
+                                                                                                        <!-- <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured1<?php echo $i; ?>" class="no-format">Is Insured?</label> -->
                                                                                                     </th>
                                                                                                     <th width="5%">
                                                                                                         <center>Action</center>
@@ -1079,7 +1091,7 @@
                                                                                             </tbody>
                                                                                             <tfoot>
                                                                                                 <tr>
-                                                                                                    <td colspan="8" style="height: 0px;min-height: 335px;">&nbsp;</td>
+                                                                                                    <td colspan="7" style="height: 0px;min-height: 335px;">&nbsp;</td>
                                                                                                 </tr>
                                                                                             </tfoot>
                                                                                         </table>
@@ -2046,6 +2058,7 @@
             var tbl_no = 1;
             var _vehicleIDSelected = null;
             var _discountType = null;
+            var serviceUnitPriceRights = <?php echo (in_array('13-6',$this->session->user_rights)) ? 'true' : 'false'; ?>;
 
             var oTableItems = {
                 qty: 'td:eq(0)',
@@ -2471,10 +2484,10 @@
                     // if (suggestion.is_product_basyo == 1){
                     //     qty = TotalBasyo();
                     // }
-
+                    //
                     changetxn = 'active';
                     var tbl_selected = $('#tbl_items_' + tbl_no + ' > tbody');
-
+                    const isInsured = $('#cb_is_insured'+tbl_no).prop('checked') ? 1 : 0;
                     tbl_selected.append(newRowItem({
                         order_qty: 1,
                         order_gross: temp_order_price,
@@ -2510,7 +2523,7 @@
                         tbl_no: tbl_no,
                         discount_type: 0,
                         discount: 0,
-                        is_insured: 0,
+                        is_insured: isInsured,
                         is_checked: ''
                     }));
 
@@ -3096,7 +3109,7 @@
                 });
 
                 $('#btn_receive_ro').click(function() {
-                    $('#tbl_ro_list tbody').html('<tr><td colspan="8"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
+                    $('#tbl_ro_list tbody').html('<tr><td colspan="7"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
                     dt_ro.ajax.reload(null, false);
                     $('#modal_ro_list').modal('show');
                 });
@@ -3209,7 +3222,7 @@
                                 }
 
                                 var tbl_selected = $('#tbl_items_' + value.tbl_no + ' > tbody');
-
+                                var is_checked = value.is_insured == 1 ? 'checked' : '';
                                 tbl_selected.append(newRowItem({
                                     order_qty: value.order_qty,
                                     product_code: value.product_code,
@@ -3245,9 +3258,9 @@
                                     vehicle_service_id: value.vehicle_service_id,
                                     tbl_no: value.tbl_no,
                                     discount_type: 0,
-                                    discount: 0,
-                                    is_insured: 0,
-                                    is_checked: ''
+                                    discount: value.order_discount,
+                                    is_insured: value.is_insured,
+                                    is_checked: is_checked
                                 }));
 
                                 changetxn = 'inactive';
@@ -3271,6 +3284,7 @@
                             checkTableLength();
                             checkInsurance();
                             checkInsuredInput()
+                            $('.tbl_items tbody tr').find('input[name="is_insured_cb[]"]').trigger('change')
                         }
                     });
 
@@ -3917,6 +3931,7 @@
             var getFloat = function(f) {
                 return parseFloat(accounting.unformat(f));
             };
+            var isReadonly = serviceUnitPriceRights ? "" : "readonly";
             var newRowItem = function(d) {
                 if (d.primary_unit == 1) {
                     parent = ' selected';
@@ -3949,12 +3964,11 @@
                     '</td>' +
                     // [3] Unit Price
                     '<td>' +
-                    '<input name="order_price[]" type="text" class="numeric form-control" value="' + accounting.formatNumber(d.order_price, 2) + '" style="text-align:right;">' +
+                    '<input name="order_price[]" type="text" class="numeric form-control" value="' + accounting.formatNumber(d.order_price, 2) + '" style="text-align:right;" ' + isReadonly + '>' +
                     '</td>' +
                     // [4] Discount
                     '<td>' +
                     '<input name="service_discount[]" type="text" id="discount-' + d.tbl_no + '-' + d.product_id + '" class="numeric form-control" value="' + d.discount + '" readonly>' +
-                    '</td>' +
                     '</td>' +
                     // [5] Total Discount
                     '<td class="hidden">' +
@@ -3996,9 +4010,9 @@
                     '<td class="hidden"><input name="order_line_total_after_global[]" type="text" class="numeric form-control" value="' + d.order_line_total_after_global + '" readonly>' +
                     '</td>' +
                     // [16] Is Insured
-                    '<td align="center">' +
+                    '<td class="hidden" align="center">' +
                     '<input name="is_insured_cb[]" data-table_no="' + d.tbl_no + '" data-table="tbl_items_' + d.tbl_no + '" type="checkbox" class="form-control is_insured_input" style="height: 25px!important; width: 25px!important;" ' + d.is_checked + '>' +
-                    '<input name="is_insured[]" type="text" class="form-control hidden" value="' + d.is_insured + '" readonly>' +
+                    '<input name="is_insured[]" type="text" class="form-control" value="' + d.is_insured + '" readonly>' +
                     '</td>' +
                     // [17] Action
                     '<td align="center">' +
@@ -4375,7 +4389,6 @@
             var initializeCollapse = function() {
                 $('.service-collapse').on('show.bs.collapse', function() {
                     const service = $(this).data('service')
-                    console.log(service)
                     $('#service-icon' + service).removeClass('fa-plus').addClass('fa-minus')
                 });
 
@@ -4498,7 +4511,8 @@
 
             $('.cb_is_insured').click(function(e) {
                 const table = $(this).data('table')
-                $('#' + table + ' tbody tr').find('input[name="is_insured_cb[]"]').prop('checked', this.checked)
+                $('#' + table + ' tbody tr').find('input[name="is_insured[]"]').val(this.checked ? 1 : 0)
+                // $('#' + table + ' tbody tr').find('input[name="is_insured_cb[]"]').prop('checked', this.checked)
             })
 
             var checkInsuredInput = function() {

@@ -176,7 +176,34 @@
             height: 40px!important;  
             background: none!important;  
             background-color: transparent!important;  
-        }         
+        }   
+
+        #btn_discount {
+            font-size: 15px !important;
+            padding: 6px 10px !important;
+        }
+
+        .products {
+            margin-left: 5px;
+        }
+
+        .service-list {
+            display: flex;
+            width: 100%;
+        }
+
+        .service-list:hover {
+            color: blue;
+        }
+
+        .products {
+            width: 100%;
+            display: flex;
+        }
+
+        label.no-format {
+            margin: 0;
+        }
 
     </style>
     <link type="text/css" href="assets/css/light-theme.css" rel="stylesheet">
@@ -204,10 +231,10 @@
         <div class="row panel-row">
         <h2 class="h2-panel-heading">Repair Order</h2><hr>
             <div class="row"> 
-                <div class="col-lg-3"><br> 
+                <div class="col-lg-2"><br> 
                 <button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Record Repair Order" ><i class="fa fa-plus"></i> Record Repair Order</button> 
                 </div> 
-                <div class="col-lg-3"> 
+                <div class="col-lg-2"> 
                         From :<br /> 
                         <div class="input-group"> 
                             <input type="text" id="txt_start_date_sales" name="" class="date-picker form-control" value="<?php echo date("m"); ?>/01/<?php echo date("Y"); ?>"> 
@@ -216,7 +243,7 @@
                              </span> 
                         </div> 
                 </div> 
-                <div class="col-lg-3"> 
+                <div class="col-lg-2"> 
                         To :<br /> 
                         <div class="input-group"> 
                             <input type="text" id="txt_end_date_sales" name="" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>"> 
@@ -224,11 +251,32 @@
                                     <i class="fa fa-calendar"></i> 
                              </span> 
                         </div> 
-                </div> 
-                <div class="col-lg-3"> 
+                </div>
+                <div class="col-lg-2"> 
+                    Status :<br /> 
+                    <select name="repair_order_status" id="cbo_repair_order_status">
+                        <option value="0">ALL</option>
+                        <option value="1">Work in Progress</option>
+                        <option value="2">Waiting for Parts</option>
+                        <option value="3">Waiting for Approval</option>
+                        <option value="4">Closed</option>
+                    </select>
+                </div>
+                <div class="col-lg-2"> 
+                    Advisor :<br /> 
+                    <select name="advisor" id="cbo_advisor">
+                        <option value="0">ALL</option>
+                        <?php foreach($advisors as $advisor){ ?>
+                            <option value="<?php echo $advisor->advisor_id; ?>">
+                                <?php echo $advisor->fullname; ?>
+                            </option>
+                        <?php }?>
+                    </select>
+                </div>
+                <div class="col-lg-2"> 
                         Search :<br /> 
                          <input type="text" id="tbl_search" class="form-control"> 
-                </div> 
+                </div>
             </div> 
             <table id="tbl_repair_order" class="table table-striped" cellspacing="0" width="100%" style="">
                 <thead >
@@ -513,8 +561,16 @@
                                     </div>
                                 </div>
                                 <div class="col-md-12">
-                                    <label>Policy No. : </label>
-                                    <input type="text" name="policy_no" class="form-control">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label>Policy No. : </label>
+                                            <input type="text" name="policy_no" class="form-control">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>Tag No. : </label>
+                                            <input type="text" name="tag_no" class="form-control">
+                                        </div>
+                                    </div>
                                 </div>
                                 <!-- <div class="col-md-12">
                                     <hr/>
@@ -594,7 +650,8 @@
                             <?php for($i=1;$i<=10;$i++){?>
 
                             <div class="tab-pane <?php if($i == 1){ echo 'active'; } ?>" id="service_<?php echo $i; ?>">
-                                <label>Service Description :</label> 
+                                <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured<?php echo $i; ?>" class="no-format">Is Insured?</label>
+                                <br/><label>Service Description :</label>
                                 <textarea class="form-control" name="sdesc_<?php echo $i; ?>" placeholder="Service Description"></textarea>
                                 <div class="table-responsive">
                                     <table id="tbl_items_<?php echo $i; ?>" class="tbl_items tbl_items_1 table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
@@ -604,7 +661,7 @@
                                                 <th width="8%">UM</th>
                                                 <th width="15%">Description</th>
                                                 <th width="10%" style="text-align: right;">Unit Price</th>
-                                                <th class="hidden">Discount</th>
+                                                <th width="10%" style="text-align: right;">Discount<span class="discount_type_label"></span></th>
                                                 <!-- DISPLAY NONE  -->
                                                 <th class="hidden">Total Discount</th>
                                                 <th class="hidden">Tax %</th>
@@ -620,6 +677,9 @@
                                                 <th class="hidden">Net of Vat (Price w/out Tax)</th>
                                                 <td class="hidden">Item ID</td>
                                                 <th class="hidden">Total after Global</th> 
+                                                <th class="hidden">
+                                                    Is Insured
+                                                </th>
                                                 <th width="5%"><center>Action</center></th>
                                             </tr>
                                         </thead>
@@ -627,7 +687,7 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <td colspan="6" style="height: 0px;min-height: 335px;">&nbsp;</td>
+                                                <td colspan="7" style="height: 0px;min-height: 335px;">&nbsp;</td>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -662,7 +722,8 @@
                             <?php for($i=11;$i<=20;$i++){?>
 
                             <div class="tab-pane" id="service_<?php echo $i; ?>">
-                                <label>Service Description <?php echo $i; ?>:</label> 
+                                <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured<?php echo $i; ?>" class="no-format">Is Insured?</label>
+                                <br/><label>Service Description :</label>
                                 <textarea class="form-control" name="sdesc_<?php echo $i; ?>" placeholder="Service Description"></textarea>
                                 <div class="table-responsive">
                                     <table id="tbl_items_<?php echo $i; ?>" class="tbl_items tbl_items_2 table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
@@ -672,7 +733,7 @@
                                                 <th width="8%">UM</th>
                                                 <th width="15%">Description</th>
                                                 <th width="10%" style="text-align: right;">Unit Price</th>
-                                                <th class="hidden">Discount</th>
+                                                <th width="10%" style="text-align: right;">Discount<span class="discount_type_label"></span></th>
                                                 <!-- DISPLAY NONE  -->
                                                 <th class="hidden">Total Discount</th>
                                                 <th class="hidden">Tax %</th>
@@ -688,6 +749,9 @@
                                                 <th class="hidden">Net of Vat (Price w/out Tax)</th>
                                                 <td class="hidden">Item ID</td>
                                                 <th class="hidden">Total after Global</th> 
+                                                <th class="hidden">
+                                                    Is Insured
+                                                </th>
                                                 <th width="5%"><center>Action</center></th>
                                             </tr>
                                         </thead>
@@ -695,7 +759,7 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <td colspan="6" style="height: 0px;min-height: 335px;">&nbsp;</td>
+                                                <td colspan="7" style="height: 0px;min-height: 335px;">&nbsp;</td>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -731,7 +795,8 @@
                             <?php for($i=21;$i<=30;$i++){?>
 
                             <div class="tab-pane" id="service_<?php echo $i; ?>">
-                                <label>Service Description <?php echo $i; ?>:</label> 
+                                <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured<?php echo $i; ?>" class="no-format">Is Insured?</label>
+                                <br/><label>Service Description :</label> 
                                 <textarea class="form-control" name="sdesc_<?php echo $i; ?>" placeholder="Service Description"></textarea>
                                 <div class="table-responsive">
                                     <table id="tbl_items_<?php echo $i; ?>" class="tbl_items tbl_items_3 table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
@@ -741,7 +806,7 @@
                                                 <th width="8%">UM</th>
                                                 <th width="15%">Description</th>
                                                 <th width="10%" style="text-align: right;">Unit Price</th>
-                                                <th class="hidden">Discount</th>
+                                                <th width="10%" style="text-align: right;">Discount<span class="discount_type_label"></span></th>
                                                 <!-- DISPLAY NONE  -->
                                                 <th class="hidden">Total Discount</th>
                                                 <th class="hidden">Tax %</th>
@@ -757,6 +822,9 @@
                                                 <th class="hidden">Net of Vat (Price w/out Tax)</th>
                                                 <td class="hidden">Item ID</td>
                                                 <th class="hidden">Total after Global</th> 
+                                                <th class="hidden">
+                                                    Is Insured
+                                                </th>
                                                 <th width="5%"><center>Action</center></th>
                                             </tr>
                                         </thead>
@@ -764,7 +832,7 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <td colspan="6" style="height: 0px;min-height: 335px;">&nbsp;</td>
+                                                <td colspan="7" style="height: 0px;min-height: 335px;">&nbsp;</td>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -800,7 +868,8 @@
                             <?php for($i=31;$i<=40;$i++){?>
 
                             <div class="tab-pane" id="service_<?php echo $i; ?>">
-                                <label>Service Description <?php echo $i; ?>:</label> 
+                                <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured<?php echo $i; ?>" class="no-format">Is Insured?</label>
+                                <br/><label>Service Description :</label>
                                 <textarea class="form-control" name="sdesc_<?php echo $i; ?>" placeholder="Service Description"></textarea>
                                 <div class="table-responsive">
                                     <table id="tbl_items_<?php echo $i; ?>" class="tbl_items tbl_items_4 table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
@@ -810,7 +879,7 @@
                                                 <th width="8%">UM</th>
                                                 <th width="15%">Description</th>
                                                 <th width="10%" style="text-align: right;">Unit Price</th>
-                                                <th class="hidden">Discount</th>
+                                                <th width="10%" style="text-align: right;">Discount<span class="discount_type_label"></span></th>
                                                 <!-- DISPLAY NONE  -->
                                                 <th class="hidden">Total Discount</th>
                                                 <th class="hidden">Tax %</th>
@@ -826,6 +895,9 @@
                                                 <th class="hidden">Net of Vat (Price w/out Tax)</th>
                                                 <td class="hidden">Item ID</td>
                                                 <th class="hidden">Total after Global</th> 
+                                                <th class="hidden">
+                                                    Is Insured
+                                                </th>
                                                 <th width="5%"><center>Action</center></th>
                                             </tr>
                                         </thead>
@@ -833,7 +905,7 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <td colspan="6" style="height: 0px;min-height: 335px;">&nbsp;</td>
+                                                <td colspan="7" style="height: 0px;min-height: 335px;">&nbsp;</td>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -869,7 +941,8 @@
                             <?php for($i=41;$i<=50;$i++){?>
 
                             <div class="tab-pane" id="service_<?php echo $i; ?>">
-                                <label>Service Description <?php echo $i; ?>:</label> 
+                                <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured<?php echo $i; ?>" class="no-format">Is Insured?</label>
+                                <br/><label>Service Description :</label>
                                 <textarea class="form-control" name="sdesc_<?php echo $i; ?>" placeholder="Service Description"></textarea>
                                 <div class="table-responsive">
                                     <table id="tbl_items_<?php echo $i; ?>" class="tbl_items tbl_items_5 table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
@@ -879,7 +952,7 @@
                                                 <th width="8%">UM</th>
                                                 <th width="15%">Description</th>
                                                 <th width="10%" style="text-align: right;">Unit Price</th>
-                                                <th class="hidden">Discount</th>
+                                                <th width="10%" style="text-align: right;">Discount<span class="discount_type_label"></span></th>
                                                 <!-- DISPLAY NONE  -->
                                                 <th class="hidden">Total Discount</th>
                                                 <th class="hidden">Tax %</th>
@@ -895,6 +968,9 @@
                                                 <th class="hidden">Net of Vat (Price w/out Tax)</th>
                                                 <td class="hidden">Item ID</td>
                                                 <th class="hidden">Total after Global</th> 
+                                                <th class="hidden">
+                                                    Is Insured
+                                                </th>
                                                 <th width="5%"><center>Action</center></th>
                                             </tr>
                                         </thead>
@@ -902,7 +978,7 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <td colspan="6" style="height: 0px;min-height: 335px;">&nbsp;</td>
+                                                <td colspan="7" style="height: 0px;min-height: 335px;">&nbsp;</td>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -938,7 +1014,8 @@
                             <?php for($i=51;$i<=60;$i++){?>
 
                             <div class="tab-pane" id="service_<?php echo $i; ?>">
-                                <label>Service Description <?php echo $i; ?>:</label> 
+                                <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured<?php echo $i; ?>" class="no-format">Is Insured?</label>
+                                <br/><label>Service Description :</label>
                                 <textarea class="form-control" name="sdesc_<?php echo $i; ?>" placeholder="Service Description"></textarea>
                                 <div class="table-responsive">
                                     <table id="tbl_items_<?php echo $i; ?>" class="tbl_items tbl_items_6 table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
@@ -948,7 +1025,7 @@
                                                 <th width="8%">UM</th>
                                                 <th width="15%">Description</th>
                                                 <th width="10%" style="text-align: right;">Unit Price</th>
-                                                <th class="hidden">Discount</th>
+                                                <th width="10%" style="text-align: right;">Discount<span class="discount_type_label"></span></th>
                                                 <!-- DISPLAY NONE  -->
                                                 <th class="hidden">Total Discount</th>
                                                 <th class="hidden">Tax %</th>
@@ -964,6 +1041,9 @@
                                                 <th class="hidden">Net of Vat (Price w/out Tax)</th>
                                                 <td class="hidden">Item ID</td>
                                                 <th class="hidden">Total after Global</th> 
+                                                <th class="hidden">
+                                                    Is Insured
+                                                </th>
                                                 <th width="5%"><center>Action</center></th>
                                             </tr>
                                         </thead>
@@ -971,7 +1051,7 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <td colspan="6" style="height: 0px;min-height: 335px;">&nbsp;</td>
+                                                <td colspan="7" style="height: 0px;min-height: 335px;">&nbsp;</td>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -1165,7 +1245,14 @@
                                         <input type="text" name="repair_order_dicsount" id="txt_overall_discount" value="0.00" class="form-control numeric">
                                     </td>
                                 </tr> 
-
+                                <tr>
+                                    <td colspan="2" align="center"><strong>Total Discount</strong></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <input type="text" name="repair_order_total_discount" id="repair_order_total_discount" value="0.00" class="form-control numeric" readonly style="font-weight: bold!important;font-size: 20px;">
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td colspan="2" align="center"><strong>Grand Total</strong></td>
                                 </tr>
@@ -1175,7 +1262,7 @@
                                     </td>
                                 </tr>                                                                      
                             </table>
-
+                        <button id="btn_discount" class="btn-success btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif; width: 100%; margin-bottom: 10px"><span class=""></span> Add Discount</button>
                         <button id="btn_save" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif; width: 100%;"><span class=""></span> Save Changes</button>
                         <br/><br/>
                         <button id="btn_cancel" class="btn-default btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;width: 100%;"><i class="fa fa-times-circle"></i> Cancel</button>
@@ -1792,6 +1879,47 @@
         </div><!---content-->
     </div>
 </div><!---modal-->
+<div id="modal_discount" class="modal fade" tabindex="-1" role="dialog">
+    <!--modal-->
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header ">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Add Discount</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4>Services</h4>
+                        <hr>
+                        <div class="services">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="discount">
+                            <h4>Discount</h4>
+                            <hr>
+                            <div class="form-group">
+                                <input type="radio" name="discount_type" id="discount_percentage" data-input="discount_percentage" value="1"> <label for="discount_percentage"> Percentage : </label>
+                                <input type="text" class="form-control numeric" name="discount_percentage" placeholder="0.00" disabled>
+                            </div>
+                            <div class="form-group">
+                                <input type="radio" name="discount_type" id="discount_amount" data-input="discount_amount" value="2"> <label for="discount_amount"> Amount : </label>
+                                <input type="text" class="form-control numeric" name="discount_amount" placeholder="0.00" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn_confirm_discount" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Confirm</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <footer role="contentinfo">
@@ -1833,6 +1961,8 @@ $(document).ready(function(){
     var _cboCustomerType; var prodstat;
     var _cboCustomerTypeCreate; var _cboSource; var _cboVehicles; var _cboAdvisors; var _cboInsurance;
     var _line_unit; var global_item_desc = ''; var _selectRowTblItems; var _cboMakes; var _cboYears; var _cboModels; var _cboColors; var _vehicleService=1; var _checkVehicle=true; var tbl_no=1; var _vehicleIDSelected=null;
+    var _discountType = null; var _cboRepairOrderStatus; var _cboAdvisor;
+    var serviceUnitPriceRights = <?php echo (in_array('13-6',$this->session->user_rights)) ? 'true' : 'false'; ?>;
 
     var oTableItems={
         qty : 'td:eq(0)',
@@ -1851,8 +1981,10 @@ $(document).ready(function(){
         net_vat : 'td:eq(13)',
         item_id : 'td:eq(14)',
         total_after_global :' td:eq(15)',
-        bulk_price : 'td:eq(17)',
-        retail_price : 'td:eq(18)'
+        is_insured: 'td:eq(16)',
+        bulk_price : 'td:eq(18)',
+        retail_price : 'td:eq(19)',
+        discount_type: 'td:eq(20)'
     };
     var oTableSearch={
         sBatch : 'td:eq(2)',
@@ -1877,7 +2009,9 @@ $(document).ready(function(){
                 "data": function ( d ) { 
                         return $.extend( {}, d, { 
                             "tsd":$('#txt_start_date_sales').val(), 
-                            "ted":$('#txt_end_date_sales').val() 
+                            "ted":$('#txt_end_date_sales').val(),
+                            "status":$('#cbo_repair_order_status').val(),
+                            "advisor_id":$('#cbo_advisor').val()
                         }); 
                     } 
             }, 
@@ -1903,14 +2037,36 @@ $(document).ready(function(){
                 { targets:[6],data: "date_time_promised" },
                 { targets:[7],data: "advisor_fullname" },
                 {
+                    sClass: 'text-right',
                     targets:[8],data:null, orderable:false,
                     render: function (data, type, full, meta){
+                        var btn_parts='<button class="btn btn-sm btn-default" name="btn_parts"  style="margin-right:0;" data-toggle="tooltip" data-placement="top" title="Waiting for Parts"><i class="fa fa-tasks"></i> </button>';
+                        var btn_approval='<button class="btn btn-sm btn-default" name="btn_approval"  style="margin-right:0; background-color: #ffb475" data-toggle="tooltip" data-placement="top" title="Waiting for Approval"><i class="fa fa-thumbs-up"></i> </button>';
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-right:0" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
-                        return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
+                        const { repair_order_status: status } = data
+                        let btnToAppend = ''
+                        if (status == 1) {
+                            btnToAppend = btn_parts
+                        } else if (status == 2) {
+                            btnToAppend = btn_approval
+                        }
+                        return btnToAppend+'&nbsp;'+btn_edit+'&nbsp;'+btn_trash;
                     }
                 }
-            ]
+            ],
+            "rowCallback": function(row, data, dataIndex){
+                const { repair_order_status: status } = data
+                if (status == 1) {
+                    $(row).css("background-color", "#87f595");
+                } else if (status == 2) {
+                    $(row).css("background-color", "#fad087");
+                } else if (status == 3) {
+                    $(row).css("background-color", "#ffb475");
+                } else if (status == 4) {
+                    $(row).css("background-color", "#ff5959");
+                }
+            }
         });
 
         dt_so=$('#tbl_so_list').DataTable({
@@ -1946,6 +2102,25 @@ $(document).ready(function(){
             placeholder: "Please select Department.",
             allowClear: false
         });
+
+        _cboRepairOrderStatus=$("#cbo_repair_order_status").select2({
+            placeholder: "Status",
+            allowClear: false
+        });
+
+        _cboRepairOrderStatus.on("select2:select", function (e) { 
+            $('#tbl_repair_order').DataTable().ajax.reload()
+        })
+
+        _cboAdvisor=$("#cbo_advisor").select2({
+            placeholder: "Advisor",
+            allowClear: false
+        });
+        
+
+        _cboAdvisor.on("select2:select", function (e) { 
+            $('#tbl_repair_order').DataTable().ajax.reload()
+        })
 
         _cboCustomers=$("#cbo_customers").select2({
             ajax: {
@@ -2216,7 +2391,7 @@ $(document).ready(function(){
             changetxn = 'active';
 
             var tbl_selected = $('#tbl_items_'+tbl_no+' > tbody');
-
+            const isInsured = $('#cb_is_insured'+tbl_no).prop('checked') ? 1 : 0;
             tbl_selected.append(newRowItem({
                 order_qty : 1,
                 order_gross : temp_order_price,
@@ -2249,17 +2424,23 @@ $(document).ready(function(){
                 batch_no : suggestion.batch_no,
                 cost_upon_invoice : suggestion.srp_cost,
                 vehicle_service_id : _vehicleService,
-                tbl_no : tbl_no
-
+                tbl_no : tbl_no,
+                discount_type: 0,
+                discount: 0,
+                is_insured: isInsured,
+                is_checked: ''
             }));
 
             _line_unit=$('.line_unit'+a).select2({
-                 minimumResultsForSearch: -1
+                minimumResultsForSearch: -1
             });
  
             reInitializeNumeric();
             reComputeTotal(_vehicleService);
             countTblItems(_vehicleService);
+            checkTableLength();
+            checkInsurance();
+            checkInsuredInput()
             // $('.qty').focus();
 
             return prodstat;   
@@ -2327,6 +2508,150 @@ $(document).ready(function(){
                  $('#for_dispatching').val('0');
             }
         });
+
+        var appendToService = function() {
+            let htmlToAppend = '';
+            for (x = 1; x <= 60; x++) {
+                const serviceData = [];
+                const services = $('#tbl_items_' + x + ' > tbody tr');
+                if (services.length > 0) {
+                    let = products = '';
+                    $.each(services, function(i, service) {
+                        const productDesc = $(oTableItems.unit_identifier, $(this)).find('input.product_desc').val();
+                        const amount = $(oTableItems.total, $(this)).find('input.numeric').val();
+                        const productId = $(oTableItems.item_id, $(this)).find('input').val();
+                        products = products +
+                            '<div class="products"> ' +
+                            '<div style="width: 50%"> ' +
+                            '<input data-product_id="' + productId + '" data-service="' + x + '" type="checkbox" name="product" class="cb_product cb_product' + x + '" id="' + x + 'product' + productId + '"> <label for="' + x + 'product' + productId + '">' + productDesc + '</label> ' +
+                            '</div>' +
+                            '<div style="width: 50%; text-align: right; margin-right: 50px;">' +
+                            '<label>' + amount + '</label>' +
+                            '</div>' +
+                            '</div>'
+                    })
+                    htmlToAppend = htmlToAppend +
+                        '<div class="service-list" data-toggle="collapse" data-target="#service' + x + '"> ' +
+                        '<label style="width:50%">SVC ' + x + '</label><label style="width: 50%; text-align: right"><i id="service-icon' + x + '" class="fa fa-plus"></i></label> ' +
+                        '</div>' +
+                        '<div id="service' + x + '" class="collapse service-collapse" data-service="' + x + '">' +
+                        '<input type="checkbox" data-total="' + services.length + '" data-service="' + x + '" name="service" class="cb_service" id="cb_service' + x + '"> <label>All</label>' +
+                        products +
+                        '</div>'
+                }
+            }
+
+
+            $('.services').html('')
+            $('.services').append(
+                htmlToAppend
+            )
+
+            initializeCheckBoxes();
+            initializeCollapse();
+        };
+
+        var initializeCollapse = function() {
+            $('.service-collapse').on('show.bs.collapse', function() {
+                const service = $(this).data('service')
+                $('#service-icon' + service).removeClass('fa-plus').addClass('fa-minus')
+            });
+
+            $('.service-collapse').on('hide.bs.collapse', function() {
+                const service = $(this).data('service')
+                $('#service-icon' + service).removeClass('fa-minus').addClass('fa-plus')
+            });
+        }
+
+        var initializeCheckBoxes = function() {
+            $('.cb_service').click(function() {
+                const service = $(this).data('service')
+                $('.cb_product' + service).prop('checked', this.checked);
+            })
+
+            $('.cb_product').click(function() {
+                const x = $(this).data('service')
+                const service = $('#cb_service' + x)
+                const total = service.data('total')
+                if ($('.cb_product' + x + ':checked').length == total) {
+                    service.prop('checked', true)
+                } else {
+                    service.prop('checked', false)
+                }
+            })
+        }
+
+        $('#btn_discount').click(function() {
+            $('input[name="discount_percentage"]').prop('disabled', true);
+            $('input[name="discount_amount"]').prop('disabled', true);
+            $('input[name="discount_percentage"]').val('0.00');
+            $('input[name="discount_amount"]').val('0.00');
+            $("#discount_percentage").prop('checked', false);
+            $("#discount_amount").prop('checked', false);
+            appendToService()
+            $('#modal_discount').modal('show');
+        })
+
+        $('input[name="discount_type"]').on("change", function(e) {
+            const value = $('#discount_percentage').is(':checked') ? 1 : 2
+            if (value == 1) {
+                $('input[name="discount_percentage"]').prop('disabled', false);
+                $('input[name="discount_amount"]').prop('disabled', true);
+            } else {
+                $('input[name="discount_amount"]').prop('disabled', false);
+                $('input[name="discount_percentage"]').prop('disabled', true);
+            }
+        });
+
+        $('#btn_confirm_discount').click(function() {
+            removeDiscounts()
+            const products = $('.cb_product:checked')
+            const discountType = $('#discount_percentage').is(':checked') ? 1 : 2
+            const discount = discountType == 2 ?
+                accounting.unformat($('input[name="discount_amount"]').val()) / products.length :
+                accounting.unformat($('input[name="discount_percentage"]').val())
+            $.each(products, function(i, value) {
+                const product = $(this)
+                const service = product.data('service')
+                const productId = product.data('product_id')
+                // console.log(productId)
+                // console.log('discount_type-' + service + '-' + productId)
+                // console.log($('#discount-' + service + '-' + productId).val())
+                // console.log($('#qty-' + service + '-' + productId).val())
+                $('#discount_type-' + service + '-' + productId).val(discountType)
+                $('#discount-' + service + '-' + productId).val(accounting.formatNumber(discount, 2))
+                $('#qty-' + service + '-' + productId).keyup();
+            })
+            const discountTypeLabel = discountType == 2 ? ' (Amount)' : ' (%)'
+            $('.discount_type_label').html(discountTypeLabel)
+            reComputeTotal();
+            _discountType = discountType;
+        })
+
+        $('.discount').on('keyup', 'input.numeric', function(e) {
+            const discountType = $('#discount_percentage').is(':checked') ? 1 : 2
+            const value = accounting.unformat(e.target.value)
+            if (discountType == 2) {
+                const repairOrderGrandTotal = accounting.unformat($('#repair_order_grand_total').val())
+                if (value > repairOrderGrandTotal) {
+                    e.target.value = 0
+                    showNotification({
+                        title: 'Discount Amount',
+                        stat: "error",
+                        msg: "Discount amount shouldn't be greater than grand total."
+                    });
+                }
+            } else {
+                if (value > 100) {
+                    e.target.value = 0
+                    showNotification({
+                        title: 'Discount Percentage',
+                        stat: "error",
+                        msg: "Discount percentage shouldn't be greater than 100."
+                    });
+                }
+            }
+        })
 
         var detailRows = [];
 
@@ -2580,6 +2905,7 @@ $(document).ready(function(){
                 clearFields($('#frm_insurance'));
                 $('#modal_new_insurance').modal('show');
             }
+            checkInsurance()
         });
 
         $('#btn_cancel_insurance').on('click', function(){
@@ -2827,7 +3153,47 @@ $(document).ready(function(){
             countTblItems(6);
             _vehicleIDSelected = null;
             reComputeTotal(); //this is to make sure, display summary are recomputed as 0
+            checkTableLength()
+            checkInsurance()
+            $('.cb_is_insured').prop('checked', false)
         });
+
+        $('#tbl_repair_order tbody').on('click','button[name="btn_parts"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dt.row(_selectRowObj).data();
+            const { repair_order_id } = data
+            var _data = []
+            _data.push({name : "repair_order_id" ,value : repair_order_id});
+            _data.push({name : "repair_order_status" ,value : 2});
+
+            updateStatus(_data)
+        });
+
+        $('#tbl_repair_order tbody').on('click','button[name="btn_approval"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dt.row(_selectRowObj).data();
+            const { repair_order_id } = data
+            var _data = []
+            _data.push({name : "repair_order_id" ,value : repair_order_id});
+            _data.push({name : "repair_order_status" ,value : 3});
+
+            updateStatus(_data)
+        });
+
+        var updateStatus = function (data) {
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Repair_order/transaction/update-status",
+                "data":data
+            }).done(function(response){
+                showNotification(response);
+                if(response.stat=="success"){
+                    dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
+                    showList(true);
+                }
+            });
+        }
 
         $('#tbl_repair_order tbody').on('click','button[name="edit_info"]',function(){
             _selectRowObj=$(this).closest('tr');
@@ -2881,7 +3247,7 @@ $(document).ready(function(){
                 processData : false,
                 contentType : false,
                 beforeSend : function(){
-                    $('.tbl_items > tbody').html('<tr><td align="center" colspan="6"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                    $('.tbl_items > tbody').html('<tr><td align="center" colspan="7"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
                 },
                 success : function(response){
                     var rows=response.data;
@@ -2902,6 +3268,7 @@ $(document).ready(function(){
                         }
 
                         var tbl_selected = $('#tbl_items_'+value.tbl_no+' > tbody');
+                        var is_checked = value.is_insured == 1 ? 'checked' : '';
 
                         tbl_selected.append(newRowItem({
                             order_qty : value.order_qty,
@@ -2936,8 +3303,11 @@ $(document).ready(function(){
                             batch_no : value.batch_no,
                             cost_upon_invoice : value.cost_upon_invoice,
                             vehicle_service_id : value.vehicle_service_id,
-                            tbl_no : value.tbl_no
-
+                            tbl_no : value.tbl_no,
+                            discount_type: 0,
+                            discount: value.order_discount,
+                            is_insured: value.is_insured,
+                            is_checked: is_checked
                         }));
 
                         changetxn = 'inactive';
@@ -2957,6 +3327,10 @@ $(document).ready(function(){
                     countTblItems(5);
                     countTblItems(6);
                     reInitializeNumeric();
+                    checkTableLength();
+                    checkInsurance();
+                    checkInsuredInput()
+                    $('.tbl_items tbody tr').find('input[name="is_insured_cb[]"]').trigger('change')
                 }
             });
 
@@ -3040,6 +3414,7 @@ $(document).ready(function(){
             var qty=parseFloat(accounting.unformat(row.find(oTableItems.qty).find('input.numeric').val()));
             var tax_rate=parseFloat(accounting.unformat(row.find(oTableItems.tax).find('input.numeric').val()))/100;
             // var gross=parseFloat(accounting.unformat(row.find(oTableItems.gross).find('input.numeric').val()));
+            var discount_type = parseFloat(accounting.unformat(row.find(oTableItems.discount_type).find('input.numeric').val()));
             
             if(discount>price){
                 showNotification({title:"Invalid",stat:"error",msg:"Discount must not greater than unit price."});
@@ -3053,21 +3428,22 @@ $(document).ready(function(){
             // var line_total=discounted_price*qty;
 
             var global_discount = $('#txt_overall_discount').val();
-            var line_total = price*qty; //ok not included in the output (view) and not saved in the database
-            var line_total_discount=discount*qty; 
+            var line_total = price * qty; //ok not included in the output (view) and not saved in the database
+
+            var line_total_discount = discount_type == 2 ? discount : line_total * (discount / 100);
             // var line_total_discount=line_total*(discount/100);
-            var new_line_total=line_total-line_total_discount; 
-            var total_after_global = new_line_total-(new_line_total*(global_discount/100));
+            var new_line_total = line_total - (line_total_discount);
+            var total_after_global = new_line_total - (new_line_total * (global_discount / 100));
 
-            var net_vat=total_after_global/(1+tax_rate);
-            var vat_input=total_after_global-net_vat;
+            var net_vat = total_after_global / (1 + tax_rate);
+            var vat_input = total_after_global - net_vat;
 
-            $(oTableItems.gross,row).find('input.numeric').val(accounting.formatNumber(line_total,2)); //gross
-            $(oTableItems.total,row).find('input.numeric').val(accounting.formatNumber(total_after_global,2)); // line total amount
-            $(oTableItems.total_line_discount,row).find('input.numeric').val(line_total_discount); //line total discount
-            $(oTableItems.net_vat,row).find('input.numeric').val(net_vat); //net of vat
-            $(oTableItems.vat_input,row).find('input.numeric').val(vat_input); //vat input
-            $(oTableItems.total_after_global,row).find('input.numeric').val(accounting.formatNumber(total_after_global,2));
+            $(oTableItems.gross, row).find('input.numeric').val(accounting.formatNumber(line_total, 2)); //gross
+            $(oTableItems.total, row).find('input.numeric').val(accounting.formatNumber(total_after_global, 2)); // line total amount
+            $(oTableItems.total_line_discount, row).find('input.numeric').val(line_total_discount); //line total discount
+            $(oTableItems.net_vat, row).find('input.numeric').val(net_vat); //net of vat
+            $(oTableItems.vat_input, row).find('input.numeric').val(vat_input); //vat input
+            $(oTableItems.total_after_global, row).find('input.numeric').val(accounting.formatNumber(total_after_global, 2));
             //console.log(net_vat);
 
             // if(accounting.unformat(row.find('.is_basyo').val()) == 1){
@@ -3140,6 +3516,7 @@ $(document).ready(function(){
             $(this).closest('tr').remove();
             reComputeTotal(_vehicleService);
             countTblItems(_vehicleService);
+            checkTableLength();
         });
 
     })();
@@ -3277,7 +3654,10 @@ $(document).ready(function(){
 
         _data.push({name : "crp_no", value : $("#cbo_vehicles option:selected").text()});
         _data.push({name : "crp_no_type", value : $("#cbo_vehicles option:selected").data('crp-no-type')});
-
+        _data.push({
+            name: "discount_type",
+            value: _discountType
+        });
         // _data.push({name : "total_after_discount", value: $('#td_total_after_discount').text()});
         // _data.push({name : "summary_discount", value : tbl_summary.find(oTableDetails.discount).text()});
         // _data.push({name : "summary_before_discount", value :tbl_summary.find(oTableDetails.before_tax).text()});
@@ -3300,7 +3680,10 @@ $(document).ready(function(){
 
         _data.push({name : "crp_no", value : $("#cbo_vehicles option:selected").text()});
         _data.push({name : "crp_no_type", value : $("#cbo_vehicles option:selected").data('crp-no-type')});
-
+        _data.push({
+            name: "discount_type",
+            value: _discountType
+        });
         // _data.push({name : "total_after_discount", value: $('#td_total_after_discount').text()});
         // _data.push({name : "summary_discount", value : tbl_summary.find(oTableDetails.discount).text()});
         // _data.push({name : "summary_before_discount", value :tbl_summary.find(oTableDetails.before_tax).text()});
@@ -3397,10 +3780,11 @@ $(document).ready(function(){
         }else{ 
             unit  = '<td ><select class="line_unit'+d.a+'" name="unit_id[]" ><option value="'+d.parent_unit_id+'" data-unit-identifier="1" '+parent+'>'+d.parent_unit_name+'</option></select></td>';
         }
+        var isReadonly = serviceUnitPriceRights ? "" : "readonly";
         return '<tr>'+
             // [0] QTY
             '<td>'+
-                '<input name="order_qty[]" type="text" class="numeric form-control trigger-keyup qty" value="'+accounting.formatNumber(d.order_qty,2)+'">'+
+                '<input name="order_qty[]" type="text" id="qty-' + d.tbl_no + '-' + d.product_id + '" class="numeric form-control trigger-keyup qty" value="'+accounting.formatNumber(d.order_qty,2)+'">'+
             '</td>'+
             // [1] Unit
             unit+
@@ -3418,15 +3802,16 @@ $(document).ready(function(){
             '</td>'+
             // [3] Unit Price
             '<td>'+
-                '<input name="order_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.order_price,2)+'" style="text-align:right;">'+
+                '<input name="order_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.order_price,2)+'" style="text-align:right;"' + isReadonly + '>'+
             '</td>'+
             // [4] Discount
-            '<td  class="hidden"><input name="order_discount[]" type="text" class="numeric form-control discount" value="'+ accounting.formatNumber(d.order_discount,2)+'" style="text-align:right;">'+
-            '</td>'+
+            '<td>' +
+            '<input name="order_discount[]" type="text" id="discount-' + d.tbl_no + '-' + d.product_id + '" class="numeric form-control" value="' + d.discount + '" readonly>' +
+            '</td>' +
             // [5] Total Discount
-            '<td class="hidden">'+
-                '<input name="order_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.order_line_total_discount,2)+'" readonly>'+
-            '</td>'+
+            '<td class="hidden">' +
+            '<input name="order_line_total_discount[]" type="text" class="numeric form-control" value="' + accounting.formatNumber(d.order_line_total_discount, 2) + '" readonly>' +
+            '</td>' +
             // [6] Tax Rate
             '<td class="hidden"><input name="order_tax_rate[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.order_tax_rate,2)+'">'+
             '</td>'+
@@ -3457,24 +3842,33 @@ $(document).ready(function(){
             '</td>'+
             // [14] Product ID
             '<td class="hidden">'+
-                '<input name="product_id[]" type="text" class="numeric form-control" value="'+ d.product_id+'" readonly>'+
+                '<input name="product_id[]" type="text" class="form-control" value="'+ d.product_id+'" readonly>'+
             '</td>'+
             // [15] Total After Global
             '<td class="hidden"><input name="order_line_total_after_global[]" type="text" class="numeric form-control" value="'+ d.order_line_total_after_global+'" readonly>'+
             '</td>'+
-            // [16] Action
+            // [16] Is Insured
+            '<td class="hidden" align="center">' +
+            '<input name="is_insured_cb[]" data-table_no="' + d.tbl_no + '" data-table="tbl_items_' + d.tbl_no + '" type="checkbox" class="form-control is_insured_input" style="height: 25px!important; width: 25px!important;" ' + d.is_checked + '>' +
+            '<input name="is_insured[]" type="text" class="form-control" value="' + d.is_insured + '" readonly>' +
+            '</td>' +
+            // [17] Action
             '<td align="center">'+
                 '<button type="button" name="search_item" class="btn btn-warning hidden" style="margin-right: 5px;"><i class="fa fa-search"></i></button>'+
                 '<button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button>'+
             '</td>'+
-            // [17] Bulk Price
+            // [18] Bulk Price
             '<td class="hidden">'+
                 '<input type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.bulk_price,2)+'" readonly>'+
             '</td>'+
-            // [18] Retail Price
+            // [19] Retail Price
             '<td class="hidden">'+
                 '<input type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.retail_price,2)+'" readonly>'+
             '</td>'+
+            // [20] discount type
+            '<td class="hidden">' +
+                '<input type="text" id="discount_type-' + d.tbl_no + '-' + d.product_id + '" class="numeric form-control" value="' + d.discount_type + '" readonly>' +
+            '</td>' +
         '</tr>';
     };
 
@@ -3486,6 +3880,7 @@ $(document).ready(function(){
         var rows_4=$('.tbl_items_4 > tbody tr');
         var rows_5=$('.tbl_items_5 > tbody tr');
         var rows_6=$('.tbl_items_6 > tbody tr');
+        var total_discount = 0;
 
         if(stat == null || stat == 1){
             var discounts=0; var before_tax=0; var after_tax=0; var order_tax_amount=0; var gross=0;
@@ -3515,7 +3910,7 @@ $(document).ready(function(){
             $('input[name="summary_before_discount_pms"]').val(accounting.formatNumber(before_tax,2));
             $('input[name="summary_tax_amount_pms"]').val(accounting.formatNumber(order_tax_amount,2));
             $('input[name="summary_after_tax_pms"]').val(accounting.formatNumber(after_tax,2));
-
+            total_discount += discounts;
 
         }
 
@@ -3549,6 +3944,7 @@ $(document).ready(function(){
             $('input[name="summary_before_discount_bpr"]').val(accounting.formatNumber(before_tax_bpr,2));
             $('input[name="summary_tax_amount_bpr"]').val(accounting.formatNumber(order_tax_amount_bpr,2));
             $('input[name="summary_after_tax_bpr"]').val(accounting.formatNumber(after_tax_bpr,2));
+            total_discount += discounts_bpr;
         }
         
         // General Job
@@ -3581,6 +3977,7 @@ $(document).ready(function(){
             $('input[name="summary_before_discount_gj"]').val(accounting.formatNumber(before_tax_gj,2));
             $('input[name="summary_tax_amount_gj"]').val(accounting.formatNumber(order_tax_amount_gj,2));
             $('input[name="summary_after_tax_gj"]').val(accounting.formatNumber(after_tax_gj,2));
+            total_discount += discounts_gj;
         }
 
         // Internal
@@ -3613,6 +4010,7 @@ $(document).ready(function(){
             $('input[name="summary_before_discount_internal"]').val(accounting.formatNumber(before_tax_internal,2));
             $('input[name="summary_tax_amount_internal"]').val(accounting.formatNumber(order_tax_amount_internal,2));
             $('input[name="summary_after_tax_internal"]').val(accounting.formatNumber(after_tax_internal,2));
+            total_discount += discounts_internal;
         }
 
         // Warranty
@@ -3645,6 +4043,7 @@ $(document).ready(function(){
             $('input[name="summary_before_discount_warranty"]').val(accounting.formatNumber(before_tax_warranty,2));
             $('input[name="summary_tax_amount_warranty"]').val(accounting.formatNumber(order_tax_amount_warranty,2));
             $('input[name="summary_after_tax_warranty"]').val(accounting.formatNumber(after_tax_warranty,2));
+            total_discount += discounts_warranty;
         }
 
         // Carwash
@@ -3677,6 +4076,7 @@ $(document).ready(function(){
             $('input[name="summary_before_discount_carwash"]').val(accounting.formatNumber(before_tax_carwash,2));
             $('input[name="summary_tax_amount_carwash"]').val(accounting.formatNumber(order_tax_amount_carwash,2));
             $('input[name="summary_after_tax_carwash"]').val(accounting.formatNumber(after_tax_carwash,2));
+            total_discount += discounts_carwash;
         }
         // var global_discount = parseFloat(accounting.unformat($('#txt_overall_discount').val()/100));
 
@@ -3695,6 +4095,7 @@ $(document).ready(function(){
         var grand_total = summary_after_tax_pms + summary_after_tax_bpr + summary_after_tax_gj + summary_after_tax_internal + summary_after_tax_warranty + summary_after_tax_carwash;
 
         $('input[name="repair_order_grand_total"]').val(accounting.formatNumber(grand_total,2));
+        $('input[name="repair_order_total_discount"]').val(accounting.formatNumber(total_discount, 2));
 
     };
 
@@ -3753,6 +4154,53 @@ $(document).ready(function(){
       var modalDialogHeight = modalDialog.height();
       if(modalDialogHeight > backdropHeight) backdrop.height(modalDialogHeight+100);
     }, 500)
+
+    var checkTableLength = function() {
+        const length = $('.tbl_items tbody tr').length
+        if (length > 0) {
+            $('#btn_discount').removeClass('hidden')
+        } else {
+            $('#btn_discount').addClass('hidden')
+        }
+    }
+
+    var removeDiscounts = function() {
+        $('.tbl_items tbody tr').find('input[name="service_discount[]"]').val("0.00")
+        $('.discount_type_label').html('')
+    }
+
+    var checkInsurance = function() {
+        const value = _cboInsurance.select2('val')
+        if (value) {
+            $('.cb_is_insured').prop('disabled', false)
+            $('.is_insured_input').prop('disabled', false)
+        } else {
+            $('.cb_is_insured').prop('disabled', true)
+            $('.is_insured_input').prop('disabled', true)
+        }
+    }
+
+    $('.cb_is_insured').click(function(e) {
+        const table = $(this).data('table')
+        $('#' + table + ' tbody tr').find('input[name="is_insured[]"]').val(this.checked ? 1 : 0)
+        // $('#' + table + ' tbody tr').find('input[name="is_insured_cb[]"]').prop('checked', this.checked)
+    })
+
+    var checkInsuredInput = function() {
+        $('.tbl_items tbody tr').find('input[name="is_insured_cb[]"]').on('change', function(e) {
+            const value = this.checked ? 1 : 0
+            $(this).closest('tr').find('input[name="is_insured[]"]').val(value)
+            const table = $(this).data('table')
+            const tableNo = $(this).data('table_no')
+            const checkedLength = $('#' + table + ' tbody tr').find('input[name="is_insured_cb[]"]:checked').length
+            const tableLength = $('#' + table + ' tbody tr').length
+            if (checkedLength == tableLength) {
+                $('#cb_is_insured' + tableNo).prop('checked', true)
+            } else {
+                $('#cb_is_insured' + tableNo).prop('checked', false)
+            }
+        })
+    }
 });
 </script>
 </body>

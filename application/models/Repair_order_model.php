@@ -10,7 +10,7 @@ class Repair_order_model extends CORE_Model
         parent::__construct();
     }
 
-    function get_all_data($search_value=null,$start_date=null,$end_date=null)
+    function get_all_data($search_value=null,$start_date=null,$end_date=null,$status=null,$advisor_id=null)
     {
         $sql="SELECT ro.* FROM 
 
@@ -25,6 +25,8 @@ class Repair_order_model extends CORE_Model
 		    insurance ON insurance.insurance_id = ro.insurance_id
 
     		WHERE c.is_deleted = FALSE AND c.is_active = TRUE
+				".($status== null ? "" : "AND repair_order_status = ". $status)."
+				".($advisor_id== null ? "" : "AND ro.advisor_id = ". $advisor_id)."
 
 	    	".($start_date==null?"":" AND DATE_FORMAT(ro.document_date, '%Y-%m-%d') BETWEEN '".$start_date."' AND '".$end_date."'")."
             ".($search_value==null?"":" 
@@ -47,7 +49,9 @@ class Repair_order_model extends CORE_Model
 		    $length=null,
 		    $start=0,
 		    $order_column=null,
-		    $order_dir=null){
+		    $order_dir=null,
+				$status=null,
+				$advisor_id=null){
 
         $query = $this->db->query("SELECT 
 		    c.customer_no,
@@ -83,6 +87,8 @@ class Repair_order_model extends CORE_Model
 
 		    WHERE ro.is_deleted = FALSE AND
 		    	ro.is_active = TRUE
+					".($status== null ? "" : "AND repair_order_status = ". $status)."
+					".($advisor_id== null ? "" : "AND ro.advisor_id = ". $advisor_id)."
 	    		".($start_date==null?"":" AND DATE_FORMAT(ro.document_date, '%Y-%m-%d') BETWEEN '".$start_date."' AND '".$end_date."'")."
 	    		".($repair_order_id==null?"":" AND ro.repair_order_id='".$repair_order_id."'")."
 

@@ -123,6 +123,8 @@ class Repair_order extends CORE_Controller
                 $ted = $this->input->post('ted', TRUE);
                 $start_date = $tsd == null ? null :  date('Y-m-d',strtotime($tsd));
                 $end_date = $ted == null ? null :  date('Y-m-d',strtotime($ted));
+                $status = $this->input->post('status', TRUE) ? $this->input->post('status', TRUE) : 0;
+                $advisor_id = $this->input->post('advisor_id', TRUE) ? $this->input->post('advisor_id', TRUE) : 0;
                 $draw = $this->input->post('draw', TRUE);
                 $search =  $this->input->post('search', TRUE);
                 $length = $this->input->post('length', TRUE);
@@ -158,11 +160,13 @@ class Repair_order extends CORE_Controller
                     $length,
                     $start,
                     $order_column,
-                    $order_dir
+                    $order_dir,
+                    $status,
+                    $advisor_id
                 ); 
 
-                $recordsTotal = $m_order->get_all_data(null,$start_date,$end_date);
-                $recordsFiltered = $m_order->get_all_data($search_value,$start_date,$end_date);
+                $recordsTotal = $m_order->get_all_data(null,$start_date,$end_date,$status,$advisor_id);
+                $recordsFiltered = $m_order->get_all_data($search_value,$start_date,$end_date,$status,$advisor_id);
 
                 $response = array(
                     "draw"            => intval($draw),
@@ -287,6 +291,8 @@ class Repair_order extends CORE_Controller
                 $m_order->loa_no=$this->input->post('loa_no',TRUE);
                 $m_order->loa_date=date('Y-m-d',strtotime($this->input->post('loa_date', TRUE)));
                 $m_order->policy_no=$this->input->post('policy_no',TRUE);
+                $m_order->tag_no=$this->input->post('tag_no',TRUE);
+                $m_order->discount_type = $this->input->post('discount_type', TRUE);
 
                 $m_order->sdesc_1=$this->input->post('sdesc_1',TRUE);
                 $m_order->sdesc_2=$this->input->post('sdesc_2',TRUE);
@@ -359,6 +365,7 @@ class Repair_order extends CORE_Controller
                 $vehicle_service_id=$this->input->post('vehicle_service_id',TRUE);
                 $tbl_no=$this->input->post('tbl_no',TRUE);                
                 $is_parent=$this->input->post('is_parent',TRUE);
+                $is_insured=$this->input->post('is_insured',TRUE);
             
                 $m_products=$this->Products_model;
 
@@ -381,6 +388,7 @@ class Repair_order extends CORE_Controller
                     $m_order_item->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
                     $m_order_item->vehicle_service_id=$this->get_numeric_value($vehicle_service_id[$i]);
                     $m_order_item->tbl_no=$this->get_numeric_value($tbl_no[$i]);
+                    $m_order_item->is_insured=$this->get_numeric_value($is_insured[$i]);
 
                     //unit id retrieval is change, because of TRIGGER restriction
                     $m_order_item->is_parent=$this->get_numeric_value($is_parent[$i]);
@@ -505,6 +513,8 @@ class Repair_order extends CORE_Controller
                 $m_order->loa_no=$this->input->post('loa_no',TRUE);
                 $m_order->loa_date=date('Y-m-d',strtotime($this->input->post('loa_date', TRUE)));
                 $m_order->policy_no=$this->input->post('policy_no',TRUE);
+                $m_order->tag_no=$this->input->post('tag_no',TRUE);
+                $m_order->discount_type = $this->input->post('discount_type', TRUE);
 
 
                 $m_order->sdesc_1=$this->input->post('sdesc_1',TRUE);
@@ -559,6 +569,7 @@ class Repair_order extends CORE_Controller
                 $vehicle_service_id=$this->input->post('vehicle_service_id',TRUE);
                 $tbl_no=$this->input->post('tbl_no',TRUE);
                 $is_parent=$this->input->post('is_parent',TRUE);
+                $is_insured=$this->input->post('is_insured',TRUE);
 
                 $m_products=$this->Products_model;
 
@@ -581,6 +592,7 @@ class Repair_order extends CORE_Controller
                     $m_order_item->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
                     $m_order_item->vehicle_service_id=$this->get_numeric_value($vehicle_service_id[$i]);
                     $m_order_item->tbl_no=$this->get_numeric_value($tbl_no[$i]);
+                    $m_order_item->is_insured=$this->get_numeric_value($is_insured[$i]);
 
                     //unit id retrieval is change, because of TRIGGER restriction
                     $m_order_item->is_parent=$this->get_numeric_value($is_parent[$i]);
@@ -806,6 +818,20 @@ class Repair_order extends CORE_Controller
                 echo(
                     json_encode($response)
                 );
+                break;
+
+            case 'update-status':
+                $repair_order_id=$this->input->post('repair_order_id',TRUE);
+                $repair_order_status=$this->input->post('repair_order_status',TRUE);
+                $m_order=$this->Repair_order_model;
+                $m_order->repair_order_status=$repair_order_status;
+                if($m_order->modify($repair_order_id)){
+                    $response['title'] = 'Success!';
+                    $response['stat'] = 'success';
+                    $response['msg'] = 'Repair Order successfully updated.';
+                    $response['row_updated']=$m_order->get_repair_order($repair_order_id);
+                    echo json_encode($response);
+                }
                 break;
         }
 

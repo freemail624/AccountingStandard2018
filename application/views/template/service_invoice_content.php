@@ -157,7 +157,8 @@
                     <?php echo $service->year_make_id . ' ' . $service->model_name; ?>
                 </td>
                 <td width="15%" valign="top">
-                    <strong>TEAM</strong><br />
+                    <strong>DATE OF INVOICE</strong><br />
+                    <?php echo $service->document_date; ?>
                 </td>
             </tr>
             <tr>
@@ -438,7 +439,8 @@
                     <?php echo $service->year_make_id . ' ' . $service->model_name; ?>
                 </td>
                 <td width="15%" valign="top">
-                    <strong>TEAM</strong><br />
+                    <strong>DATE OF INVOICE</strong><br />
+                    <?php echo $service->document_date; ?>
                 </td>
             </tr>
             <tr>

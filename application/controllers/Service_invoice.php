@@ -241,6 +241,7 @@ class Service_invoice extends CORE_Controller
                 $m_invoice->advisor_remarks=$this->input->post('advisor_remarks',TRUE);
                 $m_invoice->customer_remarks=$this->input->post('customer_remarks',TRUE);
                 $m_invoice->discount_type = $this->input->post('discount_type', TRUE);
+                $m_invoice->tag_no=$this->input->post('tag_no',TRUE);
 
                 // $m_invoice->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                 // $m_invoice->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
@@ -353,6 +354,7 @@ class Service_invoice extends CORE_Controller
                 $m_invoice->modify($service_invoice_id);
 
                 $m_order->ro_status_id=TRUE;
+                $m_order->repair_order_status=4;
                 $m_order->modify($repair_order_id);
 
                 // Update Customer Information
@@ -520,6 +522,7 @@ class Service_invoice extends CORE_Controller
                 $m_invoice->advisor_remarks=$this->input->post('advisor_remarks',TRUE);
                 $m_invoice->customer_remarks=$this->input->post('customer_remarks',TRUE);
                 $m_invoice->discount_type = $this->input->post('discount_type', TRUE);
+                $m_invoice->tag_no=$this->input->post('tag_no',TRUE);
 
                 $m_invoice->sdesc_1=$this->input->post('sdesc_1',TRUE);
                 $m_invoice->sdesc_2=$this->input->post('sdesc_2',TRUE);
