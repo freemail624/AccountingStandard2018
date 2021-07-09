@@ -1172,7 +1172,7 @@ Chart.defaults.global.defaultFontColor = "#000000";
                     $.ajax({
                         "dataType":"html",
                         "type":"POST",
-                        "url":"Templates/layout/prf/"+ d.purchase_request_id+'?type=approval',
+                        "url":"Templates/layout/prf/"+ d.purchase_request_form_id+'?type=approval',
                         "beforeSend" : function(){
                             row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
                         }
