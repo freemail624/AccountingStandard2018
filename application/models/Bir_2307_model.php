@@ -36,10 +36,10 @@
 			return $this->db->query($sql)->result();
 	    }
 
-	    function get_2307_items($particular_id,$type,$month=null,$year=null){
+	    function get_2307_items($particular_id,$type,$month=null,$year=null,$form_2307_id=null){
 	    	$sql="SELECT 
 			    form_2307.*,
-			   	CONCAT(IFNULL(ji.ref_type,''),'-',IFNULL(ji.ref_no,'')) as reference_no,
+			   	CONCAT(IFNULL(ji.ref_type,cv.ref_type),'-',IFNULL(ji.ref_no,cv.ref_no)) as reference_no,
 			    m.month_name,
 			    m.quarter,
 			    tc.atc as atc,
@@ -54,9 +54,11 @@
 			    tax_code tc ON tc.atc_id = form_2307.atc_id
 			    	LEFT JOIN
 			    journal_info ji ON ji.journal_id = form_2307.journal_id
+			    	LEFT JOIN
+			    cv_info cv ON cv.cv_id = form_2307.cv_id
 			WHERE
 				form_2307.is_deleted = FALSE AND form_2307.is_active = TRUE 
-			    
+			   
 			    ".($type=='S'?"
 			    	AND form_2307.supplier_id = '$particular_id'
 			    ":" 
@@ -65,34 +67,40 @@
 			    ")."
 			        AND MONTH(form_2307.date) = '$month'
 			        AND YEAR(form_2307.date) = '$year'
+			        ".($form_2307_id==null?"":" AND form_2307.form_2307_id = $form_2307_id")."
 			GROUP BY form_2307.atc_id";
 			return $this->db->query($sql)->result();
 	    }
 
 	    function get_2307_particulars($month=null,$year=null){
 	    	$sql="SELECT 
+	    	form_2307.form_2307_id,
 	    		CONCAT(IF(NOT ISNULL(c.customer_id),CONCAT('C-',c.customer_id),''),IF(NOT ISNULL(s.supplier_id),CONCAT('S-',s.supplier_id),'')) as particular_id,
 				CONCAT_WS(' ',IFNULL(c.customer_name,''),IFNULL(s.supplier_name,'')) as particular,
 			    s.tin_no,
 			    CONCAT_WS(' ',IFNULL(c.tin_no,''),IFNULL(s.tin_no,'')) as tin_no,
-				DATE_FORMAT(ji.date_txn,'%m/%y') as period,
-				DATE_FORMAT(ji.date_txn,'%m') as month_id,
-				DATE_FORMAT(ji.date_txn,'%Y') as year,
+				DATE_FORMAT(IF(NOT ISNULL(ji.date_txn),ji.date_txn,cv.date_txn),'%m/%y') as period,
+				DATE_FORMAT(IF(NOT ISNULL(ji.date_txn),ji.date_txn,cv.date_txn),'%m') as month_id,
+				DATE_FORMAT(IF(NOT ISNULL(ji.date_txn),ji.date_txn,cv.date_txn),'%Y') as year,
+				CONCAT(IF(NOT ISNULL(ji.ref_type),ji.ref_type,cv.ref_type),'-',IF(NOT ISNULL(ji.ref_no),ji.ref_no,cv.ref_no)) as voucher_no,
 				m.quarter
 			FROM
 			    form_2307
 			    LEFT JOIN journal_info ji ON ji.journal_id = form_2307.journal_id
+			    LEFT JOIN cv_info cv ON cv.cv_id = form_2307.cv_id
 			    LEFT JOIN customers c ON c.customer_id = form_2307.customer_id
 			    LEFT JOIN suppliers s ON s.supplier_id = form_2307.supplier_id
 			   	LEFT JOIN months m ON m.month_id = MONTH(form_2307.date)			    
 				WHERE 
 					form_2307.is_active = TRUE
 					AND form_2307.is_deleted = FALSE
-			        ".($month==null?"":" AND MONTH(ji.date_txn) = $month")."
-			        ".($year==null?"":" AND YEAR(ji.date_txn) = $year")."
-			GROUP BY form_2307.supplier_id, MONTH(ji.date_txn)";
+			        ".($month==null?"":" AND MONTH(IF(NOT ISNULL(ji.date_txn),ji.date_txn,cv.date_txn)) = $month")."
+			        ".($year==null?"":" AND YEAR(IF(NOT ISNULL(ji.date_txn),ji.date_txn,cv.date_txn)) = $year")."
+			";
 	    	return $this->db->query($sql)->result();
 	    }
+
+	    // GROUP BY form_2307.supplier_id, MONTH(ji.date_txn)
 
 	    function get_2307_list($month=null,$year=null,$journal_id=null){
 	    	$sql="SELECT 
@@ -100,14 +108,15 @@
 				    ji.date_txn,
 				    m.month_name,
 				    m.quarter,
-					CONCAT_WS(' ',IFNULL(c.customer_name,''),IFNULL(s.supplier_name,'')) as particular,
-					CONCAT_WS(' ',IFNULL(c.tin_no,''),IFNULL(s.tin_no,'')) as tin_no,
+						CONCAT_WS(' ',IFNULL(c.customer_name,''),IFNULL(s.supplier_name,'')) as particular,
+						CONCAT_WS(' ',IFNULL(c.tin_no,''),IFNULL(s.tin_no,'')) as tin_no,
 				    tc.atc as atc,
 				    tc.description as remarks,
 				    tc.tax_rate as tax_rate
 				FROM
 				    form_2307 
 				    LEFT JOIN journal_info ji ON ji.journal_id = form_2307.journal_id
+				    LEFT JOIN cv_info cv ON cv.cv_id = form_2307.cv_id
 				    LEFT JOIN months m ON m.month_id = MONTH(ji.date_txn)
 				    LEFT JOIN suppliers s ON s.supplier_id = form_2307.supplier_id
 				    LEFT JOIN customers c ON c.customer_id = form_2307.customer_id
@@ -115,8 +124,8 @@
 				    WHERE 
 				    	form_2307.is_active = TRUE
 				        AND form_2307.is_deleted = FALSE
-				        ".($month==null?"":" AND MONTH(ji.date_txn) = $month")."
-				        ".($year==null?"":" AND YEAR(ji.date_txn) = $year")."
+				        ".($month==null?"":" AND MONTH(IFNULL(ji.date_txn,cv.date_txn)) = $month")."
+				        ".($year==null?"":" AND YEAR(IFNULL(ji.date_txn,cv.date_txn)) = $year")."
 				        ".($journal_id==null?"":" AND form_2307.journal_id = $journal_id")."
 				        ";
 	    	return $this->db->query($sql)->result();

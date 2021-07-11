@@ -846,7 +846,7 @@ $(document).ready(function(){
                 },
                 { 
                     searchable: false,
-                    targets:[3],data: "particular" 
+                    targets:[3],data: "check_particular" 
                 },
                 { 
                     searchable: false,

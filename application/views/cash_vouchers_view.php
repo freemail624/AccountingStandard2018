@@ -407,6 +407,26 @@
                                     </div>
                                 </div>
                                 <div class="row for_check">
+                                    <div class="col-sm-12">
+                                        <b class="required"> * </b> <label>Check Name :</label><br />
+                                        <select id="cbo_check_particulars" name="check_particular_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Particular is required." required>
+                                            <optgroup label="Customers">
+                                                <!-- <option value="create_customer">[Create New Customer]</option> -->
+                                                <?php foreach($customers as $customer){ ?>
+                                                    <option value='C-<?php echo $customer->customer_id; ?>' data-link_department='<?php echo $customer->link_department_id; ?>'><?php echo $customer->customer_name; ?></option>
+                                                <?php } ?>
+                                            </optgroup>
+
+                                            <optgroup label="Suppliers">
+                                                <!-- <option value="create_supplier">[Create New Supplier]</option> -->
+                                                <?php foreach($suppliers as $supplier){ ?>
+                                                    <option value='S-<?php echo $supplier->supplier_id; ?>' data-link_department='0'><?php echo $supplier->supplier_name; ?></option>
+                                                <?php } ?>
+                                            </optgroup>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row for_check">
                                     <div class="col-sm-6">
                                         <b class="required"> * </b> <label>Check Date :</label><br />
                                         <div class="input-group">
@@ -1170,7 +1190,7 @@
 
 <script>
 $(document).ready(function(){
-    var _txnMode; var _cboParticulars; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode, _cbo_departments, _cboPaymentMethod, _cboCheckTypes;
+    var _txnMode; var _cboParticulars; var _cboCheckParticulars; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode, _cbo_departments, _cboPaymentMethod, _cboCheckTypes;
      var cbo_refType; var _cboLayouts; var dtRecurring; var _attribute; var _TableFilter; var _selectedDepartment = 0;
      var _cboTaxCode; var dt_rr; var btn_rr_status; var _cboCustomerType; var _cboArTrans; var _cboLinkDepartment; var _cboTaxGroup;
 
@@ -1316,6 +1336,13 @@ $(document).ready(function(){
             allowClear: false
         });
         _cboParticulars.select2('val',null);
+
+        _cboCheckParticulars=$('#cbo_check_particulars').select2({
+            placeholder: "Please select a particular for cheque.",
+            allowClear: false
+        });
+
+        _cboCheckParticulars.select2('val',null);
 
         _cboPaymentMethod = $('#cbo_pay_type').select2({
             placeholder: "Please select Payment Type.",
@@ -1678,6 +1705,7 @@ $(document).ready(function(){
             $('#cbo_branch').select2('val',null);
             $('#cbo_pay_type').select2('val',1);
             $('#cbo_particulars').select2('val',null);
+            $('#cbo_check_particulars').select2('val',null);
             $('#cbo_refType').select2('val',"CV");
             $('#is_2307').prop('checked', false);
             $('#cbo_tax_code').select2('val',null);
@@ -1816,6 +1844,7 @@ $(document).ready(function(){
             $('#cbo_branch').select2('val',data.department_id);
             $('#cbo_refType').select2('val',data.ref_type);
             $('#cbo_check_type').select2('val',data.check_type_id);
+            $('#cbo_check_particulars').select2('val',data.check_particular_id);
             $('#cbo_tax_code').val(data.atc_id).trigger("change");
 
             if(data.dr_invoice_id > 0){

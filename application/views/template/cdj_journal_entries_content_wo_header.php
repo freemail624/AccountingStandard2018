@@ -64,22 +64,57 @@
     </div>
     <table width="100%" border="0" cellspacing="-1">
         <tr>
-            <td style="padding: 4px;" width="50%"><strong>DATE :</strong> <?php echo date_format(new DateTime($journal_info->date_txn),"m/d/Y"); ?></td>
-            <td style="padding: 4px;" width="50%"><strong>REF # :</strong> <?php echo $journal_info->ref_no; ?></td>
-        </tr>
-        <?php if ($journal_info->payment_method_id == 2) { ?>
-            <tr> 
-                <td style="padding: 4px;" width="50%"><strong>CHECK # :</strong> <?php echo $journal_info->check_no; ?></td>
-                <td style="padding: 4px;" width="50%"><strong>CHECK DATE :</strong> <?php if($journal_info->check_date == '0000-00-00'){ echo ''; }else {  echo date_format(new DateTime($journal_info->check_date),"m/d/Y"); }?></td>
-            </tr>
-        <?php } ?>
-        <tr>
-            <td style="padding: 4px;" width="50%"><strong>TXN # :</strong> <?php echo $journal_info->txn_no; ?></td>
-            <td style="padding: 4px;" width="50%"><strong>AMOUNT :</strong> <?php echo number_format($journal_info->amount,2); ?></td>
-        </tr>
-        <tr>
-            <td style="padding: 4px;"><strong>PARTICULAR :</strong> <?php echo $journal_info->particular; ?></td>
-            <td style="padding: 4px;"><strong>PAYMENT METHOD :</strong> <?php echo $journal_info->payment_method; ?></td>
+            <td width="38%" valign="top">
+                <table width="100%" border="0" cellspacing="-1" style="border: 0px solid white!important;">
+                    <tr>
+                        <td><strong>DATE :</strong> <?php echo date_format(new DateTime($journal_info->date_txn),"m/d/Y"); ?></td>
+                    </tr>
+                    <tr>
+                        <td><strong>TXN # :</strong> <?php echo $journal_info->txn_no; ?></td>
+                    </tr>
+                    <tr>
+                        <td><strong>REF # :</strong> <?php echo $journal_info->ref_no; ?></td>
+                    </tr>
+                    <tr>
+                        <td><strong>PARTICULAR :</strong> <?php echo $journal_info->particular; ?></td>
+                    </tr>
+                </table>
+            </td>
+            <td width="37%" valign="top">
+                <table width="100%" border="0" cellspacing="-1" style="border: 0px solid white!important;">
+                    <?php if ($journal_info->payment_method_id == 2) { ?>
+                        <tr>
+                            <td><strong>CHECK # :</strong> <?php echo $journal_info->check_no; ?></td>
+                        </tr>
+                        <tr>
+                            <td><strong>CHECK DATE :</strong> <?php if($journal_info->check_date == '0000-00-00'){ echo ''; }else {  echo date_format(new DateTime($journal_info->check_date),"m/d/Y"); }?></td>
+                        </tr>
+                    <?php }?>
+                    <tr>
+                        <td><strong>AMOUNT :</strong> <?php echo number_format($journal_info->amount,2); ?></td>
+                    </tr>
+                    <tr>
+                        <td><strong>PAYMENT METHOD :</strong> <?php echo $journal_info->payment_method; ?></td>
+                    </tr>
+                </table>
+            </td>
+            <?php if(count($form_2307) > 0){ ?>
+                <td width="25%" valign="top">
+                    <table width="100%" border="0" cellspacing="-1" style="border: 0px solid white!important;">
+                        <tr>
+                            <td><strong>Applied for 2307 Form</strong></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>ATC : </strong><?php echo $form_2307[0]->atc; ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>NET AMOUNT :</strong> <?php echo number_format($journal_info->net_amount,2); ?></td>
+                        </tr>
+                    </table>
+                </td>
+            <?php }?>
         </tr>
     </table><br>
     <table width="100%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11" border="0">

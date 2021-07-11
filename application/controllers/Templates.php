@@ -1887,6 +1887,7 @@ class Templates extends CORE_Controller {
 
             case 'print-form-2307':
                 $m_form_2307 = $this->Bir_2307_model;
+                $form_2307_id=$this->input->get('id',TRUE);
                 $particular=$this->input->get('particular_id',TRUE);
                 $month_id=$this->input->get('month_id',TRUE);
                 $year=$this->input->get('year',TRUE);
@@ -1898,7 +1899,7 @@ class Templates extends CORE_Controller {
                 $particular_type=$particular[0];
                 $particular_id=$particular[1];
 
-                $items = $m_form_2307->get_2307_items($particular_id,$particular_type,$month_id,$year);
+                $items = $m_form_2307->get_2307_items($particular_id,$particular_type,$month_id,$year,$form_2307_id);
 
                 $particular_info = $m_form_2307->get_particular_info($particular_id,$particular_type);
 
@@ -2151,6 +2152,18 @@ class Templates extends CORE_Controller {
 
                 );
 
+                $m_form_2307=$this->Bir_2307_model;
+                $data['form_2307'] = $m_form_2307->get_list(
+                    array('cv_id'=>$cv_id,'is_applied'=>TRUE),
+                    array(
+                        'tax_code.atc',
+                        'tax_code.description'
+                    ),
+                    array(
+                        array('tax_code','tax_code.atc_id=form_2307.atc_id','left')
+                    )
+
+                );
 
                 //show only inside grid with menu button
                 if($type=='fullview'||$type==null){
@@ -2196,6 +2209,8 @@ class Templates extends CORE_Controller {
                         'journal_info.is_active as cancelled',
                         'CONCAT(IF(NOT ISNULL(customers.customer_id),CONCAT("C-",customers.customer_id),""),IF(NOT ISNULL(suppliers.supplier_id),CONCAT("S-",suppliers.supplier_id),"")) as particular_id',
                         'CONCAT_WS(" ",IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,"")) as particular',
+                        'CONCAT(IF(NOT ISNULL(check_c.customer_id),CONCAT("C-",check_c.customer_id),""),IF(NOT ISNULL(check_s.supplier_id),CONCAT("S-",check_s.supplier_id),"")) as check_particular_id',
+                        'CONCAT_WS(" ",IFNULL(check_c.customer_name,""),IFNULL(check_s.supplier_name,"")) as check_particular',
                         'suppliers.address',
                         'suppliers.email_address',
                         'suppliers.contact_no',
@@ -2207,8 +2222,23 @@ class Templates extends CORE_Controller {
                     array(
                         array('customers','customers.customer_id=journal_info.customer_id','left'),
                         array('suppliers','suppliers.supplier_id=journal_info.supplier_id','left'),
+                        array('customers check_c','check_c.customer_id=journal_info.check_c_id','left'),
+                        array('suppliers check_s','check_s.supplier_id=journal_info.check_s_id','left'),
                         array('departments','departments.department_id=journal_info.department_id','left'),
                         array('payment_methods','payment_methods.payment_method_id=journal_info.payment_method_id','left')
+                    )
+
+                );
+
+                $m_form_2307=$this->Bir_2307_model;
+                $data['form_2307'] = $m_form_2307->get_list(
+                    array('journal_id'=>$journal_id,'is_applied'=>TRUE),
+                    array(
+                        'tax_code.atc',
+                        'tax_code.description'
+                    ),
+                    array(
+                        array('tax_code','tax_code.atc_id=form_2307.atc_id','left')
                     )
 
                 );
@@ -3851,8 +3881,8 @@ class Templates extends CORE_Controller {
                     )
                     ,
                     array(
-                        array('customers','customers.customer_id=journal_info.customer_id','left'),
-                        array('suppliers','suppliers.supplier_id=journal_info.supplier_id','left')
+                        array('customers','customers.customer_id=journal_info.check_c_id','left'),
+                        array('suppliers','suppliers.supplier_id=journal_info.check_s_id','left')
                     )
                 );
 
@@ -3899,8 +3929,8 @@ class Templates extends CORE_Controller {
                     'CONCAT_WS(" ",cbu.user_fname,cbu.user_lname)as cancelled_by'
                 ),
                 array(
-                    array('customers','customers.customer_id=cv_info.customer_id','left'),
-                    array('suppliers','suppliers.supplier_id=cv_info.supplier_id','left'),
+                    array('customers','customers.customer_id=cv_info.check_c_id','left'),
+                    array('suppliers','suppliers.supplier_id=cv_info.check_s_id','left'),
                     array('departments','departments.department_id=cv_info.department_id','left'),
                     array('user_accounts','user_accounts.user_id=cv_info.created_by_user','left'),
                     array('user_accounts vbu','vbu.user_id=cv_info.verified_by_user','left'),

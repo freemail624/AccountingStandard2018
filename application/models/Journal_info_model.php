@@ -36,8 +36,8 @@ class Journal_info_model extends CORE_Model{
                         ji.book_type
                 FROM
                     journal_info ji
-                LEFT JOIN suppliers s ON s.supplier_id = ji.supplier_id
-                LEFT JOIN customers c ON c.customer_id = ji.customer_id
+                LEFT JOIN suppliers s ON s.supplier_id = ji.check_s_id
+                LEFT JOIN customers c ON c.customer_id = ji.check_c_id
                 LEFT JOIN b_refchecktype bank ON bank.check_type_id = ji.check_type_id
                 WHERE
                         ji.is_deleted = FALSE
@@ -67,8 +67,8 @@ class Journal_info_model extends CORE_Model{
                         'CV' as book_type
                 FROM
                     cv_info cv
-                LEFT JOIN suppliers s ON s.supplier_id = cv.supplier_id
-                LEFT JOIN customers c ON c.customer_id = cv.customer_id
+                LEFT JOIN suppliers s ON s.supplier_id = cv.check_s_id
+                LEFT JOIN customers c ON c.customer_id = cv.check_c_id
                 LEFT JOIN b_refchecktype bank ON bank.check_type_id = cv.check_type_id
                 WHERE
                         cv.is_deleted = FALSE
@@ -90,12 +90,16 @@ class Journal_info_model extends CORE_Model{
                 (SELECT 
                     ji.*,
                     CONCAT_WS(' ',IFNULL(c.customer_name,''),IFNULL(s.supplier_name,'')) as particular,
+                    CONCAT_WS(' ',IFNULL(check_c.customer_name,''),IFNULL(check_s.supplier_name,'')) as check_particular,
                     department_name,
                     COALESCE((SELECT check_status_id FROM bank_reconciliation_checks WHERE bank_recon_id = $bank_recon_id AND journal_id = ji.journal_id),0) as check_status_id
                 FROM
                     journal_info as ji
                 LEFT JOIN suppliers AS s ON s.supplier_id = ji.supplier_id
                 LEFT JOIN customers AS c ON c.customer_id = ji.customer_id
+                LEFT JOIN suppliers AS check_s ON check_s.supplier_id = ji.check_s_id
+                LEFT JOIN customers AS check_c ON check_c.customer_id = ji.check_c_id
+
                 LEFT JOIN departments AS d ON d.department_id = ji.department_id
                 ".($account_id!=null?" INNER JOIN(SELECT DISTINCT journal_id FROM journal_accounts WHERE account_id = $account_id) ja ON ja.journal_id = ji.journal_id ":"")." 
                 WHERE

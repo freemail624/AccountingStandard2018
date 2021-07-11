@@ -229,6 +229,7 @@ class Cash_disbursement extends CORE_Controller
                 $form_2307_apply=$voucher_info->is_2307;
                 $supplier=$m_supplier->get_list($voucher_info->supplier_id);
                 $company=$m_company->get_list();
+                $chck_form = $m_form_2307->get_list('cv_id='.$cv_id);
 
                 if ($form_2307_apply == 1){
                     $tax_rate = ($total_wtax/$net_amount)*100;
@@ -243,20 +244,21 @@ class Cash_disbursement extends CORE_Controller
 
                     $m_form_2307->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
                     $m_form_2307->date=date('Y-m-d',strtotime($voucher_info->date_txn));
-                    // $m_form_2307->payee_tin=$supplier[0]->tin_no;
-                    // $m_form_2307->payee_name=$supplier[0]->supplier_name;
-                    // $m_form_2307->payee_address=$supplier[0]->address;
-                    // $m_form_2307->payor_name=$company[0]->registered_to;
-                    // $m_form_2307->payor_tin=$company[0]->tin_no;
-                    // $m_form_2307->payor_address=$company[0]->registered_address;
-                    // $m_form_2307->zip_code = $company[0]->zip_code; 
                     $m_form_2307->gross_amount=$this->get_numeric_value($net_amount);
                     $m_form_2307->deducted_amount=$this->get_numeric_value($total_wtax);
                     $m_form_2307->tax_rate=$this->get_numeric_value($tax_rate);
                     $m_form_2307->atc_id=$voucher_info->atc_id;
                     $m_form_2307->set('date_created','NOW()');
                     $m_form_2307->created_by_user=$this->session->user_id;
-                    $m_form_2307->save();
+
+                    //2307 is created for cv
+                    if(count($chck_form) > 0){      
+                        $m_form_2307->modify($chck_form[0]->form_2307_id);
+                    }//no 2307 associated with the journal
+                    else{                          
+                        $m_form_2307->save();
+                    } 
+
                 }
 
 
@@ -382,6 +384,15 @@ class Cash_disbursement extends CORE_Controller
                 }else{
                     $m_journal->customer_id=0;
                     $m_journal->supplier_id=$particular[1];
+                }
+
+                $check_particular=explode('-',$this->input->post('check_particular_id',TRUE));
+                if($check_particular[0]=='C'){
+                    $m_journal->check_c_id=$check_particular[1];
+                    $m_journal->check_s_id=0;
+                }else{
+                    $m_journal->check_c_id=0;
+                    $m_journal->check_s_id=$check_particular[1];
                 }
 
                 $m_journal->ref_type=$ref_type;
@@ -541,6 +552,15 @@ class Cash_disbursement extends CORE_Controller
                 }else{
                     $m_journal->customer_id=0;
                     $m_journal->supplier_id=$particular[1];
+                }
+
+                $check_particular=explode('-',$this->input->post('check_particular_id',TRUE));
+                if($check_particular[0]=='C'){
+                    $m_journal->check_c_id=$check_particular[1];
+                    $m_journal->check_s_id=0;
+                }else{
+                    $m_journal->check_c_id=0;
+                    $m_journal->check_s_id=$check_particular[1];
                 }
 
                 $m_journal->remarks=$this->input->post('remarks',TRUE);
@@ -769,11 +789,15 @@ class Cash_disbursement extends CORE_Controller
                 'departments.department_name',
                 'CONCAT(IF(NOT ISNULL(customers.customer_id),CONCAT("C-",customers.customer_id),""),IF(NOT ISNULL(suppliers.supplier_id),CONCAT("S-",suppliers.supplier_id),"")) as particular_id',
                 'CONCAT_WS(" ",IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,"")) as particular',
+                'CONCAT(IF(NOT ISNULL(check_c.customer_id),CONCAT("C-",check_c.customer_id),""),IF(NOT ISNULL(check_s.supplier_id),CONCAT("S-",check_s.supplier_id),"")) as check_particular_id',
+                'CONCAT_WS(" ",IFNULL(check_c.customer_name,""),IFNULL(check_s.supplier_name,"")) as check_particular',
                 'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by'
             ),
             array(
                 array('customers','customers.customer_id=journal_info.customer_id','left'),
                 array('suppliers','suppliers.supplier_id=journal_info.supplier_id','left'),
+                array('customers check_c','check_c.customer_id=journal_info.check_c_id','left'),
+                array('suppliers check_s','check_s.supplier_id=journal_info.check_s_id','left'),
                 array('departments','departments.department_id=journal_info.department_id','left'),
                 array('user_accounts','user_accounts.user_id=journal_info.created_by_user','left'),
                 array('payment_methods','payment_methods.payment_method_id=journal_info.payment_method_id','left')

@@ -117,6 +117,7 @@ class Cash_vouchers extends CORE_Controller
                 $m_form_2307=$this->Bir_2307_model;
                 $m_cv_accounts=$this->Cash_vouchers_accounts_model;
                 $m_company=$this->Company_model;
+                $m_accounts=$this->Account_integration_model;
 
                 $valid_range=$this->Accounting_period_model->get_list("'".date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)))."'<=period_end");
                 if(count($valid_range)>0){
@@ -167,6 +168,15 @@ class Cash_vouchers extends CORE_Controller
                     $m_info->supplier_id=$particular[1];
                 }
 
+                $check_particular=explode('-',$this->input->post('check_particular_id',TRUE));
+                if($check_particular[0]=='C'){
+                    $m_info->check_c_id=$check_particular[1];
+                    $m_info->check_s_id=0;
+                }else{
+                    $m_info->check_c_id=0;
+                    $m_info->check_s_id=$check_particular[1];
+                }                
+
                 $m_info->ref_type=$ref_type;
                 $m_info->ref_no=$ref_no;
                 $m_info->remarks=$this->input->post('remarks',TRUE);
@@ -200,7 +210,16 @@ class Cash_vouchers extends CORE_Controller
                 $cr_amounts=$this->input->post('cr_amount',TRUE);
                 $department_id_line=$this->input->post('department_id_line',TRUE);
 
+                $total_wtax=0;
+                $net_amount = $this->get_numeric_value($this->input->post('net_amount',TRUE));
+                $account_integration=$m_accounts->get_list();
+
                 for($i=0;$i<=count($accounts)-1;$i++){
+
+                    if ($account_integration[0]->supplier_wtax_account_id == $accounts[$i]){
+                        $total_wtax+=$this->get_numeric_value($cr_amounts[$i]);
+                    }
+
                     $m_cv_accounts->cv_id=$cv_id;
                     $m_cv_accounts->account_id=$accounts[$i];
                     $m_cv_accounts->memo=$memos[$i];
@@ -212,6 +231,32 @@ class Cash_vouchers extends CORE_Controller
 
                 $m_info->txn_no='TMP-'.date('Ymd').'-'.$cv_id;
                 $m_info->modify($cv_id);
+
+                $form_2307_apply = $this->get_numeric_value($this->input->post('is_2307',TRUE));
+
+                if ($form_2307_apply == 1){
+                    $tax_rate = ($total_wtax/$net_amount)*100;
+                    $m_form_2307->cv_id=$cv_id;
+
+                    $particular=explode('-',$this->input->post('particular_id',TRUE));
+                    if($particular[0]=='C'){
+                        $m_form_2307->customer_id=$particular[1];
+                        $m_form_2307->supplier_id=0;
+                    }else{
+                        $m_form_2307->customer_id=0;
+                        $m_form_2307->supplier_id=$particular[1];
+                    }
+
+                    $m_form_2307->txn_no='TMP-'.date('Ymd').'-'.$cv_id;
+                    $m_form_2307->date=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
+                    $m_form_2307->gross_amount=$this->get_numeric_value($net_amount);
+                    $m_form_2307->deducted_amount=$this->get_numeric_value($total_wtax);
+                    $m_form_2307->tax_rate=$this->get_numeric_value($tax_rate);                    
+                    $m_form_2307->atc_id=$this->input->post('atc_id',TRUE);
+                    $m_form_2307->set('date_created','NOW()');
+                    $m_form_2307->created_by_user=$this->session->user_id;
+                    $m_form_2307->save();
+                }
 
                 //update status of dr
                 if($dr_invoice_id>0){
@@ -242,6 +287,8 @@ class Cash_vouchers extends CORE_Controller
                 $m_form_2307=$this->Bir_2307_model;
                 $m_cv_accounts=$this->Cash_vouchers_accounts_model;
                 $m_company=$this->Company_model;
+                $m_accounts=$this->Account_integration_model;
+                $account_integration=$m_accounts->get_list();
 
 
                 $valid_range=$this->Accounting_period_model->get_list("'".date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)))."'<=period_end");
@@ -292,6 +339,15 @@ class Cash_vouchers extends CORE_Controller
                     $m_info->supplier_id=$particular[1];
                 }
 
+                $check_particular=explode('-',$this->input->post('check_particular_id',TRUE));
+                if($check_particular[0]=='C'){
+                    $m_info->check_c_id=$check_particular[1];
+                    $m_info->check_s_id=0;
+                }else{
+                    $m_info->check_c_id=0;
+                    $m_info->check_s_id=$check_particular[1];
+                }                  
+
                 $m_info->ref_type=$this->input->post('ref_type');
                 $m_info->ref_no=$this->input->post('ref_no');
                 $m_info->remarks=$this->input->post('remarks',TRUE);
@@ -335,7 +391,16 @@ class Cash_vouchers extends CORE_Controller
                 $department_id_line=$this->input->post('department_id_line',TRUE);
 
                 $m_cv_accounts->delete_via_fk($cv_id);
+
+                $total_wtax=0;
+                $net_amount=$this->get_numeric_value($this->input->post('net_amount',TRUE));
+
                 for($i=0;$i<=count($accounts)-1;$i++){
+
+                    if ($account_integration[0]->supplier_wtax_account_id == $accounts[$i]){
+                        $total_wtax+=$this->get_numeric_value($cr_amounts[$i]);
+                    }
+
                     $m_cv_accounts->cv_id=$cv_id;
                     $m_cv_accounts->account_id=$accounts[$i];
                     $m_cv_accounts->memo=$memos[$i];
@@ -343,6 +408,57 @@ class Cash_vouchers extends CORE_Controller
                     $m_cv_accounts->cr_amount=$this->get_numeric_value($cr_amounts[$i]);
                     $m_cv_accounts->department_id=$this->get_numeric_value($department_id_line[$i]); 
                     $m_cv_accounts->save();
+                }
+
+                $chck_form = $m_form_2307->get_list('cv_id='.$cv_id);
+                $form_2307_apply = $this->get_numeric_value($this->input->post('is_2307',TRUE));
+
+                if ($form_2307_apply == 1){
+                    $tax_rate = ($total_wtax/$net_amount)*100;
+                    $m_form_2307->cv_id=$cv_id;
+
+                    $particular=explode('-',$this->input->post('particular_id',TRUE));
+                    if($particular[0]=='C'){
+                        $m_form_2307->customer_id=$particular[1];
+                        $m_form_2307->supplier_id=0;
+                    }else{
+                        $m_form_2307->customer_id=0;
+                        $m_form_2307->supplier_id=$particular[1];
+                    }
+                    
+                    $m_form_2307->txn_no='TMP-'.date('Ymd').'-'.$cv_id;
+                    $m_form_2307->date=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
+                    $m_form_2307->gross_amount=$this->get_numeric_value($net_amount);
+                    $m_form_2307->deducted_amount=$this->get_numeric_value($total_wtax);
+                    $m_form_2307->tax_rate=$this->get_numeric_value($tax_rate);                      
+                    $m_form_2307->atc_id=$this->input->post('atc_id',TRUE);
+                    $m_form_2307->set('date_created','NOW()');
+                    $m_form_2307->created_by_user=$this->session->user_id;
+                    $m_form_2307->is_applied=1;
+
+                    $cv_info=$m_info->get_list($cv_id);
+
+                    if($cv_info[0]->is_active == true){
+                        $m_form_2307->is_deleted = 0;
+                    }else{
+                        $m_form_2307->is_deleted = 1;
+                    }
+
+                    //2307 is created for cv
+                    if(count($chck_form) > 0){      
+                        $m_form_2307->modify($chck_form[0]->form_2307_id);
+                    }//no 2307 associated with the journal
+                    else{                          
+                        $m_form_2307->save();
+                    } 
+                
+                }else{
+
+                    if(count($chck_form) > 0){//2307 is created for journal
+                        $m_form_2307->is_applied=0;
+                        $m_form_2307->is_deleted = 1;
+                        $m_form_2307->modify($chck_form[0]->form_2307_id);
+                    }
                 }
 
                 //update status of dr
@@ -368,6 +484,7 @@ class Cash_vouchers extends CORE_Controller
 
             case 'delete':
                 $m_info=$this->Cash_vouchers_model;
+                $m_form_2307=$this->Bir_2307_model;
                 $cv_id=$this->input->post('cv_id',TRUE);
 
                 //mark Items as deleted
@@ -383,6 +500,13 @@ class Cash_vouchers extends CORE_Controller
                     $m_deliveries=$this->Delivery_invoice_model;
                     $m_deliveries->order_status_id=$this->get_dr_status($dr_invoice_id);
                     $m_deliveries->modify($dr_invoice_id);
+                }
+
+                $chck_form = $m_form_2307->get_list('cv_id='.$cv_id);
+                if(count($chck_form) > 0){
+                    $m_form_2307->is_applied=0;
+                    $m_form_2307->is_deleted = 1;
+                    $m_form_2307->modify($chck_form[0]->form_2307_id);
                 }
 
                 $response['title']='Deleted!';
@@ -452,6 +576,9 @@ class Cash_vouchers extends CORE_Controller
                 'payment_methods.payment_method',
                 'CONCAT(IF(NOT ISNULL(customers.customer_id),CONCAT("C-",customers.customer_id),""),IF(NOT ISNULL(suppliers.supplier_id),CONCAT("S-",suppliers.supplier_id),"")) as particular_id',
                 'CONCAT_WS(" ",IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,"")) as particular',
+                'CONCAT_WS(" ",IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,"")) as particular',
+                'CONCAT(IF(NOT ISNULL(check_c.customer_id),CONCAT("C-",check_c.customer_id),""),IF(NOT ISNULL(check_s.supplier_id),CONCAT("S-",check_s.supplier_id),"")) as check_particular_id',
+                'CONCAT_WS(" ",IFNULL(check_c.customer_name,""),IFNULL(check_s.supplier_name,"")) as check_particular',
                 'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by',
                 'CONCAT_WS(" ",vbu.user_fname,vbu.user_lname)as verified_by',
                 'CONCAT_WS(" ",abu.user_fname,abu.user_lname)as approved_by',
@@ -460,6 +587,8 @@ class Cash_vouchers extends CORE_Controller
             array(
                 array('customers','customers.customer_id=cv_info.customer_id','left'),
                 array('suppliers','suppliers.supplier_id=cv_info.supplier_id','left'),
+                array('customers check_c','check_c.customer_id=cv_info.check_c_id','left'),
+                array('suppliers check_s','check_s.supplier_id=cv_info.check_s_id','left'),
                 array('departments','departments.department_id=cv_info.department_id','left'),
                 array('user_accounts','user_accounts.user_id=cv_info.created_by_user','left'),
                 array('user_accounts vbu','vbu.user_id=cv_info.verified_by_user','left'),

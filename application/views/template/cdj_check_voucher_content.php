@@ -230,7 +230,7 @@
         </tr>
         <tr>
             <td></td>
-            <td>*** <?php echo $journal_info->particular; ?> ***</td>
+            <td>*** <?php echo $journal_info->check_particular; ?> ***</td>
             <td align="right"><?php echo number_format($journal_info->amount,2); ?></td>
         </tr>
         <tr>

@@ -79,8 +79,8 @@ class Treasury extends CORE_Controller
                         'DATE_FORMAT(journal_info.check_date,"%m/%d/%Y")as check_date'
                     ),
                     array(
-                        array('suppliers as s','s.supplier_id=journal_info.supplier_id','left'),
-                        array('customers as c','c.customer_id=journal_info.customer_id','left')
+                        array('suppliers as s','s.supplier_id=journal_info.check_s_id','left'),
+                        array('customers as c','c.customer_id=journal_info.check_c_id','left')
                     )
                 );
                 echo json_encode($response);
@@ -96,8 +96,8 @@ class Treasury extends CORE_Controller
                         'DATE_FORMAT(journal_info.check_date,"%m/%d/%Y")as check_date'
                     ),
                     array(
-                        array('suppliers as s','s.supplier_id=journal_info.supplier_id','left'),
-                        array('customers as c','c.customer_id=journal_info.customer_id','left')
+                        array('suppliers as s','s.supplier_id=journal_info.check_s_id','left'),
+                        array('customers as c','c.customer_id=journal_info.check_c_id','left')
                     )
                 );
                 echo json_encode($response);
@@ -113,8 +113,8 @@ class Treasury extends CORE_Controller
                         'DATE_FORMAT(journal_info.check_date,"%m/%d/%Y")as check_date'
                     ),
                     array(
-                        array('suppliers as s','s.supplier_id=journal_info.supplier_id','left'),
-                        array('customers as c','c.customer_id=journal_info.customer_id','left')
+                        array('suppliers as s','s.supplier_id=journal_info.check_s_id','left'),
+                        array('customers as c','c.customer_id=journal_info.check_c_id','left')
                     )
                 );
                 echo json_encode($response);

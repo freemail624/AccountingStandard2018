@@ -320,6 +320,8 @@ class Check_summary extends CORE_Controller
                         'payment_methods.payment_method',
                         'CONCAT(IF(NOT ISNULL(customers.customer_id),CONCAT("C-",customers.customer_id),""),IF(NOT ISNULL(suppliers.supplier_id),CONCAT("S-",suppliers.supplier_id),"")) as particular_id',
                         'CONCAT_WS(" ",IFNULL(customers.customer_name,""),IFNULL(suppliers.supplier_name,"")) as particular',
+                        'CONCAT(IF(NOT ISNULL(check_c.customer_id),CONCAT("C-",check_c.customer_id),""),IF(NOT ISNULL(check_s.supplier_id),CONCAT("S-",check_s.supplier_id),"")) as check_particular_id',
+                        'CONCAT_WS(" ",IFNULL(check_c.customer_name,""),IFNULL(check_s.supplier_name,"")) as check_particular',
                         'departments.department_name',
                         'b_refchecktype.check_type_desc',
                         'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by',
@@ -331,6 +333,8 @@ class Check_summary extends CORE_Controller
                     array(
                         array('customers','customers.customer_id=cv_info.customer_id','left'),
                         array('suppliers','suppliers.supplier_id=cv_info.supplier_id','left'),
+                        array('customers check_c','check_c.customer_id=cv_info.check_c_id','left'),
+                        array('suppliers check_s','check_s.supplier_id=cv_info.check_s_id','left'),
                         array('departments','departments.department_id=cv_info.department_id','left'),
                         array('user_accounts','user_accounts.user_id=cv_info.created_by_user','left'),
                         array('user_accounts vbu','vbu.user_id=cv_info.verified_by_user','left'),
@@ -652,7 +656,7 @@ class Check_summary extends CORE_Controller
                 $excel->getActiveSheet()->getStyle('H'.$check_layout_1)->getNumberFormat()->setFormatCode('_(* #,##0.00_);_(* (#,##0.00);_(* "-"??_);_(@_)');         
 
                 $excel->getActiveSheet()->setCellValue('B'.$check_layout_1,'***')
-                                        ->setCellValue('C'.$check_layout_1,$info->particular.'***')
+                                        ->setCellValue('C'.$check_layout_1,$info->check_particular.'***')
                                         ->setCellValue('H'.$check_layout_1,$info->amount);
 
                 $check_layout_2 = $check_layout_1 + 1;

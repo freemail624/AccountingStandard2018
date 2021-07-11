@@ -279,8 +279,17 @@
                 </div> -->
               <!--    <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div> -->
                             <h2 class="h2-panel-heading"> General Journal</h2><hr />
-                            <button id="btn_browse_recurring" class="btn btn-primary" style="margin-bottom: 10px; text-transform: capitalize;"><i class="fa fa-folder-open-o"></i> Browse Recurring Template</button>
-                            
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <button id="btn_browse_recurring" class="btn btn-primary" style="margin-bottom: 10px; text-transform: capitalize;"><i class="fa fa-folder-open-o"></i> Browse Recurring Template</button>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div style="float: right;">
+                                            <input type="checkbox" name="is_cashflow" id="is_cashflow"> 
+                                            <label for="is_cashflow" style="margin-left: 5px;">Included in Cash Flow?</label>
+                                        </div>
+                                    </div>
+                                </div>
                                 <form id="frm_journal" role="form" class="form-horizontal">
 
 
@@ -1592,6 +1601,8 @@ $(document).ready(function(){
             $('.dept').val(0); 
             $('#tbl_entries > tfoot tr').find(oTFSummary.dr).html('<b>0.00</b>');
             $('#tbl_entries > tfoot tr').find(oTFSummary.cr).html('<b>0.00</b>');
+            $('#is_cashflow').prop('checked', true);
+
             showList(false);
             //$('#modal_journal_entry').modal('show');
         });
@@ -1724,6 +1735,7 @@ $(document).ready(function(){
 
            _cboParticulars.select2('val',data.particular_id);
            _cboDepartments.select2('val',data.department_id);
+           $('#is_cashflow').prop('checked', (data.is_cashflow == 1 ? true : false));
 
             $.ajax({
                 url: 'General_journal/transaction/get-entries?id=' + data.journal_id,
@@ -2090,6 +2102,8 @@ $(document).ready(function(){
 
     var createJournal=function(){
         var _data=$('#frm_journal').serializeArray();
+        _data.push({name : "is_cashflow" ,value : $('#is_cashflow').is(':checked') ? 1 : 0 });
+
         return $.ajax({
             "dataType":"json",
             "type":"POST",
@@ -2128,6 +2142,8 @@ $(document).ready(function(){
 
     var updateJournal=function(){
         var _data=$('#frm_journal').serializeArray();
+        _data.push({name : "is_cashflow" ,value : $('#is_cashflow').is(':checked') ? 1 : 0 });
+
         return $.ajax({
             "dataType":"json",
             "type":"POST",

@@ -109,9 +109,9 @@ class General_journal extends CORE_Controller
                 }else{
                     $m_journal->customer_id=0;
                     $m_journal->supplier_id=$particular[1];
-                }
+                }   
 
-
+                $m_journal->is_cashflow=$this->get_numeric_value($this->input->post('is_cashflow',TRUE));
                 $m_journal->department_id=$this->input->post('department_id',TRUE);
                 $m_journal->remarks=$this->input->post('remarks',TRUE);
                 $m_journal->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
@@ -242,7 +242,7 @@ class General_journal extends CORE_Controller
                     $m_journal->supplier_id=$particular[1];
                 }
 
-
+                $m_journal->is_cashflow=$this->get_numeric_value($this->input->post('is_cashflow',TRUE));
                 $m_journal->department_id=$this->input->post('department_id',TRUE);
                 $m_journal->remarks=$this->input->post('remarks',TRUE);
                 $m_journal->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
@@ -439,6 +439,7 @@ class General_journal extends CORE_Controller
                 'journal_info.journal_id',
                 'journal_info.txn_no',
                 'journal_info.department_id',
+                'journal_info.is_cashflow',
                 'departments.department_name',
                 'DATE_FORMAT(journal_info.date_txn,"%m/%d/%Y")as date_txn',
                 'journal_info.is_active',

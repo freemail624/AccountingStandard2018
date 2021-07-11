@@ -177,7 +177,7 @@
 
                                             <table id="tbl_2307" class="table table-striped" cellspacing="0" width="100%">
                                                 <thead>
-<!--                                                     <th width="2%"></th>
+<!--                                                <th width="2%"></th>
                                                     <th width="10%">Txn No.</th>
                                                     <th width="10%">Date</th>
                                                     <th width="25%">Supplier</th>
@@ -187,8 +187,9 @@
                                                     <th width="5%">ATC</th>
                                                     <th width="5%"><center>Action</center></th> -->
                                                     <th width="10%">Period</th>
+                                                    <th width="10%">Voucher #</th>
                                                     <th width="10%">TIN</th>
-                                                    <th width="75%">Particular</th>
+                                                    <th width="65%">Particular</th>
                                                     <th width="5%">Action</th>
                                                 </thead>
                                             </table>
@@ -274,10 +275,11 @@ $(document).ready(function(){
             }, 
             "columns": [
                 { targets:[0],data: "period" },
-                { targets:[1],data: "tin_no" },
-                { targets:[2],data: "particular" },   
+                { targets:[1],data: "voucher_no" },
+                { targets:[2],data: "tin_no" },
+                { targets:[3],data: "particular" },   
                 {
-                    targets:[3],data: null,
+                    targets:[4],data: null,
                     render: function (data, type, full, meta){
                         var btn_print='<button class="btn btn-primary btn-sm" name="print_form_2307" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Print Form 2307"><i class="fa fa-print"></i> </button>';
                         return '<center>'+btn_print+'</center>';
@@ -349,8 +351,8 @@ $(document).ready(function(){
         $('#tbl_2307').on('click','button[name="print_form_2307"]',function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
-            _selectedID=data.particular_id;
-            window.open("Templates/layout/print-form-2307?particular_id="+_selectedID+"&month_id="+data.month_id+"&year="+data.year+"&quarter="+data.quarter+"&type=print","_blank");
+            _selectedID=data.form_2307_id;
+            window.open("Templates/layout/print-form-2307?id="+_selectedID+"&particular_id="+data.particular_id+"&month_id="+data.month_id+"&year="+data.year+"&quarter="+data.quarter+"&type=print","_blank");
         });
 
     })();
