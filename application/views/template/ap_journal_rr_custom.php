@@ -79,18 +79,16 @@
             <?php }?>
 
             <?php } ?>
-            <?php if($purchase_info->remarks != null || ""){ ?>
-                <tr>
-                        <td colspan="3" align="center">
-                            <?php echo $purchase_info->remarks; ?>
-                        </td>
-                </tr>
-            <?php }?>
         </table>
 
 
 </div>
 
+
+
+<span style="top: 330px; left: 40px;max-width: 650px;width: 650px;">
+    <?php echo $purchase_info->remarks; ?>
+</span>
 
 <span style="top: 365px; left: 465px;">
     <?php echo number_format($dr_amount,2) ?>
