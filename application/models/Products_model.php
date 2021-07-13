@@ -342,6 +342,7 @@ class Products_model extends CORE_Model {
         $sql="
 
             SELECT main.*,
+            DATE_FORMAT(main.txn_date,'%m/%d/%Y %h:%i %p') as txn_date_label,
             @pBalance:=(@pBalance+(main.parent_in_qty-main.parent_out_qty)) as parent_balance,
             @bulkBalance:=(@bulkBalance+((main.parent_in_qty-main.parent_out_qty)/main.bulk_conversion_rate)) as parent_bulk_balance,
             @cBalance:=(@cBalance+(main.child_in_qty-main.child_out_qty)) as child_balance
@@ -350,7 +351,7 @@ class Products_model extends CORE_Model {
 
              /*Parent - Adjustment IN*/
             (SELECT
-            (ai.date_adjusted) as txn_date,
+            CONCAT(ai.date_adjusted,' ',DATE_FORMAT(ai.invoice_time, '%H:%i:%s')) as txn_date,
             ai.date_created,
             ai.adjustment_code as ref_no,
             ('Adjustment IN')as type,
@@ -388,7 +389,7 @@ class Products_model extends CORE_Model {
             /*Child - Adjustment IN*/
             SELECT
             
-            (ai.date_adjusted) as txn_date,
+            CONCAT(ai.date_adjusted,' ',DATE_FORMAT(ai.invoice_time, '%H:%i:%s')) as txn_date,
             ai.date_created,
             ai.adjustment_code as ref_no,
             ('Adjustment IN')as type,
@@ -424,7 +425,7 @@ class Products_model extends CORE_Model {
             SELECT posrin.* FROM
 
             (SELECT
-            DATE_FORMAT(pir.start_datetime,'%Y-%m-%d') as txn_date,
+            DATE_FORMAT(pir.start_datetime,'%Y-%m-%d %H:%i:%s') as txn_date,
             DATE_FORMAT(pir.start_datetime,'%Y-%m-%d') as date_created,
             pir.invoice_no as ref_no,
             '(POS) Sales Return' as type,
@@ -467,7 +468,7 @@ class Products_model extends CORE_Model {
 
              (SELECT
             
-            DATE_FORMAT(pir.start_datetime,'%Y-%m-%d') as txn_date,
+            DATE_FORMAT(pir.start_datetime,'%Y-%m-%d %H:%i:%s') as txn_date,
             DATE_FORMAT(pir.start_datetime,'%Y-%m-%d') as date_created,
             pir.invoice_no as ref_no,
             '(POS) Sales Return' as type,
@@ -504,7 +505,7 @@ class Products_model extends CORE_Model {
             /*Parent - Adjustment OUT*/
             SELECT
 
-            (ai.date_adjusted) as txn_date,
+            CONCAT(ai.date_adjusted,' ',DATE_FORMAT(ai.invoice_time, '%H:%i:%s')) as txn_date,
             ai.date_created,
             ai.adjustment_code as ref_no,
             ('Adjustment Out')as type,
@@ -542,7 +543,7 @@ class Products_model extends CORE_Model {
             /*Child - Adjustment OUT*/
             SELECT
 
-            (ai.date_adjusted) as txn_date,
+            CONCAT(ai.date_adjusted,' ',DATE_FORMAT(ai.invoice_time, '%H:%i:%s')) as txn_date,
             ai.date_created,
             ai.adjustment_code as ref_no,
             ('Adjustment Out')as type,
@@ -579,7 +580,7 @@ class Products_model extends CORE_Model {
 
             /*Parent - Delivery Invoice*/
             SELECT
-            di.date_delivered as txn_date,
+            CONCAT(di.date_delivered,' ',DATE_FORMAT(di.invoice_time, '%H:%i:%s')) as txn_date,
             di.date_created,
             di.dr_invoice_no as ref_no,
             ('Purchase Invoice') as type,
@@ -619,7 +620,7 @@ class Products_model extends CORE_Model {
 
             /*Child - Delivery Invoice*/
             SELECT
-            di.date_delivered as txn_date,
+            CONCAT(di.date_delivered,' ',DATE_FORMAT(di.invoice_time, '%H:%i:%s')) as txn_date,
             di.date_created,
             di.dr_invoice_no as ref_no,
             ('Purchase Invoice') as type,
@@ -726,7 +727,7 @@ class Products_model extends CORE_Model {
 
             /*Parent - Transfer From*/
             SELECT
-            ii.date_issued as txn_date,
+            CONCAT(ii.date_issued,' ',DATE_FORMAT(ii.invoice_time, '%H:%i:%s')) as txn_date,
             ii.date_created ,
             ii.trn_no as ref_no,
             'Transfer Issuance Out' as type,
@@ -762,7 +763,7 @@ class Products_model extends CORE_Model {
 
             /*Child - Adjustment From*/
             SELECT
-            ii.date_issued as txn_date,
+            CONCAT(ii.date_issued,' ',DATE_FORMAT(ii.invoice_time, '%H:%i:%s')) as txn_date,
             ii.date_created ,
             ii.trn_no as ref_no,
             'Transfer Issuance Out' as type,
@@ -797,7 +798,7 @@ class Products_model extends CORE_Model {
 
             /*Parent - Transfer To*/
             SELECT
-            ii.date_issued as txn_date,
+            CONCAT(ii.date_issued,' ',DATE_FORMAT(ii.invoice_time, '%H:%i:%s')) as txn_date,
             ii.date_created ,
             ii.trn_no as ref_no,
             'Transfer Issuance IN' as type,
@@ -835,7 +836,7 @@ class Products_model extends CORE_Model {
 
             /*Child - Transfer To*/
             SELECT
-            ii.date_issued as txn_date,
+            CONCAT(ii.date_issued,' ',DATE_FORMAT(ii.invoice_time, '%H:%i:%s')) as txn_date,
             ii.date_created ,
             ii.trn_no as ref_no,
             'Transfer Issuance IN' as type,
@@ -873,7 +874,7 @@ class Products_model extends CORE_Model {
 
             /*Parent - Sales Invoice*/
             SELECT 
-            l.loading_date as txn_date,
+            CONCAT(DATE_FORMAT(l.loading_date, '%Y-%m-%d'),' ',DATE_FORMAT(l.invoice_time, '%H:%i:%s')) as txn_date,
             si.date_created as date_created,
             si.sales_inv_no as ref_no,
             ('Sales Invoice') as type,
@@ -915,7 +916,7 @@ class Products_model extends CORE_Model {
 
             /*Child - Sales Invoice*/
             SELECT 
-            l.loading_date as txn_date,
+            CONCAT(l.loading_date,' ',DATE_FORMAT(l.invoice_time, '%H:%i:%s')) as txn_date,
             si.date_created as date_created,
             si.sales_inv_no as ref_no,
             ('Sales Invoice') as type,
@@ -1040,7 +1041,7 @@ class Products_model extends CORE_Model {
             SELECT posout.* FROM
 
             (SELECT 
-            DATE_FORMAT(pis.start_datetime,'%Y-%m-%d') as txn_date,
+            DATE_FORMAT(pis.start_datetime,'%Y-%m-%d %H:%i:%s') as txn_date,
             DATE_FORMAT(pis.start_datetime,'%Y-%m-%d') as date_created,
             pis.invoice_no as ref_no,
             '(POS) Sales Invoice' as type,
@@ -1081,7 +1082,7 @@ class Products_model extends CORE_Model {
 
             SELECT chldposout.* FROM
             (SELECT 
-            DATE_FORMAT(pis.start_datetime,'%Y-%m-%d') as txn_date,
+            DATE_FORMAT(pis.start_datetime,'%Y-%m-%d %H:%i:%s') as txn_date,
             DATE_FORMAT(pis.start_datetime,'%Y-%m-%d') as date_created,
             pis.invoice_no as ref_no,
             '(POS) Sales Invoice' as type,
@@ -1199,7 +1200,7 @@ class Products_model extends CORE_Model {
             ".($is_parent==1?" WHERE main.parent_in_qty > 0 or main.parent_out_qty > 0 ":"WHERE main.child_in_qty > 0 or main.child_out_qty > 0")."
 
 
-            ORDER BY main.txn_date,main.date_created ASC";
+            ORDER BY main.txn_date ASC";
 
 
 

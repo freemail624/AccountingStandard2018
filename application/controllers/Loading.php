@@ -176,6 +176,8 @@ class Loading extends CORE_Controller
                 $m_loading->driver_name=$this->input->post('driver_name',TRUE);
                 $m_loading->driver_pahinante=$this->input->post('driver_pahinante',TRUE);
                 $m_loading->loading_date=date('Y-m-d',strtotime($this->input->post('loading_date',TRUE)));
+                $m_loading->invoice_time = date('Y-m-d',strtotime($this->input->post('loading_date',TRUE))).' '.date('H:i:s ',strtotime($this->input->post('invoice_time',TRUE)));
+
                 // $m_loading->total_amount=$this->get_numeric_value($this->input->post('grand_total_amount',TRUE));
                 // $m_loading->total_inv_qty=$this->get_numeric_value($this->input->post('grand_total_inv_qty',TRUE));
                 $m_loading->allowance_amount=$this->get_numeric_value($this->input->post('allowance_amount',TRUE));
@@ -359,6 +361,7 @@ class Loading extends CORE_Controller
                 $m_loading->driver_name=$this->input->post('driver_name',TRUE);
                 $m_loading->driver_pahinante=$this->input->post('driver_pahinante',TRUE);
                 $m_loading->loading_date=date('Y-m-d',strtotime($this->input->post('loading_date',TRUE)));
+                $m_loading->invoice_time = date('Y-m-d',strtotime($this->input->post('loading_date',TRUE))).' '.date('H:i:s ',strtotime($this->input->post('invoice_time',TRUE)));
                 // $m_loading->total_amount=$this->get_numeric_value($this->input->post('grand_total_amount',TRUE));
                 // $m_loading->total_inv_qty=$this->get_numeric_value($this->input->post('grand_total_inv_qty',TRUE));
                 $m_loading->allowance_amount=$this->get_numeric_value($this->input->post('allowance_amount',TRUE));

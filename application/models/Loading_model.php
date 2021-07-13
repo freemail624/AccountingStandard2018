@@ -39,6 +39,7 @@ class Loading_model extends CORE_Model{
         $sql="SELECT 
             loading.*,
             DATE_FORMAT(loading.loading_date,'%m/%d/%Y') as loading_date,
+            DATE_FORMAT(loading.invoice_time, '%h:%i %p') as invoice_time,
             agent.agent_name,
             agent.truck_no,
             CONCAT_WS(user.user_fname,user.user_mname,user.user_lname) as loaded_by,

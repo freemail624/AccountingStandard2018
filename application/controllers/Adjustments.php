@@ -246,6 +246,7 @@ class Adjustments extends CORE_Controller
 
                 $m_adjustment->is_returns=TRUE;
                 $m_adjustment->date_adjusted=date('Y-m-d');
+                $m_adjustment->invoice_time = date('Y-m-d H:i:s');
 
                 $m_adjustment->total_discount=$this->get_numeric_value($summary_discount);
                 $m_adjustment->total_before_tax=$this->get_numeric_value($summary_before_tax);
@@ -380,6 +381,7 @@ class Adjustments extends CORE_Controller
                 $m_adjustment->is_returns=$this->get_numeric_value($this->input->post('adjustment_is_return',TRUE));
                 $m_adjustment->is_dr_return=$this->get_numeric_value($this->input->post('adjustment_is_dr_return',TRUE));
                 $m_adjustment->date_adjusted=date('Y-m-d',strtotime($this->input->post('date_adjusted',TRUE)));
+                $m_adjustment->invoice_time = date('Y-m-d',strtotime($this->input->post('date_adjusted',TRUE))).' '.date('H:i:s ',strtotime($this->input->post('invoice_time',TRUE)));
                 $m_adjustment->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                 $m_adjustment->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
                 $m_adjustment->total_tax_amount=$this->get_numeric_value($this->input->post('summary_tax_amount',TRUE));
@@ -469,6 +471,7 @@ class Adjustments extends CORE_Controller
                 $m_adjustment->remarks=$this->input->post('remarks',TRUE);
                 $m_adjustment->adjustment_type=$this->input->post('adjustment_type',TRUE);
                 $m_adjustment->date_adjusted=date('Y-m-d',strtotime($this->input->post('date_adjusted',TRUE)));
+                $m_adjustment->invoice_time = date('Y-m-d',strtotime($this->input->post('date_adjusted',TRUE))).' '.date('H:i:s ',strtotime($this->input->post('invoice_time',TRUE)));
                 $m_adjustment->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                 $m_adjustment->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
                 $m_adjustment->total_tax_amount=$this->get_numeric_value($this->input->post('summary_tax_amount',TRUE));
@@ -605,6 +608,7 @@ class Adjustments extends CORE_Controller
                     ELSE ""
                 END) as inv_no',
                 'DATE_FORMAT(adjustment_info.date_adjusted,"%m/%d/%Y") as date_adjusted',
+                'DATE_FORMAT(adjustment_info.invoice_time, "%h:%i %p") as invoice_time',
                 'departments.department_id',
                 '(CASE 
                     WHEN adjustment_info.is_returns = 1 THEN "Sales Returns" 

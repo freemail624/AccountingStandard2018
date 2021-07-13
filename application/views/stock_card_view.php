@@ -314,9 +314,10 @@ $(document).ready(function(){
                 );
 
                 $.each(response.products_parent, function(index,value){
+
                     $('#tbl_stock #parent').append(
                         '<tr>'+
-                            '<td>'+value.txn_date+'</td>'+
+                            '<td>'+value.txn_date_label+'</td>'+
                             '<td>'+value.ref_no+'</td>'+
                             '<td>'+value.type+'</td>'+
                             '<td>'+value.identifier+'</td>'+

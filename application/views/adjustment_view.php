@@ -19,6 +19,7 @@
     <link type="text/css" href="assets/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet">
     <link type="text/css" href="assets/plugins/datatables/dataTables.themify.css" rel="stylesheet">
     <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/plugins/datapicker/datetimepicker.min.css">
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
     <!--/twitter typehead-->
     <link href="assets/plugins/twittertypehead/twitter.typehead.css" rel="stylesheet">
@@ -268,13 +269,22 @@
                                 <input type="text" name="slip_no" class="form-control" placeholder="ADJ-YYYYMMDD-XXX" readonly>
                             </div>
 
-                              Date Adjusted / Date Returned:<br />
-                                <div class="input-group">
-                                    <input type="text" name="date_adjusted" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Due Date" data-error-msg="Delivery Date is required!" required>
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-calendar"></i>
-                                    </span>
-                                </div>
+                            Date Adjusted / Date Returned:<br />
+                            <div class="input-group">
+                                <input type="text" name="date_adjusted" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Due Date" data-error-msg="Delivery Date is required!" required>
+                                <span class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </span>
+                            </div>
+
+                            Invoice Time:<br />
+                            <div class="input-group">
+                                <input type="text" name="invoice_time" class="time-picker form-control" placeholder="Delivery Time">
+                                <span class="input-group-addon">
+                                         <i class="fa fa-calendar"></i>
+                                </span>
+                            </div>
+
                         </div>
                     </div>
 
@@ -573,6 +583,12 @@
 <?php echo $_switcher_settings; ?>
 <?php echo $_def_js_files; ?>
 
+<!-- Date range use moment.js same as full calendar plugin -->
+<script src="assets/plugins/datapicker/moment.min.js"></script> 
+<!-- Data picker -->
+<script src="assets/plugins/datapicker/bootstrap-datepicker.js"></script>
+<script src="assets/plugins/datapicker/datetimepicker.min.js"></script>
+
 <script src="assets/plugins/spinner/dist/spin.min.js"></script>
 <script src="assets/plugins/spinner/dist/ladda.min.js"></script>
 
@@ -636,6 +652,12 @@ $(document).ready(function(){
         before_tax : 'tr:eq(1) > td:eq(1)',
         adjust_tax_amount : 'tr:eq(2) > td:eq(1)',
         after_tax : 'tr:eq(3) > td:eq(1)'
+    };
+
+    var reInitializeTime = function(){
+        $('.time-picker').datetimepicker({
+            format: 'LT'
+        });
     };
 
     /*var oTableItems={
@@ -1211,6 +1233,11 @@ $(document).ready(function(){
 
             }).always(function(){  });
 
+            reInitializeTime();
+
+            var current_time = "<?php echo date("h:i A"); ?>";
+            $('.time-picker').val(current_time);
+
             showList(false);
             reComputeTotal();
         });
@@ -1359,7 +1386,7 @@ $(document).ready(function(){
                 showNotification({title:"<b style='color:white;'> Error!</b>",stat:"error",msg:"Cannot Edit: Invoice is already Posted in General Journal."});
             }else{
 
-
+            reInitializeTime();
 
             $('#span_invoice_no').html(data.adjustment_code);
 

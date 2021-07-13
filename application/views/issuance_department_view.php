@@ -15,6 +15,7 @@
     <link type="text/css" href="assets/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet">
     <link type="text/css" href="assets/plugins/datatables/dataTables.themify.css" rel="stylesheet">
     <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/plugins/datapicker/datetimepicker.min.css">
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
     <!--/twitter typehead-->
     <link href="assets/plugins/twittertypehead/twitter.typehead.css" rel="stylesheet">
@@ -189,7 +190,15 @@ echo $_side_bar_navigation;
                             <input type="text" name="date_issued" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date issued" data-error-msg="Please set the date this items are issued!" required>
                         </div>
                     </div>
-                    <div class="col-lg-4"></div>
+                    <div class="col-lg-4">
+                        Issued Time : <br/>
+                        <div class="input-group">
+                            <input type="text" name="invoice_time" class="time-picker form-control" placeholder="Delivery Time">
+                            <span class="input-group-addon">
+                                     <i class="fa fa-calendar"></i>
+                            </span>
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-xs-12 col-lg-4">
@@ -382,6 +391,13 @@ echo $_side_bar_navigation;
 </div>
 <?php echo $_switcher_settings; ?>
 <?php echo $_def_js_files; ?>
+
+<!-- Date range use moment.js same as full calendar plugin -->
+<script src="assets/plugins/datapicker/moment.min.js"></script> 
+<!-- Data picker -->
+<script src="assets/plugins/datapicker/bootstrap-datepicker.js"></script>
+<script src="assets/plugins/datapicker/datetimepicker.min.js"></script>
+
 <script src="assets/plugins/spinner/dist/spin.min.js"></script>
 <script src="assets/plugins/spinner/dist/ladda.min.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
@@ -418,6 +434,11 @@ $(document).ready(function(){
     var _line_unit;
     var _cboDepartmentactive;
 
+    var reInitializeTime = function(){
+        $('.time-picker').datetimepicker({
+            format: 'LT'
+        });
+    };
 
     var oTableItems={
         qty : 'td:eq(0)',
@@ -839,6 +860,12 @@ dt_si = $('#tbl_si_list').DataTable({
             $('#cbo_departments').select2('val', $('#cbo_departments').data('default'));
             $('#cbo_departments_to').select2('val', null);
             $('#typeaheadsearch').val('');
+
+            reInitializeTime();
+
+            var current_time = "<?php echo date("h:i A"); ?>";
+            $('.time-picker').val(current_time);
+
             getproduct().done(function(data){
                 products.clear();
                 products.local = data.data;
@@ -969,6 +996,8 @@ dt_si = $('#tbl_si_list').DataTable({
                     reComputeTotal();
                 }
             });
+            
+            reInitializeTime();
             showList(false);
         
         });

@@ -1083,7 +1083,7 @@ function Export_Stock(){
 
             foreach ($products_parent as $parent) {
                                 $i++;
-                                $excel->getActiveSheet()->setCellValue('A'.$i,$parent->txn_date);
+                                $excel->getActiveSheet()->setCellValue('A'.$i,$parent->txn_date_label);
                                 $excel->getActiveSheet()->setCellValue('B'.$i,$parent->ref_no);
                                 $excel->getActiveSheet()->setCellValue('C'.$i,$parent->identifier);
 

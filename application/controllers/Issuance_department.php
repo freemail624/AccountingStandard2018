@@ -146,6 +146,7 @@ class Issuance_department extends CORE_Controller
                 $m_issuance->set('date_created','NOW()'); //treat NOW() as function and not string
                 $m_issuance->remarks=$this->input->post('remarks',TRUE);
                 $m_issuance->date_issued=date('Y-m-d',strtotime($this->input->post('date_issued',TRUE)));
+                $m_issuance->invoice_time = date('Y-m-d',strtotime($this->input->post('date_issued',TRUE))).' '.date('H:i:s ',strtotime($this->input->post('invoice_time',TRUE)));
                 $m_issuance->terms=$this->input->post('terms',TRUE);
                 $m_issuance->from_department_id=$this->input->post('from_department_id',TRUE);
                 $m_issuance->to_department_id=$this->input->post('to_department_id',TRUE);
@@ -223,6 +224,7 @@ class Issuance_department extends CORE_Controller
 
                 $m_issuance->remarks=$this->input->post('remarks',TRUE);
                 $m_issuance->date_issued=date('Y-m-d',strtotime($this->input->post('date_issued',TRUE)));
+                $m_issuance->invoice_time = date('Y-m-d',strtotime($this->input->post('date_issued',TRUE))).' '.date('H:i:s ',strtotime($this->input->post('invoice_time',TRUE)));
                 $m_issuance->from_department_id=$this->input->post('from_department_id',TRUE);
                 $m_issuance->to_department_id=$this->input->post('to_department_id',TRUE);
                 $m_issuance->terms=$this->input->post('terms',TRUE);
@@ -330,6 +332,7 @@ class Issuance_department extends CORE_Controller
                 'issuance_department_info.to_department_id',
                 'issuance_department_info.date_created',
                 'DATE_FORMAT(issuance_department_info.date_issued,"%m/%d/%Y") as date_issued',
+                'DATE_FORMAT(issuance_department_info.invoice_time, "%h:%i %p") as invoice_time',
                 'issuance_department_info.terms',
                 'departments.department_id',
                 'departments.department_name as to_department_name',

@@ -91,7 +91,7 @@
                  </tr>
                 <?php foreach($products_parent as $product){ ?>
                  <tr>
-                     <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo date("M d, Y",strtotime($product->txn_date)); ?></td>
+                     <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo date("M d, Y h:i A",strtotime($product->txn_date)); ?></td>
                      <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo $product->ref_no; ?></td>
                      <td style="border: 1px solid lightgrey;padding: 5px;"><?php echo $product->identifier; ?></td>
 

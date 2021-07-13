@@ -21,6 +21,7 @@
     <link type="text/css" href="assets/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet">
     <link type="text/css" href="assets/plugins/datatables/dataTables.themify.css" rel="stylesheet">
     <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/plugins/datapicker/datetimepicker.min.css">
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
     <!--/twitter typehead-->
     <link href="assets/plugins/twittertypehead/twitter.typehead.css" rel="stylesheet">
@@ -251,8 +252,7 @@
                 <div class="col-sm-2">
                     <label>Invoice Date :</label><br />
                     <div class="input-group">
-
-                        <input type="text" name="date_delivered" id="order_default" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Due Date" data-error-msg="Delivery Date is required!" required>
+                        <input type="text" name="date_delivered" id="order_default" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Invoice Date" data-error-msg="Delivery Date is required!" required>
                          <span class="input-group-addon">
                              <i class="fa fa-calendar"></i>
                         </span>
@@ -260,7 +260,13 @@
                 </div>
 
                 <div class="col-sm-3 col-sm-offset-4">
-
+                    <label>Due Date:</label><br />
+                    <div class="input-group">
+                        <input type="text" name="date_due" id="due_default" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Due Date" data-error-msg="Due Date is required!" required>
+                        <span class="input-group-addon">
+                                 <i class="fa fa-calendar"></i>
+                        </span>
+                    </div>
                 </div>
 
             </div>
@@ -279,9 +285,9 @@
                 </div>
 
                 <div class="col-sm-2">
-                    <label>Due Date:</label><br />
+                    <label>Invoice Time:</label><br />
                     <div class="input-group">
-                        <input type="text" name="date_due" id="due_default" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Due Date" data-error-msg="Due Date is required!" required>
+                        <input type="text" name="invoice_time" class="time-picker form-control" placeholder="Delivery Time">
                         <span class="input-group-addon">
                                  <i class="fa fa-calendar"></i>
                         </span>
@@ -846,6 +852,13 @@
 
 <?php echo $_switcher_settings; ?>
 
+
+<!-- Date range use moment.js same as full calendar plugin -->
+<script src="assets/plugins/datapicker/moment.min.js"></script> 
+<!-- Data picker -->
+<script src="assets/plugins/datapicker/bootstrap-datepicker.js"></script>
+<script src="assets/plugins/datapicker/datetimepicker.min.js"></script>
+
 <script src="assets/plugins/spinner/dist/spin.min.js"></script>
 <script src="assets/plugins/spinner/dist/ladda.min.js"></script>
 
@@ -889,6 +902,12 @@ $(document).ready(function(){
     var _productType; var _cboDepartments; var _defCostType; var products; var _line_unit; var changetxn ;
 
     //_defCostType=0;
+
+    var reInitializeTime = function(){
+        $('.time-picker').datetimepicker({
+            format: 'LT'
+        });
+    };
 
     var oTableItems={
         qty : 'td:eq(0)',
@@ -1358,6 +1377,11 @@ $(document).ready(function(){
             $('#tbl_items tbody').html('');
             $('#order_default').datepicker('setDate', 'today');
             $('#due_default').datepicker('setDate', 'today');
+            reInitializeTime();
+
+            var current_time = "<?php echo date("h:i A"); ?>";
+            $('.time-picker').val(current_time);
+
             $('#typeaheadsearch').val('');
             $('textarea[name="remarks"]').val($('textarea[name="remarks"]').data('default'));
             getproduct().done(function(data){
@@ -1485,6 +1509,8 @@ $(document).ready(function(){
                 }
 
             });
+
+            reInitializeTime();
         });
 
 
@@ -1573,6 +1599,7 @@ $(document).ready(function(){
             _selectedID=data.dr_invoice_id;
             _is_journal_posted=data.is_journal_posted;
             _is_finalized=data.is_finalized;
+            reInitializeTime();
 
             if(_is_journal_posted > 0){
                 showNotification({title:"Error!",stat:"error",msg:"Cannot Edit: Invoice is already Posted in Purchase Journal."});
@@ -1612,7 +1639,6 @@ $(document).ready(function(){
                         }
                     });
                 });
-
 
                 resetSummary();
 
@@ -1705,6 +1731,8 @@ $(document).ready(function(){
 
 
                 });
+
+                
                 showList(false);
             }
         });
@@ -2001,7 +2029,7 @@ $(document).ready(function(){
        return $.ajax({
            "dataType":"json",
            "type":"POST",
-           "url":"products/transaction/parent-list",
+           "url":"products/transaction/sales-list",
            "beforeSend": function(){
                 countproducts = products.local.length;
                 if(countproducts > 100){

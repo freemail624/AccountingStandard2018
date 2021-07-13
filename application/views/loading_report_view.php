@@ -15,6 +15,7 @@
     <link type="text/css" href="assets/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet">
     <link type="text/css" href="assets/plugins/datatables/dataTables.themify.css" rel="stylesheet">
     <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/plugins/datapicker/datetimepicker.min.css">
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
     <!--/twitter typehead-->
     <link href="assets/plugins/twittertypehead/twitter.typehead.css" rel="stylesheet">
@@ -269,10 +270,22 @@
                             </div>
                         </div>
                         <div class="col-sm-2">
+                            <label>Loading Time : </label> <br/>
+                            <div class="input-group">
+                                <input type="text" name="invoice_time" class="time-picker form-control" placeholder="Delivery Time">
+                                <span class="input-group-addon">
+                                         <i class="fa fa-calendar"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2 col-sm-offset-10">
                             <label> Daily Allowance :</label><br>
                             <input type="text" class="numeric form-control" id="allowance_amount" name="allowance_amount" placeholder="Daily Allowance" data-error-msg="Daily Allowance is required." data-default="<?php echo $accounts[0]->daily_allowance; ?>">
                         </div>
                     </div>
+                    
                     <div class="row" id="transfer-details-panel" style="display: none;">
                         <div class="col-sm-4">
                             <input type="text" class="hidden" name="transfer_id" id="transfer_id">
@@ -536,6 +549,12 @@
 <?php echo $_switcher_settings; ?>
 <?php echo $_def_js_files; ?>
 
+<!-- Date range use moment.js same as full calendar plugin -->
+<script src="assets/plugins/datapicker/moment.min.js"></script> 
+<!-- Data picker -->
+<script src="assets/plugins/datapicker/bootstrap-datepicker.js"></script>
+<script src="assets/plugins/datapicker/datetimepicker.min.js"></script>
+
 <script src="assets/plugins/spinner/dist/spin.min.js"></script>
 <script src="assets/plugins/spinner/dist/ladda.min.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
@@ -564,6 +583,12 @@ $(document).ready(function(){
     var dt_si; var products; var changetxn; var invoice_id;
     var prodstat; var is_switch; var _cboLoadingNo;
     var _line_unit; var _cboAgents; var _cboAgentsTransfer;
+
+    var reInitializeTime = function(){
+        $('.time-picker').datetimepicker({
+            format: 'LT'
+        });
+    };
 
     var oTableItems={
         invoice_id : 'td:eq(0)',
@@ -1062,6 +1087,12 @@ $(document).ready(function(){
             $('#cbo_agents').select2('open');
             $('#tbl_items > tbody').html('');
             $('#invoice_default').datepicker('setDate', 'today');
+
+            reInitializeTime();
+
+            var current_time = "<?php echo date("h:i A"); ?>";
+            $('.time-picker').val(current_time);
+
             reComputeTotal(); //this is to make sure, display summary are recomputed as 0
         });
         $('#tbl_si_list > tbody').on('click','button[name="accept_si"]',function(){
@@ -1165,6 +1196,7 @@ $(document).ready(function(){
                 }
             });
 
+            reInitializeTime();
             showList(false);
 
         });

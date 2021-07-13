@@ -394,6 +394,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
         purchase_order.po_no,
         DATE_FORMAT(di.date_due,'%m/%d/%Y')as date_due,
         DATE_FORMAT(di.date_delivered,'%m/%d/%Y')as date_delivered,
+        DATE_FORMAT(di.invoice_time, '%h:%i %p') as invoice_time,
 
         CONCAT_WS(' ',CAST(di.terms as CHAR(250)) ,di.duration) as term_description
         FROM

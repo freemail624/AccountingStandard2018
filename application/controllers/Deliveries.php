@@ -202,6 +202,7 @@ class Deliveries extends CORE_Controller
                 $m_delivery_invoice->remarks = $this->input->post('remarks',TRUE);
                 $m_delivery_invoice->tax_type_id = $this->input->post('tax_type',TRUE);
                 $m_delivery_invoice->date_delivered = date('Y-m-d',strtotime($this->input->post('date_delivered',TRUE)));
+                $m_delivery_invoice->invoice_time = date('Y-m-d',strtotime($this->input->post('date_delivered',TRUE))).' '.date('H:i:s ',strtotime($this->input->post('invoice_time',TRUE)));
                 $m_delivery_invoice->date_due = date('Y-m-d',strtotime($this->input->post('date_due',TRUE)));
                 $m_delivery_invoice->posted_by_user = $this->session->user_id;
                 $m_delivery_invoice->total_discount = $this->get_numeric_value($this->input->post('summary_discount',TRUE));
@@ -337,6 +338,7 @@ class Deliveries extends CORE_Controller
                 $m_delivery_invoice->remarks=$this->input->post('remarks',TRUE);
                 $m_delivery_invoice->tax_type_id=$this->input->post('tax_type',TRUE);
                 $m_delivery_invoice->date_delivered=date('Y-m-d',strtotime($this->input->post('date_delivered',TRUE)));
+                $m_delivery_invoice->invoice_time = date('Y-m-d',strtotime($this->input->post('date_delivered',TRUE))).' '.date('H:i:s ',strtotime($this->input->post('invoice_time',TRUE)));
                 $m_delivery_invoice->date_due=date('Y-m-d',strtotime($this->input->post('date_due',TRUE)));
                 $m_delivery_invoice->modified_by_user=$this->session->user_id;
                 $m_delivery_invoice->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
@@ -457,7 +459,7 @@ class Deliveries extends CORE_Controller
                     
                     $product_id = $dr_products[$i]->product_id;
                     $as_of_date = date('Y-m-d');
-                    $product=$m_products->product_list(1,$as_of_date,$product_id,null,null,null,null,$filter_departments,1,null,null,1);
+                    $product=$m_products->product_list(1,$as_of_date,$product_id,null,null,null,null,$filter_departments,1,null,null);
                     $on_hand_stock = $product[0]->total_qty_bulk;
                     $purchase_cost = $product[0]->purchase_cost;
 
