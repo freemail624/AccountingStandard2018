@@ -13,8 +13,10 @@ class Cash_flow_items_model extends CORE_Model {
 			    main.*,
 			    (CASE
 					WHEN main.cash_flow_ref_id = 1 THEN (main.previous)
-			        WHEN main.cash_flow_ref_id = 3 THEN (main.current - main.previous)
+			        WHEN main.cash_flow_ref_id = 3 THEN (main.previous - main.current)
 			        WHEN main.cash_flow_ref_id = 4 THEN (main.previous - main.current)
+			        WHEN main.cash_flow_ref_id = 6 THEN (main.previous - main.current)
+			        WHEN main.cash_flow_ref_id = 7 THEN (main.current - main.previous)
 			        ELSE main.current
 			    END) AS total_amount
 			FROM
@@ -26,6 +28,7 @@ class Cash_flow_items_model extends CORE_Model {
 			                    (CASE
 			                    	WHEN cfi.cash_flow_ref_id = 5 THEN (SUM(ja.cr_amount) - SUM(ja.dr_amount))
 			                    	WHEN cfi.cash_flow_ref_id = 6 THEN (SUM(ja.cr_amount) - SUM(ja.dr_amount))
+        							WHEN cfi.cash_flow_ref_id = 7 THEN (SUM(ja.cr_amount) - SUM(ja.dr_amount))
 			                    	ELSE 
 			                    		(SUM(ja.dr_amount) - SUM(ja.cr_amount))
 			                    END) AS amount
@@ -35,13 +38,18 @@ class Cash_flow_items_model extends CORE_Model {
 			                WHERE
 			                    ji.is_deleted = FALSE
 			                        AND ji.is_active = TRUE
+			                        AND ja.excluded_cashflow = FALSE
 			                        AND ji.date_txn < '$start_date'
 			                        AND ja.account_id = cfi.account_id
 			                GROUP BY ja.account_id), 0) AS previous,
-			            COALESCE((SELECT 
+			            COALESCE(
+
+			            	(IF ((cfi.cash_flow_ref_id=2 OR cfi.cash_flow_ref_id=5), 
+			            	(SELECT 
 			                    (CASE
 			                    	WHEN cfi.cash_flow_ref_id = 5 THEN (SUM(ja.cr_amount) - SUM(ja.dr_amount))
 			                    	WHEN cfi.cash_flow_ref_id = 6 THEN (SUM(ja.cr_amount) - SUM(ja.dr_amount))
+        							WHEN cfi.cash_flow_ref_id = 7 THEN (SUM(ja.cr_amount) - SUM(ja.dr_amount))
 			                    	ELSE 
 			                    		(SUM(ja.dr_amount) - SUM(ja.cr_amount))
 			                    END) AS amount
@@ -51,9 +59,30 @@ class Cash_flow_items_model extends CORE_Model {
 			                WHERE
 			                    ji.is_deleted = FALSE
 			                        AND ji.is_active = TRUE
+			                        AND ja.excluded_cashflow = FALSE
 			                        AND ji.date_txn BETWEEN '$start_date' AND '$end_date'
 			                        AND ja.account_id = cfi.account_id
-			                GROUP BY ja.account_id), 0) AS current
+			                GROUP BY ja.account_id),
+
+			            	(SELECT 
+			                    (CASE
+			                    	WHEN cfi.cash_flow_ref_id = 5 THEN (SUM(ja.cr_amount) - SUM(ja.dr_amount))
+			                    	WHEN cfi.cash_flow_ref_id = 6 THEN (SUM(ja.cr_amount) - SUM(ja.dr_amount))
+        							WHEN cfi.cash_flow_ref_id = 7 THEN (SUM(ja.cr_amount) - SUM(ja.dr_amount))
+			                    	ELSE 
+			                    		(SUM(ja.dr_amount) - SUM(ja.cr_amount))
+			                    END) AS amount
+			                FROM
+			                    journal_info ji
+			                LEFT JOIN journal_accounts ja ON ja.journal_id = ji.journal_id
+			                WHERE
+			                    ji.is_deleted = FALSE
+			                        AND ji.is_active = TRUE
+			                        AND ja.excluded_cashflow = FALSE
+			                        AND ji.date_txn <= '$end_date'
+			                        AND ja.account_id = cfi.account_id
+			                GROUP BY ja.account_id)
+			            	)), 0) AS current
 			    FROM
 			        cash_flow_items cfi
 			    LEFT JOIN account_titles at ON at.account_id = cfi.account_id) AS main

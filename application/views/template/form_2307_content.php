@@ -112,7 +112,7 @@
 <span style="top: 586px; left: 520px;font-size: 9pt;text-align: center;width: 85px;max-width: 85px; text-align: right;"><?php echo number_format($total_gross_amount,2);?></span>
 <span style="top: 586px; left: 610px;font-size: 9pt;text-align: center;width: 102px;max-width: 102px; text-align: right;"><?php echo number_format($total_deducted_amount,2); ?></span>
 
-<span style="top: 960px; left: 25px;width: 680px;max-width:680px;font-size: 10pt;"><center><?php echo $particular->particular; ?></center></span>
+<span style="top: 865px; left: 25px;width: 680px;max-width:680px;font-size: 10pt;"><center><?php echo $particular->particular; ?></center></span>
 
 <!-- <img src="../../assets/img/bir_forms/form_2307_2nd_page.png" style="top: 1050px; left: 0px; width: 100%;position: absolute;z-index: 100;"> -->
 <script type="text/javascript">

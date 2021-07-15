@@ -68,6 +68,7 @@ class Cash_flow extends CORE_Controller
                 $operating_liabilities = $m_cash_flow->get_cash_flow(4,$start_date,$end_date);
                 $non_current_assets = $m_cash_flow->get_cash_flow(5,$start_date,$end_date);
                 $non_current_liabilities = $m_cash_flow->get_cash_flow(6,$start_date,$end_date);
+                $equity_adjustments = $m_cash_flow->get_cash_flow(7,$start_date,$end_date);
 
                 $total_income = 0;
                 $total_expense = 0;
@@ -212,7 +213,28 @@ class Cash_flow extends CORE_Controller
                     $i++;
                 }
 
-                $last_row_operating = count($operating_assets) + count($operating_liabilities) + $lastrow_non_cash;
+
+
+                foreach($equity_adjustments as $eadj){
+
+                    if($eadj->parent_account_id > 0){
+                        $excel->getActiveSheet()->setCellValue('A'.$i,'                     '.$eadj->account_title);
+                    }else{
+                        $excel->getActiveSheet()->setCellValue('A'.$i,'              '.$eadj->account_title);
+                    }
+
+                    $excel->getActiveSheet()->setCellValue('B'.$i,$eadj->total_amount)
+                            ->getStyle('B'.$i)
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                    $excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()->setFormatCode('_(* #,##0.00_);_(* (#,##0.00);_(* "-"??_);_(@_)'); 
+
+                    $i++;
+                }
+
+
+                $last_row_operating = count($operating_assets) + count($operating_liabilities) + count($equity_adjustments) + $lastrow_non_cash;
 
                 $excel->getActiveSheet()->setCellValue('D'.$last_row_operating, "=SUM(B".$first_row_operating.":B".$last_row_operating.")");
                 $excel->getActiveSheet()->getStyle('D'.$last_row_operating)->getNumberFormat()->setFormatCode('_(* #,##0.00_);_(* (#,##0.00);_(* "-"??_);_(@_)'); 

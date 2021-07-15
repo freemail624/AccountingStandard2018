@@ -85,7 +85,7 @@ class General_journal extends CORE_Controller
                 $data['accounts']=$m_accounts->get_list(array('is_deleted'=>FALSE),null, null,'trim(account_title) ASC');
                 $data['entries']=$m_journal_accounts->get_list('journal_accounts.journal_id='.$journal_id);
                 $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'department_name ASC');
-                $this->load->view('template/journal_entries', $data);
+                $this->load->view('template/journal_general_entries.php', $data);
                 break;
             case 'create' :
                 $m_trans=$this->Trans_model;
@@ -111,7 +111,6 @@ class General_journal extends CORE_Controller
                     $m_journal->supplier_id=$particular[1];
                 }   
 
-                $m_journal->is_cashflow=$this->get_numeric_value($this->input->post('is_cashflow',TRUE));
                 $m_journal->department_id=$this->input->post('department_id',TRUE);
                 $m_journal->remarks=$this->input->post('remarks',TRUE);
                 $m_journal->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
@@ -128,6 +127,7 @@ class General_journal extends CORE_Controller
                 $dr_amounts=$this->input->post('dr_amount',TRUE);
                 $cr_amounts=$this->input->post('cr_amount',TRUE);
                 $department_id_line=$this->input->post('department_id_line',TRUE);
+                $excluded_cashflow = $this->input->post('excluded_cashflow',TRUE);
 
                 for($i=0;$i<=count($accounts)-1;$i++){
                     $m_journal_accounts->journal_id=$journal_id;
@@ -135,7 +135,8 @@ class General_journal extends CORE_Controller
                     $m_journal_accounts->memo=$memos[$i];
                     $m_journal_accounts->dr_amount=$this->get_numeric_value($dr_amounts[$i]);
                     $m_journal_accounts->cr_amount=$this->get_numeric_value($cr_amounts[$i]);
-                    $m_journal_accounts->department_id=$this->get_numeric_value($department_id_line[$i]); 
+                    $m_journal_accounts->department_id=$this->get_numeric_value($department_id_line[$i]);
+                    $m_journal_accounts->excluded_cashflow=$this->get_numeric_value($excluded_cashflow[$i]); 
                     $m_journal_accounts->save();
                 }
 
@@ -242,7 +243,6 @@ class General_journal extends CORE_Controller
                     $m_journal->supplier_id=$particular[1];
                 }
 
-                $m_journal->is_cashflow=$this->get_numeric_value($this->input->post('is_cashflow',TRUE));
                 $m_journal->department_id=$this->input->post('department_id',TRUE);
                 $m_journal->remarks=$this->input->post('remarks',TRUE);
                 $m_journal->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
@@ -259,6 +259,7 @@ class General_journal extends CORE_Controller
                 $dr_amounts=$this->input->post('dr_amount',TRUE);
                 $cr_amounts=$this->input->post('cr_amount',TRUE);
                 $department_id_line=$this->input->post('department_id_line',TRUE);
+                $excluded_cashflow = $this->input->post('excluded_cashflow',TRUE);
                     
                 $m_journal_accounts->delete_via_fk($journal_id);
 
@@ -268,7 +269,8 @@ class General_journal extends CORE_Controller
                     $m_journal_accounts->memo=$memos[$i];
                     $m_journal_accounts->dr_amount=$this->get_numeric_value($dr_amounts[$i]);
                     $m_journal_accounts->cr_amount=$this->get_numeric_value($cr_amounts[$i]);
-                    $m_journal_accounts->department_id=$this->get_numeric_value($department_id_line[$i]); 
+                    $m_journal_accounts->department_id=$this->get_numeric_value($department_id_line[$i]);
+                    $m_journal_accounts->excluded_cashflow=$this->get_numeric_value($excluded_cashflow[$i]); 
                     $m_journal_accounts->save();
                 }
 
@@ -439,7 +441,6 @@ class General_journal extends CORE_Controller
                 'journal_info.journal_id',
                 'journal_info.txn_no',
                 'journal_info.department_id',
-                'journal_info.is_cashflow',
                 'departments.department_name',
                 'DATE_FORMAT(journal_info.date_txn,"%m/%d/%Y")as date_txn',
                 'journal_info.is_active',

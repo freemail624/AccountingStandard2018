@@ -164,7 +164,7 @@
                 </div>
             </div>
 
-        <div class="panel panel-default hidden" id="panel_tbl_adjustment_review" style="margin-top: 20px;">
+            <div class="panel panel-default hidden" id="panel_tbl_adjustment_review" style="margin-top: 20px;">
                 <div class="panel-body table-responsive">
                     <h2 class="h2-panel-heading">Review General Journal (Adjustments)</h2><hr>
                     <div class="row-panel">
@@ -280,14 +280,8 @@
               <!--    <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div> -->
                             <h2 class="h2-panel-heading"> General Journal</h2><hr />
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <button id="btn_browse_recurring" class="btn btn-primary" style="margin-bottom: 10px; text-transform: capitalize;"><i class="fa fa-folder-open-o"></i> Browse Recurring Template</button>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div style="float: right;">
-                                            <input type="checkbox" name="is_cashflow" id="is_cashflow"> 
-                                            <label for="is_cashflow" style="margin-left: 5px;">Included in Cash Flow?</label>
-                                        </div>
                                     </div>
                                 </div>
                                 <form id="frm_journal" role="form" class="form-horizontal">
@@ -351,12 +345,13 @@
                                         <table id="tbl_entries" class="table table-striped">
                                             <thead class="">
                                             <tr>
-                                                <th style="width: 30%;">Account</th>
+                                                <th style="width: 25%;">Account</th>
                                                 <th style="width: 15%;">Memo</th>
                                                 <th style="width: 15%; text-align: right;">Dr</th>
                                                 <th style="width: 15%; text-align: right;">Cr</th>
                                                 <th style="width: 15%;">Department</th>
                                                 <th style="width: 10%;">Action</th>
+                                                <th style="width: 5%;">Excluded Cashflow</th>
                                             </tr>
                                             </thead>
  
@@ -384,6 +379,9 @@
                                                     <button type="button" class="btn btn-default add_account"><i class="fa fa-plus-circle" style="color: green;"></i></button>
                                                     <button type="button" class="btn btn-default remove_account"><i class="fa fa-times-circle" style="color: red;"></i></button>
                                                 </td>
+                                                <td align="center">
+                                                    <input type="checkbox" class="excluded_cashflow">
+                                                </td>
                                             </tr>
 
                                             <tr>
@@ -409,13 +407,16 @@
                                                     <button type="button" class="btn btn-default add_account"><i class="fa fa-plus-circle" style="color: green;"></i></button>
                                                     <button type="button" class="btn btn-default remove_account"><i class="fa fa-times-circle" style="color: red;"></i></button>
                                                 </td>
+                                                <td align="center">
+                                                    <input type="checkbox" class="excluded_cashflow">
+                                                </td>
                                             </tr>
 
                                             </tbody>
 
                                             <tfoot>
                                             <tr>
-                                                <td colspan="2" align="right"><strong>Total</strong></td>
+                                                <td colspan="3" align="right"><strong>Total</strong></td>
                                                 <td align="right"><strong>0.00</strong></td>
                                                 <td align="right"><strong>0.00</strong></td>
                                                 <td></td>
@@ -472,6 +473,9 @@
                         <td>
                             <button type="button" class="btn btn-default add_account"><i class="fa fa-plus-circle" style="color: green;"></i></button>
                             <button type="button" class="btn btn-default remove_account"><i class="fa fa-times-circle" style="color: red;"></i></button>
+                        </td>
+                        <td align="center">
+                            <input type="checkbox" class="excluded_cashflow">
                         </td>
                     </tr>
                 </table>
@@ -1591,6 +1595,7 @@ $(document).ready(function(){
             _txnMode="new";
             reInitializeDropDownAccounts($('#tbl_entries'),true);
             clearFields($('#frm_journal'));
+            $('input[name="excluded_cashflow[]"]').prop('checked', false);
             _cboDepartments.select2('val',null);
             _cboParticulars.select2('val',null);
             $('#div_check').show();
@@ -1601,7 +1606,6 @@ $(document).ready(function(){
             $('.dept').val(0); 
             $('#tbl_entries > tfoot tr').find(oTFSummary.dr).html('<b>0.00</b>');
             $('#tbl_entries > tfoot tr').find(oTFSummary.cr).html('<b>0.00</b>');
-            $('#is_cashflow').prop('checked', true);
 
             showList(false);
             //$('#modal_journal_entry').modal('show');
@@ -1735,7 +1739,6 @@ $(document).ready(function(){
 
            _cboParticulars.select2('val',data.particular_id);
            _cboDepartments.select2('val',data.department_id);
-           $('#is_cashflow').prop('checked', (data.is_cashflow == 1 ? true : false));
 
             $.ajax({
                 url: 'General_journal/transaction/get-entries?id=' + data.journal_id,
@@ -2102,7 +2105,10 @@ $(document).ready(function(){
 
     var createJournal=function(){
         var _data=$('#frm_journal').serializeArray();
-        _data.push({name : "is_cashflow" ,value : $('#is_cashflow').is(':checked') ? 1 : 0 });
+
+        $('#tbl_entries > tbody > tr').find('.excluded_cashflow').each(function(){
+            _data.push({name : "excluded_cashflow[]" ,value : $(this).is(":checked") == true ? 1 : 0 });
+        });
 
         return $.ajax({
             "dataType":"json",
@@ -2142,7 +2148,10 @@ $(document).ready(function(){
 
     var updateJournal=function(){
         var _data=$('#frm_journal').serializeArray();
-        _data.push({name : "is_cashflow" ,value : $('#is_cashflow').is(':checked') ? 1 : 0 });
+
+        $('#tbl_entries > tbody > tr').find('.excluded_cashflow').each(function(){
+            _data.push({name : "excluded_cashflow[]" ,value : $(this).is(":checked") == true ? 1 : 0 });
+        });
 
         return $.ajax({
             "dataType":"json",
