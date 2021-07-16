@@ -52,7 +52,7 @@
 
         <tr>
             <td valign="top" style="width: 30px;max-width: 30px;padding-bottom: 5px;" align="center"><?php echo $item->po_qty * 1; ?></td>
-            <td valign="top" style="width: 40px;max-width: 40px;padding-bottom: 5px;text-align: center;"><?php echo $item->unit_name; ?></td>
+            <td valign="top" style="width: 40px;max-width: 40px;padding-bottom: 5px;text-align: center;text-transform: uppercase;"><?php echo $item->unit_name; ?></td>
             <td valign="top" style="width: 285px;max-width: 285px;padding-bottom: 5px;text-align: left;padding-left: 10px;"><?php echo $item->product_desc; ?></td>
             <td valign="top" style="width: 75px;max-width: 75px;padding-bottom: 5px;text-align: right;padding-right: 18px;">
                 <?php echo number_format($item->po_line_total_after_global,2); ?>
