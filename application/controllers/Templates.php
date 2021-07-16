@@ -113,6 +113,9 @@ class Templates extends CORE_Controller {
         $this->load->model('Repair_order_item_model');
         $this->load->model('Vehicle_services_model');
 
+        $this->load->model('Repair_order_status_model');
+        $this->load->model('Advisor_model');
+
         $this->load->library('M_pdf');
         $this->load->library('excel');
         $this->load->model('Email_settings_model');
@@ -1130,7 +1133,158 @@ class Templates extends CORE_Controller {
 
                 break;
 
-            case 'sales-invoice': //delivery invoice
+                case 'repair-order-list':
+                    $m_order=$this->Repair_order_model;
+                    $m_company_info=$this->Company_model;
+                    $m_status=$this->Repair_order_status_model;
+                    $m_advisor=$this->Advisor_model;
+
+                    $data['company_info']=$m_company_info->get_list()[0];
+
+                    $tsd =  $this->input->get('tsd', TRUE);
+                    $ted = $this->input->get('ted', TRUE);
+                    $start_date = $tsd == null ? null :  date('Y-m-d',strtotime($tsd));
+                    $end_date = $ted == null ? null :  date('Y-m-d',strtotime($ted));
+                    $status = $this->input->get('status', TRUE) ? $this->input->get('status', TRUE) : 0;
+                    $advisor_id = $this->input->get('advisor_id', TRUE) ? $this->input->get('advisor_id', TRUE) : 0;
+
+                    $data['date_from'] = $tsd;
+                    $data['date_to'] = $ted;
+                    $data['status'] = $status == 0 ? 'ALL' : $m_status->get_list(array('id'=>$this->get_numeric_value($status)))[0]->name;
+                    $data['advisor'] = $advisor_id == 0 ? 'ALL' :$m_advisor->get_list(array('advisor_id'=>$this->get_numeric_value($advisor_id)),
+                    '*, CONCAT(advisor_fname," ", advisor_lname) AS fullname')[0]->fullname;
+
+                    $data['repair_orders']=$m_order->get_repair_order(
+                        null,
+                        $start_date,
+                        $end_date,
+                        null,
+                        null,
+                        null,
+                        'repair_order_id',
+                        'DESC',
+                        $status,
+                        $advisor_id
+                    ); 
+
+                    $type=$this->input->get('type',TRUE);
+                    if($type=='pdf'){;
+                        // $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                        $pdf = $this->m_pdf->load("A4-L"); //pass the instance of the mpdf class
+                        $content=$this->load->view('template/repair_order_list',$data,TRUE); //load the template
+                        //$pdf->setFooter('{PAGENO}');
+                        $pdf->WriteHTML($content);
+                        //download it.
+                        $pdf->Output();
+                    }
+                    if($type=='excel'){;
+                        $excel=$this->excel;
+
+                        $excel->setActiveSheetIndex(0);
+
+                        $excel->getActiveSheet()->getColumnDimensionByColumn('A1:H1')->setWidth('30');
+                        $excel->getActiveSheet()->getColumnDimensionByColumn('A2:H2')->setWidth('50');
+                        $excel->getActiveSheet()->getColumnDimensionByColumn('A3')->setWidth('30');
+
+                        //name the worksheet
+
+                        $excel->getActiveSheet()
+                                ->getStyle('A1:H1')
+                                ->getAlignment()
+                                ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER); 
+
+                        $excel->getActiveSheet()
+                                ->getStyle('A2:H2')
+                                ->getAlignment()
+                                ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER); 
+
+                        $excel->getActiveSheet()
+                                ->getStyle('A3:H3')
+                                ->getAlignment()
+                                ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER); 
+
+                        $excel->getActiveSheet()->setTitle("Repair Order List");
+                        $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
+                        $excel->getActiveSheet()->mergeCells('A1:H1');
+                        $excel->getActiveSheet()->mergeCells('A2:H2');
+                        $excel->getActiveSheet()->mergeCells('A3:H3');
+                        $excel->getActiveSheet()->setCellValue('A1',$data['company_info']->company_name)
+                                                ->setCellValue('A2',$data['company_info'] ->company_address)
+                                                ->setCellValue('A3',$data['company_info']->landline.'/'.$data['company_info']->mobile_no); 
+
+
+                        $excel->getActiveSheet()
+                                ->getStyle('A5:H5')
+                                ->getAlignment()
+                                ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER); 
+
+                        $excel->getActiveSheet()->getColumnDimensionByColumn('A5:D5')->setWidth('40');                                          
+                        $excel->getActiveSheet()->mergeCells('A5:H5');
+                        $excel->getActiveSheet()->setCellValue('A5','REPAIR ORDER LIST ('.$data['date_from'].' - '.$data['date_to']);
+                        $excel->getActiveSheet()->mergeCells('A6:H6');
+                        $excel->getActiveSheet()->setCellValue('A6','ADVISOR : '.$data['advisor']);
+                        $excel->getActiveSheet()->mergeCells('A7:H7');
+                        $excel->getActiveSheet()->setCellValue('A7','STATUS : '.$data['status']);
+
+                        $excel->getActiveSheet()->setCellValue('A9','CONTROL #')
+                                                ->getStyle('A9')->getFont()->setBold(TRUE);
+                        $excel->getActiveSheet()->setCellValue('B9','DOCUMENT DATE')
+                                                ->getStyle('B9')->getFont()->setBold(TRUE);
+                        $excel->getActiveSheet()->setCellValue('C9','CUSTOMER NO')
+                                                ->getStyle('C9')->getFont()->setBold(TRUE);
+                        $excel->getActiveSheet()->setCellValue('D9','CUSTOMER')
+                                                ->getStyle('D9')->getFont()->setBold(TRUE);
+                        $excel->getActiveSheet()->setCellValue('E9','PLATE NO')
+                                                ->getStyle('E9')->getFont()->setBold(TRUE);    
+                        $excel->getActiveSheet()->setCellValue('F9','DATE TIME PROMISED')
+                                                ->getStyle('F9')->getFont()->setBold(TRUE);
+                        $excel->getActiveSheet()->setCellValue('G9','ADVISOR')
+                                                ->getStyle('G9')->getFont()->setBold(TRUE);
+                        $excel->getActiveSheet()->setCellValue('H9','STATUS')
+                                                ->getStyle('H9')->getFont()->setBold(TRUE);
+
+                        $excel->getActiveSheet()->getColumnDimension('A')->setWidth('20');
+                        $excel->getActiveSheet()->getColumnDimension('B')->setWidth('20');
+                        $excel->getActiveSheet()->getColumnDimension('C')->setWidth('15');
+                        $excel->getActiveSheet()->getColumnDimension('D')->setWidth('25');
+                        $excel->getActiveSheet()->getColumnDimension('E')->setWidth('15');
+                        $excel->getActiveSheet()->getColumnDimension('F')->setWidth('30');
+                        $excel->getActiveSheet()->getColumnDimension('G')->setWidth('20');
+                        $excel->getActiveSheet()->getColumnDimension('H')->setWidth('20');
+
+                        $i=10;
+                        foreach($data['repair_orders'] as $ro){
+                            $excel->getActiveSheet()->setCellValue('A'.$i,$ro->repair_order_no);
+                            $excel->getActiveSheet()->setCellValue('B'.$i,$ro->document_date);
+                            $excel->getActiveSheet()->setCellValue('C'.$i,$ro->customer_no);
+                            $excel->getActiveSheet()->setCellValue('D'.$i,$ro->customer_name);
+                            $excel->getActiveSheet()->setCellValue('E'.$i,$ro->crp_no);
+                            $excel->getActiveSheet()->setCellValue('F'.$i,$ro->date_time_promised);
+                            $excel->getActiveSheet()->setCellValue('G'.$i,$ro->advisor_fullname);
+                            $excel->getActiveSheet()->setCellValue('H'.$i,$ro->status);
+
+                            $i++;
+                        }
+
+
+                        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                        header('Content-Disposition: attachment;filename='."Repair Order List.xlsx".'');
+                        header('Cache-Control: max-age=0');
+                        // If you're serving to IE 9, then the following may be needed
+                        header('Cache-Control: max-age=1');
+
+                        // If you're serving to IE over SSL, then the following may be needed
+                        header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+                        header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+                        header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+                        header ('Pragma: public'); // HTTP/1.0
+
+                        $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+                        $objWriter->save('php://output');   
+                    }
+                break;
+
+                case 'sales-invoice': //delivery invoice
                 $m_sales_invoice=$this->Sales_invoice_model;
                 $m_sales_invoice_items=$this->Sales_invoice_item_model;
                 $m_company_info=$this->Company_model;

@@ -61,6 +61,7 @@
                                 <li class="<?php echo (in_array('13-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Service_invoice">Service Invoice</a></li>
                                 <li class="<?php echo (in_array('13-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Service_journal">Service Journal</a></li>
                                 <li class="<?php echo (in_array('3-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Receivable_payments">Collection Entry</a></li>
+                                <li class="<?php echo (in_array('3-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Service_report">Service Report</a></li>
 <!--                                 <li class="<?php //echo (in_array('13-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Service_unit">Service Unit</a></li>
                                 <li class="<?php //echo (in_array('13-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Services">Service Management</a></li> -->
                             </ul>

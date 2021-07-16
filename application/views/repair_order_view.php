@@ -205,6 +205,17 @@
             margin: 0;
         }
 
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .header-buttons {
+            margin-top: auto;
+            padding-right: 10px;
+        }
+
     </style>
     <link type="text/css" href="assets/css/light-theme.css" rel="stylesheet">
 </head>
@@ -229,7 +240,17 @@
     <div class="panel panel-default">
         <div class="panel-body table-responsive" style="width: 100%;overflow-x: hidden;">
         <div class="row panel-row">
-        <h2 class="h2-panel-heading">Repair Order</h2><hr>
+        <div class="header">
+            <h2 class="header-title h2-panel-heading" style="margin-bottom: 0px">Repair Order</h2>
+            <div class="header-buttons">
+                <button class="btn btn-primary" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Print" >
+                    <i class="fa fa-print"></i> Print Report
+                </button>
+                <button class="btn btn-green" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Export" >
+                    <i class="fa fa-file-excel-o"></i> Export
+                </button>
+            </div>
+        </div><hr>
             <div class="row"> 
                 <div class="col-lg-2"><br> 
                 <button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Record Repair Order" ><i class="fa fa-plus"></i> Record Repair Order</button> 
@@ -326,7 +347,7 @@
                                 </div>
                                 <div class="col-md-8">
                                     <label><b class="required">*</b> Customer :</label> <br />
-                                    <select name="customer_id" id="cbo_customers" data-error-msg="Customer is required." required>
+                                    <select class="form-control" name="customer_id" id="cbo_customers" data-error-msg="Customer is required." required>
                                         <option value="0">[ Create New Customer ]</option>
                                     </select>
                                 </div>
@@ -2407,7 +2428,7 @@ $(document).ready(function(){
                 order_line_total_price : temp_order_price,
                 order_non_tax_amount: net_vat,
                 order_tax_amount:vat_input,
-                order_line_total_after_global:0.00,
+                order_line_total_after_global:temp_order_price,
                 bulk_price: bulk_price,
                 retail_price: retail_price,
                 is_bulk: suggestion.is_bulk,
@@ -3287,7 +3308,7 @@ $(document).ready(function(){
                             order_line_total_price : value.order_line_total_price,
                             order_non_tax_amount: value.order_non_tax_amount,
                             order_tax_amount:value.order_tax_amount,
-                            order_line_total_after_global : 0.00,
+                            order_line_total_after_global : value.order_line_total_after_global,
                             child_unit_id : value.child_unit_id,
                             child_unit_name : value.child_unit_name,
                             parent_unit_name : value.product_unit_name,
@@ -3304,7 +3325,7 @@ $(document).ready(function(){
                             cost_upon_invoice : value.cost_upon_invoice,
                             vehicle_service_id : value.vehicle_service_id,
                             tbl_no : value.tbl_no,
-                            discount_type: 0,
+                            discount_type: data.discount_type,
                             discount: value.order_discount,
                             is_insured: value.is_insured,
                             is_checked: is_checked
@@ -3429,11 +3450,13 @@ $(document).ready(function(){
 
             var global_discount = $('#txt_overall_discount').val();
             var line_total = price * qty; //ok not included in the output (view) and not saved in the database
-
+            
             var line_total_discount = discount_type == 2 ? discount : line_total * (discount / 100);
             // var line_total_discount=line_total*(discount/100);
             var new_line_total = line_total - (line_total_discount);
             var total_after_global = new_line_total - (new_line_total * (global_discount / 100));
+            
+            console.log(line_total_discount)
 
             var net_vat = total_after_global / (1 + tax_rate);
             var vat_input = total_after_global - net_vat;
@@ -4201,6 +4224,24 @@ $(document).ready(function(){
             }
         })
     }
+
+    $(document).on('click','#btn_print',function(){
+        const startDate = $('#txt_start_date_sales').val()
+        const endDate = $('#txt_end_date_sales').val()
+        const status = $('#cbo_repair_order_status').val()
+        const advisor_id = $('#cbo_advisor').val()
+        const queries = '&tsd='+startDate+'&ted='+endDate+'&status='+status+'&advisor_id='+advisor_id
+        window.open('Templates/layout/repair-order-list/preview?type=pdf'+queries);
+    });
+
+    $(document).on('click','#btn_export',function(){
+        const startDate = $('#txt_start_date_sales').val()
+        const endDate = $('#txt_end_date_sales').val()
+        const status = $('#cbo_repair_order_status').val()
+        const advisor_id = $('#cbo_advisor').val()
+        const queries = '&tsd='+startDate+'&ted='+endDate+'&status='+status+'&advisor_id='+advisor_id
+        window.open('Templates/layout/repair-order-list/preview?type=excel'+queries);
+    });
 });
 </script>
 </body>
