@@ -628,7 +628,7 @@
 
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                     <label class="">Sales Discount Account:</label>
-                                                                    <select name="sd_account_id" id="sd_account_id" class="for_services" data-error-msg="Link to sales discount account is required." required>
+                                                                    <select name="sd_account_id" id="sd_account_id" data-error-msg="Link to sales discount account is required." required>
                                                                         <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
                                                                         <option value="0">None</option>
                                                                         <?php foreach($accounts as $account){ ?>
@@ -1520,39 +1520,53 @@ $(document).ready(function(){
                 clearFieldsCategory($('#frm_category_group'));
             }else{
 
-                // if(_txnMode=="new"){
-                //     if ($(this).val() != 0 || $(this).val() != ""){
-                //         getAccount($(this).val(),1).done(function(response){
-                //             var row = response.data[0];
-                //             if(response.data.length > 0){ $('#income_account_id').select2('val',row.account_id); }
-                //         });
-                //         getAccount($(this).val(),2).done(function(response){
-                //             var row = response.data[0];
-                //             if(response.data.length > 0){ $('#expense_account_id').select2('val',row.account_id); }
-                //         });
-                //         getAccount($(this).val(),3).done(function(response){
-                //             var row = response.data[0];
-                //             if(response.data.length > 0){ $('#cos_account_id').select2('val',row.account_id); }
-                //         });
-                //         getAccount($(this).val(),4).done(function(response){
-                //             var row = response.data[0];
-                //             if(response.data.length > 0){ $('#sales_return_account_id').select2('val',row.account_id); }
-                //         });       
-                //         getAccount($(this).val(),5).done(function(response){
-                //             var row = response.data[0];
-                //             if(response.data.length > 0){ $('#sd_account_id').select2('val',row.account_id); }
-                //         });       
-                //         getAccount($(this).val(),6).done(function(response){
-                //             var row = response.data[0];
-                //             if(response.data.length > 0){ $('#po_return_account_id').select2('val',row.account_id); }
-                //         });     
-                //         getAccount($(this).val(),7).done(function(response){
-                //             var row = response.data[0];
-                //             if(response.data.length > 0){ $('#pd_account_id').select2('val',row.account_id); }
-                //         });     
+                if(_txnMode=="new"){
+                    if ($(this).val() != 0 || $(this).val() != ""){
+                        getAccount($(this).val(),1).done(function(response){
+                            var row = response.data[0];
+                            if(response.data.length > 0){ $('#income_account_id').select2('val',row.account_id); }else{
+                                $('#income_account_id').select2('val',0);
+                            }
+                        });
+                        getAccount($(this).val(),2).done(function(response){
+                            var row = response.data[0];
+                            if(response.data.length > 0){ $('#expense_account_id').select2('val',row.account_id); }else{
+                                $('#expense_account_id').select2('val',0);
+                            }
+                        });
+                        getAccount($(this).val(),3).done(function(response){
+                            var row = response.data[0];
+                            if(response.data.length > 0){ $('#cos_account_id').select2('val',row.account_id); }else{
+                                $('#cos_account_id').select2('val',0);
+                            }
+                        });
+                        getAccount($(this).val(),4).done(function(response){
+                            var row = response.data[0];
+                            if(response.data.length > 0){ $('#sales_return_account_id').select2('val',row.account_id); }else{
+                                $('#sales_return_account_id').select2('val',0);
+                            }
+                        });       
+                        getAccount($(this).val(),5).done(function(response){
+                            var row = response.data[0];
+                            if(response.data.length > 0){ $('#sd_account_id').select2('val',row.account_id); }else{
+                                $('#sd_account_id').select2('val',0);
+                            }
+                        });       
+                        getAccount($(this).val(),6).done(function(response){
+                            var row = response.data[0];
+                            if(response.data.length > 0){ $('#po_return_account_id').select2('val',row.account_id); }else{
+                                $('#po_return_account_id').select2('val',0);
+                            }
+                        });     
+                        getAccount($(this).val(),7).done(function(response){
+                            var row = response.data[0];
+                            if(response.data.length > 0){ $('#pd_account_id').select2('val',row.account_id); }else{
+                                $('#pd_account_id').select2('val',0);
+                            }
+                        });     
 
-                //     }
-                // }
+                    }
+                }
             }   
         });
 
@@ -1788,13 +1802,13 @@ $(document).ready(function(){
             $('.for_services').attr('disabled', true);
             $('.for_services').val('');
 
-            _cboCredit.select2('val',0);
-            _cboDebit.select2('val',0);
-            _cboCostofSale.select2('val',0);
-            _cboSalesReturn.select2('val',0);
-            _cboSalesDiscount.select2('val',0);
-            _cboPurchaseReturn.select2('val',0);
-            _cboPurchaseDiscount.select2('val',0);
+            // _cboCredit.select2('val',0);
+            // _cboDebit.select2('val',0);
+            // _cboCostofSale.select2('val',0);
+            // _cboSalesReturn.select2('val',0);
+            // _cboSalesDiscount.select2('val',0);
+            // _cboPurchaseReturn.select2('val',0);
+            // _cboPurchaseDiscount.select2('val',0);
 
         }else{
             $('.for_services').attr('disabled', false);

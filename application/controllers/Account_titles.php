@@ -106,7 +106,7 @@ class Account_titles extends CORE_Controller
                 $response['stat']='success';
                 $response['msg']='Account successfully created.';
                 $response['row_added']=$this->response_rows($account_id);
-                $response['parents']=$m_accounts->get_list(null,array('account_titles.account_id','account_titles.account_title'),null,'account_titles.account_title');
+                $response['parents']=$m_accounts->get_list(array("is_deleted"=>FALSE),array('account_titles.account_id','account_titles.account_title'),null,'account_titles.account_title');
                 $response['row_hierarchy']=$this->get_account_hierarchy();
 
                 $m_trans=$this->Trans_model;
@@ -174,7 +174,7 @@ class Account_titles extends CORE_Controller
                 $response['title']='Success!';
                 $response['stat']='success';
                 $response['msg']='Account successfully update.';
-                $response['parents']=$m_accounts->get_list(null,array('account_titles.account_id','account_titles.account_title'),null,'account_titles.account_title');
+                $response['parents']=$m_accounts->get_list(array("is_deleted"=>FALSE),array('account_titles.account_id','account_titles.account_title'),null,'account_titles.account_title');
                 $response['row_updated']=$this->response_rows($account_id);
                 $response['row_hierarchy']=$this->get_account_hierarchy();
 

@@ -71,7 +71,7 @@ class Rights_link_model extends CORE_Model{
                                           (63,'9','9-15','AR Reports'),
                                           (64,'9','9-12','Cost of Goods'),
                                           (65,'13','13-1','Service Invoice'),
-                                          (66,'13','13-2','Service Journal'),
+                                          (66,'1','1-7','Service Journal'),
                                           (67,'13','13-3','Service Unit Management'),
                                           (68,'13','13-4','Service Management'),
                                           (69,'9','9-17','Aging of Receivables'),
