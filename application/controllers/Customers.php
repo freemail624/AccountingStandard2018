@@ -515,7 +515,7 @@ class Customers extends CORE_Controller {
                 $acc = [];
                 foreach ($accounts as $account) { $acc[]=$account->soa_account_id; }
                 $filter_accounts =  implode(",", $acc);
-                $data['receivables']=$m_customers->get_customer_receivable_list($customer_id,$filter_accounts);
+                $data['receivables']=$m_customers->get_customer_receivable_list3($customer_id,$filter_accounts);
                 $structured_content=$this->load->view('template/customer_receivable_list',$data,TRUE);
                 echo $structured_content;
 

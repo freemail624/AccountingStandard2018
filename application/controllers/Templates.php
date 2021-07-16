@@ -3377,11 +3377,26 @@ class Templates extends CORE_Controller {
 
                     array(
                         'receivable_payments_list.*',
-                        'journal_info.*'
+                        '(CASE 
+                            WHEN receivable_payments_list.sales_invoice_id > 0
+                                THEN sales_invoice.sales_inv_no
+                            ELSE service_invoice.service_invoice_no
+                        END) as invoice_no',
+                        '(CASE 
+                            WHEN receivable_payments_list.sales_invoice_id > 0
+                                THEN DATE_FORMAT(sales_invoice.date_invoice, "%m/%d/%Y")
+                            ELSE DATE_FORMAT(service_invoice.document_date, "%m/%d/%Y")
+                        END) as invoice_date',
+                        '(CASE 
+                            WHEN receivable_payments_list.sales_invoice_id > 0
+                                THEN sales_invoice.remarks
+                            ELSE service_invoice.remarks
+                        END) as remarks'
 
                     ),
                     array(
-                        array('journal_info','journal_info.journal_id=receivable_payments_list.journal_id','left'),
+                        array('sales_invoice','sales_invoice.sales_invoice_id=receivable_payments_list.sales_invoice_id','left'),
+                        array('service_invoice','service_invoice.service_invoice_id=receivable_payments_list.service_invoice_id','left')
                     )
 
                 );

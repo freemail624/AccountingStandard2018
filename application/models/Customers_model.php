@@ -44,6 +44,7 @@ class Customers_model extends CORE_Model{
             WHERE c.is_deleted = FALSE AND c.is_active = TRUE
 
             ".($search_value==null?"":" AND (c.customer_no LIKE '".$search_value."%' OR c.customer_name LIKE '%".$search_value."%' OR c.contact_name LIKE '%".$search_value."%' OR cv.plate_no LIKE '%".$search_value."%' OR cv.conduction_no LIKE '%".$search_value."%')")."
+            GROUP BY c.customer_id
         ";
         return $this->db->query($sql)->num_rows();
     }
@@ -60,6 +61,7 @@ class Customers_model extends CORE_Model{
             WHERE c.is_deleted = FALSE AND c.is_active = TRUE
 
             ".($search_value==null?"":" AND (c.customer_no LIKE '".$search_value."%' OR c.customer_name LIKE '%".$search_value."%' OR c.contact_name LIKE '%".$search_value."%' OR cv.plate_no LIKE '%".$search_value."%' OR cv.conduction_no LIKE '%".$search_value."%')")."
+            GROUP BY c.customer_id
             ".($order_column==null?" ORDER BY c.customer_name ASC ":" ORDER BY ".$order_column." ".$order_dir."")."
             ".($length==null?"":" LIMIT ".$length."")."
             ".($start==0?"":" OFFSET ".$start."")."
@@ -135,6 +137,107 @@ class Customers_model extends CORE_Model{
                 
     //     return $this->db->query($sql)->result();
     // }
+
+
+    function get_customer_receivable_list3($customer_id,$filter_accounts)
+    {
+        $sql = "SELECT 
+                    unpaid.*,
+                    IFNULL(paid.payment_amount, 0) payment_amount,
+                    (IFNULL(unpaid.receivable_amount, 0) - IFNULL(paid.payment_amount, 0)) amount_due
+                FROM
+                    (SELECT 
+                        service.service_invoice_id AS invoice_id,
+                            service.service_invoice_no AS invoice_no,
+                            customers.customer_name,
+                            '' AS date_due,
+                            '' AS remarks,
+                            items.receivable_amount,
+                            0 is_sales,
+                            0 as journal_id
+                    FROM
+                        service_invoice service
+                    LEFT JOIN customers ON customers.customer_id = service.customer_id
+                    LEFT JOIN (SELECT 
+                        service_invoice_items.service_invoice_id,
+                            SUM(service_invoice_items.service_line_total_price) AS receivable_amount
+                    FROM
+                        service_invoice_items) items ON items.service_invoice_id = service.service_invoice_id
+                    WHERE
+                        service.is_deleted = FALSE
+                            AND service.is_active = TRUE
+                            AND service.customer_id = $customer_id
+
+                    UNION ALL SELECT 
+                        si.sales_invoice_id AS invoice_id,
+                        IF(ISNULL(ref_no), txn_no, ref_no) invoice_no,
+                        c.customer_name,
+                        si.date_due,
+                        si.remarks,
+                        SUM(ja.dr_amount) AS receivable_amount,
+                        ji.is_sales,
+                        ji.journal_id
+                    FROM
+                        (journal_info ji
+                        INNER JOIN (SELECT 
+                            *
+                        FROM
+                            journal_accounts ja
+                        WHERE
+                            ja.account_id IN (4)) ja ON ja.journal_id = ji.journal_id)
+                            LEFT JOIN
+                        customers c ON c.customer_id = ji.customer_id
+                            LEFT JOIN
+                        sales_invoice si ON si.sales_inv_no = ji.ref_no
+                            AND ji.is_sales = 1
+                    WHERE
+                        ji.is_deleted = FALSE
+                            AND ji.is_active = TRUE
+                            AND ji.book_type = 'SJE'
+                            AND ji.customer_id = $customer_id
+                            AND ji.hotel_integration_id = 0
+                            AND ji.pos_integration_id = 0
+                    GROUP BY ji.journal_id
+
+
+                    ) unpaid
+
+                    LEFT JOIN
+                    (SELECT 
+                        0 as is_sales,
+                        items.service_invoice_id AS invoice_id,
+                        SUM(IFNULL(items.payment_amount, 0)) payment_amount
+                    FROM
+                        receivable_payments_list items
+                            LEFT JOIN
+                        receivable_payments payment ON payment.payment_id = items.payment_id
+                    WHERE
+                        payment.is_active = TRUE
+                            AND payment.is_deleted = FALSE
+                            AND payment.customer_id = $customer_id
+                            AND items.service_invoice_id > 0
+                    GROUP BY items.service_invoice_id
+
+                    UNION ALL
+
+                    SELECT
+                        1 as is_sales,
+                        items.sales_invoice_id AS invoice_id,
+                        SUM(IFNULL(items.payment_amount, 0)) payment_amount
+                    FROM
+                        receivable_payments_list items
+                            LEFT JOIN
+                        receivable_payments payment ON payment.payment_id = items.payment_id
+                    WHERE
+                        payment.is_active = TRUE
+                            AND payment.is_deleted = FALSE
+                            AND payment.customer_id = $customer_id
+                            AND items.sales_invoice_id > 0
+                    GROUP BY items.sales_invoice_id) paid ON unpaid.invoice_id = paid.invoice_id AND unpaid.is_sales = paid.is_sales
+                HAVING amount_due > 0";
+
+        return $this->db->query($sql)->result();
+    }
 
     function get_customer_receivable_list($customer_id,$filter_accounts)
     {
