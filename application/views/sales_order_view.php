@@ -155,10 +155,19 @@
         <h2 class="h2-panel-heading">Sales Order<small> | <a href="assets/manual/sales/Sales_Order.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
 
             <div class="row"> 
-                <div class="col-lg-3"><br> 
+                <div class="col-lg-2"><br> 
                 <button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-placement="left" title="Record Charge Invoice" ><i class="fa fa-plus"></i> New Sales Order</button> 
                 </div> 
-                <div class="col-lg-2"> 
+                <div class="col-lg-3"> 
+                    Department : <br/>
+                    <select class="form-control" id="cbo_tbl_departments">
+                        <option value="0">All</option>
+                        <?php foreach($departments as $department){?>
+                            <option value="<?php echo $department->department_id; ?>">
+                                <?php echo $department->department_name; ?>
+                            </option>
+                        <?php }?>
+                    </select>
                 </div> 
                 <div class="col-lg-2"> 
                     Status : <br/>
@@ -783,7 +792,7 @@ $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj;
     var _cboDepartments; var _cboDepartment; var _cboSalesperson; var _cboCustomers; var _lookUpPrice; var products;
     var _line_unit; var _cboCustomerType; 
-    var _cboCustomerTypeCreate; var _cboStatus; var recomputeTblAmt;
+    var _cboCustomerTypeCreate; var _cboStatus; var recomputeTblAmt; var _cboTblDepartment;
 
     /*var oTableItems={
         qty : 'td:eq(0)',
@@ -827,6 +836,7 @@ $(document).ready(function(){
     recomputeTblAmt = function(){
         var _data=$('#').serializeArray();
         _data.push({name : "order_status_id" ,value : $('#cbo_order_status').val()});
+        _data.push({name : "department_id" ,value : $('#cbo_tbl_departments').val()});
 
         $.ajax({
             "dataType":"json",
@@ -857,6 +867,13 @@ $(document).ready(function(){
 
         _cboStatus.select2('val', 1);
 
+        _cboTblDepartment=$("#cbo_tbl_departments").select2({
+            placeholder: "Please select Department.",
+            allowClear: false
+        });
+
+        _cboTblDepartment.select2('val', 0);
+
         recomputeTblAmt();
 
         dt=$('#tbl_sales_order').DataTable({
@@ -869,7 +886,8 @@ $(document).ready(function(){
                 "bDestroy": true,             
                 "data": function ( d ) { 
                         return $.extend( {}, d, { 
-                            "order_status_id":$('#cbo_order_status').val()
+                            "order_status_id":$('#cbo_order_status').val(),
+                            "department_id":$('#cbo_tbl_departments').val()
                         }); 
                     } 
             }, 
@@ -932,6 +950,7 @@ $(document).ready(function(){
             placeholder: "Please select Department.",
             allowClear: false
         });
+
         _cboSalesperson=$("#cbo_salesperson").select2({
             placeholder: "Please select sales person.",
             allowClear: false
@@ -1309,6 +1328,11 @@ $(document).ready(function(){
         });
 
         $("#cbo_order_status").on("change", function () { 
+            recomputeTblAmt();       
+            $('#tbl_sales_order').DataTable().ajax.reload();
+        }); 
+
+        $("#cbo_tbl_departments").on("change", function () { 
             recomputeTblAmt();       
             $('#tbl_sales_order').DataTable().ajax.reload();
         }); 

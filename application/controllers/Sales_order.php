@@ -110,14 +110,16 @@ class Sales_order extends CORE_Controller
             case 'list':  //this returns JSON of Issuance to be rendered on Datatable
                 $m_sales_order=$this->Sales_order_model;
                 $order_status_id = $this->input->get('order_status_id', TRUE);
-                $response['data']=$m_sales_order->get_so_list(null, $order_status_id);
+                $department_id = $this->input->get('department_id', TRUE);
+                $response['data']=$m_sales_order->get_so_list(null, $order_status_id, $department_id);
                 echo json_encode($response);
                 break;
 
             case 'tbl_amount':
                 $m_sales_order=$this->Sales_order_model;
                 $order_status_id = $this->input->post('order_status_id', TRUE);
-                $response['data']=$m_sales_order->get_tbl_amount($order_status_id);
+                $department_id = $this->input->post('department_id', TRUE);
+                $response['data']=$m_sales_order->get_tbl_amount($order_status_id,$department_id);
                 echo json_encode($response);
                 break;
 

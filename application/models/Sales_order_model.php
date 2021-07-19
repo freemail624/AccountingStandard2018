@@ -10,7 +10,7 @@ class Sales_order_model extends CORE_Model
         parent::__construct();
     }
 
-    function get_so_list($sales_order_id=null,$order_status_id=0){
+    function get_so_list($sales_order_id=null,$order_status_id=0,$department_id=0){
         $sql="SELECT 
                 so.*,
                 DATE_FORMAT(so.date_order,'%m/%d/%Y') as date_order,
@@ -28,12 +28,13 @@ class Sales_order_model extends CORE_Model
                     so.is_active = TRUE
                     ".($sales_order_id==null?"":" AND so.sales_order_id='".$sales_order_id."'")."
                     ".($order_status_id==0?"":" AND so.order_status_id='".$order_status_id."'")."
+                    ".($department_id==0?"":" AND so.department_id='".$department_id."'")."
                     ORDER BY so.sales_order_id DESC";
             
             return $this->db->query($sql)->result();
     }
 
-    function get_tbl_amount($order_status_id=0){
+    function get_tbl_amount($order_status_id=0,$department_id=0){
         $sql="SELECT 
                 COALESCE(SUM(soi.so_line_total_price), 0) AS total_tbl_amount
             FROM
@@ -42,7 +43,8 @@ class Sales_order_model extends CORE_Model
                 sales_order so ON so.sales_order_id = soi.sales_order_id
                 WHERE so.is_deleted = FALSE AND
                     so.is_active = TRUE
-                ".($order_status_id==0?"":" AND so.order_status_id='".$order_status_id."'")."";
+                ".($order_status_id==0?"":" AND so.order_status_id='".$order_status_id."'")."
+                ".($department_id==0?"":" AND so.department_id='".$department_id."'")."";
             
             return $this->db->query($sql)->result();
     }
