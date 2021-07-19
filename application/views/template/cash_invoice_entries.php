@@ -98,9 +98,9 @@
     <br/>    
     <table width="100%" cellpadding="5" class="table table-striped">
         <tr>
-            <td valign="top" width="50%" class="default-color top left right">DELIVERY DATE</td>
-            <td valign="top" width="50%" class="default-color top left right">SO NUMBER
-            </td>
+            <td valign="top" width="34%" class="default-color top left right">DELIVERY DATE</td>
+            <td valign="top" width="33%" class="default-color top left right">SO NUMBER</td>
+            <td valign="top" width="33%" class="default-color top left right">SALESPERSON</td>
         </tr>
         <tr>
             <td valign="top" class="left right bottom" style="height: 30px;min-height: 30px;" align="center">
@@ -108,6 +108,9 @@
             </td>
             <td valign="top" class="left right bottom" style="height: 30px;min-height: 30px;" align="center">
                 <span><?php echo $info->so_no; ?></span>
+            </td>
+            <td valign="top" class="left right bottom" style="height: 30px;min-height: 30px;" align="left">
+                <span><?php echo $info->salesperson_name; ?></span>
             </td>
         </tr>
     </table>
