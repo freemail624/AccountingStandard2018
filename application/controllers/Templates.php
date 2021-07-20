@@ -1900,11 +1900,12 @@ class Templates extends CORE_Controller {
                 $particular_id=$particular[1];
 
                 $items = $m_form_2307->get_2307_items($particular_id,$particular_type,$month_id,$year,$form_2307_id);
-
                 $particular_info = $m_form_2307->get_particular_info($particular_id,$particular_type);
+                $payor_info = $m_form_2307->get_payor_info($form_2307_id);
 
                 $company = $this->Company_model->get_list()[0];
 
+                $data['payor'] = $payor_info[0];
                 $data['particular'] = $particular_info[0];
                 $data['company'] = $company;
                 $data['items'] = $items;

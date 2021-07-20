@@ -7,6 +7,15 @@
 	        parent::__construct();
 	    }
 
+	    function get_payor_info($form_2307_id){
+	    	$sql="SELECT 
+	    	CONCAT_WS(' ',user.user_fname,user.user_mname,user.user_lname) as payor_name
+	    	FROM form_2307 
+	    	LEFT JOIN user_accounts user ON user.user_id = form_2307.created_by_user
+	    	WHERE form_2307_id = $form_2307_id";
+			return $this->db->query($sql)->result();
+	    }
+
 	    function get_particular_info($particular_id,$type){
 	    	$sql="SELECT 
 				    main.*
