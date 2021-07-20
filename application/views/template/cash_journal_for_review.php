@@ -253,10 +253,14 @@
                                         <td class="align-right"><?php echo number_format($info->total_overall_discount_amount,2); ?></td>
                                     </tr>
                                     <tr>
+                                        <td colspan="7" class="align-right">Total Tax:</td>
+                                        <td class="align-right"><?php echo number_format($info->total_tax_amount,2); ?></td>
+                                    </tr>
+                                    <tr>
                                         <td colspan="7" class="align-right"><strong>Total Invoice Amount:   </strong></td>
                                         <td class="align-right">
                                             <strong>
-                                                <?php echo number_format($info->total_after_discount,2); ?>
+                                                <?php echo number_format($info->total_after_tax,2); ?>
                                             </strong>
                                         </td>
                                     </tr>

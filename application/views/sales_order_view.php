@@ -913,7 +913,7 @@ $(document).ready(function(){
                 {
                     sClass: "text-right", targets:[7],data: null,
                     render: function (data, type, full, meta){
-                        return accounting.formatNumber(data.total_after_discount,2);
+                        return accounting.formatNumber(data.total_after_tax,2);
                     }
                 },
                 {

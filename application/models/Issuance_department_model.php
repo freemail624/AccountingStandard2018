@@ -89,67 +89,84 @@ class Issuance_department_model extends CORE_Model
 
     }
 
-
 	    function get_journal_entries_from($issuance_department_id){
 	        $sql="SELECT 
-	        main.* 
-	        FROM(
+				    main.*
+				FROM
+				    (
+				    /* Cash */
+				    SELECT 
+				        (SELECT 
+				                    pi.iss_debit_id
+				                FROM
+				                    purchasing_integration pi) AS account_id,
+				            SUM(IFNULL(iss.issue_non_tax_amount, 0)) AS dr_amount,
+				            0 AS cr_amount,
+				            '' AS memo
+				    FROM
+				        issuance_department_items iss
+				    INNER JOIN products p ON p.product_id = iss.product_id
+				    WHERE
+				        iss.issuance_department_id = $issuance_department_id
+				            AND p.expense_account_id > 0
+				    GROUP BY iss.issuance_department_id 
 
-	        SELECT 
-			(SELECT pi.iss_debit_id FROM purchasing_integration pi) as account_id,
-			SUM(IFNULL(iss.issue_non_tax_amount,0)) as dr_amount,
-			0 as cr_amount,
-			'' as memo
-			FROM 
-			issuance_department_items iss
-			INNER JOIN products p ON p.product_id = iss.product_id
-			WHERE iss.issuance_department_id = $issuance_department_id AND p.expense_account_id > 0
-			GROUP BY iss.issuance_department_id
-
-			UNION ALL
-
-			SELECT p.expense_account_id as account_id,
-			0 as dr_amount,
-			SUM(IFNULL(iss.issue_non_tax_amount,0)) as cr_amount,
-			'' as memo
-			FROM 
-			issuance_department_items iss
-			INNER JOIN products p ON p.product_id = iss.product_id
-			WHERE iss.issuance_department_id = $issuance_department_id AND p.expense_account_id > 0
-			GROUP BY p.expense_account_id) as main 
-			WHERE main.dr_amount > 0 OR main.cr_amount > 0";
+				    /* Inventory */
+				    UNION ALL SELECT 
+				        p.expense_account_id AS account_id,
+				            0 AS dr_amount,
+				            SUM(IFNULL(iss.issue_non_tax_amount, 0)) AS cr_amount,
+				            '' AS memo
+				    FROM
+				        issuance_department_items iss
+				    INNER JOIN products p ON p.product_id = iss.product_id
+				    WHERE
+				        iss.issuance_department_id = $issuance_department_id
+				            AND p.expense_account_id > 0
+				    GROUP BY p.expense_account_id) AS main
+				WHERE
+				    main.dr_amount > 0 OR main.cr_amount > 0";
 	        return $this->db->query($sql)->result();
 
 	    }
 
 	    function get_journal_entries_to($issuance_department_id){
 	        $sql="SELECT 
-	        main.* 
-	        FROM(
-			SELECT p.expense_account_id as account_id,
+				    main.*
+				FROM
+				    (
+				    /* INVENTORY */
+				    SELECT 
+				        p.expense_account_id AS account_id,
+				            SUM(IFNULL(iss.issue_non_tax_amount, 0)) AS dr_amount,
+				            0 AS cr_amount,
+				            '' AS memo
+				    FROM
+				        issuance_department_items iss
+				    INNER JOIN products p ON p.product_id = iss.product_id
+				    WHERE
+				        iss.issuance_department_id = $issuance_department_id
+				            AND p.expense_account_id > 0
+				    GROUP BY p.expense_account_id 
 
-			SUM(IFNULL(iss.issue_non_tax_amount,0)) as dr_amount,
-			0 as cr_amount,
-			'' as memo
-			FROM 
-			issuance_department_items iss
-			INNER JOIN products p ON p.product_id = iss.product_id
-			WHERE iss.issuance_department_id = $issuance_department_id AND p.expense_account_id > 0
-			GROUP BY p.expense_account_id
-
-			UNION ALL
-
-			SELECT (SELECT pi.iss_debit_id FROM purchasing_integration pi) as account_id,
-			0 as dr_amount,
-			SUM(IFNULL(iss.issue_non_tax_amount,0)) as cr_amount,
-			'' as memo
-			FROM 
-			issuance_department_items iss
-			INNER JOIN products p ON p.product_id = iss.product_id
-			WHERE iss.issuance_department_id = $issuance_department_id AND p.expense_account_id > 0
-			GROUP BY iss.issuance_department_id
-			) as main 
-			WHERE main.dr_amount > 0 OR main.cr_amount > 0";
+				    /* CASH */
+				    UNION ALL SELECT 
+				        (SELECT 
+				                    pi.iss_debit_id
+				                FROM
+				                    purchasing_integration pi) AS account_id,
+				            0 AS dr_amount,
+				            SUM(IFNULL(iss.issue_non_tax_amount, 0)) AS cr_amount,
+				            '' AS memo
+				    FROM
+				        issuance_department_items iss
+				    INNER JOIN products p ON p.product_id = iss.product_id
+				    WHERE
+				        iss.issuance_department_id = $issuance_department_id
+				            AND p.expense_account_id > 0
+				    GROUP BY iss.issuance_department_id) AS main
+				WHERE
+				    main.dr_amount > 0 OR main.cr_amount > 0";
 	        return $this->db->query($sql)->result();
 
 	    }

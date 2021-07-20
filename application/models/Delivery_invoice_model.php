@@ -167,6 +167,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
         $sql="SELECT 
                 main.*
             FROM
+                /* INVENTORY */
                 (SELECT 
                     p.expense_account_id AS account_id,
                         '' AS memo,
@@ -184,6 +185,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
 
                 UNION ALL 
                 
+                /* VAT AMOUNT */
                 SELECT 
                     input_tax.account_id,
                         input_tax.memo,
@@ -210,6 +212,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
 
                 UNION ALL
 
+                /* SHIPPING COST */
                 SELECT 
                     shipping_cost.account_id,
                         shipping_cost.memo,
@@ -232,6 +235,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
 
                 UNION ALL
 
+                /* CUSTOM DUTIES */
                 SELECT 
                     custom_duties.account_id,
                         custom_duties.memo,
@@ -255,6 +259,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
 
                 UNION ALL
 
+                /* OTHER EXPENSES */
                 SELECT 
                     other_expense.account_id,
                         other_expense.memo,
@@ -276,9 +281,9 @@ GROUP BY n.supplier_id HAVING total_balance > 0
                 GROUP BY other_expense.account_id 
 
 
-
                 UNION ALL 
-                
+                    
+                /* ACOUNTS PAYABLE */
                 SELECT 
                     acc_payable.account_id,
                         acc_payable.memo,
@@ -287,8 +292,8 @@ GROUP BY n.supplier_id HAVING total_balance > 0
                 FROM
                     (SELECT 
                     dii.product_id,
-                        (SELECT
-                               payable_account_id
+                        (SELECT 
+                                payable_account_id
                             FROM
                                 account_integration) AS account_id,
                         '' AS memo,
@@ -305,6 +310,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
                 
                 UNION ALL
 
+                /* DISCOUNTS */
                 SELECT 
                     p.pd_account_id AS account_id,
                         '' AS memo,
@@ -325,8 +331,6 @@ GROUP BY n.supplier_id HAVING total_balance > 0
                 main.dr_amount > 0 OR main.cr_amount > 0";
 
         return $this->db->query($sql)->result();
-
-
 
     }
 
