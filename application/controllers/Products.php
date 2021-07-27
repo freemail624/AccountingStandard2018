@@ -275,6 +275,7 @@ class Products extends CORE_Controller
                 $m_products->conversion_rate = $this->get_numeric_value($this->input->post('conversion_rate', TRUE));
                 $m_products->primary_unit = $this->get_numeric_value($this->input->post('is_parent', TRUE));
                 $m_products->is_nonsalable = $this->get_numeric_value($this->input->post('is_nonsalable', TRUE));
+                $m_products->is_fast_moving = $this->get_numeric_value($this->input->post('is_fast_moving', TRUE));
                 $m_products->is_basyo = $this->get_numeric_value($this->input->post('is_basyo', TRUE));
 
                 $m_products->save();
@@ -364,6 +365,7 @@ class Products extends CORE_Controller
                 $m_products->conversion_rate = $this->get_numeric_value($this->input->post('conversion_rate', TRUE));
                 $m_products->primary_unit = $this->get_numeric_value($this->input->post('is_parent', TRUE));
                 $m_products->is_nonsalable = $this->get_numeric_value($this->input->post('is_nonsalable', TRUE));
+                $m_products->is_fast_moving = $this->get_numeric_value($this->input->post('is_fast_moving', TRUE));
                 $m_products->is_basyo = $this->get_numeric_value($this->input->post('is_basyo', TRUE));
                 $m_products->modify($product_id);
 

@@ -15,6 +15,7 @@ class Deliveries extends CORE_Controller
         $this->load->model('Delivery_invoice_item_model');
         $this->load->model('Purchases_model');
         $this->load->model('Departments_model');
+        $this->load->model('Product_locations_model');
         $this->load->model('Refproduct_model');
         $this->load->model('Asset_settings_model');
         $this->load->model('Users_model');
@@ -40,6 +41,10 @@ class Deliveries extends CORE_Controller
 
         $data['departments']=$this->Departments_model->get_list(
             array('departments.is_active'=>TRUE,'departments.is_deleted'=>FALSE)
+        );
+
+        $data['locations']=$this->Product_locations_model->get_list(
+            array('is_active'=>TRUE,'is_deleted'=>FALSE)
         );
 
         //data required by active view
@@ -192,6 +197,7 @@ class Deliveries extends CORE_Controller
                 $m_delivery_invoice->deliver_to_address = $this->input->post('deliver_to_address',TRUE);
                 $m_delivery_invoice->supplier_id = $this->input->post('supplier',TRUE);
                 $m_delivery_invoice->department_id = $this->input->post('department',TRUE);
+                $m_delivery_invoice->product_location_id = 1; /* BIN */
                 $m_delivery_invoice->remarks = $this->input->post('remarks',TRUE);
                 $m_delivery_invoice->tax_type_id = $this->input->post('tax_type',TRUE);
                 $m_delivery_invoice->date_delivered = date('Y-m-d',strtotime($this->input->post('date_delivered',TRUE)));

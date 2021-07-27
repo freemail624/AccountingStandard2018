@@ -1029,7 +1029,7 @@
             var _txnMode;
             var _selectedID;
             var _selectRowObj;
-            var _cboDepartments;
+            var _cboDepartment;
             var _cboDepartments;
             var _cboCustomers;
             var dt_so;
@@ -1251,6 +1251,7 @@
                 _cboDepartments.select2('val', null);
                 _cboDepartment.select2('val', null);
                 _cboCustomers.select2('val', null);
+
                 $('.date-picker').datepicker({
                     todayBtn: "linked",
                     keyboardNavigation: false,
@@ -1625,26 +1626,27 @@
                     $('#modal_new_salesperson').modal('show');
                     _cboDepartment.select2('val', null);
                 });
+
+
                 _cboCustomers.on("select2:select", function(e) {
                     var i = $(this).select2('val');
                     if (i == 0) { //new customer
                         //clearFields($('#modal_new_customer').find('form'));
                         clearFields($('#frm_customer_new'));
+                        _cboCustomers.select2('val', null)
+                        $('#modal_new_customer').modal('show');
                         _cboCustomerTypeCreate.select2('val', 0);
                         _cboCustomerType.select2('val', 0);
-                        _cboCustomers.select2('val', null);
-
-                        $('#modal_new_customer').modal('show');
                     } else {
-                        const { data } = e.params
                         var obj_customers = $('#cbo_customers').find('option[value="' + i + '"]');
+                        const { data } = e.params
                         $('#txt_address').val(data.address);
                         $('#contact_person').val(data.contact);
-                        // $('#cbo_customer_type').select2('val', obj_customers.data('customer_type'));
-                        $('#typeaheadsearch').focus();
+                        // $('#cbo_customer_type').select2('val', data.customerType);
                     }
-
                 });
+
+
                 $('#btn_create_salesperson').click(function() {
                     var btn = $(this);
                     if (validateRequiredFields($('#frm_salesperson'))) {
@@ -1789,7 +1791,6 @@
                     $('#cbo_departments').select2('val', $('#cbo_departments').data('default'));
                     $('#cbo_department').select2('val', null);
                     $('#cbo_customers').select2('val', $('#cbo_customers').data('default'));
-                    $('#cbo_customers').trigger('select2:select');
                     $('#cbo_order_source').select2('val', $('#cbo_order_source').data('default'));
                     $('#cbo_salesperson').select2('val', null);
                     $('#img_user').attr('src', 'assets/img/anonymous-icon.png');
@@ -1973,6 +1974,7 @@
                                 }
                             });
                         });
+                        
                         $('#cbo_order_source').select2('val', data.order_source_id);
                         $('#cbo_departments').select2('val', data.department_id);
                         $('#cbo_department').select2('val', data.department_id);

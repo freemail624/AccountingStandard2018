@@ -162,7 +162,7 @@
                                                     <h2 class="h2-panel-heading">Inventory Report<small> | <a href="assets/manual/inventory/Inventory_Report.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
 
                                                             <div class="row">
-                                                                <div class="col-lg-6">
+                                                                <div class="col-lg-4">
                                                                     Department * : <br />
                                                                     <select id="cbo_department" class="form-control">
                                                                         <option value="0">All Department</option>
@@ -170,7 +170,6 @@
                                                                             <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
                                                                         <?php } ?>
                                                                     </select>
-
                                                                 </div>
                                                                 <div class="col-lg-3">
                                                                     Current Count :<br />
@@ -180,6 +179,14 @@
                                                                         <option value="3">Less than Zero</option>
                                                                         <option value="4">Equal to Zero</option>
 
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-lg-2">
+                                                                    Moving Items : <br/>
+                                                                    <select id="cbo_moving_items" class="form-control">
+                                                                        <option value="all">All</option>
+                                                                        <option value="0">Non Fast Moving Items</option>
+                                                                        <option value="1">Fast Moving Items</option>
                                                                     </select>
                                                                 </div>
                                                                 <div class="col-lg-3">
@@ -310,15 +317,22 @@
 
             });
             _cboDepartment=$("#cbo_department").select2({
-            placeholder: "Choose Department",
-            allowClear: false
+                placeholder: "Choose Department",
+                allowClear: false
             });
             _cboCurrentCount=$("#cbo_current_count").select2({
-            placeholder: "Choose Count Filter",
-            allowClear: false,
-            minimumResultsForSearch: -1
+                placeholder: "Choose Count Filter",
+                allowClear: false,
+                minimumResultsForSearch: -1
             });
+            _cboMovingItems=$("#cbo_moving_items").select2({
+                placeholder: "Select",
+                allowClear: false,
+                minimumResultsForSearch: -1
+            });
+
             _cboCurrentCount.select2("val", 1);
+            _cboMovingItems.select2("val", 'all');
             reloadList();
 
 
@@ -347,6 +361,13 @@
                 dt.destroy();
                 reloadList();
             });
+
+            _cboMovingItems.on('select2:select',function(e){
+                dt.clear().draw();
+                dt.destroy();
+                reloadList();
+            });            
+
             $(document).on('click','#btn_print',function(){
                 window.open('Templates/layout/inventory-report?type=preview&depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val()+'&ccf='+$('#cbo_current_count').val());
             });
@@ -463,7 +484,8 @@
                             "pick_list" : false,
                             "supplier_id" : 0,
                             "product_id" : 0,
-                            "category_id" : 0
+                            "category_id" : 0,
+                            "is_fast_moving" : $('#cbo_moving_items').val()
 
                         });
                     }

@@ -127,7 +127,10 @@ class Rights_link_model extends CORE_Model{
                                           (119,'13','13-5','Repair Order'),
                                           (120,'4','4-14','Bin Management'),
                                           (121,'15','15-2','Parts Requisition and Issuance Slip'),
-                                          (122,'13','13-6','Services (Unit Price)')
+                                          (122,'13','13-6','Services (Unit Price)'),
+                                          -- (123,'4','4-15','Product Locations'),
+                                          (124,'15','15-9','Item Adjustment Approval')
+
 
 
 

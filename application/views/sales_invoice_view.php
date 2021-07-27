@@ -266,7 +266,7 @@
                                                                         <div class="row">
                                                                             <div class="col-md-12">
                                                                                 <label><b class="required">*</b> Order Source :</label><br />
-                                                                                <select name="order_source_id" id="cbo_order_source" data-default="<?php echo $accounts[0]->default_order_source_id; ?>" data-error-msg="Order Source is required." required>
+                                                                                <select name="order_source_id" id="cbo_order_source" data-default="<?php echo $accounts[0]->default_order_source_id; ?>" data-error-msg="Order Source is required.">
                                                                                     <option value="0">[ Create New Order Source ]</option>
                                                                                     <?php foreach ($order_sources as $order_source) { ?>
                                                                                         <option value="<?php echo $order_source->order_source_id; ?>"><?php echo $order_source->order_source_name; ?></option>
@@ -295,7 +295,7 @@
                                                                         <div class="row">
                                                                             <div class="col-md-12">
                                                                                 <label>Contact Person :</label><br />
-                                                                                <input type="text" name="contact_person" id="contact_person" class="form-control" required data-error-msg="Contact Person is required!" placeholder="Contact Person">
+                                                                                <input type="text" name="contact_person" id="contact_person" class="form-control" data-error-msg="Contact Person is required!" placeholder="Contact Person">
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
@@ -872,7 +872,6 @@
                     </div>
                 </div>
             </div>
-
             <div id="modal_new_order_source" class="modal fade" role="dialog">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -1029,7 +1028,7 @@
             var _txnMode;
             var _selectedID;
             var _selectRowObj;
-            var _cboDepartments;
+            var _cboDepartment;
             var _cboDepartments;
             var _cboCustomers;
             var dt_so;
@@ -1193,6 +1192,7 @@
                     placeholder: "Please select Department.",
                     allowClear: false
                 });
+
                 _cboCustomers = $('#cbo_customers').select2({
                     ajax: {
                         url: "Customers/transaction/list",
@@ -1766,6 +1766,7 @@
                         });
                     }
                 });
+
                 $('#btn_create_customer').click(function() {
                     var btn = $(this);
                     if (validateRequiredFields($('#frm_customer_new'))) {
@@ -2472,6 +2473,7 @@
                     "beforeSend": showSpinningProgress($('#btn_create_customer'))
                 });
             };
+
             var createSalesInvoice = function() {
                 var _data = $('#frm_sales_invoice,#frm_items').serializeArray();
                 var tbl_summary = $('#tbl_sales_invoice_summary');

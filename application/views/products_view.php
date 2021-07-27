@@ -339,7 +339,9 @@
 
                                                             <div class="form-group" style="margin-bottom:0px; vertical-align: middle;text-align: left;"><br>
 
-                                                            <label  for="is_nonsalable" style="text-align: left;float:left;vertical-align: middle;"><input type="checkbox" name="is_nonsalable" class="" id="is_nonsalable" style="transform: scale(2.0);">  &nbsp;&nbsp; Nonsalable ?</label>
+                                                            <label  for="is_nonsalable" style="text-align: left;float:left;vertical-align: middle;"><input type="checkbox" name="is_nonsalable" class="" id="is_nonsalable" style="transform: scale(2.0);">  &nbsp;&nbsp; Nonsalable</label>
+
+                                                            <label  for="is_fast_moving" style="text-align: left;float:left;vertical-align: middle;margin-left: 20px;"><input type="checkbox" name="is_fast_moving" class="" id="is_fast_moving" style="transform: scale(2.0);">  &nbsp;&nbsp; Fast Moving</label>
 
 
                                                             <label  for="is_tax_exempt" style="text-align: left;vertical-align: middle;" class="hidden"><input type="checkbox" name="is_tax_exempt" class="" id="is_tax_exempt" style="transform: scale(2.0);">  &nbsp;&nbsp;Tax Exempt ?</label>
@@ -2198,6 +2200,7 @@ $(document).ready(function(){
             $('#is_tax_exempt').attr('checked', false);
             $('#is_bulk').attr('checked', false);
             $('#is_nonsalable').attr('checked', false);
+            $('#is_fast_moving').attr('checked', false);
             $('#is_basyo').attr('checked', false);
 
             if($('#product_costing').val()== 1){
@@ -2277,6 +2280,7 @@ $(document).ready(function(){
             $('#is_tax_exempt').prop('checked', (data.is_tax_exempt==1?true:false));
             $('#is_bulk').prop('checked', (data.is_bulk==1?true:false));
             $('#is_nonsalable').prop('checked', (data.is_nonsalable==1?true:false));
+            $('#is_fast_moving').prop('checked', (data.is_fast_moving==1?true:false));
             $('#is_basyo').prop('checked', (data.is_basyo==1?true:false));
 
             if(data.is_bulk == true){
@@ -2426,8 +2430,8 @@ $(document).ready(function(){
 $('#is_tax_exempt').prop("checked") ?  _data.push({name : "is_tax_exempt" , value : '1'   }) : _data.push({name : "is_tax_exempt" , value : '0'   });
 $('#is_bulk').prop("checked") ?  _data.push({name : "is_bulk" , value : '1'   }) : _data.push({name : "is_bulk" , value : '0'   });
 $('#is_parent').prop("checked") ?  _data.push({name : "is_parent" , value : '1'   }) : _data.push({name : "is_parent" , value : '0'   });
-
 $('#is_nonsalable').prop("checked") ?  _data.push({name : "is_nonsalable" , value : '1'   }) : _data.push({name : "is_nonsalable" , value : '0'   });
+$('#is_fast_moving').prop("checked") ?  _data.push({name : "is_fast_moving" , value : '1'   }) : _data.push({name : "is_fast_moving" , value : '0'   });
 $('#is_basyo').prop("checked") ?  _data.push({name : "is_basyo" , value : '1'   }) : _data.push({name : "is_basyo" , value : '0'   });
 
 
@@ -2447,7 +2451,7 @@ $('#is_bulk').prop("checked") ?  _data.push({name : "is_bulk" , value : '1'   })
         _data.push({name : "product_id" ,value : _selectedID});
 $('#is_parent').prop("checked") ?  _data.push({name : "is_parent" , value : '1'   }) : _data.push({name : "is_parent" , value : '0'   });
 $('#is_nonsalable').prop("checked") ?  _data.push({name : "is_nonsalable" , value : '1'   }) : _data.push({name : "is_nonsalable" , value : '0'   });
-
+$('#is_fast_moving').prop("checked") ?  _data.push({name : "is_fast_moving" , value : '1'   }) : _data.push({name : "is_fast_moving" , value : '0'   });
 $('#is_basyo').prop("checked") ?  _data.push({name : "is_basyo" , value : '1'   }) : _data.push({name : "is_basyo" , value : '0'   });
 
 

@@ -60,6 +60,7 @@ class Inventory extends CORE_Controller
                 $search_value = $search['value'];
                 $column = $order[0]['column'];
                 $order_dir = $order[0]['dir'];
+                $is_fast_moving = $this->input->post('is_fast_moving', TRUE);
 
                 $valid_columns = array(
                     0=>'details-control',
@@ -100,7 +101,7 @@ class Inventory extends CORE_Controller
                 }
             
                 $recordsTotal = $m_products->get_all_data($item_type_id);
-                $recordsFiltered = $m_products->get_all_data($item_type_id,$search_value);
+                $recordsFiltered = $m_products->get_all_data($item_type_id,$search_value,$is_fast_moving);
 
                 if($length == null){
                     $length_value = $recordsTotal;
@@ -126,7 +127,8 @@ class Inventory extends CORE_Controller
                     $length_value, 
                     $start,
                     $order_column,
-                    $order_dir);
+                    $order_dir,
+                    $is_fast_moving);
 
                 $response = array(
                     "draw"            => intval($draw),

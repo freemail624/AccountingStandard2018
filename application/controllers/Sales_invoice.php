@@ -14,6 +14,7 @@ class Sales_invoice extends CORE_Controller
         $this->load->model('Refproduct_model');
         $this->load->model('Sales_order_model');
         $this->load->model('Departments_model');
+        $this->load->model('Product_locations_model');
         $this->load->model('Customers_model');
         $this->load->model('Products_model');
         $this->load->model('Invoice_counter_model');
@@ -44,6 +45,10 @@ class Sales_invoice extends CORE_Controller
         //data required by active view
         $data['departments']=$this->Departments_model->get_list(
             array('departments.is_active'=>TRUE,'departments.is_deleted'=>FALSE)
+        );
+
+        $data['locations']=$this->Product_locations_model->get_list(
+            array('is_active'=>TRUE,'is_deleted'=>FALSE)
         );
 
         $data['salespersons']=$this->Salesperson_model->get_list(
@@ -287,6 +292,7 @@ class Sales_invoice extends CORE_Controller
                 $m_invoice->customer_id=$this->input->post('customer',TRUE);
                 $m_invoice->salesperson_id=$this->input->post('salesperson_id',TRUE);
                 $m_invoice->department_id=$this->input->post('department',TRUE);
+                $m_invoice->product_location_id=1; /* BIN */
                 $m_invoice->agent_id=$this->input->post('agent_id',TRUE);
                 $m_invoice->issue_to_department=$this->input->post('issue_to_department',TRUE);
                 $m_invoice->address=$this->input->post('address',TRUE);
@@ -817,18 +823,7 @@ class Sales_invoice extends CORE_Controller
         return $this->Sales_invoice_model->get_list(
              'sales_invoice.is_active = TRUE AND sales_invoice.is_deleted = FALSE '.($filter_value==null?'':' AND sales_invoice.sales_invoice_id='.$filter_value).''.($additional==null?'':$additional),
             array(
-                'sales_invoice.sales_invoice_id',
-                'sales_invoice.sales_inv_no',
-                'sales_invoice.remarks', 
-                'sales_invoice.date_created',
-                'sales_invoice.customer_id',
-                'sales_invoice.inv_type',
-                'sales_invoice.contact_person',
-                'sales_invoice.customer_type_id',
-                'sales_invoice.agent_id',
-                'sales_invoice.order_source_id',
-                'sales_invoice.for_dispatching',
-                'sales_invoice.is_journal_posted',
+                'sales_invoice.*',
                 'sales_invoice.total_overall_discount',
                 'DATE_FORMAT(sales_invoice.date_invoice,"%m/%d/%Y") as date_invoice',
                 'DATE_FORMAT(sales_invoice.date_due,"%m/%d/%Y") as date_due',

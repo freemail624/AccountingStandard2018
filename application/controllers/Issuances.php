@@ -139,6 +139,10 @@ class Issuances extends CORE_Controller
                 $m_issuance->begin();
                 $m_issuance->set('date_created','NOW()'); //treat NOW() as function and not string
                 $m_issuance->issued_department_id=$this->input->post('department',TRUE);
+
+                $m_issuance->product=$this->input->post('department',TRUE);
+
+
                 //$m_issuance->issued_to_person=$this->input->post('issued_to_person',TRUE);
                 $m_issuance->repair_order_id=$repair_order_id;
                 $m_issuance->remarks=$this->input->post('remarks',TRUE);

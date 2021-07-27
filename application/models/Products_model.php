@@ -2467,7 +2467,8 @@ Product Pick List
         $length=null,
         $start=null,
         $order_column=null,
-        $order_dir=null
+        $order_dir=null,
+        $is_fast_moving='all'
     ){
         
     $sql = "CALL product_list(
@@ -2488,7 +2489,8 @@ Product Pick List
         '$length',
         '$start',
         '$order_column',
-        '$order_dir'
+        '$order_dir',
+        '$is_fast_moving'
 
     )";
         $query = $this->db->query($sql);
@@ -2500,10 +2502,11 @@ Product Pick List
 
     }
 
-    function get_all_data($item_type_id=0,$search_value=null)
+    function get_all_data($item_type_id=0,$search_value=null,$is_fast_moving='all')
     {
         $sql="SELECT p.* FROM products p WHERE p.is_deleted = FALSE AND p.is_active = TRUE
         ".($item_type_id==0?"":" AND p.item_type_id='".$item_type_id."'")."
+        ".($is_fast_moving=='all'?"":" AND p.is_fast_moving='".$is_fast_moving."'")."
             ".($search_value==null?"":" 
                     AND (LOWER(p.product_code) LIKE LOWER('".$search_value."%') OR 
                     LOWER(p.product_desc) LIKE LOWER('%".$search_value."%') OR 

@@ -280,7 +280,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                           <b class="required">*</b><label> Department :</label> <br />
+                           <b class="required">* </b><label> Department :</label> <br />
                             <select name="department" id="cbo_departments" data-default="<?php echo $accounts[0]->default_department_id; ?>" data-error-msg="Department is required." required>
                                 <option value="0">[ Create New Department ]</option>
                                 <?php foreach($departments as $department){ ?>
@@ -1642,6 +1642,7 @@ $(document).ready(function(){
                 });
             }
         });
+
 
         $('#btn_save_term').click(function(){
 
