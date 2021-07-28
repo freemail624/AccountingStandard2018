@@ -225,7 +225,7 @@
         <div class="panel panel-default" style="border-radius:6px;margin-top: 20px;">
             <div class="panel-body panel-responsive">
               <!-- <a data-toggle="collapse" data-parent="#accordionA" href="#collapseOne" style="text-decoration: none;"> -->
-<!--               <div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Cash Disbursement Journal</b></div> -->
+<!--              < fdiv class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Cash Disbursement Journal</b></div> -->
             <h2 class="h2-panel-heading">Cash Disbursement Journal</h2><hr>
 
               <!-- </a> -->
@@ -464,7 +464,9 @@
                                             <optgroup label="Suppliers">
                                                 <!-- <option value="create_supplier">[Create New Supplier]</option> -->
                                                 <?php foreach($suppliers as $supplier){ ?>
-                                                    <option value='S-<?php echo $supplier->supplier_id; ?>' data-link_department='0'><?php echo $supplier->supplier_name; ?></option>
+                                                    <option value='S-<?php echo $supplier->supplier_id; ?>' data-link_department='0'>
+                                                        <?php echo $supplier->branch_name.' '.$supplier->supplier_name; ?>
+                                                    </option>
                                                 <?php } ?>
                                             </optgroup>
                                         </select>
@@ -502,7 +504,7 @@
                                             <select id="cbo_tax_code" class="form-control" name="atc_id">
                                                 <option value=""></option>
                                                 <?php foreach($tax_codes as $tax_code){ ?>
-                                                    <option value="<?php echo $tax_code->atc_id; ?>" data-description="<?php echo $tax_code->description; ?>">
+                                                    <option value="<?php echo $tax_code->atc_id; ?>" data-tax-rate="<?php echo $tax_code->tax_rate; ?>" data-description="<?php echo $tax_code->description; ?>">
                                                         <?php echo $tax_code->atc.' - '.$tax_code->description; ?>
                                                     </option>
                                                 <?php } ?>
@@ -553,7 +555,9 @@
                                             <optgroup label="Suppliers">
                                                 <!-- <option value="create_supplier">[Create New Supplier]</option> -->
                                                 <?php foreach($suppliers as $supplier){ ?>
-                                                    <option value='S-<?php echo $supplier->supplier_id; ?>' data-link_department='0'><?php echo $supplier->supplier_name; ?></option>
+                                                    <option value='S-<?php echo $supplier->supplier_id; ?>' data-link_department='0'>
+                                                        <?php echo $supplier->branch_name.' '.$supplier->supplier_name; ?>
+                                                    </option>
                                                 <?php } ?>
                                             </optgroup>
                                         </select>
@@ -1348,7 +1352,7 @@ $(document).ready(function(){
     var dtReview; var cbo_refType; var _cboLayouts; var dtRecurring; var _attribute; var _cboTax; var dtReviewOther; var dtCashReceipt; var _cboVouchers;
      var _selectedDepartment = 0; var _cboDepartmentFilter;
      var _cboTaxCode; var _cboCustomerType; var _cboArTrans; var _cboLinkDepartment; var _cboTaxGroup;
-
+     var supplier_wtax_account_id = <?php echo $wtax_account[0]->supplier_wtax_account_id; ?>;
 
     var oTBJournal={
         "account" : "td:eq(0)",
@@ -2120,6 +2124,56 @@ $(document).ready(function(){
 
         });
 
+        var recomputeWtaxPayable = function(){
+            var net_amount = accounting.unformat($('#net_amount').val());
+            var tax_rate = accounting.unformat($('#cbo_tax_code').find(":selected").data('tax-rate'));
+            var wtax = net_amount * (tax_rate / 100);
+
+            var oRows=$('#tbl_entries').find('tbody tr');
+            var wtax_account_id = 0;
+
+            if($('#2307_apply').is(":checked") == true){
+
+                $.each(oRows,function(i,value){
+
+                    var account_id = accounting.unformat($(this).find(oTBJournal.account).find('select').find('option:selected').val());
+
+                    if (supplier_wtax_account_id == account_id){
+                        wtax_account_id+=1;
+                    }
+
+                });
+
+                if(wtax_account_id == 1){
+
+
+                    $.each(oRows,function(i,value){
+
+                        var account_id = accounting.unformat($(this).find(oTBJournal.account).find('select').find('option:selected').val());
+
+                        if (supplier_wtax_account_id == account_id){
+                            $(this).find(oTBJournal.cr).find('input.numeric').val(accounting.formatNumber(wtax,2));
+                        }
+
+                    });
+
+                }else{
+
+                    var row=$('#table_hidden').find('tr');
+                    row.clone().insertAfter('#tbl_entries > tbody > tr:last');
+
+                    reInitializeNumeric();
+                    reInitializeDropDownAccounts($('#tbl_entries'),false);
+                    $('#tbl_entries > tbody > tr:last select.dept').each(function(){ $(this).select2('val',_selectedDepartment)});
+                    $('#tbl_entries > tbody > tr:last select.selectpicker_accounts').each(function(){ $(this).select2('val',supplier_wtax_account_id)});
+                    $('#tbl_entries > tbody > tr:last input[name="cr_amount[]"]').each(function(){ $(this).val(accounting.formatNumber(wtax,2))});
+
+                }
+
+                reComputeTotals($('#tbl_entries'));
+            }
+        }
+
         var apply_2307 = function(){
             if ($('#2307_apply').is(":checked") == false){
                 _cboTaxCode.select2('val',null);
@@ -2143,13 +2197,22 @@ $(document).ready(function(){
             if(i==null || i==""){
                 $('#2307_apply').prop('checked', false);
                 $('#2307_remarks').val("");
+                $('#net_amount_label').html('');
+                $('#net_amount').prop('required',false);
             }else{
                 $('#2307_apply').prop('checked', true);
                 $('#2307_remarks').val(remarks);
+                $('#net_amount_label').html('*');
+                $('#net_amount').prop('required',true);
             } 
+
+            recomputeWtaxPayable();
 
         });
 
+        $('#net_amount').on("keyup", function(){
+            recomputeWtaxPayable();
+        });
 
         $('#2307_remarks').on('keyup',function(){
             if($(this).val() != null || ""){
@@ -2429,7 +2492,7 @@ $(document).ready(function(){
 
             }
             } else {
-                showNotification({title:"Journal Entries Etries!",stat:"error",msg:'Incomplete assignment of Account Titles in the table.'});
+                showNotification({title:"Journal Entries!",stat:"error",msg:'Incomplete assignment of Account Titles in the table.'});
                 stat=false;
             } // ELSE OF VALIDATE ACCOUNTS
             }else{

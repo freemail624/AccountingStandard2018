@@ -41,17 +41,24 @@ class Suppliers_model extends CORE_Model {
 
     function get_supplier_list($supplier_id=null) {
         $sql="  SELECT
-                  a.*,b.photo_path
+                  suppliers.*,
+                  (CASE
+                    WHEN suppliers.supplier_branch_id > 0
+                     THEN (CONCAT(branch.branch_name,'',' - '))
+                    ELSE ''
+                  END) as branch_name,
+                  photos.photo_path,
+                  IFNULL(tax_types.tax_rate,0) as tax_rate
                 FROM
-                  suppliers as a
-                LEFT JOIN
-                    supplier_photos as b
-                ON
-                  a.supplier_id=b.supplier_id
+                  suppliers
+                LEFT JOIN supplier_photos as photos ON photos.supplier_id=suppliers.supplier_id
+                LEFT JOIN supplier_branches branch ON branch.supplier_branch_id = suppliers.supplier_branch_id
+                LEFT JOIN tax_types ON tax_types.tax_type_id=suppliers.tax_type_id
                 WHERE
-                    a.is_deleted=FALSE AND a.is_active=TRUE
-                ".($supplier_id==null?"":" AND a.supplier_id=$supplier_id")."
-            ";
+                    suppliers.is_deleted=FALSE AND 
+                    suppliers.is_active=TRUE
+                  ".($supplier_id==null?"":" AND suppliers.supplier_id=$supplier_id")."
+                ORDER BY suppliers.supplier_name ASC";
         return $this->db->query($sql)->result();
     }
 

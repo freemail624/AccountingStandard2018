@@ -7,6 +7,7 @@ class Suppliers extends CORE_Controller {
         parent::__construct('');
         $this->validate_session();
         $this->load->model('Suppliers_model');
+        $this->load->model('Supplier_branches_model');
         $this->load->model('Supplier_photos_model');
         $this->load->model('Tax_model');
         $this->load->model('Journal_info_model');
@@ -24,8 +25,8 @@ class Suppliers extends CORE_Controller {
         $data['_side_bar_navigation']=$this->load->view('template/elements/side_bar_navigation','',TRUE);
         $data['_top_navigation']=$this->load->view('template/elements/top_navigation','',TRUE);
         $data['suppliers']=$this->Suppliers_model->get_list(array('suppliers.is_deleted'=>FALSE));
+        $data['supplier_branch']=$this->Supplier_branches_model->get_list(array('is_deleted'=>FALSE));
         $data['title']='Supplier Management';
-
 
         $data['tax_types']=$this->Tax_model->get_list(array('tax_types.is_deleted'=>FALSE));
         (in_array('5-2',$this->session->user_rights)? 
@@ -68,6 +69,7 @@ class Suppliers extends CORE_Controller {
                 $m_suppliers->photo_path=$this->input->post('photo_path',TRUE); 
                 $m_suppliers->tax_type_id=$this->input->post('tax_type_id',TRUE);
                 $m_suppliers->tax_output=$this->input->post('tax_output',TRUE);
+                $m_suppliers->supplier_branch_id=$this->input->post('supplier_branch_id',TRUE);
                 $m_suppliers->posted_by_user=$this->session->user_id;
                 $m_suppliers->save();
 
@@ -179,6 +181,7 @@ class Suppliers extends CORE_Controller {
                 $m_suppliers->photo_path=$this->input->post('photo_path',TRUE);
                 $m_suppliers->tax_type_id=$this->input->post('tax_type_id',TRUE);
                 $m_suppliers->tax_output=$this->input->post('tax_output',TRUE);
+                $m_suppliers->supplier_branch_id=$this->input->post('supplier_branch_id',TRUE);
                 $m_suppliers->modify($supplier_id);
 
                 $m_photos->delete_via_fk($supplier_id);

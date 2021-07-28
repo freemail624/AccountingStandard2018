@@ -41,6 +41,12 @@ class Billing_review extends CORE_Controller
                 $response['data']=$this->Temp_journal_info_model->getBillingAdvancesList($department_id);
                 echo json_encode($response);
                 break;
+
+            case 'list-billing-security-deposit-for-review':
+                $department_id = $this->input->get('department_id', TRUE);
+                $response['data']=$this->Temp_journal_info_model->getBillingSecDepList($department_id);
+                echo json_encode($response);
+                break;
         };
     }
 }

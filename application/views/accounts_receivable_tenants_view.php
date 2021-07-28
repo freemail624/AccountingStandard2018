@@ -180,6 +180,8 @@
                                                                 <thead class="">
                                                                     <tr>
                                                                         <th width="30%">Tenants</th>
+                                                                        <th>Tenant Code</th>
+                                                                        <th>Space Code</th>
                                                                         <th class="text-right">As of <br/><span class="previous_month"></span></th>
                                                                         <th class="text-right">2307</th>
                                                                         <th class="text-right">Billed</th>
@@ -330,58 +332,60 @@
                 },
                 "columns": [
                     { targets:[0],data: "customer_name" },
+                    { targets:[1],data: "tenant_code" },
+                    { targets:[2],data: "space_code" },
                     {
-                        sClass:"text-right", targets:[1],
+                        sClass:"text-right", targets:[3],
                         data: "previous",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }
                     },
                     {
-                        sClass:"text-right", targets:[2],
+                        sClass:"text-right", targets:[4],
                         data: "wtax_expanded",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }
                     },                    
                     {
-                        sClass:"text-right", targets:[3],
+                        sClass:"text-right", targets:[5],
                         data: "billing",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }
                     },
-                    { sClass:"text-center", targets:[4], data: "or_details" },
+                    { sClass:"text-center", targets:[6], data: "or_details" },
                     {
-                        sClass:"text-right", targets:[5],
+                        sClass:"text-right", targets:[7],
                         data: "payment",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }
                     },
                     {
-                        sClass:"text-right", targets:[6],
+                        sClass:"text-right", targets:[8],
                         data: "adjustment_dr",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }
                     },
                     {
-                        sClass:"text-right", targets:[7],
+                        sClass:"text-right", targets:[9],
                         data: "adjustment_cr",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }
                     },
                     {
-                        sClass:"text-right", targets:[8],
+                        sClass:"text-right", targets:[10],
                         data: "total",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }
                     },
                     {
-                        visible: false, sClass:"text-right", targets:[9],
+                        visible: false, sClass:"text-right", targets:[11],
                         data: "current",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);

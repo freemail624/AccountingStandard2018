@@ -83,7 +83,7 @@
                                                                     Supplier * : <br />
                                                                     <select id="cbo_suppliers" class="form-control">
                                                                         <?php foreach($suppliers as $supplier) { ?>
-                                                                            <option value="<?php echo $supplier->supplier_id; ?>"><?php echo $supplier->supplier_name; ?></option>
+                                                                            <option value="<?php echo $supplier->supplier_id; ?>"><?php echo $supplier->branch_name.' '.$supplier->supplier_name; ?></option>
                                                                         <?php } ?>
                                                                     </select>
 
@@ -219,7 +219,7 @@
             });
 
             _cboSuppliers=$("#cbo_suppliers").select2({
-                placeholder: "Please select customer.",
+                placeholder: "Please select supplier.",
                 allowClear: true
             });
 

@@ -479,7 +479,9 @@
                                 <optgroup label="Suppliers">
                                     <option value="create_supplier">[Create New Supplier]</option>
                                     <?php foreach($suppliers as $supplier){ ?>
-                                        <option value='S-<?php echo $supplier->supplier_id; ?>' data-link_department='0'><?php echo $supplier->supplier_name; ?></option>
+                                        <option value='S-<?php echo $supplier->supplier_id; ?>' data-link_department='0'>
+                                            <?php echo $supplier->branch_name.' '.$supplier->supplier_name; ?>
+                                        </option>
                                     <?php } ?>
                                 </optgroup>
 
@@ -1212,10 +1214,6 @@ $(document).ready(function(){
     };
 
 
-
-
-
-
     var initializeControls=function(){
         _cboDepartmentFilter=$("#cbo_departments_filter").select2({
             placeholder: "Please Select Default Department.",
@@ -1823,7 +1821,7 @@ $(document).ready(function(){
                 });
 
             }
-        } );
+        });
 
 
         $('#btn_new').click(function(){

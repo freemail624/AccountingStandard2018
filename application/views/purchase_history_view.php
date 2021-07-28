@@ -96,8 +96,8 @@
                                             <div class="panel-body table-responsive">
                                             <h2 class="h2-panel-heading">Purchase History</h2><hr>
                                             <div class="row">
-                                            <div class="col-sm-3">
-                                                <b class="required">*</b> <label>Invoice Date From: </label>:<br />
+                                            <div class="col-sm-2">
+                                                <b class="required">*</b> <label>Invoice Date From: </label><br />
                                                 <div class="input-group">
                                                     <input id="from_date" type="text" class="date-picker form-control" value="<?php echo date("m"); ?>/01/<?php echo date("Y"); ?>">
                                                     <div class="input-group-addon">
@@ -105,7 +105,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-2">
                                                 <b class="required">*</b> <label>Invoice Date To: </label>:<br />
                                                 <div class="input-group">
                                                     <input id="to_date" type="text" class="date-picker form-control" value="<?php echo date('m/d/Y'); ?>">
@@ -115,18 +115,18 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-4">
                                                 <b class="required">*</b> <label>Supplier </label>:<br />
-                                                <select name="supplier" id="supplier" >
+                                                <select name="supplier" id="supplier" class="form-control">
                                                     <option value="0"> ALL</option>
                                                     <?php foreach($suppliers as $supplier){ ?>
-                                                        <option value="<?php echo $supplier->supplier_id; ?>"><?php echo $supplier->supplier_name; ?></option>
+                                                        <option value="<?php echo $supplier->supplier_id; ?>"><?php echo $supplier->branch_name.' '.$supplier->supplier_name; ?></option>
                                                     <?php } ?>
                                                 </select>
                                             </div>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-4">
                                                 <b class="required">*</b> <label>Departments </label>:<br />
-                                                <select name="department" id="department" >
+                                                <select name="department" id="department" class="form-control">
                                                     <option value="0"> ALL</option>
                                                     <?php foreach($departments as $department){ ?>
                                                         <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>

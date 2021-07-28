@@ -82,7 +82,9 @@
 
                                                         <optgroup label="Suppliers">
                                                             <?php foreach($suppliers as $supplier){ ?>
-                                                                <option value='S-<?php echo $supplier->supplier_id; ?>' ><?php echo $supplier->supplier_name; ?></option>
+                                                                <option value='S-<?php echo $supplier->supplier_id; ?>'>
+                                                                    <?php echo $supplier->branch_name.' '.$supplier->supplier_name; ?>
+                                                                </option>
                                                             <?php } ?>
                                                         </optgroup>
                                                     </select>

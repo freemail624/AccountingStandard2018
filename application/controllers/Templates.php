@@ -2887,18 +2887,8 @@ class Templates extends CORE_Controller {
                 $data['fixed_asset_count'] = count($count);
 
                 $data['departments']=$m_departments->get_list('is_active=TRUE AND is_deleted=FALSE');
+                $data['suppliers']=$m_suppliers->get_supplier_list();
 
-                $data['suppliers']=$m_suppliers->get_list(
-                    array(
-                        'suppliers.is_active'=>TRUE,
-                        'suppliers.is_deleted'=>FALSE
-                    ),
-
-                    array(
-                        'suppliers.supplier_id',
-                        'suppliers.supplier_name'
-                    )
-                );
                 $data['entries']=$m_purchases_info->get_journal_entries_2($purchase_invoice_id);
                 $data['accounts']=$m_accounts->get_list(
                     array(
@@ -4576,6 +4566,82 @@ class Templates extends CORE_Controller {
 
                 break;
 
+            case 'billing-security-deposit-for-review':
+                $temp_journal_id=$this->input->get('id',TRUE);
+
+                $m_temp_info=$this->Temp_journal_info_model;
+                $m_temp_items=$this->Temp_journal_accounts_model;
+
+
+
+                $m_customers=$this->Customers_model;
+                $m_accounts=$this->Account_title_model;
+                $m_payments=$this->Receivable_payment_model;
+                $m_methods=$this->Payment_method_model;
+                $m_departments=$this->Departments_model;
+                $m_pay_list=$this->Receivable_payment_list_model;
+
+                $info = $m_temp_info->get_list($temp_journal_id,
+                        '*,
+                        DATE_FORMAT(temp_journal_info.date_txn,"%m/%d/%Y") as date_txn,
+                        DATE_FORMAT(b_payment_info.payment_date,"%m/%d/%Y") as payment_date,
+                        IF(b_payment_info.payment_type = 1, 2, 1) as payment_method_id,
+                        DATE_FORMAT(b_payment_info.check_date,"%m/%d/%Y") as check_date,
+                        DATEDIFF(b_payment_info.check_date,NOW()) as rem_day_for_due,
+                        IFNULL(b_payment_info.check_no,"") as check_no,
+                        customers.link_department_id,
+                        IFNULL(b_payment_info.remarks, temp_journal_info.remarks) as remarks,
+                        IFNULL(b_payment_info.reference_no, fees.fee_no) as reference_no,
+                        IFNULL(b_payment_info.used_security_deposit, (fees.fee_credit+fees.fee_debit)) As amount_paid
+                        ',
+                        array(
+                            array('b_payment_info','b_payment_info.payment_id = temp_journal_info.payment_id','left'),
+                            array('b_contract_other_fees fees','fees.fee_id = temp_journal_info.fee_id','left'),
+                            array('customers','customers.customer_id = temp_journal_info.customer_id','left')
+                        )
+                    );
+                $data['info']=$info[0];
+
+
+
+                $data['methods']=$m_methods->get_list();
+                $data['departments']=$m_departments->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE),null, null,'department_name ASC');
+
+                $data['customers']=$m_customers->get_list(
+                    array(
+                        'customers.is_active'=>TRUE,
+                        'customers.is_deleted'=>FALSE
+                    ),
+
+                    array(
+                        'customers.customer_id',
+                        'customers.customer_name'
+                    ),null,'customer_name ASC'
+                );
+                $data['entries']=$m_temp_items->get_list(array('temp_journal_id'=>$temp_journal_id),null,null,'dr_amount DESC');
+
+                $data['accounts']=$m_accounts->get_list(
+                    array(
+                        'account_titles.is_active'=>TRUE,
+                        'account_titles.is_deleted'=>FALSE
+                    ),null, null,'trim(account_title) ASC'
+                );
+
+                //validate if customer is not deleted
+                $valid_customer=$m_customers->get_list(
+                    array(
+                        'customer_id'=>$info[0]->customer_id,
+                        'is_active'=>TRUE,
+                        'is_deleted'=>FALSE
+                    )
+                );
+                $data['valid_particular']=(count($valid_customer)>0);
+
+                echo $this->load->view('template/billing_secuity_deposit_for_review',$data,TRUE); //details of the journal
+
+
+                break;
+
             case 'billing-advances-for-review':
                 $temp_journal_id=$this->input->get('id',TRUE);
                 $m_accounts=$this->Account_title_model;
@@ -4594,17 +4660,7 @@ class Templates extends CORE_Controller {
                 $data['methods']=$m_methods->get_list();
                 $data['departments']=$m_departments->get_list('is_active=TRUE AND is_deleted=FALSE');
                 $data['entries']=$m_temp_items->get_list(array('temp_journal_id'=>$temp_journal_id),null,null,'dr_amount DESC');
-                $data['suppliers']=$m_suppliers->get_list(
-                    array(
-                        'suppliers.is_active'=>TRUE,
-                        'suppliers.is_deleted'=>FALSE
-                    ),
-
-                    array(
-                        'suppliers.supplier_id',
-                        'suppliers.supplier_name'
-                    )
-                );
+                $data['suppliers']=$m_suppliers->get_supplier_list();
 
                 $m_customers=$this->Customers_model;
                 $data['customers']=$m_customers->get_list(

@@ -335,7 +335,7 @@
                     <select name="supplier" id="cbo_suppliers" data-error-msg="Supplier is required." required>
                         <option value="0">[ Create New Supplier ]</option>
                         <?php foreach($suppliers as $supplier){ ?>
-                            <option value="<?php echo $supplier->supplier_id; ?>" data-tax-type="<?php echo $supplier->tax_type_id; ?>" data-contact-person="<?php echo $supplier->contact_name; ?>"><?php echo $supplier->supplier_name; ?></option>
+                            <option value="<?php echo $supplier->supplier_id; ?>" data-tax-type="<?php echo $supplier->tax_type_id; ?>" data-contact-person="<?php echo $supplier->contact_name; ?>"><?php echo $supplier->branch_name.' '.$supplier->supplier_name; ?></option>
                         <?php } ?>
                     </select>
                 </div>

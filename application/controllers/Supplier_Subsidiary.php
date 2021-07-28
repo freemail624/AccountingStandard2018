@@ -37,7 +37,7 @@
 
 
 	        $data['title'] = 'Supplier Subsidiary';
-	        $data['suppliers'] = $this->Suppliers_model->get_list('is_deleted=FALSE AND supplier_name != "" AND is_active=TRUE',null,null,'supplier_name');
+	        $data['suppliers']=$this->Suppliers_model->get_supplier_list();
 	        $data['account_titles'] = $this->Account_title_model->get_list('account_titles.is_deleted=FALSE AND account_titles.is_active=TRUE',null,null,'account_title');
 
             $ap_account=$this->Account_integration_model->get_list();

@@ -44,7 +44,7 @@ class General_journal extends CORE_Controller
 
         $data['tax_types']=$this->Tax_model->get_list(array('tax_types.is_deleted'=>FALSE));
         $data['customers']=$this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'customer_name ASC');
-        $data['suppliers']=$this->Suppliers_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'supplier_name ASC');
+        $data['suppliers']=$this->Suppliers_model->get_supplier_list();
         $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'department_name ASC');
         $data['accounts']=$this->Account_title_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'trim(account_title) ASC');
         $data['methods']=$this->Payment_method_model->get_list('is_active=TRUE AND is_deleted=FALSE');
@@ -87,6 +87,7 @@ class General_journal extends CORE_Controller
                 $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'department_name ASC');
                 $this->load->view('template/journal_general_entries.php', $data);
                 break;
+
             case 'create' :
                 $m_trans=$this->Trans_model;
                 $m_journal=$this->Journal_info_model;
@@ -114,6 +115,13 @@ class General_journal extends CORE_Controller
                 $m_journal->department_id=$this->input->post('department_id',TRUE);
                 $m_journal->remarks=$this->input->post('remarks',TRUE);
                 $m_journal->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
+                $m_journal->payment_method_id=$this->input->post('payment_method');
+                $m_journal->check_date=date('Y-m-d',strtotime($this->input->post('check_date',TRUE)));
+                $m_journal->amount=$this->get_numeric_value($this->input->post('amount'));
+                $m_journal->or_no=$this->input->post('or_no');
+                $m_journal->check_no=$this->input->post('check_no');
+                $m_journal->check_type_id=$this->input->post('check_type_id');
+                $m_journal->ref_no=$this->input->post('ref_no');
                 $m_journal->book_type='GJE';
 
                 //for audit details
@@ -164,19 +172,19 @@ class General_journal extends CORE_Controller
                     
                     $m_issuances->modify($issuance_department_id);
 
-                // AUDIT TRAIL START
-                $issuances=$m_issuances->get_list($issuance_department_id,'trn_no');
-                $m_trans=$this->Trans_model;
-                $m_trans->user_id=$this->session->user_id;
-                $m_trans->set('trans_date','NOW()');
-                $m_trans->trans_key_id=8; //CRUD
-                $m_trans->trans_type_id=14; // TRANS TYPE
-                $m_trans->trans_log='Finalized Issuance Transfer Item  Tranfer No.'.$issuances[0]->trn_no.' For General Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
-                $m_trans->save();
+                    // AUDIT TRAIL START
+                    $issuances=$m_issuances->get_list($issuance_department_id,'trn_no');
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=8; //CRUD
+                    $m_trans->trans_type_id=14; // TRANS TYPE
+                    $m_trans->trans_log='Finalized Issuance Transfer Item  Tranfer No.'.$issuances[0]->trn_no.' For General Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
+                    $m_trans->save();
 
                 //AUDIT TRAIL END
                 }
-  //if adjustment invoice is available, adjustment invoice is recorded as journal
+                //if adjustment invoice is available, adjustment invoice is recorded as journal
                 $adjustment_id=$this->input->post('adjustment_id',TRUE);
                 if($adjustment_id!=null){
                     $m_adjustment=$this->Adjustment_model;
@@ -184,16 +192,35 @@ class General_journal extends CORE_Controller
                     $m_adjustment->is_journal_posted=TRUE;
                     $m_adjustment->modify($adjustment_id);
 
-                // AUDIT TRAIL START
-                $adjustment=$m_adjustment->get_list($adjustment_id,'adjustment_code');
-                $m_trans=$this->Trans_model;
-                $m_trans->user_id=$this->session->user_id;
-                $m_trans->set('trans_date','NOW()');
-                $m_trans->trans_key_id=8; //CRUD
-                $m_trans->trans_type_id=15; // TRANS TYPE
-                $m_trans->trans_log='Finalized Adjustment No. '.$adjustment[0]->adjustment_code.' For General Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
-                $m_trans->save();
-                //AUDIT TRAIL END
+                    // AUDIT TRAIL START
+                    $adjustment=$m_adjustment->get_list($adjustment_id,'adjustment_code');
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=8; //CRUD
+                    $m_trans->trans_type_id=15; // TRANS TYPE
+                    $m_trans->trans_log='Finalized Adjustment No. '.$adjustment[0]->adjustment_code.' For General Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
+                    $m_trans->save();
+                    //AUDIT TRAIL END
+                }
+
+                $temp_journal_id=$this->input->post('temp_journal_id',TRUE);
+                if($temp_journal_id!=null){
+                    $m_journal->is_billing=1;
+                    $m_journal->modify($journal_id);
+                    $m_temp_journal=$this->Temp_journal_info_model;
+                    $m_temp_journal->journal_id=$journal_id;
+                    $m_temp_journal->is_journal_posted=TRUE;
+                    $m_temp_journal->modify($temp_journal_id);
+                    // AUDIT TRAIL START
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=8; //CRUD
+                    $m_trans->trans_type_id=69; // TRANS TYPE
+                    $m_trans->trans_log='Finalized Payment Reference No. '.$this->input->post('or_no',TRUE).' General Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
+                    $m_trans->save();
+                    //AUDIT TRAIL END
                 }
 
                 $m_trans=$this->Trans_model;

@@ -185,13 +185,13 @@
                                     <table id="tbl_purchase_review" class="table table-striped" cellspacing="0" width="100%">
                                         <thead class="">
                                         <tr>
-                                            <th></th>
-                                            <th>Invoice #</th>
-                                            <th>External Ref #</th>
-                                            <th>Vendor</th>
-                                            <th>Terms</th>
-                                            <th>Delivered</th>
-                                            <th width="25%">Remarks</th>
+                                            <th width="5%"></th>
+                                            <th width="20%">Invoice #</th>
+                                            <th width="20%">External Ref #</th>
+                                            <th width="25%">Vendor</th>
+                                            <th width="15%">Terms</th>
+                                            <th width="15%">Delivered</th>
+                                            <th width="25%%">Remarks</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -315,7 +315,9 @@
                                                     <select id="cbo_suppliers" name="supplier_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Supplier name is required." required>
                                                         <option value="0">[ Create New Supplier ]</option>
                                                         <?php foreach($suppliers as $supplier){ ?>
-                                                            <option value='<?php echo $supplier->supplier_id; ?>'><?php echo $supplier->supplier_name; ?></option>
+                                                            <option value='<?php echo $supplier->supplier_id; ?>'>
+                                                                <?php echo $supplier->branch_name.' '.$supplier->supplier_name; ?>
+                                                            </option>
                                                         <?php } ?>
                                                     </select>
                                                 </div>
@@ -920,7 +922,7 @@
                     { targets:[3],data: "supplier_name" },
                     { targets:[4],data: "term_description" },
                     { targets:[5],data: "date_delivered" },
-                    { targets:[6],data: "remarks",render: $.fn.dataTable.render.ellipsis(60) }
+                    { targets:[6],data: "remarks",render: $.fn.dataTable.render.ellipsis(40) }
                 ],
               "initComplete": function(settings, json) {
                  if(this.api().data().length != 0){

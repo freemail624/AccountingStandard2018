@@ -361,6 +361,8 @@ class Journal_account_model extends CORE_Model{
         $sql="SELECT
             m.customer_id,
             IFNULL(c.`customer_name`,'Unknown') as customer_name,
+            IFNULL(bt.`tenant_code`,'') as tenant_code,
+            IFNULL(bt.`space_code`,'') as space_code,
             MAX(m.or_details) as or_details,
             SUM(m.previous) as previous,
             SUM(m.current) as current,
@@ -592,6 +594,7 @@ class Journal_account_model extends CORE_Model{
             ) as m
 
             LEFT JOIN customers as c ON c.customer_id=m.customer_id
+            LEFT JOIN b_tenants bt ON bt.tenant_id = c.tenant_id
 
             GROUP BY m.customer_id ORDER BY IFNULL(c.`customer_name`,'Unknown')";
 

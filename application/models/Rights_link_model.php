@@ -120,7 +120,9 @@ class Rights_link_model extends CORE_Model{
                                           (133,'100','100-6','Dashboard Graph (Income vs Expense (Current Year)) '),
                                           (134,'100','100-7','Dashboard Graph (Sales Report)'),
                                           (135,'100','100-8','Dashboard Graph (Expense Graph)'),
-                                          (136,'9','9-29','Cash Flow Report')
+                                          (136,'9','9-29','Cash Flow Report'),
+                                          (137,'4','4-9','Supplier Branch Management')
+
 
                                           ON DUPLICATE KEY UPDATE
                                           rights_links.parent_code=VALUES(rights_links.parent_code),

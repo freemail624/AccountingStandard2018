@@ -188,36 +188,34 @@
         <div class="panel-body table-responsive" style="width: 100%;overflow-x: hidden;">
         <h2 class="h2-panel-heading">Purchase Order</h2><hr>
         <div class="row">
-        <div class="col-sm-12">
         <div class="col-sm-3"><br><button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Purchase Order" ><i class="fa fa-plus"></i> New Purchase Order</button></div>
-        <div class="col-sm-2">                            
-            From :<br />
-            <div class="input-group">
-                <input type="text" id="txt_start_date" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
-                 <span class="input-group-addon">
-                        <i class="fa fa-calendar"></i>
-                 </span>
-            </div></div>
-        <div class="col-sm-2">
-            To :<br />
-            <div class="input-group">
-                <input type="text" id="txt_end_date" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
-                 <span class="input-group-addon">
-                        <i class="fa fa-calendar"></i>
-                 </span>
+            <div class="col-sm-2">                            
+                From :<br />
+                <div class="input-group">
+                    <input type="text" id="txt_start_date" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                     <span class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                     </span>
+                </div></div>
+            <div class="col-sm-2">
+                To :<br />
+                <div class="input-group">
+                    <input type="text" id="txt_end_date" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
+                     <span class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                     </span>
+                </div>
             </div>
-        </div>
-        <div class="col-sm-2">
-        Approval Status: <br>
-            <select id="cbo_approval">
-                <option value="0">All</option>
-                <?php foreach($approvals as $approval){ ?>
-                    <option value="<?php echo $approval->approval_id; ?>"><?php echo $approval->approval_status; ?></option>
-                <?php } ?>
-            </select>
-        </div>
-        <div class="col-sm-3">Search:<br><input type="text" class="form-control" id="searchbox_purchase_table"> </div>
-        </div>
+            <div class="col-sm-2">
+            Approval Status: <br>
+                <select id="cbo_approval">
+                    <option value="0">All</option>
+                    <?php foreach($approvals as $approval){ ?>
+                        <option value="<?php echo $approval->approval_id; ?>"><?php echo $approval->approval_status; ?></option>
+                    <?php } ?>
+                </select>
+            </div>
+            <div class="col-sm-3">Search:<br><input type="text" class="form-control" id="searchbox_purchase_table"> </div>
         </div><br>
             <table id="tbl_purchases" class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
@@ -261,7 +259,7 @@
                             <?php } ?>
                         </select>
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-4">
                         Contact Person : <br />
                         <div class="input-group">
                             <span class="input-group-addon">
@@ -279,21 +277,11 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-sm-2">
+                    <div class="col-sm-3">
                         Invoice Date :<br />
                         <div class="input-group">
 
                             <input type="text" name="date_invoice"  class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Invoice Date" data-error-msg="Invoice Date is required!" required>
-                             <span class="input-group-addon">
-                                 <i class="fa fa-calendar"></i>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="col-sm-2 ">
-                        Delivery Date :<br />
-                        <div class="input-group">
-
-                            <input type="text" name="date_delivery" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Delivery Date" data-error-msg="Delivery Date is required!" required>
                              <span class="input-group-addon">
                                  <i class="fa fa-calendar"></i>
                             </span>
@@ -308,6 +296,14 @@
                             </span>
                             <input type="text" name="po_no" class="form-control" placeholder="PO-YYYYMMDD-XXX" readonly>
                         </div>
+                        Delivery Date :<br />
+                        <div class="input-group">
+
+                            <input type="text" name="date_delivery" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Delivery Date" data-error-msg="Delivery Date is required!">
+                             <span class="input-group-addon">
+                                 <i class="fa fa-calendar"></i>
+                            </span>
+                        </div>                        
                     </div>
 
 
@@ -319,15 +315,15 @@
                         <select name="supplier" id="cbo_suppliers" data-error-msg="Supplier is required." required>
                             <option value="0">[ Create New Supplier ]</option>
                             <?php foreach($suppliers as $supplier){ ?>
-                                <option value="<?php echo $supplier->supplier_id; ?>" data-tax-type="<?php echo $supplier->tax_type_id; ?>" data-contact-person="<?php echo $supplier->contact_name; ?>" data-contact-no="<?php echo $supplier->contact_no; ?>"><?php echo $supplier->supplier_name; ?></option>
+                                <option value="<?php echo $supplier->supplier_id; ?>" data-tax-type="<?php echo $supplier->tax_type_id; ?>" data-contact-person="<?php echo $supplier->contact_name; ?>" data-contact-no="<?php echo $supplier->contact_no; ?>"><?php echo $supplier->branch_name.' '.$supplier->supplier_name; ?></option>
                             <?php } ?>
                         </select>
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-4">
                         Contact No : <br />
                         <input type="text" name="contact_no" class="form-control" placeholder="Contact Number">
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         Discount Type : <br/>
                         <select class="form-control" name="discount_type_id" id="cbo_discount_type">
                             <option value="1">Percentage</option>
@@ -341,11 +337,11 @@
                         Deliver to Address * : <br />
                         <textarea name="deliver_to_address" class="form-control" placeholder="Deliver to Address" data-error-msg="Deliver address is required!" required></textarea>
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-4">
                         Terms : <br />
                         <input type="text" name="terms" class="form-control" placeholder="Terms">
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
 
                     </div>
                 </div>

@@ -25,13 +25,7 @@ class Purchase_history extends CORE_Controller {
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['title'] = 'Purchase History Report';
         // $data['cashiers'] = $this->Pos_integration_items_model->cashier_list();
-        $data['suppliers']=$this->Suppliers_model->get_list(
-            array('suppliers.is_active'=>TRUE,'suppliers.is_deleted'=>FALSE),
-            'suppliers.*,IFNULL(tax_types.tax_rate,0)as tax_rate',
-            array(
-                array('tax_types','tax_types.tax_type_id=suppliers.tax_type_id','left')
-            )
-        );
+        $data['suppliers']=$this->Suppliers_model->get_supplier_list();
         $data['departments']=$this->Departments_model->get_list(
             array('departments.is_active'=>TRUE,'departments.is_deleted'=>FALSE)
         );

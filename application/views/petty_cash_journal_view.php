@@ -477,7 +477,9 @@
                                                 <select id="cbo_supplier" class="form-control" name="supplier_id" style="width: 100%;" data-error-msg="Supplier is required" required>
                                                     <option value="create_supplier">[Create New Supplier]</option>
                                                     <?php foreach($suppliers as $supplier) { ?>
-                                                        <option value="<?php echo $supplier->supplier_id; ?>"><?php echo $supplier->supplier_name; ?></option>
+                                                        <option value="<?php echo $supplier->supplier_id; ?>">
+                                                            <?php echo $supplier->branch_name.' '.$supplier->supplier_name; ?>
+                                                        </option>
                                                     <?php } ?>
                                                 </select>
                                                 <strong>* Department :</strong><br>

@@ -80,6 +80,7 @@
                                 <li  class="<?php echo (in_array('4-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Account_classes">Account Classification</a></li>
                                 <li  class="<?php echo (in_array('4-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="categories">Category Management</a></li>
                                 <li  class="<?php echo (in_array('4-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="departments">Department Management</a></li>
+                                <li  class="<?php echo (in_array('4-9',$this->session->user_rights)?'':'hidden'); ?>"><a href="supplier_branches">Supplier Branch Management</a></li>
                                 <li  class="<?php echo (in_array('4-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="units">Unit Management</a></li>
                                 <li  class="<?php echo (in_array('4-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Locations">Locations Management</a></li>
                                 <li  class="<?php echo (in_array('4-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Check_types">Check Types Management</a></li>

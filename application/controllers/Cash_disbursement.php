@@ -54,7 +54,7 @@ class Cash_disbursement extends CORE_Controller
             array(array( 'account_titles' , 'account_titles.account_id = b_refchecktype. account_id', 'left'))
             );
         $data['customers']=$this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'customer_name ASC');
-        $data['suppliers']=$this->Suppliers_model->get_list('is_deleted = FALSE',null, null,'supplier_name ASC');
+        $data['suppliers']=$this->Suppliers_model->get_supplier_list();
         $data['departments']=$this->Departments_model->get_list('is_deleted = FALSE',null, null,'department_name ASC');
         $data['accounts']=$this->Account_title_model->get_list('is_deleted = FALSE',null, null,'trim(account_title) ASC');
         $data['methods']=$this->Payment_method_model->get_list();
@@ -62,6 +62,7 @@ class Cash_disbursement extends CORE_Controller
         $data['payment_methods']=$this->Payment_method_model->get_list('is_deleted=0');
         $data['layouts']=$this->Check_layout_model->get_list('is_deleted=0');
         $data['tax_codes']=$this->Tax_code_model->get_taxcode_list();
+        $data['wtax_account']=$this->Account_integration_model->get_list(1);
 
         $data['title'] = 'Disbursement Journal';
         (in_array('1-2',$this->session->user_rights)? 

@@ -66,6 +66,7 @@
     <script>
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboItemTypes; var _cboTaxGroup;
+    var _cboSupplierBranch;
 
     var initializeControls=function(){
         var initializeControls=function() {
@@ -112,6 +113,11 @@ $(document).ready(function(){
             allowClear: false
         });
 
+        _cboSupplierBranch=$('#cbo_supplier_branch').select2({
+            allowClear: false,
+            dropdownParent: $('#modal_create_suppliers')
+        });
+
         $('#cbo_tax_type').select2({
             dropdownParent: $('#modal_create_suppliers')
         });
@@ -155,6 +161,7 @@ $(document).ready(function(){
             $('#modal_create_suppliers').modal('show');
             clearFields($('#frm_supplier'));
             _cboTaxGroup.select2('val',null);
+            _cboSupplierBranch.select2('val',0);
         });
 
         $('#btn_browse').click(function(event){
@@ -191,6 +198,7 @@ $(document).ready(function(){
             });
 
             _cboTaxGroup.select2('val',data.tax_type_id);
+            _cboSupplierBranch.select2('val',data.supplier_branch_id);
         });
 
         $('input[name="purchase_cost"],input[name="markup_percent"],input[name="sale_price"]').keyup(function(){
@@ -564,7 +572,6 @@ $(document).ready(function(){
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -736,6 +743,30 @@ $(document).ready(function(){
                                                 </div>
                                             </div>
                                         </div>
+
+
+
+                                        <div class="col-md-12">
+                                            <div class="col-md-4" id="label">
+                                                 <label class="control-label boldlabel" style="text-align:right;">Branch :</label>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-code"></i>
+                                                    </span>
+                                                    <select name="supplier_branch_id" id="cbo_supplier_branch">
+                                                        <option value="0">None</option>
+                                                        <?php foreach($supplier_branch as $branch){ ?>
+                                                            <option value="<?php echo $branch->supplier_branch_id; ?>">
+                                                                <?php echo $branch->branch_name; ?>
+                                                            </option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
 
                                     <div class="col-md-4">

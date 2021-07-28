@@ -41,17 +41,8 @@ class Deliveries extends CORE_Controller
         );
 
         //data required by active view
-        $data['suppliers']=$this->Suppliers_model->get_list(
-            array('suppliers.is_active'=>TRUE,'suppliers.is_deleted'=>FALSE),
-            'suppliers.*,IFNULL(tax_types.tax_rate,0)as tax_rate',
-            array(
-                array('tax_types','tax_types.tax_type_id=suppliers.tax_type_id','left')
-            )
-        );
-
-
+        $data['suppliers']=$this->Suppliers_model->get_supplier_list();
         $data['tax_types']=$this->Tax_types_model->get_list('is_deleted=0');
-
         $data['title'] = 'Delivery Invoice';
         
         (in_array('2-2',$this->session->user_rights)? 

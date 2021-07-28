@@ -45,7 +45,7 @@ class Cash_receipt extends CORE_Controller
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['tax_types']=$this->Tax_model->get_list(array('tax_types.is_deleted'=>FALSE));
         $data['customers']=$this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'customer_name ASC');
-        $data['suppliers']=$this->Suppliers_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'supplier_name ASC');
+        $data['suppliers']=$this->Suppliers_model->get_supplier_list();
         $data['accounts']=$this->Account_title_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'trim(account_title) ASC');
         $data['methods']=$this->Payment_method_model->get_list('is_deleted=0');
         $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'department_name ASC');
@@ -417,15 +417,15 @@ class Cash_receipt extends CORE_Controller
                     $m_temp_journal->journal_id=$journal_id;
                     $m_temp_journal->is_journal_posted=TRUE;
                     $m_temp_journal->modify($temp_journal_id);
-                // AUDIT TRAIL START
-                $m_trans=$this->Trans_model;
-                $m_trans->user_id=$this->session->user_id;
-                $m_trans->set('trans_date','NOW()');
-                $m_trans->trans_key_id=8; //CRUD
-                $m_trans->trans_type_id=69; // TRANS TYPE
-                $m_trans->trans_log='Finalized Payment Reference No. '.$this->input->post('or_no',TRUE).' Cash Receipt Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
-                $m_trans->save();
-                //AUDIT TRAIL END
+                    // AUDIT TRAIL START
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=8; //CRUD
+                    $m_trans->trans_type_id=69; // TRANS TYPE
+                    $m_trans->trans_log='Finalized Payment Reference No. '.$this->input->post('or_no',TRUE).' Cash Receipt Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
+                    $m_trans->save();
+                    //AUDIT TRAIL END
                 }
 
                 $response['stat']='success';

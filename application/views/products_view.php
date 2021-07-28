@@ -217,12 +217,12 @@
                                                 <div class="row">
                                                     <div class="col-md-4">
                                                         <div class="form-group" style="margin-bottom:0px;">
-                                                            <label class=""><b class="required">*</b>PLU :</label>
+                                                            <label class="">PLU :</label>
                                                             <div class="input-group">
                                                                 <span class="input-group-addon">
                                                                     <i class="fa fa-file-code-o"></i>
                                                                 </span>
-                                                                <input type="text" name="product_code" id="product_code" class="form-control" value="" data-error-msg="PLU is required." required>
+                                                                <input type="text" name="product_code" id="product_code" class="form-control" value="" data-error-msg="PLU is required." placeholder="Auto Generated" readonly>
                                                             </div>
                                                         </div>
                                                         <div class="form-group" style="margin-bottom:0px;">

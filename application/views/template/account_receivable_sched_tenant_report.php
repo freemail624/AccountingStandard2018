@@ -54,16 +54,18 @@
     <thead>
         <tr>
             <th width="20%" style="border: 1px solid black;padding: 3px;text-align: left;padding-left: 5px;">Tenant</th>
-            <th width="10%" style="border: 1px solid black;padding: 3px;text-align: right;padding-right: 5px;">
+            <th width="10%" style="border: 1px solid black;padding: 3px;text-align: left;padding-left: 5px;">Tenant Code</th>
+            <th width="10%" style="border: 1px solid black;padding: 3px;text-align: left;padding-left: 5px;">Space Code</th>
+            <th width="7%" style="border: 1px solid black;padding: 3px;text-align: right;padding-right: 5px;">
             As of <br/> <?php echo $prev_month; ?>
             </th>
-            <th width="10%" style="border: 1px solid black;padding: 3px;text-align: right;padding-right: 5px;">2307</th>
-            <th width="10%" style="border: 1px solid black;padding: 3px;text-align: right;padding-right: 5px;">Billed</th>
-            <th width="10%" style="border: 1px solid black;padding: 3px;text-align: center;">OR Detail</th>
-            <th width="10%" style="border: 1px solid black;padding: 3px;text-align: right;padding-right: 5px;">Payments</th>
-            <th width="10%" style="border: 1px solid black;padding: 3px;text-align: right;padding-right: 5px;">Adjustment (Dr)</th>
-            <th width="10%" style="border: 1px solid black;padding: 3px;text-align: right;padding-right: 5px;">Adjustment (Cr)</th>
-            <th width="10%" style="border: 1px solid black;padding: 3px;text-align: right;padding-right: 5px;">
+            <th width="7%" style="border: 1px solid black;padding: 3px;text-align: right;padding-right: 5px;">2307</th>
+            <th width="7%" style="border: 1px solid black;padding: 3px;text-align: right;padding-right: 5px;">Billed</th>
+            <th width="7%" style="border: 1px solid black;padding: 3px;text-align: center;">OR Detail</th>
+            <th width="7%" style="border: 1px solid black;padding: 3px;text-align: right;padding-right: 5px;">Payments</th>
+            <th width="9%" style="border: 1px solid black;padding: 3px;text-align: right;padding-right: 5px;">Adjustment (Dr)</th>
+            <th width="9%" style="border: 1px solid black;padding: 3px;text-align: right;padding-right: 5px;">Adjustment (Cr)</th>
+            <th width="7%" style="border: 1px solid black;padding: 3px;text-align: right;padding-right: 5px;">
             As of <br/> <?php echo $current_month; ?>
             </th>
         </tr>
@@ -80,15 +82,17 @@
 
             foreach($ar_accounts as $ar){ ?>
             <tr>
-                <td width="20%" style="padding-left: 5px;"><?php echo $ar->customer_name; ?></td>
-                <td width="10%" align="right" style="padding-right: 5px;"><?php echo number_format($ar->previous,2); ?></td>
-                <td width="10%" align="right" style="padding-right: 5px;"><?php echo number_format($ar->wtax_expanded,2); ?></td>
-                <td width="10%" align="right" style="padding-right: 5px;"><?php echo number_format($ar->billing,2); ?></td>
-                <td width="10%" align="right" style="padding-right: 5px;"><?php echo $ar->or_details; ?></td>
-                <td width="10%" align="right" style="padding-right: 5px;"><?php echo number_format($ar->payment,2); ?></td>
-                <td width="10%" align="right" style="padding-right: 5px;"><?php echo number_format($ar->adjustment_dr,2); ?></td>
-                <td width="10%" align="right" style="padding-right: 5px;"><?php echo number_format($ar->adjustment_cr,2); ?></td>
-                <td width="10%" align="right" style="padding-right: 5px;"><?php echo number_format($ar->total,2); ?></td>
+                <td style="padding-left: 5px;"><?php echo $ar->customer_name; ?></td>
+                <td style="padding-left: 5px;"><?php echo $ar->tenant_code; ?></td>
+                <td style="padding-left: 5px;"><?php echo $ar->space_code; ?></td>
+                <td align="right" style="padding-right: 5px;"><?php echo number_format($ar->previous,2); ?></td>
+                <td align="right" style="padding-right: 5px;"><?php echo number_format($ar->wtax_expanded,2); ?></td>
+                <td align="right" style="padding-right: 5px;"><?php echo number_format($ar->billing,2); ?></td>
+                <td align="right" style="padding-right: 5px;"><?php echo $ar->or_details; ?></td>
+                <td align="right" style="padding-right: 5px;"><?php echo number_format($ar->payment,2); ?></td>
+                <td align="right" style="padding-right: 5px;"><?php echo number_format($ar->adjustment_dr,2); ?></td>
+                <td align="right" style="padding-right: 5px;"><?php echo number_format($ar->adjustment_cr,2); ?></td>
+                <td align="right" style="padding-right: 5px;"><?php echo number_format($ar->total,2); ?></td>
             </tr>
         <?php 
             $total_previous+=$ar->previous;
@@ -102,7 +106,7 @@
     </tbody>
     <tfoot>
     <tr>
-        <td align="right"><b>Total : </b></td>
+        <td align="right" colspan="3"><b>Total : </b></td>
         <td align="right" style="padding-right: 5px;"><b><?php echo number_format($total_previous,2); ?></b></td>
         <td align="right" style="padding-right: 5px;"><b><?php echo number_format($total_2307,2); ?></b></td>
         <td align="right" style="padding-right: 5px;"><b><?php echo number_format($total_billing,2); ?></b></td>

@@ -99,7 +99,7 @@
             overflow-x: hidden;
         }
 
-        #tbl_accounts_receivable_filter{
+        #tbl_accounts_receivable_filter, #tbl_billing_sec_dep_review_filter{
             display: none;
         }
         div.dataTables_processing{ 
@@ -136,6 +136,52 @@
 <div class="col-md-12">
 
 <div id="div_payable_list">
+
+        <div class="panel panel-default hidden" style="border-radius:6px;margin-top: 20px;" id="panel_tbl_billing_sec_dep_for_review">
+            <div id="collapseOne" class="collapse in">
+                <div class="panel-body" style="">
+                <h2 class="h2-panel-heading">Review Security Deposit</h2><hr>
+                    <div >
+                        <div class="row">
+                            <div class="col-md-4">
+                                Department :<br />
+                                <select id="cbo_departments_sec_dep" class="selectpicker show-tick form-control" data-live-search="true">
+                                        <option value="0"> All Departments</option>
+                                    <?php foreach($departments as $department){ ?>
+                                        <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
+                                    <?php } ?>
+                                </select>   
+                            </div>
+                            <div class="col-md-8">
+                                <br/>
+                                <input type="text" class="form-control" id="searchbox_sec_dep" placeholder="Search Security Deposit">
+                            </div>
+                        </div>
+                        <br/>
+
+                        <table id="tbl_billing_sec_dep_review" class="table table-striped" cellspacing="0" width="100%">
+                            <thead class="">
+                            <tr>
+                                <th width="5%">&nbsp;</th>
+                                <th width="12%">Billing Ref No</th>
+                                <th width="7%">OR#</th>
+                                <th width="15%">Department</th>
+                                <th width="20%">Customer</th>
+                                <th>Transaction Date</th>
+                                <th>Notice</th>
+                                <th width="20%">Remarks</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
  <div class="panel panel-default hidden">
 <!--                 <div class="panel-heading">
                     <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; General Journal </b>
@@ -232,7 +278,7 @@
                              <input type="text" id="searchbox_general_journal" class="form-control">
                     </div>
                 </div>
-<br>
+                <br>
                     <div class="row-panel">
                         <table id="tbl_accounts_receivable" class="table table-striped" cellspacing="0" width="100%">
                             <thead class="">
@@ -302,7 +348,9 @@
                                                 <optgroup label="Suppliers">
                                                     <option value="create_supplier">[Create New Supplier]</option>
                                                     <?php foreach($suppliers as $supplier){ ?>
-                                                        <option value='S-<?php echo $supplier->supplier_id; ?>' data-link_department='0'><?php echo $supplier->supplier_name; ?></option>
+                                                        <option value='S-<?php echo $supplier->supplier_id; ?>' data-link_department='0'>
+                                                            <?php echo $supplier->branch_name.' '.$supplier->supplier_name; ?>
+                                                        </option>
                                                     <?php } ?>
                                                 </optgroup>
 
@@ -480,7 +528,32 @@
                     </tr>
                 </table>
 
-
+                <table id="table_hidden_review" class="hidden">
+                    <tr>
+                        <td>
+                            <select name="accounts[]" class="selectpicker show-tick form-control selectpicker_accounts" data-live-search="true">
+                                <?php foreach($accounts as $account){ ?>
+                                    <option value='<?php echo $account->account_id; ?>'><?php echo $account->account_title; ?></option>
+                                <?php } ?>
+                            </select>   
+                        </td>
+                        <td><input type="text" name="memo[]" class="form-control"></td>
+                        <td><input type="text" name="dr_amount[]" class="form-control numeric"></td>
+                        <td><input type="text" name="cr_amount[]" class="form-control numeric"></td>
+                        <td>       
+                            <select name="department_id_line[]" class="selectpicker show-tick form-control dept" data-live-search="true" >
+                                <option value="0">[ None ]</option>
+                                <?php foreach($departments as $department){ ?>
+                                    <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
+                                <?php } ?>
+                            </select>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-default add_account"><i class="fa fa-plus-circle" style="color: green;"></i></button>
+                            <button type="button" class="btn btn-default remove_account"><i class="fa fa-times-circle" style="color: red;"></i></button>
+                        </td>
+                    </tr>
+                </table>
 
             </div>
         </div>
@@ -1033,7 +1106,8 @@ $(document).ready(function(){
     var dtReviewAdjustment; var _cboDepartmentFilter;
     var _cboCustomerType;
     var _cboArTrans;
- 
+    var _cboDepartmentPayment;
+
     var oTBJournal={
         "dr" : "td:eq(2)",
         "cr" : "td:eq(3)"
@@ -1073,6 +1147,11 @@ $(document).ready(function(){
 
     var initializeControls=function(){
         _cboDepartmentFilter=$("#cbo_departments_filter").select2({
+            placeholder: "Please Select Default Department.",
+            allowClear: false
+        });
+
+        _cboDepartmentSecDep=$("#cbo_departments_sec_dep").select2({
             placeholder: "Please Select Default Department.",
             allowClear: false
         });
@@ -1137,6 +1216,53 @@ $(document).ready(function(){
                 },
                 { targets:[9],data: "journal_id", visible:false},
             ]
+        });
+
+        dtReviewSecDep=$('#tbl_billing_sec_dep_review').DataTable({
+            "dom": '<"toolbar">frtip',
+            oLanguage: {
+                    sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+            },
+            processing : true,            
+            "bLengthChange":false,
+            "ajax" : {
+                "url" :  "Billing_review/transaction/list-billing-security-deposit-for-review",
+                "bDestroy": true,            
+                "data": function ( d ) {
+                        return $.extend( {}, d, {
+                            "department_id": _cboDepartmentSecDep.val()
+                        });
+                    }
+            },         
+            "columns": [
+                {
+                    "targets": [0],
+                    "class":          "details-control",
+                    "orderable":      false,
+                    "data":           null,
+                    "defaultContent": ""
+                },
+                { targets:[1],data: "transaction_no" },
+                { targets:[2],data: "ref_no" },
+                { targets:[3],data: "department_name" },
+                { targets:[4],data: "customer_name" },
+                { targets:[5],data: "date_txn" },
+                { targets:[6],   data: "rem_day_for_due",
+                    render: function (data, type, full, meta){
+                        if(data>0){ //if check and remaining day before due is greater than 0
+                            return "<span style='color: red'><b><i class='fa fa-times-circle'></i> "+data+"</b> day(s) before Check is due.</span>";
+                        }else{
+                            return "";
+                        }
+                    } },
+                { targets:[7],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(30)}
+            ],
+              "initComplete": function(settings, json) {
+                 if(this.api().data().length != 0){
+                    $('#panel_tbl_billing_sec_dep_for_review').removeClass('hidden')
+                    dtReviewSecDep.columns.adjust().draw();
+                 }
+              } 
         });
 
         dtReview=$('#tbl_issuance_review').DataTable({
@@ -1260,6 +1386,16 @@ $(document).ready(function(){
                 .draw();
         });
 
+        _cboDepartmentSecDep.on("select2:select", function (e) {
+            $('#tbl_billing_sec_dep_review').DataTable().ajax.reload()
+        }); 
+
+        $("#searchbox_sec_dep").keyup(function(){         
+            dtReviewSecDep
+                .search(this.value)
+                .draw();
+        });   
+
         $('#btn_browse_customer_photo').click(function(event){
             event.preventDefault();
             $('input[name="file_upload[]"]').click();
@@ -1372,7 +1508,60 @@ $(document).ready(function(){
                     }
                 });
             }
-        } );
+        });
+
+        $('#tbl_billing_sec_dep_review tbody').on( 'click', 'tr td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = dtReviewSecDep.row( tr );
+            var idx = $.inArray( tr.attr('id'), detailRows );
+
+            if ( row.child.isShown() ) {
+                tr.removeClass( 'details' );
+                row.child.hide();
+
+                // Remove from the 'open' array
+                detailRows.splice( idx, 1 );
+            }
+            else {
+                tr.addClass( 'details' );
+                //console.log(row.data());
+                var d=row.data();
+
+                $.ajax({
+                    "dataType":"html",
+                    "type":"POST",
+                    "url":"Templates/layout/billing-security-deposit-for-review?id="+ d.temp_journal_id,
+                    "beforeSend" : function(){
+                        row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                    }
+                }).done(function(response){
+                    row.child( response,'no-padding' ).show();
+
+                    reInitializeSpecificDropDown($('.cbo_customer_list'));
+                    reInitializeSpecificDropDown($('.cbo_department_list'));
+                    reInitializeSpecificDropDown($('.cbo_payment_method'));
+
+
+                    reInitializeNumeric();
+
+                    var tbl=$('#tbl_entries_for_review_billing_'+ d.temp_journal_id);
+                    var parent_tab_pane=$('#journal_review_'+ d.temp_journal_id);
+
+                    reInitializeDropDownAccounts(tbl,false);
+                    reInitializeChildEntriesTable(tbl);
+                    reInitializeChildElementsBilling(parent_tab_pane);
+
+                    // Add to the 'open' array
+                    if ( idx === -1 ) {
+                        detailRows.push( tr.attr('id') );
+                    }
+
+
+                });
+
+            }
+        });
+
             $('#tbl_issuance_review tbody').on( 'click', 'tr td.details-control', function () {
                 var tr = $(this).closest('tr');
                 var row = dtReview.row( tr );
@@ -1900,7 +2089,7 @@ $(document).ready(function(){
             //add account button on table
             tbl.on('click','button.add_account',function(){
 
-                var row=$('#table_hidden').find('tr');
+                var row=$('#table_hidden_review').find('tr');
                 row.clone().insertAfter(tbl.find('tbody > tr:last'));
 
                 reInitializeNumeric();
@@ -2102,6 +2291,85 @@ $(document).ready(function(){
 
 
         };
+
+
+    var reInitializeChildElementsBilling=function(parent){
+        var _dataParentID=parent.data('parent-id');
+        var btn=parent.find('button[name="btn_finalize_journal_review"]');
+
+        //initialize datepicker
+        parent.find('input.date-picker').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            calendarWeeks: true,
+            autoclose: true
+
+        });
+
+        $('.cbo_department_list').on("change", function (e) {
+            var department_id = $(this).select2('val'); 
+            $('#tbl_entries_for_review_billing_'+_dataParentID+' select.dept').each(function(){ $(this).select2('val',department_id)});
+        });
+
+        parent.on('change', '.cbo_payment_method', function(){
+            // If payment method is check
+            if ($(this).val() == 2){
+                $('.for_check_billing_payment_'+_dataParentID).removeClass('hidden');
+                $('.check_date_'+_dataParentID).prop('required',true);
+                $('.check_no_'+_dataParentID).prop('required',true);
+            }else{
+                $('.for_check_billing_payment_'+_dataParentID).addClass('hidden');
+                $('.check_date_'+_dataParentID).prop('required',false);
+                $('.check_no_'+_dataParentID).prop('required',false);
+            }
+        });
+
+        parent.on('click','button[name="btn_finalize_journal_review"]',function(){
+
+            var _curBtn=$(this);
+            if(isZero('#tbl_entries_for_review_billing_'+_dataParentID)){
+            if(isBalance('#tbl_entries_for_review_billing_'+_dataParentID)){
+                if(validateRequiredFields($('.frm_billing_payment_'+_dataParentID))){
+                    finalizeJournalReview().done(function(response){
+                        showNotification(response);
+                        if(response.stat=="success"){
+                            dt.row.add(response.row_added[0]).draw();
+                            var _parentRow=_curBtn.parents('table.table_journal_entries_review').parents('tr').prev();
+                            dtReviewSecDep.row(_parentRow).remove().draw();
+                        }
+
+                    }).always(function(){
+                        showSpinningProgress(_curBtn);
+                    });
+                }
+            }else{
+                showNotification({title:"Not Balance!",stat:"error",msg:'Please make sure Debit and Credit amount are equal.'});
+                stat=false;
+            }
+            }else{
+                    showNotification({title:"No Amount!",stat:"error",msg:'Please make sure Debit and Credit does not amount to zero.'});
+                    stat=false;
+            }// END of ISZERO
+
+
+        });
+
+        var finalizeJournalReview=function(){
+            var _data_review=parent.find('form').serializeArray();
+
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"General_journal/transaction/create",
+                "data":_data_review,
+                "beforeSend": showSpinningProgress(btn)
+
+            });
+        };
+
+
+    };
 
     var createJournal=function(){
         var _data=$('#frm_journal').serializeArray();
