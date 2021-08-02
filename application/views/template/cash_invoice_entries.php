@@ -31,7 +31,7 @@
     </style>
 </head>
 <body>
-<div>
+<div style="page-break-after: always;">
     <table width="100%">
         <tr class="">
             <td width="50%" valign="top">
@@ -205,7 +205,102 @@
     <?php include 'sales_report_footer.php'; ?>   
 </div>
 
+<div>
+    <table width="100%">
+        <tr>
+            <td valign="top" align="right">WAREHOUSE COPY</td>
+        </tr>            
+    </table><br/>
+    <table width="100%">
+        <tr>
+            <td><strong>Customer Name : </strong><br/> <?php echo $info->customer_name; ?></td>
+            <td><strong>CI #: </strong><br/><?php echo $info->cash_inv_no; ?></td>
+            <td><strong>Date : </strong><br/><?php echo date('M d,Y', strtotime($info->date_invoice)); ?></td>
+        </tr>
+    </table>
+    <br/>
+    <div style="height: 390px!important; min-height: 390px!important;">
+        <table width="100%" cellpadding="5">
+            <tr>
+                <td width="10%" style="border-bottom: 1px solid black;"></td>
+                <td width="10%" style="border-bottom: 1px solid black;"><strong>QTY</strong></td>
+                <td width="45%" style="border-bottom: 1px solid black;"><strong>Description</strong></td>
+                <td width="35%" style="border-bottom: 1px solid black;"><strong>Remarks</strong></td>
+            </tr>
+            <?php
+                $total_tax_amount = 0;
+                $gross_total = 0;
+                foreach($items as $item){
+                $total_tax_amount+=$item->inv_tax_amount;
+                $gross_total+=$item->inv_gross;
+                ?>
+                <tr>
+                    <td align="center">
+                        <input type="checkbox" class="form-control" style="width: 100px!important; height: 100px!important;">
+                    </td>
+                    <td><?php echo $item->inv_qty; ?></td>
+                    <td><?php echo $item->product_desc; ?></td>
+                    <td style="border-bottom: 1px solid gray;">&nbsp;</td>
+                </tr>
+            <?php }?>
+        </table>
+    </div>
 
+    <table width="100%">
+        <tr>
+            <td>Item Prepared By : </td>
+            <td>Date : </td>
+        </tr>
+    </table>
+
+    <div style="border-bottom: 1px dashed black;">&nbsp;</div>
+    <br/><br/>
+    <table width="100%">
+        <tr>
+            <td valign="top" align="right">ACCOUNTING COPY</td>
+        </tr>            
+    </table><br/>
+    <table width="100%">
+        <tr>
+            <td><strong>Customer Name : </strong><br/> <?php echo $info->customer_name; ?></td>
+            <td><strong>CI #: </strong><br/><?php echo $info->cash_inv_no; ?></td>
+            <td><strong>Date : </strong><br/><?php echo date('M d,Y', strtotime($info->date_invoice)); ?></td>
+        </tr>
+    </table>
+    <br/>
+    <div style="height: 390px!important; min-height: 390px!important;">
+        <table width="100%" cellpadding="5">
+            <tr>
+                <td width="15%" style="border-bottom: 1px solid black;"><strong>QTY</strong></td>
+                <td width="55%" style="border-bottom: 1px solid black;"><strong>Description</strong></td>
+                <td width="15%" align="right" style="border-bottom: 1px solid black;"><strong>Unit Price</strong></td>
+                <td width="15%" align="right" style="border-bottom: 1px solid black;"><strong>Total</strong></td>
+            </tr>
+            <?php foreach($items as $item){
+                $price = $item->inv_price - $item->inv_discount;
+                $overall_discount = ($info->total_overall_discount/100);
+                $unit_price = $price - ($price * $overall_discount);
+            ?>
+                <tr>
+                    <td><?php echo $item->inv_qty; ?></td>
+                    <td><?php echo $item->product_desc; ?></td>
+                    <td align="right"><?php echo number_format($unit_price,2); ?></td>
+                    <td align="right"><?php echo number_format($unit_price * $item->inv_qty,2); ?></td>
+                </tr>
+            <?php }?>
+        </table>
+    </div>
+
+
+
+    <table width="100%">
+        <tr>
+            <td width="40%">Mode of Payment : </td>
+            <td width="40%">Received By: </td>
+            <td width="20%">Date : </td>
+        </tr>
+    </table>
+</div>
 
 
 
