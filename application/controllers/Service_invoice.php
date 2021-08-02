@@ -234,7 +234,7 @@ class Service_invoice extends CORE_Controller
                 $m_invoice->pms_desc = $this->input->post('pms_desc', TRUE);
                 $m_invoice->bpr_desc = $this->input->post('bpr_desc', TRUE);
                 $m_invoice->gj_desc = $this->input->post('gj_desc', TRUE);
-                $m_invoice->date_time_promised = date('Y-m-d h:i:s',strtotime($this->input->post('date_time_promised', TRUE)));
+                $m_invoice->date_time_promised = date('Y-m-d H:i:s',strtotime($this->input->post('date_time_promised', TRUE)));
                 $m_invoice->selling_dealer=$this->input->post('selling_dealer',TRUE);
                 $m_invoice->advisor_id=$this->input->post('advisor_id',TRUE);
                 $m_invoice->insurance_id=$this->input->post('insurance_id',TRUE);
@@ -515,7 +515,7 @@ class Service_invoice extends CORE_Controller
                 $m_invoice->pms_desc = $this->input->post('pms_desc', TRUE);
                 $m_invoice->bpr_desc = $this->input->post('bpr_desc', TRUE);
                 $m_invoice->gj_desc = $this->input->post('gj_desc', TRUE);
-                $m_invoice->date_time_promised = date('Y-m-d h:i:s',strtotime($this->input->post('date_time_promised', TRUE)));
+                $m_invoice->date_time_promised = date('Y-m-d H:i:s',strtotime($this->input->post('date_time_promised', TRUE)));
                 $m_invoice->selling_dealer=$this->input->post('selling_dealer',TRUE);
                 $m_invoice->advisor_id=$this->input->post('advisor_id',TRUE);
                 $m_invoice->insurance_id=$this->input->post('insurance_id',TRUE);

@@ -282,7 +282,7 @@ class Repair_order extends CORE_Controller
                 $m_order->pms_desc = $this->input->post('pms_desc', TRUE);
                 $m_order->bpr_desc = $this->input->post('bpr_desc', TRUE);
                 $m_order->gj_desc = $this->input->post('gj_desc', TRUE);
-                $m_order->date_time_promised = date('Y-m-d h:i:s',strtotime($this->input->post('date_time_promised', TRUE)));
+                $m_order->date_time_promised = date('Y-m-d H:i:s',strtotime($this->input->post('date_time_promised', TRUE)));
                 $m_order->selling_dealer=$this->input->post('selling_dealer',TRUE);
                 $m_order->advisor_id=$this->input->post('advisor_id',TRUE);
                 $m_order->insurance_id=$this->input->post('insurance_id',TRUE);
@@ -504,7 +504,7 @@ class Repair_order extends CORE_Controller
                 $m_order->pms_desc = $this->input->post('pms_desc', TRUE);
                 $m_order->bpr_desc = $this->input->post('bpr_desc', TRUE);
                 $m_order->gj_desc = $this->input->post('gj_desc', TRUE);
-                $m_order->date_time_promised = date('Y-m-d h:i:s',strtotime($this->input->post('date_time_promised', TRUE)));
+                $m_order->date_time_promised = date('Y-m-d H:i:s',strtotime($this->input->post('date_time_promised', TRUE)));
                 $m_order->selling_dealer=$this->input->post('selling_dealer',TRUE);
                 $m_order->advisor_id=$this->input->post('advisor_id',TRUE);
                 $m_order->insurance_id=$this->input->post('insurance_id',TRUE);
