@@ -176,6 +176,7 @@
                 </td>
                 <td valign="top">
                     <strong>TAG NO.</strong><br />
+                    <?php echo $service->tag_no; ?>
                 </td>
             </tr>
             <tr>

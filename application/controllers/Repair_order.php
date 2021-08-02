@@ -454,18 +454,18 @@ class Repair_order extends CORE_Controller
 
                 $check_ro=$m_order->get_list($repair_order_id);
 
-                if(count($check_ro) > 0){
+                // if(count($check_ro) > 0){
 
-                    if($check_ro[0]->ro_status_id == 1 OR $check_ro[0]->issued_status_id == 1){
+                //     if($check_ro[0]->ro_status_id == 1 OR $check_ro[0]->issued_status_id == 1){
 
-                        $response['stat']='error';
-                        $response['title']='<b>Warning</b>';
-                        $response['msg']='This repair order was already received!';
-                        die(json_encode($response));
+                //         $response['stat']='error';
+                //         $response['title']='<b>Warning</b>';
+                //         $response['msg']='This repair order was already received!';
+                //         die(json_encode($response));
 
-                    }
+                //     }
 
-                }
+                // }
 
                 $customer_id = $this->get_numeric_value($this->input->post('customer_id',TRUE));
                 $address = $this->input->post('address',TRUE);

@@ -196,6 +196,7 @@ class Inventory extends CORE_Controller
 
                 $date = date('Y-m-d',strtotime($this->input->get('date',TRUE)));
                 $depid = $this->input->get('depid',TRUE);
+                $is_fast_moving = $this->input->get('is_fast_moving',TRUE);
                 $info = $m_department->get_department_list($depid);
                 $currentcountfilter = $this->input->get('ccf',TRUE);
                 // Current Quantity Current Count Filter , 1 for ALL, 2 for Greater than 0, 3 for Less than Zero
@@ -214,13 +215,24 @@ class Inventory extends CORE_Controller
 
                 $products=$m_products->product_list(
                         $account, 
-                        $date, 0, 0, 0, 1, FALSE,
+                        $date, 
+                        0, 
+                        0, 
+                        0, 
+                        1, 
+                        FALSE,
                         $depid, 
                         $ci_account,
                         $account_dis, 
-                        $currentcountfilter, 0, 0, null, 
+                        $currentcountfilter, 
+                        0,
+                        0, 
+                        null, 
                         $length, 
-                        $offset, null, null);
+                        $offset,
+                        null,
+                        null,
+                        $is_fast_moving);
 
                 $data['date'] = date('m/d/Y',strtotime($date));
 
@@ -238,6 +250,8 @@ class Inventory extends CORE_Controller
                     'Description'=>'string', 
                     'Quantity In'=>'0.00', 
                     'Quantity Out'=>'0.00', 
+                    'BIN'=>'0.00',
+                    'BAY'=>'0.00',
                     'Balance'=>'0.00');
                 $sheet1="sheet1";
 
@@ -260,6 +274,8 @@ class Inventory extends CORE_Controller
                             $product->product_desc,
                             $product->quantity_in,
                             $product->quantity_out,
+                            $product->total_bin,
+                            $product->total_bay,
                             $product->total_qty_balance
                         ),
                         $styles2

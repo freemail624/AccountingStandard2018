@@ -2490,9 +2490,8 @@ Product Pick List
         '$start',
         '$order_column',
         '$order_dir',
-        '$is_fast_moving'
-
-    )";
+        '$is_fast_moving')";
+        
         $query = $this->db->query($sql);
         mysqli_next_result($this->db->conn_id);
 

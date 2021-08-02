@@ -197,7 +197,6 @@ class Deliveries extends CORE_Controller
                 $m_delivery_invoice->deliver_to_address = $this->input->post('deliver_to_address',TRUE);
                 $m_delivery_invoice->supplier_id = $this->input->post('supplier',TRUE);
                 $m_delivery_invoice->department_id = $this->input->post('department',TRUE);
-                $m_delivery_invoice->product_location_id = 1; /* BIN */
                 $m_delivery_invoice->remarks = $this->input->post('remarks',TRUE);
                 $m_delivery_invoice->tax_type_id = $this->input->post('tax_type',TRUE);
                 $m_delivery_invoice->date_delivered = date('Y-m-d',strtotime($this->input->post('date_delivered',TRUE)));

@@ -116,6 +116,8 @@ echo $_side_bar_navigation;
                 <thead class="">
                 <tr>
                     <th></th>
+                    <th>Slip #</th>
+                    <th>Location</th>
                     <th>RO Number</th>
                     <th>Customer #</th>
                     <th>Customer</th>
@@ -149,8 +151,30 @@ echo $_side_bar_navigation;
             <div class="row">
                 <div class="col-md-12">
                     <div class="row">
-                        <div class="col-xs-12 col-lg-5">
-                             Repair Order No : <br />
+                        <div class="col-md-5">
+                            <label><b class="required">*</b>  Department : </label>
+                            <select style="display: none;" name="department" id="cbo_departments" data-error-msg="Department is required.">
+                                <option value="0">[ Create New Department ]</option>
+                                <?php foreach($departments as $department){ ?>
+                                <option value="<?php echo $department->department_id; ?>" data-tax-type="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div class="col-lg-3"></div>
+                        <div class="col-lg-4">
+                            <label><b class="required">*</b> Issue to : </label>
+                            <select class="form-control" name="product_location_id" id="cbo_product_locations">
+                                <?php foreach($locations as $location){ ?>
+                                    <option value="<?php echo $location->product_location_id; ?>">
+                                        <?php echo $location->location; ?>
+                                    </option>
+                                <?php }?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-lg-3">
+                            <label>Repair Order No : </label>
                             <div class="input-group">
                                 <input type="text" name="repair_order_no" class="form-control" placeholder="Repair Order No" readonly>
                                  <span class="input-group-addon">
@@ -158,9 +182,14 @@ echo $_side_bar_navigation;
                                 </span>
                             </div>  
                         </div>
+                        <div class="col-lg-2">
+                            <label>Customer # :</label>
+                            <input type="text" name="customer_no" class="form-control" readonly>
+                            <input type="text" name="repair_order_id" class="form-control hidden" readonly>
+                        </div>
                         <div class="col-lg-3"></div>
                         <div class="col-lg-4">
-                            Plate No :<br />
+                            <label>Plate No :</label>
                             <div class="input-group">
                                 <span class="input-group-addon">
                                     <i class="fa fa-user"></i>
@@ -170,13 +199,8 @@ echo $_side_bar_navigation;
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-lg-2">
-                            Customer # :<br />
-                            <input type="text" name="customer_no" class="form-control" readonly>
-                            <input type="text" name="repair_order_id" class="form-control hidden" readonly>
-                        </div>
-                        <div class="col-lg-3">
-                            Customer :<br />
+                        <div class="col-lg-5">
+                            <label>Customer :</label>
                             <div class="input-group">
                                 <span class="input-group-addon">
                                     <i class="fa fa-user"></i>
@@ -184,9 +208,8 @@ echo $_side_bar_navigation;
                                 <input type="text" name="customer_name" class="form-control" readonly>
                             </div>
                         </div>
-                        <div class="col-lg-3"></div>
-                        <div class="col-lg-4">
-                            Date issued : <br />
+                        <div class="col-md-4 col-md-offset-3">
+                            <label><b class="required">*</b> Date issued : </label>
                             <div class="input-group">
                                 <span class="input-group-addon">
                                     <i class="fa fa-calendar"></i>
@@ -195,18 +218,6 @@ echo $_side_bar_navigation;
                             </div>
                         </div>
                     </div>
-                    <div class="row hidden">
-                        <div class="col-xs-12 col-lg-4">
-                            <b class="required" style="display: none;">*</b>  Department : <br />
-                            <select style="display: none;" name="department" id="cbo_departments" data-error-msg="Department is required.">
-                                <option value="0">[ Create New Department ]</option>
-                                <?php foreach($departments as $department){ ?>
-                                <option value="<?php echo $department->department_id; ?>" data-tax-type="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
-                                <?php } ?>
-                            </select>
-                        </div>
-                        <div class="col-lg-4"></div>
-                    </div>
                 </div>
             </div>
         </form>
@@ -214,7 +225,7 @@ echo $_side_bar_navigation;
         <div class="row">
             <div class="col-md-12">
                 <br />
-                <div class="hidden">
+                <div class="">
                     <label class="control-label" style="font-family: Tahoma;"><strong>Enter PLU or Search Item :</strong></label>
                     <div id="custom-templates">
                         <input class="typeahead" id="typeaheadsearch" type="text" placeholder="Enter PLU or Search Item">
@@ -225,17 +236,18 @@ echo $_side_bar_navigation;
                         <table id="tbl_items" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
                             <thead class="">
                                 <tr>
-                                    <th width="5%">Qty</th>
+                                    <th width="10%">Qty</th>
                                     <th width="10%">UM</th>
-                                    <th width="70%">Item</th>
-                                    <th style="text-align: right;" class="hidden">Unit Price</th>
-                                    <th style="text-align: right; display: none;">Discount</th>
-                                    <th style="display: none;">T.D</th> <!-- total discount -->
-                                    <th style="display: none;">Tax %</th>
-                                    <th style="text-align: right;" class="hidden">Total</th>
-                                    <th style="display: none;">V.I</th> <!-- vat input -->
-                                    <th style="display: none;">N.V</th> <!-- net of vat -->
-                                    <th style="display: none;">Item ID</td><!-- product id -->
+                                    <th width="15%">Part Number</th>
+                                    <th width="55%">Description</th>
+                                    <th class="hidden" style="text-align: right;">Unit Price</th>
+                                    <th class="hidden" style="text-align: right;">Discount</th>
+                                    <th class="hidden" style="text-align: right;">T.D</th>
+                                    <th class="hidden" style="text-align: right;">Tax %</th>
+                                    <th class="hidden" style="text-align: right;">Total</th>
+                                    <th class="hidden" style="text-align: right;">V.I</th>
+                                    <th class="hidden" style="text-align: right;">N.V</th>
+                                    <th class="hidden" style="text-align: right;">Product ID</td>
                                     <th width="10%"><center>Action</center></th>
                                 </tr>
                             </thead>
@@ -244,7 +256,7 @@ echo $_side_bar_navigation;
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="4" style="height: 50px;">&nbsp;</td>
+                                    <td colspan="5" style="height: 50px;">&nbsp;</td>
                                 </tr>
                                 <tr class="hidden">
                                     <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount :</strong></td>
@@ -627,20 +639,23 @@ $(document).ready(function(){
     var _productType;
     var _line_unit;
     var dt_ro;
+    var _cboLocations;
 
     var oTableItems={
         qty : 'td:eq(0)',
         unit_value: 'td:eq(1)',
-        unit_identifier : 'td:eq(2)',
-        unit_price : 'td:eq(3)',
-        discount : 'td:eq(4)',
-        total_line_discount : 'td:eq(5)',
-        tax : 'td:eq(6)',
-        total : 'td:eq(7)',
-        vat_input : 'td:eq(8)',
-        net_vat : 'td:eq(9)',
-        bulk_price : 'td:eq(12)',
-        retail_price : 'td:eq(13)'
+        plu : 'td:eq(2)',
+        unit_identifier : 'td:eq(3)',
+        unit_price : 'td:eq(4)',
+        discount : 'td:eq(5)',
+        total_line_discount : 'td:eq(6)',
+        tax : 'td:eq(7)',
+        total : 'td:eq(8)',
+        vat_input : 'td:eq(9)',
+        net_vat : 'td:eq(10)',
+        product_id : 'td:eq(11)',
+        bulk_price : 'td:eq(13)',
+        retail_price : 'td:eq(14)'
     };
 
     var oTableDetails={
@@ -653,7 +668,7 @@ $(document).ready(function(){
     var initializeControls=function(){
         dt=$('#tbl_issuances').DataTable({
             "dom": '<"toolbar">frtip',
-            "order": [[ 1, "desc" ]],
+            "order": [[ 7, "desc" ]],
             "bLengthChange":false,  
             "ajax" : "Issuances/transaction/list",
             "columns": [
@@ -664,17 +679,21 @@ $(document).ready(function(){
                     "data":           null,
                     "defaultContent": ""
                 },
-                { targets:[1],data: "repair_order_no" },
-                { targets:[2],data: "customer_no" },
-                { targets:[3],data: "customer_name" },
+                { targets:[1],data: "slip_no" },
+                { targets:[2],data: "location" },
+                { targets:[3],data: "repair_order_no" },
+                { targets:[4],data: "customer_no" },
+                { targets:[5],data: "customer_name" },
                 {
-                    targets:[4],
+                    targets:[6],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
                         return '<center>'+btn_edit+"&nbsp;"+btn_trash+'</center>';
                     }
-                }
+                },
+
+                { targets:[7],data: "issuance_id", visible: false }
             ]
         });
 
@@ -712,7 +731,12 @@ $(document).ready(function(){
 
         _cboDepartments=$("#cbo_departments").select2({
             placeholder: "Issue item to Department.",
-            allowClear: true
+            allowClear: false
+        });
+
+        _cboLocations=$("#cbo_product_locations").select2({
+            placeholder: "Issue to Location.",
+            allowClear: false
         });
 
         _cboDepartments.select2('val',null);
@@ -752,15 +776,31 @@ $(document).ready(function(){
         var _objTypeHead=$('#custom-templates .typeahead');
         _objTypeHead.typeahead({minLength: 3}, {
             name: 'products',
-            display: 'description',
+            display: 'product_code',
             limit: 10,
             source: products,
-            templates: {
-                header: [
-                    '<table class="tt-head"><tr><td width=20%" style="padding-left: 1%;"><b>PLU</b></td><td width="30%" align="left"><b>Description 1</b></td><td width="20%" align="left"><b>Description 2</b></td><td width="10%" align="right" style="padding-right: 2%;"><b>On Hand</b></td><td width="10%" align="right" style="padding-right: 2%;"><b>Cost</b></td></tr></table>'
-                ].join('\n'),
-                suggestion: Handlebars.compile('<table class="tt-items"><tr><td width="20%" style="padding-left: 1%">{{product_code}}</td><td width="30%" align="left">{{product_desc}}</td><td width="20%" align="left">{{produdct_desc1}}</td><td width="10%" align="right" style="padding-right: 2%;">{{CurrentQty}}</td><td width="10%" align="right" style="padding-right: 2%;">{{purchase_cost}}</td></tr></table>')
-            }
+                    templates: {
+                        header: [
+                            '<table class="tt-head"><tr>' +
+                            '<td width=15%" style="padding-left: 1%;"><b>PLU</b></td>' +
+                            '<td class="hidden"><b>UniqID</b></td>' +
+                            '<td width="25%" align="left"><b>Description</b></td>' +
+                            '<td class="hidden" width="20%" align="left"><b>Expiration</b></td>' +
+                            '<td class="hidden" width="10%" align="left"><b>LOT#</b></td>' +
+                            '<td class="hidden" width="17%" align="right"><b>On Hand</b></td>' +
+                            '<td class="hidden" width="13%" align="right" style="padding-right: 1%;"><b>SRP</b></td>' +
+                            '</tr></table>'
+                        ].join('\n'),
+                        suggestion: Handlebars.compile('<table class="tt-items"><tr>' +
+                            '<td width="15%" style="padding-left: 1%;">{{product_code}}</td>' +
+                            '<td class="hidden">{{unq_id}}</td>' +
+                            '<td width="25%" align="left">{{product_desc}}</td>' +
+                            '<td class="hidden" width="20%" align="left">{{exp_date}}</td>' +
+                            '<td class="hidden" width="10%" align="left">{{batch_no}}</td>' +
+                            '<td class="hidden" width="17%" align="right">{{on_hand_per_batch}}</td>' +
+                            '<td class="hidden" width="13%" align="right" style="padding-right: 1%;">{{sale_price}}</td>' +
+                            '</tr></table>')
+                    }
         }).on('keyup', this, function (event) {
             if (event.keyCode == 13) {
                 // $('.tt-suggestion:first').click();
@@ -773,11 +813,11 @@ $(document).ready(function(){
             _objTypeHead.typeahead('close');
             _objTypeHead.typeahead('val','');
 
-            if(getFloat(suggestion.CurrentQty) <= 0){
-                showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
-            }else if(getFloat(suggestion.CurrentQty) <= getFloat(suggestion.product_warn) ){
-                showNotification({title: suggestion.product_desc ,stat:"info",msg:"This item has low stock remaining.<br>It might result to negative inventory."});
-            }
+            // if(getFloat(suggestion.CurrentQty) <= 0){
+            //     showNotification({title: suggestion.product_desc,stat:"info",msg: "This item is currently out of stock.<br>Continuing will result to negative inventory."});
+            // }else if(getFloat(suggestion.CurrentQty) <= getFloat(suggestion.product_warn) ){
+            //     showNotification({title: suggestion.product_desc ,stat:"info",msg:"This item has low stock remaining.<br>It might result to negative inventory."});
+            // }
             
             var tax_rate=getFloat(suggestion.tax_rate);
             var total=getFloat(suggestion.purchase_cost);
@@ -823,8 +863,8 @@ $(document).ready(function(){
                 parent_unit_id : suggestion.parent_unit_id,
                 child_unit_id : suggestion.child_unit_id,
                 child_unit_name : suggestion.child_unit_name,
-                parent_unit_name : suggestion.parent_unit_name,
-                is_parent: 1 ,// INITIALLY , UNIT USED IS THE PARENT , 1 for PARENT 0 for CHILD
+                parent_unit_name : suggestion.product_unit_name,
+                is_parent: suggestion.is_parent,
                 a:a
             }));
 
@@ -1123,6 +1163,7 @@ $(document).ready(function(){
             clearFields($('#frm_issuances'));
             $('#typeaheadsearch').val('');
             showList(false);
+            _cboLocations.select2('val', 2)
             reComputeTotal();
         });
         $('#btn_browse').click(function(event){
@@ -1157,7 +1198,9 @@ $(document).ready(function(){
                 });
             });
             $('#cbo_departments').select2('val',data.department_id);
+            _cboLocations.select2('val', data.product_location_id);
             //$('#cbo_customers').select2('val',data.issued_to_person);
+
             $('textarea[name="remarks"]').val(data.remarks);
             $.ajax({
                 url : 'Issuances/transaction/items/'+data.issuance_id,
@@ -1459,8 +1502,9 @@ $(document).ready(function(){
             unit  = '<td width="5%"><select class="line_unit'+d.a+'" name="unit_id[]" ><option value="'+d.parent_unit_id+'" data-unit-identifier="1">'+d.parent_unit_name+'</option></select></td>';
         };
         return '<tr>'+
-        '<td width="10%"><input name="issue_qty[]" type="text" class="numeric form-control trigger-number" value="'+ d.issue_qty+'"></td>'+unit+
-        '<td width="30%">'+d.product_desc+'<input type="text" style="display: none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
+        '<td><input name="issue_qty[]" type="text" class="numeric form-control trigger-number" value="'+ d.issue_qty+'"></td>'+unit+
+        '<td>'+d.product_code+'</td>'+
+        '<td>'+d.product_desc+'<input type="text" style="display: none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
         '<td width="11%" class="hidden"><input name="issue_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.issue_price,2)+'" style="text-align:right;"></td>'+
         '<td width="11%" style="display: none;"><input name="issue_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.issue_discount,2)+'" style="text-align:right;"></td>'+
         '<td style="display: none;" width="11%"><input name="issue_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.issue_line_total_discount,2)+'" readonly></td>'+

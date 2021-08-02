@@ -161,6 +161,7 @@
     	<tr>
     		<td valign="top">
     			LOA No. <br/>
+                <strong><?php echo $info->loa_no; ?></strong>
     		</td>
     		<td valign="top">
     			Mobile No. <br/>
@@ -186,6 +187,7 @@
     	<tr>
     		<td valign="top">
     			LOA Date <br/>
+                <strong><?php echo date_format(date_create($info->loa_date),"m/d/Y"); ?></strong>
     		</td>
     		<td valign="top" colspan="2">
     			Representative Name <br/>
@@ -210,6 +212,7 @@
     	<tr>
     		<td valign="top">
     			Policy No <br/>
+                <strong><?php echo $info->policy_no; ?></strong>
     		</td>
     		<td valign="top" colspan="2">
     			Time Received <br/>
@@ -262,11 +265,7 @@
 
     <table width="100%" cellspacing="5" cellpadding="5" border="1" style="font-size: 7pt;">
     	<tr>
-    		<td valign="top" width="50%">
-    			<strong>CUSTOMER'S REQUEST</strong><br/>
-    			<?php echo $info->customer_remarks; ?><br/>
-    		</td>
-    		<td valign="top" width="50%">
+    		<td valign="top">
     			<strong>ADVISOR'S RECOMMENDATION</strong><br/>
     			***<?php echo $info->advisor_remarks; ?>***<br/><br/>
     		</td>    		

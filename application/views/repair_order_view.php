@@ -253,7 +253,7 @@
         </div><hr>
             <div class="row"> 
                 <div class="col-lg-2"><br> 
-                <button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Record Repair Order" ><i class="fa fa-plus"></i> Record Repair Order</button> 
+                <button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Record Repair Order" ><i class="fa fa-plus"></i> New Order</button> 
                 </div> 
                 <div class="col-lg-2"> 
                         From :<br /> 

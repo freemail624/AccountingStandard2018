@@ -182,7 +182,7 @@
                                                                     </select>
                                                                 </div>
                                                                 <div class="col-lg-2">
-                                                                    Moving Items : <br/>
+                                                                    Items : <br/>
                                                                     <select id="cbo_moving_items" class="form-control">
                                                                         <option value="all">All</option>
                                                                         <option value="0">Non Fast Moving Items</option>
@@ -225,10 +225,12 @@
                                                                 <thead class="">
                                                                 <tr>
                                                                     <th width="5%"></th>
-                                                                    <th width="20%">PLU</th>
+                                                                    <th width="15%">PLU</th>
                                                                     <th width="25%">Product</th>
                                                                     <th width="10%" style="text-align: right">Quantity In</th>
                                                                     <th width="10%" style="text-align: right">Quantity Out</th>
+                                                                    <th width="10%" style="text-align: right">BIN</th>
+                                                                    <th width="10%" style="text-align: right">BAY</th>
                                                                     <th width="15%" style="text-align: right">Balance</th>
                                                                 </tr>
                                                                 </thead>
@@ -381,7 +383,7 @@
             });
 
             $(document).on('click','#btn_export',function(){
-                window.open('Inventory/transaction/new-export-inventory?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val()+'&ccf='+$('#cbo_current_count').val());
+                window.open('Inventory/transaction/new-export-inventory?depid='+$('#cbo_department').val()+'&date='+$('#txt_date').val()+'&ccf='+$('#cbo_current_count').val()+'&is_fast_moving='+$('#cbo_moving_items').val());
             });
 
             $(document).on('click','#btn_email',function(){
@@ -509,7 +511,6 @@
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
                         }
-
                     },
                     {
                         targets:[4], sClass:'right-align',
@@ -521,6 +522,22 @@
                     },
                     {
                         targets:[5], sClass:'right-align',
+                        data: "total_bin",
+                        render: function(data, type, full, meta){
+                            return accounting.formatNumber(data,2);
+                        }
+
+                    },
+                    {
+                        targets:[6], sClass:'right-align',
+                        data: "total_bay",
+                        render: function(data, type, full, meta){
+                            return accounting.formatNumber(data,2);
+                        }
+
+                    },
+                    {
+                        targets:[7], sClass:'right-align',
                         data: null,
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data.total_qty_balance,2);

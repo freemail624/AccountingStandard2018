@@ -205,7 +205,6 @@ class Cash_invoice extends CORE_Controller
                 $m_invoice->customer_id=$this->input->post('customer',TRUE);
                 $m_invoice->sales_order_no=$this->input->post('so_no',TRUE);
                 $m_invoice->department_id=$this->input->post('department',TRUE);
-                $m_invoice->product_location_id=1; /* BIN */
                 $m_invoice->issue_to_department=$this->input->post('issue_to_department',TRUE);
                 $m_invoice->address=$this->input->post('address',TRUE);
                 $m_invoice->remarks=$this->input->post('remarks',TRUE);

@@ -747,6 +747,7 @@ class Service_invoice extends CORE_Controller
 
                 $service = $m_invoice->get_list($service_invoice_id);
                 $m_order->ro_status_id = FALSE;
+                $m_order->repair_order_status = 3;
                 $m_order->modify($service[0]->repair_order_id);
 
                 $response['title']='Success!';

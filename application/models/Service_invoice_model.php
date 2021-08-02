@@ -60,6 +60,7 @@ class Service_invoice_model extends CORE_Model
             i.email_address as insurance_email_address,
             si.*,
             ro.repair_order_no,
+            ro.tag_no,
             v.plate_no,
             CONCAT_WS(' ',
                     advisors.advisor_fname,

@@ -15,7 +15,7 @@ class Issuances extends CORE_Controller
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
         $this->load->model('Repair_order_model');
-
+        $this->load->model('Product_locations_model');
     }
     public function index() {
         $this->Users_model->validate();
@@ -35,6 +35,9 @@ class Issuances extends CORE_Controller
         $data['refproducts']=$this->Refproduct_model->get_list(
             'is_deleted=FALSE',null,null,'refproduct.refproduct_id'
         );
+
+        $data['locations']=$this->Product_locations_model->get_list(array("is_deleted"=>FALSE));
+
         // $data['products']=$this->Products_model->get_list(
         //     null, //no id filter
         //     array(
@@ -126,6 +129,8 @@ class Issuances extends CORE_Controller
             //***************************************create new Items************************************************
             case 'create':
                 $m_issuance=$this->Issuance_model;
+                $m_products=$this->Products_model;
+
                 // if(count($m_issuance->get_list(array('slip_no'=>$this->input->post('slip_no',TRUE))))>0){
                 //     $response['title'] = 'Invalid!';
                 //     $response['stat'] = 'error';
@@ -140,7 +145,7 @@ class Issuances extends CORE_Controller
                 $m_issuance->set('date_created','NOW()'); //treat NOW() as function and not string
                 $m_issuance->issued_department_id=$this->input->post('department',TRUE);
 
-                $m_issuance->product=$this->input->post('department',TRUE);
+                // $m_issuance->product=$this->input->post('department',TRUE);
 
 
                 //$m_issuance->issued_to_person=$this->input->post('issued_to_person',TRUE);
@@ -155,6 +160,7 @@ class Issuances extends CORE_Controller
                 $m_issuance->total_tax_amount=$this->get_numeric_value($this->input->post('summary_tax_amount',TRUE));
                 $m_issuance->total_after_tax=$this->get_numeric_value($this->input->post('summary_after_tax',TRUE));
                 $m_issuance->posted_by_user=$this->session->user_id;
+                $m_issuance->product_location_id=$this->get_numeric_value($this->input->post('product_location_id',TRUE));
                 $m_issuance->save();
 
                 $issuance_id=$m_issuance->last_insert_id();
@@ -206,17 +212,48 @@ class Issuances extends CORE_Controller
 
                     }   
 
+                    $product = $m_products->product_list(
+                            TRUE,
+                            date('Y-m-d'),
+                            $this->get_numeric_value($prod_id[$i]),
+                            0,
+                            0,
+                            0,
+                            $pick_list=FALSE,
+                            0,
+                            TRUE,
+                            FALSE,
+                            0,
+                            0,
+                            0,
+                            null,
+                            1,
+                            0,
+                            null,
+                            null,
+                            'all'
+                        );
+
+
+                    if(count($product) > 0){
+                        $m_issue_items->curr_soh = $this->get_numeric_value($product[0]->total_qty_balance);
+                    }else{
+                        $m_issue_items->curr_soh = 0;
+                    }
+
                     $m_issue_items->save();
-                    $m_products->on_hand=$m_products->get_product_qty($this->get_numeric_value($prod_id[$i]));
-                    $m_products->modify($this->get_numeric_value($prod_id[$i]));
+                    // $m_products->on_hand=$m_products->get_product_qty($this->get_numeric_value($prod_id[$i]));
+                    // $m_products->modify($this->get_numeric_value($prod_id[$i]));
                 }
                 //update invoice number base on formatted last insert id
                 $m_issuance->slip_no='SLP-'.date('Ymd').'-'.$issuance_id;
                 $m_issuance->modify($issuance_id);
 
-                $m_order = $this->Repair_order_model;
-                $m_order->issued_status_id = TRUE;
-                $m_order->modify($repair_order_id);
+                if($repair_order_id > 0){
+                    $m_order = $this->Repair_order_model;
+                    $m_order->issued_status_id = TRUE;
+                    $m_order->modify($repair_order_id);
+                }
 
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
@@ -239,6 +276,8 @@ class Issuances extends CORE_Controller
             ////***************************************update Items************************************************
             case 'update':
                 $m_issuance=$this->Issuance_model;
+                $m_products=$this->Products_model;
+
                 $issuance_id=$this->input->post('issuance_id',TRUE);
                 $repair_order_id=$this->input->post('repair_order_id',TRUE);
 
@@ -256,6 +295,7 @@ class Issuances extends CORE_Controller
                 $m_issuance->total_tax_amount=$this->get_numeric_value($this->input->post('summary_tax_amount',TRUE));
                 $m_issuance->total_after_tax=$this->get_numeric_value($this->input->post('summary_after_tax',TRUE));
                 $m_issuance->modified_by_user=$this->session->user_id;
+                $m_issuance->product_location_id=$this->get_numeric_value($this->input->post('product_location_id',TRUE));
                 $m_issuance->modify($issuance_id);
                 $m_issue_items=$this->Issuance_item_model;
                 $tmp_prod_id = $m_issue_items->get_list(
@@ -308,14 +348,43 @@ class Issuances extends CORE_Controller
                         $m_issue_items->unit_id=$unit_id[0]->parent_unit_id;
 
                     }   
+
+                    $product = $m_products->product_list(
+                            TRUE,
+                            date('Y-m-d'),
+                            $this->get_numeric_value($prod_id[$i]),
+                            0,
+                            0,
+                            0,
+                            $pick_list=FALSE,
+                            0,
+                            TRUE,
+                            FALSE,
+                            0,
+                            0,
+                            0,
+                            null,
+                            1,
+                            0,
+                            null,
+                            null,
+                            'all'
+                        );
+
+                    if(count($product) > 0){
+                        $m_issue_items->curr_soh = $this->get_numeric_value($product[0]->total_qty_balance);
+                    }else{
+                        $m_issue_items->curr_soh = 0;
+                    }
+
                     $m_issue_items->save();
 
                 }
 
-                for($i=0;$i<count($tmp_prod_id);$i++) {
-                    $m_products->on_hand=$m_products->get_product_qty($this->get_numeric_value($tmp_prod_id[$i]->product_id));
-                    $m_products->modify($this->get_numeric_value($tmp_prod_id[$i]->product_id));
-                }
+                // for($i=0;$i<count($tmp_prod_id);$i++) {
+                //     $m_products->on_hand=$m_products->get_product_qty($this->get_numeric_value($tmp_prod_id[$i]->product_id));
+                //     $m_products->modify($this->get_numeric_value($tmp_prod_id[$i]->product_id));
+                // }
 
                 $iss_info=$m_issuance->get_list($issuance_id,'slip_no');
                 $m_trans=$this->Trans_model;
@@ -353,8 +422,10 @@ class Issuances extends CORE_Controller
                 $issuance = $m_issuance->get_list($issuance_id);
                 $repair_order_id = $issuance[0]->repair_order_id;
                 
-                $m_order->issued_status_id = FALSE;
-                $m_order->modify($repair_order_id);
+                if($repair_order_id > 0){
+                    $m_order->issued_status_id = FALSE;
+                    $m_order->modify($repair_order_id);
+                }
 
                 //update product on_hand after issuance is deleted...
                 $products=$m_issuance_items->get_list(
@@ -389,27 +460,22 @@ class Issuances extends CORE_Controller
         return $this->Issuance_model->get_list(
             $filter_value,
             array(
-                'issuance_info.issuance_id',
-                'issuance_info.slip_no',
-                'issuance_info.remarks',
-                'issuance_info.issued_to_person',
-                'issuance_info.is_journal_posted',
+                'issuance_info.*',
                 'customers.customer_no',
                 'customers.customer_name',
-                'issuance_info.repair_order_id',
                 'repair_order.repair_order_no',
                 'customer_vehicles.plate_no',
-                'issuance_info.date_created',
                 'DATE_FORMAT(issuance_info.date_issued,"%m/%d/%Y") as date_issued',
-                'issuance_info.terms',
                 'departments.department_id',
-                'departments.department_name'
+                'departments.department_name',
+                'locations.location'
             ),
             array(
                 array('departments','departments.department_id=issuance_info.issued_department_id','left'),
                 array('repair_order','repair_order.repair_order_id=issuance_info.repair_order_id','left'),
                 array('customers','customers.customer_id=repair_order.customer_id','left'),
-                array('customer_vehicles','customer_vehicles.vehicle_id=repair_order.vehicle_id','left')
+                array('customer_vehicles','customer_vehicles.vehicle_id=repair_order.vehicle_id','left'),
+                array('product_locations locations','locations.product_location_id=issuance_info.product_location_id','left')
             ),
             'issuance_info.issuance_id DESC'
         );

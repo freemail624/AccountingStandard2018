@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Parts Requisition & Issuance Slip</title>
+	<title>Parts Requisition &amp; Issuance Slip</title>
 	<style type="text/css">
 		table.pris{
 			border-collapse: collapse;
@@ -37,7 +37,7 @@
 		<tr>
 			<td colspan="8" align="center" valign="top" class="top left right bottom">
 				<strong>
-					<h2>Parts Requisition &amp; Issuance Slip # <?php echo $issuance_info->repair_order_no; ?></h2>
+					<h2>Parts Requisition &amp; Issuance Slip # <?php echo $issuance_info->slip_no; ?></h2>
 				</strong>
 			</td>
 		</tr>
@@ -46,7 +46,7 @@
 				<?php echo $issuance_info->customer_no; ?><br/>
 				<strong><?php echo $issuance_info->customer_name; ?></strong>
 			</td>
-			<td width="10%" colspan="2" class="right bottom" valign="top">
+			<td width="10%" valign="top" colspan="2" class="right bottom">
 				RO NUMBER <br/>
 				<?php echo $issuance_info->repair_order_no; ?>
 			</td>
@@ -80,7 +80,7 @@
 				<td class="left"><?php echo $item->product_code; ?></td>
 				<td class=""><?php echo $item->product_desc; ?></td>
 				<td class="" align="center"><?php echo $item->bin_code; ?></td>
-				<td class="" align="center"><?php echo number_format(0,0); ?></td>
+				<td class="" align="center"><?php echo number_format($item->curr_soh,0); ?></td>
 				<td class="" align="center"><?php echo number_format($item->issue_qty,0); ?></td>
 				<td class="" align="center"><?php echo number_format(0,0); ?></td>
 				<td class="" align="center"><?php echo number_format($item->issue_qty,0); ?></td>
