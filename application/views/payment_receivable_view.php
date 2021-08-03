@@ -27,7 +27,8 @@
             float: left;
         }
         td.details-control {
-            background: url('assets/img/Folder_Closed.png') no-repeat center center;
+            /* background: url('assets/img/Folder_Closed.png') no-repeat center center; */
+            background: url('assets/img/print.png') no-repeat center center;
             cursor: pointer;
         }
         tr.details td.details-control {
@@ -527,7 +528,7 @@
                 "columns": [
                     {
                         "targets": [0],
-                        "class":          "details-control hidden",
+                        "class":          "details-control",
                         "orderable":      false,
                         "data":           null,
                         "defaultContent": ""
@@ -659,36 +660,8 @@
             $('#tbl_payments tbody').on( 'click', 'tr td.details-control', function () {
                 var tr = $(this).closest('tr');
                 var row = dt.row( tr );
-                var idx = $.inArray( tr.attr('id'), detailRows );
-
-                if ( row.child.isShown() ) {
-                    tr.removeClass( 'details' );
-                    row.child.hide();
-
-                    // Remove from the 'open' array
-                    detailRows.splice( idx, 1 );
-                }
-                else {
-                    tr.addClass( 'details' );
-                    var d=row.data();
-
-                    console.log(d);
-
-                    $.ajax({
-                        "dataType":"html",
-                        "type":"POST",
-                        "url":"Templates/layout/po/" + d.purchase_order_id,
-                        "beforeSend" : function(){
-                            row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
-                        }
-                    }).done(function(response){
-                        row.child( response,'no-padding' ).show();
-                        // Add to the 'open' array
-                        if ( idx === -1 ) {
-                            detailRows.push( tr.attr('id') );
-                        }
-                    });
-                }
+                var d=row.data();
+                window.open("Templates/layout/gate-pass/"+ d.payment_id);
             });
 
 

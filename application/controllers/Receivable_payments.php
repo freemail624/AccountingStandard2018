@@ -106,7 +106,7 @@ class receivable_payments extends CORE_Controller
                 $m_payment->receipt_no=$receipt_no;
                 $m_payment->customer_id=$this->input->post('customer_id',TRUE);
                 $m_payment->department_id=$this->input->post('department',TRUE);
-
+                
                 $payment_method_id=$this->input->post('payment_method',TRUE);
                 $m_payment->payment_method_id=$payment_method_id;
 
@@ -120,6 +120,11 @@ class receivable_payments extends CORE_Controller
                 $m_payment->total_paid_amount=$this->get_numeric_value($this->input->post('total_paid_amount',TRUE));
                 $m_payment->remarks=$this->input->post('remarks',TRUE);
                 $m_payment->date_paid=date('Y-m-d',strtotime($this->input->post('date_paid',TRUE)));
+
+                $number = '000000'; // the number to format
+                $inc_no = COUNT($m_payment->get_list())+1;
+                $m_payment->gate_pass_no = str_pad(intval($number) + $inc_no, strlen($number), '0', STR_PAD_LEFT);
+
                 $m_payment->save();
 
                 //payment to purchase invoice, amount per line

@@ -5919,7 +5919,20 @@ class Templates extends CORE_Controller {
 
                 break;
 
+            case 'gate-pass':
+                $m_company=$this->Company_model;
+                $company=$m_company->get_list();
+                $data['company_info']=$company[0];
+                $payment_id=$filter_value;
 
+                $m_payment=$this->Receivable_payment_model;
+                $data['payment']=$m_payment->get_list($payment_id)[0];
+
+                $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                $content= $this->load->view('template/gate_pass',$data,TRUE); //load the template
+                $pdf->WriteHTML($content);
+                $pdf->Output();
+                break;
         }
     }
 
