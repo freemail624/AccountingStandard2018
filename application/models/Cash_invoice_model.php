@@ -12,116 +12,121 @@ class Cash_invoice_model extends CORE_Model
 
 
 	function get_journal_entries($cash_invoice_id){
-		$sql="SELECT main.* FROM (
-		SELECT acc_receivable.account_id,
-		acc_receivable.memo,
-		0 as cr_amount,SUM(acc_receivable.dr_amount) as dr_amount
-		 FROM
-		(SELECT cii.product_id,
+		$sql="SELECT 
+			    main.*
+			FROM
+				/* CASH */
+			    (SELECT 
+			        acc_receivable.account_id,
+			            acc_receivable.memo,
+			            0 AS cr_amount,
+			            SUM(acc_receivable.dr_amount) AS dr_amount
+			    FROM
+			        (SELECT 
+			        cii.product_id,
+			            (SELECT 
+			                    payment_from_customer_id
+			                FROM
+			                    account_integration) AS account_id,
+			            '' AS memo,
+			            0 cr_amount,
+			            SUM(cii.inv_line_total_price) AS dr_amount
+			    FROM
+			        `cash_invoice_items` AS cii
+			    INNER JOIN products AS p ON cii.product_id = p.product_id
+			    WHERE
+			        cii.cash_invoice_id = $cash_invoice_id
+			            AND p.income_account_id > 0) AS acc_receivable
+			    GROUP BY acc_receivable.account_id 
 
-		(SELECT payment_from_customer_id FROM account_integration) as account_id
-		,
-		'' as memo,
-		0 cr_amount,
-		SUM(cii.inv_line_total_price) as dr_amount
+			    /* COS */
+			    UNION ALL SELECT 
+			        p.cos_account_id AS account_id,
+			            '' AS memo,
+			            0 AS cr_amount,
+			            SUM(cii.inv_qty * cii.cost_upon_invoice) AS dr_amount
+			    FROM
+			        `cash_invoice_items` AS cii
+			    INNER JOIN products AS p ON cii.product_id = p.product_id
+			    WHERE
+			        cii.cash_invoice_id = $cash_invoice_id
+			            AND p.cos_account_id > 0
+			    GROUP BY p.cos_account_id 
 
-		FROM `cash_invoice_items` as cii
-		INNER JOIN products as p ON cii.product_id=p.product_id
-		WHERE cii.cash_invoice_id=$cash_invoice_id AND p.income_account_id>0
-		) as acc_receivable GROUP BY acc_receivable.account_id
+			    /* DISCOUNT */
+			    UNION ALL SELECT 
+			        p.sd_account_id AS account_id,
+			            '' AS memo,
+			            0 AS cr_amount,
+			            (ci.total_discount + ci.total_overall_discount_amount) AS dr_amount
+			    FROM
+			        `cash_invoice_items` AS cii
+			    INNER JOIN products AS p ON cii.product_id = p.product_id
+			    LEFT JOIN cash_invoice ci ON ci.cash_invoice_id = cii.cash_invoice_id
+			    WHERE
+			        cii.cash_invoice_id = $cash_invoice_id
+			            AND p.sd_account_id > 0
+			    GROUP BY p.sd_account_id 
 
+			    /* INVENTORY */
+			    UNION ALL SELECT 
+			        p.expense_account_id AS account_id,
+			            '' AS memo,
+			            SUM(cii.inv_qty * cii.cost_upon_invoice) cr_amount,
+			            0 AS dr_amount
+			    FROM
+			        `cash_invoice_items` AS cii
+			    INNER JOIN products AS p ON cii.product_id = p.product_id
+			    WHERE
+			        cii.cash_invoice_id = $cash_invoice_id
+			            AND p.expense_account_id > 0
+			    GROUP BY p.expense_account_id 
 
-        UNION ALL 
+			    /* SALES */
+			    UNION ALL SELECT 
+			        p.income_account_id AS account_id,
+			            '' AS memo,
+			            (SUM(cii.inv_non_tax_amount) + ci.total_discount + ci.total_overall_discount_amount) cr_amount,
+			            0 AS dr_amount
+			    FROM
+			        `cash_invoice_items` AS cii
+			    INNER JOIN products AS p ON cii.product_id = p.product_id
+			    LEFT JOIN cash_invoice ci ON ci.cash_invoice_id = cii.cash_invoice_id
+			    WHERE
+			        cii.cash_invoice_id = $cash_invoice_id
+			            AND p.income_account_id > 0
+			    GROUP BY p.income_account_id 
 
-        SELECT 
-        p.cos_account_id as account_id,
-        '' as memo,
-        0 as cr_amount,
-        SUM(cii.inv_qty * cii.cost_upon_invoice) as dr_amount
-        FROM `cash_invoice_items` as cii
-        INNER JOIN products as p ON cii.product_id=p.product_id
-        WHERE cii.cash_invoice_id=$cash_invoice_id AND p.cos_account_id >0
-        GROUP BY p.cos_account_id
-
-
-		UNION ALL
-
-	        SELECT
-	        p.sd_account_id as account_id,
-	        '' as memo,
-	        0 as cr_amount,
-	        (ci.total_discount + ci.total_overall_discount_amount) as dr_amount
-
-	        FROM `cash_invoice_items` as cii
-	        INNER JOIN products as p ON cii.product_id=p.product_id
-	        LEFT JOIN cash_invoice ci ON ci.cash_invoice_id=cii.cash_invoice_id
-	        WHERE cii.cash_invoice_id=$cash_invoice_id AND p.sd_account_id>0
-	        GROUP BY p.sd_account_id
-
-        UNION ALL
-
-        SELECT
-        p.expense_account_id as account_id,
-        '' as memo,
-        SUM(cii.inv_qty * cii.cost_upon_invoice) cr_amount,
-        0 as dr_amount
-
-        FROM `cash_invoice_items` as cii
-        INNER JOIN products as p ON cii.product_id=p.product_id
-        WHERE cii.cash_invoice_id=$cash_invoice_id AND p.expense_account_id>0
-        GROUP BY p.expense_account_id
-
-		-- SELECT acc_discount.account_id,acc_discount.memo,
-		-- 0 as cr_amount,SUM(acc_discount.dr_amount) as dr_amount
-		--  FROM
-		-- (SELECT cii.product_id,
-
-		-- (SELECT receivable_discount_account_id FROM account_integration) as account_id
-		-- ,
-		-- '' as memo,
-		-- 0 cr_amount,
-		-- SUM((cii.inv_line_total_price - cii.inv_line_total_after_global) + cii.inv_line_total_discount) as dr_amount
-
-		-- FROM `cash_invoice_items` as cii
-		-- INNER JOIN products as p ON cii.product_id=p.product_id
-		-- WHERE cii.cash_invoice_id=$cash_invoice_id AND p.income_account_id>0
-		-- ) as acc_discount GROUP BY acc_discount.account_id
-
-		UNION ALL
-		SELECT
-		p.income_account_id as account_id,
-		'' as memo,
-		(SUM(cii.inv_non_tax_amount) + ci.total_discount + ci.total_overall_discount_amount) cr_amount,
-		0 as dr_amount
-
-		FROM `cash_invoice_items` as cii
-		INNER JOIN products as p ON cii.product_id=p.product_id
-		LEFT JOIN cash_invoice ci ON ci.cash_invoice_id=cii.cash_invoice_id
-		WHERE cii.cash_invoice_id=$cash_invoice_id AND p.income_account_id>0
-		GROUP BY p.income_account_id
-
-		UNION ALL
-
-		SELECT output_tax.account_id,output_tax.memo,
-		SUM(output_tax.cr_amount)as cr_amount,0 as dr_amount
-		 FROM
-		(SELECT cii.product_id,
-
-		(SELECT output_tax_account_id FROM account_integration) as account_id
-		,
-		'' as memo,
-		SUM(cii.inv_tax_amount) as cr_amount,
-		0 as dr_amount
-
-		FROM `cash_invoice_items` as cii
-		INNER JOIN products as p ON cii.product_id=p.product_id
-		WHERE cii.cash_invoice_id=$cash_invoice_id AND p.income_account_id>0
-		)as output_tax GROUP BY output_tax.account_id
-
-		) main WHERE main.dr_amount > 0 or main.cr_amount > 0";
+			    /* TAX */
+			    UNION ALL SELECT 
+			        output_tax.account_id,
+			            output_tax.memo,
+			            SUM(output_tax.cr_amount) AS cr_amount,
+			            0 AS dr_amount
+			    FROM
+			        (SELECT 
+			        cii.product_id,
+			            (SELECT 
+			                    output_tax_account_id
+			                FROM
+			                    account_integration) AS account_id,
+			            '' AS memo,
+			            SUM(cii.inv_tax_amount) AS cr_amount,
+			            0 AS dr_amount
+			    FROM
+			        `cash_invoice_items` AS cii
+			    INNER JOIN products AS p ON cii.product_id = p.product_id
+			    WHERE
+			        cii.cash_invoice_id = $cash_invoice_id
+			            AND p.income_account_id > 0) AS output_tax
+			    GROUP BY output_tax.account_id) main
+			WHERE
+			    main.dr_amount > 0 OR main.cr_amount > 0";
 
 		return $this->db->query($sql)->result();
 	}
+
+
 
 
 

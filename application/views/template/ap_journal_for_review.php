@@ -193,16 +193,15 @@
                                     <table class="table table-striped" style="width: 100% !important;">
                                         <thead>
                                             <tr style="border-bottom: solid gray;">
-                                                <td style="width: 40%;"><strong>Item</strong></td>
-                                                <td style="width: 12%;text-align: right;"><strong>Qty</strong></td>
-                                                <td style="width: 12%;"><strong>UM</strong></td>
-                                                <td style="width: 12%;text-align: right;"><strong>Price (RR)</strong></td>
-                                                <td style="width: 12%;text-align: right;"><strong>Price (PO)</strong></td>
-
-                                                <td style="width: 12%;text-align: right;"><strong>Discount</strong></td>
-
-                                                <td style="width: 12%;text-align: right;"><strong>Tax</strong></td>
-                                                <td style="width: 12%;text-align: right;"><strong>Total</strong></td>
+                                                <td style="width: 10%;"><strong>Part Number</strong></td>
+                                                <td style="width: 20%;"><strong>Item</strong></td>
+                                                <td style="width: 10%;text-align: right;"><strong>Qty</strong></td>
+                                                <td style="width: 10%;"><strong>UM</strong></td>
+                                                <td style="width: 10%;text-align: right;"><strong>Price (RR)</strong></td>
+                                                <td style="width: 10%;text-align: right;"><strong>Price (PO)</strong></td>
+                                                <td style="width: 10%;text-align: right;"><strong>Discount</strong></td>
+                                                <td style="width: 10%;text-align: right;"><strong>Tax</strong></td>
+                                                <td style="width: 10%;text-align: right;"><strong>Total</strong></td>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -212,6 +211,7 @@
                                                 foreach($items as $item){
                                                     ?>
                                             <tr style="<?php echo ($purchase_info->po_no != '' && $item->dr_price != $item->po_price ? 'color: #f44336; font-weight: bolder;' : ''); ?>">
+                                                <td><?php echo $item->product_code; ?></td>
                                                 <td><?php echo $item->product_desc; ?></td>
                                                 <td align="right"><?php echo number_format($item->dr_qty,2); ?></td>
                                                 <td><?php echo $item->unit_name; ?></td>
@@ -229,54 +229,43 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <td colspan="8"> </td>
-
+                                                <td colspan="9"></td>
                                             </tr>
-
                                             <tr>
-                                                <td></td>
-                                                <td colspan="6" align="right">Discount 1:</td>
+                                                <td colspan="8" align="right">Discount 1:</td>
                                                 <td align="right"><?php echo number_format($purchase_info->total_discount,2); ?></td>
                                             </tr>
                                             <tr>
-                                                <td></td>
-                                                <td colspan="6" align="right">Total Before Tax:</td>
+                                                <td colspan="8" align="right">Total Before Tax:</td>
                                                 <td align="right"><?php echo number_format($purchase_info->total_before_tax,2); ?></td>
                                             </tr>
                                             <tr>
-                                                <td></td>
-                                                <td colspan="6" align="right">Tax Amount:</td>
+                                                <td colspan="8" align="right">Tax Amount:</td>
                                                 <td align="right"><?php echo number_format($purchase_info->total_tax_amount,2); ?></td>
                                             </tr>
 
                                             <tr>
-                                                <td></td>
-                                                <td colspan="6" align="right">Total After Tax:</td>
+                                                <td colspan="8" align="right">Total After Tax:</td>
                                                 <td align="right"><?php echo number_format($purchase_info->total_after_tax,2); ?></td>
                                             </tr>
                                             <tr>
-                                                <td></td>
-                                                <td colspan="6" align="right">Discount 2: </td>
+                                                <td colspan="8" align="right">Discount 2: </td>
                                                 <td align="right"><?php echo number_format($purchase_info->total_overall_discount_amount,2); ?></td>
                                             </tr>
                                             <tr>
-                                                <td></td>
-                                                <td colspan="6" align="right">Shipping Cost: </td>
+                                                <td colspan="8" align="right">Shipping Cost: </td>
                                                 <td align="right"><?php echo number_format($purchase_info->shipping_cost,2); ?></td>
                                             </tr>
                                             <tr>
-                                                <td></td>
-                                                <td colspan="6" align="right">Custom Duties: </td>
+                                                <td colspan="8" align="right">Custom Duties: </td>
                                                 <td align="right"><?php echo number_format($purchase_info->custom_duties,2); ?></td>
                                             </tr>  
                                             <tr>
-                                                <td></td>
-                                                <td colspan="6" align="right">Other Amount: </td>
+                                                <td colspan="8" align="right">Other Amount: </td>
                                                 <td align="right"><?php echo number_format($purchase_info->other_amount,2); ?></td>
                                             </tr>                  
                                             <tr>
-                                                <td></td>
-                                                <td colspan="6" align="right"><strong>Total:</strong></td>
+                                                <td colspan="8" align="right"><strong>Total:</strong></td>
                                                 <td align="right"><?php echo number_format($purchase_info->grand_total_amount,2); ?></td>
                                         </tfoot>
                                     </table>

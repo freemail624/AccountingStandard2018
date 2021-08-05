@@ -182,6 +182,7 @@
                                 <th></th>
                                 <th>Adjustment Code</th>
                                 <th>Adjustment Type</th>
+                                <th>Invoice No</th>
                                 <th>Date Adjusted</th>
                                 <th style="width: 25%;">Remarks</th>
                                 <th>Department</th>
@@ -1060,10 +1061,11 @@ $(document).ready(function(){
                     "defaultContent": ""
                 },
                 { targets:[1],data: "adjustment_code" },
-                { targets:[2],data: "adjustment_type" , sClass:"center-align"},
-                { targets:[3],data: "date_adjusted" },
-                { targets:[4],data: "remarks",render: $.fn.dataTable.render.ellipsis(80)},
-                { targets:[5],data: "department_name" }
+                { targets:[2],data: "transaction_type" },
+                { targets:[3],data: "inv_no" },
+                { targets:[4],data: "date_adjusted" },
+                { targets:[5],data: "remarks",render: $.fn.dataTable.render.ellipsis(80)},
+                { targets:[6],data: "department_name" }
             ]
         });
 

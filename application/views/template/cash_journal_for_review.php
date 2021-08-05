@@ -208,6 +208,7 @@
                                     <table class="table table-striped" style="width: 100% !important;">
                                         <thead>
                                             <tr style="border-bottom: solid gray;">
+                                                <td><strong>Part Number </strong></td>
                                                 <td><strong>Item </strong></td>
                                                 <td class="align-right"><strong>Qty</strong></td>
                                                 <td><strong>UM</strong></td>
@@ -227,6 +228,7 @@
 
                                             ?>
                                                 <tr>
+                                                    <td><?php echo $item->product_code; ?></td>
                                                     <td><?php echo $item->product_desc; ?></td>
                                                     <td class="align-right"><?php echo $item->inv_qty; ?></td>
                                                     <td><?php echo $item->unit_name; ?></td>
@@ -240,24 +242,24 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <td colspan="8">
+                                                <td colspan="9">
                                                     <hr>
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td colspan="7" class="align-right">Gross Total:</td>
+                                                <td colspan="8" class="align-right">Gross Total:</td>
                                                 <td class="align-right"><?php echo number_format($gross_total, 2); ?></td>
                                             </tr>
                                             <tr>
-                                                <td colspan="7" class="align-right">Discount per Item:</td>
+                                                <td colspan="8" class="align-right">Discount per Item:</td>
                                                 <td class="align-right"><?php echo number_format($info->total_discount, 2); ?></td>
                                             </tr>
                                             <tr>
-                                                <td colspan="7" class="align-right">Global Discount:</td>
+                                                <td colspan="8" class="align-right">Global Discount:</td>
                                                 <td class="align-right"><?php echo number_format($info->total_overall_discount_amount, 2); ?></td>
                                             </tr>
                                             <tr>
-                                                <td colspan="7" class="align-right"><strong>Total Invoice Amount: </strong></td>
+                                                <td colspan="8" class="align-right"><strong>Total Invoice Amount: </strong></td>
                                                 <td class="align-right">
                                                     <strong>
                                                         <?php echo number_format($info->total_after_discount, 2); ?>

@@ -573,13 +573,7 @@
                                                                             </div>
                                                                             <div class="col-md-12">
                                                                                 <label>Insurance :</label> <br />
-                                                                                <select class="form-control" name="insurance_id" id="cbo_insurance" data-error-msg="Advisor is required!">
-                                                                                    <option value="0">[ Create New Insurance ]</option>
-                                                                                    <?php foreach ($insurances as $insurance) { ?>
-                                                                                        <option value="<?php echo $insurance->insurance_id; ?>">
-                                                                                            <?php echo $insurance->insurer_company; ?>
-                                                                                        </option>
-                                                                                    <?php } ?>
+                                                                                <select class="form-control" name="insurance_id" id="cbo_insurance">
                                                                                 </select>
                                                                             </div>
                                                                             <div class="col-md-12">
@@ -2266,9 +2260,52 @@
                     allowClear: false
                 });
 
-                _cboInsurance = $("#cbo_insurance").select2({
-                    placeholder: "Please select an insurance company.",
-                    allowClear: false
+                _cboInsurance=$("#cbo_insurance").select2({
+                    ajax: {
+                        url: "Customers/transaction/list",
+                        type: "post",
+                        dataType: 'json',
+                        delay: 500,
+                        data: function(params) {
+                            return {
+                                search: {
+                                    value: params.term
+                                },
+                                start: ((params.page || 1) * 10) - 10,
+                                length: 10,
+                                order: [{
+                                    column: 1,
+                                    dir: 'asc'
+                                }]
+                            };
+                        },
+                        processResults: function(response, params) {
+                            const {
+                                data,
+                                recordsFiltered
+                            } = response
+                            return {
+                                results: data.map(res => {
+                                    return {
+                                        id: res.customer_id,
+                                        text: res.customer_no + ' - ' + res.customer_name,
+                                        customerName: res.customerName,
+                                        customerNo: res.customer_no,
+                                        address: res.address,
+                                        contactNo: res.contact_no,
+                                        telNoHome: res.tel_no_home,
+                                        telNoBus: res.tel_no_bus
+                                    }
+                                }),
+                                pagination: {
+                                    more: ((params.page || 1) * 10) < recordsFiltered
+                                }
+                            };
+                        },
+                        cache: true
+                    },
+                    placeholder: 'Select an insurance',
+                    minimumInputLength: 1
                 });
 
                 _cboMakes = $("#cbo_makes").select2({
@@ -3177,10 +3214,15 @@
 
                     $('#cbo_customers').append('<option value="' + data.customer_id + '" selected data-customer_type = "' + data.customer_type_id + '">' + data.customer_name + '</option>');
                     $('#cbo_customers').select2('val', data.customer_id);
+
+                    $('#cbo_insurance').append('<option value="' + data.insurance_id + '" selected>' + data.insurer_company + '</option>');
+                    $('#cbo_insurance').select2('val', data.insurance_id);
+
                     _vehicleIDSelected = data.vehicle_id;
                     _cboCustomers.trigger("select2:select");
+                    _cboInsurance.trigger("select2:select");
+
                     $('#cbo_advisors').select2('val', data.advisor_id);
-                    $('#cbo_insurance').select2('val', data.insurance_id);
 
                     $('input[name="year_make_id"]').val(data.year_make_id);
                     $('input[name="model_name"]').val(data.model_name);
@@ -3322,10 +3364,15 @@
 
                     $('#cbo_customers').append('<option value="' + data.customer_id + '" selected data-customer_type = "' + data.customer_type_id + '">' + data.customer_name + '</option>');
                     $('#cbo_customers').select2('val', data.customer_id);
+
+                    $('#cbo_insurance').append('<option value="' + data.insurance_id + '" selected>' + data.customer_name + '</option>');
+                    $('#cbo_insurance').select2('val', data.insurance_id);
+
                     _vehicleIDSelected = data.vehicle_id;
                     _cboCustomers.trigger("select2:select");
+                    _cboInsurance.trigger("select2:select");
+
                     $('#cbo_advisors').select2('val', data.advisor_id);
-                    $('#cbo_insurance').select2('val', data.insurance_id);
 
                     $('input[name="year_make_id"]').val(data.year_make_id);
                     $('input[name="model_name"]').val(data.model_name);

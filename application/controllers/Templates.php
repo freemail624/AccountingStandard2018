@@ -143,9 +143,9 @@ class Templates extends CORE_Controller {
                         'service_invoice.is_active'=>TRUE,
                         'service_invoice.service_invoice_id'=>$service_invoice_id),
                     array(
+                        '0 as is_insured',
                         'service_invoice.service_invoice_id',
                         'service_invoice.service_invoice_no',
-                        'service_invoice.customer_id',
                         'service_invoice.department_id',
                         'service_invoice.salesperson_id',
                         'service_invoice.total_amount',
@@ -156,6 +156,8 @@ class Templates extends CORE_Controller {
                         'service_invoice.posted_by_user',
                         'service_invoice.date_due',
                         'service_invoice.remarks',
+                        'customers.customer_id',
+                        'customers.customer_no,',
                         'customers.customer_name',
                         'customers.address',
                         'customers.email_address',
@@ -199,10 +201,9 @@ class Templates extends CORE_Controller {
                     )
                 );
 
-                $data['entries']=$m_service_invoice->get_journal_entries_2($service_invoice_id);
-                $data['items']=$m_service_invoice_items->get_service_invoice_items($service_invoice_id);
+                $data['entries']=$m_service_invoice->get_journal_entries_2($service_invoice_id, 0);
+                $data['items']=$m_service_invoice_items->get_service_invoice_items($service_invoice_id, 0);
 
-                
                 //validate if customer is not deleted
                 $valid_customer=$m_customers->get_list(
                     array(
@@ -215,6 +216,97 @@ class Templates extends CORE_Controller {
 
                   echo $this->load->view('template/service_journal_for_review',$data,TRUE); //details of the journal
 
+                break;
+
+              case 'services-insurance-journal-for-review':
+
+                $service_invoice_id = $this->input->get('id',TRUE);
+                $m_service_invoice=$this->Service_invoice_model;
+                $m_service_invoice_items=$this->Service_invoice_item_model;
+                $m_accounts=$this->Account_title_model;
+                $m_customers=$this->Customers_model;
+                $m_departments=$this->Departments_model;
+
+
+                $service_info=$m_service_invoice->get_list(
+                    array(
+                        'service_invoice.is_deleted'=>FALSE,
+                        'service_invoice.is_active'=>TRUE,
+                        'service_invoice.service_invoice_id'=>$service_invoice_id),
+                    array(
+                        '1 as is_insured',
+                        'service_invoice.service_invoice_id',
+                        'service_invoice.service_invoice_no',
+                        'service_invoice.department_id',
+                        'service_invoice.salesperson_id',
+                        'service_invoice.total_amount',
+                        'service_invoice.total_overall_discount_amount',
+                        'service_invoice.total_amount_after_discount',
+                        'DATE_FORMAT(service_invoice.date_invoice,"%m/%d/%Y")as date_invoice',
+                        'DATE_FORMAT(service_invoice.date_created,"%m/%d/%Y %r")as date_created',
+                        'service_invoice.posted_by_user',
+                        'service_invoice.date_due',
+                        'service_invoice.remarks',
+                        'insurance.customer_id',
+                        'insurance.customer_no',
+                        'insurance.customer_name',
+                        'insurance.address',
+                        'insurance.email_address',
+                        'insurance.contact_no',
+                        'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by'
+
+                        ),
+                        array(
+                            array('customers', 'customers.customer_id=service_invoice.customer_id','left'),
+                            array('customers insurance', 'insurance.customer_id=service_invoice.insurance_id','left'),
+                            array('user_accounts','user_accounts.user_id=service_invoice.posted_by_user','left')
+
+                            )    
+                );
+
+                $data['service_invoice']=$service_info[0];
+
+                $data['departments']=$m_departments->get_list(
+                    array('is_active'=> TRUE, 
+                          'is_deleted'=>FALSE
+                        ),
+                    array(
+                        'departments.department_id',
+                        'departments.department_name'
+                        )
+                );
+
+                $data['customers']=$m_customers->get_list(
+                    array('is_active'=>TRUE,
+                          'is_deleted'=> FALSE
+                        ),
+                    array(
+                        'customers.customer_id',
+                        'customers.customer_name'
+                        )
+                );
+
+                $data['accounts']=$m_accounts->get_list(
+                    array(
+                        'account_titles.is_active'=>TRUE,
+                        'account_titles.is_deleted'=>FALSE
+                    )
+                );
+
+                $data['entries']=$m_service_invoice->get_journal_entries_2($service_invoice_id, 1);
+                $data['items']=$m_service_invoice_items->get_service_invoice_items($service_invoice_id, 1);
+
+                //validate if customer is not deleted
+                $valid_customer=$m_customers->get_list(
+                    array(
+                        'customer_id'=>$service_info[0]->customer_id,
+                        'is_active'=>TRUE,
+                        'is_deleted'=>FALSE
+                    )
+                );
+                $data['valid_particular']=(count($valid_customer)>0);          
+
+                  echo $this->load->view('template/service_journal_for_review',$data,TRUE); //details of the journal
 
                 break;
 
@@ -321,8 +413,7 @@ class Templates extends CORE_Controller {
                         $data['company_info']=$company[0];
                         $data['po_items']=$m_po_items->get_list(
                                 array('purchase_order_id'=>$filter_value),
-                                'purchase_order_items.*,products.product_desc,units.unit_name',
-
+                                'purchase_order_items.*,products.product_code,products.product_desc,units.unit_name',
                                 array(
                                     array('products','products.product_id=purchase_order_items.product_id','left'),
                                     array('units','units.unit_id=purchase_order_items.unit_id','left')
@@ -406,7 +497,7 @@ class Templates extends CORE_Controller {
                         $data['company_info']=$company[0];
                         $data['pr_items']=$m_requests_items->get_list(
                                 array('purchase_request_id'=>$filter_value),
-                                'purchase_request_items.*,products.product_desc,units.unit_name',
+                                'purchase_request_items.*,products.product_code,products.product_desc,units.unit_name',
 
                                 array(
                                     array('products','products.product_id=purchase_request_items.product_id','left'),
@@ -499,7 +590,7 @@ class Templates extends CORE_Controller {
                         $data['company_info']=$company[0];
                         $data['dr_items']=$m_dr_items->get_list(
                             array('dr_invoice_id'=>$filter_value),
-                            'delivery_invoice_items.*,products.product_desc,units.unit_name',
+                            'delivery_invoice_items.*,products.product_code,products.product_desc,units.unit_name',
                             array(
                                 array('products','products.product_id=delivery_invoice_items.product_id','left'),
                                 array('units','units.unit_id=delivery_invoice_items.unit_id','left')
@@ -1932,7 +2023,7 @@ class Templates extends CORE_Controller {
                 $data['sales_order']=$info[0];
                 $data['sales_order_items']=$m_sales_order_items->get_list(
                     array('sales_order_items.sales_order_id'=>$filter_value),
-                    'sales_order_items.*,products.product_desc,units.unit_name',
+                    'sales_order_items.*,products.product_code,products.product_desc,units.unit_name',
                     array(
                         array('products','products.product_id=sales_order_items.product_id','left'),
                         array('units','units.unit_id=sales_order_items.unit_id','left')
@@ -2923,6 +3014,7 @@ class Templates extends CORE_Controller {
 
                     array(
                         'delivery_invoice_items.*',
+                        'products.product_code',
                         'products.product_desc',
                         'units.unit_name',
                         'IFNULL(m.po_price,0) AS po_price'
@@ -3019,6 +3111,7 @@ class Templates extends CORE_Controller {
 
                     array(
                         'sales_invoice_items.*',
+                        'products.product_code',
                         'products.product_desc',
                         'products.purchase_cost',
                         'units.unit_name'
@@ -5697,6 +5790,7 @@ class Templates extends CORE_Controller {
 
                 $data['items']=$m_adjustment_items->get_list(array('adjustment_items.adjustment_id'=>$adjustment_id),
                     'adjustment_items.*,
+                    products.product_code,
                     products.product_desc,
                     units.unit_name
                     ',
@@ -5730,7 +5824,7 @@ class Templates extends CORE_Controller {
                         )
                     );
                     $particular_id = 'S-'.$adjustment_info[0]->supplier_id;
-                    $particular_name = $valid_particular[0]-> supplier_name . ' (Supplier)';
+                    $particular_name = $valid_particular[0]->supplier_name . ' (Supplier)';
                 }else{
                      $valid_particular=$m_suppliers->get_list(
                         array(
@@ -5895,6 +5989,7 @@ class Templates extends CORE_Controller {
 
                 $data['items']=$m_issuance_item_model->get_list(array('issuance_department_items.issuance_department_id'=>$issuance_department_id),
                     'issuance_department_items.*,
+                    products.product_code,
                     products.product_desc,
                     units.unit_name
                     ',

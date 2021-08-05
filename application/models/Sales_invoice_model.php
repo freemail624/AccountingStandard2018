@@ -148,10 +148,11 @@ class Sales_invoice_model extends CORE_Model
     }
 
 
-function get_journal_entries_2($sales_invoice_id){
+    function get_journal_entries_2($sales_invoice_id){
 
-$sql="SELECT main.* FROM(
-            SELECT acc_receivable.account_id,acc_receivable.memo,
+        $sql="SELECT main.* FROM
+            /* AR */
+            (SELECT acc_receivable.account_id,acc_receivable.memo,
             0 as cr_amount,SUM(acc_receivable.dr_amount) as dr_amount
              FROM
             (SELECT sii.product_id,
@@ -168,7 +169,7 @@ $sql="SELECT main.* FROM(
             ) as acc_receivable GROUP BY acc_receivable.account_id
             
             UNION ALL 
-            
+            /* COS */
             SELECT 
             p.cos_account_id as account_id,
             '' as memo,
@@ -180,7 +181,7 @@ $sql="SELECT main.* FROM(
             GROUP BY p.cos_account_id
 
             UNION ALL
-
+            /* DISCOUNTS */
             SELECT
             p.sd_account_id as account_id,
             '' as memo,
@@ -194,7 +195,7 @@ $sql="SELECT main.* FROM(
             GROUP BY p.sd_account_id
 
             UNION ALL
-
+            /* INVENTORY */
             SELECT
             p.expense_account_id as account_id,
             '' as memo,
@@ -207,7 +208,7 @@ $sql="SELECT main.* FROM(
             GROUP BY p.expense_account_id
 
             UNION ALL
-
+            /* SALES */
             SELECT
             p.income_account_id as account_id,
             '' as memo,
@@ -222,7 +223,7 @@ $sql="SELECT main.* FROM(
 
 
             UNION ALL
-
+            /* TAX AMOUNT */
             SELECT output_tax.account_id,
             output_tax.memo,
             SUM(output_tax.cr_amount)as cr_amount,

@@ -57,7 +57,7 @@ class Repair_order_model extends CORE_Model
 		    c.customer_no,
 		    c.customer_name,
 		    ro.*,
-		    insurance.insurer_company,
+		    insurance.customer_name as insurer_company,
 		    v.plate_no,
 		    CONCAT_WS(' ',
 		            advisors.advisor_fname,
@@ -84,7 +84,7 @@ class Repair_order_model extends CORE_Model
 		        LEFT JOIN
 		    advisors ON advisors.advisor_id = ro.advisor_id
 		    	LEFT JOIN
-		    insurance ON insurance.insurance_id = ro.insurance_id
+		    customers insurance ON insurance.customer_id = ro.insurance_id
 					LEFT JOIN
 				repair_order_statuses ros ON ros.id = ro.repair_order_status
 
@@ -155,6 +155,7 @@ class Repair_order_model extends CORE_Model
         $query = $this->db->query("SELECT 
 		    c.customer_no,
 		    c.customer_name,
+		    insurance.customer_name as insurer_company,
 		    ro.*,
 		    v.plate_no,
 		    CONCAT_WS(' ',
@@ -180,6 +181,8 @@ class Repair_order_model extends CORE_Model
 		    customer_vehicles v ON v.vehicle_id = ro.vehicle_id
 		        LEFT JOIN
 		    advisors ON advisors.advisor_id = ro.advisor_id
+		    	LEFT JOIN
+		    customers insurance ON insurance.customer_id = ro.insurance_id
 
 		    WHERE ro.is_deleted = FALSE AND
 		    	ro.is_active = TRUE AND 

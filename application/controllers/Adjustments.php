@@ -477,6 +477,8 @@ class Adjustments extends CORE_Controller
         return $this->Adjustment_model->get_list(
             $filter_value,
             array(
+                'customers.customer_name',
+                'suppliers.supplier_name',
                 'CONCAT_WS(" ",user.user_fname,user.user_mname,user.user_lname) as posted_by',
                 'adjustment_info.approval_id',
                 'status.approval_status',
@@ -499,15 +501,17 @@ class Adjustments extends CORE_Controller
                 'DATE_FORMAT(adjustment_info.date_adjusted,"%m/%d/%Y") as date_adjusted',
                 'departments.department_id',
                 '(CASE 
-                    WHEN adjustment_info.is_returns = 1 THEN "Sales Returns" 
-                    WHEN adjustment_info.is_dr_return = 1 THEN "Purchase Returns" 
-                    ELSE "Adjustments" END ) as transaction_type',
+                    WHEN adjustment_info.is_returns = 1 THEN "Sales Return" 
+                    WHEN adjustment_info.is_dr_return = 1 THEN "Purchase Return" 
+                    ELSE CONCAT("Adjustment"," ",adjustment_info.adjustment_type) END ) as transaction_type',
                 'departments.department_name'
             ),
             array(
                 array('departments','departments.department_id=adjustment_info.department_id','left'),
                 array('approval_status status','status.approval_id=adjustment_info.approval_id','left'),
-                array('user_accounts user','user.user_id=adjustment_info.posted_by_user','left')
+                array('user_accounts user','user.user_id=adjustment_info.posted_by_user','left'),
+                array('suppliers','suppliers.supplier_id=adjustment_info.supplier_id','left'),
+                array('customers','customers.customer_id=adjustment_info.customer_id','left')
             ),
             'adjustment_info.adjustment_id DESC'
         );

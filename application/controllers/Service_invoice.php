@@ -51,10 +51,6 @@ class Service_invoice extends CORE_Controller
             'salesperson_id, acr_name, CONCAT(firstname, " ", middlename, " ", lastname) AS fullname, firstname, middlename, lastname'
         );
 
-        $data['insurances']=$this->Insurance_model->get_list(
-            'is_deleted=FALSE'
-        );
-
         $data['services'] = $this->Services_model->get_list(
             array('services.is_active'=>TRUE,'services.is_deleted'=>FALSE), 
             array(
@@ -787,7 +783,12 @@ class Service_invoice extends CORE_Controller
             echo json_encode($response);
             break;
 
-            
+            case 'service-isurance-for-review':
+
+            $m_invoice=$this->Service_invoice_model;
+            $response['data']=$m_invoice->get_service_insurance_list();
+            echo json_encode($response);
+            break;
         }
 
     }

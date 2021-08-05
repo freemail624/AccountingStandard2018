@@ -272,65 +272,68 @@
         <form id="frm_items">
             <div class="table-responsive">
                 <table id="tbl_items" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
-                    <thead class="">
-                    <tr>
-                        <th width="5%">Qty</th>
-                        <th width="10%">UM</th>
-                        <th width="15%">Description</th>
-                        <th width="10%" style="text-align: right;">Unit Price</th>
-                        <th width="10%" style="text-align: right;">Discount</th>
-
-                        <th style="display: none;" width="5%">T.D</th> <!-- total discount -->
-                        <th style="display: none;" width="5%">Tax %</th>
-
-                        <th width="15%" style="text-align: right;">Total</th>
-                        <th width="10%" style="display: none;">V.I</th> <!-- vat input -->
-
-                        <th style="display: none;" width="10%">N.V</th> <!-- net of vat -->
-                        <th style="display: none;" width="10%">Item ID</th><!-- product id -->
-                        <th width="5%"><center>Action</center></th>
-                        <th style="display: none;" width="10%">Bulk Price</th>
-                        <th style="display: none;" width="10%">Retail Price</th>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th width="10%">Qty</th>
+                            <th width="10%">UM</th>
+                            <th width="10%">Part Number</th>
+                            <th width="25%">Description</th>
+                            <th class="text-right" width="10%">Unit Price</th>
+                            <th class="text-right" width="10%">Discount</th>
+                            <th class="hidden" width="1%">T.D</th>
+                            <th class="hidden" width="1%">Tax %</th>
+                            <th class="text-right" width="15%">Total</th>
+                            <th class="hidden" width="1%">V.I</th>
+                            <th class="hidden" width="1%">N.V</th>
+                            <th class="hidden" width="1%">Item ID</th>
+                            <th class="text-center" width="5%">Action</th>
+                            <th class="hidden" width="1%">Bulk Price</th>
+                            <th class="hidden" width="1%">Retail Price</th>
+                        </tr>
                     </thead>
                     <tbody>
-
                     </tbody>
-
                     <tfoot>
-                    <tr>
-                        <td colspan="7" style="height: 20px;">&nbsp;</td>
-                    </tr>
-                    <tr class="">
-                        <td colspan="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount (%) :</strong></td>
-                        <td align="right" colspan="1" id="" color="red">
-                            <input id="txt_overall_discount" name="total_overall_discount" type="text" class="numeric form-control" value="0.00" />
-                            <input id="txt_overall_discount_amount" name="total_overall_discount_amount" type="hidden" class="numeric form-control" value="0.00" />
-                        </td>
-                        <td style="text-align: right;"><strong style="display: none;"> <i class="glyph-icon icon-star"></i>Total After Discount :</strong></td>
-                        <td id="td_total_after_discount" style="text-align: right;display: none;"><strong>0.00</strong></td><td style="border-right: 0px;"></td>
-                        <td style="text-align: right; border-left: 0px!important;"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
-                        <td align="right" colspan="2" id="td_before_tax" color="red">0.00</td>
-                    </tr>
-                    <tr>
-                        <td class="" colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
-                        <td class="" align="right" colspan="1" id="td_tax" color="red">0.00</td>
-                        <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
-                        <td align="right" colspan="2" id="td_after_tax" color="red">0.00</td>
-                    </tr>
+                        <tr>
+                            <td colspan="15" style="height: 20px;">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" align="right">
+                                <strong><i class="glyph-icon icon-star"></i> Discount (%) :</strong>
+                            </td>
+                            <td>
+                                <input id="txt_overall_discount" name="total_overall_discount" type="text" class="numeric form-control" value="0.00" />
+                                <input id="txt_overall_discount_amount" name="total_overall_discount_amount" type="hidden" class="numeric form-control" value="0.00" />
+                            </td>
+                            <td class="hidden">
+                                <strong class="hidden"> <i class="glyph-icon icon-star"></i>Total After Discount :</strong>
+                            </td>
+                            <td id="td_total_after_discount" class="hidden">
+                                <strong>0.00</strong></td><td style="border-right: 0px;">
+                            </td>
+                            <td colspan="2" align="right" style="border-left: 0px;">
+                                <strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong>
+                            </td>
+                            <td align="right" colspan="2" id="td_before_tax">0.00</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" align="right">
+                                <strong><i class="glyph-icon icon-star"></i> Tax :</strong>
+                            </td>
+                            <td align="right" id="td_tax">0.00</td>
+                            <td colspan="3" align="right">
+                                <strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong>
+                                </td>
+                            <td align="right" colspan="2" id="td_after_tax">
+                                0.00
+                            </td>
+                        </tr>
                     </tfoot>
-
-
                 </table>
             </div>
         </form>
-
-
-
     </div>
-
-<hr>
-
+    <hr>
     <br />
     <div class="row ">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -338,11 +341,6 @@
             <div class="col-lg-12" style="padding: 0%;">
                 <textarea name="remarks" class="form-control" placeholder="Remarks" data-default="<?php echo $company->purchase_remarks; ?>"></textarea>
             </div>
-
-
-
-
-
             <div class="row" style="display: none;">
                 <div class="col-lg-4 col-lg-offset-8">
                     <div class="table-responsive">
@@ -764,26 +762,22 @@ $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboSuppliers; var _cboTaxType;
     var _cboDepartments; var _defCostType; var products; var _line_unit; var changetxn;
 
-
-    //_defCostType=1; //Luzon Area Purchase Cost is default, this will change when branch is specified
-
     var oTableItems={
         qty : 'td:eq(0)',
         unit_value: 'td:eq(1)',
-        unit_identifier : 'td:eq(2)',
-        unit_price : 'td:eq(3)',
-        discount : 'td:eq(4)',
-        total_line_discount : 'td:eq(5)',
-        tax : 'td:eq(6)',
-        total : 'td:eq(7)',
-        vat_input : 'td:eq(8)',
-        net_vat : 'td:eq(9)',
-        item_id : 'td:eq(10)',
-        bulk_price : 'td:eq(12)',
-        retail_price : 'td:eq(13)',
-        total_after_global : 'td:eq(14)'
-
-
+        plu : 'td:eq(2)',
+        unit_identifier : 'td:eq(3)',
+        unit_price : 'td:eq(4)',
+        discount : 'td:eq(5)',
+        total_line_discount : 'td:eq(6)',
+        tax : 'td:eq(7)',
+        total : 'td:eq(8)',
+        vat_input : 'td:eq(9)',
+        net_vat : 'td:eq(10)',
+        item_id : 'td:eq(11)',
+        bulk_price : 'td:eq(13)',
+        retail_price : 'td:eq(14)',
+        total_after_global : 'td:eq(15)'
     };
 
 
@@ -1140,24 +1134,14 @@ $(document).ready(function(){
                     "dataType":"html",
                     "type":"POST",
                     "url":"Templates/layout/pr/"+ d.purchase_request_id,
-                    // "beforeSend" : function(){
-                    //     row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
-                    // }
+
                 }).done(function(response){
-                    // row.child( response ).show();
-                    // // Add to the 'open' array
-                    // if ( idx === -1 ) {
-                    //     detailRows.push( tr.attr('id') );
-                    // }
+
                     $("#purchase_order").html(response);
                     $("#modal_purchase_order").modal('show');
                 });
             }
         } );
-
-
-
-
 
         // $('#tbl_purchase_request tbody').on('click','#btn_email',function(){
         //     _selectRowObj=$(this).parents('tr').prev();
@@ -1312,7 +1296,7 @@ $(document).ready(function(){
                 processData : false,
                 contentType : false,
                 beforeSend : function(){
-                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="15"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
                 },
                 success : function(response) {
                     var rows=response.data;
@@ -1779,8 +1763,9 @@ $(document).ready(function(){
             unit  = '<td ><select class="line_unit'+d.a+'" name="unit_id[]" ><option value="'+d.parent_unit_id+'" data-unit-identifier="1" '+parent+'>'+d.parent_unit_name+'</option></select></td>';
         }
         return '<tr>'+
-        '<td ><input name="po_qty[]" type="text" class="numeric form-control number-keyup qty" value="'+ d.po_qty+'"></td>'+unit+'<td >'+d.product_desc+' <input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
-
+        '<td><input name="po_qty[]" type="text" class="numeric form-control number-keyup qty" value="'+ d.po_qty+'"></td>'+unit+
+        '<td>'+d.product_code+'</td>'+
+        '<td >'+d.product_desc+' <input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
         '<td ><input name="po_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.po_price,2)+'" style="text-align:right;"></td>'+
         '<td ><input name="po_discount[]" type="text" class="numeric form-control discount" value="'+ accounting.formatNumber(d.po_discount,2)+'" style="text-align:right;"></td>'+
         //display:none;

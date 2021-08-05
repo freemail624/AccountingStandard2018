@@ -227,9 +227,8 @@
                         </div>
                         <div class="col-sm-3">
                             
-                            <input type="checkbox" name="accounting[]" data-type="1" value="is_adjustment" id="is_adjustment" class="css-checkbox transaction" style="font-size: 12px!important;"><label class="css-label " for="is_adjustment" style="font-size: 12px!important;">Adjustment</label><br>
-                            
-     <!--                        <input type="checkbox" name="accounting[]" data-type="2" value="is_returns" id="is_returns" class="css-checkbox transaction" style="font-size: 12px!important;"><label class="css-label " for="is_returns" style="font-size: 12px!important;">Sales Return</label><br> -->
+                            <input type="checkbox" name="accounting[]" data-type="1" value="is_adjustment" id="is_adjustment" class="css-checkbox transaction" style="font-size: 12px!important;"><label class="css-label " for="is_adjustment" style="font-size: 12px!important;">Adjustment</label><br>                            
+                            <input type="checkbox" name="accounting[]" data-type="2" value="is_returns" id="is_returns" class="css-checkbox transaction" style="font-size: 12px!important;"><label class="css-label " for="is_returns" style="font-size: 12px!important;">Sales Return</label><br>
                             <input type="hidden" name="adjustment_is_return" id="adjustment_is_return" class="form-control">
                             <input type="checkbox" name="accounting[]" data-type="3" value="is_dr_returns" id="is_dr_returns" class="css-checkbox transaction" style="font-size: 12px!important;"><label class="css-label " for="is_dr_returns" style="font-size: 12px!important;">Purchase Return</label><br>
                             <input type="hidden" name="adjustment_is_dr_return" id="adjustment_is_dr_return" class="form-control"> <br>                            
@@ -239,11 +238,7 @@
                             <div class="checkhidden check_sr">
                                 <b class="required">*</b>Customer : <br />
                                 <select name="customer_id" id="cbo_customers" data-error-msg="Customer is required." >
-                                    <?php foreach($customers as $customer){ ?>
-                                        <option data-address="<?php echo $customer->address; ?>" data-contact="<?php echo $customer->contact_name; ?>" value="<?php echo $customer->customer_id; ?>" data-term-default="<?php echo ($customer->term=="none"?"":$customer->term); ?>" data-customer_type="<?php echo $customer->customer_type_id; ?>" data-name-customer="<?php echo $customer->customer_name; ?>"><?php echo $customer->customer_name; ?></option>
-                                    <?php } ?>
                                 </select>
-
                                 Invoice # :<br />
                                 <div class="input-group">
                                     <input type="text" name="inv_no" id="inv_no" class="form-control" readonly required data-error-msg="Invoice is Required for the Sales Return.">
@@ -257,14 +252,8 @@
 
                             <div class="checkhidden check_dr">
                                 <b class="required">*</b>Supplier : <br />
-                                <select name="supplier_id" id="cbo_suppliers" data-error-msg="Supplier is required." >
-                                    <?php foreach($suppliers as $supplier){ ?>
-                                        <option value="<?php echo $supplier->supplier_id; ?>" data-supplier-name="<?php echo $supplier->supplier_name; ?>">
-                                            <?php echo $supplier->supplier_name; ?>
-                                        </option>
-                                    <?php } ?>
+                                <select name="supplier_id" id="cbo_suppliers" data-error-msg="Supplier is required." required>
                                 </select>
-
                                 Invoice # :<br />
                                 <div class="input-group">
                                     <input type="text" name="dr_invoice_no" id="dr_invoice_no" class="form-control" readonly required data-error-msg="Invoice is Required for the Purchase Return.">
@@ -520,9 +509,8 @@
                     <tr>
                         <th></th>
                         <th>Invoice #</th>
+                        <th>Part Number</th>
                         <th>Item</th>
-                        <th>Expiration</th>
-                        <th>LOT#</th>
                         <th>Qty</th>
                         <th>Unit</th>
                         <th><center>Action</center></th>
@@ -555,9 +543,8 @@
                     <tr>
                         <th></th>
                         <th>Invoice #</th>
+                        <th>Part Number</th>
                         <th>Item</th>
-                        <th>Expiration</th>
-                        <th>LOT#</th>
                         <th>Qty</th>
                         <th>Unit</th>
                         <th><center>Action</center></th>
@@ -749,16 +736,15 @@ $(document).ready(function(){
             "columns": [
                 { visible:false,targets:[0],data: "product_id" },
                 { targets:[1],data: "inv_no" },
-                { targets:[2],data: "product_desc" },
-                { targets:[3],data: "exp_date" },
-                { targets:[4],data: "batch_no" },
-                { targets:[5],data:null,
+                { targets:[2],data: "product_code" },
+                { targets:[3],data: "product_desc" },
+                { targets:[4],data:null,
                     render: function (data, type, full, meta){
                         return accounting.formatNumber(data.inv_qty,2);
                     }
                 },
-                { targets:[6],data: "unit_name" },
-                {  targets:[7],
+                { targets:[5],data: "unit_name" },
+                {  targets:[6],
                     render: function (data, type, full, meta){
                         var btn_accept='<button class="btn btn-success btn-sm" name="accept_item"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Accept"><i class="fa fa-check"></i> </button>';
                         return '<center>'+btn_accept+'</center>';
@@ -770,7 +756,7 @@ $(document).ready(function(){
         dtSupplier=$('#tbl_dr_list').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-                "order": [[ 1, "desc" ]],
+            "order": [[ 1, "desc" ]],
             "ajax" : {
                 "url" : "Adjustments/transaction/list-per-supplier",
                 "bDestroy": true,            
@@ -783,16 +769,15 @@ $(document).ready(function(){
             "columns": [
                 { visible:false,targets:[0],data: "product_id" },
                 { targets:[1],data: "dr_invoice_no" },
-                { targets:[2],data: "product_desc" },
-                { targets:[3],data: "exp_date" },
-                { targets:[4],data: "batch_no" },
-                { sClass:"text-right", targets:[5],data:null,
+                { targets:[2],data: "product_code" },
+                { targets:[3],data: "product_desc" },
+                { sClass:"text-right", targets:[4],data:null,
                     render: function (data, type, full, meta){
                         return accounting.formatNumber(data.dr_qty,2);
                     }
                 },
-                { targets:[6],data: "unit_name" },
-                {  targets:[7],
+                { targets:[5],data: "unit_name" },
+                {  targets:[6],
                     render: function (data, type, full, meta){
                         var btn_accept='<button class="btn btn-success btn-sm" name="accept_item"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Accept"><i class="fa fa-check"></i> </button>';
                         return '<center>'+btn_accept+'</center>';
@@ -869,14 +854,92 @@ $(document).ready(function(){
             }
         });
 
-        _cboCustomers=$("#cbo_customers").select2({
-            placeholder: "Please select customer.",
+        _cboCustomers = $('#cbo_customers').select2({
+            ajax: {
+                url: "Customers/transaction/list",
+                type: "post",
+                dataType: 'json',
+                delay: 500,
+                data: function(params) {
+                    return {
+                        search: {
+                            value: params.term
+                        },
+                        start: ((params.page || 1) * 10) - 10,
+                        length: 10,
+                        order: [{
+                            column: 1,
+                            dir: 'asc'
+                        }]
+                    };
+                },
+                processResults: function(response, params) {
+                    const {
+                        data,
+                        recordsFiltered
+                    } = response
+                    return {
+                        results: data.map(res => {
+                            return {
+                                id: res.customer_id,
+                                text: res.customer_no + ' - ' + res.customer_name,
+                                address: res.address,
+                                contact: res.contact_name,
+                                customer_name: res.customer_name
+                            }
+                        }),
+                        pagination: {
+                            more: ((params.page || 1) * 10) < recordsFiltered
+                        }
+                    };
+                },
+                cache: true
+            },
+            placeholder: 'Select a customer',
+            minimumInputLength: 1
         });
+
         _cboCustomers.select2('val',null);
 
         _cboSuppliers=$("#cbo_suppliers").select2({
-            placeholder: "Please select supplier.",
+            ajax: {
+                url: "Suppliers/transaction/list",
+                type: "post",
+                dataType: 'json',
+                delay: 500,
+                data: function(params) {
+                    return {
+                        search: { 
+                            value: params.term
+                        },
+                        start: ((params.page || 1) * 10) - 10,
+                        length: 10,
+                        order: [{
+                            column: 1,
+                            dir: 'asc'
+                        }]
+                    };
+                },
+                processResults: function(response, params) {
+                    const { data, recordsFiltered } = response
+                    return {
+                        results: data.map(res => {
+                            return {
+                                id: res.supplier_id,
+                                text: res.supplier_name
+                            }
+                        }),
+                        pagination: {
+                            more: ((params.page || 1) * 10) < recordsFiltered 
+                        }
+                    };
+                },
+            cache: true
+            },
+            placeholder: 'Select a supplier',
+            minimumInputLength: 1
         });
+
         _cboSuppliers.select2('val',null);        
 
         // products = new Bloodhound({
@@ -1090,41 +1153,56 @@ $(document).ready(function(){
 
     };
 
+    _cboCustomers.on("select2:select", function (e) {
 
-    $('#link_browse_inv').click(function(){
-         iCus= _cboCustomers.select2('val');
+        iCus= _cboCustomers.select2('val');
         if(iCus == 0 || iCus == null){
             showNotification({title: "Error !",stat:"error",msg: "Please Select a Customer before proceeding."});
         }else{
-            $('#tbl_inv_list tbody').html('<tr><td colspan="7"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
+            $('#tbl_inv_list tbody').html('<tr><td colspan="6"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
             $('#tbl_inv_list').DataTable().ajax.reload();
-            var obj_cusmodal=$('#cbo_customers').find('option[value="' + iCus + '"]');
-            $('#modal_customer_name').text(obj_cusmodal.data('name-customer'));
+            const { data } = e.params
+            $('#modal_customer_name').text(data.customer_name);
+            $('#modal_inv_list').modal('show');
+        }
+
+    });
+
+    $('#link_browse_inv').click(function(){
+        iCus= _cboCustomers.select2('val');
+        if(iCus == 0 || iCus == null){
+            showNotification({title: "Error !",stat:"error",msg: "Please Select a Customer before proceeding."});
+        }else{
+            $('#tbl_inv_list tbody').html('<tr><td colspan="6"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
+            $('#tbl_inv_list').DataTable().ajax.reload();
             $('#modal_inv_list').modal('show');
         }
     });
 
-    $('#link_browse_dr_inv').click(function(){
-         iSup= _cboSuppliers.select2('val');
+    _cboSuppliers.on("select2:select", function (e) {
+        iSup= _cboSuppliers.select2('val');
         if(iSup == 0 || iSup == null){
             showNotification({title: "Error !",stat:"error",msg: "Please Select a Supplier before proceeding."});
         }else{
-            $('#tbl_dr_list tbody').html('<tr><td colspan="7"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
+            $('#tbl_dr_list tbody').html('<tr><td colspan="6"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
             $('#tbl_dr_list').DataTable().ajax.reload();
+            const { data } = e.params
+            $('#modal_supplier_name').text(data.text);
+            $('#modal_dr_list').modal('show');
+        }
+    });
 
-            var obj_supmodal=$('#cbo_suppliers').find('option[value="' + iSup + '"]');
-            $('#modal_supplier_name').text(obj_supmodal.data('supplier-name'));
+    $('#link_browse_dr_inv').click(function(){
+        iSup= _cboSuppliers.select2('val');
+        if(iSup == 0 || iSup == null){
+            showNotification({title: "Error !",stat:"error",msg: "Please Select a Supplier before proceeding."});
+        }else{
+            $('#tbl_dr_list tbody').html('<tr><td colspan="6"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
+            $('#tbl_dr_list').DataTable().ajax.reload();
             $('#modal_dr_list').modal('show');
         }
     }); 
 
-    _cboCustomers.on("select2:select", function (e) {
-        $('#link_browse_inv').trigger('click');
-    });
-
-    _cboSuppliers.on("select2:select", function (e) {
-        $('#link_browse_dr_inv').trigger('click');
-    });
 
     var bindEventHandlers=(function(){
             $('[id=is_returns]').click(function(event) {
@@ -1574,9 +1652,19 @@ $(document).ready(function(){
 
             _cboAdjustments.select2('val',data.adjustment_type);
             $('#cbo_departments').select2('val',data.department_id);
-            $('#cbo_customers').select2('val',data.customer_id);
-            $('#cbo_suppliers').select2('val',data.supplier_id);
 
+            if(data.customer_id > 0){
+                $('#cbo_customers').append('<option value="'+data.customer_id+'"" selected>'+data.customer_name+'</option>');
+                $('#cbo_customers').select2('val',data.customer_id);
+                $('#modal_customer_name').text(data.customer_name);
+            }
+
+            if(data.supplier_id > 0){
+                $('#cbo_suppliers').append('<option value="'+data.supplier_id+'"" selected>'+data.supplier_name+'</option>');
+                $('#cbo_suppliers').select2('val',data.supplier_id);
+                $('#modal_supplier_name').text(data.supplier_name);
+            }
+            
             $.ajax({
                 url : 'Adjustments/transaction/items/'+data.adjustment_id,
                 type : "GET",

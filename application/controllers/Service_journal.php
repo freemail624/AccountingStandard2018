@@ -66,6 +66,7 @@ class Service_journal extends CORE_Controller
 
                 $this->load->view('template/journal_entries', $data);
                 break;
+
             case 'create' :
                 $m_journal=$this->Journal_info_model;
                 $m_journal_accounts=$this->Journal_account_model;
@@ -113,14 +114,24 @@ class Service_journal extends CORE_Controller
 
 
                 //if sales invoice is available, sales invoice is recorded as journal so mark this as posted
+                $is_insured = $this->input->post('is_insured',TRUE);
                 $service_invoice_id=$this->input->post('service_invoice_id',TRUE);
-                if($service_invoice_id!=null){
-                    $m_service_invoice=$this->Service_invoice_model;
-                    $m_service_invoice->journal_id=$journal_id;
-                    $m_service_invoice->is_journal_posted=TRUE;
-                    $m_service_invoice->modify($service_invoice_id);
-                }
 
+                if($is_insured > 0){
+                    if($service_invoice_id!=null){
+                        $m_service_invoice=$this->Service_invoice_model;
+                        $m_service_invoice->isurance_journal_id=$journal_id;
+                        $m_service_invoice->insurance_is_journal_posted=TRUE;
+                        $m_service_invoice->modify($service_invoice_id);
+                    }
+                }else{
+                    if($service_invoice_id!=null){
+                        $m_service_invoice=$this->Service_invoice_model;
+                        $m_service_invoice->journal_id=$journal_id;
+                        $m_service_invoice->is_journal_posted=TRUE;
+                        $m_service_invoice->modify($service_invoice_id);
+                    }
+                }
 
                 $response['stat']='success';
                 $response['title']='Success!';

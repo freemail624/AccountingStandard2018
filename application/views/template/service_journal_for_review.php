@@ -60,6 +60,7 @@
         <hr />
         <div style="width: 90%;">
             <input type="hidden" name="service_invoice_id" value="<?php echo $service_invoice->service_invoice_id; ?>">
+            <input type="hidden" name="is_insured" value="<?php echo $service_invoice->is_insured; ?>">
             <label class="col-lg-2"> * Txn # :</label>
             <div class="col-lg-10">
                 <input type="text" name="txn_no" class="form-control" style="font-weight: bold;" placeholder="TXN-MMDDYYY-XXX" readonly>
@@ -73,9 +74,7 @@
             <label class="col-lg-2"> * Customer :</label>
             <div class="col-lg-10">
                 <select name="customer_id" class="cbo_customer_list" data-error-msg="Customer is required." required>
-                    <?php foreach($customers as $customer){ ?>
-                        <option value="<?php echo $customer->customer_id; ?>" <?php echo ($service_invoice->customer_id===$customer->customer_id?'selected':''); ?>><?php echo $customer->customer_name; ?></option>
-                    <?php } ?>
+                    <option value="<?php echo $service_invoice->customer_id; ?>"><?php echo $service_invoice->customer_no . ' - ' . $service_invoice->customer_name; ?></option>
                 </select>
             </div>
             <br /><br />
@@ -152,7 +151,7 @@
     </div>
 </div>
 <div class="tab-pane" id="purchase_review_<?php echo $service_invoice->service_invoice_id; ?>" >
-    <h4><span style="margin-left: 1%"><strong><i class="fa fa-bars"></i> Sales Invoice</strong></span></h4>
+    <h4><span style="margin-left: 1%"><strong><i class="fa fa-bars"></i> Service Invoice</strong></span></h4>
     <hr />
     <div style="margin-left: 2%">
         <div class="row">
@@ -162,7 +161,7 @@
                 <i class="fa fa-file-o"></i> Remarks : <?php echo $service_invoice->remarks; ?><br />
             </div>
             <div class="col-lg-6">
-                <i class="fa fa-users"></i> Customer : <?php echo $service_invoice->customer_name; ?><br />
+                <i class="fa fa-users"></i> Particular : <?php echo $service_invoice->customer_name; ?><br />
                 <i class="fa fa-globe"></i> Address : <?php echo $service_invoice->address; ?><br />
                 <i class="fa fa-send"></i> Email : <?php echo $service_invoice->email_address; ?><br />
                 <i class="fa fa-phone-square"></i> Telephone : <?php echo $service_invoice->contact_no; ?><br />
@@ -175,47 +174,55 @@
         <table class="table table-striped" style="width: 100% !important;">
             <thead>
             <tr style="border-bottom: solid gray;">
-                <td style="width: 35%;"><strong>Item</strong></td>
-                <td style="width: 15%;text-align: left;"><strong>Qty</strong></td>
-                <td style="width: 12%;"><strong>UM</strong></td>
-                <td style="width: 12%;text-align: right;"><strong>Price</strong></td>
-                <td style="width: 12%;text-align: right;"><strong>Total</strong></td>
+                <td style="width: 15%;"><strong>Part Number</strong></td>
+                <td style="width: 25%;"><strong>Item</strong></td>
+                <td style="width: 10%;text-align: left;"><strong>Qty</strong></td>
+                <td style="width: 10%;"><strong>UM</strong></td>
+                <td style="width: 10%;text-align: right;"><strong>SRP</strong></td>
+                <td style="width: 10%;text-align: right;"><strong>Gross</strong></td>
+                <td style="width: 10%;text-align: right;"><strong>Discount</strong></td>
+                <td style="width: 10%;text-align: right;"><strong>Total</strong></td>
             </tr>
             </thead>
             <tbody>
             <?php
             $service_gross=0;
             $service_total_price=0;
-            foreach($items as $item){
+            $service_discount=0;
+                foreach($items as $item){
                 ?>
                 <tr>
+                    <td><?php echo $item->product_code; ?></td>
                     <td><?php echo $item->product_desc; ?></td>
                     <td style="text-align: left;"><?php echo $item->service_qty; ?></td>
                     <td ><?php echo $item->unit_name; ?></td>
                     <td align="right"><?php echo number_format($item->service_price,2); ?></td>
+                    <td align="right"><?php echo number_format($item->service_gross,2); ?></td>
+                    <td align="right"><?php echo number_format($item->service_line_total_discount,2); ?></td>
                     <td align="right"><?php echo number_format($item->service_line_total_price,2); ?></td>
                 </tr>
                 <?php
                 $service_gross+=$item->service_gross;
                 $service_total_price+=$item->service_line_total_price;
+                $service_discount+=$item->service_line_total_discount;
                 } ?>
             </tbody>
             <tfoot>
-            <tr>
-                <td colspan="5"> </td>
-            </tr>
-            <tr>
-                <td colspan="4" align="right">Total before Discount: </td>
-                <td align="right"><?php echo number_format($service_gross,2); ?></td>
-            </tr>
-            <tr>
-                <td colspan="4" align="right">Discount: </td>
-                <td align="right"><?php echo number_format($service_invoice->total_overall_discount_amount,2); ?></td>
-            </tr>
-            <tr>
-                <td colspan="4" align="right"><strong>Total after Discount: </strong></td>
-                <td align="right"><strong><?php echo number_format($service_total_price,2); ?></strong></td>
-            </tr>
+                <tr>
+                    <td colspan="8"></td>
+                </tr>
+                <tr>
+                    <td colspan="7" align="right">Total before Discount: </td>
+                    <td align="right"><?php echo number_format($service_gross,2); ?></td>
+                </tr>
+                <tr>
+                    <td colspan="7" align="right">Discount: </td>
+                    <td align="right"><?php echo number_format($service_discount,2); ?></td>
+                </tr>
+                <tr>
+                    <td colspan="7" align="right"><strong>Total after Discount: </strong></td>
+                    <td align="right"><strong><?php echo number_format($service_total_price,2); ?></strong></td>
+                </tr>
             </tfoot>
         </table>
         <br /><br />

@@ -122,21 +122,23 @@
     <br/>
     <table width="100%" cellpadding="6" class="table table-striped">
         <tr>
-            <td width="15%" class="default-color border" valign="top">QTY</td>
+            <td width="10%" class="default-color border" valign="top">QTY</td>
+            <td width="15%" class="default-color border" valign="top">Part Number</td>
             <td width="35%" class="default-color border" valign="top">DESCRIPTION</td>
-            <td width="25%" class="default-color border" valign="top" align="right">UNIT PRICE</td>
-            <td width="25%" class="default-color border" valign="top" align="right">TOTAL</td>
+            <td width="20%" class="default-color border" valign="top" align="right">UNIT PRICE</td>
+            <td width="20%" class="default-color border" valign="top" align="right">TOTAL</td>
         </tr>
         <?php foreach($po_items as $item){ ?>
         <tr>
             <td class="left right"><?php echo number_format($item->po_qty,2); ?></td>
+            <td class="left right"><?php echo $item->product_code; ?></td>
             <td class="left right"><?php echo $item->product_desc; ?></td>
             <td class="left right" align="right"><?php echo number_format($item->po_price,2); ?></td>
             <td class="left right" align="right"><?php echo number_format($item->po_line_total_after_global,2); ?></td>
         </tr>
         <?php }?>
         <tr>
-            <td colspan="2" class="top" rowspan="5" valign="top">
+            <td colspan="3" class="top" rowspan="5" valign="top">
                 <table width="100%" style="font-size: 8pt;">
                     <tr>
                         <td valign="top">1.</td>
@@ -147,7 +149,7 @@
                     <tr>
                         <td valign="top">2.</td>
                         <td valign="top">
-                            Accustandard reserves the right to inspect the items and to reject the same if found not in accordance with the specifictions or not in good condition.
+                            <?php echo $company_info->company_name; ?> reserves the right to inspect the items and to reject the same if found not in accordance with the specifictions or not in good condition.
                         </td>
                     </tr>
                     <tr>
@@ -192,7 +194,7 @@
 
     <br/><br/><br/><br/>
 
-    <?php include 'po_report_footer.php'; ?>
+    <!-- <?php include 'po_report_footer.php'; ?> -->
 
 </body>
 </html>

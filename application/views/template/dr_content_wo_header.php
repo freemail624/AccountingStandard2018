@@ -85,75 +85,77 @@
         <table width="95%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11;border:none!important;" >
             <thead>
             <tr>
-                <th width="50%" style="border-bottom: 2px solid gray;text-align: left;height: 30px;padding: 6px;">Description</th>
-                <th width="12%" style="border-bottom: 2px solid gray;text-align: right;height: 30px;padding: 6px;">Qty</th>
-                <th width="12%" style="border-bottom: 2px solid gray;text-align: center;height: 30px;padding: 6px;">UM</th>
-                <th width="12%" style="border-bottom: 2px solid gray;text-align: right;height: 30px;padding: 6px;">Price</th>
-                <th width="12%" style="border-bottom: 2px solid gray;text-align: right;height: 30px;padding: 6px;">Total</th>
+                <th width="15%" style="border-bottom: 2px solid gray;text-align: left;height: 30px;padding: 6px;">Part Number</th>
+                <th width="45%" style="border-bottom: 2px solid gray;text-align: left;height: 30px;padding: 6px;">Description</th>
+                <th width="10%" style="border-bottom: 2px solid gray;text-align: right;height: 30px;padding: 6px;">Qty</th>
+                <th width="10%" style="border-bottom: 2px solid gray;text-align: center;height: 30px;padding: 6px;">UM</th>
+                <th width="10%" style="border-bottom: 2px solid gray;text-align: right;height: 30px;padding: 6px;">Price</th>
+                <th width="10%" style="border-bottom: 2px solid gray;text-align: right;height: 30px;padding: 6px;">Total</th>
             </tr>
             </thead>
             <tbody>
             <?php foreach($dr_items as $item){ ?>
                 <tr>
-                    <td width="50%" style="border-bottom: 1px solid gray;text-align: left;height: 15px;padding: 6px;"><?php echo $item->product_desc; ?></td>
-                    <td width="12%" style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;"><?php echo number_format($item->dr_qty,2); ?></td>
-                    <td width="12%" style="border-bottom: 1px solid gray;text-align: center;height: 15px;padding: 6px;"><?php echo $item->unit_name; ?></td>
-                    <td width="12%" style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;"><?php echo number_format($item->dr_price,2); ?></td>
-                    <td width="12%" style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;"><?php echo number_format($item->dr_line_total_after_global,2); ?></td>
+                    <td style="border-bottom: 1px solid gray;text-align: left;height: 15px;padding: 6px;"><?php echo $item->product_code; ?></td>
+                    <td style="border-bottom: 1px solid gray;text-align: left;height: 15px;padding: 6px;"><?php echo $item->product_desc; ?></td>
+                    <td style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;"><?php echo number_format($item->dr_qty,2); ?></td>
+                    <td style="border-bottom: 1px solid gray;text-align: center;height: 15px;padding: 6px;"><?php echo $item->unit_name; ?></td>
+                    <td style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;"><?php echo number_format($item->dr_price,2); ?></td>
+                    <td style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;"><?php echo number_format($item->dr_price*$item->dr_qty,2); ?></td>
                 </tr>
             <?php } ?>
             <tr>
-            <td colspan="5" style="text-align: left;font-weight: bolder; ;height: 30px;padding: 6px;border-left: 1px solid gray;border-right: 1px solid gray;"><b>Remarks:</b></td>
+            <td colspan="6" style="text-align: left;font-weight: bolder; ;height: 30px;padding: 6px;border-left: 1px solid gray;border-right: 1px solid gray;"><b>Remarks:</b></td>
             </tr>
             <tr>
-            <td colspan="5" style="text-align: left;font-weight: normal;height: 30px;padding: 6px;border-left: 1px solid gray;border-bottom: 1px solid gray;border-right: 1px solid gray;"><?php echo $delivery_info->remarks; ?></td>
+            <td colspan="6" style="text-align: left;font-weight: normal;height: 30px;padding: 6px;border-left: 1px solid gray;border-bottom: 1px solid gray;border-right: 1px solid gray;"><?php echo $delivery_info->remarks; ?></td>
             </tr>
             </tbody>
             <tfoot>
             <tr>
                 <td align="left" colspan="2" style="border-left: 1px solid gray;padding: 6px;"><b>Prepared By:</b></td>
-                <td colspan="2" style="padding: 6px;border-bottom: 1px solid gray;height: 15px;border-left: 1px solid gray;" align="left">Global Discount %:</td>
-                <td style="padding: 6px;border-bottom: 1px solid gray;height: 15px;border-right: 1px solid gray;" align="right"><?php echo number_format($delivery_info->total_overall_discount,2); ?></td>
+                <td colspan="2" style="padding: 6px;border-bottom: 1px solid gray;height: 15px;border-left: 1px solid gray;" align="left">Total Gross:</td>
+                <td colspan="2" style="padding: 6px;border-bottom: 1px solid gray;height: 15px;border-right: 1px solid gray;" align="right"><?php echo number_format($delivery_info->total_overall_discount,2); ?></td>
             </tr>
             <tr>
                 <td colspan="2" style="text-align: right;height: 15px;padding: 6px;border-left: 1px solid gray;"></td>
-                <td colspan="2" style="border-bottom: 1px solid gray;text-align: left;height: 15px;padding: 6px;border-left: 1px solid gray;">Discount 2 : </td>
-                <td style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;border-right: 1px solid gray;"><?php echo number_format($delivery_info->total_overall_discount_amount+$delivery_info->total_discount,2); ?></td>
+                <td colspan="2" style="border-bottom: 1px solid gray;text-align: left;height: 15px;padding: 6px;border-left: 1px solid gray;">Discounts : </td>
+                <td colspan="2" style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;border-right: 1px solid gray;"><?php echo number_format($delivery_info->total_overall_discount_amount+$delivery_info->total_discount,2); ?></td>
             </tr>
             <tr>
                 <td colspan="2" style="text-align: right;height: 15px;padding: 6px;border-bottom: 1px solid gray;border-left: 1px solid gray;"></td>
                 <td colspan="2" style="padding: 6px;border-bottom: 1px solid gray;height: 15px;border-left: 1px solid gray;" align="left">Total Before Tax:</td>
-                <td style="padding: 6px;border-bottom: 1px solid gray;height: 15px;border-right: 1px solid gray;" align="right"><?php echo number_format($delivery_info->total_before_tax,2); ?></td>
+                <td colspan="2" style="padding: 6px;border-bottom: 1px solid gray;height: 15px;border-right: 1px solid gray;" align="right"><?php echo number_format($delivery_info->total_before_tax,2); ?></td>
             </tr>
             <tr>
                 <td colspan="2" style="text-align: left;height: 15px;padding: 6px;border-left: 1px solid gray;"><b>Received By:</b></td>
                 <td colspan="2" style="border-bottom: 1px solid gray;text-align: left;height: 15px;padding: 6px;border-left: 1px solid gray;">Tax Amount : </td>
-                <td style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;border-right: 1px solid gray;"><?php echo number_format($delivery_info->total_tax_amount,2); ?></td>
+                <td colspan="2" style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;border-right: 1px solid gray;"><?php echo number_format($delivery_info->total_tax_amount,2); ?></td>
             </tr>
             <tr>
                 <td align="left" colspan="2" style="border-left: 1px solid gray;"></td>
                 <td colspan="2" style="border-bottom: 1px solid gray;text-align: left;height: 15px;padding: 6px;border-left: 1px solid gray;">Total After Tax : </td>
-                <td style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;border-right: 1px solid gray;"><?php echo number_format($delivery_info->total_after_tax,2); ?></td>
+                <td colspan="2" style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;border-right: 1px solid gray;"><?php echo number_format($delivery_info->total_after_tax,2); ?></td>
             </tr>
             <tr>
                 <td align="left" colspan="2" style="border-left: 1px solid gray;"></td>
                 <td colspan="2" style="border-bottom: 1px solid gray;text-align: left;height: 15px;padding: 6px;border-left: 1px solid gray;">Shipping Cost : </td>
-                <td style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;border-right: 1px solid gray;"><?php echo number_format($delivery_info->shipping_cost,2); ?></td>
+                <td colspan="2" style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;border-right: 1px solid gray;"><?php echo number_format($delivery_info->shipping_cost,2); ?></td>
             </tr>
             <tr>
                 <td align="left" colspan="2" style="border-left: 1px solid gray;"></td>
                 <td colspan="2" style="border-bottom: 1px solid gray;text-align: left;height: 15px;padding: 6px;border-left: 1px solid gray;">Custom Duties : </td>
-                <td style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;border-right: 1px solid gray;"><?php echo number_format($delivery_info->custom_duties,2); ?></td>
+                <td colspan="2" style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;border-right: 1px solid gray;"><?php echo number_format($delivery_info->custom_duties,2); ?></td>
             </tr>
             <tr>
                 <td align="left" colspan="2" style="border-left: 1px solid gray;"></td>
                 <td colspan="2" style="border-bottom: 1px solid gray;text-align: left;height: 15px;padding: 6px;border-left: 1px solid gray;">Other Amount : </td>
-                <td style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;border-right: 1px solid gray;"><?php echo number_format($delivery_info->other_amount,2); ?></td>
+                <td colspan="2" style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;border-right: 1px solid gray;"><?php echo number_format($delivery_info->other_amount,2); ?></td>
             </tr>
             <tr>
                 <td colspan="2" style="text-align: left;height: 15px;padding: 6px;border-bottom: 1px solid gray;border-left: 1px solid gray;">Date:</td>
                 <td colspan="2" style="border-bottom: 1px solid gray;text-align: left;height: 15px;padding: 6px;border-left: 1px solid gray;"><strong>Total: </strong></td>
-                <td style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;border-right: 1px solid gray;"><strong><?php echo number_format($delivery_info->grand_total_amount,2); ?></strong></td>
+                <td colspan="2" style="border-bottom: 1px solid gray;text-align: right;height: 15px;padding: 6px;border-right: 1px solid gray;"><strong><?php echo number_format($delivery_info->grand_total_amount,2); ?></strong></td>
             </tr>
             </tfoot>
         </table><br /><br />

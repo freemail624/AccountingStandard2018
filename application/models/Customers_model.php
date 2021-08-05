@@ -162,11 +162,37 @@ class Customers_model extends CORE_Model{
                         service_invoice_items.service_invoice_id,
                             SUM(service_invoice_items.service_line_total_price) AS receivable_amount
                     FROM
-                        service_invoice_items) items ON items.service_invoice_id = service.service_invoice_id
+                        service_invoice_items
+                        WHERE service_invoice_items.is_insured = FALSE
+                        GROUP BY service_invoice_items.service_invoice_id) items ON items.service_invoice_id = service.service_invoice_id
                     WHERE
                         service.is_deleted = FALSE
                             AND service.is_active = TRUE
                             AND service.customer_id = $customer_id
+
+                    UNION ALL SELECT 
+                        service.service_invoice_id AS invoice_id,
+                            service.service_invoice_no AS invoice_no,
+                            customers.customer_name,
+                            '' AS date_due,
+                            '' AS remarks,
+                            items.receivable_amount,
+                            0 is_sales,
+                            0 as journal_id
+                    FROM
+                        service_invoice service
+                    LEFT JOIN customers ON customers.customer_id = service.insurance_id
+                    LEFT JOIN (SELECT 
+                        service_invoice_items.service_invoice_id,
+                            SUM(service_invoice_items.service_line_total_price) AS receivable_amount
+                    FROM
+                        service_invoice_items
+                        WHERE service_invoice_items.is_insured = TRUE
+                        GROUP BY service_invoice_items.service_invoice_id) items ON items.service_invoice_id = service.service_invoice_id
+                    WHERE
+                        service.is_deleted = FALSE
+                            AND service.is_active = TRUE
+                            AND service.insurance_id = $customer_id
 
                     UNION ALL SELECT 
                         si.sales_invoice_id AS invoice_id,
@@ -184,7 +210,7 @@ class Customers_model extends CORE_Model{
                         FROM
                             journal_accounts ja
                         WHERE
-                            ja.account_id IN (4)) ja ON ja.journal_id = ji.journal_id)
+                            ja.account_id IN ($filter_accounts)) ja ON ja.journal_id = ji.journal_id)
                             LEFT JOIN
                         customers c ON c.customer_id = ji.customer_id
                             LEFT JOIN

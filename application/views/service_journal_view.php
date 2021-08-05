@@ -217,7 +217,7 @@
             </a> -->
             <div id="" class="">
                 <div class="panel-body">
-                    <h2 class="h2-panel-heading">Review Service Journal<small> | Pending  <a href="assets/manual/services/Review_Service_Journal.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
+                    <h2 class="h2-panel-heading">Review Service Journal (Customers)<small> | Pending  <!-- <a href="assets/manual/services/Review_Service_Journal.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a> --></small></h2><hr>
                     <div class="row-panel">
                         <table id="tbl_service_review" class="table table-striped" cellspacing="0" width="100%">
                             <thead >
@@ -237,7 +237,34 @@
                 </div>
             </div>
         </div>
+        <div class="panel panel-default">
+<!--             <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo">
+                <div class="panel-heading">
+                    <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Review Service Journal (Pending)</b>
+                </div>
+            </a> -->
+            <div id="" class="">
+                <div class="panel-body">
+                    <h2 class="h2-panel-heading">Review Service Journal (Insurance Company)<small> | Pending  <!-- <a href="assets/manual/services/Review_Service_Journal.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a> --></small></h2><hr>
+                    <div class="row-panel">
+                        <table id="tbl_service_insurance_review" class="table table-striped" cellspacing="0" width="100%">
+                            <thead >
+                            <tr>
+                                <th>&nbsp;</th>
+                                <th>Invoice #</th>
+                                <th>Insurance Company</th>
+                                <th>Invoice Date</th>
+                                <th width="25%">Remarks</th>
+                            </tr>
+                            </thead>
+                            <tbody>
 
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="panel panel-default" >
 <!--             <a data-toggle="collapse" data-parent="#accordionA" href="#collapseOne">
                 <div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;">
@@ -846,6 +873,24 @@ $(document).ready(function(){
             ]
         });
 
+        dtInsuranceReview=$('#tbl_service_insurance_review').DataTable({
+            "bLengthChange":false,
+            "ajax" : "service_invoice/transaction/service-isurance-for-review",
+            "columns": [
+                {
+                    "targets": [0],
+                    "class":          "details-control",
+                    "orderable":      false,
+                    "data":           null,
+                    "defaultContent": ""
+                },
+                { targets:[1],data: "service_invoice_no" },
+                { targets:[2],data: "customer_name" },
+                { targets:[3],data: "date_invoice" },
+                { targets:[4],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(80)}
+            ]
+        });
+
         $('.numeric').autoNumeric('init');
 
         $('#mobile_no').keypress(validateNumber);
@@ -984,8 +1029,6 @@ $(document).ready(function(){
             }
         } );
 
-
-
         $('#tbl_service_review tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
             var row = dtReview.row( tr );
@@ -1031,14 +1074,56 @@ $(document).ready(function(){
 
 
                 });
-
-
-
-
             }
-        } );
+        });
+
+        $('#tbl_service_insurance_review tbody').on( 'click', 'tr td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = dtInsuranceReview.row( tr );
+            var idx = $.inArray( tr.attr('id'), detailRows );
+
+            if ( row.child.isShown() ) {
+                tr.removeClass( 'details' );
+                row.child.hide();
+
+                // Remove from the 'open' array
+                detailRows.splice( idx, 1 );
+            }
+            else {
+                tr.addClass( 'details' );
+                //console.log(row.data());
+                var d=row.data();
+
+                $.ajax({
+                    "dataType":"html",
+                    "type":"POST",
+                    "url":"Templates/layout/services-insurance-journal-for-review?id="+ d.service_invoice_id,
+                    "beforeSend" : function(){
+                        row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                    }
+                }).done(function(response){
+                    row.child( response,'no-padding' ).show();
+
+                    reInitializeSpecificDropDown($('.cbo_customer_list'), true);
+                    reInitializeSpecificDropDown($('.cbo_department_list'));
+                    reInitializeNumeric();
+
+                    var tbl=$('#tbl_entries_for_review_'+ d.service_invoice_id);
+                    var parent_tab_pane=$('#journal_review_'+ d.service_invoice_id);
+
+                    reInitializeDropDownAccounts(tbl);
+                    reInitializeChildEntriesTable(tbl);
+                    reInitializeChildElementsInsurance(parent_tab_pane);
+
+                    // Add to the 'open' array
+                    if ( idx === -1 ) {
+                        detailRows.push( tr.attr('id') );
+                    }
 
 
+                });
+            }
+        });
 
         $('#btn_new').click(function(){
             _txnMode="new";
@@ -1432,13 +1517,57 @@ $(document).ready(function(){
         });
     };
 
-
-    function reInitializeSpecificDropDown(elem){
-        elem.select2({
-            placeholder: "Please select item.",
-            allowClear: true
-        });
+    function reInitializeSpecificDropDown(elem, isCustomer = false){
+        if (isCustomer) {
+            elem.select2({
+                ajax: {
+                url: "Customers/transaction/list",
+                type: "post",
+                dataType: 'json',
+                delay: 500,
+                data: function(params) {
+                    return {
+                        search: {
+                            value: params.term
+                        },
+                        start: ((params.page || 1) * 10) - 10,
+                        length: 10,
+                        order: [{
+                            column: 1,
+                            dir: 'asc'
+                        }]
+                    };
+                },
+                processResults: function(response, params) {
+                    const {
+                        data,
+                        recordsFiltered
+                    } = response
+                    return {
+                        results: data.map(res => {
+                            return {
+                                id: res.customer_id,
+                                text: res.customer_no + ' - ' + res.customer_name
+                            }
+                        }),
+                        pagination: {
+                            more: ((params.page || 1) * 10) < recordsFiltered
+                        }
+                    };
+                },
+                cache: true
+            },
+            placeholder: 'Select a customer',
+            minimumInputLength: 1
+            })
+        } else {
+            elem.select2({
+                placeholder: "Please select item.",
+                allowClear: true
+            });
+        }
     };
+
 
     function validateNumber(event) {
         var key = window.event ? event.keyCode : event.which;
@@ -1622,6 +1751,62 @@ $(document).ready(function(){
                         dt.row.add(response.row_added[0]).draw();
                         var _parentRow=_curBtn.parents('table.table_journal_entries_review').parents('tr').prev();
                         dtReview.row(_parentRow).remove().draw();
+                    }
+
+
+                }).always(function(){
+                    showSpinningProgress(_curBtn);
+                });
+            }else{
+                showNotification({title:"Not Balance!",stat:"error",msg:'Please make sure Debit and Credit amount are equal.'});
+                stat=false;
+            }
+
+        });
+
+        var finalizeJournalReview=function(){
+            var _data_review=parent.find('form').serializeArray();
+
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Service_journal/transaction/create",
+                "data":_data_review,
+                "beforeSend": showSpinningProgress(btn)
+
+            });
+        };
+
+
+
+    };
+
+
+    var reInitializeChildElementsInsurance=function(parent){
+        var _dataParentID=parent.data('parent-id');
+        var btn=parent.find('button[name="btn_finalize_journal_review"]');
+
+        //initialize datepicker
+        parent.find('input.date-picker').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: true,
+            autoclose: true
+
+        });
+
+
+        parent.on('click','button[name="btn_finalize_journal_review"]',function(){
+
+            var _curBtn=$(this);
+            if(isBalance('#tbl_entries_for_review_'+_dataParentID)){
+                finalizeJournalReview().done(function(response){
+                    showNotification(response);
+                    if(response.stat=="success"){
+                        dt.row.add(response.row_added[0]).draw();
+                        var _parentRow=_curBtn.parents('table.table_journal_entries_review').parents('tr').prev();
+                        dtInsuranceReview.row(_parentRow).remove().draw();
                     }
 
 

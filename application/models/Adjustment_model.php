@@ -14,7 +14,7 @@ parent::__construct();
         $sql="SELECT 
         main.* 
         FROM(
-
+        /* Wastages */
         SELECT
 		(SELECT pi.adj_debit_id FROM purchasing_integration pi) as account_id,
 		SUM(IFNULL(adj.adjust_non_tax_amount,0)) as dr_amount,
@@ -27,6 +27,7 @@ parent::__construct();
 		WHERE adj.adjustment_id = $adjustment_id AND p.expense_account_id > 0
 		GROUP BY adj.adjustment_id
 
+		/* Inventory */
 		UNION ALL
 
 		SELECT 
@@ -48,6 +49,7 @@ parent::__construct();
         $sql="SELECT 
         main.* 
         FROM(
+        /* Inventory */
 		SELECT
 		p.expense_account_id as account_id,
 		SUM(IFNULL(adj.adjust_non_tax_amount,0)) as dr_amount,
@@ -59,8 +61,7 @@ parent::__construct();
 		WHERE adj.adjustment_id= $adjustment_id AND p.expense_account_id > 0
 		GROUP BY p.expense_account_id
 
-
-
+		/* Gain  on Sale*/
 		UNION ALL
 
         SELECT
@@ -89,10 +90,10 @@ parent::__construct();
 		$sql="SELECT 
         main.* 
         FROM(
-        -- Sales Return
+        /* Sales Return */
 		SELECT
 		p.sales_return_account_id as account_id,
-		SUM(IFNULL(adj.adjust_non_tax_amount,0)) as dr_amount,
+		SUM(IFNULL(adj.adjust_non_tax_amount,0) + IFNULL(adj.adjust_line_total_discount,0) + IFNULL(adj.global_discount_amount,0) ) as dr_amount,
 		0 as cr_amount,
 		
 		'' as memo
@@ -101,12 +102,12 @@ parent::__construct();
 		WHERE adj.adjustment_id= $adjustment_id AND p.sales_return_account_id > 0
 		GROUP BY p.sales_return_account_id
 
-		-- Inventory
+		/* Inventory */
 		UNION ALL
 
         SELECT
 		p.expense_account_id as account_id,
-		SUM(adj.adjust_qty * p.purchase_cost) as dr_amount,
+		SUM(adj.adjust_qty * adj.cost_upon_invoice) as dr_amount,
 		0 as cr_amount,
 		
 		'' as memo
@@ -117,7 +118,7 @@ parent::__construct();
 		WHERE adj.adjustment_id = $adjustment_id AND p.expense_account_id > 0
 		GROUP BY p.expense_account_id
 
-		-- Output Tax
+		/* Output Tax */
 	    UNION ALL
 
 	    SELECT output_tax.account_id,
@@ -137,7 +138,7 @@ parent::__construct();
 	    WHERE adj.adjustment_id=$adjustment_id AND p.income_account_id>0
 	    )as output_tax GROUP BY output_tax.account_id
 
-	    -- AR / Cash 
+	    /* AR / Cash */ 
 		UNION ALL
 				
 		SELECT 
@@ -160,13 +161,13 @@ parent::__construct();
 			main.account_id > 0
 		GROUP BY main.account_id
 		
-		-- Cost of Sales
+		/* Cost of Sales */
 		UNION ALL
         
         SELECT
 		p.cos_account_id as account_id,
 		0 as dr_amount,
-		SUM(adj.adjust_qty * p.purchase_cost) as cr_amount,
+		SUM(adj.adjust_qty * adj.cost_upon_invoice) as cr_amount,
 		'' as memo
 		FROM 
 		adjustment_items adj 
@@ -174,13 +175,13 @@ parent::__construct();
 		WHERE adj.adjustment_id = $adjustment_id AND p.cos_account_id > 0
 		GROUP BY p.cos_account_id
 
-		-- Discount
+		/* Discount */
 		UNION ALL
 
 		SELECT
 		p.sd_account_id as account_id,
 		0 as dr_amount,
-		SUM(IFNULL(adj.adjust_line_total_discount,0)) as cr_amount,
+		SUM(IFNULL(adj.adjust_line_total_discount,0) + IFNULL(adj.global_discount_amount,0) ) as cr_amount,
 		
 		'' as memo
 		FROM adjustment_items adj
@@ -195,12 +196,13 @@ parent::__construct();
         return $this->db->query($sql)->result();
 	}
 
+
 	function get_journal_entries_purchasereturn($adjustment_id){
 		$sql="SELECT 
 			    main.*
 			FROM
 			    (
-
+			    /* AP */
 			    SELECT 
 			        main.*
 			    FROM
@@ -219,13 +221,10 @@ parent::__construct();
 			        main.account_id > 0
 			    GROUP BY main.account_id 
 
-
-			    UNION ALL 
-
-
-			    SELECT 
+			    /* DISCOUNTS */
+			    UNION ALL SELECT 
 			        p.pd_account_id AS account_id,
-			            SUM(IFNULL(adj.adjust_line_total_discount, 0)) AS dr_amount,
+			            SUM(IFNULL(adj.adjust_line_total_discount, 0) + IFNULL(adj.global_discount_amount, 0)) AS dr_amount,
 			            0 AS cr_amount,
 			            '' AS memo
 			    FROM
@@ -236,10 +235,9 @@ parent::__construct();
 			            AND p.pd_account_id > 0
 			    GROUP BY p.pd_account_id 
 
+			    /* PURCHASE RETURN */
+			    UNION ALL SELECT 
 
-			    UNION ALL 
-
-			    SELECT 
 			        p.po_return_account_id AS account_id,
 			            0 AS dr_amount,
 			            SUM(IFNULL((adj.adjust_qty * adj.adjust_price)-adj.adjust_tax_amount, 0)) AS cr_amount,
@@ -252,11 +250,8 @@ parent::__construct();
 			            AND p.po_return_account_id > 0
 			    GROUP BY p.po_return_account_id 
 
-			    
-			    UNION ALL 
-
-
-			    SELECT 
+			    /* TAX */
+			    UNION ALL SELECT 
 			        input_tax.account_id,
 			            0 AS dr_amount,
 			            SUM(input_tax.dr_amount) AS cr_amount,
@@ -423,7 +418,7 @@ parent::__construct();
 			    di.is_active = TRUE
 			        AND di.is_deleted = FALSE
 			        AND di.is_finalized = TRUE
-			        AND di.supplier_id = $supplier_id";
+			        AND di.supplier_id = '$supplier_id'";
         return $this->db->query($sql)->result();
 
     }
@@ -436,6 +431,15 @@ parent::__construct();
 			ai.adjustment_code,
 			ai.remarks,
 			ai.adjustment_type,
+			(CASE 
+	            WHEN ai.is_returns = 1 THEN "Sales Returns" 
+	            WHEN ai.is_dr_return = 1 THEN "Purchase Returns" 
+	        ELSE CONCAT("Adjustment"," ",ai.adjustment_type) END ) as transaction_type,
+			(CASE
+                WHEN ai.is_returns = TRUE THEN ai.inv_no
+                WHEN ai.is_dr_return = TRUE THEN ai.dr_invoice_no
+                ELSE ""
+            END) as inv_no,        
 			ai.date_created,
 			DATE_FORMAT(ai.date_adjusted,"%m/%d/%Y") as date_adjusted,
 			d.department_id,
@@ -450,6 +454,7 @@ parent::__construct();
 			is_journal_posted=FALSE
 			AND ai.adjustment_type = "IN"
 			AND ai.is_closed = FALSE
+			AND ai.approval_id = 1
 
 			UNION ALL
 
@@ -459,6 +464,15 @@ parent::__construct();
 			ai.adjustment_code,
 			ai.remarks,
 			ai.adjustment_type,
+			(CASE 
+	            WHEN ai.is_returns = 1 THEN "Sales Return" 
+	            WHEN ai.is_dr_return = 1 THEN "Purchase Return" 
+	        ELSE CONCAT("Adjustment"," ",ai.adjustment_type) END ) as transaction_type,
+			(CASE
+                WHEN ai.is_returns = TRUE THEN ai.inv_no
+                WHEN ai.is_dr_return = TRUE THEN ai.dr_invoice_no
+                ELSE ""
+            END) as inv_no,	
 			ai.date_created,
 			DATE_FORMAT(ai.date_adjusted,"%m/%d/%Y") as date_adjusted,
 			d.department_id,
@@ -472,12 +486,11 @@ parent::__construct();
 			ai.is_deleted=FALSE AND 
 			is_journal_posted=FALSE
 			AND ai.adjustment_type = "OUT"
-			AND ai.is_closed = FALSE) as main
+			AND ai.is_closed = FALSE
+			AND ai.approval_id = 1) as main
 
 			ORDER BY main.adjustment_id';
         return $this->db->query($sql)->result();
-
-
 
     }
 }

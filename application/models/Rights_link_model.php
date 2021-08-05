@@ -91,7 +91,7 @@ class Rights_link_model extends CORE_Model{
                                           (84,'6','6-13','Audit Trail'),
                                           (85,'15','15-5','Item Transfer to Department'),
                                           (86,'15','15-6','Stock Card / Bin Card'),
-                                          (87,'3','3-5','Warehouse Dispatching'),
+                                          -- (87,'3','3-5','Warehouse Dispatching'),
                                           (88,'4','4-7','Brands'),
                                           (89,'16','16-1','Monthly Percentage Tax Return'),
                                           (90,'16','16-2','Quarterly Percentage Tax Return'),

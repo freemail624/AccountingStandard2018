@@ -433,7 +433,7 @@
                 </td>
                 <td width="20%" valign="top">
                     <strong>TIN NO.</strong><br />
-                    <?php echo $service->tin_no; ?>
+                    <?php echo $service->isurance_tin_no; ?>
                 </td>
                 <td width="20%" valign="top" colspan="2">
                     <strong>YEAR / MAKE / MODEL</strong><br />

@@ -265,7 +265,7 @@
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label><b class="required">*</b> Order Source :</label><br />
+                                                                                <label>Order Source :</label><br />
                                                                                 <select name="order_source_id" id="cbo_order_source" data-default="<?php echo $accounts[0]->default_order_source_id; ?>" data-error-msg="Order Source is required.">
                                                                                     <option value="0">[ Create New Order Source ]</option>
                                                                                     <?php foreach ($order_sources as $order_source) { ?>
