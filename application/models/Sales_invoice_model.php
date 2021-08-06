@@ -998,6 +998,7 @@ GROUP BY n.customer_id HAVING total_balance > 0";
             inv_gross,
             remarks,
             DATE_FORMAT(main.date_invoice,"%m/%d/%Y") as date_invoice,
+            p.product_code,
             p.product_desc,
             u.unit_name
             FROM 

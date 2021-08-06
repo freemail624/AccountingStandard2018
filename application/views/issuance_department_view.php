@@ -542,7 +542,8 @@ $(document).ready(function(){
         issue_tax_amount : 'tr:eq(2) > td:eq(1)',
         after_tax : 'tr:eq(3) > td:eq(1)'
     };
-dt_si = $('#tbl_si_list').DataTable({
+    
+    dt_si = $('#tbl_si_list').DataTable({
         "bLengthChange" : false,
         "ajax" : "Sales_invoice/transaction/list",
         "columns" : [

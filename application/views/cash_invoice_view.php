@@ -1,7 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- Mirrored from avenxo.kaijuthemes.com/ui-typography.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 06 Jun 2016 12:09:25 GMT -->
-
 <head>
     <meta charset="utf-8">
     <title>JCORE - <?php echo $title; ?></title>
@@ -375,55 +373,31 @@
                                                             <table id="tbl_items" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
                                                                 <thead class="">
                                                                     <tr>
-                                                                        <th width="9%">Qty</th>
-                                                                        <th width="8%">UM</th>
-                                                                        <th width="35%">Description</th>
-                                                                        <th width="10%" style="text-align: right;">Unit Price</th>
-                                                                        <th width="8%" style="text-align: right;">Discount</th>
-                                                                        <!-- DISPLAY NONE  -->
-                                                                        <th class="hidden">Total Discount</th>
-                                                                        <th class="hidden">Tax %</th>
-                                                                        <!-- DISPLAY -->
-                                                                        <th width="10%" style="text-align: right;">Gross</th>
-                                                                        <th width="10%" style="text-align: right;">Net Total</th>
-                                                                        <!-- Expiration and LOT# -->
-                                                                        <th class="hidden">Expiration</th>
-                                                                        <th class="hidden">LOT#</th>
-                                                                        <th class="hidden">Cost Upon Invoice</th>
-                                                                        <!-- DISPLAY NONE  -->
-                                                                        <th class="hidden">Vat Input(Total Line Tax)</th>
-                                                                        <th class="hidden">Net of Vat (Price w/out Tax)</th>
-                                                                        <td class="hidden">Item ID</td>
-                                                                        <th class="hidden">Total after Global</th>
-                                                                        <th width="10%">
-                                                                            <center>Action</center>
-                                                                        </th>
+                                                                        <th width="10%">Qty</th>
+                                                                        <th width="10%">UM</th>
+                                                                        <th width="10%">Part Number</th>
+                                                                        <th width="16%">Description</th>
+                                                                        <th width="10%" class="text-right">Unit Price</th>
+                                                                        <th width="10%" class="text-right">Discount</th>
+                                                                        <th width="1%" class="hidden">Total Discount</th>
+                                                                        <th width="1%" class="hidden">Tax %</th>
+                                                                        <th width="10%" class="text-right">Gross</th>
+                                                                        <th width="10%" class="text-right">Net Total</th>
+                                                                        <th width="1%" class="hidden">Expiration</th>
+                                                                        <th width="1%" class="hidden">LOT#</th>
+                                                                        <th width="1%" class="hidden">Cost Upon Invoice</th>
+                                                                        <th width="1%" class="hidden">Vat Input</th>
+                                                                        <th width="1%" class="hidden">Net of Vat</th>
+                                                                        <td width="1%" class="hidden">Item ID</td>
+                                                                        <th width="1%" class="hidden">Total after Global</th>
+                                                                        <th width="5%"><center>Action</center></th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
-                                                                    <!--<tr>
-                                    <td width="10%"><input type="text" class="numeric form-control" align="right"></td>
-                                    <td width="5%">pcs</td>
-                                    <td width="30%">Computer Case</td>
-                                    <td width="12%"><input type="text" class="numeric form-control"></td>
-                                    <td width="12%"><input type="text" class="numeric form-control"></td>
-                                    <td></td>
-                                    <td width="15%">
-                                        <select class="form-control">
-                                            <?php foreach ($tax_types as $tax_type) { ?>
-                                                <option value="<?php echo $tax_type->tax_type_id; ?>"><?php echo $tax_type->tax_type; ?></option>
-                                            <?php } ?>
-                                        </select>
-                                    </td>
-                                    <td width="12%" align="right"><input type="text" class="numeric form-control"></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td><button type="button" class="btn btn-default"><i class="fa fa-trash"></i></button></td>
-                                </tr>-->
                                                                 </tbody>
                                                                 <tfoot>
                                                                     <tr>
-                                                                        <td colspan="8" style="height: 50px;">&nbsp;</td>
+                                                                        <td colspan="18" style="height: 50px;">&nbsp;</td>
                                                                     </tr>
                                                                     <tr class="">
                                                                         <td style="text-align: right;"><strong>Discount:</strong></td>
@@ -435,7 +409,7 @@
                                                                         <td style="text-align: right;" class="hidden">Total After Discount:</td>
                                                                         <td id="td_total_after_discount" style="text-align: right" class="hidden">0.00</td>
 
-                                                                        <td style="text-align: right;" colspan="4"><strong>Total before tax:</strong></td>
+                                                                        <td style="text-align: right;" colspan="5"><strong>Total before tax:</strong></td>
                                                                         <td colspan="2" id="td_total_before_tax" style="text-align: right">0.00</td>
                                                                     </tr>
                                                                     <tr>
@@ -443,19 +417,19 @@
                                                                             <strong><i class="glyph-icon icon-star"></i> Tax :</strong>
                                                                         </td>
                                                                         <td align="right" id="td_tax" color="red">0.00</td>
-                                                                        <td colspan="4" style="text-align: right;">
+                                                                        <td colspan="5" style="text-align: right;">
                                                                             <strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong>
                                                                         </td>
                                                                         <td colspan="2" align="right" colspan="1" id="td_after_tax" color="red">0.00</td>
                                                                     </tr>
                                                                     <tr class="">
-                                                                        <td colspan="6" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tendered :</strong></td>
+                                                                        <td colspan="7" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tendered :</strong></td>
                                                                         <td colspan="2" align="right" color="red">
                                                                             <input id="td_tendered" name="td_tendered" type="text" class="numeric form-control" value="0.00" />
                                                                         </td>
                                                                     </tr>
                                                                     <tr class="">
-                                                                        <td colspan="6" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Change :</strong></td>
+                                                                        <td colspan="7" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Change :</strong></td>
 
                                                                         <td colspan="2" align="right" id="td_change" color="red">0.00</td>
                                                                     </tr>
@@ -1044,22 +1018,23 @@
             var oTableItems = {
                 qty: 'td:eq(0)',
                 unit_value: 'td:eq(1)',
-                unit_identifier: 'td:eq(2)',
-                unit_price: 'td:eq(3)',
-                discount: 'td:eq(4)',
-                total_line_discount: 'td:eq(5)',
-                tax: 'td:eq(6)',
-                gross: 'td:eq(7)',
-                total: 'td:eq(8)',
-                exp_date: 'td:eq(9)',
-                batch_no: 'td:eq(10)',
-                cost_upon_invoice: 'td:eq(11)',
-                vat_input: 'td:eq(12)',
-                net_vat: 'td:eq(13)',
-                item_id: 'td:eq(14)',
-                total_after_global: ' td:eq(15)',
-                bulk_price: 'td:eq(17)',
-                retail_price: 'td:eq(18)'
+                plu: 'td:eq(2)',
+                unit_identifier: 'td:eq(3)',
+                unit_price: 'td:eq(4)',
+                discount: 'td:eq(5)',
+                total_line_discount: 'td:eq(6)',
+                tax: 'td:eq(7)',
+                gross: 'td:eq(8)',
+                total: 'td:eq(9)',
+                exp_date: 'td:eq(10)',
+                batch_no: 'td:eq(11)',
+                cost_upon_invoice: 'td:eq(12)',
+                vat_input: 'td:eq(13)',
+                net_vat: 'td:eq(14)',
+                item_id: 'td:eq(15)',
+                total_after_global: ' td:eq(16)',
+                bulk_price: 'td:eq(18)',
+                retail_price: 'td:eq(19)'
             };
             var oTableSearch = {
                 sBatch: 'td:eq(2)',
@@ -1991,7 +1966,7 @@
                             processData: false,
                             contentType: false,
                             beforeSend: function() {
-                                $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                                $('#tbl_items > tbody').html('<tr><td align="center" colspan="9"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
                             },
                             success: function(response) {
                                 var rows = response.data;
@@ -2676,7 +2651,11 @@
                     '</td>' +
                     // [1] Unit
                     unit +
-                    // [2] Item
+
+                    // [2] PLU
+                    '<td>'+d.product_code+'</td>'+
+
+                    // [3] Item
                     '<td>' +
                     d.product_desc +
 
@@ -2685,62 +2664,62 @@
                     '<input type="text" class="hidden is_basyo" value="' + d.is_basyo + '">' +
                     '<input type="text" class="hidden is_product_basyo" value="' + d.is_product_basyo + '">' +
                     '</td>' +
-                    // [3] Unit Price
+                    // [4] Unit Price
                     '<td>' +
                     '<input name="inv_price[]" type="text" class="numeric form-control" value="' + accounting.formatNumber(d.inv_price, 2) + '" style="text-align:right;">' +
                     '</td>' +
-                    // [4] Discount
+                    // [5] Discount
                     '<td  style=""><input name="inv_discount[]" type="text" class="numeric form-control discount" value="' + accounting.formatNumber(d.inv_discount, 2) + '" style="text-align:right;">' +
                     '</td>' +
-                    // [5] Total Discount
+                    // [6] Total Discount
                     '<td class="hidden">' +
                     '<input name="inv_line_total_discount[]" type="text" class="numeric form-control" value="' + accounting.formatNumber(d.inv_line_total_discount, 2) + '" readonly>' +
                     '</td>' +
-                    // [6] Tax Rate
+                    // [7] Tax Rate
                     '<td class="hidden"><input name="inv_tax_rate[]" type="text" class="numeric form-control" value="' + accounting.formatNumber(d.inv_tax_rate, 2) + '">' +
                     '</td>' +
-                    // [7] Gross
+                    // [8] Gross
                     '<td><input name="inv_gross[]" type="text" class="numeric form-control" value="' + accounting.formatNumber(d.inv_gross, 2) + '" readonly>' +
                     '</td>' +
-                    // [8] Net Total
+                    // [9] Net Total
                     '<td  align="right"><input name="inv_line_total_price[]" type="text" class="numeric form-control" value="' + accounting.formatNumber(d.inv_line_total_price, 2) + '" readonly>' +
                     '</td>' +
-                    // [9] Expiration
+                    // [10] Expiration
                     '<td class="hidden">' +
                     '<input name="exp_date[]" type="text" class="form-control" value="' + d.exp_date + '" readonly>' +
                     '</td>' +
-                    // [10] Batch #
+                    // [11] Batch #
                     '<td class="hidden">' +
                     '<input name="batch_no[]" type="text" class="form-control" value="' + d.batch_no + '" readonly>' +
                     '</td>' +
-                    // [11] Cost Upon Invoice
+                    // [12] Cost Upon Invoice
                     '<td class="hidden"><input name="cost_upon_invoice[]" type="text" class="numeric form-control" value="' + d.cost_upon_invoice + '" readonly>' +
                     '</td>' +
-                    // [12] Vat Input
+                    // [13] Vat Input
                     '<td class="hidden">' +
                     '<input name="inv_tax_amount[]" type="text" class="numeric form-control" value="' + d.inv_tax_amount + '" readonly>' +
                     '</td>' +
-                    // [13] Net of Vat
+                    // [14] Net of Vat
                     '<td class="hidden">' +
                     '<input name="inv_non_tax_amount[]" type="text" class="numeric form-control" value="' + d.inv_non_tax_amount + '" readonly>' +
                     '</td>' +
-                    // [14] Product ID
+                    // [15] Product ID
                     '<td class="hidden">' +
                     '<input name="product_id[]" type="text" class="numeric form-control" value="' + d.product_id + '" readonly>' +
                     '</td>' +
-                    // [15] Total After Global
+                    // [16] Total After Global
                     '<td class="hidden"><input name="inv_line_total_after_global[]" type="text" class="numeric form-control" value="' + d.inv_line_total_after_global + '" readonly>' +
                     '</td>' +
-                    // [16] Action
+                    // [17] Action
                     '<td align="center">' +
                     '<button type="button" name="search_item" class="btn btn-warning hidden" style="margin-right: 5px;"><i class="fa fa-search"></i></button>' +
                     '<button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button>' +
                     '</td>' +
-                    // [17] Bulk Price
+                    // [18] Bulk Price
                     '<td class="hidden">' +
                     '<input type="text" class="numeric form-control" value="' + accounting.formatNumber(d.bulk_price, 2) + '" readonly>' +
                     '</td>' +
-                    // [18] Retail Price
+                    // [19] Retail Price
                     '<td class="hidden">' +
                     '<input type="text" class="numeric form-control" value="' + accounting.formatNumber(d.retail_price, 2) + '" readonly>' +
                     '</td>' +

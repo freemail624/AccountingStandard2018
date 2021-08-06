@@ -311,41 +311,41 @@
                             <tr>
                                 <th width="10%">Qty</th>
                                 <th width="10%">UM</th>
-                                <th width="30%">Description</th>
-                                <th width="15%" style="text-align: right">Unit Price</th>
-                                <th class="hidden" style="text-align: right;">Discount</th>
-                                <th class="hidden">T.D</th> <!-- total discount -->
-                                <th class="hidden">Tax %</th>
-                                <th width="15%" style="text-align: right">Total</th>
-                                <th class="hidden">Expiration</th>
-                                <th class="hidden">LOT#</th>
-                                <th class="hidden">Cost Upon Invoice</th>
-                                <th class="hidden">V.I</th> <!-- vat input -->
-                                <th class="hidden">N.V</th> <!-- net of vat -->
-                                <td class="hidden">Item ID</td><!-- product id -->
-                                <th width="10%"><center>Action</center></th>
+                                <th width="10%">Part Number</th>
+                                <th width="26%">Description</th>
+                                <th width="15%">Unit Price</th>
+                                <th width="1%" class="hidden">Discount</th>
+                                <th width="1%" class="hidden">T.D</th>
+                                <th width="1%" class="hidden">Tax %</th>
+                                <th width="15%" class="text-right">Total</th>
+                                <th width="1%" class="hidden">Expiration</th>
+                                <th width="1%" class="hidden">LOT#</th>
+                                <th width="1%" class="hidden">Cost Upon Invoice</th>
+                                <th width="1%" class="hidden">V.I</th>
+                                <th width="1%" class="hidden">N.V</th>
+                                <td width="1%" class="hidden">Item ID</td>
+                                <th width="5%"><center>Action</center></th>
                             </tr>
                             </thead>
                             <tbody>
                             </tbody>
-
                             <tfoot>
                             <tr>
-                                <td colspan="6" style="height: 50px;">&nbsp;</td>
+                                <td colspan="16" style="height: 50px;">&nbsp;</td>
                             </tr>
                             <tr>
-                                <td colspan="3" style="text-align: right;">
+                                <td colspan="2" style="text-align: right;">
                                     <strong><i class="glyph-icon icon-star"></i> Discount :</strong>
                                 </td>
                                 <td align="right" id="td_discount color="red">0.00</td>
-                                <td colspan="1" id="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
-                                <td align="right" colspan="1" id="td_before_tax" color="red">0.00</td>
+                                <td colspan="2" id="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
+                                <td align="right" colspan="2" id="td_before_tax" color="red">0.00</td>
                             </tr>
                             <tr>
-                                <td colspan="3" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
+                                <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
                                 <td align="right" colspan="1" id="td_tax" color="red">0.00</td>
-                                <td colspan="1" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
-                                <td align="right" colspan="1" id="td_after_tax" color="red">0.00</td>
+                                <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
+                                <td align="right" colspan="2" id="td_after_tax" color="red">0.00</td>
                             </tr>
                             </tfoot>
 
@@ -669,20 +669,21 @@ $(document).ready(function(){
     var oTableItems={
         qty : 'td:eq(0)',
         unit_value: 'td:eq(1)',
-        unit_identifier : 'td:eq(2)',
-        unit_price : 'td:eq(3)',
-        discount : 'td:eq(4)',
-        total_line_discount : 'td:eq(5)',
-        tax : 'td:eq(6)',
-        total : 'td:eq(7)',
-        exp_date : 'td:eq(8)',
-        batch_no : 'td:eq(9)',
-        cost_upon_invoice : 'td:eq(10)',
-        vat_input : 'td:eq(11)',
-        net_vat : 'td:eq(12)',
-        item_id : 'td:eq(13)',
-        bulk_price : 'td:eq(15)',
-        retail_price : 'td:eq(16)'
+        plu: 'td:eq(2)',
+        unit_identifier : 'td:eq(3)',
+        unit_price : 'td:eq(4)',
+        discount : 'td:eq(5)',
+        total_line_discount : 'td:eq(6)',
+        tax : 'td:eq(7)',
+        total : 'td:eq(8)',
+        exp_date : 'td:eq(9)',
+        batch_no : 'td:eq(10)',
+        cost_upon_invoice : 'td:eq(11)',
+        vat_input : 'td:eq(12)',
+        net_vat : 'td:eq(13)',
+        item_id : 'td:eq(14)',
+        bulk_price : 'td:eq(16)',
+        retail_price : 'td:eq(17)'
     };
 
     var oTableSearch={
@@ -1673,7 +1674,7 @@ $(document).ready(function(){
                 processData : false,
                 contentType : false,
                 beforeSend : function(){
-                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="9"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
                 },
                 success : function(response){
                     var rows=response.data;
@@ -2159,7 +2160,11 @@ $(document).ready(function(){
             '</td>'+
             // [1] UM
             unit+
-            // [2] Item
+
+            // [2] PLU
+            '<td>'+d.product_code+'</td>'+
+
+            // [3] Item
             '<td>'+
                 d.product_desc+
                 '<input type="hidden" class="product_desc" value="'+d.product_desc+'">'+
@@ -2169,60 +2174,60 @@ $(document).ready(function(){
 
 
             '</td>'+
-            // [3] Unit Price
+            // [4] Unit Price
             '<td>'+
                 '<input name="adjust_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.adjust_price,2)+'" style="text-align:right;">'+
             '</td>'+
-            // [4] Discount
+            // [5] Discount
             '<td class="hidden">'+
                 '<input name="adjust_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.adjust_discount,2)+'" style="text-align:right;">'+
             '</td>'+
-            // [5] Total Discount
+            // [6] Total Discount
             '<td class="hidden">'+
                 '<input name="adjust_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.adjust_line_total_discount,2)+'" readonly>'+
             '</td>'+
-            // [6] Tax
+            // [7] Tax
             '<td class="hidden">'+
                 '<input name="adjust_tax_rate[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.adjust_tax_rate,2)+'">'+
             '</td>'+
-            // [7] Total
+            // [8] Total
             '<td align="right">'+
                 '<input name="adjust_line_total_price[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.adjust_line_total_price,2)+'" readonly>'+
             '</td>'+
-            // [8] Expiration
+            // [9] Expiration
             '<td class="hidden">'+
                 '<input name="exp_date[]" type="text" class="'+dateAttr+' form-control" value="'+ d.exp_date +'" '+readonlyAttr+'>'+
             '</td>'+
-            // [9] Batch #
+            // [10] Batch #
             '<td class="hidden">'+
                 '<input name="batch_no[]" type="text" class="form-control" value="'+ d.batch_no +'" '+readonlyAttr+'>'+
             '</td>'+
-            // [10] Cost Upon Invoice
+            // [11] Cost Upon Invoice
             '<td class="hidden">'+
                 '<input name="cost_upon_invoice[]" type="text" class="numeric form-control" value="'+ d.cost_upon_invoice+'" readonly>'+
             '</td>'+
-            // [11] Vat Input
+            // [12] Vat Input
             '<td class="hidden">'+
                 '<input name="adjust_tax_amount[]" type="text" class="numeric form-control" value="'+ d.adjust_tax_amount+'" readonly>'+
             '</td>'+
-            // [12] Net of Vat
+            // [13] Net of Vat
             '<td class="hidden">'+
                 '<input name="adjust_non_tax_amount[]" type="text" class="numeric form-control" value="'+ d.adjust_non_tax_amount+'" readonly>'+
             '</td>'+
-            // [13] Product ID
+            // [14] Product ID
             '<td class="hidden">'+
                 '<input name="product_id[]" type="text" class="numeric form-control" value="'+ d.product_id+'" readonly>'+
             '</td>'+
-            // [14] Action
+            // [15] Action
             '<td align="center">'+
                 '<button type="button" name="search_item" class="btn btn-warning hidden '+hideAttr+'" style="margin-right: 5px;"><i class="fa fa-search"></i></button>'+
                 '<button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button>'+
             '</td>'+
-            // [15] Bulk Price
+            // [16] Bulk Price
             '<td class="hidden">'+
                 '<input type="text" class="numeric form-control" value="'+ d.bulk_price+'" readonly>'+
             '</td>'+
-            // [16] Retail Price
+            // [17] Retail Price
             '<td class="hidden">'+
                 '<input type="text" class="numeric form-control" value="'+ d.retail_price+'" readonly>'+
             '</td>'+

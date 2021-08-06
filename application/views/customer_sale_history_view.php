@@ -168,6 +168,7 @@
                 <thead >
                 <tr>
                     <th></th>
+                    <th>Part Number</th>
                     <th width="25%">Product</th>
                     <th>Price</th>
                     <th>Qty</th>
@@ -261,14 +262,15 @@ $(document).ready(function(){
                     "data":           null,
                     "defaultContent": ""
                 },
-                { targets:[1],data: "product_desc" ,render: $.fn.dataTable.render.ellipsis(100)},
-                {sClass:"right_align", targets:[2],data: "inv_price" , render: $.fn.dataTable.render.number( ',', '.', 2)},
-                {sClass:"right_align", targets:[3],data: "inv_qty" , render: $.fn.dataTable.render.number( ',', '.', 2)},
-                { targets:[4],data: "unit_name" },
-                {sClass:"right_align", targets:[5],data: "inv_gross" , render: $.fn.dataTable.render.number( ',', '.', 2)},
-                { targets:[6],data: "inv_no" },
-                { targets:[7],data: "date_invoice" },
-                { targets:[8],data: "remarks"  ,render: $.fn.dataTable.render.ellipsis(80)},
+                { targets:[1],data: "product_code" },
+                { targets:[2],data: "product_desc" ,render: $.fn.dataTable.render.ellipsis(100)},
+                {sClass:"right_align", targets:[3],data: "inv_price" , render: $.fn.dataTable.render.number( ',', '.', 2)},
+                {sClass:"right_align", targets:[4],data: "inv_qty" , render: $.fn.dataTable.render.number( ',', '.', 2)},
+                { targets:[5],data: "unit_name" },
+                {sClass:"right_align", targets:[6],data: "inv_gross" , render: $.fn.dataTable.render.number( ',', '.', 2)},
+                { targets:[7],data: "inv_no" },
+                { targets:[8],data: "date_invoice" },
+                { targets:[9],data: "remarks"  ,render: $.fn.dataTable.render.ellipsis(80)},
             ]
         });
         _cboCustomers=$("#cbo_customers").select2({

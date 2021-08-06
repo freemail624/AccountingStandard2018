@@ -934,7 +934,7 @@ class Templates extends CORE_Controller {
                 $data['company_info']=$company[0];
                 $data['issue_items']=$m_dr_items->get_list(
                     array('issuance_department_items.issuance_department_id'=>$filter_value),
-                    'issuance_department_items.*,products.product_desc,units.unit_name,units.unit_code',
+                    'issuance_department_items.*,products.product_code,products.product_desc,units.unit_name,units.unit_code',
                     array(
                         array('products','products.product_id=issuance_department_items.product_id','left'),
                         array('units','units.unit_id=issuance_department_items.unit_id','left')
@@ -1026,7 +1026,7 @@ class Templates extends CORE_Controller {
                 $data['company_info']=$company[0];
                 $data['adjustment_items']=$m_adjustment_items->get_list(
                     array('adjustment_items.adjustment_id'=>$filter_value),
-                    'adjustment_items.*,products.product_desc,units.unit_name',
+                    'adjustment_items.*,products.product_code, products.product_desc,units.unit_name',
                     array(
                         array('products','products.product_id=adjustment_items.product_id','left'),
                         array('units','units.unit_id=adjustment_items.unit_id','left')
@@ -1311,7 +1311,7 @@ class Templates extends CORE_Controller {
 
                         $excel->getActiveSheet()->getColumnDimensionByColumn('A5:D5')->setWidth('40');                                          
                         $excel->getActiveSheet()->mergeCells('A5:H5');
-                        $excel->getActiveSheet()->setCellValue('A5','REPAIR ORDER LIST ('.$data['date_from'].' - '.$data['date_to']);
+                        $excel->getActiveSheet()->setCellValue('A5','REPAIR ORDER LIST ('.$data['date_from'].' - '.$data['date_to'].')');
                         $excel->getActiveSheet()->mergeCells('A6:H6');
                         $excel->getActiveSheet()->setCellValue('A6','ADVISOR : '.$data['advisor']);
                         $excel->getActiveSheet()->mergeCells('A7:H7');

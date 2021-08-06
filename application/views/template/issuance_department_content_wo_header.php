@@ -59,11 +59,12 @@
 <table width="100%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11;background-color: transparent!important;border:none!important;" class="nohover">
     <thead>
         <tr >
+            <th style="width:15%;text-align:left;border-bottom: 1px solid gray;">Part Number</th>
             <th style="width:35%;text-align:left;border-bottom: 1px solid gray;">Description</th>
             <th style="width:10%;text-align:center;border-bottom: 1px solid gray;">Quantity</th>
-            <th style="width:15%;text-align:center;border-bottom: 1px solid gray;">Unit</th>
-            <th style="width:20%;text-align:right;border-bottom: 1px solid gray;">Unit Price</th>
-            <th style="width:20%;text-align:right;border-bottom: 1px solid gray;">Amount</th>
+            <th style="width:10%;text-align:center;border-bottom: 1px solid gray;">Unit</th>
+            <th style="width:15%;text-align:right;border-bottom: 1px solid gray;">Unit Price</th>
+            <th style="width:15%;text-align:right;border-bottom: 1px solid gray;">Amount</th>
         </tr>
     </thead>
     <tbody>
@@ -73,15 +74,16 @@
             $grandtotal+=$item->issue_line_total_price;
              ?>
                 <tr>
-                    <td style="border-bottom: 1px solid gray;"><?php echo $item->product_desc; ?></td>
-                    <td style="text-align:center; border-bottom: 1px solid gray;"><?php echo number_format($item->issue_qty,0); ?></td>
-                    <td style="text-align:center; border-bottom: 1px solid gray;"><?php echo $item->unit_name; ?></td>
+                    <td align="left" style="border-bottom: 1px solid gray;"><?php echo $item->product_code; ?></td>
+                    <td align="left" style="border-bottom: 1px solid gray;"><?php echo $item->product_desc; ?></td>
+                    <td align="center" style="border-bottom: 1px solid gray;"><?php echo number_format($item->issue_qty,0); ?></td>
+                    <td align="center" style="border-bottom: 1px solid gray;"><?php echo $item->unit_name; ?></td>
                     <td style="border-bottom: 1px solid gray;" align="right"><?php echo number_format($item->issue_price,2); ?></td>
                     <td style="border-bottom: 1px solid gray;" align="right"><?php echo number_format($item->issue_line_total_price,2); ?></td>
                 </tr>
             <?php } ?>
             <tr>
-            <td colspan="3"></td>
+            <td colspan="4"></td>
                 <td style="font-weight:bold;" align="right">Grand Total</td>
                 <td style="font-weight:bold;" align="right"><?php echo number_format($grandtotal,2); ?></td>
             </tr>

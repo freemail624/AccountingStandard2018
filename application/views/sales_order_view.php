@@ -266,22 +266,19 @@
                         <table id="tbl_items" class="table table-striped"  cellspacing="0" width="100%" style="font-font:tahoma;">
                         <thead class="">
                         <tr>
-                            <!-- DISPLAY -->
                             <th width="10%">Qty </th>
                             <th width="10%">UM </th>
-                            <th width="25%">Description</th>
-                            <th width="15%" style="text-align: right;">Unit Price </th>
-                            <th width="10%" style="text-align: right;">Discount </th>
-                            <!-- display:none; -->
-                            <th style="display:none;" width="10%">Total line Discount </th> <!-- total discount -->
-                            <th style="display:none;" width="10%">Tax % </th>
-                            <!-- DISPLAY -->
-                            <th width="15%" style="text-align: right">Gross</th>
-                            <th width="15%" style="text-align: right">Total</th>
-                            <!-- display:none;  -->
-                            <th style="display:none;"  width="10%">Vat Input(Total Line Tax) </th> <!-- vat input -->
-                            <th style="display:none;"  width="10%">Net of Vat (Price w/out Tax) </th> <!-- net of vat -->
-                            <td style="display:none;" width="10%">Item ID </td><!-- product id -->
+                            <th width="10%">Part Number</th>
+                            <th width="20%">Description</th>
+                            <th width="10%" class="text-right">Unit Price </th>
+                            <th width="10%" class="text-right">Discount </th>
+                            <th width="1%" class="hidden">Total line Discount </th>
+                            <th width="1%" class="hidden">Tax % </th>
+                            <th width="10%" class="text-right">Gross</th>
+                            <th width="10%" class="text-right">Total</th>
+                            <th width="1%" class="hidden">Vat Input(Total Line Tax) </th>
+                            <th width="1%" class="hidden">Net of Vat (Price w/out Tax) </th>
+                            <td width="1%" class="hidden">Item ID </td>
                             <th width="5%"><center>Action</center></th>
                         </tr>
                         </thead>
@@ -289,29 +286,24 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="8" style="height: 50px;">&nbsp;</td>
-                            </tr>
-                            <tr class="">
-                                <td style="text-align: right;">Discount</td>
-                                <td align="right" colspan="1" id="" color="red">
-                                <input id="txt_overall_discount" name="total_overall_discount" type="text" class="numeric form-control" value="0.00" />
-                                <input id="txt_overall_discount_amount" name="total_overall_discount_amount" type="hidden" class="numeric form-control" value="0.00" / readonly>
-                                </td>
-
-                                <td class="hidden">Total After Discount:</td>
-                                <td class="hidden" id="td_total_after_discount" style="text-align: right">0.00</td>
-
-                                <td style="text-align: right;" colspan="4">Total Before Tax:</td>
-                                <td id="td_total_before_tax" style="text-align: right">0.00</td>
-                                <td></td>
+                                <td colspan="9" style="height: 50px;">&nbsp;</td>
                             </tr>
                             <tr>
-                                <td class="" colspan="3" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
-                                <td class="" align="right" colspan="1" id="td_tax" color="red">0.00</td>
-
-                                <td colspan="2"  style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
-                                <td align="right" colspan="1" id="td_after_tax" color="red">0.00</td>
-                                <td></td>
+                                <td style="text-align: right;">Discount</td>
+                                <td align="right" color="red">
+                                    <input id="txt_overall_discount" name="total_overall_discount" type="text" class="numeric form-control" value="0.00" />
+                                    <input id="txt_overall_discount_amount" name="total_overall_discount_amount" type="hidden" class="numeric form-control" value="0.00" / readonly>
+                                </td>
+                                <td class="hidden">Total After Discount:</td>
+                                <td class="hidden" id="td_total_after_discount" style="text-align: right">0.00</td>
+                                <td style="text-align: right;" colspan="5">Total Before Tax:</td>
+                                <td colspan="2" id="td_total_before_tax" style="text-align: right">0.00</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
+                                <td class="" align="right" id="td_tax" color="red">0.00</td>
+                                <td colspan="5"  style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
+                                <td align="right" colspan="2" id="td_after_tax" color="red">0.00</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -742,18 +734,19 @@ $(document).ready(function(){
     var oTableItems={
         qty : 'td:eq(0)',
         unit_value: 'td:eq(1)',
-        unit_identifier : 'td:eq(2)',
-        unit_price : 'td:eq(3)',
-        discount : 'td:eq(4)',
-        total_line_discount : 'td:eq(5)',
-        tax : 'td:eq(6)',
-        gross : 'td:eq(7)',
-        total : 'td:eq(8)',
-        vat_input : 'td:eq(9)',
-        net_vat : 'td:eq(10)',
-        item_id : 'td:eq(11)',
-        bulk_price : 'td:eq(13)',
-        retail_price : 'td:eq(14)'
+        plu: 'td:eq(2)',
+        unit_identifier : 'td:eq(3)',
+        unit_price : 'td:eq(4)',
+        discount : 'td:eq(5)',
+        total_line_discount : 'td:eq(6)',
+        tax : 'td:eq(7)',
+        gross : 'td:eq(8)',
+        total : 'td:eq(9)',
+        vat_input : 'td:eq(10)',
+        net_vat : 'td:eq(11)',
+        item_id : 'td:eq(12)',
+        bulk_price : 'td:eq(14)',
+        retail_price : 'td:eq(15)'
     };
     var oTableDetails={
         discount : 'tr:eq(0) > td:eq(1)',
@@ -1368,7 +1361,7 @@ $(document).ready(function(){
                 processData : false,
                 contentType : false,
                 beforeSend : function(){
-                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="9"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
                 },
                 success : function(response){
                     var rows=response.data;
@@ -1795,6 +1788,9 @@ $(document).ready(function(){
         return '<tr>'+
         // DISPLAY
         '<td ><input name="so_qty[]" type="text" class="number form-control trigger-keyup qty" value="'+accounting.formatNumber(d.so_qty,2)+'"></td>'+unit+
+
+
+        '<td>'+d.product_code+'</td>'+
         '<td >'+d.product_desc+'<input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"> <input type="text" class="hidden is_basyo" value="'+d.is_basyo+'"> <input type="text" class="hidden is_product_basyo" value="'+d.is_product_basyo+'"></td>'+
         '<td ><input name="so_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.so_price,2)+'" style="text-align:right;"></td>'+
         '<td  style=""><input name="so_discount[]" type="text" class="numeric form-control discount" value="'+ accounting.formatNumber(d.so_discount,2)+'" style="text-align:right;"></td>'+

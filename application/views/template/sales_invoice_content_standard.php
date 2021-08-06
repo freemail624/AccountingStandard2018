@@ -119,10 +119,11 @@
     <br/>  
    <table width="100%" cellpadding="6" class="table table-striped">
         <tr>
-            <td width="15%" class="default-color border" valign="top">QTY</td>
+            <td width="10%" class="default-color border" valign="top">QTY</td>
+            <td width="15%" class="default-color border" valign="top">PART NUMBER</td>
             <td width="35%" class="default-color border" valign="top">DESCRIPTION</td>
-            <td width="25%" class="default-color border" valign="top" align="right">UNIT PRICE</td>
-            <td width="25%" class="default-color border" valign="top" align="right">TOTAL</td>
+            <td width="20%" class="default-color border" valign="top" align="right">UNIT PRICE</td>
+            <td width="20%" class="default-color border" valign="top" align="right">TOTAL</td>
         </tr>
         <?php 
             $total_tax_amount = 0;
@@ -132,13 +133,14 @@
             $gross_total+=$item->inv_gross; ?>
         <tr>
             <td class="left right"><?php echo number_format($item->inv_qty,2); ?></td>
+            <td class="left right"><?php echo $item->product_code; ?></td>
             <td class="left right"><?php echo $item->product_desc; ?></td>
             <td class="left right" align="right"><?php echo number_format($item->inv_price,2); ?></td>
             <td class="left right" align="right"><?php echo number_format($item->inv_gross,2); ?></td>
         </tr>
         <?php }?>
         <tr>
-            <td colspan="2" class="top" rowspan="4" valign="top">
+            <td colspan="3" class="top" rowspan="4" valign="top">
                 <table width="100%" style="font-size: 8pt;">
                     <tr>
                         <td valign="top">1.</td>
