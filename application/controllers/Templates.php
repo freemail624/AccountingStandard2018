@@ -109,6 +109,8 @@ class Templates extends CORE_Controller {
         $this->load->model('Travel_order_model');
         $this->load->model('Incident_report_model');
 
+        $this->load->model('Trans_model');
+
         $this->load->library('M_pdf');
         $this->load->library('excel');
         $this->load->model('Email_settings_model');
@@ -3809,6 +3811,159 @@ class Templates extends CORE_Controller {
                 $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
                 $objWriter->save('php://output');                 
 
+                break;
+
+            case 'import-nonvat':
+
+                $m_journal=$this->Journal_info_model;
+                $m_journal_accounts=$this->Journal_account_model;
+
+                $file = $this->input->get('file');
+
+                $excel=$this->excel;
+                $path="assets/chsi/nonvat/".$file;
+                $reader= PHPExcel_IOFactory::createReaderForFile($path);
+                $excel_Obj = $reader->load($path);
+
+                $worksheet=$excel_Obj->getSheet('0');
+
+                $lastRow = $worksheet->getHighestRow();
+                $colomncount = $worksheet->getHighestDataColumn();
+                $colomncount_number=PHPExcel_Cell::columnIndexFromString($colomncount);
+
+                for($row=1;$row<=$lastRow;$row++){
+
+                    $customer_id = $worksheet->getCell('B'.$row)->getValue();
+                    $remarks = $worksheet->getCell('C'.$row)->getValue();
+                    $credit_id = $worksheet->getCell('D'.$row)->getValue();
+                    $date_txn = date("Y-m-d", strtotime($worksheet->getCell('F'.$row)->getValue()));
+                    $amount = $worksheet->getCell('G'.$row)->getValue();
+
+                    $m_journal->customer_id=$this->get_numeric_value($customer_id);
+                    $m_journal->department_id=1;
+                    $m_journal->remarks=$remarks;
+                    $m_journal->date_txn=$date_txn;
+                    $m_journal->book_type='SJE';
+                    $m_journal->is_sales=1;
+                    $m_journal->set('date_created','NOW()');
+                    $m_journal->created_by_user=$this->session->user_id;
+                    $m_journal->save();
+
+                    $journal_id=$m_journal->last_insert_id();
+
+                    for($i=0;$i<=1;$i++){
+
+                        if($i == 0){
+                            $account_id = 9;
+                            $m_journal_accounts->dr_amount=$this->get_numeric_value($amount);
+                            $m_journal_accounts->cr_amount=0;
+
+                        }else{
+                            $account_id = $this->get_numeric_value($credit_id);
+                            $m_journal_accounts->dr_amount=0;
+                            $m_journal_accounts->cr_amount=$this->get_numeric_value($amount);
+                        }
+
+                        $m_journal_accounts->journal_id=$journal_id;
+                        $m_journal_accounts->account_id=$account_id;
+                        $m_journal_accounts->save();
+                    }
+
+                    //update transaction number base on formatted last insert id
+                    $m_journal->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
+                    $m_journal->modify($journal_id);
+
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=1; //CRUD
+                    $m_trans->trans_type_id=4; // TRANS TYPE
+                    $m_trans->trans_log='Created Sales Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
+                    $m_trans->save();
+
+                    echo '['.$row.'] Created successfully! <br/>';
+
+                }   
+                break;
+
+            case 'import-vat':
+
+                $m_journal=$this->Journal_info_model;
+                $m_journal_accounts=$this->Journal_account_model;
+
+                $file = $this->input->get('file');
+
+                $excel=$this->excel;
+                $path="assets/chsi/vat/".$file;
+                $reader= PHPExcel_IOFactory::createReaderForFile($path);
+                $excel_Obj = $reader->load($path);
+
+                $worksheet=$excel_Obj->getSheet('0');
+
+                $lastRow = $worksheet->getHighestRow();
+                $colomncount = $worksheet->getHighestDataColumn();
+                $colomncount_number=PHPExcel_Cell::columnIndexFromString($colomncount);
+
+                for($row=1;$row<=$lastRow;$row++){
+
+                    $customer_id = $worksheet->getCell('B'.$row)->getValue();
+                    $remarks = $worksheet->getCell('C'.$row)->getValue();
+                    $date_txn = date("Y-m-d", strtotime($worksheet->getCell('F'.$row)->getValue()));
+                    $credit_id = $worksheet->getCell('D'.$row)->getValue();
+
+                    $ar_amount = $worksheet->getCell('G'.$row)->getValue();
+                    $income_amount = $worksheet->getCell('H'.$row)->getValue();
+                    $vat_amount = $worksheet->getCell('I'.$row)->getValue();
+
+                    $m_journal->customer_id=$this->get_numeric_value($customer_id);
+                    $m_journal->department_id=1;
+                    $m_journal->remarks=$remarks;
+                    $m_journal->date_txn=$date_txn;
+                    $m_journal->book_type='SJE';
+                    $m_journal->is_sales=1;
+                    $m_journal->set('date_created','NOW()');
+                    $m_journal->created_by_user=$this->session->user_id;
+                    $m_journal->save();
+
+                    $journal_id=$m_journal->last_insert_id();
+
+                    for($i=0;$i<=2;$i++){
+
+                        if($i == 0){
+                            $account_id = 9;
+                            $m_journal_accounts->dr_amount=$this->get_numeric_value($ar_amount);
+                            $m_journal_accounts->cr_amount=0;
+
+                        }else if($i == 1){
+                            $account_id = $this->get_numeric_value($credit_id);
+                            $m_journal_accounts->dr_amount=0;
+                            $m_journal_accounts->cr_amount=$this->get_numeric_value($income_amount);
+                        }else{
+                            $account_id = 51;
+                            $m_journal_accounts->dr_amount=0;
+                            $m_journal_accounts->cr_amount=$this->get_numeric_value($vat_amount);
+                        }
+
+                        $m_journal_accounts->journal_id=$journal_id;
+                        $m_journal_accounts->account_id=$account_id;
+                        $m_journal_accounts->save();
+                    }
+
+                    //update transaction number base on formatted last insert id
+                    $m_journal->txn_no='TXN-'.date('Ymd').'-'.$journal_id;
+                    $m_journal->modify($journal_id);
+
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=1; //CRUD
+                    $m_trans->trans_type_id=4; // TRANS TYPE
+                    $m_trans->trans_log='Created Sales Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
+                    $m_trans->save();
+
+                    echo '['.$row.'] Created successfully! <br/>';
+
+                }   
                 break;
 
             case 'supplier-subsidiary-export' :
