@@ -70,9 +70,10 @@ class Temp_journal_info_model extends CORE_Model
             LEFT JOIN b_contract_other_fees fees ON fees.fee_id = tji.fee_id
             WHERE 
                 tji.is_deleted = FALSE AND
-                tji.book_type_id = 2 AND
-                fees.fee_type_id != 2 AND
-                tji.is_journal_posted = FALSE
+                tji.is_journal_posted = FALSE AND
+                tji.payment_id = 0 AND
+                fees.is_transfer = 0 AND 
+                fees.is_forfeited = 0
                 ".($department_id==0?"":" AND c.link_department_id='".$department_id."'")."");
         return $query->result();
     }    
@@ -97,7 +98,8 @@ class Temp_journal_info_model extends CORE_Model
                     temp_journal_info.is_deleted = FALSE AND
                     temp_journal_info.is_active = TRUE AND
                     temp_journal_info.is_journal_posted = FALSE AND
-                    (b_payment_info.used_security_deposit > 0 OR fees.fee_type_id = 2)
+                    ((b_payment_info.used_security_deposit > 0 AND temp_journal_info.payment_id > 0) 
+                    OR (temp_journal_info.fee_id > 0 AND (fees.is_transfer = 1 OR fees.is_forfeited = 1)))
                     ".($department_id==0?"":" AND customers.link_department_id='".$department_id."'")."");
         return $query->result();
     }

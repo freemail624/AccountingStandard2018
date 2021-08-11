@@ -177,6 +177,12 @@ class Cash_disbursement extends CORE_Controller
                     $m_journal->customer_id=$voucher_info->customer_id;
                 }
 
+                if($voucher_info->check_s_id > 0){
+                    $m_journal->check_s_id=$voucher_info->check_s_id;
+                }else{
+                    $m_journal->check_c_id=$voucher_info->check_c_id;
+                }
+
                 $m_journal->ref_type=$ref_type;
                 // $m_journal->ref_no=str_pad($ref_type_count, 8, "0", STR_PAD_LEFT); // Commented for a while 
                 $m_journal->ref_no = $voucher_info->ref_no;
@@ -387,13 +393,16 @@ class Cash_disbursement extends CORE_Controller
                     $m_journal->supplier_id=$particular[1];
                 }
 
-                $check_particular=explode('-',$this->input->post('check_particular_id',TRUE));
-                if($check_particular[0]=='C'){
-                    $m_journal->check_c_id=$check_particular[1];
-                    $m_journal->check_s_id=0;
-                }else{
-                    $m_journal->check_c_id=0;
-                    $m_journal->check_s_id=$check_particular[1];
+                if($this->input->post('check_particular_id',TRUE) != null){
+
+                    $check_particular=explode('-',$this->input->post('check_particular_id',TRUE));
+                    if($check_particular[0]=='C'){
+                        $m_journal->check_c_id=$check_particular[1];
+                        $m_journal->check_s_id=0;
+                    }else{
+                        $m_journal->check_c_id=0;
+                        $m_journal->check_s_id=$check_particular[1];
+                    }
                 }
 
                 $m_journal->ref_type=$ref_type;
@@ -555,13 +564,15 @@ class Cash_disbursement extends CORE_Controller
                     $m_journal->supplier_id=$particular[1];
                 }
 
-                $check_particular=explode('-',$this->input->post('check_particular_id',TRUE));
-                if($check_particular[0]=='C'){
-                    $m_journal->check_c_id=$check_particular[1];
-                    $m_journal->check_s_id=0;
-                }else{
-                    $m_journal->check_c_id=0;
-                    $m_journal->check_s_id=$check_particular[1];
+                if($this->input->post('check_particular_id',TRUE) != null){
+                    $check_particular=explode('-',$this->input->post('check_particular_id',TRUE));
+                    if($check_particular[0]=='C'){
+                        $m_journal->check_c_id=$check_particular[1];
+                        $m_journal->check_s_id=0;
+                    }else{
+                        $m_journal->check_c_id=0;
+                        $m_journal->check_s_id=$check_particular[1];
+                    }
                 }
 
                 $m_journal->remarks=$this->input->post('remarks',TRUE);

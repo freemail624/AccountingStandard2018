@@ -389,7 +389,7 @@
                             <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <b class="required"> * </b> <label>Method of Payment  :</label><br />
+                                        <b class="required"> * </b> <label>Method of Payment :</label><br />
                                         <select id="cbo_pay_type" name="payment_method" class="form-control" data-error-msg="Payment method is required." required>
                                             <?php foreach($payment_methods as $payment_method){ ?>
                                                 <option value='<?php echo $payment_method->payment_method_id; ?>'><?php echo $payment_method->payment_method; ?></option>
@@ -411,16 +411,14 @@
                                 <div class="row for_check">
                                     <div class="col-sm-12">
                                         <b class="required"> * </b> <label>Check Name :</label><br />
-                                        <select id="cbo_check_particulars" name="check_particular_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Particular is required." required>
+                                        <select id="cbo_check_particulars" name="check_particular_id" class="selectpicker show-tick form-control" data-error-msg="Particular is required.">
                                             <optgroup label="Customers">
-                                                <!-- <option value="create_customer">[Create New Customer]</option> -->
                                                 <?php foreach($customers as $customer){ ?>
                                                     <option value='C-<?php echo $customer->customer_id; ?>' data-link_department='<?php echo $customer->link_department_id; ?>'><?php echo $customer->customer_name; ?></option>
                                                 <?php } ?>
                                             </optgroup>
 
                                             <optgroup label="Suppliers">
-                                                <!-- <option value="create_supplier">[Create New Supplier]</option> -->
                                                 <?php foreach($suppliers as $supplier){ ?>
                                                     <option value='S-<?php echo $supplier->supplier_id; ?>' data-link_department='0'>
                                                         <?php echo $supplier->branch_name.' '.$supplier->supplier_name; ?>
@@ -2156,15 +2154,23 @@ $(document).ready(function(){
         $('#cbo_check_type').val(0).trigger("change");
         $('#check_date').val('');
         $('#check_no').val('');
+        $('#cbo_check_particulars').select2('val', null);
 
         if(id == 2) { 
             $('.for_check').removeClass('hidden');
             $('#check_date').prop('required',true);
             $('#check_no').prop('required',true);
+            $('#cbo_check_particulars').prop('required',true);
+
+            var particular_id = $('#cbo_particulars').select2('val');
+            $('#cbo_check_particulars').select2('val', particular_id);
+
         } else {
             $('.for_check').addClass('hidden');
             $('#check_date').prop('required',false);
             $('#check_no').prop('required',false);
+            $('#cbo_check_particulars').prop('required',false);
+            $('#cbo_check_particulars').select2('val', null);
         }
     };
 

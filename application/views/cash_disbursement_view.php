@@ -544,7 +544,7 @@
                                 <div class="row for_check">
                                     <div class="col-sm-12">
                                         <b class="required"> * </b> <label>Check Name :</label><br />
-                                        <select id="cbo_check_particulars" name="check_particular_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Particular is required." required>
+                                        <select id="cbo_check_particulars" name="check_particular_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Particular is required.">
                                             <optgroup label="Customers">
                                                 <!-- <option value="create_customer">[Create New Customer]</option> -->
                                                 <?php foreach($customers as $customer){ ?>
@@ -2616,15 +2616,22 @@ $(document).ready(function(){
         $('#cbo_check_type').val(0).trigger("change");
         $('#check_date').val('');
         $('#check_no').val('');
+        $('#cbo_check_particulars').select2('val', null);
 
         if(id == 2) { 
             $('.for_check').removeClass('hidden');
             $('#check_date').prop('required',true);
             $('#check_no').prop('required',true);
+            $('#cbo_check_particulars').prop('required',true);
+
+            var particular_id = $('#cbo_particulars').select2('val');
+            $('#cbo_check_particulars').select2('val', particular_id);
         } else {
             $('.for_check').addClass('hidden');
             $('#check_date').prop('required',false);
             $('#check_no').prop('required',false);
+            $('#cbo_check_particulars').prop('required',false);
+            $('#cbo_check_particulars').select2('val', null);
         }
     };
 

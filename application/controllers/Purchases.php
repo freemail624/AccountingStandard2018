@@ -14,6 +14,7 @@ class Purchases extends CORE_Controller
         $this->load->model('Products_model');
         $this->load->model('Purchase_items_model');
         $this->load->model('Delivery_invoice_model');
+        $this->load->model('Delivery_invoice_item_model');
         $this->load->model('Refproduct_model');
         $this->load->model('Departments_model');
         $this->load->model('Users_model');
@@ -682,65 +683,89 @@ class Purchases extends CORE_Controller
 
                 case 'mark-approved': //called on DASHBOARD when approved button is clicked
                     $m_purchases=$this->Purchases_model;
-                    $purchase_order_id=$this->input->post('purchase_order_id',TRUE);
+                    $m_po_items=$this->Purchase_items_model;
+                    $m_delivery_invoice=$this->Delivery_invoice_model;
+                    $m_dr_items=$this->Delivery_invoice_item_model;
 
-                    $m_email=$this->Email_settings_model;
-                    $email=$m_email->get_list();
+                    $purchase_order_id=$this->input->post('purchase_order_id',TRUE);
+                    $info = $m_purchases->get_list($purchase_order_id);
 
                     $m_purchases->set('date_approved','NOW()'); //treat NOW() as function and not string, set date of approval
                     $m_purchases->approved_by_user=$this->session->user_id; //deleted by user
                     $m_purchases->approval_remarks=$this->input->post('approval_remarks',TRUE);
                     $m_purchases->approval_id=1; //1 means approved
+
                     if($m_purchases->modify($purchase_order_id)){
 
-                        $info=$m_purchases->get_list(
-                            $purchase_order_id,
-                            array(
-                                'user_accounts.user_email',
-                                'purchase_order.po_no'
-                            ),
-                            array(
-                                array('user_accounts','user_accounts.user_id=purchase_order.posted_by_user','left')
-                            )
-                        );
+                        $m_delivery_invoice->begin();
 
-                        // if(strlen($info[0]->user_email)>0){ //if email is found, notify the user who posted it
-                        //     $emailConfig = array('protocol' => 'smtp', 
-                        //         'smtp_host' => 'ssl://smtp.googlemail.com', 
-                        //         'smtp_port' => 465, 
-                        //         'smtp_user' => $email[0]->email_address, 
-                        //         'smtp_pass' => $email[0]->password, 
-                        //         'mailtype' => 'html', 
-                        //         'charset' => 'iso-8859-1');
+                        /* INSERT PO INFO */
+                        $m_delivery_invoice->set('date_created','NOW()');
+                        $m_delivery_invoice->purchase_order_id=$purchase_order_id;
+                        $m_delivery_invoice->contact_person=$info[0]->contact_person;
+                        $m_delivery_invoice->terms=$info[0]->terms;
+                        $m_delivery_invoice->supplier_id = $info[0]->supplier_id;
+                        $m_delivery_invoice->department_id = $info[0]->department_id;
+                        $m_delivery_invoice->remarks = $info[0]->remarks;
+                        $m_delivery_invoice->date_delivered = date('Y-m-d');
+                        $m_delivery_invoice->date_due = date('Y-m-d');
+                        $m_delivery_invoice->tax_type_id = $info[0]->tax_type_id;
+                        $m_delivery_invoice->posted_by_user = $this->session->user_id;
+                        $m_delivery_invoice->total_discount = $this->get_numeric_value($info[0]->total_discount);
+                        $m_delivery_invoice->total_before_tax=$this->get_numeric_value($info[0]->total_before_tax);
+                        $m_delivery_invoice->total_tax_amount=$this->get_numeric_value($info[0]->total_tax_amount);
+                        $m_delivery_invoice->total_after_tax=$this->get_numeric_value($info[0]->total_after_tax);
+                        $m_delivery_invoice->total_overall_discount=$this->get_numeric_value($info[0]->total_overall_discount);
+                        $m_delivery_invoice->total_overall_discount_amount=$this->get_numeric_value($info[0]->total_overall_discount_amount);
+                        $m_delivery_invoice->total_after_discount=$this->get_numeric_value($info[0]->total_after_discount);
+                        $m_delivery_invoice->discount_type_id=$this->get_numeric_value($info[0]->discount_type_id);
+                        $m_delivery_invoice->save();
 
-                        //     // Set your email information
-                            
-                        //     $from = array('email' => $email[0]->email_from,
-                        //         'name' => $email[0]->name_from);
-                                
+                        $dr_invoice_id=$m_delivery_invoice->last_insert_id();
 
-                        //     $to = array($info[0]->user_email);
-                        //     $subject = 'Purchase Order';
-                        //   //  $message = 'Type your gmail message here';
-                        //     $message = '<p>Good Day!</p><br /><br /><p>Hi! your Purchase Order '.$info[0]->po_no.' is already approved. Kindly check your account.</p>';
+                        /* INSERT PO ITEMS */
+                        $items = $m_po_items->get_list(array("purchase_order_id"=>$purchase_order_id));
 
-                        //     // Load CodeIgniter Email library
-                        //     $this->load->library('email', $emailConfig);
-                        //     // Sometimes you have to set the new line character for better result
-                        //     $this->email->set_newline("\r\n");
-                        //     // Set email preferences
-                        //     $this->email->from($from['email'], $from['name']);
-                        //     $this->email->to($to);
-                        //     $this->email->subject($subject);
-                        //     $this->email->message($message);
-                         
-                        //     $this->email->set_mailtype("html");
-                        //     $this->email->send();
-                        // }
+                        foreach ($items as $item){
 
+                            $m_dr_items->dr_invoice_id=$dr_invoice_id;
+                            $m_dr_items->product_id=$this->get_numeric_value($item->product_id);
+                            $m_dr_items->dr_qty=$this->get_numeric_value($item->po_qty);
+                            $m_dr_items->dr_price=$this->get_numeric_value($item->po_price);
+                            $m_dr_items->dr_discount=$this->get_numeric_value($item->po_discount);
+                            $m_dr_items->dr_line_total_discount=$this->get_numeric_value($item->po_line_total_discount);
+                            $m_dr_items->dr_tax_rate=$this->get_numeric_value($item->po_tax_rate);
+                            $m_dr_items->dr_line_total_price=$this->get_numeric_value($item->po_line_total);
+                            $m_dr_items->dr_tax_amount=$this->get_numeric_value($item->tax_amount);
+                            $m_dr_items->dr_non_tax_amount=$this->get_numeric_value($item->non_tax_amount);
+                            $m_dr_items->dr_line_total_after_global=$this->get_numeric_value($item->po_line_total_after_global);
+                            $m_dr_items->is_parent=$this->get_numeric_value($item->is_parent);
+                            $m_dr_items->unit_id=$this->get_numeric_value($item->unit_id);
+                            $m_dr_items->save();
 
+                        }
 
+                        //update invoice number base on formatted last insert id
+                        $m_delivery_invoice->dr_invoice_no='P-INV-'.date('Ymd').'-'.$dr_invoice_id;
+                        $m_delivery_invoice->modify($dr_invoice_id);
 
+                        //update status of po
+                        $m_purchases->order_status_id=$this->get_po_status($purchase_order_id);
+                        $m_purchases->modify($purchase_order_id);
+
+                        //update payable amount of supplier
+                        $m_suppliers=$this->Suppliers_model;
+                        $m_suppliers->recalculate_supplier_payable($info[0]->supplier_id);
+
+                        $m_trans=$this->Trans_model;
+                        $m_trans->user_id=$this->session->user_id;
+                        $m_trans->set('trans_date','NOW()');
+                        $m_trans->trans_key_id=1; //CRUD
+                        $m_trans->trans_type_id=12; // TRANS TYPE
+                        $m_trans->trans_log='Created Purchase Invoice No: P-INV-'.date('Ymd').'-'.$dr_invoice_id;
+                        $m_trans->save();
+
+                        $m_delivery_invoice->commit();
 
                         $response['title']='Success!';
                         $response['stat']='success';
@@ -885,6 +910,27 @@ class Purchases extends CORE_Controller
             'purchase_order.purchase_order_id DESC'
         );
     }
+
+    function get_po_status($id){
+            //NOTE : 1 means open, 2 means Closed, 3 means partially invoice
+            $m_delivery=$this->Delivery_invoice_model;
+
+            if(count($m_delivery->get_list(
+                        array('delivery_invoice.purchase_order_id'=>$id,'delivery_invoice.is_active'=>TRUE,'delivery_invoice.is_deleted'=>FALSE),
+                        'delivery_invoice.dr_invoice_id'))==0 ){ //means no po found on delivery/purchase invoice that means this po is still open
+
+                return 1;
+
+            }else{
+
+                $m_po=$this->Purchases_model;
+                $row=$m_po->get_po_balance_qty($id);
+                return ($row[0]->Balance>0?3:2);
+
+            }
+
+    }
+
 }
 
 

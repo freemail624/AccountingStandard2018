@@ -163,7 +163,6 @@
                             <thead class="">
                             <tr>
                                 <th width="5%">&nbsp;</th>
-                                <th width="12%">Billing Ref No</th>
                                 <th width="7%">OR#</th>
                                 <th width="15%">Department</th>
                                 <th width="20%">Customer</th>
@@ -1242,12 +1241,11 @@ $(document).ready(function(){
                     "data":           null,
                     "defaultContent": ""
                 },
-                { targets:[1],data: "transaction_no" },
-                { targets:[2],data: "ref_no" },
-                { targets:[3],data: "department_name" },
-                { targets:[4],data: "customer_name" },
-                { targets:[5],data: "date_txn" },
-                { targets:[6],   data: "rem_day_for_due",
+                { targets:[1],data: "ref_no" },
+                { targets:[2],data: "department_name" },
+                { targets:[3],data: "customer_name" },
+                { targets:[4],data: "date_txn" },
+                { targets:[5],   data: "rem_day_for_due",
                     render: function (data, type, full, meta){
                         if(data>0){ //if check and remaining day before due is greater than 0
                             return "<span style='color: red'><b><i class='fa fa-times-circle'></i> "+data+"</b> day(s) before Check is due.</span>";
@@ -1255,7 +1253,7 @@ $(document).ready(function(){
                             return "";
                         }
                     } },
-                { targets:[7],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(30)}
+                { targets:[6],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(30)}
             ],
               "initComplete": function(settings, json) {
                  if(this.api().data().length != 0){

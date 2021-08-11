@@ -169,14 +169,18 @@ class Cash_vouchers extends CORE_Controller
                     $m_info->supplier_id=$particular[1];
                 }
 
-                $check_particular=explode('-',$this->input->post('check_particular_id',TRUE));
-                if($check_particular[0]=='C'){
-                    $m_info->check_c_id=$check_particular[1];
-                    $m_info->check_s_id=0;
-                }else{
-                    $m_info->check_c_id=0;
-                    $m_info->check_s_id=$check_particular[1];
-                }                
+                if($this->input->post('check_particular_id',TRUE) != null){
+
+                    $check_particular=explode('-',$this->input->post('check_particular_id',TRUE));
+                    if($check_particular[0]=='C'){
+                        $m_info->check_c_id=$check_particular[1];
+                        $m_info->check_s_id=0;
+                    }else{
+                        $m_info->check_c_id=0;
+                        $m_info->check_s_id=$check_particular[1];
+                    }    
+
+                }            
 
                 $m_info->ref_type=$ref_type;
                 $m_info->ref_no=$ref_no;
@@ -340,14 +344,18 @@ class Cash_vouchers extends CORE_Controller
                     $m_info->supplier_id=$particular[1];
                 }
 
-                $check_particular=explode('-',$this->input->post('check_particular_id',TRUE));
-                if($check_particular[0]=='C'){
-                    $m_info->check_c_id=$check_particular[1];
-                    $m_info->check_s_id=0;
-                }else{
-                    $m_info->check_c_id=0;
-                    $m_info->check_s_id=$check_particular[1];
-                }                  
+                if($this->input->post('check_particular_id',TRUE) != null){
+
+                    $check_particular=explode('-',$this->input->post('check_particular_id',TRUE));
+                    if($check_particular[0]=='C'){
+                        $m_info->check_c_id=$check_particular[1];
+                        $m_info->check_s_id=0;
+                    }else{
+                        $m_info->check_c_id=0;
+                        $m_info->check_s_id=$check_particular[1];
+                    }    
+
+                }           
 
                 $m_info->ref_type=$this->input->post('ref_type');
                 $m_info->ref_no=$this->input->post('ref_no');
