@@ -3821,7 +3821,7 @@ class Templates extends CORE_Controller {
                 $file = $this->input->get('file');
 
                 $excel=$this->excel;
-                $path="assets/chsi/nonvat/".$file;
+                $path="assets/chsi/nonvat/".$file.".csv";
                 $reader= PHPExcel_IOFactory::createReaderForFile($path);
                 $excel_Obj = $reader->load($path);
 
@@ -3833,12 +3833,14 @@ class Templates extends CORE_Controller {
 
                 for($row=1;$row<=$lastRow;$row++){
 
-                    $customer_id = $worksheet->getCell('B'.$row)->getValue();
-                    $remarks = $worksheet->getCell('C'.$row)->getValue();
-                    $credit_id = $worksheet->getCell('D'.$row)->getValue();
-                    $date_txn = date("Y-m-d", strtotime($worksheet->getCell('F'.$row)->getValue()));
-                    $amount = $worksheet->getCell('G'.$row)->getValue();
+                    $invoice_no = $worksheet->getCell('B'.$row)->getValue();
+                    $customer_id = $worksheet->getCell('C'.$row)->getValue();
+                    $remarks = $worksheet->getCell('D'.$row)->getValue();
+                    $credit_id = $worksheet->getCell('E'.$row)->getValue();
+                    $date_txn = date("Y-m-d", strtotime($worksheet->getCell('G'.$row)->getValue()));
+                    $amount = $worksheet->getCell('H'.$row)->getValue();
 
+                    $m_journal->ref_no = $invoice_no;
                     $m_journal->customer_id=$this->get_numeric_value($customer_id);
                     $m_journal->department_id=1;
                     $m_journal->remarks=$remarks;
@@ -3894,7 +3896,7 @@ class Templates extends CORE_Controller {
                 $file = $this->input->get('file');
 
                 $excel=$this->excel;
-                $path="assets/chsi/vat/".$file;
+                $path="assets/chsi/vat/".$file.".csv";
                 $reader= PHPExcel_IOFactory::createReaderForFile($path);
                 $excel_Obj = $reader->load($path);
 
@@ -3907,14 +3909,16 @@ class Templates extends CORE_Controller {
                 for($row=1;$row<=$lastRow;$row++){
 
                     $customer_id = $worksheet->getCell('B'.$row)->getValue();
-                    $remarks = $worksheet->getCell('C'.$row)->getValue();
-                    $date_txn = date("Y-m-d", strtotime($worksheet->getCell('F'.$row)->getValue()));
-                    $credit_id = $worksheet->getCell('D'.$row)->getValue();
+                    $invoice_no = $worksheet->getCell('C'.$row)->getValue();
+                    $remarks = $worksheet->getCell('D'.$row)->getValue();
+                    $date_txn = date("Y-m-d", strtotime($worksheet->getCell('G'.$row)->getValue()));
+                    $credit_id = $worksheet->getCell('E'.$row)->getValue();
 
-                    $ar_amount = $worksheet->getCell('G'.$row)->getValue();
-                    $income_amount = $worksheet->getCell('H'.$row)->getValue();
-                    $vat_amount = $worksheet->getCell('I'.$row)->getValue();
+                    $ar_amount = $worksheet->getCell('H'.$row)->getValue();
+                    $income_amount = $worksheet->getCell('I'.$row)->getValue();
+                    $vat_amount = $worksheet->getCell('J'.$row)->getValue();
 
+                    $m_journal->ref_no = $invoice_no;
                     $m_journal->customer_id=$this->get_numeric_value($customer_id);
                     $m_journal->department_id=1;
                     $m_journal->remarks=$remarks;
