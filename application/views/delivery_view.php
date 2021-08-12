@@ -200,6 +200,7 @@
                     <th>External Ref#</th>
                     <th>PO #</th>
                     <th>Terms</th>
+                    <th class="text-right">Amount</th>
                     <th>Delivered</th>
                     <th>Status</th>
                     <th><center>Action</center></th>
@@ -500,7 +501,7 @@
 
 <div id="modal_confirmation" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog modal-sm">
-        <div class="modal-content"><!---content--->
+        <div class="modal-content"><!---content-->
             <div class="modal-header">
                 <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
                 <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Confirm Deletion</h4>
@@ -512,13 +513,13 @@
                 <button id="btn_yes" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Yes</button>
                 <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">No</button>
             </div>
-        </div><!---content---->
+        </div><!---content-->
     </div>
 </div><!---modal-->
 
 <div id="modal_po_list" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog" style="width: 80%;">
-        <div class="modal-content"><!---content--->
+        <div class="modal-content"><!---content-->
             <div class="modal-header ">
                 <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
                 <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Purchase Order</h4>
@@ -531,7 +532,8 @@
                     <tr>
                         <th></th>
                         <th>PO#</th>
-                        <th>Vendor</th>
+                        <th width="20%">Vendor</th>
+                        <th class="text-right">Amount</th>
                         <th>Terms</th>
                         <th>Deliver to</th>
                         <th>Status</th>
@@ -539,9 +541,6 @@
                     </tr>
                     </thead>
                     <tbody>
-
-
-
                     </tbody>
                 </table>
             </div>
@@ -550,7 +549,7 @@
 
                 <button type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Cancel</button>
             </div>
-        </div><!---content---->
+        </div><!---content-->
     </div>
 </div><!---modal-->
 
@@ -916,7 +915,12 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "po_no" },
                 { targets:[2],data: "supplier_name" },
-                { targets:[3],data: "term_description" },
+                { sClass:"text-right", targets:[3],data: null,
+                    render: function (data, type, full, meta){
+                        return accounting.formatNumber(data.total_after_tax,2);
+                    }
+                },
+                { targets:[4],data: "term_description" },
                 { targets:[5],data: "deliver_to_address" },
                 { targets:[6],data: "order_status" },
                 {
@@ -933,7 +937,7 @@ $(document).ready(function(){
         dt=$('#tbl_delivery_invoice').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 9, "desc" ]],
+            "order": [[ 10, "desc" ]],
             "language": {
                 "searchPlaceholder":"Search Purchase Invoice"
             },
@@ -951,10 +955,15 @@ $(document).ready(function(){
                 { targets:[3],data: "external_ref_no" },
                 { targets:[4],data: "po_no" },
                 { targets:[5],data: "term_description" },
-                { targets:[6],data: "date_delivered" },
-                { targets:[7],data: "order_status" }, 
+                { sClass:"text-right", targets:[6],data: null,
+                    render: function (data, type, full, meta){
+                        return accounting.formatNumber(data.total_after_tax,2);
+                    }
+                },
+                { targets:[7],data: "date_delivered" },
+                { targets:[8],data: "order_status" }, 
                 {
-                    targets:[8],
+                    targets:[9],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
@@ -962,7 +971,7 @@ $(document).ready(function(){
                         return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                     }
                 },
-                { targets:[9],data: "dr_invoice_id", visible:false }
+                { targets:[10],data: "dr_invoice_id", visible:false }
             ]
         });
 
