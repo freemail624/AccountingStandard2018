@@ -132,7 +132,7 @@
 <!--                                 <li class="<?php //echo (in_array('5-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Agent">Agent Management</a></li> -->
                         
                                 <li class="<?php echo (in_array('5-7',$this->session->user_rights)?'':'hidden'); ?>"><a href="Advisors">Advisor Management</a></li>
-                                <li class="<?php echo (in_array('5-8',$this->session->user_rights)?'':'hidden'); ?>"><a href="Insurance">Insurance Management</a></li>
+<!--                                 <li class="<?php //echo (in_array('5-8',$this->session->user_rights)?'':'hidden'); ?>"><a href="Insurance">Insurance Management</a></li> -->
                                 <li class="<?php echo (in_array('5-9',$this->session->user_rights)?'':'hidden'); ?>"><a href="Vehicles">Vehicles Management</a></li>
                             </ul>
                         </li>

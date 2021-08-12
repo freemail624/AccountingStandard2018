@@ -26,7 +26,7 @@ class Templates extends CORE_Controller {
         $this->load->model('Sales_invoice_item_model');
 
         $this->load->model('Payment_method_model');
-
+        $this->load->model('Trans_model');
 
         $this->load->model('Sales_order_model');
         $this->load->model('Sales_order_item_model');
@@ -128,6 +128,124 @@ class Templates extends CORE_Controller {
     
     function layout($layout=null,$filter_value=null,$type=null){
         switch($layout){
+
+            case 'update-cost': 
+ 
+                $m_products=$this->Products_model; 
+                $file = $this->input->get('file'); 
+ 
+                $excel=$this->excel; 
+                $path="assets/import/".$file; 
+                $reader= PHPExcel_IOFactory::createReaderForFile($path); 
+                $excel_Obj = $reader->load($path); 
+ 
+                $worksheet=$excel_Obj->getSheet('0'); 
+ 
+                $lastRow = $worksheet->getHighestRow(); 
+                $colomncount = $worksheet->getHighestDataColumn(); 
+                $colomncount_number=PHPExcel_Cell::columnIndexFromString($colomncount); 
+ 
+                for($row=1;$row<=$lastRow;$row++){ 
+ 
+                    $product_id = $worksheet->getCell('A'.$row)->getValue(); 
+                    $purchase_cost = $worksheet->getCell('B'.$row)->getValue(); 
+                    $sale_price = $worksheet->getCell('C'.$row)->getValue(); 
+ 
+                    $m_products->purchase_cost=$this->get_numeric_value($purchase_cost);
+                    $m_products->sale_price=$this->get_numeric_value($sale_price);
+                    $m_products->modify($this->get_numeric_value($product_id)); 
+ 
+                    echo '['.$row.'] Updated successfully! <br/>'; 
+ 
+                }    
+                break; 
+
+            case 'import': 
+ 
+                $m_adjustment=$this->Adjustment_model;
+                $m_adjustment_items=$this->Adjustment_item_model;
+                $m_products=$this->Products_model;
+
+                $file = $this->input->get('file'); 
+ 
+                $excel=$this->excel; 
+                $path="assets/import/adjustments/".$file.".csv"; 
+                $reader= PHPExcel_IOFactory::createReaderForFile($path); 
+                $excel_Obj = $reader->load($path); 
+ 
+                $worksheet=$excel_Obj->getSheet('0'); 
+ 
+                $lastRow = $worksheet->getHighestRow();
+                $colomncount = $worksheet->getHighestDataColumn(); 
+                $colomncount_number=PHPExcel_Cell::columnIndexFromString($colomncount); 
+            
+                $m_adjustment->begin();
+
+                $m_adjustment->set('date_created','NOW()');
+                $m_adjustment->department_id=1;
+                $m_adjustment->adjustment_type=1;
+                $m_adjustment->date_adjusted=date('Y-m-d');
+                $m_adjustment->inv_type_id = 0;
+                $m_adjustment->posted_by_user=$this->session->user_id;
+                $m_adjustment->save();
+
+                $adjustment_id=$m_adjustment->last_insert_id();
+                $total_before_tax = 0;
+                $total_tax_amount = 0;
+                $total_after_tax = 0;
+
+                for($row=1;$row<=$lastRow;$row++){ 
+
+                    $product_id = $worksheet->getCell('A'.$row)->getValue();
+                    $adjust_qty = $worksheet->getCell('B'.$row)->getValue(); 
+
+                    $product = $m_products->get_list($product_id);
+
+                    $adjust_price = $product[0]->purchase_cost;
+                    $adjust_line_total_price = $this->get_numeric_value($adjust_qty) * $adjust_price;
+                    $unit_id = $product[0]->parent_unit_id;
+                    $adjust_non_tax_amount = $adjust_line_total_price / 1.12;
+                    $adjust_tax_amount = $adjust_line_total_price - $adjust_non_tax_amount;
+
+                    $total_before_tax += $adjust_line_total_price;
+                    $total_tax_amount += $adjust_tax_amount;
+                    $total_after_tax += $adjust_non_tax_amount;
+
+                    $m_adjustment_items->adjustment_id=$adjustment_id;
+                    $m_adjustment_items->product_id=$this->get_numeric_value($product_id);
+                    $m_adjustment_items->adjust_qty=$this->get_numeric_value($adjust_qty);
+                    $m_adjustment_items->adjust_price=$this->get_numeric_value($adjust_price);
+                    $m_adjustment_items->adjust_tax_rate=12;
+                    $m_adjustment_items->adjust_line_total_price=$this->get_numeric_value($adjust_line_total_price);
+                    $m_adjustment_items->adjust_tax_amount=$this->get_numeric_value($adjust_tax_amount);
+                    $m_adjustment_items->adjust_non_tax_amount=$this->get_numeric_value($adjust_non_tax_amount);
+                    $m_adjustment_items->cost_upon_invoice=$this->get_numeric_value($adjust_price);
+                    $m_adjustment_items->is_parent=0;
+                    $m_adjustment_items->unit_id=$this->get_numeric_value($unit_id);
+                    $m_adjustment_items->save();
+
+                    echo '['.$row.'] Created successfully! <br/>'; 
+ 
+                }    
+
+                $m_adjustment->total_before_tax=$this->get_numeric_value($total_before_tax);
+                $m_adjustment->total_tax_amount=$this->get_numeric_value($total_tax_amount);
+                $m_adjustment->total_after_tax=$this->get_numeric_value($total_after_tax);
+                $m_adjustment->adjustment_code='ADJ-'.date('Ymd').'-'.$adjustment_id;
+                $m_adjustment->modify($adjustment_id);
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=1; //CRUD
+                $m_trans->trans_type_id=15; // TRANS TYPE
+                $m_trans->trans_log='Created Adjustment No: ADJ-'.date('Ymd').'-'.$adjustment_id;
+                $m_trans->save();
+
+                $m_adjustment->commit();
+
+                break; 
+
               case 'services-journal-for-review':
 
                 $service_invoice_id = $this->input->get('id',TRUE);

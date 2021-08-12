@@ -120,7 +120,7 @@ class Service_journal extends CORE_Controller
                 if($is_insured > 0){
                     if($service_invoice_id!=null){
                         $m_service_invoice=$this->Service_invoice_model;
-                        $m_service_invoice->isurance_journal_id=$journal_id;
+                        $m_service_invoice->insurance_journal_id=$journal_id;
                         $m_service_invoice->insurance_is_journal_posted=TRUE;
                         $m_service_invoice->modify($service_invoice_id);
                     }

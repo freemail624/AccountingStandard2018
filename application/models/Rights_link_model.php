@@ -122,7 +122,7 @@ class Rights_link_model extends CORE_Model{
                                           (114,'4','4-12','Vehicle Year Management'),
                                           (115,'4','4-13','Makes Management'),
                                           (116,'5','5-7','Advisor Management'),
-                                          (117,'5','5-8','Insurance Management'),
+                                          -- (117,'5','5-8','Insurance Management'),
                                           (118,'5','5-9','Vehicles Management'),
                                           (119,'13','13-5','Repair Order'),
                                           (120,'4','4-14','Bin Management'),
