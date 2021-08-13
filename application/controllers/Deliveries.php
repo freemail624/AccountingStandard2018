@@ -20,7 +20,8 @@ class Deliveries extends CORE_Controller
         $this->load->model('Trans_model');          
         $this->load->model('Asset_settings_model');
         $this->load->model('Cash_vouchers_model');
-
+        $this->load->model('Order_status_model');
+        $this->load->model('Purchase_journal_info_model');
     }
 
     public function index() {
@@ -40,6 +41,8 @@ class Deliveries extends CORE_Controller
             array('departments.is_active'=>TRUE,'departments.is_deleted'=>FALSE)
         );
 
+        $data['statuses']=$this->Order_status_model->get_list();
+
         //data required by active view
         $data['suppliers']=$this->Suppliers_model->get_supplier_list();
         $data['tax_types']=$this->Tax_types_model->get_list('is_deleted=0');
@@ -56,8 +59,12 @@ class Deliveries extends CORE_Controller
 
             case'delivery_list_count':  //this returns JSON of Purchase Order to be rendered on Datatable with validation of count in invoice
             $m_delivery=$this->Delivery_invoice_model;
-            $response['data']=$m_delivery->delivery_list_count($id_filter);
 
+            $status_id = $this->input->post('order_status_id', TRUE);
+            $tsd = date('Y-m-d',strtotime($this->input->post('tsd', TRUE)));
+            $ted = date('Y-m-d',strtotime($this->input->post('ted', TRUE)));
+
+            $response['data']=$m_delivery->delivery_list_count($id_filter,null,null,$tsd,$ted,null,$status_id);
             echo json_encode($response);    
 
             break;
@@ -487,6 +494,13 @@ class Deliveries extends CORE_Controller
                 $response['data']=$m_delivery_invoice->get_purchases_for_review();
                 echo json_encode($response);
                 break;
+
+            case 'purchases-for-posting':
+                $m_purchases=$this->Purchase_journal_info_model;
+                $response['data']=$m_purchases->get_purchases_for_posting();
+                echo json_encode($response);
+                break;
+
             //***************************************************************************************
             case 'test':
                 $m_po=$this->Purchases_model;

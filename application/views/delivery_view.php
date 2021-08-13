@@ -148,8 +148,19 @@
         #img_user {
             padding-bottom: 15px;
         }
-
-
+        #tbl_delivery_invoice_filter{
+            display: none;
+        }
+        div.dataTables_processing{ 
+            position: absolute!important; 
+            top: 0%!important; 
+            right: -45%!important; 
+            left: auto!important; 
+            width: 100%!important; 
+            height: 40px!important; 
+            background: none!important; 
+            background-color: transparent!important; 
+        } 
     </style>
 </head>
 
@@ -188,9 +199,47 @@
 <!--         <div class="panel-heading">
             <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Purchase Invoice</b>
         </div> -->
-        <div class="panel-body table-responsive">
+        <div class="panel-body table-responsive" style="width: 100%;overflow-x: hidden;">
         <div class="row panel-row">
             <h2 style="margin-bottom: 0;" class="h2-panel-heading"> Purchase Invoice</h2><hr>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <br>
+                        <button class="btn btn-primary" id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Record Purchase Invoice" >
+                            <i class="fa fa-plus"></i> Record Purchase Invoice
+                        </button>
+                </div>
+                <div class="col-sm-2">                            
+                    From :<br />
+                    <div class="input-group">
+                        <input type="text" id="txt_start_date" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                         <span class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                         </span>
+                    </div></div>
+                <div class="col-sm-2">
+                    To :<br />
+                    <div class="input-group">
+                        <input type="text" id="txt_end_date" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
+                         <span class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                         </span>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    Status: <br>
+                    <select id="cbo_statuses">
+                        <option value="0">All</option>
+                        <?php foreach($statuses as $status){ ?>
+                            <option value="<?php echo $status->order_status_id; ?>">
+                                <?php echo $status->order_status; ?>
+                            </option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="col-sm-3">Search:<br><input type="text" class="form-control" id="searchbox"> </div>
+            </div><br>
             <table id="tbl_delivery_invoice" class="table table-striped" cellspacing="0" width="100%">
                 <thead>
                 <tr>
@@ -870,7 +919,7 @@
 $(document).ready(function(){
     var dt; var dt_po; var _txnMode; var _selectedID; var _selectRowObj; var _cboSuppliers; var _cboTaxType;
     var _productType; var _cboDepartments; var _defCostType; var products; var _line_unit; var changetxn ;
-    var _cboDiscountType;
+    var _cboDiscountType; var _cboStatuses;
     //_defCostType=0;
 
     var oTableItems={
@@ -901,6 +950,12 @@ $(document).ready(function(){
 
 
     var initializeControls=function(){
+
+        _cboStatuses=$('#cbo_statuses').select2({
+            placeholder: "",
+            minimumResultsForSearch : -1,
+            allowClear: false
+        });
 
         dt_po=$('#tbl_po_list').DataTable({
             "bLengthChange":false,
@@ -941,7 +996,22 @@ $(document).ready(function(){
             "language": {
                 "searchPlaceholder":"Search Purchase Invoice"
             },
-            "ajax" : "Deliveries/transaction/delivery_list_count",
+            "ajax" : {
+                "url":"Deliveries/transaction/delivery_list_count",
+                "bDestroy": true,
+                "type":"POST",
+                "data": function ( d ) {
+                    return $.extend( {}, d, {
+                            "order_status_id":_cboStatuses.select2('val'),
+                            "tsd":$('#txt_start_date').val(),
+                            "ted":$('#txt_end_date').val()
+                        });
+                    }
+            },   
+            oLanguage: {
+                    sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+            },
+            processing : true,
             "columns": [
                 {
                     "targets": [0],
@@ -974,18 +1044,6 @@ $(document).ready(function(){
                 { targets:[10],data: "dr_invoice_id", visible:false }
             ]
         });
-
-
-        var createToolBarButton=function(){
-            var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Record Purchase Invoice" >'+
-                '<i class="fa fa-plus"></i> Record Purchase Invoice</button>';
-
-            $("div.toolbar").html(_btnNew);
-        }();
-
-
-
-
 
         $('.date-picker').datepicker({
             todayBtn: "linked",
@@ -1179,11 +1237,6 @@ $(document).ready(function(){
 
     }();
 
-
-
-
-
-
     var bindEventHandlers=(function(){
         var detailRows = [];
 
@@ -1315,6 +1368,24 @@ $(document).ready(function(){
                 $('input[name="contact_person"]').val($(this).find('option:selected').data('contact-person'));
             }
 
+        });
+
+        $("#txt_start_date").on("change", function () {        
+            $('#tbl_delivery_invoice').DataTable().ajax.reload()
+        });
+
+        $("#txt_end_date").on("change", function () {        
+            $('#tbl_delivery_invoice').DataTable().ajax.reload()
+        });
+
+        _cboStatuses.on("select2:select", function (e) {
+            $('#tbl_delivery_invoice').DataTable().ajax.reload()
+        });
+
+        $("#searchbox").keyup(function(){         
+            dt
+                .search(this.value)
+                .draw();
         });
 
 
@@ -1571,7 +1642,11 @@ $(document).ready(function(){
 
             if(_is_journal_posted > 0){
                 showNotification({title:"Error!",stat:"error",msg:"Cannot Edit: Invoice is already Posted in Purchase Journal."});
-            } else {
+            } 
+            else if(data.delivery_order_status_id > 1){
+                showNotification({title:"Error!",stat:"error",msg:"Cannot Edit: Invoice is already received."});
+            }
+            else {
 
                 if(data.order_status_id == 4){
                     showNotification({title:"Purchase Order Already Marked As Closed",stat:"warning",msg:"Editing this invoice will reopen the Purchase Order."});
@@ -1712,7 +1787,11 @@ $(document).ready(function(){
 
             if(_is_journal_posted > 0){
                 showNotification({title:"Error!",stat:"error",msg:"Cannot Delete: Invoice is already Posted in Purchase Journal."});
-            } else {
+            } 
+            else if(data.delivery_order_status_id > 1){
+                showNotification({title:"Error!",stat:"error",msg:"Cannot Edit: Invoice is already received."});
+            }
+            else {
                  $('#modal_confirmation').modal('show');
             }
         });

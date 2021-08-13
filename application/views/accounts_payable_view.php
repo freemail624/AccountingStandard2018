@@ -184,15 +184,15 @@
                                     <div>
                                     <table id="tbl_purchase_review" class="table table-striped" cellspacing="0" width="100%">
                                         <thead class="">
-                                        <tr>
-                                            <th width="5%"></th>
-                                            <th width="20%">Invoice #</th>
-                                            <th width="20%">External Ref #</th>
-                                            <th width="25%">Vendor</th>
-                                            <th width="15%">Terms</th>
-                                            <th width="15%">Delivered</th>
-                                            <th width="25%%">Remarks</th>
-                                        </tr>
+                                            <tr>
+                                                <th width="5%"></th>
+                                                <th width="20%">Invoice #</th>
+                                                <th width="20%">External Ref #</th>
+                                                <th width="25%">Vendor</th>
+                                                <th width="15%">Terms</th>
+                                                <th width="15%">Delivered</th>
+                                                <th width="25%%">Remarks</th>
+                                            </tr>
                                         </thead>
                                         <tbody>
                                         </tbody>
@@ -201,6 +201,33 @@
                                 </div>
                             </div>
                         </div>
+
+
+                        <div class="panel panel-default" id="panel_tbl_purchase_posting" style="margin-top:20px;">
+                            <div id="" class="">
+                                <div class="panel-body">
+                                    <h2 class="h2-panel-responsive">Purchase Journal (For Posting)</h2><hr>
+                                    <div>
+                                        <table id="tbl_purchase_posting" class="table table-striped" cellspacing="0" width="100%">
+                                            <thead class="">
+                                            <tr>
+                                                <th width="5%"></th>
+                                                <th width="20%">Invoice #</th>
+                                                <th width="20%">External Ref #</th>
+                                                <th width="25%">Vendor</th>
+                                                <th width="15%">Terms</th>
+                                                <th width="15%">Delivered</th>
+                                                <th width="25%%">Remarks</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="panel panel-default hidden" style="margin-top:20px;" id="panel_tbl_job_order_review">
                             <div id="" class="">
                                 <div class="panel-body">
@@ -817,7 +844,7 @@
     $(document).ready(function(){
         var _txnMode; var _cboSuppliers; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode;
         var dtReview; var _cboDepartments; var _selectedDepartment = 0; var _cboDepartmentFilter;
-
+        var dtPurchasePosting;
 
         var oTBJournal={
             "dr" : "td:eq(2)",
@@ -927,6 +954,31 @@
               "initComplete": function(settings, json) {
                  if(this.api().data().length != 0){
                     $('#panel_tbl_purchase_review').removeClass('hidden')
+                 }
+              } 
+            });
+
+            dtPurchasePosting=$('#tbl_purchase_posting').DataTable({
+                "bLengthChange":false,
+                "ajax" : "Deliveries/transaction/purchases-for-posting",
+                "columns": [
+                    {
+                        "targets": [0],
+                        "class":          "details-control",
+                        "orderable":      false,
+                        "data":           null,
+                        "defaultContent": ""
+                    },
+                    { targets:[1],data: "dr_invoice_no" },
+                    { targets:[2],data: "external_ref_no" },
+                    { targets:[3],data: "supplier_name" },
+                    { targets:[4],data: "term_description" },
+                    { targets:[5],data: "date_delivered" },
+                    { targets:[6],data: "remarks",render: $.fn.dataTable.render.ellipsis(40) }
+                ],
+                "initComplete": function(settings, json) {
+                 if(this.api().data().length != 0){
+                    $('#panel_tbl_purchase_posting').removeClass('hidden')
                  }
               } 
             });
@@ -1170,11 +1222,58 @@
 
                     });
 
+                }
+            });
 
+            $('#tbl_purchase_posting tbody').on( 'click', 'tr td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = dtPurchasePosting.row( tr );
+                var idx = $.inArray( tr.attr('id'), detailRows );
 
+                if ( row.child.isShown() ) {
+                    tr.removeClass( 'details' );
+                    row.child.hide();
+
+                    // Remove from the 'open' array
+                    detailRows.splice( idx, 1 );
+                }
+                else {
+                    tr.addClass( 'details' );
+                    //console.log(row.data());
+                    var d=row.data();
+
+                    $.ajax({
+                        "dataType":"html",
+                        "type":"POST",
+                        "url":"Templates/layout/ap-journal-for-posting?id="+ d.dr_invoice_id,
+                        "beforeSend" : function(){
+                            row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                        }
+                    }).done(function(response){
+                        row.child( response,'no-padding' ).show();
+
+                        reInitializeSpecificDropDown($('.cbo_supplier_list'));
+                        reInitializeSpecificDropDown($('.cbo_department_list'));
+
+                        reInitializeNumeric();
+
+                        var tbl=$('#tbl_entries_for_review_'+ d.dr_invoice_id);
+                        var parent_tab_pane=$('#journal_review_'+ d.dr_invoice_id);
+
+                        reInitializeDropDownAccounts(tbl);
+                        reInitializeChildEntriesTable(tbl);
+                        reInitializeChildElements(parent_tab_pane);
+                        reInitializeTbl(d.dr_invoice_id);
+
+                        // Add to the 'open' array
+                        if ( idx === -1 ) {
+                            detailRows.push( tr.attr('id') );
+                        }
+
+                    });
 
                 }
-            } );
+            });
 
 
             $('#tbl_purchase_review tbody').on( 'click', 'tr td.items-details-control', function () {

@@ -66,6 +66,7 @@ class Account_payables extends CORE_Controller
                 $response['data']=$this->get_response_rows(null,$additional);
                 echo json_encode($response);
                 break;
+
             case 'get-entries':
                 $journal_id=$this->input->get('id');
                 $m_accounts=$this->Account_title_model;

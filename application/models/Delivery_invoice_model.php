@@ -275,9 +275,10 @@ GROUP BY n.supplier_id HAVING total_balance > 0
     }
 
 
-    function delivery_list_count($id_filter,$department_id=null,$supplier_id=null,$startDate=null,$endDate=null,$open_filter=null){
+    function delivery_list_count($id_filter,$department_id=null,$supplier_id=null,$startDate=null,$endDate=null,$open_filter=null,$status_id=0){
         $sql="
         SELECT di.*,
+        di.order_status_id as delivery_order_status_id,
         suppliers.supplier_name,
         departments.department_name,
         tax_types.tax_type,
@@ -305,6 +306,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
         ".($id_filter==null?"":" AND di.dr_invoice_id=$id_filter")."
         ".($startDate==null?"":" AND di.date_delivered BETWEEN '$startDate' AND '$endDate'")."
         ".($open_filter==null?"":" AND (di.order_status_id=1 OR di.order_status_id=3)")."
+        ".($status_id==0?"":" AND di.order_status_id=$status_id")."
         ";
 
         return $this->db->query($sql)->result();
@@ -375,8 +377,10 @@ GROUP BY n.supplier_id HAVING total_balance > 0
 
         WHERE di.is_active = TRUE AND
         di.is_deleted = FALSE AND
-        di.is_journal_posted = FALSE
-        AND dii.identifier > 0';
+        di.is_journal_posted = FALSE AND
+        dii.identifier > 0 AND
+        di.is_saved = FALSE
+        ';
 
          return $this->db->query($sql)->result();
 
