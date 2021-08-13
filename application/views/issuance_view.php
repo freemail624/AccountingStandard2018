@@ -1163,7 +1163,7 @@ $(document).ready(function(){
             clearFields($('#frm_issuances'));
             $('#typeaheadsearch').val('');
             showList(false);
-            _cboLocations.select2('val', 2)
+            _cboLocations.select2('val', 2);
             reComputeTotal();
         });
         $('#btn_browse').click(function(event){

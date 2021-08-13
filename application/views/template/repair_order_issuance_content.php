@@ -308,5 +308,110 @@
                 </tr>
             <?php }}}?>
     </table>
+    <br/>
+    <div>
+        <table width="100%" cellpadding="1" cellspacing="1" style="font-size: 8.5pt;">
+            <tr>
+                <td  valign="top" rowspan="5" width="70%" style="font-size: 5.5pt;">
+                    
+                <strong>Customer's Acknowledgement:</strong> <br/><br/>
+
+                I/We hereby authorize the above repair jobs to be carried along with the use of necessary parts and materials and pay the corresponding amount upon completion. <br/><br/>
+
+                I/We hereby bind myself to pay interest at 3% per month on all overdue accounts and in the event, that the same is endorsed to an attorney for collection, to pay interest additional 25% of the amount due but in no case, be less that ten thousand pesos (P10,000.00) as attorney's fee and litigation cost. <br/><br/>
+
+                I/We also bind myself to the additional terms and conditions stated at the back of this document.
+
+
+                </td>
+            </tr>
+            <tr>
+                <td width="30%" valign="top">
+                    <table width="100%">
+                        <?php  
+                            $grand_total=0;
+                            $i=0;
+
+                            foreach($categories as $category){ 
+                                $grand_total+=$category->total_amount;
+                            ?>
+                            <tr>
+                                <td valign="top" width="38%" class="border" style="padding-left: 5px; padding-right: 5px;">
+                                    <strong>
+                                        <?php echo $category->category_desc; ?>
+                                    </strong>
+                                </td>
+                                <td valign="top" class="top bottom" style="padding-left: 5px; padding-right: 5px;">
+                                    <strong>
+                                        <?php  if($i == 0){echo 'Php';} ?>
+                                    </strong>
+                                </td>
+                                <td valign="top" align="right" class="top bottom right" style="padding-left: 5px; padding-right: 5px;">
+                                    <strong>0.00</strong>
+                                </td>
+                            </tr>
+                        <?php $i++; } ?>
+                        <tr>
+                            <td valign="top" class="border" style="padding-left: 5px; padding-right: 5px;"><strong>Total</strong></td>
+                            <td valign="top" class="top bottom" style="padding-left: 5px; padding-right: 5px;"><strong>Php</strong></td>
+                            <td align="right" valign="top" class="top bottom right" style="padding-left: 5px; padding-right: 5px;">
+                                <strong>0.00</strong>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <table width="100%" cellpadding="3" cellspacing="3" style="font-size: 7pt;">
+            <tr>
+                <td width="30%" valign="top" class="top left black footer">Prepared/Date:</td>
+                <td width="20%" valign="top" class="top left black footer">Checked/Date:</td>
+                <td width="20%" valign="top" class="top left black footer">Approved/Date:</td>
+                <td width="30%" valign="top" class="top left right black footer">Acknowledged &amp; Conformed/Date:</td>
+            </tr>
+            <tr>
+                <td valign="top" class="left bottom black" align="center">
+                    <strong><?php echo $info->advisor_fullname; ?></strong>
+                </td>
+                <td valign="top" class="left bottom black" align="center">
+                </td>
+                <td valign="top" class="left bottom black" align="center">
+                </td>
+                <td valign="top" class="left bottom right black" align="center">
+                    <strong><?php echo $info->customer_name; ?></strong>
+                </td>
+            </tr>
+            <tr>
+                <td width="30%" valign="middle" class="bottom left black footer" align="center">
+                    SA/Insurance Coordinator
+                </td>
+                <td width="20%" valign="middle" class="bottom left black footer" align="center" style="padding: 0;">
+                    Signature over printed name <br/> 
+                    Warranty Processor (for waranty)
+                </td>
+                <td width="20%" valign="middle" class="bottom left black footer" align="center">
+                    Service Head
+                </td>
+                <td width="30%" valign="middle" class="bottom left right black footer" align="center">
+                    Customer's signature over printed name
+                </td>
+            </tr>
+        </table>
+        <table width="100%" style="margin-top: 3px;">
+            <tr>
+                <td valign="top" colspan="2" style="padding:0;font-size: 5pt;">
+                    <strong>Reminders to customer: Please present this Repair Order when claiming your vehicle.</strong>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top" style="padding:0;font-size: 5pt;">
+                    <strong>NOT VALID FOR CLAIMING INPUT TAX</strong>
+                </td>
+                <td valign="top" align="right" style="padding:0;font-size: 5pt;">
+                    <?php echo date('m/d/Y h:i A') ?>
+                </td>
+            </tr>
+        </table>
+    </div>    
 </body>
 </html>

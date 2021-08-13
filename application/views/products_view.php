@@ -583,7 +583,7 @@
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                             <label class="">Link to Credit Account (For Sales Journal):</label>
 
-                                                                            <select name="income_account_id" id="income_account_id" data-error-msg="Link to Account is required." required>
+                                                                            <select name="income_account_id" id="income_account_id" data-error-msg="Link to Account is required.">
                                                                                 <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
                                                                                 <option value="0">None</option>
                                                                                 <?php foreach($accounts as $account){ ?>
@@ -596,7 +596,7 @@
 
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                             <label class="">Inventory Account (For Sales &amp; Purchase Journal): </label>
-                                                                            <select name="expense_account_id" id="expense_account_id" class="for_services" data-error-msg="Link to Account is required." required>
+                                                                            <select name="expense_account_id" id="expense_account_id" class="for_services" data-error-msg="Link to Account is required.">
                                                                                 <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
                                                                                 <option value="0">None</option>
                                                                                 <?php foreach($accounts as $account){ ?>
@@ -607,7 +607,7 @@
 
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                             <label class="">Cost of Sales Account:</label>
-                                                                            <select name="cos_account_id" id="cos_account_id" class="for_services" data-error-msg="Link to Cost of sales account is required." required>
+                                                                            <select name="cos_account_id" id="cos_account_id" class="for_services" data-error-msg="Link to Cost of sales account is required.">
                                                                                 <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
                                                                                 <option value="0">None</option>
                                                                                 <?php foreach($accounts as $account){ ?>
@@ -618,7 +618,7 @@
 
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                             <label class="">Sales Return Account:</label>
-                                                                            <select name="sales_return_account_id" id="sales_return_account_id" class="for_services" data-error-msg="Link to sales return account is required." required>
+                                                                            <select name="sales_return_account_id" id="sales_return_account_id" class="for_services" data-error-msg="Link to sales return account is required.">
                                                                                 <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
                                                                                 <option value="0">None</option>
                                                                                 <?php foreach($accounts as $account){ ?>
@@ -630,7 +630,7 @@
 
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                     <label class="">Sales Discount Account:</label>
-                                                                    <select name="sd_account_id" id="sd_account_id" data-error-msg="Link to sales discount account is required." required>
+                                                                    <select name="sd_account_id" id="sd_account_id" data-error-msg="Link to sales discount account is required.">
                                                                         <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
                                                                         <option value="0">None</option>
                                                                         <?php foreach($accounts as $account){ ?>
@@ -641,7 +641,7 @@
 
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                             <label class="">Purchase Return Account:</label>
-                                                                            <select name="po_return_account_id" id="po_return_account_id" class="for_services" data-error-msg="Link to purchase return account is required." required>
+                                                                            <select name="po_return_account_id" id="po_return_account_id" class="for_services" data-error-msg="Link to purchase return account is required.">
                                                                                 <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
                                                                                 <option value="0">None</option>
                                                                                 <?php foreach($accounts as $account){ ?>
@@ -653,7 +653,7 @@
 
                                                                 <div class="form-group" style="margin-bottom:0px;">
                                                                             <label class="">Purchase Discount Account:</label>
-                                                                            <select name="pd_account_id" id="pd_account_id" class="for_services" data-error-msg="Link to purchase discount account is required." required>
+                                                                            <select name="pd_account_id" id="pd_account_id" class="for_services" data-error-msg="Link to purchase discount account is required.">
                                                                                 <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
                                                                                 <option value="0">None</option>
                                                                                 <?php foreach($accounts as $account){ ?>
@@ -1522,53 +1522,53 @@ $(document).ready(function(){
                 clearFieldsCategory($('#frm_category_group'));
             }else{
 
-                if(_txnMode=="new"){
-                    if ($(this).val() != 0 || $(this).val() != ""){
-                        getAccount($(this).val(),1).done(function(response){
-                            var row = response.data[0];
-                            if(response.data.length > 0){ $('#income_account_id').select2('val',row.account_id); }else{
-                                $('#income_account_id').select2('val',0);
-                            }
-                        });
-                        getAccount($(this).val(),2).done(function(response){
-                            var row = response.data[0];
-                            if(response.data.length > 0){ $('#expense_account_id').select2('val',row.account_id); }else{
-                                $('#expense_account_id').select2('val',0);
-                            }
-                        });
-                        getAccount($(this).val(),3).done(function(response){
-                            var row = response.data[0];
-                            if(response.data.length > 0){ $('#cos_account_id').select2('val',row.account_id); }else{
-                                $('#cos_account_id').select2('val',0);
-                            }
-                        });
-                        getAccount($(this).val(),4).done(function(response){
-                            var row = response.data[0];
-                            if(response.data.length > 0){ $('#sales_return_account_id').select2('val',row.account_id); }else{
-                                $('#sales_return_account_id').select2('val',0);
-                            }
-                        });       
-                        getAccount($(this).val(),5).done(function(response){
-                            var row = response.data[0];
-                            if(response.data.length > 0){ $('#sd_account_id').select2('val',row.account_id); }else{
-                                $('#sd_account_id').select2('val',0);
-                            }
-                        });       
-                        getAccount($(this).val(),6).done(function(response){
-                            var row = response.data[0];
-                            if(response.data.length > 0){ $('#po_return_account_id').select2('val',row.account_id); }else{
-                                $('#po_return_account_id').select2('val',0);
-                            }
-                        });     
-                        getAccount($(this).val(),7).done(function(response){
-                            var row = response.data[0];
-                            if(response.data.length > 0){ $('#pd_account_id').select2('val',row.account_id); }else{
-                                $('#pd_account_id').select2('val',0);
-                            }
-                        });     
+                // if(_txnMode=="new"){
+                //     if ($(this).val() != 0 || $(this).val() != ""){
+                //         getAccount($(this).val(),1).done(function(response){
+                //             var row = response.data[0];
+                //             if(response.data.length > 0){ $('#income_account_id').select2('val',row.account_id); }else{
+                //                 $('#income_account_id').select2('val',0);
+                //             }
+                //         });
+                //         getAccount($(this).val(),2).done(function(response){
+                //             var row = response.data[0];
+                //             if(response.data.length > 0){ $('#expense_account_id').select2('val',row.account_id); }else{
+                //                 $('#expense_account_id').select2('val',0);
+                //             }
+                //         });
+                //         getAccount($(this).val(),3).done(function(response){
+                //             var row = response.data[0];
+                //             if(response.data.length > 0){ $('#cos_account_id').select2('val',row.account_id); }else{
+                //                 $('#cos_account_id').select2('val',0);
+                //             }
+                //         });
+                //         getAccount($(this).val(),4).done(function(response){
+                //             var row = response.data[0];
+                //             if(response.data.length > 0){ $('#sales_return_account_id').select2('val',row.account_id); }else{
+                //                 $('#sales_return_account_id').select2('val',0);
+                //             }
+                //         });       
+                //         getAccount($(this).val(),5).done(function(response){
+                //             var row = response.data[0];
+                //             if(response.data.length > 0){ $('#sd_account_id').select2('val',row.account_id); }else{
+                //                 $('#sd_account_id').select2('val',0);
+                //             }
+                //         });       
+                //         getAccount($(this).val(),6).done(function(response){
+                //             var row = response.data[0];
+                //             if(response.data.length > 0){ $('#po_return_account_id').select2('val',row.account_id); }else{
+                //                 $('#po_return_account_id').select2('val',0);
+                //             }
+                //         });     
+                //         getAccount($(this).val(),7).done(function(response){
+                //             var row = response.data[0];
+                //             if(response.data.length > 0){ $('#pd_account_id').select2('val',row.account_id); }else{
+                //                 $('#pd_account_id').select2('val',0);
+                //             }
+                //         });     
 
-                    }
-                }
+                //     }
+                // }
             }   
         });
 
