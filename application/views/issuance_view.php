@@ -225,7 +225,7 @@ echo $_side_bar_navigation;
         <div class="row">
             <div class="col-md-12">
                 <br />
-                <div class="">
+                <div class="hidden">
                     <label class="control-label" style="font-family: Tahoma;"><strong>Enter PLU or Search Item :</strong></label>
                     <div id="custom-templates">
                         <input class="typeahead" id="typeaheadsearch" type="text" placeholder="Enter PLU or Search Item">
@@ -1163,6 +1163,7 @@ $(document).ready(function(){
             clearFields($('#frm_issuances'));
             $('#typeaheadsearch').val('');
             showList(false);
+            _cboDepartments.select2('val', 1);
             _cboLocations.select2('val', 2);
             reComputeTotal();
         });
@@ -1197,7 +1198,7 @@ $(document).ready(function(){
                     }
                 });
             });
-            $('#cbo_departments').select2('val',data.department_id);
+            $('#cbo_departments').select2('val',data.issued_department_id);
             _cboLocations.select2('val', data.product_location_id);
             //$('#cbo_customers').select2('val',data.issued_to_person);
 

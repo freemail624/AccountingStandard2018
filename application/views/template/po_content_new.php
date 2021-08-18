@@ -193,8 +193,15 @@
     </table>
 
     <br/><br/><br/><br/>
-
-    <!-- <?php include 'po_report_footer.php'; ?> -->
-
+    <table width="100%">
+        <tr>
+            <td><center></center></td>
+            <td><center></center></td>
+        </tr>
+        <tr>
+            <td><center><hr style="margin: 0;padding: 0;width: 60%;margin-bottom: 5px;">PREPARED BY</center></td>
+            <td><center><hr style="margin: 0;padding: 0;width: 60%;margin-bottom: 5px;">APPROVED BY</center></td>
+        </tr>
+    </table>
 </body>
 </html>

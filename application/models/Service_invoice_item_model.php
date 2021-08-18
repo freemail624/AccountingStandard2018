@@ -73,6 +73,7 @@ class Service_invoice_item_model extends CORE_Model
 			    p.dealer_price,
 			    p.distributor_price,
 			    p.public_price,
+				p.item_type_id,
 			    (CASE
 			        WHEN p.is_parent = TRUE THEN p.bulk_unit_id
 			        ELSE p.parent_unit_id

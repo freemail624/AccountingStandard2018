@@ -236,7 +236,8 @@ class Issuances extends CORE_Controller
 
 
                     if(count($product) > 0){
-                        $m_issue_items->curr_soh = $this->get_numeric_value($product[0]->total_qty_balance);
+                        $rem_balance = $this->get_numeric_value($product[0]->total_qty_balance) - $this->get_numeric_value($issue_qty[$i]);
+                        $m_issue_items->curr_soh = $rem_balance;
                     }else{
                         $m_issue_items->curr_soh = 0;
                     }
@@ -372,7 +373,8 @@ class Issuances extends CORE_Controller
                         );
 
                     if(count($product) > 0){
-                        $m_issue_items->curr_soh = $this->get_numeric_value($product[0]->total_qty_balance);
+                        $rem_balance = $this->get_numeric_value($product[0]->total_qty_balance) - $this->get_numeric_value($issue_qty[$i]);
+                        $m_issue_items->curr_soh = $rem_balance;
                     }else{
                         $m_issue_items->curr_soh = 0;
                     }

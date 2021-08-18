@@ -68,14 +68,14 @@
     </style>
 </head>
 <body>
-    <table width="100%">
+<table width="100%">
         <tr class="">
-            <td width="15%" valign="top">
-                <img src="<?php echo $company_info->logo_path; ?>" style="height: 100px; width: 100px;"> 
-            </td>
-            <td width="55%" valign="top">
-                <strong style="font-size: 18pt;"><?php echo $company_info->company_name; ?></strong>
-                <br/><br/>
+        	<td width="25%" valign="top">
+                <img src="<?php echo $company_info->logo_path; ?>" style="height: 90px; width: 130px;"> 
+        	</td>
+            <td width="45%" valign="top">
+            	<strong style="font-size: 15pt;"><?php echo $company_info->company_name; ?></strong>
+            	<br/><br/>
                 <p><?php echo $company_info->company_address; ?></p>
                 <p><?php echo $company_info->company_address_2; ?></p>
                 <span>Email : <?php echo $company_info->email_address; ?></span>
@@ -97,7 +97,7 @@
         </tr>
     </table>
     <br/>
-    <table width="100%" border="1" cellspacing="5" cellpadding="5" style="font-size: 8.5pt;">
+    <table width="100%" border="1" cellspacing="5" cellpadding="5" style="font-size: 7pt;">
         <tr>
             <td valign="top" width="16%">
                 Customer No. <br/> 
@@ -272,7 +272,7 @@
         </tr>
     </table>
     <br/>
-    <table width="100%" cellspacing="4" cellpadding="4" style="font-size: 8.5pt;padding: 10px;">
+    <table width="100%" cellspacing="4" cellpadding="4" style="font-size: 7pt;padding: 10px;">
         <thead>
             <tr>
                 <th valign="top" width="5%"><strong>Line</strong></th>
@@ -310,7 +310,7 @@
     </table>
     <br/>
     <div>
-        <table width="100%" cellpadding="1" cellspacing="1" style="font-size: 8.5pt;">
+        <table width="100%" cellpadding="1" cellspacing="1" style="font-size: 7pt;">
             <tr>
                 <td  valign="top" rowspan="5" width="70%" style="font-size: 5.5pt;">
                     

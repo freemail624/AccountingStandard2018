@@ -2561,7 +2561,8 @@
                         discount_type: 0,
                         discount: 0,
                         is_insured: isInsured,
-                        is_checked: ''
+                        is_checked: '',
+                        item_type_id: suggestion.item_type_id
                     }));
 
                     _line_unit = $('.line_unit' + a).select2({
@@ -3302,7 +3303,8 @@
                                     discount_type: data.discount_type,
                                     discount: value.order_discount,
                                     is_insured: value.is_insured,
-                                    is_checked: is_checked
+                                    is_checked: is_checked,
+                                    item_type_id: value.item_type_id
                                 }));
 
                                 changetxn = 'inactive';
@@ -3450,7 +3452,8 @@
                                     discount_type: data.discount_type,
                                     discount: value.service_discount,
                                     is_insured: value.is_insured,
-                                    is_checked: is_checked
+                                    is_checked: is_checked,
+                                    item_type_id: value.item_type_id
                                 }));
 
                                 changetxn = 'inactive';
@@ -3978,7 +3981,7 @@
             var getFloat = function(f) {
                 return parseFloat(accounting.unformat(f));
             };
-            var isReadonly = serviceUnitPriceRights ? "" : "readonly";
+
             var newRowItem = function(d) {
                 if (d.primary_unit == 1) {
                     parent = ' selected';
@@ -3992,6 +3995,17 @@
                 } else {
                     unit = '<td ><select class="line_unit' + d.a + '" name="unit_id[]" ><option value="' + d.parent_unit_id + '" data-unit-identifier="1" ' + parent + '>' + d.parent_unit_name + '</option></select></td>';
                 }
+
+                if (serviceUnitPriceRights == true){
+                    isReadonly = "";
+                }else{
+                    if(d.item_type_id != 1){
+                        isReadonly = "";
+                    }else{
+                        isReadonly = "readonly";
+                    }
+                }
+
                 return '<tr>' +
                     // [0] QTY
                     '<td>' +

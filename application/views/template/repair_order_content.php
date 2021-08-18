@@ -71,10 +71,10 @@
     <table width="100%">
         <tr class="">
         	<td width="25%" valign="top">
-                <img src="<?php echo $company_info->logo_path; ?>" style="height: 100px; width: 150px;"> 
+                <img src="<?php echo $company_info->logo_path; ?>" style="height: 90px; width: 130px;"> 
         	</td>
             <td width="45%" valign="top">
-            	<strong style="font-size: 18pt;"><?php echo $company_info->company_name; ?></strong>
+            	<strong style="font-size: 15pt;"><?php echo $company_info->company_name; ?></strong>
             	<br/><br/>
                 <p><?php echo $company_info->company_address; ?></p>
                 <p><?php echo $company_info->company_address_2; ?></p>
