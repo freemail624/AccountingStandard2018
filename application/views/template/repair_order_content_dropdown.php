@@ -623,15 +623,20 @@
 						<a href="Templates/layout/repair-order/<?php echo $info->repair_order_id; ?>?type=pdf" class="btn btn-danger" style="text-transform:none;font-family: tahoma;width: 100%;border-radius: .2em;" ><i class="fa fa-file-pdf-o"></i> PDF </a>
 					</td>
 				</tr>
-					<tr>
-						<td width="50%">
-							<a href="Templates/layout/repair-order/<?php echo $info->repair_order_id; ?>?type=tech" target="_blank" class="btn btn-primary" style="text-transform:none;font-family: tahoma;width: 100%;border-radius: .2em;" ><i class="fa fa-cog"></i> Tech (Back) </a>
-						</td>
-						<td width="50%">
-							<a href="Templates/layout/repair-order/<?php echo $info->repair_order_id; ?>?type=sa" target="_blank" class="btn btn-default" style="text-transform:none;font-family: tahoma;width: 100%;border-radius: .2em;" ><i class="fa fa-file-o"></i> SA (Back) </a>
-						</td>
-					</tr>					
-				</table>
+				<tr>
+					<td width="50%">
+						<a href="Templates/layout/repair-order/<?php echo $info->repair_order_id; ?>?type=tech" target="_blank" class="btn btn-primary" style="text-transform:none;font-family: tahoma;width: 100%;border-radius: .2em;" ><i class="fa fa-cog"></i> Tech (Back) </a>
+					</td>
+					<td width="50%">
+						<a href="Templates/layout/repair-order/<?php echo $info->repair_order_id; ?>?type=sa" target="_blank" class="btn btn-default" style="text-transform:none;font-family: tahoma;width: 100%;border-radius: .2em;" ><i class="fa fa-file-o"></i> SA (Back) </a>
+					</td>
+				</tr>	
+				<tr>
+					<td colspan="2">
+						<a href="Templates/layout/repair-order/<?php echo $info->repair_order_id; ?>?type=inv-preview" target="_blank" class="btn btn-primary" style="text-transform:none;font-family: tahoma;width: 100%;border-radius: .2em;" ><i class="fa fa-print"></i> Print Inventory </a>
+					</td>
+				</tr>				
+			</table>
 				<br/>
 				<table width="100%" border="1" cellspacing="5" cellpadding="5" style="font-size: 8.5pt;" class="table table-striped" cellspacing="0">
 					<tr>

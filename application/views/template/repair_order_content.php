@@ -97,7 +97,7 @@
         </tr>
     </table>
     <br/>
-    <table width="100%" border="1" cellspacing="5" cellpadding="5" style="font-size: 8.5pt;">
+    <table width="100%" border="1" cellspacing="5" cellpadding="5" style="font-size: 7pt;">
     	<tr>
     		<td valign="top" width="16%">
     			Customer No. <br/> 
@@ -272,7 +272,7 @@
     	</tr>
     </table>
     <br/>
-	<table width="100%" cellspacing="4" cellpadding="4" style="font-size: 8.5pt;padding: 10px;">
+	<table width="100%" cellspacing="4" cellpadding="4" style="font-size: 7pt;padding: 10px;">
 		<thead>
 	    	<tr>
 	    		<th valign="top" width="5%"><strong>Line</strong></th>
@@ -314,7 +314,7 @@
     	<?php }?>
     </table>
     <div>
-	    <table width="100%" cellpadding="1" cellspacing="1" style="font-size: 8.5pt;">
+	    <table width="100%" cellpadding="1" cellspacing="1" style="font-size: 7pt;">
 	    	<tr>
 	    		<td  valign="top" rowspan="5" width="70%" style="font-size: 5.5pt;">
 	    			
