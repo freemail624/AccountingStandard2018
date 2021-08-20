@@ -17,6 +17,7 @@ class receivable_payments extends CORE_Controller
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
         $this->load->model('Account_integration_model');
+        $this->load->model('Adjustment_model');
 
     }
 
@@ -175,7 +176,8 @@ class receivable_payments extends CORE_Controller
             case 'cancel':
                 $payment_id=$this->input->post('payment_id',TRUE);
                 $m_payment=$this->Receivable_payment_model;
-
+                $m_payment_items=$this->Receivable_payment_list_model;
+                $m_adjustment=$this->Adjustment_model;
 
                 $m_payment->begin();
 
@@ -202,6 +204,32 @@ class receivable_payments extends CORE_Controller
                 $m_trans->trans_type_id=18; // TRANS TYPE
                 $m_trans->trans_log='Cancelled Payment No: '.$pay_info[0]->receipt_no.' from Collection Entry';
                 $m_trans->save();
+
+                $invoices = $m_payment_items->get_adjustments($payment_id);
+
+                if(count($invoices) > 0){
+
+                    foreach($invoices as $invoice){
+
+                        //mark Items as deleted
+                        $m_adjustment->set('date_deleted','NOW()'); //treat NOW() as function and not string
+                        $m_adjustment->deleted_by_user=$this->session->user_id;//user that deleted the record
+                        $m_adjustment->is_deleted=1;//mark as deleted
+                        $m_adjustment->modify($invoice->adjustment_id);
+
+                        //record audit trail
+                        $adj_info=$m_adjustment->get_list($invoice->adjustment_id,'adjustment_code');
+                        $m_trans=$this->Trans_model;
+                        $m_trans->user_id=$this->session->user_id;
+                        $m_trans->set('trans_date','NOW()');
+                        $m_trans->trans_key_id=4; //CRUD
+                        $m_trans->trans_type_id=15; // TRANS TYPE
+                        $m_trans->trans_log='Cancelled Adjustment # '.$adj_info[0]->adjustment_code.' with receipt # '.$invoice->receipt_no;
+                        $m_trans->save();
+
+                    }
+
+                }
 
                 $m_payment->commit();
 

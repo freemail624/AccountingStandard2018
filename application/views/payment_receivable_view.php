@@ -724,9 +724,7 @@
                     if(response.stat=="success"){
                         dt.row(_selectRowObj).data(response.row_updated[0]).draw();
                     }
-
                 });
-
             });
 
             $("#txt_start_date,#txt_end_date").on("change", function () {        
