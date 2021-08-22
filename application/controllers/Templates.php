@@ -13,6 +13,9 @@ class Templates extends CORE_Controller {
         $this->load->model('Delivery_invoice_model');
         $this->load->model('Delivery_invoice_item_model');
 
+        $this->load->model('Purchase_journal_info_model');
+        $this->load->model('Purchase_journal_account_model');
+
         $this->load->model('Issuance_model');
         $this->load->model('Issuance_item_model');
 
@@ -2953,7 +2956,138 @@ class Templates extends CORE_Controller {
                 break;
 
 
+                case 'ap-journal-for-posting':
+                    $purchase_journal_id=$this->input->get('id',TRUE);
+    
+                    $m_suppliers=$this->Suppliers_model;
+                    $m_accounts=$this->Account_title_model;
+                    $m_purchases_items=$this->Delivery_invoice_item_model;
+                    $m_purchases_info=$this->Delivery_invoice_model;
+                    $m_departments=$this->Departments_model;
+                    $m_p_journal=$this->Purchase_journal_info_model;
+                    $m_p_journal_accounts=$this->Purchase_journal_account_model;
+                    $m_company=$this->Company_model;
+    
+                    $info=$m_p_journal->get_list($purchase_journal_id);
+                    $purchase_invoice_id = $info[0]->dr_invoice_id;
+                    $data['info']=$info[0];
 
+                    $purchase_info=$m_purchases_info->get_list(
+                        array(
+                            'delivery_invoice.is_active'=>TRUE,
+                            'delivery_invoice.is_deleted'=>FALSE,
+                            'delivery_invoice.dr_invoice_id'=>$purchase_invoice_id
+                        ),
+    
+                        array(
+                            'delivery_invoice.dr_invoice_id',
+                            'delivery_invoice.purchase_order_id',
+                            'delivery_invoice.dr_invoice_no',
+                            'delivery_invoice.supplier_id',
+                            'delivery_invoice.department_id',
+                            'delivery_invoice.external_ref_no',
+                            'delivery_invoice.remarks',
+                            'delivery_invoice.total_discount',
+                            'delivery_invoice.total_before_tax',
+                            'delivery_invoice.total_tax_amount',
+                            'delivery_invoice.total_after_tax',
+                            'delivery_invoice.total_overall_discount_amount',
+                            'delivery_invoice.total_after_discount',
+                            'CONCAT_WS(" ",delivery_invoice.terms,delivery_invoice.duration)as term_description',
+                            'DATE_FORMAT(delivery_invoice.date_delivered,"%m/%d/%Y")as date_delivered',
+                            'DATE_FORMAT(delivery_invoice.date_created,"%m/%d/%Y %r")as date_created',
+                            'suppliers.supplier_name',
+                            'suppliers.address',
+                            'suppliers.email_address',
+                            'suppliers.contact_no',
+                            'purchase_order.po_no',
+                            'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by'
+                        ),
+    
+                        array(
+                            array('suppliers','suppliers.supplier_id=delivery_invoice.supplier_id','left'),
+                            array('purchase_order','purchase_order.purchase_order_id=delivery_invoice.purchase_order_id','left'),
+                            array('user_accounts','user_accounts.user_id=delivery_invoice.posted_by_user','left')
+                        )
+    
+                    );
+                    $data['purchase_info']=$purchase_info[0];
+    
+                    // Count Fixed Asset Items in DR
+                    $accounts=$this->Asset_settings_model->get_list(null,'asset_account_id');
+                    $acc = [];
+                    foreach ($accounts as $account) { $acc[]=$account->asset_account_id; }
+                    $fixed_asset_account_id =  implode(",", $acc);
+    
+                    $count = $m_purchases_items->get_fixed_asset_items($purchase_invoice_id,$fixed_asset_account_id);
+                    $data['fixed_asset_count'] = count($count);
+    
+                    $data['departments']=$m_departments->get_list('is_active=TRUE AND is_deleted=FALSE');
+                    $data['suppliers']=$m_suppliers->get_supplier_list();
+    
+                    $data['entries']=$m_p_journal_accounts->get_list(array("purchase_journal_id"=>$purchase_journal_id));
+                    $data['accounts']=$m_accounts->get_list(
+                        array(
+                            'account_titles.is_active'=>TRUE,
+                            'account_titles.is_deleted'=>FALSE
+                        )
+                    );
+                    $data['items']=$m_purchases_items->get_list(
+                        array(
+                            'delivery_invoice_items.dr_invoice_id'=>$purchase_invoice_id
+                        ),
+    
+                        array(
+                            'delivery_invoice_items.*',
+                            'products.product_desc',
+                            'units.unit_name',
+                            'IFNULL(m.po_price,0) AS po_price'
+                        ),
+    
+                        array(
+                            array('delivery_invoice','delivery_invoice.dr_invoice_id=delivery_invoice_items.dr_invoice_id','left'),
+                            array('products','products.product_id=delivery_invoice_items.product_id','left'),
+                            array('units','units.unit_id=delivery_invoice_items.unit_id','left'),
+                            array('(SELECT po_price,purchase_order_id,product_id FROM purchase_order_items as poi WHERE purchase_order_id='.$purchase_info[0]->purchase_order_id.' GROUP BY poi.product_id) as m','m.purchase_order_id=delivery_invoice.purchase_order_id AND delivery_invoice_items.product_id=m.product_id','left')
+                        )
+    
+                    );
+    
+                    //validate if customer is not deleted
+                    $valid_supplier=$m_suppliers->get_list(
+                        array(
+                            'supplier_id'=>$info[0]->supplier_id,
+                            'is_active'=>TRUE,
+                            'is_deleted'=>FALSE
+                        )
+                    );
+                    $data['valid_particular']=(count($valid_supplier)>0);
+                    $company=$m_company->get_list();
+                    $data['company_info']=$company[0];
+    
+                    $type = $this->input->get('type');
+    
+                    if($type==null || $type == ""){
+                        echo $this->load->view('template/ap_journal_for_posting',$data,TRUE); //details of the journal
+                    }
+    
+                    if($type == "RR"){
+                        // $file_name=$purchase_info[0]->dr_invoice_no;
+                        // $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                        // $pdf = $this->m_pdf->load('Letter'); //pass the instance of the mpdf class
+                        // $content=$this->load->view('template/ap_journal_rr',$data,TRUE);
+                        // // $pdf->setFooter('{PAGENO}');
+                        // $pdf->WriteHTML($content);
+                        // //download it.
+                        // $pdf->Output();
+    
+                        echo $this->load->view('template/ap_journal_rr_custom',$data,TRUE); //details of the journal
+                    
+                    }
+    
+    
+                    break;
+    
 
 
 

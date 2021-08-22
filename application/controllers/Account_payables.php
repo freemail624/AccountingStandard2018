@@ -22,7 +22,9 @@ class Account_payables extends CORE_Controller
                 'Users_model',
                 'Accounting_period_model',
                 'Jo_billing_model',
-                'Trans_model'
+                'Trans_model',
+                'Purchase_journal_info_model',
+                'Purchase_journal_account_model'
             )
         );
 
@@ -77,6 +79,99 @@ class Account_payables extends CORE_Controller
                 $data['departments']=$this->Departments_model->get_list('is_active=TRUE AND is_deleted=FALSE',null, null,'department_name ASC');
                 $this->load->view('template/journal_entries', $data);
                 break;
+
+            case 'cancel-invoice':
+
+                $m_p_journal=$this->Purchase_journal_info_model;
+                $m_purchase_invoice=$this->Delivery_invoice_model;
+                
+                $purchase_journal_id = $this->input->post('purchase_journal_id',TRUE);
+                $dr_invoice_id = $this->input->post('dr_invoice_id',TRUE);
+
+                // Soft Delete Purchase Journal
+                $m_p_journal->is_deleted = TRUE;
+                $m_p_journal->modify($purchase_journal_id);
+
+                // Remove is saved in invoice
+                $m_purchase_invoice->is_saved = FALSE;
+                $m_purchase_invoice->modify($dr_invoice_id);
+
+                $response['stat']='success';
+                $response['title']='Success!';
+                $response['msg']='Invoice successfully cancelled';
+                echo json_encode($response);
+                break;
+
+            case 'save':
+                $m_p_journal=$this->Purchase_journal_info_model;
+                $m_p_journal_accounts=$this->Purchase_journal_account_model;
+                $m_purchase_invoice=$this->Delivery_invoice_model;
+                
+                //validate if still in valid range
+                $valid_range=$this->Accounting_period_model->get_list("'".date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)))."'<=period_end");
+                if(count($valid_range)>0){
+                    $response['stat']='error';
+                    $response['title']='<b>Accounting Period is Closed!</b>';
+                    $response['msg']='Please make sure transaction date is valid!<br />';
+                    die(json_encode($response));
+                }
+                $m_p_journal->dr_invoice_id=$this->input->post('dr_invoice_id',TRUE);
+                $m_p_journal->supplier_id=$this->input->post('supplier_id',TRUE);
+                $m_p_journal->department_id=$this->input->post('department_id',TRUE);
+                $m_p_journal->remarks=$this->input->post('remarks',TRUE);
+                $m_p_journal->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
+
+                //for audit details
+                $m_p_journal->set('date_created','NOW()');
+                $m_p_journal->created_by_user=$this->session->user_id;
+                $m_p_journal->save();
+
+                $purchase_journal_id=$m_p_journal->last_insert_id();
+
+                $accounts=$this->input->post('accounts',TRUE);
+                $memos=$this->input->post('memo',TRUE);
+                $dr_amounts=$this->input->post('dr_amount',TRUE);
+                $cr_amounts=$this->input->post('cr_amount',TRUE); 
+                $department_id_line=$this->input->post('department_id_line',TRUE);
+
+                for($i=0;$i<=count($accounts)-1;$i++){
+                    $m_p_journal_accounts->purchase_journal_id=$purchase_journal_id;
+                    $m_p_journal_accounts->account_id=$accounts[$i];
+                    $m_p_journal_accounts->memo=$memos[$i];
+                    $m_p_journal_accounts->dr_amount=$this->get_numeric_value($dr_amounts[$i]);
+                    $m_p_journal_accounts->cr_amount=$this->get_numeric_value($cr_amounts[$i]);
+                    $m_p_journal_accounts->department_id=$this->get_numeric_value($department_id_line[$i]); 
+                    $m_p_journal_accounts->save();
+                }
+
+
+                //if dr invoice is available, purchase invoice is recorded as journal
+                $dr_invoice_id=$this->input->post('dr_invoice_id',TRUE);
+                $purchase_invoice=$m_purchase_invoice->get_list($dr_invoice_id,'dr_invoice_no');
+
+                if($dr_invoice_id!=null){
+                    $m_purchase_invoice=$this->Delivery_invoice_model;
+                    $m_purchase_invoice->is_saved=TRUE;
+                    $m_purchase_invoice->modify($dr_invoice_id);
+
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=13; //CRUD
+                    $m_trans->trans_type_id=3; // TRANS TYPE
+                    $m_trans->trans_log='Saved Purchase Invoice No.'.$purchase_invoice[0]->dr_invoice_no;
+                    $m_trans->save();
+                    //AUDIT TRAIL END
+                }
+
+                $response['stat']='success';
+                $response['title']='Success!';
+                $response['msg']='Journal successfully saved';
+                $response['row_added']=$m_p_journal->get_purchases_for_posting($dr_invoice_id);
+                echo json_encode($response);
+
+                break;
+
             case 'create' :
                 $m_journal=$this->Journal_info_model;
                 $m_journal_accounts=$this->Journal_account_model;
@@ -128,6 +223,7 @@ class Account_payables extends CORE_Controller
                 if($dr_invoice_id!=null){
                     $m_purchase_invoice=$this->Delivery_invoice_model;
                     $m_purchase_invoice->journal_id=$journal_id;
+                    $m_purchase_invoice->is_journal_posted=TRUE;
                     $m_purchase_invoice->is_journal_posted=TRUE;
                     $m_purchase_invoice->modify($dr_invoice_id);
                                     // AUDIT TRAIL START

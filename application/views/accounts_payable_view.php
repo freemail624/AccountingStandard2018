@@ -203,7 +203,7 @@
                         </div>
 
 
-                        <div class="panel panel-default" id="panel_tbl_purchase_posting" style="margin-top:20px;">
+                        <div class="panel panel-default hidden" id="panel_tbl_purchase_posting" style="margin-top:20px;">
                             <div id="" class="">
                                 <div class="panel-body">
                                     <h2 class="h2-panel-responsive">Purchase Journal (For Posting)</h2><hr>
@@ -1245,7 +1245,7 @@
                     $.ajax({
                         "dataType":"html",
                         "type":"POST",
-                        "url":"Templates/layout/ap-journal-for-posting?id="+ d.dr_invoice_id,
+                        "url":"Templates/layout/ap-journal-for-posting?id="+ d.purchase_journal_id,
                         "beforeSend" : function(){
                             row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
                         }
@@ -1262,7 +1262,7 @@
 
                         reInitializeDropDownAccounts(tbl);
                         reInitializeChildEntriesTable(tbl);
-                        reInitializeChildElements(parent_tab_pane);
+                        reInitializeChildElementsPosting(parent_tab_pane);
                         reInitializeTbl(d.dr_invoice_id);
 
                         // Add to the 'open' array
@@ -2054,7 +2054,6 @@
         };
         //***************************************************************************************************************88
 
-
         var reInitializeChildElements=function(parent){
             var _dataParentID=parent.data('parent-id');
             var btn=parent.find('button[name="btn_finalize_journal_review"]');
@@ -2066,9 +2065,7 @@
                 forceParse: false,
                 calendarWeeks: true,
                 autoclose: true
-
             });
-
 
             parent.on('click','button[name="btn_finalize_journal_review"]',function(){
 
@@ -2076,10 +2073,11 @@
 
                 if(isZero('#tbl_entries_for_review_'+_dataParentID)){
                 if(isBalance('#tbl_entries_for_review_'+_dataParentID)){
-                    finalizeJournalReview().done(function(response){
+                    SaveJournalReview().done(function(response){
                         showNotification(response);
                         if(response.stat=="success"){
-                            dt.row.add(response.row_added[0]).draw();
+                            $('#panel_tbl_purchase_posting').removeClass('hidden');
+                            dtPurchasePosting.row.add(response.row_added[0]).draw();
                             var _parentRow=_curBtn.parents('table.table_journal_entries_review').parents('tr').prev();
                             dtReview.row(_parentRow).remove().draw();
                         }
@@ -2103,6 +2101,99 @@
                 window.open('Templates/layout/ap-journal-for-review?type=RR&id='+_dataParentID);
             });
 
+            var SaveJournalReview=function(){
+                var _data_review=parent.find('form').serializeArray();
+
+                return $.ajax({
+                    "dataType":"json",
+                    "type":"POST",
+                    "url":"Account_payables/transaction/save",
+                    "data":_data_review,
+                    "beforeSend": showSpinningProgress(btn)
+
+                });
+            };
+
+        };
+
+
+        var reInitializeChildElementsPosting=function(parent){
+            var _dataParentID=parent.data('parent-id');
+            var btn=parent.find('button[name="btn_finalize_journal_review"]');
+            var cancelbtn=parent.find('button[name="btn_cancel_journal_posting"]');
+
+            //initialize datepicker
+            parent.find('input.date-picker').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true
+            });
+
+            parent.on('click','button[name="btn_finalize_journal_review"]',function(){
+
+                var _curBtn=$(this);
+
+                if(isZero('#tbl_entries_for_review_'+_dataParentID)){
+                if(isBalance('#tbl_entries_for_review_'+_dataParentID)){
+                    finalizeJournalReview().done(function(response){
+                        showNotification(response);
+                        if(response.stat=="success"){
+                            dt.row.add(response.row_added[0]).draw();
+                            var _parentRow=_curBtn.parents('table.table_journal_entries_review').parents('tr').prev();
+                            dtPurchasePosting.row(_parentRow).remove().draw();
+                        }
+
+
+                    }).always(function(){
+                        showSpinningProgress(_curBtn);
+                    });
+                }else{
+                    showNotification({title:"Not Balance!",stat:"error",msg:'Please make sure Debit and Credit amount are equal.'});
+                    stat=false;
+                }
+                }else{
+                        showNotification({title:"No Amount!",stat:"error",msg:'Please make sure Debit and Credit does not amount to zero.'});
+                        stat=false;
+                }// END of ISZERO
+            });
+
+
+            parent.on('click','button[name="btn_print_rr"]',function(){
+                window.open('Templates/layout/ap-journal-for-review?type=RR&id='+_dataParentID);
+            });
+
+            parent.on('click','button[name="btn_cancel_journal_posting"]',function(){
+
+                var _curBtn=$(this);
+                cancelJournalReview().done(function(response){
+                    showNotification(response);
+
+                    if(response.stat=="success"){
+                        var _parentRow=_curBtn.parents('table.table_journal_entries_review').parents('tr').prev();
+                        dtPurchasePosting.row(_parentRow).remove().draw();
+                        $('#tbl_purchase_review').DataTable().ajax.reload();
+                    }
+
+                }).always(function(){
+                    showSpinningProgress(_curBtn);
+                });
+            });
+
+            var cancelJournalReview=function(){
+                var _data_review=parent.find('form').serializeArray();
+
+                return $.ajax({
+                    "dataType":"json",
+                    "type":"POST",
+                    "url":"Account_payables/transaction/cancel-invoice",
+                    "data":_data_review,
+                    "beforeSend": showSpinningProgress(cancelbtn)
+
+                });
+            };
+
             var finalizeJournalReview=function(){
                 var _data_review=parent.find('form').serializeArray();
 
@@ -2115,8 +2206,6 @@
 
                 });
             };
-
-
 
         };
 

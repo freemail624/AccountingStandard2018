@@ -379,8 +379,7 @@ GROUP BY n.supplier_id HAVING total_balance > 0
         di.is_deleted = FALSE AND
         di.is_journal_posted = FALSE AND
         dii.identifier > 0 AND
-        di.is_saved = FALSE
-        ';
+        di.is_saved = FALSE';
 
          return $this->db->query($sql)->result();
 

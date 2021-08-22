@@ -225,6 +225,7 @@
                     <th>PO#</th>
                     <th>Vendor</th>
                     <th>Terms</th>
+                    <th width="20%">Remarks</th>
                     <th class="text-right">Amount</th>
                     <th>Approved</th>
                     <th>Status</th>
@@ -972,7 +973,7 @@
 
 <!-- touchspin -->
 <script type="text/javascript" src="assets/plugins/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.js"></script>
-
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 
 <!-- Select2 -->
 <script src="assets/plugins/select2/select2.full.min.js"></script>
@@ -1048,7 +1049,7 @@ $(document).ready(function(){
         dt=$('#tbl_purchases').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 10, "desc" ]],
+            "order": [[ 11, "desc" ]],
             "ajax" : {
                 "url":"Purchases/transaction/list",
                 "bDestroy": true,            
@@ -1089,15 +1090,16 @@ $(document).ready(function(){
                 { targets:[2],data: "po_no" },
                 { targets:[3],data: "supplier_name" },
                 { targets:[4],data: "term_description" },
-                { sClass:"text-right", targets:[5],data: null,
+                { targets:[5],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(40) },
+                { sClass:"text-right", targets:[6],data: null,
                     render: function (data, type, full, meta){
                         return accounting.formatNumber(data.total_after_tax,2);
                     }
                 },
-                { targets:[6],data: "approval_status" },
-                { targets:[7],data: "order_status" },
+                { targets:[7],data: "approval_status" },
+                { targets:[8],data: "order_status" },
                 { visible:false,
-                    targets:[8],data: null,
+                    targets:[9],data: null,
                     render: function (data, type, full, meta){
                         var _attribute='';
                         //console.log(data.is_email_sent);
@@ -1112,7 +1114,7 @@ $(document).ready(function(){
 
                 },
                 {
-                    targets:[9],data: null,
+                    targets:[10],data: null,
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
@@ -1140,7 +1142,7 @@ $(document).ready(function(){
                         return '<center>'+btn_edit+'&nbsp;'+btn_message+'&nbsp;'+btn_trash+'&nbsp;'+btn_cancel+'&nbsp'+po_btn_mark_as_closed+'</center>';
                     }
                 },
-                { targets:[10],data: "purchase_order_id",visible:false }
+                { targets:[11],data: "purchase_order_id",visible:false }
             ]
         });
 

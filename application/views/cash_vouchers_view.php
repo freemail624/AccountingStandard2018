@@ -753,6 +753,7 @@
                         <th>RR#</th>
                         <th>Vendor</th>
                         <th>Terms</th>
+                        <th>Remarks</th>
                         <th>Delivered</th>
                         <th>Status</th>
                         <th><center>Action</center></th>
@@ -1307,10 +1308,11 @@ $(document).ready(function(){
                 { targets:[1],data: "dr_invoice_no" },
                 { targets:[2],data: "supplier_name" },
                 { targets:[3],data: "term_description" },
-                { targets:[4],data: "date_delivered" },
-                { targets:[5],data: "order_status" },
+                { targets:[4],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(40) },
+                { targets:[5],data: "date_delivered" },
+                { targets:[6],data: "order_status" },
                 {
-                    targets:[6],
+                    targets:[7],
                     render: function (data, type, full, meta){
                         var btn_accept='<button class="btn btn-success btn-sm" name="accept_rr"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Receive this RR"><i class="fa fa-check"></i> Accept RR</button>';
                         return '<center>'+btn_accept+'</center>';

@@ -249,6 +249,7 @@
                     <th>External Ref#</th>
                     <th>PO #</th>
                     <th>Terms</th>
+                    <th width="20%">Remarks</th>
                     <th class="text-right">Amount</th>
                     <th>Delivered</th>
                     <th>Status</th>
@@ -581,9 +582,10 @@
                     <tr>
                         <th></th>
                         <th>PO#</th>
-                        <th width="20%">Vendor</th>
+                        <th width="30%">Vendor</th>
                         <th class="text-right">Amount</th>
                         <th>Terms</th>
+                        <th>Remarks</th>
                         <th>Deliver to</th>
                         <th>Status</th>
                         <th><center>Action</center></th>
@@ -892,7 +894,7 @@
 <script src="assets/plugins/fullcalendar/moment.min.js"></script>
 <!-- Data picker -->
 <script src="assets/plugins/datapicker/bootstrap-datepicker.js"></script>
-
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 <!-- Select2 -->
 <script src="assets/plugins/select2/select2.full.min.js"></script>
 
@@ -975,11 +977,12 @@ $(document).ready(function(){
                         return accounting.formatNumber(data.total_after_tax,2);
                     }
                 },
-                { targets:[4],data: "term_description" },
-                { targets:[5],data: "deliver_to_address" },
-                { targets:[6],data: "order_status" },
+                { visible: false, targets:[4],data: "term_description" },
+                { targets:[5],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(25) },
+                { targets:[6],data: "deliver_to_address" },
+                { targets:[7],data: "order_status" },
                 {
-                    targets:[7],
+                    targets:[8],
                     render: function (data, type, full, meta){
                         var btn_accept='<button class="btn btn-success btn-sm" name="accept_po"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Receive this PO"><i class="fa fa-check"></i> Accept PO</button>';
                         return '<center>'+btn_accept+'</center>';
@@ -992,7 +995,7 @@ $(document).ready(function(){
         dt=$('#tbl_delivery_invoice').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 10, "desc" ]],
+            "order": [[ 11, "desc" ]],
             "language": {
                 "searchPlaceholder":"Search Purchase Invoice"
             },
@@ -1022,18 +1025,19 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "dr_invoice_no" },
                 { targets:[2],data: "supplier_name" },
-                { targets:[3],data: "external_ref_no" },
+                { visible: false, targets:[3],data: "external_ref_no" },
                 { targets:[4],data: "po_no" },
-                { targets:[5],data: "term_description" },
-                { sClass:"text-right", targets:[6],data: null,
+                { visible: false, targets:[5],data: "term_description" },
+                { targets:[6],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(40) },                
+                { sClass:"text-right", targets:[7],data: null,
                     render: function (data, type, full, meta){
                         return accounting.formatNumber(data.total_after_tax,2);
                     }
                 },
-                { targets:[7],data: "date_delivered" },
-                { targets:[8],data: "order_status" }, 
+                { targets:[8],data: "date_delivered" },
+                { targets:[9],data: "order_status" }, 
                 {
-                    targets:[9],
+                    targets:[10],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
@@ -1041,7 +1045,7 @@ $(document).ready(function(){
                         return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                     }
                 },
-                { targets:[10],data: "dr_invoice_id", visible:false }
+                { targets:[11],data: "dr_invoice_id", visible:false }
             ]
         });
 

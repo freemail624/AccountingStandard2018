@@ -165,7 +165,7 @@
                             <div class="row">
                                 <div class="col-lg-12">
                                 <div class="col-sm-6">  
-                                    <button name="btn_finalize_journal_review" class="btn btn-primary <?php if(!$valid_particular){ echo "disabled"; }?>"><i class="fa fa-check-circle"></i> <span class=""></span> Finalize and Post this Journal</button>
+                                    <button name="btn_finalize_journal_review" class="btn btn-primary <?php if(!$valid_particular){ echo "disabled"; }?>"><i class="fa fa-check-circle"></i> <span class=""></span> Save Journal</button>
                                 </div>
                                 <div class="col-sm-3">
                                     <button name="btn_print_rr" style="float: right;margin-top: 5px;" class="btn btn-success <?php if(!$valid_particular){ echo "disabled"; }?>"><i class="fa fa-print"></i> <span class=""></span> Print RR</button>
