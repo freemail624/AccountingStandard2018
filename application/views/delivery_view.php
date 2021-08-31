@@ -2029,7 +2029,8 @@ $(document).ready(function(){
        return $.ajax({
            "dataType":"json",
            "type":"POST",
-           "url":"products/transaction/sales-list",
+           // "url":"products/transaction/sales-list",
+           "url":"products/transaction/parent-list",
            "beforeSend": function(){
                 countproducts = products.local.length;
                 if(countproducts > 100){
