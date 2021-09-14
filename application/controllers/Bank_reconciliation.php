@@ -18,6 +18,7 @@
 					'Company_model',
 					'Bank_reconciliation_details_model',
 					'Bank_reconciliation_checks_model',
+					'Bank_reconciliation_additional_model',
 					'Months_model',
 					'Bank_statement_model',
 					'Bank_statement_item_model',
@@ -44,7 +45,7 @@
 	        
 		}
 
-		function transaction($txn) 
+		function transaction($txn, $filter_value=null) 
 		{
 			switch ($txn) {
 	            case 'reconciliation-list':
@@ -66,6 +67,13 @@
 
 					echo json_encode($response);
 					break;
+
+				case 'bank-r-items':
+					$m_bankr_additionals = $this->Bank_reconciliation_additional_model;
+					$bank_recon_id = $filter_value;
+					$response['data']=$m_bankr_additionals->get_list(array('bank_recon_id' => $bank_recon_id));
+					echo json_encode($response);
+				break;
 
 				case 'create':
 					$m_bankr = $this->Bank_reconciliation_model;
@@ -155,6 +163,60 @@
 	                $bank_reconciliation_no='BR-'.date('Ymd').'-'.$bank_recon_id;
 	                $m_bankr->bank_reconciliation_no=$bank_reconciliation_no;
 	                $m_bankr->modify($bank_recon_id);
+
+	                $m_bankr_additionals = $this->Bank_reconciliation_additional_model;
+
+	                // Deductions Journal
+	                $deduction_journal_desc = $this->input->post('deduction_journal_desc',TRUE);
+	                $deduction_journal_amt = $this->input->post('deduction_journal_amt',TRUE);
+
+	                for ($i=0; $i < count($deduction_journal_desc); $i++) { 
+	                	$m_bankr_additionals->description = $deduction_journal_desc[$i];
+	                	$m_bankr_additionals->bank_recon_id = $bank_recon_id;
+						$m_bankr_additionals->amount = $this->get_numeric_value($deduction_journal_amt[$i]);
+						$m_bankr_additionals->class_type_id = 1; //journal
+						$m_bankr_additionals->category_type_id = 2; //deduction						
+	                	$m_bankr_additionals->save();
+	                }
+
+	                // Additional Journal
+	                $additional_journal_desc = $this->input->post('additional_journal_desc',TRUE);
+	                $additional_journal_amt = $this->input->post('additional_journal_amt',TRUE);
+
+	                for ($i=0; $i < count($additional_journal_desc); $i++) { 
+	                	$m_bankr_additionals->description = $additional_journal_desc[$i];
+	                	$m_bankr_additionals->bank_recon_id = $bank_recon_id;
+						$m_bankr_additionals->amount = $this->get_numeric_value($additional_journal_amt[$i]);
+						$m_bankr_additionals->class_type_id = 1; //journal
+						$m_bankr_additionals->category_type_id = 1; //additional
+	                	$m_bankr_additionals->save();
+	                }
+
+	                // Deductions Bank
+	                $deduction_bank_desc = $this->input->post('deduction_bank_desc',TRUE);
+	                $deduction_bank_amt = $this->input->post('deduction_bank_amt',TRUE);
+
+	                for ($i=0; $i < count($deduction_bank_desc); $i++) { 
+	                	$m_bankr_additionals->description = $deduction_bank_desc[$i];
+	                	$m_bankr_additionals->bank_recon_id = $bank_recon_id;
+						$m_bankr_additionals->amount = $this->get_numeric_value($deduction_bank_amt[$i]);
+						$m_bankr_additionals->class_type_id = 2; //bank
+						$m_bankr_additionals->category_type_id = 2; //deduction						
+	                	$m_bankr_additionals->save();
+	                }
+
+	                // Additional Bank
+	                $additional_bank_desc = $this->input->post('additional_bank_desc',TRUE);
+	                $additional_bank_amt = $this->input->post('additional_bank_amt',TRUE);
+
+	                for ($i=0; $i < count($additional_bank_desc); $i++) { 
+	                	$m_bankr_additionals->description = $additional_bank_desc[$i];
+	                	$m_bankr_additionals->bank_recon_id = $bank_recon_id;
+						$m_bankr_additionals->amount = $this->get_numeric_value($additional_bank_amt[$i]);
+						$m_bankr_additionals->class_type_id = 2; //bank
+						$m_bankr_additionals->category_type_id = 1; //additional								
+	                	$m_bankr_additionals->save();
+	                }
 
 					$m_journal=$this->Journal_info_model;
 
@@ -273,6 +335,61 @@
 					$m_bankr->modify($bank_recon_id);
 
 					$m_journal=$this->Journal_info_model;
+
+	                $m_bankr_additionals = $this->Bank_reconciliation_additional_model;
+               	 	$m_bankr_additionals->delete_via_fk($bank_recon_id); //delete previous items then insert those new
+
+	                // Deductions Journal
+	                $deduction_journal_desc = $this->input->post('deduction_journal_desc',TRUE);
+	                $deduction_journal_amt = $this->input->post('deduction_journal_amt',TRUE);
+
+	                for ($i=0; $i < count($deduction_journal_desc); $i++) { 
+	                	$m_bankr_additionals->description = $deduction_journal_desc[$i];
+	                	$m_bankr_additionals->bank_recon_id = $bank_recon_id;
+						$m_bankr_additionals->amount = $this->get_numeric_value($deduction_journal_amt[$i]);
+						$m_bankr_additionals->class_type_id = 1; //journal
+						$m_bankr_additionals->category_type_id = 2; //deduction						
+	                	$m_bankr_additionals->save();
+	                }
+
+	                // Additional Journal
+	                $additional_journal_desc = $this->input->post('additional_journal_desc',TRUE);
+	                $additional_journal_amt = $this->input->post('additional_journal_amt',TRUE);
+
+	                for ($i=0; $i < count($additional_journal_desc); $i++) { 
+	                	$m_bankr_additionals->description = $additional_journal_desc[$i];
+	                	$m_bankr_additionals->bank_recon_id = $bank_recon_id;
+						$m_bankr_additionals->amount = $this->get_numeric_value($additional_journal_amt[$i]);
+						$m_bankr_additionals->class_type_id = 1; //journal
+						$m_bankr_additionals->category_type_id = 1; //additional
+	                	$m_bankr_additionals->save();
+	                }
+
+	                // Deductions Bank
+	                $deduction_bank_desc = $this->input->post('deduction_bank_desc',TRUE);
+	                $deduction_bank_amt = $this->input->post('deduction_bank_amt',TRUE);
+
+	                for ($i=0; $i < count($deduction_bank_desc); $i++) { 
+	                	$m_bankr_additionals->description = $deduction_bank_desc[$i];
+	                	$m_bankr_additionals->bank_recon_id = $bank_recon_id;
+						$m_bankr_additionals->amount = $this->get_numeric_value($deduction_bank_amt[$i]);
+						$m_bankr_additionals->class_type_id = 2; //bank
+						$m_bankr_additionals->category_type_id = 2; //deduction						
+	                	$m_bankr_additionals->save();
+	                }
+
+	                // Additional Bank
+	                $additional_bank_desc = $this->input->post('additional_bank_desc',TRUE);
+	                $additional_bank_amt = $this->input->post('additional_bank_amt',TRUE);
+
+	                for ($i=0; $i < count($additional_bank_desc); $i++) { 
+	                	$m_bankr_additionals->description = $additional_bank_desc[$i];
+	                	$m_bankr_additionals->bank_recon_id = $bank_recon_id;
+						$m_bankr_additionals->amount = $this->get_numeric_value($additional_bank_amt[$i]);
+						$m_bankr_additionals->class_type_id = 2; //bank
+						$m_bankr_additionals->category_type_id = 1; //additional								
+	                	$m_bankr_additionals->save();
+	                }
 
                	 	$m_bank_checks->delete_via_fk($bank_recon_id); //delete previous items then insert those new
 

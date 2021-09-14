@@ -472,7 +472,17 @@
                                                                         <input type="text" class="form-control text-right numeric" name="account_balance" value="0" disabled>
                                                                     </div>
                                                                 </div><hr>
-                                                                <h5><b>DEDUCT :</b></h5>
+
+                                                                <div class="row">
+                                                                    <div class="col-sm-12">
+                                                                        <h5>
+                                                                            <b>DEDUCT :</b>
+                                                                            <button style="border-radius: 50%;float: right;margin-top: -5px;" class="btn btn-success" id="btn-add-deduct-journal">
+                                                                                <i class="fa fa-plus"></i>
+                                                                            </button> 
+                                                                        </h5>
+                                                                    </div>
+                                                                </div>
                                                                 <div class="row">
                                                                     <div class="col-sm-8">
                                                                         <label>BANK SERVICE CHARGE</label>
@@ -504,8 +514,25 @@
                                                                     <div class="col-sm-4">
                                                                         <input type="text" class="form-control text-right numeric" name="journal_other_deductions" value="0" >
                                                                     </div>
-                                                                </div><hr>
-                                                                <h5><b>ADD :</b></h5>
+                                                                </div>
+
+                                                                <form id="frm_deduction_journal">
+                                                                    <div class="row-deduction-journal">
+                                                                    </div>
+                                                                </form>
+
+                                                                <hr>
+                                                                <div class="row">
+                                                                    <div class="col-sm-12">
+                                                                        <h5>
+                                                                            <b>ADD :</b>
+                                                                            <button style="border-radius: 50%;float: right;margin-top: -5px;" class="btn btn-success" id="btn-additional-journal">
+                                                                                <i class="fa fa-plus"></i>
+                                                                            </button> 
+                                                                        </h5>
+                                                                    </div>
+                                                                </div>
+
                                                                 <div class="row">
                                                                     <div class="col-sm-8">
                                                                         <label>INTEREST EARNED</label>
@@ -529,7 +556,14 @@
                                                                     <div class="col-sm-4">
                                                                         <input type="text" class="form-control text-right numeric" name="journal_other_additions" value="0" >
                                                                     </div>
-                                                                </div><hr>
+                                                                </div>
+
+                                                                <form id="frm_additional_journal">
+                                                                    <div class="row-additional-journal">
+                                                                    </div>
+                                                                </form>
+
+                                                                <hr>
                                                                 <div class="row">
                                                                     <div class="col-sm-8">
                                                                         <label>ADJUSTED COLLECTED BALANCE</label>
@@ -548,7 +582,16 @@
                                                                 <br/>
                                                                 <strong>ACTUAL BALANCE</strong>
                                                                 <input type="text" class="form-control text-right numeric" name="actual_balance" value="0" readonly><hr>
-                                                                <h5><b>DEDUCT :</b></h5>
+                                                                <div class="row">
+                                                                    <div class="col-sm-12">
+                                                                        <h5>
+                                                                            <b>DEDUCT :</b>
+                                                                            <button style="border-radius: 50%;float: right;margin-top: -5px;" class="btn btn-success" id="btn-deduction-bank">
+                                                                                <i class="fa fa-plus"></i>
+                                                                            </button> 
+                                                                        </h5>
+                                                                    </div>
+                                                                </div>
                                                                 <div class="row">
                                                                     <div class="col-sm-8">
                                                                         <label>OUTSTANDING CHECKS</label>
@@ -565,8 +608,21 @@
                                                                         <input type="text" class="form-control text-right numeric" name="bank_other_deductions" value="0">
                                                                     </div>
                                                                 </div>
+                                                                <form id="frm_deduction_bank">
+                                                                    <div class="row-deduction-bank">
+                                                                    </div>
+                                                                </form>
                                                                 <hr>
-                                                                <h5><b>ADD :</b></h5>
+                                                                <div class="row">
+                                                                    <div class="col-sm-12">
+                                                                        <h5>
+                                                                            <b>ADD :</b>
+                                                                            <button style="border-radius: 50%;float: right;margin-top: -5px;" class="btn btn-success" id="btn-additional-bank">
+                                                                                <i class="fa fa-plus"></i>
+                                                                            </button> 
+                                                                        </h5>
+                                                                    </div>
+                                                                </div>
                                                                 <div class="row">
                                                                     <div class="col-sm-8">
                                                                         <label>DEPOSIT IN TRANSIT</label>
@@ -583,6 +639,10 @@
                                                                         <input type="text" class="form-control text-right numeric" name="bank_other_additions" value="0">
                                                                     </div>
                                                                 </div>
+                                                                <form id="frm_additional_bank">
+                                                                    <div class="row-additional-bank">
+                                                                    </div>
+                                                                </form>
                                                                 <br>
                                                                 <br><br/>
                                                                 <hr>
@@ -993,6 +1053,12 @@ $(document).ready(function(){
             $('input[name="end_date"]').datepicker('setDate','today');
             $('#btn_step_1').click();
             clearFields($('#frm_reconcile'));
+
+            $('.row-additional-journal').html("");
+            $('.row-deduction-journal').html("");
+            $('.row-additional-bank').html("");
+            $('.row-deduction-bank').html("");
+
             $('#tbl_bank_reconciliation').DataTable().ajax.reload();
             showList(false);
         }); 
@@ -1042,6 +1108,48 @@ $(document).ready(function(){
 
             });
 
+                $.ajax({
+                    url : 'Bank_reconciliation/transaction/bank-r-items/'+_selectedID,
+                    type : "GET",
+                    cache : false,
+                    dataType : 'json',
+                    processData : false,
+                    contentType : false,
+                    success : function(response){
+                        var rows=response.data;
+
+                        $('.row-additional-journal').html("");
+                        $('.row-deduction-journal').html("");
+                        $('.row-additional-bank').html("");
+                        $('.row-deduction-bank').html("");
+
+                        $.each(rows,function(i,value){
+                            if(value.class_type_id == 1){
+                                if(value.category_type_id == 1){
+                                    $('.row-additional-journal').append(addJournalRow(value.description, value.amount));
+                                }
+                                if(value.category_type_id == 2){
+                                    $('.row-deduction-journal').append(deductJournalRow(value.description, value.amount));
+                                }
+                            }
+                            if(value.class_type_id == 2){
+                                if(value.category_type_id == 1){
+                                    $('.row-additional-bank').append(addBankRow(value.description, value.amount));
+                                }
+                                if(value.category_type_id == 2){
+                                    $('.row-deduction-bank').append(deductBankRow(value.description, value.amount));
+                                }
+                            }
+                        });
+
+                        reInitializeRemoveButtonJournalDeduction();
+                        reInitializeRemoveButtonJournalAdditional();
+                        reInitializeRemoveButtonBankDeduction();
+                        reInitializeRemoveButtonBankAdditional();
+                        reComputeTotal();
+                    }
+                });
+
             _editStatus=0;
 
             $('#tbl_bank_reconciliation').DataTable().ajax.reload();
@@ -1061,6 +1169,122 @@ $(document).ready(function(){
         $('#btn_cancel').click(function(){
             showList(true);
         });              
+
+        var deductJournalRow = function(desc="", amount=""){
+            return '<div class="row"><div class="col-sm-1"><div class="btn-remove-deduct-journal"><i class="fa fa-times" style="color: red;margin-top: 5px;cursor: pointer;"></i></div></div><div class="col-sm-7"><input type="text" name="deduction_journal_desc[]" class="form-control" placeholder="Deduction description" value="'+desc+'" required data-error-msg="Description is required!"></div><div class="col-sm-4"><input type="text" name="deduction_journal_amt[]" class="numeric amount-field form-control" placeholder="Amount" value="'+amount+'" required data-error-msg="Amount is required!"></div></div>';
+        };
+
+        var addJournalRow = function(desc="", amount=""){
+            return '<div class="row"><div class="col-sm-1"><div class="btn-remove-additional-journal"><i class="fa fa-times" style="color: red;margin-top: 5px;cursor: pointer;"></i></div></div><div class="col-sm-7"><input type="text" name="additional_journal_desc[]" class="form-control" placeholder="Aditional description" value="'+desc+'" required data-error-msg="Description is required!"></div><div class="col-sm-4"><input type="text" name="additional_journal_amt[]" class="numeric amount-field form-control" placeholder="Amount" value="'+amount+'" required data-error-msg="Amount is required!"></div></div>';
+
+        };
+
+        var deductBankRow=function(desc="", amount=""){
+            return '<div class="row"><div class="col-sm-1"><div class="btn-remove-deduction-bank"><i class="fa fa-times" style="color: red;margin-top: 5px;cursor: pointer;"></i></div></div><div class="col-sm-7"><input type="text" name="deduction_bank_desc[]" class="form-control" placeholder="Deduction description" value="'+desc+'" required data-error-msg="Description is required!"></div><div class="col-sm-4"><input type="text" name="deduction_bank_amt[]" class="numeric amount-field form-control" placeholder="Amount" value="'+amount+'" required data-error-msg="Amount is required!"></div></div>';
+        };
+
+        var addBankRow=function(desc="", amount=""){
+            return '<div class="row"><div class="col-sm-1"><div class="btn-remove-additional-bank"><i class="fa fa-times" style="color: red;margin-top: 5px;cursor: pointer;"></i></div></div><div class="col-sm-7"><input type="text" name="additional_bank_desc[]" class="form-control" placeholder="Aditional description" value="'+desc+'" required data-error-msg="Description is required!"></div><div class="col-sm-4"><input type="text" name="additional_bank_amt[]" class="numeric amount-field form-control" placeholder="Amount" value="'+amount+'" required data-error-msg="Amount is required!"></div></div>';
+        };
+
+        //add new line of deduction
+        $('#btn-add-deduct-journal').on('click',function(){
+
+            var row=$('.row-deduction-journal');
+            row.append(deductJournalRow());
+
+            reInitializeNumeric();
+            reInitializeRemoveButtonJournalDeduction();
+        });
+
+        var reInitializeRemoveButtonJournalDeduction = function(){
+
+            $('.amount-field').on("keyup", function(){
+                reComputeTotal();
+            });
+
+            $('.btn-remove-deduct-journal').on('click', function(){
+                var oRow = $(this).closest('.row');
+                oRow.remove();
+                reComputeTotal();
+            });
+
+        };
+
+        //add new line of deduction
+        $('#btn-additional-journal').on('click',function(){
+
+            var row=$('.row-additional-journal');
+            row.append(addJournalRow());
+
+            reInitializeNumeric();
+            reInitializeRemoveButtonJournalAdditional();
+        });
+
+        var reInitializeRemoveButtonJournalAdditional = function(){
+
+            $('.amount-field').on("keyup", function(){
+                reComputeTotal();
+            });
+
+            $('.btn-remove-additional-journal').on('click', function(){
+                var oRow = $(this).closest('.row');
+                oRow.remove();
+                reComputeTotal();
+            });
+
+        };
+
+        //add new line of deduction
+        $('#btn-deduction-bank').on('click',function(){
+
+            var row=$('.row-deduction-bank');
+            row.append(deductBankRow());
+
+            reInitializeNumeric();
+            reInitializeRemoveButtonBankDeduction();
+        });
+
+        var reInitializeRemoveButtonBankDeduction = function(){
+
+            $('.amount-field').on("keyup", function(){
+                reComputeTotal();
+            });
+
+            $('.btn-remove-deduction-bank').on('click', function(){
+                var oRow = $(this).closest('.row');
+                oRow.remove();
+                reComputeTotal();
+            });
+
+        };
+
+        //add new line of deduction
+        $('#btn-additional-bank').on('click',function(){
+
+            var row=$('.row-additional-bank');
+            row.append(addBankRow());
+
+            reInitializeNumeric();
+            reInitializeRemoveButtonBankAdditional();
+        });
+
+        var reInitializeRemoveButtonBankAdditional = function(){
+
+            $('.amount-field').on("keyup", function(){
+                reComputeTotal();
+            });
+
+            $('.btn-remove-additional-bank').on('click', function(){
+                var oRow = $(this).closest('.row');
+                oRow.remove();
+                reComputeTotal();
+            });
+
+        };
+
+
+
 
         var showList=function(b){
             if(b){
@@ -1412,10 +1636,30 @@ $(document).ready(function(){
             showNotification({title: 'Error!', msg: _msg, stat: 'error'});
             stat=false;
             return false;
-        }else {
-            stat=true;
-            return true;
         }
+
+        $('div.form-group').removeClass('has-error');
+        $('input[required],textarea[required],select[required]',$('#frm_deduction_journal, #frm_additional_journal, #frm_deduction_bank, #frm_additional_bank')).each(function(){
+
+            if($(this).is('select')){
+                if($(this).select2('val')==0||$(this).select2('val')==null){
+                    showNotification({title:"Error!",stat:"error",msg:$(this).data('error-msg')});
+                    $(this).closest('div.form-group').addClass('has-error');
+                    $(this).focus();
+                    stat=false;
+                    return false;
+                }
+            }else{
+                if($(this).val()==""||$(this).val()==0){
+                    showNotification({title:"Error!",stat:"error",msg:$(this).data('error-msg')});
+                    $(this).closest('div.form-group').addClass('has-error');
+                    $(this).focus();
+                    stat=false;
+                    return false;
+                }
+            }
+        });
+
 
         return stat;
     };
@@ -1470,7 +1714,7 @@ $(document).ready(function(){
     };
 
     var createBankRecon=function(){
-        var _data=$('#frm_bank_statement').serializeArray();
+        var _data=$('#frm_bank_statement, #frm_deduction_journal, #frm_additional_journal, #frm_deduction_bank, #frm_additional_bank').serializeArray();
 
         $('.status:checked').each(function(){
             var $this = $(this),
@@ -1516,7 +1760,7 @@ $(document).ready(function(){
 
 
     var updateBankRecon=function(){
-        var _data=$('#frm_bank_statement').serializeArray();
+        var _data=$('#frm_bank_statement, #frm_deduction_journal, #frm_additional_journal, #frm_deduction_bank, #frm_additional_bank').serializeArray();
 
         $('.status:checked').each(function(){
             var $this = $(this),
@@ -1618,9 +1862,34 @@ $(document).ready(function(){
         var _bankDeductions = accounting.unformat($('input[name="bank_other_deductions"]').val());
         var _bankAdditions = accounting.unformat($('input[name="bank_other_additions"]').val());
 
-        var totalBank = (_actualBalance - _outstandingChecks -_bankDeductions) + _depositInTransit + _bankAdditions;
+        var total_deduction_journal = 0;
 
-        var totalJournal = _accountBal - (_bankService + _nsfChecks + _checkPrinting + _journalDeductions) + (_interestEarned + _notesReceivable + _journalAdditions);
+        $('input[name="deduction_journal_amt[]"]').each(function(){
+            total_deduction_journal += accounting.unformat($(this).val());
+        });
+
+        var total_additional_journal = 0;
+
+        $('input[name="additional_journal_amt[]"]').each(function(){
+            total_additional_journal += accounting.unformat($(this).val());
+        });
+
+
+        var total_deduction_bank = 0;
+
+        $('input[name="deduction_bank_amt[]"]').each(function(){
+            total_deduction_bank += accounting.unformat($(this).val());
+        });
+
+        var total_additional_bank = 0;
+
+        $('input[name="additional_bank_amt[]"]').each(function(){
+            total_additional_bank += accounting.unformat($(this).val());
+        });
+
+        var totalBank = (_actualBalance - _outstandingChecks -_bankDeductions - total_deduction_bank) + _depositInTransit + _bankAdditions + total_additional_bank;
+
+        var totalJournal = _accountBal - (_bankService + _nsfChecks + _checkPrinting + _journalDeductions + total_deduction_journal) + (_interestEarned + _notesReceivable + _journalAdditions + total_additional_journal);
 
         $('input[name="adjusted_collected_balance_journal"]').val(accounting.formatNumber(totalJournal,2));
         $('input[name="adjusted_collected_balance_bank"]').val(accounting.formatNumber(totalBank,2));

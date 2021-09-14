@@ -1042,7 +1042,7 @@ $(document).ready(function(){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
 
-                        return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
+                        return '<center>'+btn_trash+'</center>';
                     }
                 },
                 { targets:[11],data: "dr_invoice_id", visible:false }
