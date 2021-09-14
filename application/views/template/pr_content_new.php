@@ -80,27 +80,28 @@
     <table width="100%" cellpadding="8" class="table table-striped">
         <tr>
             <td width="15%" class="default-color border" valign="top">QTY</td>
-            <td width="35%" class="default-color border" valign="top">DESCRIPTION</td>
-            <td width="25%" class="default-color border" valign="top" align="right">UNIT PRICE</td>
-            <td width="25%" class="default-color border" valign="top" align="right">TOTAL</td>
+            <td width="85%" class="default-color border" valign="top">DESCRIPTION</td>
+<!--             <td width="25%" class="default-color border" valign="top" align="right">UNIT PRICE</td>
+            <td width="25%" class="default-color border" valign="top" align="right">TOTAL</td> -->
         </tr>
         <?php foreach($pr_items as $item){ ?>
         <tr>
             <td class="left right"><?php echo number_format($item->po_qty,2); ?></td>
             <td class="left right"><?php echo $item->product_desc; ?></td>
-            <td class="left right" align="right"><?php echo number_format($item->po_price,2); ?></td>
-            <td class="left right" align="right"><?php echo number_format($item->po_line_total_after_global,2); ?></td>
+<!--             <td class="left right" align="right"><?php //echo number_format($item->po_price,2); ?></td>
+            <td class="left right" align="right"><?php //echo number_format($item->po_line_total_after_global,2); ?> --></td>
         </tr>
         <?php }?>
+        <tr><td class="top" colspan="2"></td></tr>
 
-        <tr>
+<!--         <tr>
             <td colspan="2" class="top" rowspan="5" valign="top">
             </td>
             <td class="default-color border" align="right" style="font-size: 10pt;"><b>TOTAL AMOUNT DUE</b></td>
             <td class="border" align="right" style="font-size: 10pt;">
-                <b><?php echo number_format($requests->total_after_discount,2); ?></b>
+                <b><?php //echo number_format($requests->total_after_discount,2); ?></b>
             </td>        
-        <tr>
+        <tr> -->
     </table>
 
 </body>

@@ -271,32 +271,32 @@
                 <table id="tbl_items" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
                     <thead class="">
                     <tr>
-                        <th width="5%">Qty</th>
+                        <th width="10%">Qty</th>
                         <th width="10%">UM</th>
-                        <th width="15%">Description</th>
-                        <th width="10%" style="text-align: right;">Unit Price</th>
-                        <th width="10%" style="text-align: right;">Discount</th>
+                        <th width="60%">Description</th>
+                        <th width="1%" class="hidden" style="text-align: right;">Unit Price</th>
+                        <th width="1%" class="hidden" style="text-align: right;">Discount</th>
 
-                        <th style="display: none;" width="5%">T.D</th> <!-- total discount -->
-                        <th style="display: none;" width="5%">Tax %</th>
+                        <th style="display: none;" width="1%">T.D</th> <!-- total discount -->
+                        <th style="display: none;" width="1%">Tax %</th>
 
-                        <th width="15%" style="text-align: right;">Total</th>
-                        <th width="10%" style="display: none;">V.I</th> <!-- vat input -->
+                        <th width="1%" class="hidden" style="text-align: right;">Total</th>
+                        <th width="1%" style="display: none;">V.I</th> <!-- vat input -->
 
-                        <th style="display: none;" width="10%">N.V</th> <!-- net of vat -->
-                        <th style="display: none;" width="10%">Item ID</th><!-- product id -->
-                        <th width="5%"><center>Action</center></th>
-                        <th style="display: none;" width="10%">Bulk Price</th>
-                        <th style="display: none;" width="10%">Retail Price</th>
+                        <th style="display: none;" width="1%">N.V</th> <!-- net of vat -->
+                        <th style="display: none;" width="1%">Item ID</th><!-- product id -->
+                        <th width="10%"><center>Action</center></th>
+                        <th style="display: none;" width="1%">Bulk Price</th>
+                        <th style="display: none;" width="1%">Retail Price</th>
                     </tr>
                     </thead>
                     <tbody>
 
                     </tbody>
 
-                    <tfoot>
+                    <tfoot class="hidden">
                     <tr>
-                        <td colspan="7" style="height: 20px;">&nbsp;</td>
+                        <td colspan="4" style="height: 20px;">&nbsp;</td>
                     </tr>
                     <tr class="">
                         <td colspan="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount (%) :</strong></td>
@@ -954,10 +954,10 @@ $(document).ready(function(){
             source: products,
             templates: {
                 header: [
-                    '<table class="tt-head"><tr><td width=20%" style="padding-left: 1%;"><b>PLU</b></td><td width="20%" align="left"><b>Description 1</b></td><td width="20%" align="left"><b>Unit</b></td><td width="10%" align="right" style="padding-right: 2%;"><b>Cost</b></td></tr></table>'
+                    '<table class="tt-head"><tr><td width=30%" style="padding-left: 1%;"><b>PLU</b></td><td width="59%" align="left"><b>Description 1</b></td><td width="10%" align="left"><b>Unit</b></td><td class="hidden" width="1%" align="right" style="padding-right: 2%;"><b>Cost</b></td></tr></table>'
                 ].join('\n'),
 
-                suggestion: Handlebars.compile('<table class="tt-items"><tr><td width="20%" style="padding-left: 1%">{{product_code}}</td><td width="20%" align="left">{{product_desc}}</td><td width="20%" align="left">{{product_unit_name}}</td><td width="10%" align="right" style="padding-right: 2%;">{{purchase_cost}}</td></tr></table>')
+                suggestion: Handlebars.compile('<table class="tt-items"><tr><td width="30%" style="padding-left: 1%">{{product_code}}</td><td width="59%" align="left">{{product_desc}}</td><td width="10%" align="left">{{product_unit_name}}</td><td class="hidden" width="1%" align="right" style="padding-right: 2%;">{{purchase_cost}}</td></tr></table>')
 
             }
         }).on('keyup', this, function (event) {
@@ -1790,19 +1790,19 @@ $(document).ready(function(){
         return '<tr>'+
         '<td ><input name="po_qty[]" type="text" class="numeric form-control number-keyup qty" value="'+ d.po_qty+'"></td>'+unit+'<td >'+d.product_desc+' <input type="text" style="display:none;" class="form-control" name="is_parent[]" value="'+d.is_parent+'"></td>'+
 
-        '<td ><input name="po_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.po_price,2)+'" style="text-align:right;"></td>'+
-        '<td ><input name="po_discount[]" type="text" class="numeric form-control discount" value="'+ accounting.formatNumber(d.po_discount,2)+'" style="text-align:right;"></td>'+
+        '<td class="hidden"><input name="po_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.po_price,2)+'" style="text-align:right;"></td>'+
+        '<td class="hidden"><input name="po_discount[]" type="text" class="numeric form-control discount" value="'+ accounting.formatNumber(d.po_discount,2)+'" style="text-align:right;"></td>'+
         //display:none;
         '<td style="display: none;" ><input name="po_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.po_line_total_discount,2)+'" readonly></td>'+
         '<td style="display: none;"><input name="po_tax_rate[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.po_tax_rate,2)+'"></td>'+
-        '<td  align="right" style="display:none;"><input name="po_line_total[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.po_line_total,2)+'" readonly></td>'+
+        '<td class="hidden" align="right" style="display:none;"><input name="po_line_total[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.po_line_total,2)+'" readonly></td>'+
         '<td  style="display: none;"><input name="tax_amount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.po_tax_amount,2)+'" readonly></td>'+
         '<td style="display: none;" ><input name="non_tax_amount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.po_non_tax_amount,2)+'" readonly></td>'+
         '<td style="display: none;"  ><input name="product_id[]" type="text" class="form-control" value="'+ d.product_id+'" readonly></td>'+
         '<td align="center" style="display:none;"><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>'+
         '<td style="display: none;"><input  type="text" class="form-control numeric" value="'+ accounting.formatNumber(d.bulk_price,2)+'" readonly></td>'+
         '<td style="display: none;"><input type="text" class="form-control numeric" value="'+ accounting.formatNumber(d.retail_price,2)+'" readonly></td>'+
-        '<td  align="right"><input name="po_line_total_after_global[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.po_line_total_after_global,2)+'" readonly></td>'+
+        '<td class="hidden" align="right"><input name="po_line_total_after_global[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.po_line_total_after_global,2)+'" readonly></td>'+
         '<td align="center" ><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>'+ // ADDED ANOTHER ONE HERE BECAUSE WE CANNOT REARRANGE THE  TABLE DATA
         '</tr>';
     };
