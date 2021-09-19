@@ -304,6 +304,7 @@ class Repair_order extends CORE_Controller
                 $m_order->sdesc_8=$this->input->post('sdesc_8',TRUE);
                 $m_order->sdesc_9=$this->input->post('sdesc_9',TRUE);
                 $m_order->sdesc_10=$this->input->post('sdesc_10',TRUE);
+
                 $m_order->sdesc_11=$this->input->post('sdesc_11',TRUE);
                 $m_order->sdesc_12=$this->input->post('sdesc_12',TRUE);
                 $m_order->sdesc_13=$this->input->post('sdesc_13',TRUE);
@@ -314,6 +315,7 @@ class Repair_order extends CORE_Controller
                 $m_order->sdesc_18=$this->input->post('sdesc_18',TRUE);
                 $m_order->sdesc_19=$this->input->post('sdesc_19',TRUE);
                 $m_order->sdesc_20=$this->input->post('sdesc_20',TRUE);
+
                 $m_order->sdesc_21=$this->input->post('sdesc_21',TRUE);
                 $m_order->sdesc_22=$this->input->post('sdesc_22',TRUE);
                 $m_order->sdesc_23=$this->input->post('sdesc_23',TRUE);
@@ -324,7 +326,128 @@ class Repair_order extends CORE_Controller
                 $m_order->sdesc_28=$this->input->post('sdesc_28',TRUE);
                 $m_order->sdesc_29=$this->input->post('sdesc_29',TRUE);
                 $m_order->sdesc_30=$this->input->post('sdesc_30',TRUE);
+            
+                $m_order->sdesc_31=$this->input->post('sdesc_31',TRUE);
+                $m_order->sdesc_32=$this->input->post('sdesc_32',TRUE);
+                $m_order->sdesc_33=$this->input->post('sdesc_33',TRUE);
+                $m_order->sdesc_34=$this->input->post('sdesc_34',TRUE);
+                $m_order->sdesc_35=$this->input->post('sdesc_35',TRUE);
+                $m_order->sdesc_36=$this->input->post('sdesc_36',TRUE);
+                $m_order->sdesc_37=$this->input->post('sdesc_37',TRUE);
+                $m_order->sdesc_38=$this->input->post('sdesc_38',TRUE);
+                $m_order->sdesc_39=$this->input->post('sdesc_39',TRUE);
+                $m_order->sdesc_40=$this->input->post('sdesc_40',TRUE);
 
+                $m_order->sdesc_31=$this->input->post('sdesc_31',TRUE);
+                $m_order->sdesc_32=$this->input->post('sdesc_32',TRUE);
+                $m_order->sdesc_33=$this->input->post('sdesc_33',TRUE);
+                $m_order->sdesc_34=$this->input->post('sdesc_34',TRUE);
+                $m_order->sdesc_35=$this->input->post('sdesc_35',TRUE);
+                $m_order->sdesc_36=$this->input->post('sdesc_36',TRUE);
+                $m_order->sdesc_37=$this->input->post('sdesc_37',TRUE);
+                $m_order->sdesc_38=$this->input->post('sdesc_38',TRUE);
+                $m_order->sdesc_39=$this->input->post('sdesc_39',TRUE);
+                $m_order->sdesc_40=$this->input->post('sdesc_40',TRUE);
+
+                $m_order->sdesc_41=$this->input->post('sdesc_41',TRUE);
+                $m_order->sdesc_42=$this->input->post('sdesc_42',TRUE);
+                $m_order->sdesc_43=$this->input->post('sdesc_43',TRUE);
+                $m_order->sdesc_44=$this->input->post('sdesc_44',TRUE);
+                $m_order->sdesc_45=$this->input->post('sdesc_45',TRUE);
+                $m_order->sdesc_46=$this->input->post('sdesc_46',TRUE);
+                $m_order->sdesc_47=$this->input->post('sdesc_47',TRUE);
+                $m_order->sdesc_48=$this->input->post('sdesc_48',TRUE);
+                $m_order->sdesc_49=$this->input->post('sdesc_49',TRUE);
+                $m_order->sdesc_50=$this->input->post('sdesc_50',TRUE);
+
+                $m_order->sdesc_51=$this->input->post('sdesc_51',TRUE);
+                $m_order->sdesc_52=$this->input->post('sdesc_52',TRUE);
+                $m_order->sdesc_53=$this->input->post('sdesc_53',TRUE);
+                $m_order->sdesc_54=$this->input->post('sdesc_54',TRUE);
+                $m_order->sdesc_55=$this->input->post('sdesc_55',TRUE);
+                $m_order->sdesc_56=$this->input->post('sdesc_56',TRUE);
+                $m_order->sdesc_57=$this->input->post('sdesc_57',TRUE);
+                $m_order->sdesc_58=$this->input->post('sdesc_58',TRUE);
+                $m_order->sdesc_59=$this->input->post('sdesc_59',TRUE);
+                $m_order->sdesc_60=$this->input->post('sdesc_60',TRUE);
+
+                                $m_order->instruct_1=$this->input->post('instruct_1',TRUE);
+                $m_order->instruct_2=$this->input->post('instruct_2',TRUE);
+                $m_order->instruct_3=$this->input->post('instruct_3',TRUE);
+                $m_order->instruct_4=$this->input->post('instruct_4',TRUE);
+                $m_order->instruct_5=$this->input->post('instruct_5',TRUE);
+                $m_order->instruct_6=$this->input->post('instruct_6',TRUE);
+                $m_order->instruct_7=$this->input->post('instruct_7',TRUE);
+                $m_order->instruct_8=$this->input->post('instruct_8',TRUE);
+                $m_order->instruct_9=$this->input->post('instruct_9',TRUE);
+                $m_order->instruct_10=$this->input->post('instruct_10',TRUE);
+
+                $m_order->instruct_11=$this->input->post('instruct_11',TRUE);
+                $m_order->instruct_12=$this->input->post('instruct_12',TRUE);
+                $m_order->instruct_13=$this->input->post('instruct_13',TRUE);
+                $m_order->instruct_14=$this->input->post('instruct_14',TRUE);
+                $m_order->instruct_15=$this->input->post('instruct_15',TRUE);
+                $m_order->instruct_16=$this->input->post('instruct_16',TRUE);
+                $m_order->instruct_17=$this->input->post('instruct_17',TRUE);
+                $m_order->instruct_18=$this->input->post('instruct_18',TRUE);
+                $m_order->instruct_19=$this->input->post('instruct_19',TRUE);
+                $m_order->instruct_20=$this->input->post('instruct_20',TRUE);
+
+                $m_order->instruct_21=$this->input->post('instruct_21',TRUE);
+                $m_order->instruct_22=$this->input->post('instruct_22',TRUE);
+                $m_order->instruct_23=$this->input->post('instruct_23',TRUE);
+                $m_order->instruct_24=$this->input->post('instruct_24',TRUE);
+                $m_order->instruct_25=$this->input->post('instruct_25',TRUE);
+                $m_order->instruct_26=$this->input->post('instruct_26',TRUE);
+                $m_order->instruct_27=$this->input->post('instruct_27',TRUE);
+                $m_order->instruct_28=$this->input->post('instruct_28',TRUE);
+                $m_order->instruct_29=$this->input->post('instruct_29',TRUE);
+                $m_order->instruct_30=$this->input->post('instruct_30',TRUE);
+            
+                $m_order->instruct_31=$this->input->post('instruct_31',TRUE);
+                $m_order->instruct_32=$this->input->post('instruct_32',TRUE);
+                $m_order->instruct_33=$this->input->post('instruct_33',TRUE);
+                $m_order->instruct_34=$this->input->post('instruct_34',TRUE);
+                $m_order->instruct_35=$this->input->post('instruct_35',TRUE);
+                $m_order->instruct_36=$this->input->post('instruct_36',TRUE);
+                $m_order->instruct_37=$this->input->post('instruct_37',TRUE);
+                $m_order->instruct_38=$this->input->post('instruct_38',TRUE);
+                $m_order->instruct_39=$this->input->post('instruct_39',TRUE);
+                $m_order->instruct_40=$this->input->post('instruct_40',TRUE);
+
+                $m_order->instruct_31=$this->input->post('instruct_31',TRUE);
+                $m_order->instruct_32=$this->input->post('instruct_32',TRUE);
+                $m_order->instruct_33=$this->input->post('instruct_33',TRUE);
+                $m_order->instruct_34=$this->input->post('instruct_34',TRUE);
+                $m_order->instruct_35=$this->input->post('instruct_35',TRUE);
+                $m_order->instruct_36=$this->input->post('instruct_36',TRUE);
+                $m_order->instruct_37=$this->input->post('instruct_37',TRUE);
+                $m_order->instruct_38=$this->input->post('instruct_38',TRUE);
+                $m_order->instruct_39=$this->input->post('instruct_39',TRUE);
+                $m_order->instruct_40=$this->input->post('instruct_40',TRUE);
+
+                $m_order->instruct_41=$this->input->post('instruct_41',TRUE);
+                $m_order->instruct_42=$this->input->post('instruct_42',TRUE);
+                $m_order->instruct_43=$this->input->post('instruct_43',TRUE);
+                $m_order->instruct_44=$this->input->post('instruct_44',TRUE);
+                $m_order->instruct_45=$this->input->post('instruct_45',TRUE);
+                $m_order->instruct_46=$this->input->post('instruct_46',TRUE);
+                $m_order->instruct_47=$this->input->post('instruct_47',TRUE);
+                $m_order->instruct_48=$this->input->post('instruct_48',TRUE);
+                $m_order->instruct_49=$this->input->post('instruct_49',TRUE);
+                $m_order->instruct_50=$this->input->post('instruct_50',TRUE);
+
+                $m_order->instruct_51=$this->input->post('instruct_51',TRUE);
+                $m_order->instruct_52=$this->input->post('instruct_52',TRUE);
+                $m_order->instruct_53=$this->input->post('instruct_53',TRUE);
+                $m_order->instruct_54=$this->input->post('instruct_54',TRUE);
+                $m_order->instruct_55=$this->input->post('instruct_55',TRUE);
+                $m_order->instruct_56=$this->input->post('instruct_56',TRUE);
+                $m_order->instruct_57=$this->input->post('instruct_57',TRUE);
+                $m_order->instruct_58=$this->input->post('instruct_58',TRUE);
+                $m_order->instruct_59=$this->input->post('instruct_59',TRUE);
+                $m_order->instruct_60=$this->input->post('instruct_60',TRUE);
+                
                 // $m_invoice->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                 // $m_invoice->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                 // $m_invoice->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
@@ -515,8 +638,7 @@ class Repair_order extends CORE_Controller
                 $m_order->policy_no=$this->input->post('policy_no',TRUE);
                 $m_order->tag_no=$this->input->post('tag_no',TRUE);
                 $m_order->discount_type = $this->input->post('discount_type', TRUE);
-
-
+                
                 $m_order->sdesc_1=$this->input->post('sdesc_1',TRUE);
                 $m_order->sdesc_2=$this->input->post('sdesc_2',TRUE);
                 $m_order->sdesc_3=$this->input->post('sdesc_3',TRUE);
@@ -527,6 +649,7 @@ class Repair_order extends CORE_Controller
                 $m_order->sdesc_8=$this->input->post('sdesc_8',TRUE);
                 $m_order->sdesc_9=$this->input->post('sdesc_9',TRUE);
                 $m_order->sdesc_10=$this->input->post('sdesc_10',TRUE);
+
                 $m_order->sdesc_11=$this->input->post('sdesc_11',TRUE);
                 $m_order->sdesc_12=$this->input->post('sdesc_12',TRUE);
                 $m_order->sdesc_13=$this->input->post('sdesc_13',TRUE);
@@ -537,6 +660,7 @@ class Repair_order extends CORE_Controller
                 $m_order->sdesc_18=$this->input->post('sdesc_18',TRUE);
                 $m_order->sdesc_19=$this->input->post('sdesc_19',TRUE);
                 $m_order->sdesc_20=$this->input->post('sdesc_20',TRUE);
+
                 $m_order->sdesc_21=$this->input->post('sdesc_21',TRUE);
                 $m_order->sdesc_22=$this->input->post('sdesc_22',TRUE);
                 $m_order->sdesc_23=$this->input->post('sdesc_23',TRUE);
@@ -547,6 +671,127 @@ class Repair_order extends CORE_Controller
                 $m_order->sdesc_28=$this->input->post('sdesc_28',TRUE);
                 $m_order->sdesc_29=$this->input->post('sdesc_29',TRUE);
                 $m_order->sdesc_30=$this->input->post('sdesc_30',TRUE);
+            
+                $m_order->sdesc_31=$this->input->post('sdesc_31',TRUE);
+                $m_order->sdesc_32=$this->input->post('sdesc_32',TRUE);
+                $m_order->sdesc_33=$this->input->post('sdesc_33',TRUE);
+                $m_order->sdesc_34=$this->input->post('sdesc_34',TRUE);
+                $m_order->sdesc_35=$this->input->post('sdesc_35',TRUE);
+                $m_order->sdesc_36=$this->input->post('sdesc_36',TRUE);
+                $m_order->sdesc_37=$this->input->post('sdesc_37',TRUE);
+                $m_order->sdesc_38=$this->input->post('sdesc_38',TRUE);
+                $m_order->sdesc_39=$this->input->post('sdesc_39',TRUE);
+                $m_order->sdesc_40=$this->input->post('sdesc_40',TRUE);
+
+                $m_order->sdesc_31=$this->input->post('sdesc_31',TRUE);
+                $m_order->sdesc_32=$this->input->post('sdesc_32',TRUE);
+                $m_order->sdesc_33=$this->input->post('sdesc_33',TRUE);
+                $m_order->sdesc_34=$this->input->post('sdesc_34',TRUE);
+                $m_order->sdesc_35=$this->input->post('sdesc_35',TRUE);
+                $m_order->sdesc_36=$this->input->post('sdesc_36',TRUE);
+                $m_order->sdesc_37=$this->input->post('sdesc_37',TRUE);
+                $m_order->sdesc_38=$this->input->post('sdesc_38',TRUE);
+                $m_order->sdesc_39=$this->input->post('sdesc_39',TRUE);
+                $m_order->sdesc_40=$this->input->post('sdesc_40',TRUE);
+
+                $m_order->sdesc_41=$this->input->post('sdesc_41',TRUE);
+                $m_order->sdesc_42=$this->input->post('sdesc_42',TRUE);
+                $m_order->sdesc_43=$this->input->post('sdesc_43',TRUE);
+                $m_order->sdesc_44=$this->input->post('sdesc_44',TRUE);
+                $m_order->sdesc_45=$this->input->post('sdesc_45',TRUE);
+                $m_order->sdesc_46=$this->input->post('sdesc_46',TRUE);
+                $m_order->sdesc_47=$this->input->post('sdesc_47',TRUE);
+                $m_order->sdesc_48=$this->input->post('sdesc_48',TRUE);
+                $m_order->sdesc_49=$this->input->post('sdesc_49',TRUE);
+                $m_order->sdesc_50=$this->input->post('sdesc_50',TRUE);
+
+                $m_order->sdesc_51=$this->input->post('sdesc_51',TRUE);
+                $m_order->sdesc_52=$this->input->post('sdesc_52',TRUE);
+                $m_order->sdesc_53=$this->input->post('sdesc_53',TRUE);
+                $m_order->sdesc_54=$this->input->post('sdesc_54',TRUE);
+                $m_order->sdesc_55=$this->input->post('sdesc_55',TRUE);
+                $m_order->sdesc_56=$this->input->post('sdesc_56',TRUE);
+                $m_order->sdesc_57=$this->input->post('sdesc_57',TRUE);
+                $m_order->sdesc_58=$this->input->post('sdesc_58',TRUE);
+                $m_order->sdesc_59=$this->input->post('sdesc_59',TRUE);
+                $m_order->sdesc_60=$this->input->post('sdesc_60',TRUE);
+
+                $m_order->instruct_1=$this->input->post('instruct_1',TRUE);
+                $m_order->instruct_2=$this->input->post('instruct_2',TRUE);
+                $m_order->instruct_3=$this->input->post('instruct_3',TRUE);
+                $m_order->instruct_4=$this->input->post('instruct_4',TRUE);
+                $m_order->instruct_5=$this->input->post('instruct_5',TRUE);
+                $m_order->instruct_6=$this->input->post('instruct_6',TRUE);
+                $m_order->instruct_7=$this->input->post('instruct_7',TRUE);
+                $m_order->instruct_8=$this->input->post('instruct_8',TRUE);
+                $m_order->instruct_9=$this->input->post('instruct_9',TRUE);
+                $m_order->instruct_10=$this->input->post('instruct_10',TRUE);
+
+                $m_order->instruct_11=$this->input->post('instruct_11',TRUE);
+                $m_order->instruct_12=$this->input->post('instruct_12',TRUE);
+                $m_order->instruct_13=$this->input->post('instruct_13',TRUE);
+                $m_order->instruct_14=$this->input->post('instruct_14',TRUE);
+                $m_order->instruct_15=$this->input->post('instruct_15',TRUE);
+                $m_order->instruct_16=$this->input->post('instruct_16',TRUE);
+                $m_order->instruct_17=$this->input->post('instruct_17',TRUE);
+                $m_order->instruct_18=$this->input->post('instruct_18',TRUE);
+                $m_order->instruct_19=$this->input->post('instruct_19',TRUE);
+                $m_order->instruct_20=$this->input->post('instruct_20',TRUE);
+
+                $m_order->instruct_21=$this->input->post('instruct_21',TRUE);
+                $m_order->instruct_22=$this->input->post('instruct_22',TRUE);
+                $m_order->instruct_23=$this->input->post('instruct_23',TRUE);
+                $m_order->instruct_24=$this->input->post('instruct_24',TRUE);
+                $m_order->instruct_25=$this->input->post('instruct_25',TRUE);
+                $m_order->instruct_26=$this->input->post('instruct_26',TRUE);
+                $m_order->instruct_27=$this->input->post('instruct_27',TRUE);
+                $m_order->instruct_28=$this->input->post('instruct_28',TRUE);
+                $m_order->instruct_29=$this->input->post('instruct_29',TRUE);
+                $m_order->instruct_30=$this->input->post('instruct_30',TRUE);
+            
+                $m_order->instruct_31=$this->input->post('instruct_31',TRUE);
+                $m_order->instruct_32=$this->input->post('instruct_32',TRUE);
+                $m_order->instruct_33=$this->input->post('instruct_33',TRUE);
+                $m_order->instruct_34=$this->input->post('instruct_34',TRUE);
+                $m_order->instruct_35=$this->input->post('instruct_35',TRUE);
+                $m_order->instruct_36=$this->input->post('instruct_36',TRUE);
+                $m_order->instruct_37=$this->input->post('instruct_37',TRUE);
+                $m_order->instruct_38=$this->input->post('instruct_38',TRUE);
+                $m_order->instruct_39=$this->input->post('instruct_39',TRUE);
+                $m_order->instruct_40=$this->input->post('instruct_40',TRUE);
+
+                $m_order->instruct_31=$this->input->post('instruct_31',TRUE);
+                $m_order->instruct_32=$this->input->post('instruct_32',TRUE);
+                $m_order->instruct_33=$this->input->post('instruct_33',TRUE);
+                $m_order->instruct_34=$this->input->post('instruct_34',TRUE);
+                $m_order->instruct_35=$this->input->post('instruct_35',TRUE);
+                $m_order->instruct_36=$this->input->post('instruct_36',TRUE);
+                $m_order->instruct_37=$this->input->post('instruct_37',TRUE);
+                $m_order->instruct_38=$this->input->post('instruct_38',TRUE);
+                $m_order->instruct_39=$this->input->post('instruct_39',TRUE);
+                $m_order->instruct_40=$this->input->post('instruct_40',TRUE);
+
+                $m_order->instruct_41=$this->input->post('instruct_41',TRUE);
+                $m_order->instruct_42=$this->input->post('instruct_42',TRUE);
+                $m_order->instruct_43=$this->input->post('instruct_43',TRUE);
+                $m_order->instruct_44=$this->input->post('instruct_44',TRUE);
+                $m_order->instruct_45=$this->input->post('instruct_45',TRUE);
+                $m_order->instruct_46=$this->input->post('instruct_46',TRUE);
+                $m_order->instruct_47=$this->input->post('instruct_47',TRUE);
+                $m_order->instruct_48=$this->input->post('instruct_48',TRUE);
+                $m_order->instruct_49=$this->input->post('instruct_49',TRUE);
+                $m_order->instruct_50=$this->input->post('instruct_50',TRUE);
+
+                $m_order->instruct_51=$this->input->post('instruct_51',TRUE);
+                $m_order->instruct_52=$this->input->post('instruct_52',TRUE);
+                $m_order->instruct_53=$this->input->post('instruct_53',TRUE);
+                $m_order->instruct_54=$this->input->post('instruct_54',TRUE);
+                $m_order->instruct_55=$this->input->post('instruct_55',TRUE);
+                $m_order->instruct_56=$this->input->post('instruct_56',TRUE);
+                $m_order->instruct_57=$this->input->post('instruct_57',TRUE);
+                $m_order->instruct_58=$this->input->post('instruct_58',TRUE);
+                $m_order->instruct_59=$this->input->post('instruct_59',TRUE);
+                $m_order->instruct_60=$this->input->post('instruct_60',TRUE);
 
                 $m_order->modify($repair_order_id);
 

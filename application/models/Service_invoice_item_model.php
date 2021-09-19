@@ -46,6 +46,36 @@ class Service_invoice_item_model extends CORE_Model
 					WHEN tbl_no = 28 THEN si.sdesc_28
 					WHEN tbl_no = 29 THEN si.sdesc_29
 					WHEN tbl_no = 30 THEN si.sdesc_30
+					WHEN tbl_no = 31 THEN si.sdesc_31
+					WHEN tbl_no = 32 THEN si.sdesc_32
+					WHEN tbl_no = 33 THEN si.sdesc_33
+					WHEN tbl_no = 34 THEN si.sdesc_34
+					WHEN tbl_no = 35 THEN si.sdesc_35
+					WHEN tbl_no = 36 THEN si.sdesc_36
+					WHEN tbl_no = 37 THEN si.sdesc_37
+					WHEN tbl_no = 38 THEN si.sdesc_38
+					WHEN tbl_no = 39 THEN si.sdesc_39
+					WHEN tbl_no = 40 THEN si.sdesc_40
+					WHEN tbl_no = 41 THEN si.sdesc_41
+					WHEN tbl_no = 42 THEN si.sdesc_42
+					WHEN tbl_no = 43 THEN si.sdesc_43
+					WHEN tbl_no = 44 THEN si.sdesc_44
+					WHEN tbl_no = 45 THEN si.sdesc_45
+					WHEN tbl_no = 46 THEN si.sdesc_46
+					WHEN tbl_no = 47 THEN si.sdesc_47
+					WHEN tbl_no = 48 THEN si.sdesc_48
+					WHEN tbl_no = 49 THEN si.sdesc_49
+					WHEN tbl_no = 50 THEN si.sdesc_50
+					WHEN tbl_no = 51 THEN si.sdesc_51
+					WHEN tbl_no = 52 THEN si.sdesc_52
+					WHEN tbl_no = 53 THEN si.sdesc_53
+					WHEN tbl_no = 54 THEN si.sdesc_54
+					WHEN tbl_no = 55 THEN si.sdesc_55
+					WHEN tbl_no = 56 THEN si.sdesc_56
+					WHEN tbl_no = 57 THEN si.sdesc_57
+					WHEN tbl_no = 58 THEN si.sdesc_58
+					WHEN tbl_no = 59 THEN si.sdesc_59
+					WHEN tbl_no = 60 THEN si.sdesc_60					
 					ELSE ''
 				END) as sdesc		    
 			FROM

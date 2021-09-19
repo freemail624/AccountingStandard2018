@@ -277,9 +277,10 @@
 	    	<tr>
 	    		<th valign="top" width="5%"><strong>Line</strong></th>
 	    		<th valign="top" width="10%"><strong>Product</strong></th>
-	    		<th valign="top" width="40%"><strong>Description</strong></th>
+	    		<th valign="top" width="30%"><strong>Description</strong></th>
 	    		<th valign="top" width="15%" align="right"><strong>Quantity</strong></th>
 	    		<th valign="top" width="15%" align="right"><strong>Unit Price</strong></th>
+	    		<th valign="top" width="10%" align="right"><strong>Discount</strong></th>
 	    		<th valign="top" width="15%" align="right"><strong>Amount</strong></th>
 	    	</tr>
 		</thead>
@@ -287,28 +288,37 @@
     	?>
     		<tr>
     			<td valign="top" colspan="2" class="gray">C</td>
-    			<td valign="top" colspan="4" class="gray">
+    			<td valign="top" colspan="5" class="gray">
     				<strong><?php echo $tbl->sdesc; ?></strong>
     			</td>    
     		</tr>
+            <?php if($tbl->instruction != ""){ ?>
+                <tr>
+                    <td valign="top" colspan="2"></td>
+                    <td valign="top" colspan="5">
+                        <?php echo $tbl->instruction; ?>
+                    </td>    
+                </tr>
+            <?php } ?>
     		<?php 
 
     			$sub_total=0;
         			foreach($items as $item){
         			if($item->tbl_no == $tbl->tbl_no){
-        			$sub_total+=$item->order_gross;
+        			$sub_total+=$item->order_line_total_after_global;
     		?>
     			<tr>
-    				<td valign="top"></td>
     				<td valign="top"><?php echo $item->unit_code; ?></td>
+    				<td valign="top"><?php echo $item->product_code; ?></td>
     				<td valign="top"><?php echo $item->product_desc; ?></td>
     				<td valign="top" align="right"><?php echo $item->order_qty + 0;?></td>
     				<td valign="top" align="right"><?php echo number_format($item->order_price,2) ?></td>
-    				<td valign="top" align="right"><?php echo number_format($item->order_gross,2) ?></td>
+    				<td valign="top" align="right"><?php echo number_format($item->order_line_total_discount,2) ?></td>
+    				<td valign="top" align="right"><?php echo number_format($item->order_line_total_after_global,2) ?></td>
     			</tr>
     		<?php }}?>
     		<tr>
-    			<td valign="top" colspan="5" align="right">Sub-Total</td>
+    			<td valign="top" colspan="6" align="right">Sub-Total</td>
     			<td valign="top" align="right" class=""><hr><?php echo number_format($sub_total,2); ?> <hr><hr></td>
     		</tr>
     	<?php }?>

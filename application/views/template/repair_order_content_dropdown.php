@@ -351,6 +351,14 @@
 									<strong><?php echo $tbl->sdesc; ?></strong>
 								</td>
 							</tr>
+							<?php if($tbl->instruction != ""){ ?>
+								<tr>
+									<td valign="top" colspan="2"></td>
+									<td valign="top" colspan="5">
+										<?php echo $tbl->instruction; ?>
+									</td>
+								</tr>
+							<?php } ?>
 							<?php 
 								$sub_total=0;
 								foreach($items as $item){
@@ -358,8 +366,8 @@
 								$sub_total+=$item->order_line_total_after_global;
 							?>
 							<tr>
-								<td valign="top"></td>
 								<td valign="top"><?php echo $item->unit_code; ?></td>
+								<td valign="top"><?php echo $item->product_code; ?></td>
 								<td valign="top"><?php echo $item->product_desc; ?></td>
 								<td valign="top" align="right"><?php echo $item->order_qty + 0;?></td>
 								<td valign="top" align="right"><?php echo number_format($item->order_price,2) ?></td>
@@ -396,6 +404,14 @@
 									<strong><?php echo $tbl->sdesc; ?></strong>
 								</td>
 							</tr>
+							<?php if($tbl->instruction != ""){ ?>
+								<tr>
+									<td valign="top" colspan="2"></td>
+									<td valign="top" colspan="5">
+										<?php echo $tbl->instruction; ?>
+									</td>
+								</tr>
+							<?php } ?>
 							<?php 
 								$sub_total=0;
 								foreach($items as $item){
@@ -403,8 +419,8 @@
 								$sub_total+=$item->order_line_total_after_global;
 							?>
 							<tr>
-								<td valign="top"></td>
 								<td valign="top"><?php echo $item->unit_code; ?></td>
+								<td valign="top"><?php echo $item->product_code; ?></td>
 								<td valign="top"><?php echo $item->product_desc; ?></td>
 								<td valign="top" align="right"><?php echo $item->order_qty + 0;?></td>
 								<td valign="top" align="right"><?php echo number_format($item->order_price,2) ?></td>
@@ -441,6 +457,14 @@
 									<strong><?php echo $tbl->sdesc; ?></strong>
 								</td>
 							</tr>
+							<?php if($tbl->instruction != ""){ ?>
+								<tr>
+									<td valign="top" colspan="2"></td>
+									<td valign="top" colspan="5">
+										<?php echo $tbl->instruction; ?>
+									</td>
+								</tr>
+							<?php } ?>
 							<?php 
 								$sub_total=0;
 								foreach($items as $item){
@@ -448,8 +472,8 @@
 								$sub_total+=$item->order_line_total_after_global;
 							?>
 							<tr>
-								<td valign="top"></td>
 								<td valign="top"><?php echo $item->unit_code; ?></td>
+								<td valign="top"><?php echo $item->product_code; ?></td>
 								<td valign="top"><?php echo $item->product_desc; ?></td>
 								<td valign="top" align="right"><?php echo $item->order_qty + 0;?></td>
 								<td valign="top" align="right"><?php echo number_format($item->order_price,2) ?></td>
@@ -486,6 +510,14 @@
 									<strong><?php echo $tbl->sdesc; ?></strong>
 								</td>
 							</tr>
+							<?php if($tbl->instruction != ""){ ?>
+								<tr>
+									<td valign="top" colspan="2"></td>
+									<td valign="top" colspan="5">
+										<?php echo $tbl->instruction; ?>
+									</td>
+								</tr>
+							<?php } ?>
 							<?php 
 								$sub_total=0;
 								foreach($items as $item){
@@ -493,8 +525,8 @@
 								$sub_total+=$item->order_line_total_after_global;
 							?>
 							<tr>
-								<td valign="top"></td>
 								<td valign="top"><?php echo $item->unit_code; ?></td>
+								<td valign="top"><?php echo $item->product_code; ?></td>
 								<td valign="top"><?php echo $item->product_desc; ?></td>
 								<td valign="top" align="right"><?php echo $item->order_qty + 0;?></td>
 								<td valign="top" align="right"><?php echo number_format($item->order_price,2) ?></td>
@@ -531,6 +563,14 @@
 									<strong><?php echo $tbl->sdesc; ?></strong>
 								</td>
 							</tr>
+							<?php if($tbl->instruction != ""){ ?>
+								<tr>
+									<td valign="top" colspan="2"></td>
+									<td valign="top" colspan="5">
+										<?php echo $tbl->instruction; ?>
+									</td>
+								</tr>
+							<?php } ?>
 							<?php 
 								$sub_total=0;
 								foreach($items as $item){
@@ -538,8 +578,8 @@
 								$sub_total+=$item->order_line_total_after_global;
 							?>
 							<tr>
-								<td valign="top"></td>
 								<td valign="top"><?php echo $item->unit_code; ?></td>
+								<td valign="top"><?php echo $item->product_code; ?></td>
 								<td valign="top"><?php echo $item->product_desc; ?></td>
 								<td valign="top" align="right"><?php echo $item->order_qty + 0;?></td>
 								<td valign="top" align="right"><?php echo number_format($item->order_price,2) ?></td>
@@ -576,6 +616,14 @@
 									<strong><?php echo $tbl->sdesc; ?></strong>
 								</td>
 							</tr>
+							<?php if($tbl->instruction != ""){ ?>
+								<tr>
+									<td valign="top" colspan="2"></td>
+									<td valign="top" colspan="5">
+										<?php echo $tbl->instruction; ?>
+									</td>
+								</tr>
+							<?php } ?>
 							<?php 
 								$sub_total=0;
 								foreach($items as $item){
@@ -583,8 +631,8 @@
 								$sub_total+=$item->order_line_total_after_global;
 							?>
 							<tr>
-								<td valign="top"></td>
 								<td valign="top"><?php echo $item->unit_code; ?></td>
+								<td valign="top"><?php echo $item->product_code; ?></td>
 								<td valign="top"><?php echo $item->product_desc; ?></td>
 								<td valign="top" align="right"><?php echo $item->order_qty + 0;?></td>
 								<td valign="top" align="right"><?php echo number_format($item->order_price,2) ?></td>

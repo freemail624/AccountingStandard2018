@@ -1100,13 +1100,13 @@
                                                                 </div>
                                                             </div>
                                                             <br />
-                                                            <div class="col-md-6">
+                                                            <div class="col-md-12">
                                                                 <label><strong>Advisor's Recommendation :</strong></label>
                                                                 <div class="col-lg-12" style="padding: 0px;">
                                                                     <textarea name="advisor_remarks" id="advisor_remarks" class="form-control" placeholder="Advisor Recommendation"></textarea>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-md-6">
+                                                            <div class="hidden">
                                                                 <label><strong>Customer's Request :</strong></label>
                                                                 <div class="col-lg-12" style="padding: 0px;">
                                                                     <textarea name="customer_remarks" id="customer_remarks" class="form-control" placeholder="Customer's Request"></textarea>

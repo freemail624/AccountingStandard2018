@@ -668,6 +668,8 @@
                                 <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured<?php echo $i; ?>" class="no-format">Is Insured?</label>
                                 <br/><label>Service Description :</label>
                                 <textarea class="form-control" name="sdesc_<?php echo $i; ?>" placeholder="Service Description"></textarea>
+                                <br/><label>Instruction :</label>
+                                <textarea class="form-control" name="instruct_<?php echo $i; ?>" placeholder="Instruction"></textarea>
                                 <div class="table-responsive">
                                     <table id="tbl_items_<?php echo $i; ?>" class="tbl_items tbl_items_1 table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
                                         <thead class="">    
@@ -740,6 +742,8 @@
                                 <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured<?php echo $i; ?>" class="no-format">Is Insured?</label>
                                 <br/><label>Service Description :</label>
                                 <textarea class="form-control" name="sdesc_<?php echo $i; ?>" placeholder="Service Description"></textarea>
+                                <br/><label>Instruction :</label>
+                                <textarea class="form-control" name="instruct_<?php echo $i; ?>" placeholder="Instruction"></textarea>                                
                                 <div class="table-responsive">
                                     <table id="tbl_items_<?php echo $i; ?>" class="tbl_items tbl_items_2 table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
                                         <thead class="">    
@@ -813,6 +817,8 @@
                                 <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured<?php echo $i; ?>" class="no-format">Is Insured?</label>
                                 <br/><label>Service Description :</label> 
                                 <textarea class="form-control" name="sdesc_<?php echo $i; ?>" placeholder="Service Description"></textarea>
+                                <br/><label>Instruction :</label>
+                                <textarea class="form-control" name="instruct_<?php echo $i; ?>" placeholder="Instruction"></textarea>                                
                                 <div class="table-responsive">
                                     <table id="tbl_items_<?php echo $i; ?>" class="tbl_items tbl_items_3 table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
                                         <thead class="">    
@@ -886,6 +892,8 @@
                                 <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured<?php echo $i; ?>" class="no-format">Is Insured?</label>
                                 <br/><label>Service Description :</label>
                                 <textarea class="form-control" name="sdesc_<?php echo $i; ?>" placeholder="Service Description"></textarea>
+                                <br/><label>Instruction :</label>
+                                <textarea class="form-control" name="instruct_<?php echo $i; ?>" placeholder="Instruction"></textarea>                                
                                 <div class="table-responsive">
                                     <table id="tbl_items_<?php echo $i; ?>" class="tbl_items tbl_items_4 table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
                                         <thead class="">    
@@ -959,6 +967,8 @@
                                 <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured<?php echo $i; ?>" class="no-format">Is Insured?</label>
                                 <br/><label>Service Description :</label>
                                 <textarea class="form-control" name="sdesc_<?php echo $i; ?>" placeholder="Service Description"></textarea>
+                                <br/><label>Instruction :</label>
+                                <textarea class="form-control" name="instruct_<?php echo $i; ?>" placeholder="Instruction"></textarea>                                
                                 <div class="table-responsive">
                                     <table id="tbl_items_<?php echo $i; ?>" class="tbl_items tbl_items_5 table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
                                         <thead class="">    
@@ -1032,6 +1042,8 @@
                                 <input type="checkbox" data-table="tbl_items_<?php echo $i; ?>" class="form-control cb_is_insured" id="cb_is_insured<?php echo $i; ?>" style="height: 15px!important; width: 15px!important; display: inline"> <label for="cb_is_insured<?php echo $i; ?>" class="no-format">Is Insured?</label>
                                 <br/><label>Service Description :</label>
                                 <textarea class="form-control" name="sdesc_<?php echo $i; ?>" placeholder="Service Description"></textarea>
+                                <br/><label>Instruction :</label>
+                                <textarea class="form-control" name="instruct_<?php echo $i; ?>" placeholder="Instruction"></textarea>                                
                                 <div class="table-responsive">
                                     <table id="tbl_items_<?php echo $i; ?>" class="tbl_items tbl_items_6 table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
                                         <thead class="">    
@@ -1081,13 +1093,13 @@
                     </div>
                 </div>
                 <br/>
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <label ><strong>Advisor's Recommendation :</strong></label>
                     <div class="col-lg-12" style="padding: 0px;">
                         <textarea name="advisor_remarks" id="advisor_remarks" class="form-control" placeholder="Advisor Recommendation"></textarea>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="hidden">
                     <label ><strong>Customer's Request :</strong></label>
                     <div class="col-lg-12" style="padding: 0px;">
                         <textarea name="customer_remarks" id="customer_remarks" class="form-control" placeholder="Customer's Request"></textarea>

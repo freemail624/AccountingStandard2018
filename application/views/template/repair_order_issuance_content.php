@@ -291,6 +291,14 @@
                     <strong><?php echo $tbl->sdesc; ?></strong>
                 </td>    
             </tr>
+            <?php if($tbl->instruction != ""){ ?>
+                <tr>
+                    <td valign="top" colspan="2"></td>
+                    <td valign="top" colspan="4">
+                        <?php echo $tbl->instruction; ?>
+                    </td>    
+                </tr>
+            <?php } ?>
             <?php 
 
                 $sub_total=0;
@@ -299,8 +307,8 @@
                     $sub_total+=$item->order_gross;
             ?>
                 <tr>
-                    <td valign="top"></td>
                     <td valign="top"><?php echo $item->unit_code; ?></td>
+                    <td valign="top"><?php echo $item->product_code; ?></td>
                     <td valign="top"><?php echo $item->product_desc; ?></td>
                     <td valign="top" align="right"><?php echo $item->order_qty + 0;?></td>
                     <td valign="top" align="right"></td>

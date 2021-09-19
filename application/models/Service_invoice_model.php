@@ -76,6 +76,7 @@ class Service_invoice_model extends CORE_Model
             c.customer_no,
             c.customer_name,
             c.tin_no,
+            c.email_address,
             i.contact_name as insurance_contact_person,
             i.customer_name as insurer_company,
             i.address as insurance_address,

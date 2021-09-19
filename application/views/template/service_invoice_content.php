@@ -109,7 +109,7 @@
     $insured_vat_total = 0;
     $insured_grand_total = 0;
     ?>
-    <div>
+    <div style="<?php if (count($insured_item_info) > 0) { echo 'page-break-after: always'; }?>">
         <table width="100%">
             <tr class="">
                 <td width="25%" valign="top">
@@ -127,14 +127,14 @@
         </table>
         <hr>
         <br /><br />
-        <table width="100%">
+        <table width="100%" style="font-size: 9pt;">
             <tr>
                 <td align="center">
                     <h1>SERVICE INVOICE</h1>
                 </td>
             </tr>
         </table> <br />
-        <table width="100%" cellspacing="5" cellspacing="5" border="1">
+        <table width="100%" cellspacing="5" cellspacing="5" border="1" style="font-size: 7pt;">
             <tr>
                 <td colspan="7" valign="top"><strong>RO NO.</strong> <?php echo $service->repair_order_no; ?></td>
             </tr>
@@ -238,7 +238,7 @@
                 </td>
                 <td valign="top">
                     <strong>EXP. DATE</strong><br />
-                    <?php echo $service->exp_date; ?>
+                    <?php //echo $service->exp_date; ?>
                 </td>
             </tr>
             <tr>
@@ -263,13 +263,13 @@
             </tr>
         </table>
         <br />
-        <table width="100%" cellspacing="5" cellspacing="5">
+        <table width="100%" cellspacing="5" cellspacing="5" style="font-size: 7pt;">
             <!-- <thead> -->
                 <tr>
-                    <th width="20%" valign="top" align="left" class="bottom black">
+                    <th width="12%" valign="top" align="left" class="bottom black">
                         <strong>Part No.</strong>
                     </th>
-                    <th width="32%" valign="top" align="left" class="bottom black">
+                    <th width="28%" valign="top" align="left" class="bottom black">
                         <strong>DESCRIPTION</strong>
                     </th>
                     <th width="12%" valign="top" align="right" class="bottom black">
@@ -282,6 +282,9 @@
                         <strong>UNIT PRICE</strong>
                     </th>
                     <th width="12%" valign="top" align="right" class="bottom black">
+                        <strong>DISCOUNT</strong>
+                    </th>
+                    <th width="12%" valign="top" align="right" class="bottom black">
                         <strong>AMOUNT</strong>
                     </th>
                 </tr>
@@ -290,7 +293,7 @@
                 <?php foreach ($tbl_count as $tbl) { ?>
                     <tr>
                         <td valign="top" class="gray">C</td>
-                        <td valign="top" class="gray" colspan="5">
+                        <td valign="top" class="gray" colspan="6">
                             <strong><?php echo $tbl->sdesc; ?></strong>
                         </td>
                     </tr>
@@ -321,13 +324,14 @@
                                 <td valign="top"><?php echo $item->product_desc; ?></td>
                                 <td valign="top" align="right"><?php echo $item->service_qty + 0; ?></td>
                                 <td valign="top"><?php echo $item->unit_name; ?></td>
-                                <td valign="top" align="right"><?php echo number_format($item->service_price - ($item->service_line_total_discount / $item->service_qty), 2) ?></td>
+                                <td valign="top" align="right"><?php echo number_format($item->service_price, 2) ?></td>
+                                <td valign="top" align="right"><?php echo number_format($item->service_line_total_discount, 2) ?></td>
                                 <td valign="top" align="right"><?php echo number_format($item->service_gross - $item->service_line_total_discount, 2) ?></td>
                             </tr>
                     <?php }
                     } ?>
                     <tr>
-                        <td valign="top" colspan="5" align="right">Sub-Total</td>
+                        <td valign="top" colspan="6" align="right">Sub-Total</td>
                         <td valign="top" align="right">
                             <hr><?php echo number_format($sub_total, 2); ?>
                             <hr>
@@ -338,12 +342,12 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="6" style="height: 15px; min-height: 15px;">
+                    <td colspan="7" style="height: 15px; min-height: 15px;">
                         &nbsp;
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="5" valign="top" align="right">
+                    <td colspan="6" valign="top" align="right">
                         <strong>Sub Total:</strong>
                     </td>
                     <td valign="top" align="right">
@@ -353,7 +357,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="5" valign="top" align="right">
+                    <td colspan="6" valign="top" align="right">
                         <strong>VAT:</strong>
                     </td>
                     <td valign="top" align="right">
@@ -363,7 +367,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="5" valign="top" align="right">
+                    <td colspan="6" valign="top" align="right">
                         <strong>Grand Total:</strong>
                     </td>
                     <td valign="top" align="right">
@@ -373,7 +377,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="6" style="height: 15px; min-height: 15px;">
+                    <td colspan="7" style="height: 15px; min-height: 15px;">
                         &nbsp;
                     </td>
                 </tr>
@@ -410,14 +414,14 @@
         </table>
         <hr>
         <br /><br />
-        <table width="100%">
+        <table width="100%" style="font-size: 9pt;">
             <tr>
                 <td align="center">
                     <h1>SERVICE INVOICE</h1>
                 </td>
             </tr>
         </table> <br />
-        <table width="100%" cellspacing="5" cellspacing="5" border="1">
+        <table width="100%" border="1" style="font-size: 7pt;">
             <tr>
                 <td colspan="7" valign="top"><strong>RO NO.</strong> <?php echo $service->repair_order_no; ?></td>
             </tr>
@@ -519,7 +523,7 @@
                 </td>
                 <td valign="top">
                     <strong>EXP. DATE</strong><br />
-                    <?php echo $service->exp_date; ?>
+                    <?php //echo $service->exp_date; ?>
                 </td>
             </tr>
             <tr>
@@ -543,13 +547,13 @@
             </tr>
         </table>
         <br />
-        <table width="100%" cellspacing="5" cellspacing="5">
+        <table width="100%" cellspacing="5" cellspacing="5" style="font-size:7pt;">
             <!-- <thead> -->
                 <tr>
-                    <th width="20%" valign="top" align="left" class="bottom black">
+                    <th width="12%" valign="top" align="left" class="bottom black">
                         <strong>Part No.</strong>
                     </th>
-                    <th width="32%" valign="top" align="left" class="bottom black">
+                    <th width="28%" valign="top" align="left" class="bottom black">
                         <strong>DESCRIPTION</strong>
                     </th>
                     <th width="12%" valign="top" align="right" class="bottom black">
@@ -562,6 +566,9 @@
                         <strong>UNIT PRICE</strong>
                     </th>
                     <th width="12%" valign="top" align="right" class="bottom black">
+                        <strong>DISCOUNT</strong>
+                    </th>
+                    <th width="12%" valign="top" align="right" class="bottom black">
                         <strong>AMOUNT</strong>
                     </th>
                 </tr>
@@ -570,12 +577,12 @@
                 <?php foreach ($insured_tbl_count as $tbl) { ?>
                     <tr>
                         <td valign="top" class="gray">C</td>
-                        <td valign="top" class="gray" colspan="5">
+                        <td valign="top" class="gray" colspan="6">
                             <strong><?php echo $tbl->sdesc; ?></strong>
                         </td>
                     </tr>
                     <?php
-                    $sub_total = 0;
+                    $insured_sub_total = 0;
                     foreach ($insured_item_info as $item) {
                         if ($item->tbl_no == $tbl->tbl_no) {
                             $insured_grand_sub_total += $item->service_non_tax_amount;
@@ -601,13 +608,14 @@
                                 <td valign="top"><?php echo $item->product_desc; ?></td>
                                 <td valign="top" align="right"><?php echo $item->service_qty + 0; ?></td>
                                 <td valign="top"><?php echo $item->unit_name; ?></td>
-                                <td valign="top" align="right"><?php echo number_format($item->service_price - ($item->service_line_total_discount / $item->service_qty), 2) ?></td>
+                                <td valign="top" align="right"><?php echo number_format($item->service_price, 2) ?></td>
+                                <td valign="top" align="right"><?php echo number_format($item->service_line_total_discount, 2) ?></td>
                                 <td valign="top" align="right"><?php echo number_format($item->service_gross - $item->service_line_total_discount, 2) ?></td>
                             </tr>
                     <?php }
                     } ?>
                     <tr>
-                        <td valign="top" colspan="5" align="right">Sub-Total</td>
+                        <td valign="top" colspan="6" align="right">Sub-Total</td>
                         <td valign="top" align="right">
                             <hr><?php echo number_format($insured_sub_total, 2); ?>
                             <hr>
@@ -618,12 +626,12 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="6" style="height: 15px; min-height: 15px;">
+                    <td colspan="7" style="height: 15px; min-height: 15px;">
                         &nbsp;
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="5" valign="top" align="right">
+                    <td colspan="6" valign="top" align="right">
                         <strong>Sub Total:</strong>
                     </td>
                     <td valign="top" align="right">
@@ -633,7 +641,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="5" valign="top" align="right">
+                    <td colspan="6" valign="top" align="right">
                         <strong>VAT:</strong>
                     </td>
                     <td valign="top" align="right">
@@ -643,7 +651,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="5" valign="top" align="right">
+                    <td colspan="6" valign="top" align="right">
                         <strong>Grand Total:</strong>
                     </td>
                     <td valign="top" align="right">
@@ -653,7 +661,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="6" style="height: 15px; min-height: 15px;">
+                    <td colspan="7" style="height: 15px; min-height: 15px;">
                         &nbsp;
                     </td>
                 </tr>

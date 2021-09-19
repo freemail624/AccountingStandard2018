@@ -257,6 +257,7 @@ class Service_invoice extends CORE_Controller
                 $m_invoice->sdesc_8=$this->input->post('sdesc_8',TRUE);
                 $m_invoice->sdesc_9=$this->input->post('sdesc_9',TRUE);
                 $m_invoice->sdesc_10=$this->input->post('sdesc_10',TRUE);
+
                 $m_invoice->sdesc_11=$this->input->post('sdesc_11',TRUE);
                 $m_invoice->sdesc_12=$this->input->post('sdesc_12',TRUE);
                 $m_invoice->sdesc_13=$this->input->post('sdesc_13',TRUE);
@@ -267,6 +268,7 @@ class Service_invoice extends CORE_Controller
                 $m_invoice->sdesc_18=$this->input->post('sdesc_18',TRUE);
                 $m_invoice->sdesc_19=$this->input->post('sdesc_19',TRUE);
                 $m_invoice->sdesc_20=$this->input->post('sdesc_20',TRUE);
+
                 $m_invoice->sdesc_21=$this->input->post('sdesc_21',TRUE);
                 $m_invoice->sdesc_22=$this->input->post('sdesc_22',TRUE);
                 $m_invoice->sdesc_23=$this->input->post('sdesc_23',TRUE);
@@ -277,6 +279,50 @@ class Service_invoice extends CORE_Controller
                 $m_invoice->sdesc_28=$this->input->post('sdesc_28',TRUE);
                 $m_invoice->sdesc_29=$this->input->post('sdesc_29',TRUE);
                 $m_invoice->sdesc_30=$this->input->post('sdesc_30',TRUE);
+            
+                $m_invoice->sdesc_31=$this->input->post('sdesc_31',TRUE);
+                $m_invoice->sdesc_32=$this->input->post('sdesc_32',TRUE);
+                $m_invoice->sdesc_33=$this->input->post('sdesc_33',TRUE);
+                $m_invoice->sdesc_34=$this->input->post('sdesc_34',TRUE);
+                $m_invoice->sdesc_35=$this->input->post('sdesc_35',TRUE);
+                $m_invoice->sdesc_36=$this->input->post('sdesc_36',TRUE);
+                $m_invoice->sdesc_37=$this->input->post('sdesc_37',TRUE);
+                $m_invoice->sdesc_38=$this->input->post('sdesc_38',TRUE);
+                $m_invoice->sdesc_39=$this->input->post('sdesc_39',TRUE);
+                $m_invoice->sdesc_40=$this->input->post('sdesc_40',TRUE);
+
+                $m_invoice->sdesc_31=$this->input->post('sdesc_31',TRUE);
+                $m_invoice->sdesc_32=$this->input->post('sdesc_32',TRUE);
+                $m_invoice->sdesc_33=$this->input->post('sdesc_33',TRUE);
+                $m_invoice->sdesc_34=$this->input->post('sdesc_34',TRUE);
+                $m_invoice->sdesc_35=$this->input->post('sdesc_35',TRUE);
+                $m_invoice->sdesc_36=$this->input->post('sdesc_36',TRUE);
+                $m_invoice->sdesc_37=$this->input->post('sdesc_37',TRUE);
+                $m_invoice->sdesc_38=$this->input->post('sdesc_38',TRUE);
+                $m_invoice->sdesc_39=$this->input->post('sdesc_39',TRUE);
+                $m_invoice->sdesc_40=$this->input->post('sdesc_40',TRUE);
+
+                $m_invoice->sdesc_41=$this->input->post('sdesc_41',TRUE);
+                $m_invoice->sdesc_42=$this->input->post('sdesc_42',TRUE);
+                $m_invoice->sdesc_43=$this->input->post('sdesc_43',TRUE);
+                $m_invoice->sdesc_44=$this->input->post('sdesc_44',TRUE);
+                $m_invoice->sdesc_45=$this->input->post('sdesc_45',TRUE);
+                $m_invoice->sdesc_46=$this->input->post('sdesc_46',TRUE);
+                $m_invoice->sdesc_47=$this->input->post('sdesc_47',TRUE);
+                $m_invoice->sdesc_48=$this->input->post('sdesc_48',TRUE);
+                $m_invoice->sdesc_49=$this->input->post('sdesc_49',TRUE);
+                $m_invoice->sdesc_50=$this->input->post('sdesc_50',TRUE);
+
+                $m_invoice->sdesc_51=$this->input->post('sdesc_51',TRUE);
+                $m_invoice->sdesc_52=$this->input->post('sdesc_52',TRUE);
+                $m_invoice->sdesc_53=$this->input->post('sdesc_53',TRUE);
+                $m_invoice->sdesc_54=$this->input->post('sdesc_54',TRUE);
+                $m_invoice->sdesc_55=$this->input->post('sdesc_55',TRUE);
+                $m_invoice->sdesc_56=$this->input->post('sdesc_56',TRUE);
+                $m_invoice->sdesc_57=$this->input->post('sdesc_57',TRUE);
+                $m_invoice->sdesc_58=$this->input->post('sdesc_58',TRUE);
+                $m_invoice->sdesc_59=$this->input->post('sdesc_59',TRUE);
+                $m_invoice->sdesc_60=$this->input->post('sdesc_60',TRUE);
 
                 $m_invoice->posted_by_user=$this->session->user_id;
                 $m_invoice->save();
@@ -530,6 +576,7 @@ class Service_invoice extends CORE_Controller
                 $m_invoice->sdesc_8=$this->input->post('sdesc_8',TRUE);
                 $m_invoice->sdesc_9=$this->input->post('sdesc_9',TRUE);
                 $m_invoice->sdesc_10=$this->input->post('sdesc_10',TRUE);
+
                 $m_invoice->sdesc_11=$this->input->post('sdesc_11',TRUE);
                 $m_invoice->sdesc_12=$this->input->post('sdesc_12',TRUE);
                 $m_invoice->sdesc_13=$this->input->post('sdesc_13',TRUE);
@@ -540,6 +587,7 @@ class Service_invoice extends CORE_Controller
                 $m_invoice->sdesc_18=$this->input->post('sdesc_18',TRUE);
                 $m_invoice->sdesc_19=$this->input->post('sdesc_19',TRUE);
                 $m_invoice->sdesc_20=$this->input->post('sdesc_20',TRUE);
+
                 $m_invoice->sdesc_21=$this->input->post('sdesc_21',TRUE);
                 $m_invoice->sdesc_22=$this->input->post('sdesc_22',TRUE);
                 $m_invoice->sdesc_23=$this->input->post('sdesc_23',TRUE);
@@ -550,7 +598,50 @@ class Service_invoice extends CORE_Controller
                 $m_invoice->sdesc_28=$this->input->post('sdesc_28',TRUE);
                 $m_invoice->sdesc_29=$this->input->post('sdesc_29',TRUE);
                 $m_invoice->sdesc_30=$this->input->post('sdesc_30',TRUE);
+            
+                $m_invoice->sdesc_31=$this->input->post('sdesc_31',TRUE);
+                $m_invoice->sdesc_32=$this->input->post('sdesc_32',TRUE);
+                $m_invoice->sdesc_33=$this->input->post('sdesc_33',TRUE);
+                $m_invoice->sdesc_34=$this->input->post('sdesc_34',TRUE);
+                $m_invoice->sdesc_35=$this->input->post('sdesc_35',TRUE);
+                $m_invoice->sdesc_36=$this->input->post('sdesc_36',TRUE);
+                $m_invoice->sdesc_37=$this->input->post('sdesc_37',TRUE);
+                $m_invoice->sdesc_38=$this->input->post('sdesc_38',TRUE);
+                $m_invoice->sdesc_39=$this->input->post('sdesc_39',TRUE);
+                $m_invoice->sdesc_40=$this->input->post('sdesc_40',TRUE);
 
+                $m_invoice->sdesc_31=$this->input->post('sdesc_31',TRUE);
+                $m_invoice->sdesc_32=$this->input->post('sdesc_32',TRUE);
+                $m_invoice->sdesc_33=$this->input->post('sdesc_33',TRUE);
+                $m_invoice->sdesc_34=$this->input->post('sdesc_34',TRUE);
+                $m_invoice->sdesc_35=$this->input->post('sdesc_35',TRUE);
+                $m_invoice->sdesc_36=$this->input->post('sdesc_36',TRUE);
+                $m_invoice->sdesc_37=$this->input->post('sdesc_37',TRUE);
+                $m_invoice->sdesc_38=$this->input->post('sdesc_38',TRUE);
+                $m_invoice->sdesc_39=$this->input->post('sdesc_39',TRUE);
+                $m_invoice->sdesc_40=$this->input->post('sdesc_40',TRUE);
+
+                $m_invoice->sdesc_41=$this->input->post('sdesc_41',TRUE);
+                $m_invoice->sdesc_42=$this->input->post('sdesc_42',TRUE);
+                $m_invoice->sdesc_43=$this->input->post('sdesc_43',TRUE);
+                $m_invoice->sdesc_44=$this->input->post('sdesc_44',TRUE);
+                $m_invoice->sdesc_45=$this->input->post('sdesc_45',TRUE);
+                $m_invoice->sdesc_46=$this->input->post('sdesc_46',TRUE);
+                $m_invoice->sdesc_47=$this->input->post('sdesc_47',TRUE);
+                $m_invoice->sdesc_48=$this->input->post('sdesc_48',TRUE);
+                $m_invoice->sdesc_49=$this->input->post('sdesc_49',TRUE);
+                $m_invoice->sdesc_50=$this->input->post('sdesc_50',TRUE);
+
+                $m_invoice->sdesc_51=$this->input->post('sdesc_51',TRUE);
+                $m_invoice->sdesc_52=$this->input->post('sdesc_52',TRUE);
+                $m_invoice->sdesc_53=$this->input->post('sdesc_53',TRUE);
+                $m_invoice->sdesc_54=$this->input->post('sdesc_54',TRUE);
+                $m_invoice->sdesc_55=$this->input->post('sdesc_55',TRUE);
+                $m_invoice->sdesc_56=$this->input->post('sdesc_56',TRUE);
+                $m_invoice->sdesc_57=$this->input->post('sdesc_57',TRUE);
+                $m_invoice->sdesc_58=$this->input->post('sdesc_58',TRUE);
+                $m_invoice->sdesc_59=$this->input->post('sdesc_59',TRUE);
+                $m_invoice->sdesc_60=$this->input->post('sdesc_60',TRUE);
                 $m_invoice->modify($service_invoice_id);
 
                 $m_invoice_item->delete_via_fk($service_invoice_id); //delete previous items then insert those new
