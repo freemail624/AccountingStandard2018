@@ -684,7 +684,7 @@ class Products extends CORE_Controller
                     $product_id,
                     $supplier_id=0, 
                     $category_id=0, 
-                    $item_type_id=1, 
+                    $item_type_id=0, 
                     $pick_list=FALSE, 
                     $depid=0, 
                     $account_cii,
