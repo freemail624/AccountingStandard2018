@@ -151,13 +151,29 @@ class Purchases extends CORE_Controller
                     );
                     break;
 
+                case 'transfer-po':
+
+                    $m_purchases=$this->Purchases_model;
+
+                    $purchase_order_id = $this->input->post('purchase_order_id', TRUE);
+                    $m_purchases->is_transfer = TRUE;
+                    
+                    if($m_purchases->modify($purchase_order_id)){
+                        $response['title']='Success!';
+                        $response['stat']='success';
+                        $response['msg']='Purchase order successfully transferred.';
+                        echo json_encode($response);
+                    }
+
+                    break;
+
                 case 'po-for-approved':  //is called on DASHBOARD, returns PO list for approval
                     //approval id 2 are those pending
                     $m_integration=$this->Account_integration_model;
                     $m_purchases=$this->Purchases_model;
 
                     $po_for_final_approval_amt = $m_integration->get_list(1)[0]->po_for_final_approval;
-                    $filter = " >= ".$po_for_final_approval_amt;
+                    $filter = "(po.total_after_discount >= ".$po_for_final_approval_amt." OR po.is_transfer = TRUE)";
 
                     $response['data']=$m_purchases->get_po_for_approval($filter);
                     echo json_encode($response);
@@ -169,7 +185,7 @@ class Purchases extends CORE_Controller
                     $m_purchases=$this->Purchases_model;
 
                     $po_for_accounting_approval_amt = $m_integration->get_list(1)[0]->po_for_accounting_approval;
-                    $filter = " <= ".$po_for_accounting_approval_amt;
+                    $filter = "(po.total_after_discount <= ".$po_for_accounting_approval_amt." AND po.is_transfer = FALSE)";
 
                     $response['data']=$m_purchases->get_po_for_approval($filter);
                     echo json_encode($response);

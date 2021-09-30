@@ -469,7 +469,7 @@
                                                                         </select> -->
                                                                     </div>
                                                                     <div class="col-sm-4">
-                                                                        <input type="text" class="form-control text-right numeric" name="account_balance" value="0" disabled>
+                                                                        <input type="text" class="form-control text-right numeric" name="account_balance" value="0">
                                                                     </div>
                                                                 </div><hr>
 
@@ -981,10 +981,13 @@ $(document).ready(function(){
                 $('input[name="current_bank_account"]').val(data[0].text);
                 $('input[name="account_to_reconcile"]').val(data[0].text);
 
+                var start = $('input[name="start_date"]').val();
+                var end = $('input[name="end_date"]').val();
+
                 $.ajax({
                     "dataType":"json",
                     "type":"GET",
-                    "url":"Bank_reconciliation/transaction/get-account-balance?account_id="+_cboAccounts.select2('val')
+                    "url":"Bank_reconciliation/transaction/get-account-balance?account_id="+_cboAccounts.select2('val')+"&start="+start+"&end="+end
                 }).done(function(response){
                     $('input[name="account_balance"]').val(response.data);
 
@@ -999,6 +1002,45 @@ $(document).ready(function(){
 
         });
 
+        $('input[name="end_date"]').on('change', function(){
+            var data = _cboAccounts.select2('data');
+
+            if ($(this).val() != null || ""){
+            
+                var start = $('input[name="start_date"]').val();
+                var end = $('input[name="end_date"]').val();
+
+                $.ajax({
+                    "dataType":"json",
+                    "type":"GET",
+                    "url":"Bank_reconciliation/transaction/get-account-balance?account_id="+_cboAccounts.select2('val')+"&start="+start+"&end="+end
+                }).done(function(response){
+                    $('input[name="account_balance"]').val(response.data);
+                    reComputeTotal();
+                });
+            }
+
+        });
+
+        $('input[name="start_date"]').on('change', function(){
+            var data = _cboAccounts.select2('data');
+
+            if ($(this).val() != null || ""){
+            
+                var start = $('input[name="start_date"]').val();
+                var end = $('input[name="end_date"]').val();
+
+                $.ajax({
+                    "dataType":"json",
+                    "type":"GET",
+                    "url":"Bank_reconciliation/transaction/get-account-balance?account_id="+_cboAccounts.select2('val')+"&start="+start+"&end="+end
+                }).done(function(response){
+                    $('input[name="account_balance"]').val(response.data);
+                    reComputeTotal();
+                });
+            }
+
+        });
         var reInitializeDate = function(){
 
             $('.date-picker').datepicker({

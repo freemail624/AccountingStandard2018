@@ -28,7 +28,7 @@ class Purchases_model extends CORE_Model {
             po.approval_id = 2 AND 
             po.is_reviewed = TRUE AND
             po.is_checked = FALSE AND
-            po.total_after_discount $filter_by
+            $filter_by
 
         GROUP BY po.purchase_order_id
         ORDER BY po.purchase_order_id DESC

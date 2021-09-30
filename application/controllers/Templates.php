@@ -3026,6 +3026,18 @@ class Templates extends CORE_Controller {
                     $data['suppliers']=$m_suppliers->get_supplier_list();
     
                     $data['entries']=$m_p_journal_accounts->get_list(array("purchase_journal_id"=>$purchase_journal_id));
+
+                    $data['entry_accounts']=$m_p_journal_accounts->get_list(
+                            array("purchase_journal_id"=>$purchase_journal_id),
+                            array('purchase_journal_accounts.*',
+                                'account_titles.account_title'
+                            ),
+                            array(
+                                array('account_titles','account_titles.account_id=purchase_journal_accounts.account_id','left')
+                            ),
+                            'dr_amount DESC, account_id DESC'
+                    );
+
                     $data['accounts']=$m_accounts->get_list(
                         array(
                             'account_titles.is_active'=>TRUE,
@@ -3081,7 +3093,7 @@ class Templates extends CORE_Controller {
                         // //download it.
                         // $pdf->Output();
     
-                        echo $this->load->view('template/ap_journal_rr_custom',$data,TRUE); //details of the journal
+                        echo $this->load->view('template/ap_journal_rr_custom_v2',$data,TRUE); //details of the journal
                     
                     }
     

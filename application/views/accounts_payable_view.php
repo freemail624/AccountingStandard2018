@@ -2119,6 +2119,7 @@
 
         var reInitializeChildElementsPosting=function(parent){
             var _dataParentID=parent.data('parent-id');
+            var _dataPurchaseJournalID=parent.find('input[name="purchase_journal_id"]').val();
             var btn=parent.find('button[name="btn_finalize_journal_review"]');
             var cancelbtn=parent.find('button[name="btn_cancel_journal_posting"]');
 
@@ -2161,7 +2162,7 @@
 
 
             parent.on('click','button[name="btn_print_rr"]',function(){
-                window.open('Templates/layout/ap-journal-for-review?type=RR&id='+_dataParentID);
+                window.open('Templates/layout/ap-journal-for-posting?type=RR&id='+_dataPurchaseJournalID);
             });
 
             parent.on('click','button[name="btn_cancel_journal_posting"]',function(){

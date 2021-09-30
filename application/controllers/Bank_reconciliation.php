@@ -600,24 +600,22 @@
 				
 				case 'get-account-balance':
 					$m_journal=$this->Journal_info_model;
+                	$m_months=$this->Months_model;
+                	$m_titles=$this->Account_title_model;
 
 					$account_id=$this->input->get('account_id');
+	                $start=$this->input->get('start',TRUE);
+	                $end=$this->input->get('end',TRUE);
 
-					$account_balance=$m_journal->get_list(
-						'ja.account_id='.$account_id.'
-						AND journal_info.is_deleted=FALSE
-						AND journal_info.is_active=TRUE',
-						'IFNULL(IF(ac.account_type_id = 1 OR ac.account_type_id = 5,
-						(SUM(ja.dr_amount) - SUM(ja.cr_amount)),
-						(SUM(ja.cr_amount) - SUM(ja.dr_amount))),0) AS Balance',
-						array(
-							array('journal_accounts as ja','ja.journal_id=journal_info.journal_id','inner'),
-							array('account_titles as at','at.account_id = ja.account_id','left'),
-							array('account_classes as ac','ac.account_class_id=at.account_class_id','left')
-						)
-					);
-
-					$response['data']=number_format($account_balance[0]->Balance,2);
+		            $date_filter = $m_months->get_between_dates(date('Y-m-d',strtotime($start)),date('Y-m-d',strtotime($end)));
+             		$account_balance=$m_titles->get_account_titles_balance(
+		                    date('Y-m-d',strtotime($date_filter[0]->start_date)),
+		                    date('Y-m-d',strtotime($date_filter[0]->end_date)),
+		                    $account_id,
+		                    date('Y-m-d',strtotime($date_filter[0]->previous_date))
+		                );
+             		
+					$response['data']=number_format($account_balance[0]->balance,2);
 
 					echo json_encode($response);
 					break;

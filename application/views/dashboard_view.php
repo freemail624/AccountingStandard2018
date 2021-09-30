@@ -654,6 +654,22 @@
               </div>
           </div>
       </div>      
+      <div id="modal_confirmation_transfer" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+          <div class="modal-dialog modal-sm">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                      <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Transfer Confirmation</h4>
+                  </div>
+                  <div class="modal-body">
+                    Are you sure you want to transfer this PO?
+                  </div>
+                  <div class="modal-footer">
+                      <button id="btn_yes_transfer" type="button" class="btn btn-success" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Transfer</button>
+                  </div>
+              </div>
+          </div>
+      </div>
       <div id="modal_confirmation_approval" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
           <div class="modal-dialog modal-md">
               <div class="modal-content">
@@ -1028,7 +1044,7 @@ Chart.defaults.global.defaultFontColor = "#000000";
                         render: function (data, type, full, meta){
                             //alert(full.purchase_order_id);
 
-                            var btn_approved='<button class="btn btn-success btn-sm" name="approve_po"  data-toggle="tooltip" data-placement="top" title="Approve this PO"><i class="fa fa-check" style="color: white;"></i> <span class=""></span></button>';
+                            var btn_approved='<button class="btn btn-success btn-sm" name="approve_po" data-toggle="tooltip" data-placement="top" title="Approve this PO"><i class="fa fa-check" style="color: white;"></i> <span class=""></span></button>';
                             var btn_conversation='<a id="link_conversation" href="Po_messages?id='+full.purchase_order_id+'" target="_blank" class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="Open Conversation"><i class="fa fa-envelope"></i> </a>';
                             var btn_disapproved='<button class="btn btn-danger btn-sm" name="disapprove_po" data-toggle="tooltip" data-placement="top" title="Disapprove this PO"><i class="fa fa-times" style="color: white;"></i> <span class=""></span></button>';
 
@@ -1110,12 +1126,12 @@ Chart.defaults.global.defaultFontColor = "#000000";
                         targets:[6],
                         render: function (data, type, full, meta){
                             //alert(full.purchase_order_id);
-
-                            var btn_approved='<button class="btn btn-primary btn-sm" name="checked_po"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Mark this PO as reviewed"><i class="fa fa-check" style="color: white;"></i> <span class=""></span></button>';
+                            var btn_transfer='<button class="btn btn-warning btn-sm" name="transfer_po"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Transfer this PO to GM"><i class="fa fa-exchange" style="color: white;font-size: 16px;"></i> <span class=""></span></button>';
+                            var btn_approved='<button class="btn btn-primary btn-sm" name="checked_po" data-toggle="tooltip" data-placement="top" title="Mark this PO as reviewed"><i class="fa fa-check" style="color: white;"></i> <span class=""></span></button>';
                             var btn_conversation='<a id="link_conversation" href="Po_messages?id='+full.purchase_order_id+'" target="_blank" class="btn btn-info btn-sm"  style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Open Conversation"><i class="fa fa-envelope"></i> </a>';
                             var btn_disapproved='<button class="btn btn-danger btn-sm" name="disapprove_po" data-toggle="tooltip" data-placement="top" title="Disapprove this PO"><i class="fa fa-times" style="color: white;"></i> <span class=""></span></button>';
 
-                            return '<center>'+btn_approved+'&nbsp;'+btn_conversation+'&nbsp;'+btn_disapproved+'</center>';
+                            return '<center>'+btn_transfer+'&nbsp;'+btn_approved+'&nbsp;'+btn_conversation+'&nbsp;'+btn_disapproved+'</center>';
                         }
                     }
                 ]
@@ -1434,7 +1450,30 @@ Chart.defaults.global.defaultFontColor = "#000000";
                     }
 
                 });
-              });                   
+              });  
+
+
+            $('#tbl_po_list_checking > tbody').on('click','button[name="transfer_po"]',function(){
+            // showNotification({title:"Approving PO and Sending Email!",stat:"info",msg:"Please wait for a few seconds."});
+                _selectRowObj=$(this).closest('tr'); //hold dom of tr which is selected
+                var data=dtchecking.row(_selectRowObj).data();
+                _selectedID=data.purchase_order_id;
+                $('#modal_confirmation_transfer').modal('show');
+
+            });           
+
+              $('#btn_yes_transfer').click(function(){
+                 transferPurchaseOrder().done(function(response){
+                    showNotification(response);
+                    if(response.stat=="success"){
+                        dtchecking.row(_selectRowObj).remove().draw();
+                        $('#tbl_po_list').DataTable().ajax.reload();
+                        $('#modal_confirmation_transfer').modal('hide');
+                    }
+
+                });
+              });  
+
 
             //****************************************************************************************
             $('#tbl_po_list > tbody').on('click','button[name="mark_as_approved"]',function(){
@@ -1579,6 +1618,16 @@ Chart.defaults.global.defaultFontColor = "#000000";
 
 
         //functions called on bindEventHandlers
+        var transferPurchaseOrder=function(){
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Purchases/transaction/transfer-po",
+                "data":{purchase_order_id : _selectedID}
+
+            });
+        };
+
         var approvePurchaseOrder=function(){
             return $.ajax({
                 "dataType":"json",
