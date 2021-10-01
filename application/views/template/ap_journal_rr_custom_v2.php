@@ -29,8 +29,8 @@
 </style>
 <!-- <img src="<?php //echo base_url(); ?>/assets/img/rr.jpg" style="top: 0px; left: 0px; width: 100%;position: absolute;z-index: 100;height: 100%;"> -->
 
-<span style="top: 95px; left: 160px;"><?php echo $purchase_info->supplier_name; ?></span>
-<span style="top: 95px; left: 565px;"><?php echo $purchase_info->date_delivered; ?></span>
+<span style="top: 95px; left: 160px;"><?php echo $info->supplier_name; ?></span>
+<span style="top: 95px; left: 565px;"><?php echo $info->date_delivered; ?></span>
 
 <div class="panel">
 
@@ -87,7 +87,7 @@
 
 
 <span style="top: 330px; left: 40px;max-width: 650px;width: 650px;">
-    <?php echo $purchase_info->remarks; ?>
+    <?php echo $info->remarks; ?>
 </span>
 
 <span style="top: 365px; left: 465px;">

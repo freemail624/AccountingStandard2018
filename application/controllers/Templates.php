@@ -2968,7 +2968,17 @@ class Templates extends CORE_Controller {
                     $m_p_journal_accounts=$this->Purchase_journal_account_model;
                     $m_company=$this->Company_model;
     
-                    $info=$m_p_journal->get_list($purchase_journal_id);
+                    $info=$m_p_journal->get_list(
+                        array('purchase_journal_info.purchase_journal_id'=>$purchase_journal_id),
+                        array('purchase_journal_info.*',
+                              'DATE_FORMAT(purchase_journal_info.date_txn,"%m/%d/%Y")as date_delivered',
+                              'suppliers.supplier_name',
+                            ),
+                        array(
+                            array('suppliers','suppliers.supplier_id=purchase_journal_info.supplier_id','left'),
+                        )
+                    );
+
                     $purchase_invoice_id = $info[0]->dr_invoice_id;
                     $data['info']=$info[0];
 
