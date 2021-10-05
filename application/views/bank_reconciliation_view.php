@@ -284,7 +284,6 @@
                                                                     <th align="right">Amount</th>
                                                                     <th width="7%">Outstanding</th>
                                                                     <th width="7%">Good Check / Released</th>
-                                                                    <th width="7%">Default</th>
                                                                 </thead>
                                                                 <tbody></tbody>
                                                             </table>
@@ -938,7 +937,7 @@ $(document).ready(function(){
                             attr_checked="checked";
                         }
 
-                        return '<input id="outstanding_'+full.check_no+'" type="radio" name="outstanding_'+ full.check_no +'[]" class="outstanding status" value="1" '+attr_checked+' data-amount="' + full.amount + '"/>'
+                        return '<input type="radio" name="outstanding_'+ full.journal_id +'[0]" class="outstanding status" value="1" '+attr_checked+' data-amount="' + full.amount + '"/>'
                     }
                 },
                 { 
@@ -950,18 +949,11 @@ $(document).ready(function(){
                             attr_checked="checked";
                         }
 
-                        return '<input id="good_check_'+full.check_no+'" type="radio" name="outstanding_'+ full.check_no +'[]" class="good-check status" value="2" '+attr_checked+'/>'
-                    }
-                },
-                { 
-                    class: "text-center hidden",
-                    targets:[10],
-                    render: function(data,type,full,meta) {
-                        var attr_checked="";
-                        if(full.check_status_id==0){
+                        if(_txnMode == "new"){
                             attr_checked="checked";
                         }
-                        return '<input id="default_'+full.check_no+'" type="radio" name="outstanding_'+ full.check_no +'[]" class="default status" value="0" '+attr_checked+'/>'
+
+                        return '<input id="check_no_'+full.check_no+'" type="radio" name="outstanding_'+ full.journal_id +'[0]" class="good-check status " value="2" '+attr_checked+'/>'
                     }
                 }
             ]
@@ -971,7 +963,7 @@ $(document).ready(function(){
     var bindEventHandlers=function(){
 
         $('#tbl_cbo_account_id').on('change', function() {
-            $('#tbl_bank_reconciliation_list').DataTable().ajax.reload()
+            $('#tbl_bank_reconciliation_list').DataTable().ajax.reload();
         });
 
         _cboAccounts.on('change', function(){

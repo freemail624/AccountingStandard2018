@@ -92,7 +92,14 @@ class Journal_info_model extends CORE_Model{
                     CONCAT_WS(' ',IFNULL(c.customer_name,''),IFNULL(s.supplier_name,'')) as particular,
                     CONCAT_WS(' ',IFNULL(check_c.customer_name,''),IFNULL(check_s.supplier_name,'')) as check_particular,
                     department_name,
-                    COALESCE((SELECT check_status_id FROM bank_reconciliation_checks WHERE bank_recon_id = $bank_recon_id AND journal_id = ji.journal_id),0) as check_status_id
+                    COALESCE((
+                    SELECT check_status_id 
+                    FROM bank_reconciliation_checks 
+                    LEFT JOIN bank_reconciliation ON bank_reconciliation_checks.bank_recon_id = bank_reconciliation.bank_recon_id
+                    WHERE 
+                    bank_reconciliation_checks.bank_recon_id = $bank_recon_id 
+                    AND journal_id = ji.journal_id 
+                    AND bank_reconciliation.is_deleted = FALSE ),0) as check_status_id
                 FROM
                     journal_info as ji
                 LEFT JOIN suppliers AS s ON s.supplier_id = ji.supplier_id
