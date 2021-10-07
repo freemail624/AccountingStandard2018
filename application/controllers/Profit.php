@@ -48,8 +48,10 @@ class Profit extends CORE_Controller
                     $response['data']=$m_sales->get_profit_by_product($start,$end); 
                 }else if($invoice_type == 2){//Charge Invoices
                     $response['data']=$m_sales->get_profit_by_product_charge($start,$end,$agent_id); 
-                }else{//Cash Invoices
+                }else if($invoice_type == 3){//Cash Invoices
                     $response['data']=$m_sales->get_profit_by_product_cash($start,$end); //Cash Invoice
+                }else{
+                    $response['data']=$m_sales->get_profit_by_product_service($start,$end); 
                 }
 
                 echo json_encode($response);
@@ -75,12 +77,16 @@ class Profit extends CORE_Controller
                     $response['distinct']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,TRUE,FALSE,$agent_id);
                     $response['subtotal']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,TRUE,$agent_id);
 
-                }else{ //Cash Invoices
+                }else if($invoice_type == 3){ //Cash Invoices
 
                     $response['data']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end);
                     $response['distinct']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,TRUE);
                     $response['subtotal']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,FALSE,TRUE);
 
+                }else{
+                    $response['data']=$m_sales->get_profit_by_invoice_detailed_service($start,$end,FALSE,FALSE);
+                    $response['distinct']=$m_sales->get_profit_by_invoice_detailed_service($start,$end,TRUE,FALSE);
+                    $response['subtotal']=$m_sales->get_profit_by_invoice_detailed_service($start,$end,FALSE,TRUE);
                 }
 
                 echo json_encode($response);
@@ -98,8 +104,10 @@ class Profit extends CORE_Controller
                     $response['summary']=$m_sales->get_profit_by_invoice_detailed($start,$end,FALSE,TRUE);
                 }else if($invoice_type == 2){//Charge Invoices
                     $response['summary']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,TRUE,$agent_id); 
-                }else{//Cash Invoices
+                }else if($invoice_type == 3){//Cash Invoices
                    $response['summary']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,FALSE,TRUE);
+                }else{
+                   $response['summary']=$m_sales->get_profit_by_invoice_detailed_service($start,$end,FALSE,TRUE);
                 }
 
                     echo json_encode($response);
@@ -123,8 +131,10 @@ class Profit extends CORE_Controller
                         $data['items']=$m_sales->get_profit_by_product($start,$end); 
                     }else if($invoice_type == 2){//Charge Invoices
                         $data['items']=$m_sales->get_profit_by_product_charge($start,$end,$agent_id); 
-                    }else{//Cash Invoices
+                    }else if($invoice_type == 3){//Cash Invoices
                         $data['items']=$m_sales->get_profit_by_product_cash($start,$end); //Cash Invoice
+                    }else{
+                        $data['items']=$m_sales->get_profit_by_product_service($start,$end);
                     }
                     $this->load->view('template/profit_content',$data);
                 }
@@ -143,12 +153,17 @@ class Profit extends CORE_Controller
                         $data['distinct']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,TRUE,FALSE,$agent_id);
                         $data['subtotal']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,TRUE,$agent_id);
 
-                    }else{ //Cash Invoices
+                    }else if($invoice_type == 3){ //Cash Invoices
 
                         $data['items']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end);
                         $data['distinct']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,TRUE);
                         $data['subtotal']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,FALSE,TRUE);
 
+                    }else{
+
+                        $data['items']=$m_sales->get_profit_by_invoice_detailed_service($start,$end);
+                        $data['distinct']=$m_sales->get_profit_by_invoice_detailed_service($start,$end,TRUE);
+                        $data['subtotal']=$m_sales->get_profit_by_invoice_detailed_service($start,$end,FALSE,TRUE);
                     }
 
                     $this->load->view('template/profit_content_detailed',$data);
@@ -159,8 +174,10 @@ class Profit extends CORE_Controller
                         $data['summary']=$m_sales->get_profit_by_invoice_detailed($start,$end,FALSE,TRUE);
                     }else if($invoice_type == 2){//Charge Invoices
                         $data['summary']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,TRUE,$agent_id); 
-                    }else{//Cash Invoices
+                    }else if($invoice_type == 3){//Cash Invoices
                        $data['summary']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,FALSE,TRUE);
+                    }else{
+                       $data['summary']=$m_sales->get_profit_by_invoice_detailed_service($start,$end,FALSE,TRUE);
                     }
 
                     $this->load->view('template/profit_content_summary',$data);
@@ -185,8 +202,10 @@ class Profit extends CORE_Controller
                     $items = $m_sales->get_profit_by_product($start,$end);
                 }else if($invoice_type == 2){//Charge Invoices
                     $items = $m_sales->get_profit_by_product_charge($start,$end,$agent_id); 
-                }else{//Cash Invoices
+                }else if($invoice_type == 3){//Cash Invoices
                     $items = $m_sales->get_profit_by_product_cash($start,$end);
+                }else{
+                    $items = $m_sales->get_profit_by_product_service($start,$end);
                 }
 
                 $excel->setActiveSheetIndex(0);
@@ -352,12 +371,17 @@ class Profit extends CORE_Controller
                     $distinct=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,TRUE,FALSE,$agent_id);
                     $subtotal=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,TRUE,$agent_id);
 
-                }else{ //Cash Invoices
+                }else if($invoice_type == 3){ //Cash Invoices
 
                     $data=$m_sales->get_profit_by_invoice_detailed_cash($start,$end);
                     $distinct=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,TRUE);
                     $subtotal=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,FALSE,TRUE);
 
+                }else{ //Service Invoice
+
+                    $data=$m_sales->get_profit_by_invoice_detailed_service($start,$end);
+                    $distinct=$m_sales->get_profit_by_invoice_detailed_service($start,$end,TRUE);
+                    $subtotal=$m_sales->get_profit_by_invoice_detailed_service($start,$end,FALSE,TRUE);
                 }
 
                 $excel->setActiveSheetIndex(0);
@@ -552,8 +576,10 @@ class Profit extends CORE_Controller
                     $summary=$m_sales->get_profit_by_invoice_detailed($start,$end,FALSE,TRUE);
                 }else if($invoice_type == 2){//Charge Invoices
                     $summary=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,TRUE,$agent_id); 
-                }else{//Cash Invoices
+                }else if($invoice_type == 2){//Cash Invoices
                    $summary=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,FALSE,TRUE);
+                }else{//Service Invoice
+                   $summary=$m_sales->get_profit_by_invoice_detailed_service($start,$end,FALSE,TRUE);
                 }
 
                 $excel->setActiveSheetIndex(0);

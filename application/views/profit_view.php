@@ -195,6 +195,7 @@
                         <option value="1">All Invoices</option>
                         <option value="2">Charge Invoice</option>
                         <option value="3">Cash Invoice</option>
+                        <option value="4">Service Invoice</option>
                     </select>
                 </div>
                 <div class="col-sm-3">
@@ -382,12 +383,6 @@ $(document).ready(function(){
         _cboInvoiceType.on("select2:select", function (e) {
             type = _cboReportType.val();
             var invoice_type = $(this).val();
-
-            if(invoice_type == 2){
-                $('.truck_panel').show();
-            }else{
-                $('.truck_panel').hide();
-            }
 
             if(type == '1'){ reportProducts();}else if(type == '2'){ reportInvoiceDetailed();}else if(type == '3'){ reportInvoiceSummary(); }
         });     

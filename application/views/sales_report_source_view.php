@@ -204,7 +204,7 @@
                         <option value="0">ALL</option>
                         <option value="1">Sales Invoices</option>
                         <option value="2">Cash Invoices</option>
-                       
+                        <option value="3">Service Invoices</option>
                     </select>
                 </div>
                 <div class="col-lg-2">

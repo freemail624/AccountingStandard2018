@@ -65,12 +65,36 @@ class Sales_report_source_model extends CORE_Model
         AND (ci.date_invoice BETWEEN '$start' AND '$end')
 		".($order_source_id!=0?" AND ci.order_source_id = $order_source_id":"")."
 
+        UNION ALL
+
+        SELECT
+        '3' as source_invoice,
+        0 as order_source_id,
+        '' as order_source_name,
+        servi.service_invoice_no as inv_no,
+        servi.date_invoice as date,
+        c.customer_name,
+        p.product_desc,
+        servii.service_qty as inv_qty,
+        servii.service_price as inv_price,
+        servii.service_gross as inv_gross,
+        servii.service_line_total_discount as inv_discount,
+        servii.service_line_total_after_global as inv_line_total_price
+
+        FROM service_invoice_items servii
+        LEFT JOIN service_invoice servi ON servi.service_invoice_id = servii.service_invoice_id 
+        LEFT JOIN products p ON p.product_id = servii.product_id 
+        LEFT JOIN customers c ON c.customer_id = servi.customer_id
+        WHERE servi.is_active = TRUE AND servi.is_deleted = FALSE
+        AND (servi.date_invoice BETWEEN '$start' AND '$end')
+        ".($order_source_id!=0?" AND 0 = 1":"")."
 
 		) as main 
 
 
 		".($all==1?" WHERE source_invoice = 1":"")."
 		".($all==2?" WHERE source_invoice = 2":"")."
+        ".($all==3?" WHERE source_invoice = 3":"")."
 		
         ORDER BY main.date DESC
 
@@ -135,8 +159,20 @@ class Sales_report_source_model extends CORE_Model
             LEFT JOIN order_source os ON os.order_source_id = ci.order_source_id
             WHERE ci.is_active = TRUE
             AND ci.is_deleted = FALSE
+            UNION ALL
             
-            
+            SELECT 
+            3 as source_invoice,
+            servi.service_invoice_no as inv_no,
+            servi.date_invoice,
+            0 as order_source_id,
+            '' as order_source_name
+            FROM service_invoice servi
+
+            WHERE servi.is_active = TRUE
+            AND servi.is_deleted = FALSE
+
+
             ) as invoices ON invoices.inv_no = ai.inv_no
 
 
@@ -150,6 +186,7 @@ class Sales_report_source_model extends CORE_Model
 
             ".($all==1?" WHERE source_invoice = 1":"")."
             ".($all==2?" WHERE source_invoice = 2":"")."
+            ".($all==3?" WHERE source_invoice = 2":"")."
 
 
 

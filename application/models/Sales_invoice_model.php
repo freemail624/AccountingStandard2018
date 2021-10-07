@@ -774,15 +774,36 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                 ci.customer_id,
                 ci.salesperson_id,
                 cii.product_id,
-                (cii.inv_qty - cii.inv_discount) as inv_qty,
-                cii.inv_price,
+                cii.inv_qty as inv_qty,
+                (cii.inv_price - cii.inv_discount) as inv_price,
                 cii.inv_line_total_after_global
             FROM
                 cash_invoice AS ci
                 INNER JOIN cash_invoice_items AS cii ON ci.cash_invoice_id = cii.cash_invoice_id
             WHERE
                 ci.is_active = TRUE AND ci.is_deleted = FALSE
-                AND ci.date_invoice BETWEEN '$start' AND '$end') as main
+                AND ci.date_invoice BETWEEN '$start' AND '$end'
+
+
+            UNION ALL
+
+            SELECT
+                servi.service_invoice_no as inv_no,
+                servi.date_invoice,
+                servi.customer_id,
+                0 as salesperson_id,
+                servii.product_id,
+                servii.service_qty as inv_qty,
+                (servii.service_price - servii.service_line_total_discount) as inv_price,
+                servii.service_line_total_after_global as inv_line_total_after_global
+            FROM
+                service_invoice AS servi
+                INNER JOIN service_invoice_items AS servii ON servi.service_invoice_id = servii.service_invoice_id
+            WHERE
+                servi.is_active = TRUE AND servi.is_deleted = FALSE
+                AND servi.date_invoice BETWEEN '$start' AND '$end'                
+
+                ) as main
             LEFT JOIN customers AS c ON c.customer_id = main.customer_id
             LEFT JOIN products AS p ON p.product_id=main.product_id
             LEFT JOIN salesperson AS s ON s.salesperson_id=main.salesperson_id
@@ -820,6 +841,20 @@ GROUP BY n.customer_id HAVING total_balance > 0";
 
             WHERE ci.is_active = TRUE AND ci.is_deleted = FALSE
             AND ci.date_invoice BETWEEN '$start' AND '$end'
+
+            UNION ALL
+
+            SELECT servi.customer_id,
+            0 as salesperson_id,
+            servii.service_line_total_after_global
+
+            FROM service_invoice_items servii 
+            LEFT JOIN service_invoice servi ON servi.service_invoice_id = servii.service_invoice_id
+
+            WHERE servi.is_active = TRUE AND servi.is_deleted = FALSE
+            AND servi.date_invoice BETWEEN '$start' AND '$end'
+
+
             ) as main
             LEFT JOIN customers c ON c.customer_id = main.customer_id
 
@@ -856,6 +891,19 @@ GROUP BY n.customer_id HAVING total_balance > 0";
 
             WHERE ci.is_active = TRUE AND ci.is_deleted = FALSE
             AND ci.date_invoice BETWEEN '$start' AND '$end'
+
+             UNION ALL
+
+            SELECT 
+            0 as salesperson_id,
+            servii.service_line_total_after_global as inv_line_total_after_global
+
+            FROM service_invoice_items servii 
+            LEFT JOIN service_invoice servi ON servi.service_invoice_id = servii.service_invoice_id
+
+            WHERE servi.is_active = TRUE AND servi.is_deleted = FALSE
+            AND servi.date_invoice BETWEEN '$start' AND '$end'
+
             ) as main
             LEFT JOIN salesperson s ON s.salesperson_id = main.salesperson_id
 
@@ -895,7 +943,20 @@ GROUP BY n.customer_id HAVING total_balance > 0";
                   
               WHERE
                   ci.is_active = TRUE AND ci.is_deleted = FALSE
-                  AND ci.date_invoice BETWEEN '$start' AND '$end') as main
+                  AND ci.date_invoice BETWEEN '$start' AND '$end'
+
+                UNION ALL
+
+            SELECT 
+                  servii.product_id,
+                  servii.service_line_total_after_global as inv_line_total_after_global
+              FROM
+                  (service_invoice AS servi)
+                  INNER JOIN service_invoice_items AS servii ON servi.service_invoice_id = servii.service_invoice_id
+              WHERE
+                  servi.is_active = TRUE AND servi.is_deleted = FALSE
+                  AND servi.date_invoice BETWEEN '$start' AND '$end'
+                  ) as main
 
                   LEFT JOIN products AS p ON p.product_id=main.product_id
 
@@ -961,6 +1022,17 @@ GROUP BY n.customer_id HAVING total_balance > 0";
             FROM  cash_invoice ci
             WHERE ci.is_active = TRUE AND ci.is_deleted = FALSE
             AND MONTH(ci.date_invoice) = '$month' AND YEAR(ci.date_invoice) = '$year'
+
+            UNION ALL
+
+            SELECT 
+
+            SUM(servii.service_line_total_after_global) as income_amount
+            FROM service_invoice_items servii
+
+            LEFT JOIN service_invoice servi ON servi.service_invoice_id = servii.service_invoice_id
+            WHERE servi.is_active = TRUE AND servi.is_deleted = FALSE
+            AND MONTH(servi.date_invoice) = '$month' AND YEAR(servi.date_invoice) = '$year'
 
             ) as main";
 
