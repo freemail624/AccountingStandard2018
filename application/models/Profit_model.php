@@ -7,6 +7,62 @@ class Profit_model extends CORE_Model
     {
         parent::__construct();
     }
+
+
+    function get_returns_by_invoice_detailed($start,$end,$customer_id=0){
+        $sql="SELECT main.*,
+                (main.returned_qty * main.net_returned) as total_net_returned
+            FROM 
+
+            (SELECT
+                    ai.inv_no,
+                    aii.product_id,
+                    aii.adjust_qty as returned_qty,
+                    aii.adjust_price,
+                    aii.adjust_line_total_price as total,
+                    p.product_code,
+                    p.product_desc,
+                    units.unit_name,
+
+                    (CASE 
+                        WHEN ai.inv_type_id = 1 AND aii.adjust_price > 0
+                        THEN
+
+                        COALESCE((SELECT 
+                            MAX(sii.cost_upon_invoice) as cost_upon_invoice
+                            FROM sales_invoice_items sii 
+                            LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
+                            WHERE sii.product_id = aii.product_id AND si.sales_inv_no = ai.inv_no
+                        ),0)
+
+                        WHEN ai.inv_type_id = 2 AND aii.adjust_price > 0
+                        THEN
+
+                        COALESCE((SELECT 
+                            MAX(cii.cost_upon_invoice) as cost_upon_invoice
+                            FROM cash_invoice_items cii 
+                            LEFT JOIN cash_invoice ci ON ci.cash_invoice_id = cii.cash_invoice_id
+                            WHERE cii.product_id = aii.product_id AND ci.cash_inv_no = ai.inv_no
+                        ),0)
+
+                        ELSE 0
+
+                    END) as net_returned
+
+                FROM adjustment_items aii
+                LEFT JOIN adjustment_info ai ON ai.adjustment_id = aii.adjustment_id
+                LEFT JOIN products p ON p.product_id = aii.product_id
+                LEFT JOIN units ON units.unit_id = aii.unit_id
+                WHERE 
+                ai.is_deleted = FALSE AND ai.is_active = TRUE AND
+                ai.adjustment_type = 'IN' AND 
+                ai.is_returns = 1 AND
+                ai.date_adjusted BETWEEN '$start' AND '$end'
+                ".($customer_id==0?"":" AND ai.customer_id='".$customer_id."'").") as main
+        ";
+        return $this->db->query($sql)->result();
+    }
+
     function get_profit_by_product($start,$end,$customer_id=0){
         $sql="SELECT
 
@@ -23,15 +79,17 @@ class Profit_model extends CORE_Model
                 SUM(main.inv_gross) as gross,
                 p.purchase_cost,
                 SUM(main.net_cost) as net_cost,
-                (SUM(main.inv_gross) - SUM(main.net_cost)) as net_profit,
-                main.invoice_status
+                (SUM(main.inv_gross) - SUM(main.net_cost)) - (COALESCE(returns.total,0)) as net_profit,
+                main.invoice_status,
+                (COALESCE(returns.qty,0)) as return_qty,
+                (COALESCE(returns.total,0)) as return_amount
 
                 FROM(
                 SELECT charge.* FROM (SELECT 
                 sii.product_id,
                 SUM(sii.inv_qty) as inv_qty,
                 SUM(sii.inv_line_total_price) as inv_gross,
-                SUM(sii.inv_qty * sii.cost_upon_invoice) as net_cost,
+                SUM((sii.inv_qty - COALESCE(si_returns.qty,0)) * sii.cost_upon_invoice) as net_cost,
                (CASE
                     WHEN COALESCE(loading.invoice_id,0) > 0
                     THEN 1
@@ -51,6 +109,24 @@ class Profit_model extends CORE_Model
                     WHERE l.is_deleted = FALSE AND l.is_active = TRUE
                     GROUP BY li.invoice_id) as loading ON loading.invoice_id = si.sales_invoice_id
 
+                LEFT JOIN
+                (
+                    SELECT
+                    aii.product_id,
+                    ai.inv_no,
+                    SUM(aii.adjust_qty) as qty
+                    FROM adjustment_items aii
+                    LEFT JOIN adjustment_info ai ON ai.adjustment_id = aii.adjustment_id
+                    WHERE 
+                        ai.is_deleted = FALSE AND ai.is_active = TRUE AND
+                        ai.adjustment_type = 'IN' AND 
+                        ai.is_returns = 1 AND
+                        ai.inv_type_id = 1 AND
+                        ai.date_adjusted BETWEEN '$start' AND '$end'
+                        ".($customer_id==0?"":" AND ai.customer_id='".$customer_id."'")."
+                    GROUP BY ai.inv_no, aii.product_id
+                ) as si_returns ON si_returns.inv_no = si.sales_inv_no AND si_returns.product_id = sii.product_id
+
 
                 WHERE (loading.loading_date BETWEEN '$start' AND '$end') AND si.is_active = TRUE AND si.is_deleted = FALSE
                 ".($customer_id==0?"":" AND si.customer_id='".$customer_id."'")."
@@ -63,12 +139,31 @@ class Profit_model extends CORE_Model
                 cii.product_id,
                 SUM(cii.inv_qty) as inv_qty,
                 SUM(cii.inv_line_total_price) as inv_gross,
-                SUM(cii.inv_qty * cii.cost_upon_invoice) as net_cost,
+                SUM((cii.inv_qty - COALESCE(ci_returns.qty,0)) * cii.cost_upon_invoice) as net_cost,
                 1 as invoice_status
 
                 FROM 
                 cash_invoice_items cii
                 LEFT JOIN cash_invoice ci ON ci.cash_invoice_id = cii.cash_invoice_id
+
+                LEFT JOIN
+                (
+                    SELECT
+                    aii.product_id,
+                    ai.inv_no,
+                    SUM(aii.adjust_qty) as qty
+                    FROM adjustment_items aii
+                    LEFT JOIN adjustment_info ai ON ai.adjustment_id = aii.adjustment_id
+                    WHERE 
+                        ai.is_deleted = FALSE AND ai.is_active = TRUE AND
+                        ai.adjustment_type = 'IN' AND 
+                        ai.is_returns = 1 AND
+                        ai.inv_type_id = 2 AND
+                        ai.date_adjusted BETWEEN '$start' AND '$end'
+                        ".($customer_id==0?"":" AND ai.customer_id='".$customer_id."'")."
+                    GROUP BY ai.inv_no, aii.product_id
+                ) as ci_returns ON ci_returns.inv_no = ci.cash_inv_no AND ci_returns.product_id = cii.product_id
+
                 WHERE (ci.date_invoice BETWEEN '$start' AND '$end') AND ci.is_active = TRUE AND ci.is_deleted = FALSE
 
                 ".($customer_id==0?"":" AND ci.customer_id='".$customer_id."'")."
@@ -78,6 +173,22 @@ class Profit_model extends CORE_Model
                 LEFT JOIN units u ON u.unit_id = p.parent_unit_id
                 LEFT JOIN units as blkunit ON blkunit.unit_id = p.bulk_unit_id
                 LEFT JOIN units as chldunit ON chldunit.unit_id = p.parent_unit_id
+                LEFT JOIN
+                (
+                    SELECT
+                    aii.product_id,
+                    SUM(aii.adjust_qty) as qty,
+                    SUM(aii.adjust_line_total_price) as total
+                    FROM adjustment_items aii
+                    LEFT JOIN adjustment_info ai ON ai.adjustment_id = aii.adjustment_id
+                    WHERE 
+                        ai.is_deleted = FALSE AND ai.is_active = TRUE AND
+                        ai.adjustment_type = 'IN' AND 
+                        ai.is_returns = 1 AND
+                        ai.date_adjusted BETWEEN '$start' AND '$end'
+                        ".($customer_id==0?"":" AND ai.customer_id='".$customer_id."'")."
+                    GROUP BY aii.product_id
+                ) as returns ON returns.product_id = main.product_id
 
                 WHERE main.invoice_status > 0
 
@@ -85,13 +196,12 @@ class Profit_model extends CORE_Model
                 main.product_id
 
                 ORDER BY p.product_desc ASC
-	
+    
 
-		";
+        ";
 
         return $this->db->query($sql)->result();
     }
-
     function get_profit_by_product_charge($start,$end,$agent_id,$customer_id=0){
         $sql="SELECT
 
@@ -108,15 +218,17 @@ class Profit_model extends CORE_Model
                 SUM(main.inv_gross) as gross,
                 p.purchase_cost,
                 SUM(main.net_cost) as net_cost,
-                (SUM(main.inv_gross) - SUM(main.net_cost)) as net_profit,
-                main.invoice_status
+                (SUM(main.inv_gross) - SUM(main.net_cost)) - (COALESCE(returns.total,0)) as net_profit,
+                main.invoice_status,
+                (COALESCE(returns.qty,0)) as return_qty,
+                (COALESCE(returns.total,0)) as return_amount
 
                 FROM(
                 SELECT charge.* FROM (SELECT 
                 sii.product_id,
                 SUM(sii.inv_qty) as inv_qty,
                 SUM(sii.inv_line_total_price) as inv_gross,
-                SUM(sii.inv_qty * sii.cost_upon_invoice) as net_cost,
+                SUM((sii.inv_qty - COALESCE(si_returns.qty,0)) * sii.cost_upon_invoice) as net_cost,
                 (CASE
                     WHEN COALESCE(loading.invoice_id,0) > 0
                     THEN 1
@@ -135,7 +247,23 @@ class Profit_model extends CORE_Model
                     LEFT JOIN sales_invoice si ON si.sales_invoice_id = li.invoice_id
                     WHERE l.is_deleted = FALSE AND l.is_active = TRUE
                     GROUP BY li.invoice_id) as loading ON loading.invoice_id = si.sales_invoice_id
-
+                LEFT JOIN
+                (
+                    SELECT
+                    aii.product_id,
+                    ai.inv_no,
+                    SUM(aii.adjust_qty) as qty
+                    FROM adjustment_items aii
+                    LEFT JOIN adjustment_info ai ON ai.adjustment_id = aii.adjustment_id
+                    WHERE 
+                        ai.is_deleted = FALSE AND ai.is_active = TRUE AND
+                        ai.adjustment_type = 'IN' AND 
+                        ai.is_returns = 1 AND
+                        ai.inv_type_id = 1 AND
+                        ai.date_adjusted BETWEEN '$start' AND '$end'
+                        ".($customer_id==0?"":" AND ai.customer_id='".$customer_id."'")."
+                    GROUP BY ai.inv_no, aii.product_id
+                ) as si_returns ON si_returns.inv_no = si.sales_inv_no AND si_returns.product_id = sii.product_id
 
                 WHERE (loading.loading_date BETWEEN '$start' AND '$end') AND si.is_active = TRUE AND si.is_deleted = FALSE
 
@@ -152,6 +280,23 @@ class Profit_model extends CORE_Model
                 LEFT JOIN units u ON u.unit_id = p.parent_unit_id
                 LEFT JOIN units as blkunit ON blkunit.unit_id = p.bulk_unit_id
                 LEFT JOIN units as chldunit ON chldunit.unit_id = p.parent_unit_id
+                LEFT JOIN
+                (
+                    SELECT
+                    aii.product_id,
+                    SUM(aii.adjust_qty) as qty,
+                    SUM(aii.adjust_line_total_price) as total
+                    FROM adjustment_items aii
+                    LEFT JOIN adjustment_info ai ON ai.adjustment_id = aii.adjustment_id
+                    WHERE 
+                        ai.is_deleted = FALSE AND ai.is_active = TRUE AND
+                        ai.adjustment_type = 'IN' AND 
+                        ai.is_returns = 1 AND
+                        ai.inv_type_id = 1 AND
+                        ai.date_adjusted BETWEEN '$start' AND '$end'
+                        ".($customer_id==0?"":" AND ai.customer_id='".$customer_id."'")."
+                    GROUP BY aii.product_id
+                ) as returns ON returns.product_id = main.product_id
 
                 WHERE main.invoice_status > 0
 
@@ -181,8 +326,10 @@ class Profit_model extends CORE_Model
                 p.sale_price as srp,
                 SUM(main.inv_gross) as gross,
                 p.purchase_cost,
-                SUM(main.net_cost) as net_cost,
-                (SUM(main.inv_gross) - SUM(main.net_cost)) as net_profit
+                 SUM(main.net_cost) as net_cost,
+                (SUM(main.inv_gross) - SUM(main.net_cost)) - (COALESCE(returns.total,0)) as net_profit,
+                (COALESCE(returns.qty,0)) as return_qty,
+                (COALESCE(returns.total,0)) as return_amount
 
                 FROM(
 
@@ -190,11 +337,28 @@ class Profit_model extends CORE_Model
                 cii.product_id,
                 SUM(cii.inv_qty) as inv_qty,
                 SUM(cii.inv_line_total_price) as inv_gross,
-                SUM(cii.inv_qty * cii.cost_upon_invoice) as net_cost
+                SUM((cii.inv_qty - COALESCE(ci_returns.qty,0)) * cii.cost_upon_invoice) as net_cost
 
                 FROM 
                 cash_invoice_items cii
                 LEFT JOIN cash_invoice ci ON ci.cash_invoice_id = cii.cash_invoice_id
+                LEFT JOIN
+                (
+                    SELECT
+                    aii.product_id,
+                    ai.inv_no,
+                    SUM(aii.adjust_qty) as qty
+                    FROM adjustment_items aii
+                    LEFT JOIN adjustment_info ai ON ai.adjustment_id = aii.adjustment_id
+                    WHERE 
+                        ai.is_deleted = FALSE AND ai.is_active = TRUE AND
+                        ai.adjustment_type = 'IN' AND 
+                        ai.is_returns = 1 AND
+                        ai.inv_type_id = 2 AND
+                        ai.date_adjusted BETWEEN '$start' AND '$end'
+                        ".($customer_id==0?"":" AND ai.customer_id='".$customer_id."'")."
+                    GROUP BY ai.inv_no, aii.product_id
+                ) as ci_returns ON ci_returns.inv_no = ci.cash_inv_no AND ci_returns.product_id = cii.product_id                
                 WHERE (ci.date_invoice BETWEEN '$start' AND '$end') AND ci.is_active = TRUE AND ci.is_deleted = FALSE
 
                 ".($customer_id==0?"":" AND ci.customer_id='".$customer_id."'")."                
@@ -204,8 +368,24 @@ class Profit_model extends CORE_Model
                 LEFT JOIN units u ON u.unit_id = p.parent_unit_id
                 LEFT JOIN units as blkunit ON blkunit.unit_id = p.bulk_unit_id
                 LEFT JOIN units as chldunit ON chldunit.unit_id = p.parent_unit_id
-                GROUP BY 
-                main.product_id
+                LEFT JOIN
+                (
+                    SELECT
+                    aii.product_id,
+                    SUM(aii.adjust_qty) as qty,
+                    SUM(aii.adjust_line_total_price) as total
+                    FROM adjustment_items aii
+                    LEFT JOIN adjustment_info ai ON ai.adjustment_id = aii.adjustment_id
+                    WHERE 
+                        ai.is_deleted = FALSE AND ai.is_active = TRUE AND
+                        ai.adjustment_type = 'IN' AND 
+                        ai.is_returns = 1 AND
+                        ai.date_adjusted BETWEEN '$start' AND '$end'
+                        ".($customer_id==0?"":" AND ai.customer_id='".$customer_id."'")."
+                    GROUP BY aii.product_id
+                ) as returns ON returns.product_id = main.product_id
+
+                GROUP BY main.product_id
 
                 ORDER BY p.product_desc ASC
     

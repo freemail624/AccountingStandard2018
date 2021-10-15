@@ -73,18 +73,21 @@ class Profit extends CORE_Controller
                     $response['data']=$m_sales->get_profit_by_invoice_detailed($start,$end,FALSE,FALSE,$customer_id);
                     $response['distinct']=$m_sales->get_profit_by_invoice_detailed($start,$end,TRUE,FALSE,$customer_id);
                     $response['subtotal']=$m_sales->get_profit_by_invoice_detailed($start,$end,FALSE,TRUE,$customer_id);
+                    $response['returns']=$m_sales->get_returns_by_invoice_detailed($start,$end,$customer_id);
 
                 }else if($invoice_type == 2){ //Charge Invoices
  
                     $response['data']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,FALSE,$agent_id,$customer_id);
                     $response['distinct']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,TRUE,FALSE,$agent_id,$customer_id);
-                    $response['subtotal']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,FALSE,TRUE,$agent_id,$customer_id);
+                    $response['subtotal']=$m_sales->get_profit_by_invoice_detailed_charge($start,$end,$agent_id,$customer_id);
+                    $response['returns']=$m_sales->get_returns_by_invoice_detailed_charge($start,$end,FALSE,TRUE,$agent_id,$customer_id);
 
                 }else{ //Cash Invoices
 
                     $response['data']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,FALSE,FALSE,$customer_id);
                     $response['distinct']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,TRUE,FALSE,$customer_id);
                     $response['subtotal']=$m_sales->get_profit_by_invoice_detailed_cash($start,$end,FALSE,TRUE,$customer_id);
+                    $response['returns']=$m_sales->get_returns_by_invoice_detailed_cash($start,$end,$customer_id);
 
                 }
 
