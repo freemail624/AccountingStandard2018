@@ -412,7 +412,8 @@ GROUP BY n.supplier_id HAVING total_balance > 0
                             WHERE
                                 cv_info.dr_invoice_id = di.dr_invoice_id
                                     AND cv_info.is_deleted = FALSE
-                                    AND cv_info.is_active = TRUE) AS total_cv_amount
+                                    AND cv_info.is_active = TRUE
+                                    AND cv_info.cv_status_id != 4) AS total_cv_amount
                 FROM
                     delivery_invoice AS di
                 LEFT JOIN suppliers ON suppliers.supplier_id = di.supplier_id
@@ -454,7 +455,8 @@ GROUP BY n.supplier_id HAVING total_balance > 0
                                             WHERE
                                                 cv_info.dr_invoice_id = di.dr_invoice_id AND
                                                 cv_info.is_deleted = FALSE AND
-                                                cv_info.is_active = TRUE) AS total_cv_amount
+                                                cv_info.is_active = TRUE AND 
+                                                cv_info.cv_status_id != 4) AS total_cv_amount
                                 FROM
                                     delivery_invoice AS di
                                 WHERE
@@ -484,7 +486,8 @@ GROUP BY n.supplier_id HAVING total_balance > 0
                                             WHERE
                                                 cv_info.dr_invoice_id = di.dr_invoice_id AND
                                                 cv_info.is_deleted = FALSE AND
-                                                cv_info.is_active = TRUE) AS total_cv_amount
+                                                cv_info.is_active = TRUE AND
+                                                cv_info.cv_status_id != 4) AS total_cv_amount
                                 FROM
                                     delivery_invoice AS di
                                 WHERE

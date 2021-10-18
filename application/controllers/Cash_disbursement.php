@@ -351,9 +351,9 @@ class Cash_disbursement extends CORE_Controller
                 //AUDIT TRAIL END
 
                 //update status of dr
-                // $m_dr=$this->Delivery_invoice_model;
-                // $m_dr->order_status_id=$this->get_dr_status($dr_invoice_id);
-                // $m_dr->modify($dr_invoice_id);
+                $m_dr=$this->Delivery_invoice_model;
+                $m_dr->order_status_id=$this->get_dr_status($dr_invoice_id);
+                $m_dr->modify($dr_invoice_id);
 
                 $response['stat']='success';
                 $response['title']='Success!';
@@ -823,7 +823,12 @@ class Cash_disbursement extends CORE_Controller
             $m_cash_voucher=$this->Cash_vouchers_model;
 
             if(count($m_cash_voucher->get_list(
-                        array('cv_info.dr_invoice_id'=>$id,'cv_info.is_active'=>TRUE,'cv_info.is_deleted'=>FALSE),
+                        array(
+                            'cv_info.dr_invoice_id'=>$id,
+                            'cv_info.is_active'=>TRUE,
+                            'cv_info.is_deleted'=>FALSE,
+                            'cv_info.cv_status_id!=4'
+                        ),
                         'cv_info.cv_id'))==0 ){ //means no rr found on cash voucher that means this rr is still open
 
                 return 1;
