@@ -142,8 +142,19 @@
             <div class="row"> 
                 <div class="col-lg-3"><br> 
                 <button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Record Charge Invoice" ><i class="fa fa-plus"></i> Record Charge Invoice</button> 
-                </div> 
+                </div>
                 <div class="col-lg-3"> 
+                    Department : <br/>
+                    <select class="form-control" id="cbo_tbl_departments">
+                        <option value="0">All</option>
+                        <?php foreach($departments as $department){?>
+                            <option value="<?php echo $department->department_id; ?>">
+                                <?php echo $department->department_name; ?>
+                            </option>
+                        <?php }?>
+                    </select>
+                </div>                 
+                <div class="col-lg-2"> 
                         From :<br /> 
                         <div class="input-group"> 
                             <input type="text" id="txt_start_date_sales" name="" class="date-picker form-control" value="<?php echo date("m"); ?>/01/<?php echo date("Y"); ?>"> 
@@ -152,7 +163,7 @@
                              </span> 
                         </div> 
                 </div> 
-                <div class="col-lg-3"> 
+                <div class="col-lg-2"> 
                         To :<br /> 
                         <div class="input-group"> 
                             <input type="text" id="txt_end_date_sales" name="" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>"> 
@@ -161,7 +172,7 @@
                              </span> 
                         </div> 
                 </div> 
-                <div class="col-lg-3"> 
+                <div class="col-lg-2"> 
                         Search :<br /> 
                          <input type="text" id="tbl_sales_invoice_search" class="form-control"> 
                 </div> 
@@ -975,7 +986,7 @@ $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboDepartments; var _cboCustomers; var dt_so; var products; var changetxn;
     var _cboCustomerType; var prodstat;
     var _cboCustomerTypeCreate; var _cboSource;
-    var _line_unit; var global_item_desc = ''; var _selectRowTblItems;
+    var _line_unit; var global_item_desc = ''; var _selectRowTblItems; var _cboTblDepartment;
 
     var oTableItems={
         qty : 'td:eq(0)',
@@ -1008,7 +1019,42 @@ $(document).ready(function(){
         inv_tax_amount : 'tr:eq(2) > td:eq(1)',
         after_tax : 'tr:eq(3) > td:eq(1)'
     };
+
+    var initializeDepartmentOnload = function(){
+        
+        var user_department_id = <?php echo $this->session->user_department_id; ?>;
+
+        if(user_department_id != 0){
+            $('#cbo_tbl_departments').select2('val', user_department_id);
+            $('#cbo_tbl_departments').prop("disabled", true);
+        }
+
+    };
+
+    var initializeDepartment = function(status){
+        
+        var user_department_id = <?php echo $this->session->user_department_id; ?>;
+
+        if(user_department_id == 0 || user_department_id == null){
+            status == null ? "" : $('#cbo_departments').select2('val', null);
+            $('#cbo_departments').prop("disabled", false);
+        }else{
+            status == null ? "" : $('#cbo_departments').select2('val', user_department_id);
+            $('#cbo_departments').prop("disabled", true);
+        }
+
+    };
+
     var initializeControls=function(){
+
+        _cboTblDepartment=$("#cbo_tbl_departments").select2({
+            placeholder: "Please select Department.",
+            allowClear: false
+        });
+
+        initializeDepartmentOnload();
+        initializeDepartment();
+
         dt=$('#tbl_sales_invoice').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
@@ -1019,7 +1065,8 @@ $(document).ready(function(){
                 "data": function ( d ) { 
                         return $.extend( {}, d, { 
                             "tsd":$('#txt_start_date_sales').val(), 
-                            "ted":$('#txt_end_date_sales').val() 
+                            "ted":$('#txt_end_date_sales').val(),
+                            "department_id":$('#cbo_tbl_departments').val()
                         }); 
                     } 
             }, 
@@ -1458,6 +1505,11 @@ $(document).ready(function(){
                         .search(this.value) 
                         .draw(); 
         }); 
+
+        $("#cbo_tbl_departments").on("change", function () { 
+            $('#tbl_sales_invoice').DataTable().ajax.reload();
+        }); 
+
         $("#txt_start_date_sales").on("change", function () {         
             $('#tbl_sales_invoice').DataTable().ajax.reload() 
         }); 
@@ -1865,7 +1917,7 @@ $(document).ready(function(){
             
             $('#cbo_order_source').select2('val',data.order_source_id);
             $('#cbo_customer_type').select2('val',data.customer_type_id);
-            initializeDepartment(1);
+            initializeDepartment();
             $('#cbo_departments').select2('val',data.department_id);
             $('#cbo_department').select2('val',data.department_id);
             $('#cbo_customers').select2('val',data.customer_id);
@@ -2430,19 +2482,6 @@ $(document).ready(function(){
     };
     function format ( d ) {
         //return
-    };
-    var initializeDepartment = function(status){
-        
-        var user_department_id = <?php echo $this->session->user_department_id; ?>;
-        
-        if(user_department_id == 0 || user_department_id == null){
-            status == null ? "" : $('#cbo_departments').select2('val', null);
-            $('#cbo_departments').prop("disabled", false);
-        }else{
-            status == null ? "" : $('#cbo_departments').select2('val', user_department_id);
-            $('#cbo_departments').prop("disabled", true);
-        }
-
     };
 
     function validateNumber(event) {

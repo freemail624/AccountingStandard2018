@@ -858,6 +858,32 @@ $(document).ready(function(){
 
     }
 
+    var initializeDepartmentOnload = function(){
+        
+        var user_department_id = <?php echo $this->session->user_department_id; ?>;
+
+        if(user_department_id != 0){
+            $('#cbo_tbl_departments').select2('val', user_department_id);
+            $('#cbo_tbl_departments').prop("disabled", true);
+        }
+
+    };
+
+    var initializeDepartment = function(status){
+        
+        var user_department_id = <?php echo $this->session->user_department_id; ?>;
+
+        if(user_department_id == 0 || user_department_id == null){
+            status == null ? "" : $('#cbo_departments').select2('val', null);
+            $('#cbo_departments').prop("disabled", false);
+        }else{
+            status == null ? "" : $('#cbo_departments').select2('val', user_department_id);
+            $('#cbo_departments').prop("disabled", true);
+        }
+
+    };
+
+
     var initializeControls=function(){
 
         _cboStatus=$("#cbo_order_status").select2({
@@ -872,8 +898,8 @@ $(document).ready(function(){
             allowClear: false
         });
 
-        _cboTblDepartment.select2('val', 0);
-
+        initializeDepartmentOnload();
+        initializeDepartment();
         recomputeTblAmt();
 
         dt=$('#tbl_sales_order').DataTable({
@@ -1678,6 +1704,7 @@ $(document).ready(function(){
                 showNotification(response);
                 if(response.stat=="success"){
                     dt.row(_selectRowObj).remove().draw();
+                    recomputeTblAmt();
                 }
             });
             //}
@@ -1703,6 +1730,7 @@ $(document).ready(function(){
                         showNotification(response);
                         dt.row.add(response.row_added[0]).draw();
                         clearFields($('#frm_sales_order'));
+                        recomputeTblAmt();
                         showList(true);
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
@@ -1712,6 +1740,7 @@ $(document).ready(function(){
                         showNotification(response);
                         dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
                         clearFields($('#frm_sales_order'));
+                        recomputeTblAmt();
                         showList(true);
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
@@ -1935,20 +1964,6 @@ $(document).ready(function(){
     };
     function format ( d ) {
         //return
-    };
-
-    var initializeDepartment = function(status){
-        
-        var user_department_id = <?php echo $this->session->user_department_id; ?>;
-        
-        if(user_department_id == 0 || user_department_id == null){
-            status == null ? "" : $('#cbo_departments').select2('val', null);
-            $('#cbo_departments').prop("disabled", false);
-        }else{
-            status == null ? "" : $('#cbo_departments').select2('val', user_department_id);
-            $('#cbo_departments').prop("disabled", true);
-        }
-
     };
 
     function validateNumber(event) {

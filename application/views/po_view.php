@@ -190,11 +190,20 @@
         <h2 class="h2-panel-heading">Purchase Order<small> | <a href="assets/manual/purchasing/Purchase_Order.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
 
             <div class="row"> 
-                <div class="col-lg-3"><br> 
+                <div class="col-lg-2"><br> 
                 <button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-placement="left" title="Record Charge Invoice" ><i class="fa fa-plus"></i> Record Order</button> 
                 </div> 
-                <div class="col-lg-2"> 
-                </div> 
+                <div class="col-lg-3"> 
+                    Department : <br/>
+                    <select class="form-control" id="cbo_tbl_departments">
+                        <option value="0">All</option>
+                        <?php foreach($departments as $department){?>
+                            <option value="<?php echo $department->department_id; ?>">
+                                <?php echo $department->department_name; ?>
+                            </option>
+                        <?php }?>
+                    </select>
+                </div>                          
                 <div class="col-lg-2"> 
                     Status : <br/>
                     <select class="form-control" id="cbo_order_status">
@@ -220,14 +229,10 @@
                 <thead class="">
                 <tr>
                     <th></th>
-                    <th style="text-align: center;">Email</th>
                     <th>PO#</th>
                     <th>Ship Out Date</th>
                     <th>Vendor</th>
-                    <th>Terms</th>
-                    <th>Approved</th>
                     <th>Status</th>
-                    <th>Sent</th>
                     <th>Total Qty</th>
                     <th>Amount</th>
                     <th width="15%"><center>Action</center></th>
@@ -941,7 +946,7 @@
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboSuppliers; var _cboTaxType;
     var _cboDepartments; var _defCostType; var products; var _line_unit; var changetxn;
-    var _cboTerms; var _cboStatus; var recomputeTblAmt;
+    var _cboTerms; var _cboStatus; var recomputeTblAmt; var _cboTblDepartment;
 
     //_defCostType=1; //Luzon Area Purchase Cost is default, this will change when branch is specified
 
@@ -974,6 +979,7 @@ $(document).ready(function(){
     recomputeTblAmt = function(){
         var _data=$('#').serializeArray();
         _data.push({name : "order_status_id" ,value : $('#cbo_order_status').val()});
+        _data.push({name : "department_id" ,value : $('#cbo_tbl_departments').val()});
 
         $.ajax({
             "dataType":"json",
@@ -995,6 +1001,32 @@ $(document).ready(function(){
 
     }
 
+    var initializeDepartmentOnload = function(){
+        
+        var user_department_id = <?php echo $this->session->user_department_id; ?>;
+
+        if(user_department_id != 0){
+            $('#cbo_tbl_departments').select2('val', user_department_id);
+            $('#cbo_tbl_departments').prop("disabled", true);
+        }
+
+    };
+
+    var initializeDepartment = function(status){
+        
+        var user_department_id = <?php echo $this->session->user_department_id; ?>;
+
+        if(user_department_id == 0 || user_department_id == null){
+            status == null ? "" : $('#cbo_departments').select2('val', null);
+            $('#cbo_departments').prop("disabled", false);
+        }else{
+            status == null ? "" : $('#cbo_departments').select2('val', user_department_id);
+            $('#cbo_departments').prop("disabled", true);
+        }
+
+    };
+
+
     var initializeControls=function(){
 
         _cboStatus=$("#cbo_order_status").select2({
@@ -1004,9 +1036,25 @@ $(document).ready(function(){
 
         _cboStatus.select2('val', 1);
 
+        _cboTblDepartment=$("#cbo_tbl_departments").select2({
+            placeholder: "Please select Department.",
+            allowClear: false
+        });
+
+        initializeDepartment();
+        initializeDepartmentOnload();
+
         dt_pr=$('#tbl_pr_list').DataTable({
             "bLengthChange":false,
-            "ajax" : "Purchase_request/transaction/open",
+            "ajax" : { 
+                "url":"Purchase_request/transaction/open", 
+                "bDestroy": true,             
+                "data": function ( d ) { 
+                        return $.extend( {}, d, { 
+                            "department_id":$('#cbo_tbl_departments').val()
+                        }); 
+                    } 
+            },             
             "columns": [
                 {
                     "targets": [0],
@@ -1034,16 +1082,24 @@ $(document).ready(function(){
         dt=$('#tbl_purchases').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 12, "desc" ]],
+            "order": [[ 8, "desc" ]],
             "ajax" : { 
                 "url":"Purchases/transaction/list", 
                 "bDestroy": true,             
                 "data": function ( d ) { 
                         return $.extend( {}, d, { 
-                            "order_status_id":$('#cbo_order_status').val()
+                            "order_status_id":$('#cbo_order_status').val(),
+                            "department_id":$('#cbo_tbl_departments').val()
                         }); 
                     } 
             }, 
+            "language": {
+                "searchPlaceholder":"Search Invoice"
+            },
+            oLanguage: { 
+                    sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>' 
+            }, 
+            processing : true, 
             "columns": [
                 {
                     "targets": [0],
@@ -1052,54 +1108,24 @@ $(document).ready(function(){
                     "data":           null,
                     "defaultContent": ""
                 },
-                { visible:false,
-                    targets:[1], data:null,
-                    render: function (data, type, full, meta){
-                        var btn_email='<button id="btn_email" class="btn-primary btn btn-sm " style="margin-left:-15px;" data-toggle="tooltip" data-placement="top"><i class="fa fa-share"></i> <span class="display" style="display:none;"></span></button> ';
-                        var btn_disabled='<button id="btn_email" class="btn-primary btn btn-sm disabled" style="margin-left:-15px;" data-toggle="tooltip" data-placement="top"><i class="fa fa-share"></i> <span class="display" style="display:none;"></span></button> ';
-                        if(data.approval_id =="1"){
-                            return '<center>'+btn_email+'</center>';
-                        }else{
-                            return '<center>'+btn_disabled+'</center>';
-                            
-                        } 
-                    }
-                },
-                { targets:[2],data: "po_no" },
-                { targets:[3],data: "ship_out_date" },
-                { targets:[4],data: "supplier_name" },
-                { visible: false, targets:[5],data: "term_description" },
-                { visible: false, targets:[6],data: "approval_status" },
-                { targets:[7],data: "order_status" },
+                { targets:[1],data: "po_no" },
+                { targets:[2],data: "ship_out_date" },
+                { targets:[3],data: "supplier_name" },
+                { targets:[4],data: "order_status" },
                 {
-                    visible:false,targets:[8],data: null,
-                    render: function (data, type, full, meta){
-                        var _attribute='';
-                        //console.log(data.is_email_sent);
-                        if(data.is_email_sent=="1"){
-                            _attribute=' class="fa fa-check-circle" style="color:green;" ';
-                        }else{
-                            _attribute=' class="fa fa-times-circle" style="color:red;" ';
-                        }
-
-                        return '<center><i '+_attribute+'></i></center>';
-                    }
-
-                },
-                {
-                    sClass: "text-right", targets:[9],data: null,
+                    sClass: "text-right", targets:[5],data: null,
                     render: function (data, type, full, meta){
                         return accounting.formatNumber(data.total_qty,2);
                     }
                 },
                 {
-                    sClass: "text-right", targets:[10],data: null,
+                    sClass: "text-right", targets:[6],data: null,
                     render: function (data, type, full, meta){
                         return accounting.formatNumber(data.total_after_discount,2);
                     }
                 },
                 {
-                    sClass:"text-left", targets:[11],data: null,
+                    sClass:"text-left", targets:[7],data: null,
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
@@ -1114,7 +1140,7 @@ $(document).ready(function(){
 
                     }
                 },
-                { targets:[12],data: "purchase_order_id",visible:false }
+                { targets:[8],data: "purchase_order_id",visible:false }
             ]
         });
 
@@ -1446,6 +1472,11 @@ $(document).ready(function(){
             $('#tbl_purchases').DataTable().ajax.reload();
         }); 
 
+        $("#cbo_tbl_departments").on("change", function () { 
+            recomputeTblAmt();       
+            $('#tbl_purchases').DataTable().ajax.reload();
+        }); 
+
         // $('#tbl_purchases tbody').on('click','#btn_email',function(){
         //     _selectRowObj=$(this).parents('tr').prev();
         //     var d=dt.row(_selectRowObj).data();
@@ -1481,7 +1512,7 @@ $(document).ready(function(){
                 "beforeSend": showSpinningProgress(btn)
             }).done(function(response){
                 showNotification(response);
-                dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
+                dt.row(_selectRowObj).data(response.row_updated[0]).draw();
  
     
             });
@@ -1493,9 +1524,9 @@ $(document).ready(function(){
 
             //$('.toggle-fullscreen').click();
             clearFields($('#frm_purchases'));
+            initializeDepartment(1);
             $('#cbo_tax_type').select2('val',null);
             $('#cbo_suppliers').select2('val',null);
-            $('#cbo_departments').select2('val', $('#cbo_departments').data('default') );
             $('#cbo_terms').select2('val',null);
             $('textarea[name="remarks"]').val($('textarea[name="remarks"]').data('default'));
             $('textarea[name="deliver_to_address"]').val($('textarea[name="deliver_to_address"]').data('default'));
@@ -1643,6 +1674,7 @@ $(document).ready(function(){
             $('#txt_overall_discount').val(accounting.formatNumber($('#txt_overall_discount').val(),2));
 
             $('#cbo_suppliers').select2('val',data.supplier_id);
+            initializeDepartment();
             $('#cbo_departments').select2('val',data.department_id);
             $('#cbo_terms').select2('val',data.term_id);
 
@@ -1651,7 +1683,6 @@ $(document).ready(function(){
             //tbl_summary.find(oTableDetails.before_tax).html(accounting.formatNumber(data.total_before_tax,2));
             //tbl_summary.find(oTableDetails.tax_amount).html(accounting.formatNumber(data.total_tax_amount,2));
             //tbl_summary.find(oTableDetails.after_tax).html('<b>'+accounting.formatNumber(data.total_after_tax,2)+'</b>');
-
 
             $.ajax({
                 url : 'Purchases/transaction/items/'+data.purchase_order_id,
@@ -1720,6 +1751,8 @@ $(document).ready(function(){
 
 
 
+            _selectRowObj=$(this).closest('tr');
+            var data=dt.row(_selectRowObj).data();
 
             showList(false);
 
@@ -1946,6 +1979,7 @@ $(document).ready(function(){
                 showNotification(response);
                 if(response.stat=="success"){
                     dt.row(_selectRowObj).remove().draw();
+                    recomputeTblAmt();
                 }
 
             });
@@ -1964,7 +1998,7 @@ $(document).ready(function(){
             MarkRecordAsClosed().done(function(response){
                 showNotification(response);
                 if(response.stat=="success"){
-                    dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
+                    dt.row(_selectRowObj).data(response.row_updated[0]).draw();
                 }
 
             });
@@ -1990,6 +2024,7 @@ $(document).ready(function(){
                         showNotification(response);
                         dt.row.add(response.row_added[0]).draw();
                         clearFields($('#frm_purchases'));
+                        recomputeTblAmt();
                         showList(true);
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
@@ -1997,8 +2032,9 @@ $(document).ready(function(){
                 }else{
                     updatePurchaseOrder().done(function(response){
                         showNotification(response);
-                        dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
+                        dt.row(_selectRowObj).data(response.row_updated[0]).draw();
                         clearFields($('#frm_purchases'));
+                        recomputeTblAmt();
                         showList(true);
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
@@ -2146,6 +2182,7 @@ $(document).ready(function(){
         _data.push({name : "summary_tax_amount", value : tbl_summary.find(oTableDetails.tax_amount).text()});
         _data.push({name : "summary_after_tax", value : tbl_summary.find(oTableDetails.after_tax).text()});
         _data.push({name : "remarks", value : $('textarea[name="remarks"]').val() });
+        _data.push({name : "department", value : $('#cbo_departments').select2('val') });
         
         return $.ajax({
             "dataType":"json",
@@ -2167,6 +2204,8 @@ $(document).ready(function(){
         _data.push({name : "summary_after_tax", value : tbl_summary.find(oTableDetails.after_tax).text()});
         _data.push({name : "purchase_order_id" ,value : _selectedID});
         _data.push({name : "remarks", value : $('textarea[name="remarks"]').val() });
+        _data.push({name : "department", value : $('#cbo_departments').select2('val') });
+
 
         return $.ajax({
             "dataType":"json",
@@ -2234,8 +2273,6 @@ $(document).ready(function(){
         $('#td_discount').html(accounting.formatNumber(0,2));
         $('#td_tax').html(accounting.formatNumber(0,2));
         $('#td_total_after_discount').html(accounting.formatNumber(0,2));
-
-
     };
 
 

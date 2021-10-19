@@ -173,9 +173,10 @@ class Purchase_request extends CORE_Controller
 
                 case 'open':  //this returns PO that are already approved
                     $m_requests=$this->Purchase_request_model;
+                    $department_id = $this->input->get('department_id', TRUE);
                     $response['data']= $m_requests->get_list(
 
-                        'purchase_request.is_deleted=FALSE AND purchase_request.is_active=TRUE AND purchase_request.approval_id=1 AND (purchase_request.order_status_id=1 OR purchase_request.order_status_id=3)',
+                        'purchase_request.is_deleted=FALSE AND purchase_request.is_active=TRUE AND purchase_request.approval_id=1 AND (purchase_request.order_status_id=1 OR purchase_request.order_status_id=3)'.($department_id==0?'':' AND purchase_request.department_id='.$department_id),
 
                         array(
                             'purchase_request.*',

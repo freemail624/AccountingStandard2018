@@ -197,8 +197,17 @@
                 <div class="col-lg-3"><br> 
                 <button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-placement="left" title="Record Charge Invoice" ><i class="fa fa-plus"></i> Record Purchase Invoice</button> 
                 </div> 
-                <div class="col-lg-2"> 
-                </div> 
+                <div class="col-lg-3"> 
+                    Department : <br/>
+                    <select class="form-control" id="cbo_tbl_departments">
+                        <option value="0">All</option>
+                        <?php foreach($departments as $department){?>
+                            <option value="<?php echo $department->department_id; ?>">
+                                <?php echo $department->department_name; ?>
+                            </option>
+                        <?php }?>
+                    </select>
+                </div>
                 <div class="col-lg-2">
                     From :<br /> 
                     <div class="input-group"> 
@@ -217,7 +226,7 @@
                          </span> 
                     </div> 
                 </div> 
-                <div class="col-lg-3"> 
+                <div class="col-lg-2"> 
                     Search :<br /> 
                     <input type="text" id="tbl_search" class="form-control"> 
                 </div> 
@@ -988,7 +997,7 @@
 $(document).ready(function(){
     var dt; var dt_po; var _txnMode; var _selectedID; var _selectRowObj; var _cboSuppliers; var _cboTaxType;
     var _productType; var _cboDepartments; var _defCostType; var products; var _line_unit; var changetxn ;
-    var _cboTerms; var _cboPaymentMethod;
+    var _cboTerms; var _cboPaymentMethod; var _cboTblDepartment;
     //_defCostType=0;
 
     var oTableItems={
@@ -1021,11 +1030,53 @@ $(document).ready(function(){
     };
 
 
+    var initializeDepartmentOnload = function(){
+        
+        var user_department_id = <?php echo $this->session->user_department_id; ?>;
+
+        if(user_department_id != 0){
+            $('#cbo_tbl_departments').select2('val', user_department_id);
+            $('#cbo_tbl_departments').prop("disabled", true);
+        }
+
+    };
+
+    var initializeDepartment = function(status){
+        
+        var user_department_id = <?php echo $this->session->user_department_id; ?>;
+
+        if(user_department_id == 0 || user_department_id == null){
+            status == null ? "" : $('#cbo_departments').select2('val', null);
+            $('#cbo_departments').prop("disabled", false);
+        }else{
+            status == null ? "" : $('#cbo_departments').select2('val', user_department_id);
+            $('#cbo_departments').prop("disabled", true);
+        }
+
+    };
+
+
     var initializeControls=function(){
+
+        _cboTblDepartment=$("#cbo_tbl_departments").select2({
+            placeholder: "Please select Department.",
+            allowClear: false
+        });
+
+        initializeDepartment();
+        initializeDepartmentOnload();
 
         dt_po=$('#tbl_po_list').DataTable({
             "bLengthChange":false,
-            "ajax" : "Purchases/transaction/open",
+            "ajax" : { 
+                "url":"Purchases/transaction/open", 
+                "bDestroy": true,             
+                "data": function ( d ) { 
+                        return $.extend( {}, d, { 
+                            "department_id":$('#cbo_tbl_departments').val()
+                        }); 
+                    } 
+            }, 
             "columns": [
                 {
                     "targets": [0],
@@ -1063,7 +1114,8 @@ $(document).ready(function(){
                 "data": function ( d ) { 
                         return $.extend( {}, d, { 
                             "tsd":$('#txt_start_date').val(), 
-                            "ted":$('#txt_end_date').val() 
+                            "ted":$('#txt_end_date').val(),
+                            "department_id":$('#cbo_tbl_departments').val()
                         }); 
                     } 
             }, 
@@ -1482,7 +1534,7 @@ $(document).ready(function(){
             //$('.toggle-fullscreen').click();
             $('#span_invoice_no').html('INV-XXXX');
             clearFields($('#frm_deliveries'));
-            $('#cbo_departments').select2('val', $('#cbo_departments').data('default') );
+            initializeDepartment(1);
             $('#cbo_suppliers').select2('val', null);
             $('#cbo_terms').select2('val', null);
             $('#cbo_payment_method').select2('val', 1);
@@ -1776,6 +1828,7 @@ $(document).ready(function(){
 
                 $('textarea[name="remarks"]').val(data.remarks);
                 $('#cbo_suppliers').select2('val',data.supplier_id);
+                initializeDepartment();
                 $('#cbo_departments').select2('val',data.department_id);
                 $('#cbo_terms').select2('val',data.term_id);
                 $('#cbo_payment_method').select2('val',data.payment_method_id);
@@ -2122,6 +2175,10 @@ $(document).ready(function(){
                     .draw(); 
         });
 
+        $("#cbo_tbl_departments").on("change", function () { 
+            $('#tbl_delivery_invoice').DataTable().ajax.reload();
+        }); 
+
         $("#txt_start_date, #txt_end_date").on("change", function () {         
             $('#tbl_delivery_invoice').DataTable().ajax.reload() 
         }); 
@@ -2259,7 +2316,8 @@ $(document).ready(function(){
         _data.push({name : "summary_before_discount", value :tbl_summary.find(oTableDetails.before_tax).text()});
         _data.push({name : "summary_tax_amount", value : tbl_summary.find(oTableDetails.tax_amount).text()});
         _data.push({name : "summary_after_tax", value : tbl_summary.find(oTableDetails.after_tax).text()});
-        console.log(_data);
+        _data.push({name : "department", value : $('#cbo_departments').select2('val') });
+
         return $.ajax({ 
             "dataType":"json",
             "type":"POST",
@@ -2280,7 +2338,8 @@ $(document).ready(function(){
         _data.push({name : "summary_tax_amount", value : tbl_summary.find(oTableDetails.tax_amount).text()});
         _data.push({name : "summary_after_tax", value : tbl_summary.find(oTableDetails.after_tax).text()});
         _data.push({name : "dr_invoice_id" ,value : _selectedID});
-        console.log(_data);
+        _data.push({name : "department", value : $('#cbo_departments').select2('val') });
+
         return $.ajax({
             "dataType":"json",
             "type":"POST",

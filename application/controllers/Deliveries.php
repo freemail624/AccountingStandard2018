@@ -94,7 +94,15 @@ class Deliveries extends CORE_Controller
             $m_delivery=$this->Delivery_invoice_model;
             $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
             $ted = date('Y-m-d',strtotime($this->input->get('ted')));
-            $response['data']=$m_delivery->delivery_list_count($id_filter,null,null,$tsd,$ted,null);
+            $department_id = $this->input->get('department_id', TRUE);
+
+            if($department_id == 0){
+                $department = null;
+            }else{
+                $department = $department_id;
+            }
+
+            $response['data']=$m_delivery->delivery_list_count($id_filter,$department,null,$tsd,$ted,null);
 
             echo json_encode($response);    
 

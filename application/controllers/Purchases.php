@@ -75,14 +75,16 @@ class Purchases extends CORE_Controller
                 case 'list':  //this returns JSON of Purchase Order to be rendered on Datatable
                     $m_purchases=$this->Purchases_model;
                     $order_status_id = $this->input->get('order_status_id', TRUE);
-                    $response['data']=$m_purchases->get_po_list(null,$order_status_id);
+                    $department_id = $this->input->get('department_id', TRUE);
+                    $response['data']=$m_purchases->get_po_list(null,$order_status_id,$department_id);
                     echo json_encode($response);
                     break;
 
                 case 'tbl_amount':
                     $m_purchases=$this->Purchases_model;
                     $order_status_id = $this->input->post('order_status_id', TRUE);
-                    $response['data']=$m_purchases->get_tbl_amount($order_status_id);
+                    $department_id = $this->input->post('department_id', TRUE);
+                    $response['data']=$m_purchases->get_tbl_amount($order_status_id,$department_id);
                     echo json_encode($response);
                     break;
                     
@@ -148,10 +150,11 @@ class Purchases extends CORE_Controller
 
                 case 'open':  //this returns PO that are already approved
                     $m_purchases=$this->Purchases_model;
+                    $department_id = $this->input->get('department_id', TRUE);
                     //$where_filter=null,$select_list=null,$join_array=null,$order_by=null,$group_by=null,$auto_select_escape=TRUE,$custom_where_filter=null
                     $response['data']= $m_purchases->get_list(
 
-                        'purchase_order.is_deleted=FALSE AND purchase_order.is_active=TRUE AND purchase_order.approval_id=1 AND (purchase_order.order_status_id=1 OR purchase_order.order_status_id=3)',
+                        'purchase_order.is_deleted=FALSE AND purchase_order.is_active=TRUE AND purchase_order.approval_id=1 AND (purchase_order.order_status_id=1 OR purchase_order.order_status_id=3)'.($department_id==0?'':' AND purchase_order.department_id='.$department_id),
 
                         array(
                             'purchase_order.*',

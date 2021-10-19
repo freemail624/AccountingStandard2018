@@ -8,7 +8,7 @@ class Purchases_model extends CORE_Model {
         parent::__construct();
     }
 
-    function get_po_list($purchase_order_id=null,$order_status_id=0){
+    function get_po_list($purchase_order_id=null,$order_status_id=0,$department_id=0){
         $sql="SELECT 
                 po.*,
                 terms.term_description,
@@ -42,11 +42,12 @@ class Purchases_model extends CORE_Model {
                     AND po.is_active = TRUE
                     ".($purchase_order_id==null?"":" AND po.purchase_order_id='".$purchase_order_id."'")."
                     ".($order_status_id==0?"":" AND po.order_status_id='".$order_status_id."'")."
+                    ".($department_id==0?"":" AND po.department_id='".$department_id."'")."
             ORDER BY po.purchase_order_id DESC";
             return $this->db->query($sql)->result();
     }
 
-    function get_tbl_amount($order_status_id=0){
+    function get_tbl_amount($order_status_id=0,$department_id=0){
         $sql="SELECT 
                 COALESCE(SUM(poi.po_line_total_after_global), 0) AS total_tbl_amount
             FROM
@@ -55,7 +56,8 @@ class Purchases_model extends CORE_Model {
                 purchase_order po ON po.purchase_order_id = poi.purchase_order_id
                 WHERE po.is_deleted = FALSE AND
                     po.is_active = TRUE
-                ".($order_status_id==0?"":" AND po.order_status_id='".$order_status_id."'")."";
+                ".($order_status_id==0?"":" AND po.order_status_id='".$order_status_id."'")."
+                ".($department_id==0?"":" AND po.department_id='".$department_id."'")."";
             
             return $this->db->query($sql)->result();
     }

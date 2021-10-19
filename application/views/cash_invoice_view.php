@@ -154,6 +154,17 @@
                     <button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Record Cash Invoice" ><i class="fa fa-plus"></i> Record Cash Invoice</button> 
                 </div> 
                 <div class="col-lg-3"> 
+                    Department : <br/>
+                    <select class="form-control" id="cbo_tbl_departments">
+                        <option value="0">All</option>
+                        <?php foreach($departments as $department){?>
+                            <option value="<?php echo $department->department_id; ?>">
+                                <?php echo $department->department_name; ?>
+                            </option>
+                        <?php }?>
+                    </select>
+                </div>
+                <div class="col-lg-2"> 
                         From :<br /> 
                         <div class="input-group"> 
                             <input type="text" id="txt_start_date_cash" name="" class="date-picker form-control" value="<?php echo date("m"); ?>/01/<?php echo date("Y"); ?>"> 
@@ -162,7 +173,7 @@
                              </span> 
                         </div> 
                 </div> 
-                <div class="col-lg-3"> 
+                <div class="col-lg-2"> 
                         To :<br /> 
                         <div class="input-group"> 
                             <input type="text" id="txt_end_date_cash" name="" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>"> 
@@ -171,7 +182,7 @@
                              </span> 
                         </div> 
                 </div> 
-                <div class="col-lg-3"> 
+                <div class="col-lg-2"> 
                         Search :<br /> 
                          <input type="text" id="tbl_cash_invoice_search" class="form-control"> 
                 </div> 
@@ -1008,7 +1019,44 @@ $(document).ready(function(){
         inv_tax_amount : 'tr:eq(2) > td:eq(1)',
         after_tax : 'tr:eq(3) > td:eq(1)'
     };
+
+    var initializeDepartmentOnload = function(){
+        
+        var user_department_id = <?php echo $this->session->user_department_id; ?>;
+
+        if(user_department_id != 0){
+            $('#cbo_tbl_departments').select2('val', user_department_id);
+            $('#cbo_tbl_departments').prop("disabled", true);
+        }
+
+    };
+
+    var initializeDepartment = function(status){
+        
+        var user_department_id = <?php echo $this->session->user_department_id; ?>;
+
+        if(user_department_id == 0 || user_department_id == null){
+            status == null ? "" : $('#cbo_departments').select2('val', null);
+            $('#cbo_departments').prop("disabled", false);
+        }else{
+            status == null ? "" : $('#cbo_departments').select2('val', user_department_id);
+            $('#cbo_departments').prop("disabled", true);
+        }
+
+    };
+
+
+
     var initializeControls=function(){
+
+        _cboTblDepartment=$("#cbo_tbl_departments").select2({
+            placeholder: "Please select Department.",
+            allowClear: false
+        });
+
+        initializeDepartmentOnload();
+        initializeDepartment();
+
         dt=$('#tbl_cash_invoice').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
@@ -1019,7 +1067,8 @@ $(document).ready(function(){
                 "data": function ( d ) { 
                         return $.extend( {}, d, { 
                             "tsd":$('#txt_start_date_cash').val(), 
-                            "ted":$('#txt_end_date_cash').val() 
+                            "ted":$('#txt_end_date_cash').val(),
+                            "department_id":$('#cbo_tbl_departments').val()
                         }); 
                     } 
             },  
@@ -1385,6 +1434,11 @@ $(document).ready(function(){
         $('#link_browse').click(function(){
             $('#btn_receive_so').click();
         });
+
+        $("#cbo_tbl_departments").on("change", function () { 
+            $('#tbl_cash_invoice').DataTable().ajax.reload();
+        }); 
+
         $("#txt_start_date_cash").on("change", function () {         
             $('#tbl_cash_invoice').DataTable().ajax.reload() 
         }); 
@@ -2436,19 +2490,7 @@ $(document).ready(function(){
     function format ( d ) {
         //return
     };
-    var initializeDepartment = function(status){
-        
-        var user_department_id = <?php echo $this->session->user_department_id; ?>;
-        
-        if(user_department_id == 0 || user_department_id == null){
-            status == null ? "" : $('#cbo_departments').select2('val', null);
-            $('#cbo_departments').prop("disabled", false);
-        }else{
-            status == null ? "" : $('#cbo_departments').select2('val', user_department_id);
-            $('#cbo_departments').prop("disabled", true);
-        }
 
-    };
     function validateNumber(event) {
         var key = window.event ? event.keyCode : event.which;
         if (event.keyCode === 8 || event.keyCode === 46

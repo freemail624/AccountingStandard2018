@@ -153,8 +153,9 @@ class Sales_invoice extends CORE_Controller
                 $m_invoice=$this->Sales_invoice_model;
                 $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
                 $ted = date('Y-m-d',strtotime($this->input->get('ted')));
+                $department_id = $this->input->get('department_id', TRUE);
                 $additional = " AND DATE(sales_invoice.date_invoice) BETWEEN '$tsd' AND '$ted'";
-                $response['data']=$this->response_rows($id_filter,$additional);
+                $response['data']=$this->response_rows($id_filter,$additional,$department_id);
                 echo json_encode($response);
                 break;
 
@@ -813,9 +814,9 @@ class Sales_invoice extends CORE_Controller
 
 
 //**************************************user defined*************************************************
-    function response_rows($filter_value,$additional=null){
+    function response_rows($filter_value,$additional=null,$department_id=0){
         return $this->Sales_invoice_model->get_list(
-             'sales_invoice.is_active = TRUE AND sales_invoice.is_deleted = FALSE '.($filter_value==null?'':' AND sales_invoice.sales_invoice_id='.$filter_value).''.($additional==null?'':$additional),
+             'sales_invoice.is_active = TRUE AND sales_invoice.is_deleted = FALSE '.($filter_value==null?'':' AND sales_invoice.sales_invoice_id='.$filter_value).''.($additional==null?'':$additional).''.($department_id==0?'':' AND sales_invoice.department_id='.$department_id),
             array(
                 'sales_invoice.sales_invoice_id',
                 'sales_invoice.sales_inv_no',
