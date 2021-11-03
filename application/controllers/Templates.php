@@ -2224,7 +2224,8 @@ class Templates extends CORE_Controller {
                         'COALESCE((SELECT delivery_invoice.dr_invoice_no 
                             FROM cv_info 
                             LEFT JOIN delivery_invoice ON delivery_invoice.dr_invoice_id = cv_info.dr_invoice_id
-                            WHERE cv_info.journal_id = journal_info.journal_id),"") as dr_invoice_no'
+                            WHERE cv_info.journal_id = journal_info.journal_id AND
+                                    cv_info.dr_invoice_id != 0),"") as dr_invoice_no'
                     ),
 
                     array(
