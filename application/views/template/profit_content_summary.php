@@ -7,7 +7,7 @@
 			font-family: 'Segoe UI',sans-serif;
 			font-size: 12px;
 		}
-		table, th, td { border-color: white; text-align: left;}
+		table, th, td { border-color: white;}
 		tr { border-bottom: none !important; }
 		th { border-bottom: 1px solid gray; }
 
@@ -49,61 +49,125 @@
         <h3><strong><center>Profit Report By Product</center> </strong></h3>
     </div>
 
-<?php 
-    $summary_grand_qty = 0;
-    $summary_grand_gross = 0;
-    $summary_grand_net = 0;
-    $summary_grand_profit = 0; 
-?>
+    <?php 
+        $summary_grand_qty = 0;
+        $summary_grand_gross = 0;
+        $summary_grand_net = 0;
+        $summary_grand_profit = 0; 
+        $summary_grand_return=0;
+        $total_net_returned=0;
+        $grand_total_net_returned = 0;
+        $grand_total_profit=0;
+    ?>
 
-<table cellspacing="0" cellpadding="5">
-	<tr>
-		<td><strong>Period: </strong> <?php echo $_GET['start']  ?> - <?php echo $_GET['end']  ?></td>
-		<td></td>
-		<td></td>
-		<td></td>
-	</tr>
-</table>
+    <table cellspacing="0" cellpadding="5">
+    	<tr>
+    		<td><strong>Period: </strong> <?php echo $_GET['start']  ?> - <?php echo $_GET['end']  ?></td>
+    		<td></td>
+    		<td></td>
+    		<td></td>
+    	</tr>
+    </table>
     <h4>Profit Report by Invoice (Summary)</h4><br>
     <table style="width:100%" class="table table-striped" id="tbl_summary">
-    <thead>
-    <th>Invoice No</th>
-    <th>Customer Name</th>
-    <th>Date</th>
-    <th class="right-align">QTY Sold</th>
-    <th class="right-align">Gross</th>
-    <th class="right-align">Net Cost</th>
-    <th class="right-align">Net Profit</th>
- 
-    </thead>
+        <thead>
+            <th align="left">Invoice No</th>
+            <th align="left">Customer Name</th>
+            <th align="left">Date</th>
+            <th align="right">QTY Sold</th>
+            <th align="right">Gross</th>
+            <th align="right">Net Cost</th>
+            <th align="right">Net Profit</th>
+        </thead>
         <tbody>
         <?php foreach ($summary as $value) { ?>
         <tr>
-        <td><?php echo $value->inv_no ?></td>
-        <td><?php echo $value->customer_name ?></td>
-        <td><?php echo $value->date_invoice ?></td>
-        <td class="right-align"><?php echo $value->qty_total ?></td>
-        <td class="right-align"><?php echo number_format($value->gross_total,2) ?></td>
-        <td class="right-align"><?php echo number_format($value->net_cost_total,2) ?></td>
-        <td class="right-align"><?php echo number_format($value->profit_total,2) ?></td>
-        </tr>
-        <?php 
-            $summary_grand_qty+=$value->qty_total;
-            $summary_grand_gross+=$value->gross_total;
-            $summary_grand_net+=$value->net_cost_total;
-            $summary_grand_profit+=$value->profit_total;
-        } ?>
-
-        <tr>
-        <td><strong>Total : </strong></td>
-        <td></td>
-        <td></td>
-        <td class="right-align"><strong><?php echo number_format($summary_grand_qty,2); ?></strong></td>
-        <td class="right-align"><strong><?php echo number_format($summary_grand_gross,2); ?></strong></td>
-        <td class="right-align"><strong><?php echo number_format($summary_grand_net,2); ?></strong></td>
-        <td class="right-align"><strong><?php echo number_format($summary_grand_profit,2); ?></strong></td>
-        </tr>
+            <td><?php echo $value->inv_no ?></td>
+            <td><?php echo $value->customer_name ?></td>
+            <td><?php echo $value->date_invoice ?></td>
+            <td align="right"><?php echo $value->qty_total ?></td>
+            <td align="right"><?php echo number_format($value->gross_total,2) ?></td>
+            <td align="right"><?php echo number_format($value->net_cost_total,2) ?></td>
+            <td align="right"><?php echo number_format($value->profit_total,2) ?></td>
+            </tr>
+            <?php 
+                $summary_grand_qty+=$value->qty_total;
+                $summary_grand_gross+=$value->gross_total;
+                $summary_grand_net+=$value->net_cost_total;
+                $summary_grand_profit+=$value->profit_total;
+            } ?>
+            <tr>
+                <td colspan="3"><strong>Total : </strong></td>
+                <td align="right"><strong><?php echo number_format($summary_grand_qty,2); ?></strong></td>
+                <td align="right"><strong><?php echo number_format($summary_grand_gross,2); ?></strong></td>
+                <td align="right"><strong><?php echo number_format($summary_grand_net,2); ?></strong></td>
+                <td align="right"><strong><?php echo number_format($summary_grand_profit,2); ?></strong></td>
+            </tr>
         </tbody>
+    </table>
+    <br/>
+
+    <?php if(count($returns) > 0){?>
+        <h4>
+            <span style="float: left;">Returns by Invoice (Summary)</span>
+        </h4> 
+        <br/><br/>
+        <table width="100%" class="table table-striped">
+            <thead>
+                <tr>
+                    <th align="left">Invoice #</th>
+                    <th align="left">Customer Name</th>
+                    <th align="right">QTY Return</th>
+                    <th align="right">Total Return</th>
+                </tr>
+            </thead>
+            <tbody>
+            <?php foreach($returns as $return){?>
+                <tr>
+                    <td><?php echo $return->inv_no; ?></td>
+                    <td><?php echo $return->customer_name; ?></td>
+                    <td align="right"><?php echo number_format($return->returned_qty,2); ?></td>
+                    <td align="right"><?php echo number_format($return->total,2); ?></td>
+                </tr>
+            <?php }?>
+            <tbody>
+        </table>
+    <?php 
+        $summary_grand_return += $return->total;
+        $total_net_returned += $return->total_net_returned;
+    }?>
+
+    <?php 
+        $grand_total_profit = ($summary_grand_gross - ($summary_grand_net - $total_net_returned)) - $summary_grand_return;
+        $grand_total_net_returned = $summary_grand_profit - $grand_total_profit;
+    ?>
+
+    <br><br>
+    <table style="width:100%;border:none!important;font-size:12px!important;font-weight:bold;">
+        <tr>
+            <td width="85%" align="right">Total Quantity Sold: </td>
+            <td width="15%" align="right">&nbsp;<?php echo number_format($summary_grand_qty,2);?></td>
+        </tr>
+        <tr>
+            <td align="right">Total Gross: </td>
+            <td align="right"><?php echo number_format($summary_grand_gross,2);?></td>
+        </tr>
+        <tr>
+            <td align="right">Total Net: </td>
+            <td align="right"><?php echo number_format($summary_grand_net,2);?></td>
+        </tr>
+        <tr>
+            <td align="right">Net Profit: </td>
+            <td align="right"><?php echo number_format($summary_grand_profit,2);?></td>
+        </tr>
+        <tr>
+            <td align="right">Total Net Returned: </td>
+            <td align="right"><?php echo number_format($grand_total_net_returned,2);?></td>
+        </tr>
+        <tr>
+            <td align="right">Total Profit: </td>
+            <td align="right"><?php echo number_format($grand_total_profit,2);?></td>
+        </tr>
     </table>
 
 </body>

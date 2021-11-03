@@ -44,10 +44,27 @@
         <td width="50%">CUSTOMER : <?php echo $info->customer_name; ?></td>
         <td width="50%" align="right">DR# : <?php echo $info->cash_inv_no; ?></td>
     </tr>
+
+    <?php if($info->salesperson_name != ""){ ?>
+
+    <tr>
+        <td>ADDRESS : <?php echo $info->address; ?></td>
+        <td align="right">Sales Person : <?php echo $info->salesperson_name; ?></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td align="right">DATE : <?php echo date_format(new DateTime($info->date_invoice),"m/d/Y"); ?></td>
+    </tr>
+
+    <?php }else{?>
+
     <tr>
         <td>ADDRESS : <?php echo $info->address; ?></td>
         <td align="right">DATE : <?php echo date_format(new DateTime($info->date_invoice),"m/d/Y"); ?></td>
     </tr>
+
+    <?php }?>
+
 </table>
 <br /> <br />
 <table width="100%" style="border-collapse: collapse;" cellspacing="5" cellpadding="5">

@@ -694,10 +694,12 @@ class Cash_invoice extends CORE_Controller
                 'cash_invoice.customer_type_id',
                 'cash_invoice.address',
                 'sales_order.so_no',
+                'CONCAT(salesperson.firstname," ",salesperson.lastname) AS salesperson_name',
                 'CONCAT_WS(" ", user_accounts.user_fname,user_accounts.user_mname,user_accounts.user_lname) as user'
             ),
             array(
                 array('departments','departments.department_id=cash_invoice.department_id','left'),
+                array('salesperson','salesperson.salesperson_id=cash_invoice.salesperson_id','left'),
                 array('customers','customers.customer_id=cash_invoice.customer_id','left'),
                 array('sales_order','sales_order.sales_order_id=cash_invoice.sales_order_id','left'),
                 array('user_accounts','user_accounts.user_id=cash_invoice.posted_by_user','left'),

@@ -67,12 +67,14 @@
                     <th class="right-align">SRP</th>
                     <th class="right-align">Unit Cost</th>
                     <th class="right-align">Gross</th>
+                    <th class="right-align">Qty Return</th>
+                    <th class="right-align">Returns</th>
                     <th class="right-align">Net Cost</th>
                     <th class="right-align">Net Profit</th>
                   
                     </thead>
                         <tbody>
-                        <?php $p_qty = 0;$p_gross= 0; $p_net_cost=0; $p_net=0; ?>
+                        <?php $p_qty = 0;$p_gross= 0; $p_net_cost=0; $p_net=0; $p_qty_returns=0; $p_returns=0; ?>
                         <?php foreach ($items as $value) { ?>
                         <tr>
 	                        <td><?php echo $value->product_code;?></td>
@@ -82,6 +84,8 @@
 	                        <td class="right-align"><?php echo number_format($value->srp,2);?></td>
 	                        <td class="right-align"><?php echo number_format($value->purchase_cost,2);?></td>
                             <td class="right-align"><?php echo number_format($value->gross,2);?></td>
+                            <td class="right-align"><?php echo number_format($value->return_qty,2);?></td>
+                            <td class="right-align"><?php echo number_format($value->return_amount,2);?></td>
                             <td class="right-align"><?php echo number_format($value->net_cost,2);?></td>
 	                        <td class="right-align"><?php echo number_format($value->net_profit,2);?></td>
                         </tr>
@@ -90,15 +94,17 @@
 							$p_gross+=$value->gross;
                             $p_net_cost+=$value->net_cost;
 							$p_net+=$value->net_profit;
+                            $p_qty_returns+=$value->return_qty;
+                            $p_returns+=$value->return_amount;
                         } ?>
                         <tr>
-                        <td><strong>TOTAL</strong></td>
-                        <td></td>
-                        <td></td>
+                        <td colspan="3" align="right"><strong>TOTAL</strong></td>
                         <td class="right-align"><strong><?php echo number_format($p_qty,2);?></strong></td>
                         <td class="right-align"></td>
                         <td class="right-align"></td>
                         <td class="right-align"><strong><?php echo number_format($p_gross,2);?></strong></td>
+                        <td class="right-align"><strong><?php echo number_format($p_qty_returns,2);?></strong></td>
+                        <td class="right-align"><strong><?php echo number_format($p_returns,2);?></strong></td>
                         <td class="right-align"><strong><?php echo number_format($p_net_cost,2);?></strong></td>
                         <td class="right-align"><strong><?php echo number_format($p_net,2);?></strong></td>
                         </tr>

@@ -574,8 +574,10 @@ $(document).ready(function(){
                 detailed_grand_gross= 0;
                 detailed_grand_return= 0;
                 detailed_grand_net= 0;
-                detailed_grand_profit= 0;
+                grand_total_profit= 0;
+                detailed_grand_profit=0;
                 total_net_returned=0;
+                grand_total_net_returned = 0;
 
                  $.each(response.distinct, function(index,value){
                     $('#tbl_delivery_invoice').append(
@@ -676,8 +678,8 @@ $(document).ready(function(){
                     detailed_grand_profit += getFloat(value.profit_total);
                  });
 
-                 detailed_grand_net = detailed_grand_net - total_net_returned;
-                 detailed_grand_profit = (detailed_grand_gross - detailed_grand_net) - detailed_grand_return;
+                 grand_total_profit = (detailed_grand_gross - (detailed_grand_net - total_net_returned)) - detailed_grand_return;
+                 grand_total_net_returned = detailed_grand_profit - grand_total_profit;
 
                  $('#tbl_delivery_invoice ').append(
 
@@ -691,14 +693,16 @@ $(document).ready(function(){
                     '<tr style="font-size:18px;font-weight:bold;float:right;padding-right:10px;"><tr>'+
                         '<td style="width:70%;"> </td><td style="width:15%;">Total Net: </td><td  style="width:15%;text-align:right;">&nbsp;'+accounting.formatNumber(detailed_grand_net,2)+'</td>'+
                     '</tr>'+
+
                     '<tr style="font-size:18px;font-weight:bold;float:right;padding-right:10px;"><tr>'+
-                        '<td style="width:70%;"> </td><td style="width:15%;">Total Net Returned: </td><td  style="width:15%;text-align:right;">&nbsp;'+accounting.formatNumber(total_net_returned,2)+'</td>'+
+                        '<td style="width:70%;"> </td><td style="width:15%;">Net Profit: </td><td  style="width:15%;text-align:right;">&nbsp;'+accounting.formatNumber(detailed_grand_profit,2)+'</td>'+
+                    '</tr>'+
+
+                    '<tr style="font-size:18px;font-weight:bold;float:right;padding-right:10px;"><tr>'+
+                        '<td style="width:70%;"> </td><td style="width:15%;">Total Net Returned: </td><td  style="width:15%;text-align:right;">&nbsp;'+accounting.formatNumber(grand_total_net_returned,2)+'</td>'+
                     '</tr>'+
                     '<tr style="font-size:18px;font-weight:bold;float:right;padding-right:10px;"><tr>'+
-                        '<td style="width:70%;"> </td><td style="width:15%;">Total Returns: </td><td  style="width:15%;text-align:right;">&nbsp;'+accounting.formatNumber(detailed_grand_return,2)+'</td>'+
-                    '</tr>'+
-                    '<tr style="font-size:18px;font-weight:bold;float:right;padding-right:10px;"><tr>'+
-                        '<td style="width:70%;"> </td><td style="width:15%;">Total Profit: </td><td  style="width:15%;text-align:right;">&nbsp;'+accounting.formatNumber(detailed_grand_profit,2)+'</td>'+
+                        '<td style="width:70%;"> </td><td style="width:15%;">Total Profit: </td><td  style="width:15%;text-align:right;">&nbsp;'+accounting.formatNumber(grand_total_profit,2)+'</td>'+
                     '</tr>'+
                     '</table><br><br>'
                 )
@@ -729,6 +733,9 @@ $(document).ready(function(){
                     summary_grand_return= 0;
                     summary_grand_net= 0;
                     summary_grand_profit= 0;
+                    total_net_returned=0;
+                    grand_total_net_returned = 0;
+                    grand_total_profit=0;
 
                     $('#tbl_delivery_invoice').html('');
                     $('#tbl_delivery_invoice').append(
@@ -740,7 +747,6 @@ $(document).ready(function(){
                     '<th>Date</th>'+
                     '<th class="right-align">QTY Sold</th>'+
                     '<th class="right-align">Gross</th>'+
-                    '<th class="right-align">Return</th>'+
                     '<th class="right-align">Net Cost</th>'+
                     '<th class="right-align">Net Profit</th>'+
                     
@@ -757,7 +763,6 @@ $(document).ready(function(){
                         '<td>'+value.date_invoice+'</td>'+
                         '<td class="right-align">'+value.qty_total+'</td>'+
                         '<td class="right-align">'+accounting.formatNumber(value.gross_total,2)+'</td>'+
-                        '<td class="right-align">'+accounting.formatNumber(0,2)+'</td>'+
                         '<td class="right-align">'+accounting.formatNumber(value.net_cost_total,2)+'</td>'+
                         '<td class="right-align">'+accounting.formatNumber(value.profit_total,2)+'</td>'+
                         '</tr>'
@@ -765,25 +770,76 @@ $(document).ready(function(){
                     
                     summary_grand_qty += getFloat(value.qty_total);
                     summary_grand_gross += getFloat(value.gross_total);
-                    summary_grand_return += getFloat(0);
                     summary_grand_net += getFloat(value.net_cost_total);
                     summary_grand_profit += getFloat(value.profit_total);
         
                  });
 
-                    $('#tbl_summary  tbody').append(
-                        '<tr>'+
-                        '<td><strong>Total : </strong></td>'+
-                        '<td></td>'+
-                        '<td></td>'+
-                        '<td class="right-align"><strong>'+accounting.formatNumber(summary_grand_qty,2)+'</strong></td>'+
-                        '<td class="right-align"><strong>'+accounting.formatNumber(summary_grand_gross,2)+'</strong></td>'+
-                        '<td class="right-align"><strong>'+accounting.formatNumber(summary_grand_return,2)+'</strong></td>'+
-                        '<td class="right-align"><strong>'+accounting.formatNumber(summary_grand_net,2)+'</strong></td>'+
-                        '<td class="right-align"><strong>'+accounting.formatNumber(summary_grand_profit,2)+'</strong></td>'+
-                        '</tr>'
-                    );
 
+                 if(response.returns.length > 0){
+
+                        $('#tbl_delivery_invoice').append('<hr>');
+                        $('#tbl_delivery_invoice').append('<h4>Returns by Invoice (Summary)</h4><br>');
+
+                        $('#tbl_delivery_invoice').append(
+                        '<table style="width:100%" class="table table-striped" id="returnsSummary">'+
+                        '<thead>'+
+                        '<th>Invoice #</th>'+
+                        '<th>Customer Name</th>'+
+                        '<th class="right-align">QTY Return</th>'+
+                        '<th class="right-align">Total Return</th>'+
+                        
+                        '</thead>'+
+                            '<tbody >'+
+                            '</tbody>'+
+                             '</table>'
+                        );
+
+                         $.each(response.returns, function(index,value){
+                            $('#returnsSummary  tbody').append(
+                                '<tr>'+
+                                '<td>'+value.inv_no+'</td>'+
+                                '<td>'+value.customer_name+'</td>'+
+                                '<td class="right-align">'+value.returned_qty+'</td>'+
+                                '<td class="right-align">'+accounting.formatNumber(value.total,2)+'</td>'+
+                                '</tr>'
+                            );
+
+                            summary_grand_return += getFloat(value.total);
+                            total_net_returned += getFloat(value.total_net_returned);
+                         });
+                 }
+
+
+                 grand_total_profit = (summary_grand_gross - (summary_grand_net - total_net_returned)) - summary_grand_return;
+                 grand_total_net_returned = summary_grand_profit - grand_total_profit;
+
+
+                 $('#tbl_delivery_invoice ').append(
+
+                    '<table style="width:100%;border:none!important;font-size:12px!important;font-weight:bold;">'+
+                    '<tr style="font-size:18px;font-weight:bold;float:right;padding-right:10px;"><tr>'+
+                        '<td style="width:70%;"> </td><td style="width:15%;">Total Quantity Sold: </td><td  style="width:15%;text-align:right;">&nbsp;'+accounting.formatNumber(summary_grand_qty,2)+'</td>'+
+                    '</tr>'+
+                    '<tr style="font-size:18px;font-weight:bold;float:right;padding-right:10px;"><tr>'+
+                        '<td style="width:70%;"> </td><td style="width:15%;">Total Gross: </td><td  style="width:15%;text-align:right;">&nbsp;'+accounting.formatNumber(summary_grand_gross,2)+'</td>'+
+                    '</tr>'+
+                    '<tr style="font-size:18px;font-weight:bold;float:right;padding-right:10px;"><tr>'+
+                        '<td style="width:70%;"> </td><td style="width:15%;">Total Net: </td><td  style="width:15%;text-align:right;">&nbsp;'+accounting.formatNumber(summary_grand_net,2)+'</td>'+
+                    '</tr>'+
+
+                    '<tr style="font-size:18px;font-weight:bold;float:right;padding-right:10px;"><tr>'+
+                        '<td style="width:70%;"> </td><td style="width:15%;">Net Profit: </td><td  style="width:15%;text-align:right;">&nbsp;'+accounting.formatNumber(summary_grand_profit,2)+'</td>'+
+                    '</tr>'+
+
+                    '<tr style="font-size:18px;font-weight:bold;float:right;padding-right:10px;"><tr>'+
+                        '<td style="width:70%;"> </td><td style="width:15%;">Total Net Returned: </td><td  style="width:15%;text-align:right;">&nbsp;'+accounting.formatNumber(grand_total_net_returned,2)+'</td>'+
+                    '</tr>'+
+                    '<tr style="font-size:18px;font-weight:bold;float:right;padding-right:10px;"><tr>'+
+                        '<td style="width:70%;"> </td><td style="width:15%;">Total Profit: </td><td  style="width:15%;text-align:right;">&nbsp;'+accounting.formatNumber(grand_total_profit,2)+'</td>'+
+                    '</tr>'+
+                    '</table><br><br>'
+                )
 
             }
         });

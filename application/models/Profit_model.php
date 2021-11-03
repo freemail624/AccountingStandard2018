@@ -8,6 +8,205 @@ class Profit_model extends CORE_Model
         parent::__construct();
     }
 
+    function get_returns_by_invoice_summary($start,$end,$customer_id=0){
+        $sql="
+            SELECT 
+                allmain.inv_no,
+                SUM(allmain.total_net_returned) as total_net_returned,
+                SUM(allmain.returned_qty) as returned_qty,
+                SUM(allmain.total) as total,
+                (CASE
+                    WHEN allmain.inv_type_id = 1
+                    THEN si_customer.customer_name
+                    ELSE ci_customer.customer_name
+                END) as customer_name
+
+            FROM
+
+                (SELECT main.*,
+                    (main.returned_qty * main.net_returned) as total_net_returned
+                FROM 
+
+                (SELECT
+                        ai.inv_type_id,
+                        ai.inv_no,
+                        aii.product_id,
+                        aii.adjust_qty as returned_qty,
+                        aii.adjust_price,
+                        aii.adjust_line_total_price as total,
+                        p.product_code,
+                        p.product_desc,
+                        units.unit_name,
+
+
+                        (CASE 
+                            WHEN ai.inv_type_id = 1 AND aii.adjust_price > 0
+                            THEN
+
+                            COALESCE((SELECT 
+                                MAX(sii.cost_upon_invoice) as cost_upon_invoice
+                                FROM sales_invoice_items sii 
+                                LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
+                                WHERE sii.product_id = aii.product_id AND si.sales_inv_no = ai.inv_no
+                            ),0)
+
+                            WHEN ai.inv_type_id = 2 AND aii.adjust_price > 0
+                            THEN
+
+                            COALESCE((SELECT 
+                                MAX(cii.cost_upon_invoice) as cost_upon_invoice
+                                FROM cash_invoice_items cii 
+                                LEFT JOIN cash_invoice ci ON ci.cash_invoice_id = cii.cash_invoice_id
+                                WHERE cii.product_id = aii.product_id AND ci.cash_inv_no = ai.inv_no
+                            ),0)
+
+                            ELSE 0
+
+                        END) as net_returned
+
+                    FROM adjustment_items aii
+                    LEFT JOIN adjustment_info ai ON ai.adjustment_id = aii.adjustment_id
+                    LEFT JOIN products p ON p.product_id = aii.product_id
+                    LEFT JOIN units ON units.unit_id = aii.unit_id
+                    WHERE 
+                    ai.is_deleted = FALSE AND ai.is_active = TRUE AND
+                    ai.adjustment_type = 'IN' AND 
+                    ai.is_returns = 1 AND
+                    ai.date_adjusted BETWEEN '$start' AND '$end'
+                    ".($customer_id==0?"":" AND ai.customer_id='".$customer_id."'").") as main
+                ) as allmain
+                LEFT JOIN sales_invoice si ON si.sales_inv_no=allmain.inv_no
+                LEFT JOIN cash_invoice ci ON ci.cash_inv_no=allmain.inv_no
+                LEFT JOIN customers si_customer ON si_customer.customer_id = si.customer_id
+                LEFT JOIN customers ci_customer ON ci_customer.customer_id = ci.customer_id
+                GROUP BY allmain.inv_no
+        ";
+        return $this->db->query($sql)->result();
+    }
+
+    function get_returns_by_invoice_summary_charge($start,$end,$agent_id=0,$customer_id=0){
+        $sql="
+            SELECT 
+                allmain.inv_no,
+                SUM(allmain.total_net_returned) as total_net_returned,
+                SUM(allmain.returned_qty) as returned_qty,
+                SUM(allmain.total) as total,
+                customers.customer_name
+
+            FROM
+
+                (SELECT main.*,
+                    (main.returned_qty * main.net_returned) as total_net_returned
+                FROM 
+
+                (SELECT
+                        ai.inv_type_id,
+                        ai.inv_no,
+                        aii.product_id,
+                        aii.adjust_qty as returned_qty,
+                        aii.adjust_price,
+                        aii.adjust_line_total_price as total,
+                        p.product_code,
+                        p.product_desc,
+                        units.unit_name,
+
+
+                        (CASE 
+                            WHEN ai.inv_type_id = 1 AND aii.adjust_price > 0
+                            THEN
+
+                            COALESCE((SELECT 
+                                MAX(sii.cost_upon_invoice) as cost_upon_invoice
+                                FROM sales_invoice_items sii 
+                                LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
+                                WHERE sii.product_id = aii.product_id AND si.sales_inv_no = ai.inv_no
+                            ),0)
+                            ELSE 0
+
+                        END) as net_returned
+
+                    FROM adjustment_items aii
+                    LEFT JOIN adjustment_info ai ON ai.adjustment_id = aii.adjustment_id
+                    LEFT JOIN sales_invoice si ON si.sales_inv_no = ai.inv_no
+                    LEFT JOIN products p ON p.product_id = aii.product_id
+                    LEFT JOIN units ON units.unit_id = aii.unit_id
+                    WHERE 
+                    ai.is_deleted = FALSE AND ai.is_active = TRUE AND
+                    ai.adjustment_type = 'IN' AND 
+                    ai.is_returns = 1 AND
+                    ai.inv_type_id = 1 AND
+                    ai.date_adjusted BETWEEN '$start' AND '$end'
+                    ".($customer_id==0?"":" AND ai.customer_id='".$customer_id."'")."
+                    ".($agent_id==0?"":" AND si.agent_id='".$agent_id."'").") as main
+                ) as allmain
+                LEFT JOIN sales_invoice si ON si.sales_inv_no=allmain.inv_no
+                LEFT JOIN customers ON customers.customer_id = si.customer_id
+                GROUP BY allmain.inv_no
+        ";
+        return $this->db->query($sql)->result();
+    }
+
+
+    function get_returns_by_invoice_summary_cash($start,$end,$customer_id=0){
+        $sql="
+            SELECT 
+                allmain.inv_no,
+                SUM(allmain.total_net_returned) as total_net_returned,
+                SUM(allmain.returned_qty) as returned_qty,
+                SUM(allmain.total) as total,
+                customers.customer_name
+
+            FROM
+
+                (SELECT main.*,
+                    (main.returned_qty * main.net_returned) as total_net_returned
+                FROM 
+
+                (SELECT
+                        ai.inv_type_id,
+                        ai.inv_no,
+                        aii.product_id,
+                        aii.adjust_qty as returned_qty,
+                        aii.adjust_price,
+                        aii.adjust_line_total_price as total,
+                        p.product_code,
+                        p.product_desc,
+                        units.unit_name,
+
+
+                        (CASE 
+                            WHEN ai.inv_type_id = 2 AND aii.adjust_price > 0
+                            THEN
+
+                                COALESCE((SELECT 
+                                    MAX(cii.cost_upon_invoice) as cost_upon_invoice
+                                    FROM cash_invoice_items cii 
+                                    LEFT JOIN cash_invoice ci ON ci.cash_invoice_id = cii.cash_invoice_id
+                                    WHERE cii.product_id = aii.product_id AND ci.cash_inv_no = ai.inv_no
+                                ),0)
+
+                            ELSE 0
+
+                        END) as net_returned
+
+                    FROM adjustment_items aii
+                    LEFT JOIN adjustment_info ai ON ai.adjustment_id = aii.adjustment_id
+                    LEFT JOIN products p ON p.product_id = aii.product_id
+                    LEFT JOIN units ON units.unit_id = aii.unit_id
+                    WHERE 
+                    ai.is_deleted = FALSE AND ai.is_active = TRUE AND
+                    ai.adjustment_type = 'IN' AND 
+                    ai.is_returns = 1 AND
+                    ai.inv_type_id = 2 AND
+                    ai.date_adjusted BETWEEN '$start' AND '$end'
+                    ".($customer_id==0?"":" AND ai.customer_id='".$customer_id."'").") as main
+                ) as allmain
+                LEFT JOIN cash_invoice ci ON ci.cash_inv_no=allmain.inv_no
+                LEFT JOIN customers ON customers.customer_id = ci.customer_id
+                GROUP BY allmain.inv_no
+        ";
+        return $this->db->query($sql)->result();
+    }
 
     function get_returns_by_invoice_detailed($start,$end,$customer_id=0){
         $sql="SELECT main.*,
@@ -57,6 +256,98 @@ class Profit_model extends CORE_Model
                 ai.is_deleted = FALSE AND ai.is_active = TRUE AND
                 ai.adjustment_type = 'IN' AND 
                 ai.is_returns = 1 AND
+                ai.date_adjusted BETWEEN '$start' AND '$end'
+                ".($customer_id==0?"":" AND ai.customer_id='".$customer_id."'").") as main
+        ";
+        return $this->db->query($sql)->result();
+    }
+
+    function get_returns_by_invoice_detailed_charge($start,$end,$agent_id=0,$customer_id=0){
+        $sql="SELECT main.*,
+                (main.returned_qty * main.net_returned) as total_net_returned
+            FROM 
+
+            (SELECT
+                    ai.inv_no,
+                    aii.product_id,
+                    aii.adjust_qty as returned_qty,
+                    aii.adjust_price,
+                    aii.adjust_line_total_price as total,
+                    p.product_code,
+                    p.product_desc,
+                    units.unit_name,
+
+                    (CASE 
+                        WHEN ai.inv_type_id = 1 AND aii.adjust_price > 0
+                        THEN
+
+                        COALESCE((SELECT 
+                            MAX(sii.cost_upon_invoice) as cost_upon_invoice
+                            FROM sales_invoice_items sii 
+                            LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
+                            WHERE sii.product_id = aii.product_id AND si.sales_inv_no = ai.inv_no
+                        ),0)
+
+                        ELSE 0
+
+                    END) as net_returned
+
+                FROM adjustment_items aii
+                LEFT JOIN adjustment_info ai ON ai.adjustment_id = aii.adjustment_id
+                LEFT JOIN sales_invoice si ON si.sales_inv_no = ai.inv_no
+                LEFT JOIN products p ON p.product_id = aii.product_id
+                LEFT JOIN units ON units.unit_id = aii.unit_id
+                WHERE 
+                ai.is_deleted = FALSE AND ai.is_active = TRUE AND
+                ai.adjustment_type = 'IN' AND 
+                ai.is_returns = 1 AND
+                ai.inv_type_id = 1 AND
+                ai.date_adjusted BETWEEN '$start' AND '$end'
+                ".($customer_id==0?"":" AND ai.customer_id='".$customer_id."'")."
+                ".($agent_id==0?"":" AND si.agent_id='".$agent_id."'").") as main
+        ";
+        return $this->db->query($sql)->result();
+    }
+
+    function get_returns_by_invoice_detailed_cash($start,$end,$customer_id=0){
+        $sql="SELECT main.*,
+                (main.returned_qty * main.net_returned) as total_net_returned
+            FROM 
+
+            (SELECT
+                    ai.inv_no,
+                    aii.product_id,
+                    aii.adjust_qty as returned_qty,
+                    aii.adjust_price,
+                    aii.adjust_line_total_price as total,
+                    p.product_code,
+                    p.product_desc,
+                    units.unit_name,
+
+                    (CASE 
+                        WHEN ai.inv_type_id = 2 AND aii.adjust_price > 0
+                        THEN
+
+                        COALESCE((SELECT 
+                            MAX(cii.cost_upon_invoice) as cost_upon_invoice
+                            FROM cash_invoice_items cii 
+                            LEFT JOIN cash_invoice ci ON ci.cash_invoice_id = cii.cash_invoice_id
+                            WHERE cii.product_id = aii.product_id AND ci.cash_inv_no = ai.inv_no
+                        ),0)
+
+                        ELSE 0
+
+                    END) as net_returned
+
+                FROM adjustment_items aii
+                LEFT JOIN adjustment_info ai ON ai.adjustment_id = aii.adjustment_id
+                LEFT JOIN products p ON p.product_id = aii.product_id
+                LEFT JOIN units ON units.unit_id = aii.unit_id
+                WHERE 
+                ai.is_deleted = FALSE AND ai.is_active = TRUE AND
+                ai.adjustment_type = 'IN' AND 
+                ai.is_returns = 1 AND
+                ai.inv_type_id = 2 AND
                 ai.date_adjusted BETWEEN '$start' AND '$end'
                 ".($customer_id==0?"":" AND ai.customer_id='".$customer_id."'").") as main
         ";
