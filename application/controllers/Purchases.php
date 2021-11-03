@@ -165,7 +165,7 @@ class Purchases extends CORE_Controller
                         $m_trans=$this->Trans_model;
                         $m_trans->user_id=$this->session->user_id;
                         $m_trans->set('trans_date','NOW()');
-                        $m_trans->trans_key_id=13; //CRUD - Transfer
+                        $m_trans->trans_key_id=14; //CRUD - Transfer
                         $m_trans->trans_type_id=11; // TRANS TYPE
                         $m_trans->trans_log='Transferred PO#: '.$po_info[0]->po_no.' to  GM Approval';
                         $m_trans->save();
