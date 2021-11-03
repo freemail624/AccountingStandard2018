@@ -75,6 +75,11 @@
                     <tr>
                         <td><strong>REF # :</strong> <?php echo $journal_info->ref_no; ?></td>
                     </tr>
+                    <?php if($journal_info->dr_invoice_no != ""){ ?>
+                        <tr>
+                            <td><strong>RR # :</strong> <?php echo $journal_info->dr_invoice_no; ?></td>
+                        </tr>
+                    <?php }?>
                     <tr>
                         <td><strong>PARTICULAR :</strong> <?php echo $journal_info->particular; ?></td>
                     </tr>
@@ -85,6 +90,9 @@
                     <?php if ($journal_info->payment_method_id == 2) { ?>
                         <tr>
                             <td><strong>CHECK # :</strong> <?php echo $journal_info->check_no; ?></td>
+                        </tr>
+                        <tr>
+                            <td><strong>CHECK NAME :</strong> <?php echo $journal_info->check_particular; ?></td>
                         </tr>
                         <tr>
                             <td><strong>CHECK DATE :</strong> <?php if($journal_info->check_date == '0000-00-00'){ echo ''; }else {  echo date_format(new DateTime($journal_info->check_date),"m/d/Y"); }?></td>
